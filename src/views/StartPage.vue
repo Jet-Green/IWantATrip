@@ -2,6 +2,9 @@
 import SlideMenu from "../components/SlideMenu.vue";
 import { defineComponent, ref, reactive } from "vue";
 
+
+
+
 const direction = reactive([
   {
     menuItem: "Заграница",

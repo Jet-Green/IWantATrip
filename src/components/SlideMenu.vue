@@ -1,22 +1,25 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, reactive } from "vue";
 import { useElementBounding } from "@vueuse/core";
 
 const props = defineProps(["direction"]);
-console.log(props.direction);
+let activeSelector = reactive()
 
 const el = ref(null);
 const { x, y, top, right, bottom, left, width, height } =
   useElementBounding(el);
 
-const activeMenuItem = () => {
-  console.dir(el);
+const activeMenuItem = (index) => {
+  activeSelector =  props.direction[index];
+  console.log( props.direction[index].image)
 };
 </script>
 
 <template>
   <div class="section" ref="el">
+  
     <div
+    @mouseenter="activeMenuItem(index)"
       v-for="(item, index) in props.direction"
       :key="index"
       :id="index"
@@ -25,6 +28,7 @@ const activeMenuItem = () => {
       {{ item.menuItem }}
     </div>
   </div>
+   {{activeSelector}}
 </template>
 <style>
 .section {
