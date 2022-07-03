@@ -35,7 +35,7 @@ const props = defineProps(["direction"]);
 .carousel__next {
   background-color: rgba(0, 0, 0, 0);
   box-sizing: content-box;
-
+  font-size: 24px;
   color: white;
 
   &:active {
