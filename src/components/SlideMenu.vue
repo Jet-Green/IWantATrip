@@ -1,59 +1,51 @@
 <script setup>
 import { ref, computed, reactive } from "vue";
-import { useElementBounding } from "@vueuse/core";
+import { defineComponent } from "vue";
+import { Carousel, Navigation, Slide } from "vue3-carousel";
+
+import "vue3-carousel/dist/carousel.css";
 
 const props = defineProps(["direction"]);
-let activeSelector = reactive()
-
-const el = ref(null);
-const { x, y, top, right, bottom, left, width, height } =
-  useElementBounding(el);
-
-const activeMenuItem = (index) => {
-  activeSelector =  props.direction[index];
-  console.log( props.direction[index].image)
-};
 </script>
 
 <template>
-  <div class="section" ref="el">
-  
-    <div
-    @mouseenter="activeMenuItem(index)"
-      v-for="(item, index) in props.direction"
-      :key="index"
-      :id="index"
-      class="section__item"
-    >
-      {{ item.menuItem }}
-    </div>
-  </div>
-   {{activeSelector}}
+  <Carousel>
+    <Slide v-for="(item, index) in props.direction" :key="index">
+      <div class="carousel__item">{{ item.menuItem }}</div>
+    </Slide>
+    <template #addons>
+      <Navigation />
+    </template>
+  </Carousel>
 </template>
-<style>
-.section {
-  display: flex;
-  gap: 10px;
-  max-width: 150px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: auto;
-  
-}
-.section::-webkit-scrollbar {
-  width: 0;
-}
-.section__item {
+<style lang="scss">
+.carousel__item {
+  width: 100%;
+
+  font-size: clamp(16px, 2vw, 20px);
+
   display: flex;
   justify-content: center;
+  align-items: center;
+}
+
+.carousel__slide {
+  padding: 5px;
+}
+
+.carousel__prev,
+.carousel__next {
+  background-color: rgba(0, 0, 0, 0);
+  box-sizing: content-box;
+
   color: white;
 
-
-  flex: 0 0 100%;
-
-  scroll-snap-align: start;
-
-  font-size: 1.5rem;
-  cursor: pointer;
+  &:active {
+    font-size: 0.9em;
+  }
+}
+.carousel__prev--in-active,
+.carousel__next--in-active {
+  display: none;
 }
 </style>

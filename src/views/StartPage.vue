@@ -25,7 +25,7 @@ const direction = reactive([
 </script>
 
 <template>
-  <div
+  <a-layout
     :style="{
       background: `url(https://geo-1.ru/wp-content/uploads/2018/10/21-5.jpg)`,
       height: '100vh',
@@ -35,38 +35,42 @@ const direction = reactive([
     }"
   >
     <a-layout-header><h1>Хочу в поездку</h1></a-layout-header>
-    <a-row>
-      <a-col :xs="{ span: 24, order: 1 }" :sm="{ span: 12, order: 0 }">
-        <div class="selectors main_card">
-          <SlideMenu @change="console.log(event)" :direction="direction" />
-          <SlideMenu @change="console.log(event)" :direction="direction" />
-          <SlideMenu @change="console.log(event)" :direction="direction" />
-          <SlideMenu @change="console.log(event)" :direction="direction" />
-          <div class="variants">посмотреть варианты</div>
-        </div>
-      </a-col>
-      <a-col :xs="24" :sm="12">
-        <div class="budget_info">
-          <h3 class="main_card">
-            Бюджет
-            <span class="mdi mdi-24px mdi-approximately-equal"></span>
-            1500 - 3000 руб.
-          </h3>
-        </div>
-      </a-col>
-    </a-row>
-    <a-row style="height: 50%">
-      <a-col :xs="{ span: 24 }" :sm="{ span: 12 }" class="center_flex">
-        <button class="order">Заказать тур</button>
-      </a-col>
-      <a-col :xs="24" :sm="12"> </a-col>
-    </a-row>
-
-    <a-layout-footer
-      :style="{ position: 'fixed', bottom: 0, zIndex: 1, width: '100%' }"
+    <a-layout-content>
+      <a-row>
+        <a-col :xs="{ span: 24, order: 1 }" :sm="{ span: 12, order: 0 }">
+          <a-row justify="center">
+            <a-col :xs="18" :sm="14">
+              <div class="selectors main_card">
+                <SlideMenu :direction="direction" />
+                <SlideMenu :direction="direction" />
+                <SlideMenu :direction="direction" />
+                <SlideMenu :direction="direction" />
+                <div class="variants">посмотреть варианты</div>
+              </div>
+            </a-col>
+          </a-row>
+        </a-col>
+        <a-col :xs="24" :sm="12">
+          <div class="budget_info">
+            <h3 class="main_card">
+              Бюджет
+              <span class="mdi mdi-approximately-equal"></span>
+              1500 - 3000 руб.
+            </h3>
+          </div>
+        </a-col>
+      </a-row>
+      <a-row style="height: 50%">
+        <a-col :xs="{ span: 24 }" :sm="{ span: 12 }" class="center_flex">
+          <button class="order">Заказать тур</button>
+        </a-col>
+        <a-col :xs="24" :sm="12"> </a-col>
+      </a-row>
+    </a-layout-content>
+    <a-layout-footer :style="{ bottom: 0, zIndex: 1, width: '100%' }"
       >меню текст
     </a-layout-footer>
-  </div>
+  </a-layout>
 </template>
 <style lang="scss" scoped>
 .ant-layout-footer,
@@ -80,7 +84,7 @@ const direction = reactive([
 .budget_info {
   display: flex;
   justify-content: flex-end;
-  font-size: 1.3em;
+  font-size: clamp(10px, 2vw, 18px);
   h3 {
     margin: 20px 20px 0 0;
   }
@@ -89,7 +93,6 @@ const direction = reactive([
   display: flex;
   justify-content: center;
   align-items: center;
-
   flex-direction: column;
   margin: 20px;
 }
@@ -101,11 +104,10 @@ const direction = reactive([
 }
 
 .order {
-  animation: 3s ease infinite button_animation;
   box-shadow: 1px 1px 30px white;
   font-size: 1.3em;
   &:hover {
-    font-size: 1.5em;
+    font-size: 1.32em;
     animation: none;
   }
   &:active {
@@ -113,17 +115,18 @@ const direction = reactive([
     font-size: 1.3em;
   }
 }
-.variants{
-  position: absolute;
-  right: 40px;
-  bottom:20px;
- 
-  font-size: 1.3em;
-  color:#e7e68b;
+.variants {
+  font-size: clamp(12px, 2vw, 16px);
+  border-radius: 10px;
+  padding: 5px;
+  color: #e7e68b;
   cursor: pointer;
   transition: all 0.3s ease;
-  &:hover{
-    font-size: 1.32em;
+  &:hover {
+    box-shadow: 1px 1px 30px white;
+  }
+  &:active {
+    box-shadow: none;
   }
 }
 
@@ -135,19 +138,8 @@ button {
   border-radius: 10px;
   border: none;
   cursor: pointer;
-   &:active {
+  &:active {
     font-size: 0.9em;
-  }
-}
-@keyframes button_animation {
-  0% {
-    font-size: 1.3em;
-  }
-  70% {
-    font-size: 1.4em;
-  }
-  100% {
-    font-size: 1.3em;
   }
 }
 </style>
