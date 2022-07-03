@@ -1,22 +1,31 @@
 <script setup>
-import { ref, computed, reactive } from "vue";
+import { ref, reactive, computed, onMounted } from "vue";
 import { defineComponent } from "vue";
 import { Carousel, Navigation, Slide } from "vue3-carousel";
-
 import "vue3-carousel/dist/carousel.css";
+
+//carousel__slide--active
+const myCarousel = ref(null);
+const carouselData = reactive(myCarousel);
+
+const slideIndex = computed(() => {
+  return carouselData.value.data.currentSlide.value;
+});
 
 const props = defineProps(["direction"]);
 </script>
 
 <template>
-  <Carousel>
-    <Slide v-for="(item, index) in props.direction" :key="index">
-      <div class="carousel__item">{{ item.menuItem }}</div>
-    </Slide>
-    <template #addons>
-      <Navigation />
-    </template>
-  </Carousel>
+  <div @click="$emit('currentSlideIndex', slideIndex)">
+    <Carousel ref="myCarousel">
+      <Slide v-for="(item, index) in props.direction" :key="index">
+        <div :id="index" class="carousel__item">{{ item.menuItem }}</div>
+      </Slide>
+      <template #addons>
+        <Navigation />
+      </template>
+    </Carousel>
+  </div>
 </template>
 <style lang="scss">
 .carousel__item {

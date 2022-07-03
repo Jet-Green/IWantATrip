@@ -1,33 +1,42 @@
 <script setup>
 import SlideMenu from "../components/SlideMenu.vue";
-import { defineComponent, ref, reactive } from "vue";
+import { defineComponent, ref, reactive, computed } from "vue";
+
+const slideIndex = ref(0);
 
 const direction = reactive([
   {
     menuItem: "Заграница",
     image:
-      "https://stolica-s.su/wp-content/uploads/2019/06/1560237775-stolica-s-su-Kak-nakopit-na-otpusk-mechty-2.jpg",
+      "https://anothercitizenship.com/wp-content/uploads/2016/06/parizh.jpg",
   },
   {
     menuItem: "Рядом",
-    image: "https://geo-1.ru/wp-content/uploads/2018/10/21-5.jpg",
+    image: "https://megalithica.ru/assets/images/resources/629/2907.jpg",
   },
   {
     menuItem: "По России",
-    image:
-      "https://stolica-s.su/wp-content/uploads/2019/06/1560237775-stolica-s-su-Kak-nakopit-na-otpusk-mechty-2.jpg",
+    image:"https://geo-1.ru/wp-content/uploads/2018/10/21-5.jpg"
+      ,
   },
   {
     menuItem: "Море",
-    image: "https://geo-1.ru/wp-content/uploads/2018/10/21-5.jpg",
+    image: "https://stolica-s.su/wp-content/uploads/2019/06/1560237775-stolica-s-su-Kak-nakopit-na-otpusk-mechty-2.jpg",
   },
 ]);
+
+const getCurrentImage = computed(() => {
+  return direction[slideIndex.value].image;
+});
+const changeBackground = (index) => {
+  slideIndex.value = index;
+};
 </script>
 
 <template>
   <a-layout
     :style="{
-      background: `url(https://geo-1.ru/wp-content/uploads/2018/10/21-5.jpg)`,
+      background: `url(${getCurrentImage})`,
       height: '100vh',
       'background-size': 'cover',
       'background-repeat': 'no-repeat',
@@ -41,7 +50,10 @@ const direction = reactive([
           <a-row justify="center">
             <a-col :xs="20" :sm="14">
               <div class="selectors main_card">
-                <SlideMenu :direction="direction" />
+                <SlideMenu
+                  :direction="direction"
+                  @current-slide-index="changeBackground"
+                />
                 <SlideMenu :direction="direction" />
                 <SlideMenu :direction="direction" />
                 <SlideMenu :direction="direction" />
