@@ -21,9 +21,7 @@ const props = defineProps(["direction"]);
 <style lang="scss">
 .carousel__item {
   width: 100%;
-
-  font-size: clamp(16px, 2vw, 20px);
-
+  font-size: clamp(18px, 2vw, 20px);
   display: flex;
   justify-content: center;
   align-items: center;

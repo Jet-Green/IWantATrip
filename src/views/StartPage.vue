@@ -39,7 +39,7 @@ const direction = reactive([
       <a-row>
         <a-col :xs="{ span: 24, order: 1 }" :sm="{ span: 12, order: 0 }">
           <a-row justify="center">
-            <a-col :xs="18" :sm="14">
+            <a-col :xs="20" :sm="14">
               <div class="selectors main_card">
                 <SlideMenu :direction="direction" />
                 <SlideMenu :direction="direction" />
