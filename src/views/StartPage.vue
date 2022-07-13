@@ -1,20 +1,22 @@
 <script setup>
-import SlideMenu from "../components/SlideMenu.vue"
-import { defineComponent, ref } from "vue";
-import { Carousel, Pagination, Slide } from "vue3-carousel";
-import "vue3-carousel/dist/carousel.css";
-
-const myCarousel = ref(null);
-
-
-
 </script>
 
 <template>
-  <h1>Хочу в поездку</h1>
-  <SlideMenu />
-  <SlideMenu />
-  <SlideMenu />
+  <a-layout :style="{
+    background: `url(${getCurrentImage})`,
+    height: '100vh',
+    'background-size': 'cover',
+    'background-repeat': 'no-repeat',
+    'background-position': 'center center',
+  }">
+    <a-layout-header>
+      <h1>Хочу в поездку</h1>
+    </a-layout-header>
+    <a-layout-content>
+    </a-layout-content>
+    <a-layout-footer :style="{ bottom: 0, zIndex: 1, width: '100%' }">меню текст
+    </a-layout-footer>
+  </a-layout>
 </template>
-<style>
+<style lang="scss" scoped>
 </style>
