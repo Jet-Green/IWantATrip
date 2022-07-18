@@ -81,75 +81,75 @@ onMounted(() => {
 
 </script>
 <template>
+  <!-- <a-row type="flex" justify="center">
+    <a-col :xs="24" :sm="20"> -->
   <a-row type="flex" justify="center">
-    <a-col :xs="24" :sm="20">
-      <a-row type="flex" justify="center">
-        <a-col>
-          <a-typography-title :level="2">Выберите готовый тур из 1000 представленных</a-typography-title>
-        </a-col>
-      </a-row>
-
-
-      <a-row>
-        <a-col :md="5" :xs="24">
-          <a-select style="width: 100%" placeholder="Куда едем" v-model:value="where" @focus="focusOnWhere"
-            @change="handleChangeOnWhere" :bordered="false" size="large">
-            <a-select-option value="1">
-              Туда
-            </a-select-option>
-          </a-select>
-        </a-col>
-        <a-col :md="5" :xs="24">
-          <a-select style="width: 100%" placeholder="Как едем" v-model:value="how" @focus="focusOnWhere"
-            @change="handleChangeOnWhere" :bordered="false" size="large">
-            <a-select-option value="1">
-              Так
-            </a-select-option>
-          </a-select>
-        </a-col>
-        <a-col :md="5" :xs="24">
-          <a-select style="width: 100%" placeholder="На сколько" v-model:value="time" @focus="focusOnWhere"
-            @change="handleChangeOnWhere" :bordered="false" size="large">
-            <a-select-option value="1">
-              На столько
-            </a-select-option>
-          </a-select>
-        </a-col>
-        <a-col :md="5" :xs="24">
-          <a-select style="width: 100%" placeholder="На сколько" v-model:value="time" @focus="focusOnWhere"
-            @change="handleChangeOnWhere" :bordered="false" size="large">
-            <a-select-option value="1">
-              На столько
-            </a-select-option>
-          </a-select>
-        </a-col>
-        <a-col :md="4" :xs="24">
-          <a-button style="height: 100%; width: 100%">
-            Найти
-          </a-button>
-        </a-col>
-      </a-row>
-
-      <a-row>
-        <a-col :span="24">
-          <div ref="carousel_container"></div>
-          <Carousel :itemsToShow="postsCount" :autoplay="25000" snapAlign="start" :wrapAround="true">
-            <Slide v-for="(cardsGroup, index) in cards" :key="index" class="unselectable">
-              <div class="carousel__item" style="display: flex; flex-wrap: wrap">
-                <TripCard image="https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg"
-                  eventName="БИ-2" :fixedWidth="false" />
-              </div>
-            </Slide>
-            <template #addons>
-              <Navigation />
-            </template>
-          </Carousel>
-        </a-col>
-      </a-row>
-
-
+    <a-col>
+      <a-typography-title :level="2">Выберите готовый тур из 1000 представленных</a-typography-title>
     </a-col>
   </a-row>
+
+
+  <a-row>
+    <a-col :md="5" :xs="24">
+      <a-select style="width: 100%" placeholder="Куда едем" v-model:value="where" @focus="focusOnWhere"
+        @change="handleChangeOnWhere" :bordered="false" size="large">
+        <a-select-option value="1">
+          Туда
+        </a-select-option>
+      </a-select>
+    </a-col>
+    <a-col :md="5" :xs="24">
+      <a-select style="width: 100%" placeholder="Как едем" v-model:value="how" @focus="focusOnWhere"
+        @change="handleChangeOnWhere" :bordered="false" size="large">
+        <a-select-option value="1">
+          Так
+        </a-select-option>
+      </a-select>
+    </a-col>
+    <a-col :md="5" :xs="24">
+      <a-select style="width: 100%" placeholder="На сколько" v-model:value="time" @focus="focusOnWhere"
+        @change="handleChangeOnWhere" :bordered="false" size="large">
+        <a-select-option value="1">
+          На столько
+        </a-select-option>
+      </a-select>
+    </a-col>
+    <a-col :md="5" :xs="24">
+      <a-select style="width: 100%" placeholder="На сколько" v-model:value="time" @focus="focusOnWhere"
+        @change="handleChangeOnWhere" :bordered="false" size="large">
+        <a-select-option value="1">
+          На столько
+        </a-select-option>
+      </a-select>
+    </a-col>
+    <a-col :md="4" :xs="24">
+      <a-button style="height: 100%; width: 100%">
+        Найти
+      </a-button>
+    </a-col>
+  </a-row>
+
+  <a-row>
+    <a-col :span="24">
+      <div ref="carousel_container"></div>
+      <Carousel :itemsToShow="postsCount" :autoplay="25000" snapAlign="start" :wrapAround="true">
+        <Slide v-for="(cardsGroup, index) in cards" :key="index" class="unselectable">
+          <div class="carousel__item" style="display: flex; flex-wrap: wrap">
+            <TripCard image="https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg" eventName="БИ-2"
+              :fixedWidth="false" />
+          </div>
+        </Slide>
+        <template #addons>
+          <Navigation />
+        </template>
+      </Carousel>
+    </a-col>
+  </a-row>
+
+
+  <!-- </a-col>
+  </a-row> -->
 </template>
 <style lang="scss">
 .carousel__prev,
