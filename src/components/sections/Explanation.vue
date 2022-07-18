@@ -26,9 +26,9 @@ const cards = reactive([
     </a-col>
   </a-row>
   <a-row type="flex" justify="space-between">
-    <a-col style="justify-content: center" v-for="(card, index) in cards" :xs="24" :sm="12" :md="6" class="pa-16">
+    <a-col style="justify-content: center" v-for="(card, index) in cards" :xs="24" :sm="12" :lg="5" class="pa-16">
       <a-col style="display: flex; justify-content: center;">
-        <img style="border-radius: 20px; width: 100%"
+        <img style="border-radius: 20px; width: 100%; aspect-ratio: 9/5;"
           src="https://themiscochat.com/wp-content/uploads/2022/04/couple-relaxing-beach-vacation.webp " />
       </a-col>
       <a-col style="text-align: center;" class="mr-16 ml-16">

@@ -1,7 +1,7 @@
 <script setup></script>
 <template>
   <a-row class="row">
-    <a-col :xs="24" :md="12" :lg="10" class="col pa-16">
+    <a-col :xs="24" :md="10" :lg="8" class="col pa-16">
       <img src="https://themiscochat.com/wp-content/uploads/2022/04/couple-relaxing-beach-vacation.webp" />
     </a-col>
 
@@ -50,5 +50,6 @@ img {
   */
   width: 100%;
   border-radius: 25px;
+  aspect-ratio: 570/317;
 }
 </style>
