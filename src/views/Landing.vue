@@ -6,7 +6,7 @@ import FindTrip from "../components/sections/FindTrip.vue";
 </script>
 <template>
   <a-row type="flex" justify="center">
-    <a-col :xs="24" :sm="20">
+    <a-col :span="20">
       <CreateTrip />
       <FindTrip />
       <Companions />

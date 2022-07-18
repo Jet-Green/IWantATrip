@@ -12,8 +12,8 @@
     "@vueuse/core": "^8.7.5",
     "ant-design-vue": "^3.2.9",
     "vue": "^3.2.25",
-    "vue-router": "^4.0.16"
-   
+    "vue-router": "^4.0.16",
+    "vue3-carousel": "^0.1.40"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.3.3",
