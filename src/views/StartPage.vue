@@ -1,11 +1,10 @@
 <script setup>
+import Header from "../components/Header.vue";
 </script>
 
 <template>
   <a-layout style="min-height: 100vh">
-    <a-layout-header>
-      <h1>Хочу в поездку</h1>
-    </a-layout-header>
+    <Header></Header>
     <a-layout-content>
       <router-view></router-view>
     </a-layout-content>
