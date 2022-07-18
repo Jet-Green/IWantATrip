@@ -1,42 +1,40 @@
 <script setup>
+import { reactive } from 'vue'
 
-
+const cards = reactive([
+  {
+    title: 'Создайте свой тур',
+  },
+  {
+    title: 'Выберите тур',
+  },
+  {
+    title: 'Найдите попутчиков для путешествия',
+  },
+  {
+    title: 'Гид по вашему городу',
+  },
+])
 
 </script>
 <template>
-  <a-row style="width: 100%; display: flex; justify-content: center">
-    <a-col style="display: flex; justify-content: center">
-      <a-typography style="font-size: 36px">
+  <a-row style="display: flex; justify-content: center">
+    <a-col>
+      <a-typography-title :level="1">
         Удобная платформа для путешествий!
-      </a-typography>
+      </a-typography-title>
     </a-col>
   </a-row>
-  <a-row style="width: 100%; display: flex; justify-content: center">
-    <a-col style="justify-content: center" v-for="i in 4">
-    {{i}}
-      <a-col style="justify-content: center; margin: 0 15px 0 15px">
-        <a-image
-          style="border-radius: 20px"
-          :width="200"
-          src="https://themiscochat.com/wp-content/uploads/2022/04/couple-relaxing-beach-vacation.webp "
-        />
+  <a-row type="flex" justify="space-between">
+    <a-col style="justify-content: center" v-for="(card, index) in cards" :xs="24" :sm="12" :md="6" class="pa-16">
+      <a-col style="display: flex; justify-content: center;">
+        <img style="border-radius: 20px; width: 100%"
+          src="https://themiscochat.com/wp-content/uploads/2022/04/couple-relaxing-beach-vacation.webp " />
       </a-col>
-      <a-col style="justify-content: center; margin: 0 15px 0 15px">
-        <a-typography style="font-size: 16px"> Создайте свой тур </a-typography>
+      <a-col style="text-align: center;" class="mr-16 ml-16">
+        <a-typography-title :level="4"> {{ card.title }} </a-typography-title>
       </a-col>
     </a-col>
-    <!-- <a-col style="justify-content: center">
-      <a-col style="justify-content: center; margin: 0 15px 0 15px">
-        <a-image
-          style="border-radius: 20px"
-          :width="200"
-          src="https://s1.1zoom.ru/big0/234/Sea_Sky_Beach_Sunlounger_Sand_Rest_580068_1280x853.jpg "
-        />
-      </a-col>
-      <a-col style="justify-content: center; margin: 0 15px 0 15px">
-        <a-typography style="font-size: 16px"> Выберите готовый тур </a-typography>
-      </a-col>
-    </a-col> -->
-   
+
   </a-row>
 </template>
