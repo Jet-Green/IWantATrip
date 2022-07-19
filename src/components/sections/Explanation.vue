@@ -1,40 +1,57 @@
 <script setup>
-import { reactive } from 'vue'
+import { reactive } from "vue";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const sm = breakpoints.smaller("md");
 
 const cards = reactive([
   {
-    title: 'Создайте свой тур',
+    title: "создай тур",
+    image:
+      "https://themiscochat.com/wp-content/uploads/2022/04/couple-relaxing-beach-vacation.webp",
   },
   {
-    title: 'Выберите тур',
+    title: "выбери тур",
+    image:
+      "https://themiscochat.com/wp-content/uploads/2022/04/couple-relaxing-beach-vacation.webp",
   },
   {
-    title: 'Найдите попутчиков для путешествия',
+    title: "попутчики",
+    image:
+      "https://themiscochat.com/wp-content/uploads/2022/04/couple-relaxing-beach-vacation.webp",
   },
   {
-    title: 'Гид по вашему городу',
+    title: "гид по городу",
+    image:
+      "https://themiscochat.com/wp-content/uploads/2022/04/couple-relaxing-beach-vacation.webp",
   },
-])
-
+]);
 </script>
 <template>
-  <a-row style="display: flex; justify-content: center">
-    <a-col>
-      <a-typography-title :level="1">
-        Удобная платформа для путешествий!
-      </a-typography-title>
-    </a-col>
-  </a-row>
-  <a-row type="flex" justify="space-between">
-    <a-col style="justify-content: center" v-for="(card, index) in cards" :xs="24" :sm="12" :lg="5" class="pa-16">
-      <a-col style="display: flex; justify-content: center;">
-        <img style="border-radius: 20px; width: 100%; aspect-ratio: 9/5;"
-          src="https://themiscochat.com/wp-content/uploads/2022/04/couple-relaxing-beach-vacation.webp " />
-      </a-col>
-      <a-col style="text-align: center;" class="mr-16 ml-16">
-        <a-typography-title :level="4"> {{ card.title }} </a-typography-title>
-      </a-col>
-    </a-col>
+  <h1>Удобная платформа для путешествий!</h1>
 
+  <a-row type="flex" justify="center">
+    <a-col :sm="20" style="display: flex; flex-wrap: wrap">
+      <a-col
+        v-for="(card, index) in cards"
+        :key="index"
+        :xs="12"
+        :md="6"
+        :class="{ 'pa-4': sm, 'pa-16': !sm }"
+      >
+        <img
+          style="border-radius: 20px; width: 100%; aspect-ratio: 18/10"
+          :src="card.image"
+        />
+
+        <p style="text-align: center">{{ card.title }}</p>
+      </a-col>
+    </a-col>
   </a-row>
 </template>
+<style lang="scss" scoped>
+h1 {
+  text-align: center;
+  font-size: clamp(14px, 5vw, 36px);
+}
+</style>
