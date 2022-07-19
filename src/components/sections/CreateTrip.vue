@@ -3,11 +3,11 @@
   <a-row type="flex" justify="center" class="create_trip_bg pt-16 pb-16">
     <a-col :xs="22" :lg="16">
       <a-row type="flex" justify="space-between">
-        <a-col :xs="24" :sm="11" class="d-flex justify-center">
+        <a-col :xs="{ span: 20, offset: 2 }" :md="12" :lg="8">
           <img src="https://themiscochat.com/wp-content/uploads/2022/04/couple-relaxing-beach-vacation.webp" />
         </a-col>
 
-        <a-col :xs="24" :sm="11" :lg="{ span: 6, offset: 3 }" class="col">
+        <a-col :xs="24" :md="{ span: 6, offset: 3 }" class="col">
           <h2>Создай свой тур</h2>
           <p>Твой тур - твои правила</p>
           <a-button type="primary">Создать</a-button>
@@ -46,8 +46,8 @@ img {
     width: 25vw;
     height: 29vh;
   */
+  width: 100%;
   aspect-ratio: 18/10;
-  min-width: 200px;
   border-radius: 25px;
 }
 </style>
