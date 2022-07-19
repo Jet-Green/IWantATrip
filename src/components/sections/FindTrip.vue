@@ -125,7 +125,7 @@ onMounted(() => {
           </a-select>
         </a-col>
         <a-col :md="4" :xs="24">
-          <a-button style="height: 100%; width: 100%">
+          <a-button style="height: 100%; width: 100%" type="primary">
             Найти
           </a-button>
         </a-col>

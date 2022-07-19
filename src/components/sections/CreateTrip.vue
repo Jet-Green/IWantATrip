@@ -7,10 +7,10 @@
           <img src="https://themiscochat.com/wp-content/uploads/2022/04/couple-relaxing-beach-vacation.webp" />
         </a-col>
 
-        <a-col :xs="24" :md="{ span: 6, offset: 3 }" class="col">
+        <a-col :xs="{ span: 20, offset: 2 }" :md="{ span: 6, offset: 3 }">
           <h2>Создай свой тур</h2>
           <p>Твой тур - твои правила</p>
-          <a-button type="primary">Создать</a-button>
+          <a-button type="primary" shape="round">Создать</a-button>
         </a-col>
       </a-row>
     </a-col>
@@ -20,14 +20,6 @@
 .create_trip_bg {
   background: #f7f7f7;
   min-height: 25vh;
-}
-
-.ant-btn-primary {
-  background: #02aff2;
-  border-color: #019edb;
-  /* width: 50%;
-  height: 17%; */
-  border-radius: 100px;
 }
 
 .col {
