@@ -28,26 +28,19 @@ const cards = reactive([
 ]);
 </script>
 <template>
-
-  <h1>Удобная платформа для путешествий!</h1>
-
- 
-    <a-col :sm="16" style="display: flex; flex-wrap: wrap">
-      <a-col
-        v-for="(card, index) in cards"
-        :key="index"
-        :xs="12"
-        :md="6"
-        :class="{ 'pa-4': sm, 'pa-16': !sm }"
-      >
-        <img
-          style="border-radius: 20px; width: 100%; aspect-ratio: 18/10"
-          :src="card.image"
-        />
+  <a-row type="flex" justify="center">
+    <a-col :xs="22" :lg="16" class="d-flex justify-center">
+      <h1>Удобная платформа для путешествий!</h1>
+    </a-col>
+    <a-col :xs="22" :lg="16" style="display: flex; flex-wrap: wrap">
+      <a-col v-for="(card, index) in cards" :key="index" :xs="12" :sm="12" :lg="6"
+        :class="{ 'pa-4': sm, 'pa-16': !sm }">
+        <img style="border-radius: 20px; width: 100%; aspect-ratio: 18/10" :src="card.image" />
 
         <p style="text-align: center">{{ card.title }}</p>
       </a-col>
     </a-col>
+  </a-row>
 
 </template>
 <style lang="scss" scoped>

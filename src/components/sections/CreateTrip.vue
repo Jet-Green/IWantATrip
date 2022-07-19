@@ -1,29 +1,23 @@
 <script setup></script>
 <template>
-  <a-col :span="24" class="create_trip">
-    <a-row class="row" :gutter="16">
-      <a-col
-        :xs="12"
-        class="pa-16"
-        style="display: flex; justify-content: flex-end"
-      >
-        <img
-          src="https://themiscochat.com/wp-content/uploads/2022/04/couple-relaxing-beach-vacation.webp"
-        />
-      </a-col>
+  <a-row type="flex" justify="center" class="create_trip_bg pt-16 pb-16">
+    <a-col :xs="22" :lg="16">
+      <a-row type="flex" justify="space-between">
+        <a-col :xs="24" :sm="11" class="d-flex justify-center">
+          <img src="https://themiscochat.com/wp-content/uploads/2022/04/couple-relaxing-beach-vacation.webp" />
+        </a-col>
 
-      <a-col :xs="12" class="d-flex align-center  pa-16">
-        <div class="col">
+        <a-col :xs="24" :sm="11" :lg="{ span: 6, offset: 3 }" class="col">
           <h2>Создай свой тур</h2>
           <p>Твой тур - твои правила</p>
           <a-button type="primary">Создать</a-button>
-        </div>
-      </a-col>
-    </a-row>
-  </a-col>
+        </a-col>
+      </a-row>
+    </a-col>
+  </a-row>
 </template>
 <style scoped>
-.create_trip {
+.create_trip_bg {
   background: #f7f7f7;
   min-height: 25vh;
 }
@@ -31,8 +25,8 @@
 .ant-btn-primary {
   background: #02aff2;
   border-color: #019edb;
-  width: 50%;
-  height: 17%;
+  /* width: 50%;
+  height: 17%; */
   border-radius: 100px;
 }
 

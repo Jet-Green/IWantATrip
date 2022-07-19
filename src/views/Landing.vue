@@ -6,15 +6,11 @@ import FindTrip from "../components/sections/FindTrip.vue";
 import Explanation from "../components/sections/Explanation.vue";
 </script>
 <template>
-  <a-row type="flex" justify="center">
-  
-      <Explanation />
-      <CreateTrip />
-      <FindTrip />
-      <Companions />
-      <CityGuide />
-
-  </a-row>
+  <Explanation />
+  <CreateTrip />
+  <FindTrip />
+  <Companions />
+  <CityGuide />
 </template>
 <style lang="scss" scoped>
 </style>

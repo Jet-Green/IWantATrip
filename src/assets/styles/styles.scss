@@ -58,3 +58,10 @@
         padding-top: #{$i*4}px;
     }
 }
+
+// PB
+@for $i from 1 through 4 {
+    .pb-#{$i*4} {
+        padding-bottom: #{$i*4}px;
+    }
+}

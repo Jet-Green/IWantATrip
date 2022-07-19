@@ -13,18 +13,18 @@ const sm = breakpoints.smaller("md");
 <template>
   <a-layout-header>
     <a-row type="flex" justify="center">
-      <a-col :xs="24" :sm="20">
-        <a-row>
-          <a-col :span="12">
+      <a-col :xs="22" :lg="16">
+        <a-row type="flex" justify="space-between">
+          <a-col :xs="20" :md="12">
             <span class="mdi mdi-24px mdi-gnome" style="color: #245159"></span>
-            Хочу в поездку</a-col
-          >
+            Хочу в поездку
+          </a-col>
           <a-col v-if="!sm" :span="12" class="top_menu">
             <div>найти тур</div>
             <div>создать тур</div>
             <div>попутчики</div>
           </a-col>
-          <a-col v-else :span="12" class="burger_menu">
+          <a-col v-else class="burger_menu">
             <span class="mdi mdi-24px mdi-menu" style="color: #245159"></span>
           </a-col>
         </a-row>
@@ -37,17 +37,19 @@ const sm = breakpoints.smaller("md");
 <style lang="scss" scoped>
 .ant-layout-header {
   text-transform: uppercase;
+  padding: 0;
 
   .top_menu {
     display: flex;
     justify-content: space-around;
   }
+
   .burger_menu {
     display: flex;
     justify-content: flex-end;
     align-items: center;
     cursor: pointer;
- 
+
   }
 }
 </style>
