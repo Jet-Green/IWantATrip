@@ -91,7 +91,7 @@ onMounted(() => {
       </a-row>
 
 
-      <a-row>
+      <a-row class="select-container">
         <a-col :md="5" :xs="24">
           <a-select style="width: 100%" placeholder="Куда едем" v-model:value="where" @focus="focusOnWhere"
             @change="handleChangeOnWhere" :bordered="false" size="large">
@@ -125,7 +125,7 @@ onMounted(() => {
           </a-select>
         </a-col>
         <a-col :md="4" :xs="24">
-          <a-button style="height: 100%; width: 100%" type="primary">
+          <a-button style="height: 100%; width: 100%; border-radius: 15px;" type="primary">
             Найти
           </a-button>
         </a-col>
@@ -157,16 +157,22 @@ onMounted(() => {
 .carousel__next {
   background-color: white;
   box-sizing: content-box;
-  box-shadow: 1px 2px 2px #c0004e;
+  box-shadow: 1px 2px 2px #3DAFF5;
   color: black;
 
   &:active {
-    box-shadow: 1px 1px 1px #c0004e;
+    box-shadow: 1px 1px 1px #3DAFF5;
     font-size: 18px;
   }
 }
 
 .find_trip_bg {
   background-color: #245159;
+}
+
+.select-container {
+  background-color: white;
+  border-radius: 15px;
+  overflow: hidden;
 }
 </style>
