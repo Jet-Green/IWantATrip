@@ -28,10 +28,11 @@ const cards = reactive([
 ]);
 </script>
 <template>
+
   <h1>Удобная платформа для путешествий!</h1>
 
-  <a-row type="flex" justify="center">
-    <a-col :sm="20" style="display: flex; flex-wrap: wrap">
+ 
+    <a-col :sm="16" style="display: flex; flex-wrap: wrap">
       <a-col
         v-for="(card, index) in cards"
         :key="index"
@@ -47,7 +48,7 @@ const cards = reactive([
         <p style="text-align: center">{{ card.title }}</p>
       </a-col>
     </a-col>
-  </a-row>
+
 </template>
 <style lang="scss" scoped>
 h1 {

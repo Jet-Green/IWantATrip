@@ -1,27 +1,31 @@
 <script setup></script>
 <template>
-  <a-row class="row">
-    <a-col :xs="24" :md="10" :lg="8" class="col pa-16">
-      <img src="https://themiscochat.com/wp-content/uploads/2022/04/couple-relaxing-beach-vacation.webp" />
-    </a-col>
+  <a-col :span="24" class="create_trip">
+    <a-row class="row" :gutter="16">
+      <a-col
+        :xs="12"
+        class="pa-16"
+        style="display: flex; justify-content: flex-end"
+      >
+        <img
+          src="https://themiscochat.com/wp-content/uploads/2022/04/couple-relaxing-beach-vacation.webp"
+        />
+      </a-col>
 
-    <a-col :xs="24" :md="12" :lg="8" class="d-flex align-center pa-16">
-      <div class="col">
-        <a-typography-title :level="2">
-          Создайте свой тур
-        </a-typography-title>
-        <p style="width: 50%; font-weight: 500">
-          Используя удобные фильтры создайте свой собственный тур
-        </p>
-        <a-button type="primary">Создать</a-button>
-      </div>
-    </a-col>
-  </a-row>
+      <a-col :xs="12" class="d-flex align-center  pa-16">
+        <div class="col">
+          <h2>Создай свой тур</h2>
+          <p>Твой тур - твои правила</p>
+          <a-button type="primary">Создать</a-button>
+        </div>
+      </a-col>
+    </a-row>
+  </a-col>
 </template>
 <style scoped>
-.row {
-  display: flex;
-  justify-content: space-between;
+.create_trip {
+  background: #f7f7f7;
+  min-height: 25vh;
 }
 
 .ant-btn-primary {
@@ -48,8 +52,8 @@ img {
     width: 25vw;
     height: 29vh;
   */
-  width: 100%;
+  aspect-ratio: 18/10;
+  min-width: 200px;
   border-radius: 25px;
-  aspect-ratio: 570/317;
 }
 </style>
