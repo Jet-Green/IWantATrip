@@ -16,7 +16,7 @@ const router = createRouter({
       }]
     },
     {
-      path: '/TripsPage',
+      path: '/trips',
       name: 'TripsPage',
       component: () => import( '../views/TripsPage.vue'),
     }

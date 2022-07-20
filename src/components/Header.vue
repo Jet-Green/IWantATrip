@@ -7,9 +7,6 @@ const sm = breakpoints.smaller("md");
 // const xl = breakpoints.between('lg', 'xl')
 // const xxl = breakpoints.between('xl', '2xl')
 // const xxxl = breakpoints['2xl']
-function TripsPage() {
-  router.push("/trips-page");
-}
 </script>
 
 
@@ -23,7 +20,7 @@ function TripsPage() {
             Хочу в поездку
           </a-col>
           <a-col v-if="!sm" :span="12" class="top_menu">
-            <div @click="TripsPage">найти тур</div>
+            <div>найти тур</div>
             <div>создать тур</div>
             <div>попутчики</div>
           </a-col>
