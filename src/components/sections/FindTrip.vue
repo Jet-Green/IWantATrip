@@ -60,7 +60,7 @@ let onResize = () => {
 };
 
 function TripsPage() {
-  router.push("/trips");
+  router.push("/trips-page");
 }
 
 function toEventPage() {
