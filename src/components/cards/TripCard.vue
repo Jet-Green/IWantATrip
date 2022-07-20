@@ -29,7 +29,7 @@ let props = defineProps({
         </a-typography-text>
       </div>
       <div class="custom-card-actions mt-8">
-        <a-button style="display: flex; align-items: center;" type="text">
+        <a-button style="display: flex; align-items: center; color: #3DAFF5" type="text">
           Купить
         </a-button>
       </div>
@@ -69,8 +69,8 @@ let props = defineProps({
   font-weight: light;
 }
 
-.custom-card-actions {
-  // display: flex;
-  // justify-content: end;
-}
+// .custom-card-actions {
+// display: flex;
+// justify-content: end;
+// }
 </style>

@@ -134,7 +134,8 @@ onMounted(() => {
       <a-row>
         <a-col :span="24">
           <div ref="carousel_container"></div>
-          <Carousel :itemsToShow="postsCount" :autoplay="25000" snapAlign="start" :wrapAround="true">
+          <Carousel :itemsToShow="postsCount" :autoplay="25000" snapAlign="start" :wrapAround="true"
+            class="unselectable">
             <Slide v-for="(cardsGroup, index) in cards" :key="index" class="unselectable">
               <div class="carousel__item" style="display: flex; flex-wrap: wrap">
                 <TripCard image="https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg"
@@ -153,6 +154,13 @@ onMounted(() => {
   </a-row>
 </template>
 <style lang="scss">
+.unselectable {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 .carousel__prev,
 .carousel__next {
   background-color: white;
