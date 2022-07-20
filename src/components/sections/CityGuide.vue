@@ -74,14 +74,13 @@ let cards = [
       </a-row>
       <a-row type="flex" justify="space-between">
         <a-col v-for="(card, index) in cards" :key="index" :xs="11" :lg="5" class="mb-16">
-
           <a-tooltip placement="top" color="#3DAFF5">
             <template #title>
               Нажмите, чтобы узнать больше
             </template>
             <div class="card">
               <img :src="card.icon" alt="icon" class="icon">
-              <a-typography-title :level="3" class="mt-16">
+              <a-typography-title :level="5" style="margin: 0 16px 0 0">
                 {{ card.title }}
               </a-typography-title>
             </div>
@@ -98,13 +97,15 @@ let cards = [
   padding: 16px;
   border-radius: 20px;
   box-shadow: 0 0 10px #D9D9D9;
+  margin: 16px;
 }
 
 .card {
   cursor: pointer;
   background-color: white;
   border-radius: 20px;
-  padding: 16px;
   height: 100%;
+  display: flex;
+  align-items: center;
 }
 </style>
