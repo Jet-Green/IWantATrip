@@ -1,14 +1,18 @@
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from "vue";
+
+import { useRouter } from "vue-router";
 
 import { Carousel, Navigation, Slide } from "vue3-carousel";
 import "vue3-carousel/dist/carousel.css";
 
-import TripCard from '../cards/TripCard.vue'
+import TripCard from "../cards/TripCard.vue";
 
-let where = ref(null)
-let how = ref(null)
-let time = ref(null)
+let router = useRouter();
+
+let where = ref(null);
+let how = ref(null);
+let time = ref(null);
 
 const poster = reactive({
   cards: [
@@ -55,20 +59,16 @@ let onResize = () => {
   carouselWidth.value = carousel_container.value.clientWidth;
 };
 
-function createEvent() {
-  router.push("/create-event");
+function TripsPage() {
+  router.push("/trips");
 }
 
 function toEventPage() {
-  router.push({ name: 'EventPage', params: { type: 'event' } })
+  router.push({ name: "EventPage", params: { type: "event" } });
 }
-function focusOnWhere() {
+function focusOnWhere() {}
 
-}
-
-function handleChangeOnWhere() {
-
-}
+function handleChangeOnWhere() {}
 
 const postsCount = computed(() => {
   return carouselWidth.value / 270;
@@ -78,54 +78,77 @@ onMounted(() => {
   onResize();
   window.addEventListener("resize", onResize);
 });
-
 </script>
 <template>
   <a-row type="flex" justify="center" class="find_trip_bg pt-16 pb-16">
     <a-col :xs="20" :md="16" :lg="14">
       <a-row type="flex" justify="center">
         <a-col>
-          <a-typography-title :level="2" style="color: white">Выберите готовый тур из 1000 представленных
+          <a-typography-title :level="2" style="color: white"
+            >Выберите готовый тур из 1000 представленных
           </a-typography-title>
         </a-col>
       </a-row>
 
-
       <a-row class="select-container">
         <a-col :md="5" :xs="24">
-          <a-select style="width: 100%" placeholder="Куда едем" v-model:value="where" @focus="focusOnWhere"
-            @change="handleChangeOnWhere" :bordered="false" size="large">
-            <a-select-option value="1">
-              Туда
-            </a-select-option>
+          <a-select
+            style="width: 100%"
+            placeholder="Куда едем"
+            v-model:value="where"
+            @focus="focusOnWhere"
+            @change="handleChangeOnWhere"
+            :bordered="false"
+            size="large"
+          >
+            <a-select-option value="1"> Туда </a-select-option>
           </a-select>
         </a-col>
         <a-col :md="5" :xs="24">
-          <a-select style="width: 100%" placeholder="Как едем" v-model:value="how" @focus="focusOnWhere"
-            @change="handleChangeOnWhere" :bordered="false" size="large">
-            <a-select-option value="1">
-              Так
-            </a-select-option>
+          <a-select
+            style="width: 100%"
+            placeholder="Как едем"
+            v-model:value="how"
+            @focus="focusOnWhere"
+            @change="handleChangeOnWhere"
+            :bordered="false"
+            size="large"
+          >
+            <a-select-option value="1"> Так </a-select-option>
           </a-select>
         </a-col>
         <a-col :md="5" :xs="24">
-          <a-select style="width: 100%" placeholder="На сколько" v-model:value="time" @focus="focusOnWhere"
-            @change="handleChangeOnWhere" :bordered="false" size="large">
-            <a-select-option value="1">
-              На столько
-            </a-select-option>
+          <a-select
+            style="width: 100%"
+            placeholder="На сколько"
+            v-model:value="time"
+            @focus="focusOnWhere"
+            @change="handleChangeOnWhere"
+            :bordered="false"
+            size="large"
+          >
+            <a-select-option value="1"> На столько </a-select-option>
           </a-select>
         </a-col>
         <a-col :md="5" :xs="24">
-          <a-select style="width: 100%" placeholder="На сколько" v-model:value="time" @focus="focusOnWhere"
-            @change="handleChangeOnWhere" :bordered="false" size="large">
-            <a-select-option value="1">
-              На столько
-            </a-select-option>
+          <a-select
+            style="width: 100%"
+            placeholder="На сколько"
+            v-model:value="time"
+            @focus="focusOnWhere"
+            @change="handleChangeOnWhere"
+            :bordered="false"
+            size="large"
+          >
+            <a-select-option value="1"> На столько </a-select-option>
           </a-select>
         </a-col>
         <a-col :md="4" :xs="24">
-          <a-button style="height: 100%; width: 100%; border-radius: 15px;" type="primary">
+          <a-button
+            style="height: 100%; width: 100%; border-radius: 15px"
+            type="primary"
+            @click="TripsPage"
+          >
             Найти
           </a-button>
         </a-col>
@@ -134,12 +157,20 @@ onMounted(() => {
       <a-row>
         <a-col :span="24">
           <div ref="carousel_container"></div>
-          <Carousel :itemsToShow="postsCount" :autoplay="25000" snapAlign="start" :wrapAround="true"
-            class="unselectable">
+          <Carousel
+            :itemsToShow="postsCount"
+            :autoplay="25000"
+            snapAlign="start"
+            :wrapAround="true"
+            class="unselectable"
+          >
             <Slide v-for="(cardsGroup, index) in cards" :key="index" class="unselectable">
               <div class="carousel__item" style="display: flex; flex-wrap: wrap">
-                <TripCard image="https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg"
-                  eventName="БИ-2" :fixedWidth="false" />
+                <TripCard
+                  image="https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg"
+                  eventName="БИ-2"
+                  :fixedWidth="false"
+                />
               </div>
             </Slide>
             <template #addons>
@@ -148,8 +179,6 @@ onMounted(() => {
           </Carousel>
         </a-col>
       </a-row>
-
-
     </a-col>
   </a-row>
 </template>
@@ -165,11 +194,11 @@ onMounted(() => {
 .carousel__next {
   background-color: white;
   box-sizing: content-box;
-  box-shadow: 1px 2px 2px #3DAFF5;
+  box-shadow: 1px 2px 2px #3daff5;
   color: black;
 
   &:active {
-    box-shadow: 1px 1px 1px #3DAFF5;
+    box-shadow: 1px 1px 1px #3daff5;
     font-size: 18px;
   }
 }
