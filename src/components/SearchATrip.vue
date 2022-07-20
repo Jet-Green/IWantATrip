@@ -1,4 +1,11 @@
-<script setup></script>
+<script setup>
+import { ref } from 'vue'
+let where = ref(null);
+let how = ref(null);
+let time = ref(null);
+function focusOnWhere() {}
+function handleChangeOnWhere() {}
+</script>
 <template>
   <a-row type="flex" justify="center">
     <a-col :lg="16" :xs="22">
@@ -69,6 +76,6 @@
   background-color: #d9d9d9;
   border-radius: 15px;
   overflow: hidden;
-  margin: 32px 0 32px 0
+  margin: 32px 0 32px 0;
 }
 </style>
