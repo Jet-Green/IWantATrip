@@ -1,3 +1,23 @@
+@import url("https://fonts.googleapis.com/css?family=Montserrat");
+@import url("https://fonts.googleapis.com/css?family=Nunito");
+
+
+body {
+    font-family: "Nunito", sans-serif;
+
+    p {
+        color: rgba(0, 0, 0, 0.7)
+    }
+
+    button {
+        text-transform: uppercase;
+    }
+
+    h2 {
+        font-size: 30px;
+    }
+}
+
 .d-flex {
     display: flex;
 }
