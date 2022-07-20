@@ -1,7 +1,7 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from "vue";
 
-import { useRouter } from "router";
+import { useRouter } from "vue-router";
 
 import { Carousel, Navigation, Slide } from "vue3-carousel";
 import "vue3-carousel/dist/carousel.css";
@@ -60,7 +60,7 @@ let onResize = () => {
 };
 
 function TripsPage() {
-  router.push("/trips-page");
+  router.push("/trips");
 }
 
 function toEventPage() {
