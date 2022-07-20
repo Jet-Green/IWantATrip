@@ -80,7 +80,7 @@ let cards = [
             </template>
             <div class="card">
               <img :src="card.icon" alt="icon" class="icon">
-              <a-typography-title :level="4">
+              <a-typography-title :level="5" style="margin: 0 16px 0 0">
                 {{ card.title }}
               </a-typography-title>
             </div>
