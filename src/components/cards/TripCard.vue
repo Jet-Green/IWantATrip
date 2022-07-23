@@ -5,7 +5,8 @@ let props = defineProps({
 
 </script>
 <template>
-  <div class="custom-card" :style="props.tour.fixedWidth ? { 'width': '170px' } : {}">
+  <!-- :style="props.fixedWidth ? { 'width': '170px' } : {}" -->
+  <div class="custom-card">
     <!-- <div class="custom-card-avatar">
       <a-avatar src="https://joeschmoe.io/api/v1/random" />
       <div class="custom-card-avatar-name">
