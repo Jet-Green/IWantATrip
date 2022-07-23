@@ -60,30 +60,31 @@ const handleChange = (value) => {
       <a-row>
         <a-col class="d-flex">
           <h2>Гид по городу
-          <a-select
-            class="ma-16 "
-            ref="select"
-            v-model:value="city"
-           
-            @focus="focus"
-            @change="handleChange"
-          >
-            <a-select-option value="glazov">Глазов</a-select-option>
-            <a-select-option  value="izhevsk">Ижевск</a-select-option>
-            <a-select-option value="perm">Пермь</a-select-option>
-          </a-select></h2>
+            <a-select class="ma-16 guide-select" v-model:value="city" :focus="focus" @change="handleChange"
+              :bordered="false">
+              <a-select-option value="glazov">
+                <h2>
+                  Глазов
+                </h2>
+              </a-select-option>
+              <a-select-option value="izhevsk">
+                <h2>
+                  Ижевск
+                </h2>
+              </a-select-option>
+              <a-select-option value="perm">
+                <h2>
+                  Пермь
+                </h2>
+              </a-select-option>
+            </a-select>
+          </h2>
         </a-col>
       </a-row>
       <a-row type="flex" justify="space-between">
-        <a-col
-          v-for="(card, index) in cards"
-          :key="index"
-          :xs="11"
-          :lg="5"
-          class="mb-16"
-        >
-          <div class="card">
-            <img :src="card.icon" alt="icon" class="icon" />
+        <a-col v-for="(card, index) in cards" :key="index" :xs="11" :lg="5" class="mb-16">
+          <div class="guide-card">
+            <img :src="card.icon" alt="icon" class="guide-icon" />
             <a-typography-title :level="5" style="margin: 0 16px 0 0">
               {{ card.title }}
             </a-typography-title>
@@ -94,19 +95,22 @@ const handleChange = (value) => {
   </a-row>
 </template>
 
-<style scoped lang="scss">
-.icon {
+<style lang="scss">
+.guide-icon {
   height: 70px;
   padding: 16px;
 }
 
-
-.card {
+.guide-card {
   cursor: pointer;
   background-color: white;
   border-radius: 20px;
   height: 100%;
   display: flex;
   align-items: center;
+}
+
+.guide-select {
+  font-size: 32px;
 }
 </style>
