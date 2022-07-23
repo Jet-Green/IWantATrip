@@ -11,7 +11,7 @@ const sm = breakpoints.smaller("md");
 
 
 <template>
-  <a-layout-header>
+  <a-layout-header :style="{ position: 'fixed', zIndex: 1, width: '100%' }">
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
         <a-row type="flex" justify="space-between">

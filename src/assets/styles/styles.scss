@@ -1,5 +1,5 @@
-@import url("https://fonts.googleapis.com/css?family=Montserrat");
-@import url("https://fonts.googleapis.com/css?family=Nunito");
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap');
 
 
 body {
@@ -15,6 +15,9 @@ body {
 
     h2 {
         font-size: 30px;
+    }
+    h1{
+        font-size: 36px;
     }
 }
 
@@ -38,7 +41,7 @@ body {
 }
 
 // MT
-@for $i from 1 through 4 {
+@for $i from 1 through 12 {
     .mt-#{$i*4} {
         margin-top: #{$i*4}px;
     }
@@ -52,7 +55,7 @@ body {
 }
 
 // MB
-@for $i from 1 through 4 {
+@for $i from 1 through 10 {
     .mb-#{$i*4} {
         margin-bottom: #{$i*4}px;
     }

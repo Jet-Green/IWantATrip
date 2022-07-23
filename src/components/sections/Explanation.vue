@@ -28,7 +28,7 @@ const cards = reactive([
 ]);
 </script>
 <template>
-  <a-row type="flex" justify="center">
+  <a-row type="flex" justify="center" class="mt-48">
     <a-col :xs="22" :lg="16" class="d-flex justify-center">
       <h1>Удобная платформа для путешествий!</h1>
     </a-col>
