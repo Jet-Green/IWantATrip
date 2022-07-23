@@ -14,6 +14,15 @@ let where = ref(null);
 let how = ref(null);
 let time = ref(null);
 
+// внедрение карточек сделано криво
+// tours for working cards
+let tours = reactive(
+  {
+    image: "https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg",
+    eventName: "БИ-2",
+  }
+);
+
 const poster = reactive({
   cards: [
     1,
@@ -167,9 +176,7 @@ onMounted(() => {
             <Slide v-for="(cardsGroup, index) in cards" :key="index" class="unselectable">
               <div class="carousel__item" style="display: flex; flex-wrap: wrap">
                 <TripCard
-                  image="https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg"
-                  eventName="БИ-2"
-                  :fixedWidth="false"
+                  :tour="tours"
                 />
               </div>
             </Slide>

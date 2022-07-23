@@ -1,13 +1,11 @@
 <script setup>
 let props = defineProps({
-  image: String,
-  eventName: String,
-  fixedWidth: Boolean
+  tour: Object
 })
 
 </script>
 <template>
-  <div class="custom-card" :style="props.fixedWidth ? { 'width': '170px' } : {}">
+  <div class="custom-card" :style="props.tour.fixedWidth ? { 'width': '170px' } : {}">
     <!-- <div class="custom-card-avatar">
       <a-avatar src="https://joeschmoe.io/api/v1/random" />
       <div class="custom-card-avatar-name">
@@ -15,7 +13,7 @@ let props = defineProps({
       </div>
     </div> -->
     <div class="custom-card-cover">
-      <img alt="" :src="props.image" style="width: 100%" />
+      <img alt="" :src="props.tour.image" style="width: 100%" />
     </div>
     <div class="custom-card-content">
       <div class="custom-card-title">
