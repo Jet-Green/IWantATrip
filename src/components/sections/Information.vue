@@ -15,14 +15,14 @@ onMounted(() => {});
           <div
             style="height: 600px"
             :class="{
-              todo: y > 200,
-              'animate-todo': y <= 200 && y > -900,
+              todo: y > 150,
+              'animate-todo': y <= 150 && y > -900,
               'absolute-todo': y <= -900,
             }"
           >
             <div
               class="todo-element"
-              :class="{ 'active-todo-element': y < 330 && y >= -150 }"
+              :class="{ 'active-todo-element': y < 350 && y >= -150 }"
             >
               Найти <br />
               тур
@@ -54,7 +54,7 @@ onMounted(() => {});
           <div class="todo-answer">
             <div
               class="answer"
-              :class="{ 'animate-answer': y < 330 && y >= -150 }"
+              :class="{ 'animate-answer': y < 350 && y >= -150 }"
             >
               Удобная система фильтрации подберет варианты именно для вас
             </div>
@@ -94,12 +94,12 @@ onMounted(() => {});
   transform: translateY(150px);
   transition: all 1s ease;
   position: fixed;
-  top: 120px;
+  top: 150px;
 }
 .absolute-todo {
   transform: translateY(150px);
   position: absolute;
-  bottom: 120px;
+  bottom: 70px;
 }
 
 .answer {
