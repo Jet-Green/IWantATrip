@@ -94,23 +94,5 @@ const handleChange = (value) => {
     </a-col>
   </a-row>
 </template>
-
-<style lang="scss">
-.guide-icon {
-  height: 70px;
-  padding: 16px;
-}
-
-.guide-card {
-  cursor: pointer;
-  background-color: white;
-  border-radius: 20px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.guide-select {
-  font-size: 32px;
-}
+<style>
 </style>

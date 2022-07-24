@@ -149,34 +149,5 @@ onMounted(() => {
     </a-col>
   </a-row>
 </template>
-<style lang="scss">
-.unselectable {
-  -moz-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-.carousel__prev,
-.carousel__next {
-  background-color: white;
-  box-sizing: content-box;
-  box-shadow: 1px 2px 2px #3daff5;
-  color: black;
-
-  &:active {
-    box-shadow: 1px 1px 1px #3daff5;
-    font-size: 18px;
-  }
-}
-
-.find_trip_bg {
-  background-color: #245159;
-}
-
-.select-container {
-  background-color: white;
-  border-radius: 15px;
-  overflow: hidden;
-}
+<style>
 </style>
