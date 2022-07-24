@@ -7,7 +7,10 @@ const question0 = ref(null);
 const question1 = ref(null);
 const question2 = ref(null);
 const question3 = ref(null);
-
+const answer0 = ref(null);
+const answer1 = ref(null);
+const answer2 = ref(null);
+const answer3 = ref(null);
 
 const { x, y, top, right, bottom, left, width, height } =
   useElementBounding(marker);
@@ -15,64 +18,71 @@ const { x, y, top, right, bottom, left, width, height } =
 let youCanDo = reactive([
   {
     ref: "question0",
+    refForAnswer: "answer0",
     question: "Найти </br> тур",
     answer: "текст для найти тур",
     description: "пояснения для найти тур",
     startActive: 350,
-    finishActive: -150
+    finishActive: -150,
   },
   {
     ref: "question1",
+    refForAnswer: "answer1",
     question: "Заказать </br> тур",
     answer: "текст для заказать тур",
     description: "пояснения для заказать тур",
     startActive: -150,
-    finishActive: -450
+    finishActive: -450,
   },
   {
     ref: "question2",
+    refForAnswer: "answer2",
     question: "Создать </br> тур",
     answer: "текст для создать тур",
     description: "пояснения для создать тур",
     startActive: -450,
-    finishActive: -750
+    finishActive: -750,
   },
   {
     ref: "question3",
+    refForAnswer: "answer3",
     question: "Найти </br> попутчика",
     answer: "текст для найти попутчика",
     description: "пояснения для найти попутчика",
     startActive: -750,
-    finishActive: -2000
+    finishActive: -2000,
   },
 ]);
 const description = ref(youCanDo[0].description);
 watch(y, (newY) => {
   for (let i = 0; i < youCanDo.length; i++) {
-    let elQuestionRef;
+    let elQuestionRef, elAnswerRef;
     switch (i) {
       case 0:
         elQuestionRef = question0;
+        elAnswerRef = answer0;
         break;
       case 1:
         elQuestionRef = question1;
-         break;
+        elAnswerRef = answer1;
+        break;
       case 2:
         elQuestionRef = question2;
-         break;
+        elAnswerRef = answer2;
+        break;
       case 3:
         elQuestionRef = question3;
-         break;
+        elAnswerRef = answer3;
+        break;
     }
 
-    if (
-      newY < youCanDo[i].startActive &&
-      newY >= youCanDo[i].finishActive
-    ) {
+    if (newY < youCanDo[i].startActive && newY >= youCanDo[i].finishActive) {
+      elAnswerRef.value[0].classList.add("animate-answer");
       elQuestionRef.value[0].classList.add("active-todo-element");
       description.value.innerHTML = youCanDo[i].description;
     } else {
       elQuestionRef.value[0].classList.remove("active-todo-element");
+      elAnswerRef.value[0].classList.remove("animate-answer");
     }
   }
 });
@@ -100,37 +110,21 @@ onMounted(() => {});
               :ref="el.ref"
               class="todo-element"
               v-html="el.question"
-              :index="index"
             ></div>
             <div ref="description">
               тут описание к вопросу для заполнения пустоты
             </div>
-        
           </div>
         </a-col>
         <a-col style="width: 50%">
           <div class="todo-answer">
             <div
+              v-for="(el, index) in youCanDo"
+              :key="index"
               class="answer"
-              :class="{ 'animate-answer': y < 350 && y >= -150 }"
+              :ref="el.refForAnswer"
             >
-              Удобная система фильтрации подберет варианты именно для вас
-            </div>
-            <div
-              class="answer"
-              :class="{ 'animate-answer': y < -150 && y >= -450 }"
-            >
-              Быстрая форма
-            </div>
-            <div
-              class="answer"
-              :class="{ 'animate-answer': y < -450 && y >= -750 }"
-            >
-              Удобная система фильтрации подберет варианты именно для вас
-            </div>
-            <div class="answer" :class="{ 'animate-answer': y < -750 }">
-              Оставьте заявку на поиск попутчика <br />
-              или сами станьте попутчиком
+              {{ el.answer }}
             </div>
           </div>
         </a-col>
@@ -174,7 +168,7 @@ onMounted(() => {});
   }
 }
 .todo-element {
-  // font-family: "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 48px;
   line-height: 48px;
   font-weight: 900;
