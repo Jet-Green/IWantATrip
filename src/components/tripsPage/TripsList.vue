@@ -51,8 +51,8 @@ let tours = reactive([
 <template>
   <a-row display="flex" justify="center">
     <a-col :xs="22" :lg="16">
-      <a-row>
-        <a-col :span="6" v-for="tour in tours" :xs="24" :sm="11" :md="6">
+      <a-row type="flex" justify="space-between">
+        <a-col v-for="tour in tours" :xs="24" :sm="11" :md="8" :xl="6">
           <TripCard :tour="tour" />
         </a-col>
       </a-row>
