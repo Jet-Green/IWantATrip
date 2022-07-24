@@ -1,9 +1,81 @@
 <script setup>
-import { onMounted, ref, reactive } from "vue";
+import { onMounted, ref, reactive, watch } from "vue";
 import { useElementBounding } from "@vueuse/core";
-const el = ref(null);
+
+const marker = ref(null);
+const question0 = ref(null);
+const question1 = ref(null);
+const question2 = ref(null);
+const question3 = ref(null);
+
+
 const { x, y, top, right, bottom, left, width, height } =
-  useElementBounding(el);
+  useElementBounding(marker);
+
+let youCanDo = reactive([
+  {
+    ref: "question0",
+    question: "Найти </br> тур",
+    answer: "текст для найти тур",
+    description: "пояснения для найти тур",
+    startActive: 350,
+    finishActive: -150
+  },
+  {
+    ref: "question1",
+    question: "Заказать </br> тур",
+    answer: "текст для заказать тур",
+    description: "пояснения для заказать тур",
+    startActive: -150,
+    finishActive: -450
+  },
+  {
+    ref: "question2",
+    question: "Создать </br> тур",
+    answer: "текст для создать тур",
+    description: "пояснения для создать тур",
+    startActive: -450,
+    finishActive: -750
+  },
+  {
+    ref: "question3",
+    question: "Найти </br> попутчика",
+    answer: "текст для найти попутчика",
+    description: "пояснения для найти попутчика",
+    startActive: -750,
+    finishActive: -2000
+  },
+]);
+const description = ref(youCanDo[0].description);
+watch(y, (newY) => {
+  for (let i = 0; i < youCanDo.length; i++) {
+    let elQuestionRef;
+    switch (i) {
+      case 0:
+        elQuestionRef = question0;
+        break;
+      case 1:
+        elQuestionRef = question1;
+         break;
+      case 2:
+        elQuestionRef = question2;
+         break;
+      case 3:
+        elQuestionRef = question3;
+         break;
+    }
+
+    if (
+      newY < youCanDo[i].startActive &&
+      newY >= youCanDo[i].finishActive
+    ) {
+      elQuestionRef.value[0].classList.add("active-todo-element");
+      description.value.innerHTML = youCanDo[i].description;
+    } else {
+      elQuestionRef.value[0].classList.remove("active-todo-element");
+    }
+  }
+});
 
 onMounted(() => {});
 </script>
@@ -11,50 +83,36 @@ onMounted(() => {});
   <a-row type="flex" justify="center">
     <a-col :xs="18" :lg="14">
       <a-row>
-        <a-col ref="el" style="width: 50%">
+        <!-- ** элемент отслеживание которого влияет на поведение компоненты -->
+        <a-col ref="marker" style="width: 50%">
+          <!-- TODO: расчитывать высоту этого элемента исходя их высоты экрана vueuse  -->
           <div
             style="height: 600px"
             :class="{
-              todo: y > 200,
-              'animate-todo': y <= 200 && y > -900,
-              'absolute-todo': y <= -900,
+              todo: y > 150,
+              'fix-todo': y <= 150 && y > -1000,
+              'absolute-todo': y <= -1000,
             }"
           >
             <div
+              v-for="(el, index) in youCanDo"
+              :key="index"
+              :ref="el.ref"
               class="todo-element"
-              :class="{ 'active-todo-element': y < 330 && y >= -150 }"
-            >
-              Найти <br />
-              тур
+              v-html="el.question"
+              :index="index"
+            ></div>
+            <div ref="description">
+              тут описание к вопросу для заполнения пустоты
             </div>
-            <div
-              class="todo-element"
-              :class="{ 'active-todo-element': y < -150 && y >= -450 }"
-            >
-              Заказать <br />
-              тур
-            </div>
-            <div
-              class="todo-element"
-              :class="{ 'active-todo-element': y < -450 && y >= -750 }"
-            >
-              Создать <br />
-              тур
-            </div>
-            <div
-              class="todo-element"
-              :class="{ 'active-todo-element': y < -750 }"
-            >
-              Найти <br />
-              попутчика
-            </div>
+        
           </div>
         </a-col>
         <a-col style="width: 50%">
           <div class="todo-answer">
             <div
               class="answer"
-              :class="{ 'animate-answer': y < 330 && y >= -150 }"
+              :class="{ 'animate-answer': y < 350 && y >= -150 }"
             >
               Удобная система фильтрации подберет варианты именно для вас
             </div>
@@ -85,21 +143,16 @@ onMounted(() => {});
 
 <style lang="scss" scoped>
 .todo {
-  transform: translateY(150px);
   transition: all 1s ease;
-  
 }
-.animate-todo {
-
-  transform: translateY(150px);
+.fix-todo {
   transition: all 1s ease;
   position: fixed;
-  top: 120px;
+  top: 150px;
 }
 .absolute-todo {
-  transform: translateY(150px);
   position: absolute;
-  bottom: 120px;
+  bottom: -50px;
 }
 
 .answer {
@@ -128,8 +181,6 @@ onMounted(() => {});
   color: black;
   opacity: 0.5;
   text-transform: uppercase;
-
- 
 }
 .active-todo-element {
   opacity: 1;
