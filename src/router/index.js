@@ -9,16 +9,18 @@ const router = createRouter({
       path: '/',
       name: 'StartPage',
       component: StartPage,
-      children: [{
-        path: '/',
-        name: 'Landing',
-        component: Landing,
-      }]
+      children: [
+        {
+          path: '/',
+          name: 'Landing',
+          component: Landing,
+        }
+      ]
     },
     {
       path: '/trips',
       name: 'TripsPage',
-      component: () => import( '../views/TripsPage.vue'),
+      component: () => import('../components/tripsPage/TripsPage.vue'),
     }
   ]
 })
