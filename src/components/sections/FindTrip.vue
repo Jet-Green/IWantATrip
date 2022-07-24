@@ -137,7 +137,7 @@ onMounted(() => {
             class="unselectable">
             <Slide v-for="(cardsGroup, index) in cards" :key="index" class="unselectable">
               <div class="carousel__item" style="display: flex; flex-wrap: wrap">
-                <TripCard :tour="tours" />
+                <TripCard :tour="tours" :isPreview="true" />
               </div>
             </Slide>
             <template #addons>

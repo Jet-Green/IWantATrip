@@ -53,7 +53,7 @@ let tours = reactive([
     <a-col :xs="22" :lg="16">
       <a-row type="flex" justify="space-between">
         <a-col v-for="tour in tours" :xs="24" :sm="11" :md="8" :xl="6">
-          <TripCard :tour="tour" />
+          <TripCard :tour="tour" :isPreview="false" />
         </a-col>
       </a-row>
     </a-col>
