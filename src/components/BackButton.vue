@@ -9,26 +9,26 @@ const sm = breakpoints.smaller("md");
 
 
 function ToStartPage() {
-  router.push("/");
+    router.push("/");
 }
 </script>
 <template>
-<a-row type="flex" justify="center" class="ma-16">
-    <a-col v-if="!sm" :xs="22" :lg="16">
-        <div @click="ToStartPage" style>
-        <span class="mdi mdi-arrow-left-thick" style="color: #245159"></span>
-        Назад
-        </div>
-    </a-col>
-    <a-col v-else :xs="22" :lg="16">
-        <div @click="ToStartPage">
-            <span class="mdi mdi-arrow-left-thick" style="color: #245159"></span>
-        </div>
-    </a-col>
-</a-row>
+    <a-row type="flex" justify="center" class="ma-16">
+        <a-col v-if="!sm" :xs="22" :lg="16">
+            <div @click="ToStartPage">
+                <span class="mdi mdi-arrow-left-thick" style="color: #245159"></span>
+                Назад
+            </div>
+        </a-col>
+        <a-col v-else :xs="22" :lg="16">
+            <div @click="ToStartPage">
+                <span class="mdi mdi-arrow-left-thick" style="color: #245159"></span>
+            </div>
+        </a-col>
+    </a-row>
 </template>
 <style scoped>
-div{
+div {
     cursor: pointer;
-    }
+}
 </style>
