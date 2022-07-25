@@ -27,7 +27,11 @@ const router = createRouter({
       name: 'CreateTripPage',
       component: () => import('../components/_createTrip/CreateTripPage.vue'),
     },
-  ]
+  ],
+  scrollBehavior(to, from, savedPosition) {
+    if (to.name == 'TripsPage')
+      return { top: 0 }
+  }
 })
 
 export default router
