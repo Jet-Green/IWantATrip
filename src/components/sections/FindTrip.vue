@@ -68,7 +68,7 @@ let onResize = () => {
   carouselWidth.value = carousel_container.value.clientWidth;
 };
 
-function TripsPage() {
+function tripsPage() {
   router.push("/trips");
 }
 
@@ -124,7 +124,7 @@ onMounted(() => {
           </a-select>
         </a-col>
         <a-col :md="4" :xs="24">
-          <a-button style="height: 100%; width: 100%; border-radius: 15px" type="primary" @click="TripsPage">
+          <a-button style="height: 100%; width: 100%; border-radius: 15px" type="primary" @click="tripsPage">
             Найти
           </a-button>
         </a-col>
