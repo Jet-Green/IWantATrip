@@ -1,2 +1,6 @@
-<script setup></script>
-<template>create a trip</template>
+<script setup>
+import CreateTrip from './CreateTrip.vue'
+</script>
+<template>
+    <CreateTrip />
+</template>
