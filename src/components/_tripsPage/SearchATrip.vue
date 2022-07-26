@@ -76,6 +76,6 @@ function handleChangeOnWhere() {}
   background-color: #d9d9d9;
   border-radius: 15px;
   overflow: hidden;
-  margin: 32px 0 32px 0;
+  margin-bottom: 32px;
 }
 </style>
