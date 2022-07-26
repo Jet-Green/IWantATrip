@@ -1,4 +1,7 @@
 <script setup>
+import { useRouter } from 'vue-router'
+
+let router = useRouter();
 let props = defineProps({
     tour: Object,
     isPreview: Boolean
@@ -33,7 +36,8 @@ let props = defineProps({
                     2000 руб./взр.
                 </div>
                 <div class="actions mt-8">
-                    <a-button style="display: flex; align-items: center; color: #3DAFF5" type="text">
+                    <a-button style="display: flex; align-items: center; color: #3DAFF5" type="text"
+                        @click="router.push({ name: 'TripsPage', params: { withTripInfo: true } })">
                         Подробнее
                     </a-button>
                 </div>
