@@ -11,7 +11,7 @@ function handleChangeOnWhere() {}
 </script>
 <template>
 <a-row display="flex" justify="center"><a-col :xs="20" :md="16" :lg="14">
-   <div v-if="!sm" style="display:flex; flex-direction: row;">
+    <a-row v-if="!sm" :gutter="[8,8]">
         <a-col :md="5" :xs="24">
           <a-select style="width: 100%" placeholder="Куда едем" v-model:value="where" @focus="focusOnWhere"
             @change="handleChangeOnWhere" :bordered="true" size="large" class="selector">
@@ -43,32 +43,32 @@ function handleChangeOnWhere() {}
             @click="router.push({ name: 'TripsPage', params: { withTripInfo: false } })" class="ml-4">
             Найти
           </a-button>
-          </div>
+          </a-row>
 
 
-          <div v-else style="display:flex; flex-direction: column;">
-        <a-col :md="5" :xs="11">
+          <a-row v-else :gutter="[8,8]">
+        <a-col :md="5" :xs="12">
           <a-select style="width: 100%" placeholder="Куда едем" v-model:value="where" @focus="focusOnWhere"
             @change="handleChangeOnWhere" :bordered="true" size="large" class="selector">
             <a-select-option value="1"> Туда </a-select-option>
           </a-select>
         </a-col>
 
-        <a-col :md="5" :xs="11">
+        <a-col :md="5" :xs="12">
           <a-select style="width: 100%" placeholder="Как едем" v-model:value="how" @focus="focusOnWhere"
             @change="handleChangeOnWhere" :bordered="true" size="large" class="selector">
             <a-select-option value="1"> Так </a-select-option>
           </a-select>
         </a-col>
 
-        <a-col :md="5" :xs="11">
+        <a-col :md="5" :xs="12">
           <a-select style="width: 100%" placeholder="На сколько" v-model:value="time" @focus="focusOnWhere"
             @change="handleChangeOnWhere" :bordered="true" size="large" class="selector">
             <a-select-option value="1"> На столько </a-select-option>
           </a-select>
         </a-col>
 
-        <a-col :md="5" :xs="11">
+        <a-col :md="5" :xs="12">
           <a-select style="width: 100%" placeholder="На сколько" v-model:value="time" @focus="focusOnWhere"
             @change="handleChangeOnWhere" :bordered="true" size="large" class="selector">
             <a-select-option value="1"> На столько </a-select-option>
@@ -78,7 +78,7 @@ function handleChangeOnWhere() {}
             @click="router.push({ name: 'TripsPage', params: { withTripInfo: false } })" class="mt-16 mb-8">
             Найти
           </a-button>
-          </div>
+          </a-row>
     </a-col></a-row>
 </template>
 <style scoped>
