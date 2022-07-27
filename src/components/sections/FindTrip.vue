@@ -8,6 +8,10 @@ import "vue3-carousel/dist/carousel.css";
 
 import TripCard from "../cards/TripCard.vue";
 
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const sm = breakpoints.smaller("md");
+
 let router = useRouter();
 
 let where = ref(null);
@@ -87,45 +91,85 @@ onMounted(() => {
 <template>
   <a-row type="flex" justify="center" class="find_trip_bg pt-16 pb-16">
     <a-col :xs="20" :md="16" :lg="14">
-      <a-row type="flex" justify="center">
+      <a-row type="flex" justify="center" style="flex-direction:row">
+
         <a-col>
           <a-typography-title :level="2" style="color: white">Выберите готовый тур из 1000 представленных
           </a-typography-title>
         </a-col>
       </a-row>
 
-      <a-row class="select-container">
+
+        <div v-if="!sm" style="display:flex; flex-direction: row;">
         <a-col :md="5" :xs="24">
           <a-select style="width: 100%" placeholder="Куда едем" v-model:value="where" @focus="focusOnWhere"
-            @change="handleChangeOnWhere" :bordered="false" size="large">
+            @change="handleChangeOnWhere" :bordered="true" size="large" class="selector">
             <a-select-option value="1"> Туда </a-select-option>
           </a-select>
         </a-col>
+
         <a-col :md="5" :xs="24">
           <a-select style="width: 100%" placeholder="Как едем" v-model:value="how" @focus="focusOnWhere"
-            @change="handleChangeOnWhere" :bordered="false" size="large">
+            @change="handleChangeOnWhere" :bordered="true" size="large" class="selector">
             <a-select-option value="1"> Так </a-select-option>
           </a-select>
         </a-col>
+
         <a-col :md="5" :xs="24">
           <a-select style="width: 100%" placeholder="На сколько" v-model:value="time" @focus="focusOnWhere"
-            @change="handleChangeOnWhere" :bordered="false" size="large">
+            @change="handleChangeOnWhere" :bordered="true" size="large" class="selector">
             <a-select-option value="1"> На столько </a-select-option>
           </a-select>
         </a-col>
+
         <a-col :md="5" :xs="24">
           <a-select style="width: 100%" placeholder="На сколько" v-model:value="time" @focus="focusOnWhere"
-            @change="handleChangeOnWhere" :bordered="false" size="large">
+            @change="handleChangeOnWhere" :bordered="true" size="large" class="selector">
             <a-select-option value="1"> На столько </a-select-option>
           </a-select>
         </a-col>
-        <a-col :md="4" :xs="24">
-          <a-button style="height: 100%; width: 100%; border-radius: 15px" type="primary"
-            @click="router.push({ name: 'TripsPage', params: { withTripInfo: false } })">
+          <a-button style="height: 15%; width: 15%; border-radius: 15px" type="primary" size="large"
+            @click="router.push({ name: 'TripsPage', params: { withTripInfo: false } })" class="ml-4">
             Найти
           </a-button>
+          </div>
+
+
+          <div v-else style="display:flex; flex-direction: column;">
+        <a-col :md="5" :xs="11">
+          <a-select style="width: 100%" placeholder="Куда едем" v-model:value="where" @focus="focusOnWhere"
+            @change="handleChangeOnWhere" :bordered="true" size="large" class="selector">
+            <a-select-option value="1"> Туда </a-select-option>
+          </a-select>
         </a-col>
-      </a-row>
+
+        <a-col :md="5" :xs="11">
+          <a-select style="width: 100%" placeholder="Как едем" v-model:value="how" @focus="focusOnWhere"
+            @change="handleChangeOnWhere" :bordered="true" size="large" class="selector">
+            <a-select-option value="1"> Так </a-select-option>
+          </a-select>
+        </a-col>
+
+        <a-col :md="5" :xs="11">
+          <a-select style="width: 100%" placeholder="На сколько" v-model:value="time" @focus="focusOnWhere"
+            @change="handleChangeOnWhere" :bordered="true" size="large" class="selector">
+            <a-select-option value="1"> На столько </a-select-option>
+          </a-select>
+        </a-col>
+
+        <a-col :md="5" :xs="11">
+          <a-select style="width: 100%" placeholder="На сколько" v-model:value="time" @focus="focusOnWhere"
+            @change="handleChangeOnWhere" :bordered="true" size="large" class="selector">
+            <a-select-option value="1"> На столько </a-select-option>
+          </a-select>
+        </a-col>
+          <a-button style="height: 15%; width: 100%; border-radius: 15px" type="primary" size="large"
+            @click="router.push({ name: 'TripsPage', params: { withTripInfo: false } })" class="mt-16 mb-8">
+            Найти
+          </a-button>
+          </div>
+    
+
 
       <a-row>
         <a-col :span="24">
@@ -146,5 +190,5 @@ onMounted(() => {
     </a-col>
   </a-row>
 </template>
-<style>
+<style scoped>
 </style>
