@@ -22,7 +22,7 @@ let youCanDo = reactive([
     question: "Найти </br> тур",
     answer: "текст для найти тур",
     description: "пояснения для найти тур",
-    startActive: 350,
+    startActive: 800,
     finishActive: -150,
   },
   {
@@ -90,7 +90,7 @@ watch(y, (newY) => {
 onMounted(() => {});
 </script>
 <template>
-  <a-row type="flex" justify="center">
+  <a-row type="flex" justify="center" class="pt-32">
     <a-col :xs="18" :lg="14">
       <a-row>
         <!-- ** элемент отслеживание которого влияет на поведение компоненты -->

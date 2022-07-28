@@ -77,7 +77,7 @@ body {
 }
 
 // PT
-@for $i from 1 through 4 {
+@for $i from 1 through 8 {
     .pt-#{$i*4} {
         padding-top: #{$i*4}px;
     }
