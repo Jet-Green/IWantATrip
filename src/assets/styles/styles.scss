@@ -14,11 +14,11 @@ body {
     }
 
     h2 {
-        font-size: 30px;
+        font-size: clamp(12px, 5vw, 30px);
     }
 
     h1 {
-        font-size: 36px;
+        font-size: clamp(14px, 5vw, 36px);
     }
 }
 
@@ -128,9 +128,7 @@ body {
     }
 }
 
-.find_trip_bg {
-    background: linear-gradient(270.04deg, #245159 0.04%, #24594F 99.97%);
-}
+
 
 .select-container {
     background-color: white;

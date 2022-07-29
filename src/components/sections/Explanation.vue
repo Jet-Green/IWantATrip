@@ -27,7 +27,7 @@ const sm = breakpoints.smaller("md");
 <style lang="scss" scoped>
 h1 {
   text-align: center;
-  font-size: clamp(14px, 5vw, 36px);
+  
 }
 .topImage {
   background-image: url("../../assets/images/topImage.jpg");

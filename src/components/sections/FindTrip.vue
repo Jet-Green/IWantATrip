@@ -8,51 +8,19 @@ import "vue3-carousel/dist/carousel.css";
 
 import TripCard from "../cards/TripCard.vue";
 
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const sm = breakpoints.smaller("md");
-
-let router = useRouter();
-
-let where = ref(null);
-let how = ref(null);
-let time = ref(null);
 
 // внедрение карточек сделано криво
 // tours for working cards
-let tours = reactive(
-  {
-    image: "https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg",
-    eventName: "БИ-2",
-  }
-);
+let tours = reactive({
+  image:
+    "https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg",
+  eventName: "БИ-2",
+});
 
 const poster = reactive({
   cards: [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    12,
-    13,
-    14,
-    15,
-    16,
-    17,
-    18,
-    20,
-    21,
-    22,
-    23,
-    24,
-    25,
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22,
+    23, 24, 25,
   ],
 });
 let carouselWidth = ref(0);
@@ -72,12 +40,8 @@ let onResize = () => {
   carouselWidth.value = carousel_container.value.clientWidth;
 };
 
-function toEventPage() {
-  router.push({ name: "EventPage", params: { type: "event" } });
-}
-function focusOnWhere() { }
 
-function handleChangeOnWhere() { }
+
 
 const postsCount = computed(() => {
   return carouselWidth.value / 270;
@@ -91,93 +55,35 @@ onMounted(() => {
 <template>
   <a-row type="flex" justify="center" class="find_trip_bg pt-16 pb-16">
     <a-col :xs="20" :md="16" :lg="14">
-      <a-row type="flex" justify="center" style="flex-direction:row">
-
+      <a-row type="flex" justify="center" style="flex-direction: row">
         <a-col>
-          <a-typography-title :level="2" style="color: white">Выберите готовый тур из 1000 представленных
-          </a-typography-title>
+          <h2 style="color: white"
+            >Выбери готовый тур
+          </h2>
         </a-col>
       </a-row>
 
-
-        <a-row v-if="!sm" :gutter="[8,8]">
-        <a-col :md="5" :xs="24">
-          <a-select style="width: 100%" placeholder="Куда едем" v-model:value="where" @focus="focusOnWhere"
-            @change="handleChangeOnWhere" :bordered="true" size="large" class="selector">
-            <a-select-option value="1"> Туда </a-select-option>
-          </a-select>
-        </a-col>
-
-        <a-col :md="5" :xs="24">
-          <a-select style="width: 100%" placeholder="Как едем" v-model:value="how" @focus="focusOnWhere"
-            @change="handleChangeOnWhere" :bordered="true" size="large" class="selector">
-            <a-select-option value="1"> Так </a-select-option>
-          </a-select>
-        </a-col>
-
-        <a-col :md="5" :xs="24">
-          <a-select style="width: 100%" placeholder="На сколько" v-model:value="time" @focus="focusOnWhere"
-            @change="handleChangeOnWhere" :bordered="true" size="large" class="selector">
-            <a-select-option value="1"> На столько </a-select-option>
-          </a-select>
-        </a-col>
-
-        <a-col :md="5" :xs="24">
-          <a-select style="width: 100%" placeholder="На сколько" v-model:value="time" @focus="focusOnWhere"
-            @change="handleChangeOnWhere" :bordered="true" size="large" class="selector">
-            <a-select-option value="1"> На столько </a-select-option>
-          </a-select>
-        </a-col>
-          <a-button style="height: 15%; width: 15%; border-radius: 15px" type="primary" size="large"
-            @click="router.push({ name: 'TripsPage', params: { withTripInfo: false } })" class="ml-4">
-            Найти
-          </a-button>
-          </a-row>
-
-
-          <a-row v-else :gutter="[8,8]">
-        <a-col :md="5" :xs="12">
-          <a-select style="width: 100%" placeholder="Куда едем" v-model:value="where" @focus="focusOnWhere"
-            @change="handleChangeOnWhere" :bordered="true" size="large" class="selector">
-            <a-select-option value="1"> Туда </a-select-option>
-          </a-select>
-        </a-col>
-
-        <a-col :md="5" :xs="12">
-          <a-select style="width: 100%" placeholder="Как едем" v-model:value="how" @focus="focusOnWhere"
-            @change="handleChangeOnWhere" :bordered="true" size="large" class="selector">
-            <a-select-option value="1"> Так </a-select-option>
-          </a-select>
-        </a-col>
-
-        <a-col :md="5" :xs="12">
-          <a-select style="width: 100%" placeholder="На сколько" v-model:value="time" @focus="focusOnWhere"
-            @change="handleChangeOnWhere" :bordered="true" size="large" class="selector">
-            <a-select-option value="1"> На столько </a-select-option>
-          </a-select>
-        </a-col>
-
-        <a-col :md="5" :xs="12">
-          <a-select style="width: 100%" placeholder="На сколько" v-model:value="time" @focus="focusOnWhere"
-            @change="handleChangeOnWhere" :bordered="true" size="large" class="selector">
-            <a-select-option value="1"> На столько </a-select-option>
-          </a-select>
-        </a-col>
-          <a-button style="height: 15%; width: 100%; border-radius: 15px" type="primary" size="large"
-            @click="router.push({ name: 'TripsPage', params: { withTripInfo: false } })" class="mt-16 mb-8">
-            Найти
-          </a-button>
-          </a-row>
-    
-
+   
 
       <a-row>
         <a-col :span="24">
           <div ref="carousel_container"></div>
-          <Carousel :itemsToShow="postsCount" :autoplay="25000" snapAlign="start" :wrapAround="true"
-            class="unselectable">
-            <Slide v-for="(cardsGroup, index) in cards" :key="index" class="unselectable">
-              <div class="carousel__item" style="display: flex; flex-wrap: wrap">
+          <Carousel
+            :itemsToShow="postsCount"
+            :autoplay="25000"
+            snapAlign="start"
+            :wrapAround="true"
+            class="unselectable"
+          >
+            <Slide
+              v-for="(cardsGroup, index) in cards"
+              :key="index"
+              class="unselectable"
+            >
+              <div
+                class="carousel__item"
+                style="display: flex; flex-wrap: wrap"
+              >
                 <TripCard :tour="tours" :isPreview="true" />
               </div>
             </Slide>
@@ -191,4 +97,7 @@ onMounted(() => {
   </a-row>
 </template>
 <style scoped>
+.find_trip_bg {
+    background: linear-gradient(270.04deg, #245159 0.04%, #24594F 99.97%);
+}
 </style>
