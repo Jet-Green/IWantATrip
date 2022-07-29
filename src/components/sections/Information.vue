@@ -12,7 +12,7 @@ const answer1 = ref(null);
 const answer2 = ref(null);
 const answer3 = ref(null);
 
-const { x, y, top, right, bottom, left, width, height } =
+const { y } =
   useElementBounding(marker);
 
 let youCanDo = reactive([
@@ -54,8 +54,9 @@ let youCanDo = reactive([
   },
 ]);
 const description = ref(youCanDo[0].description);
-watch(y, (newY) => {
-  for (let i = 0; i < youCanDo.length; i++) {
+watch(y, () => {
+  let newY = y.value;
+  for (let i = 0; i < youCanDo.length; i++) { 
     let elQuestionRef, elAnswerRef;
     switch (i) {
       case 0:
@@ -94,7 +95,8 @@ onMounted(() => {});
     <a-col :xs="18" :lg="14">
       <a-row>
         <!-- ** элемент отслеживание которого влияет на поведение компоненты -->
-        <a-col ref="marker" style="width: 50%">
+        <div ref="marker"></div>
+        <a-col  style="width: 50%">
           <!-- TODO: расчитывать высоту этого элемента исходя их высоты экрана vueuse  -->
           <div
             style="height: 600px"
