@@ -85,9 +85,9 @@ const handleChange = (value) => {
         <a-col v-for="(card, index) in cards" :key="index" :xs="11" :lg="5" class="mb-16">
           <div class="guide-card">
             <img :src="card.icon" alt="icon" class="guide-icon" />
-            <a-typography-title :level="5" style="margin: 0 16px 0 0">
+            <p style="margin: 0 16px 0 0">
               {{ card.title }}
-            </a-typography-title>
+            </p>
           </div>
         </a-col>
       </a-row>

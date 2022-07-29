@@ -7,10 +7,16 @@ import router from './router'
 
 import './assets/styles/styles.scss'
 // Ant
-import Antd from 'ant-design-vue';
+import {Layout,Button, Row, Col,Input, Select, Progress} from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.less';
 
 createApp(App)
     .use(router)
-    .use(Antd)
+    .use(Layout)
+    .use(Button)
+    .use(Col)
+    .use(Row)
+    .use(Input)
+    .use(Select)
+    .use(Progress)
     .mount('#app')
