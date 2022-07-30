@@ -12,13 +12,14 @@ const answer1 = ref(null);
 const answer2 = ref(null);
 const answer3 = ref(null);
 
-const { x, y, top, right, bottom, left, width, height } =
-  useElementBounding(marker);
+const { y } = useElementBounding(marker);
 
 let youCanDo = reactive([
   {
-    ref: "question0",
-    refForAnswer: "answer0",
+    refQuestion: question0,
+    refAnswer: answer0,
+    linkForQuestion: "question0",
+    linkForAnswer: "answer0",
     question: "Найти </br> тур",
     answer: "текст для найти тур",
     description: "пояснения для найти тур",
@@ -26,8 +27,10 @@ let youCanDo = reactive([
     finishActive: -150,
   },
   {
-    ref: "question1",
-    refForAnswer: "answer1",
+    refQuestion: question1,
+    refAnswer: answer1,
+    linkForQuestion: "question1",
+    linkForAnswer: "answer1",
     question: "Заказать </br> тур",
     answer: "текст для заказать тур",
     description: "пояснения для заказать тур",
@@ -35,8 +38,10 @@ let youCanDo = reactive([
     finishActive: -450,
   },
   {
-    ref: "question2",
-    refForAnswer: "answer2",
+    refQuestion: question2,
+    refAnswer: answer2,
+    linkForQuestion: "question2",
+    linkForAnswer: "answer2",
     question: "Создать </br> тур",
     answer: "текст для создать тур",
     description: "пояснения для создать тур",
@@ -44,8 +49,10 @@ let youCanDo = reactive([
     finishActive: -750,
   },
   {
-    ref: "question3",
-    refForAnswer: "answer3",
+    refQuestion: question3,
+    refAnswer: answer3,
+    linkForQuestion: "question3",
+    linkForAnswer: "answer3",
     question: "Найти </br> попутчика",
     answer: "текст для найти попутчика",
     description: "пояснения для найти попутчика",
@@ -56,33 +63,13 @@ let youCanDo = reactive([
 const description = ref(youCanDo[0].description);
 watch(y, (newY) => {
   for (let i = 0; i < youCanDo.length; i++) {
-    let elQuestionRef, elAnswerRef;
-    switch (i) {
-      case 0:
-        elQuestionRef = question0;
-        elAnswerRef = answer0;
-        break;
-      case 1:
-        elQuestionRef = question1;
-        elAnswerRef = answer1;
-        break;
-      case 2:
-        elQuestionRef = question2;
-        elAnswerRef = answer2;
-        break;
-      case 3:
-        elQuestionRef = question3;
-        elAnswerRef = answer3;
-        break;
-    }
-
     if (newY < youCanDo[i].startActive && newY >= youCanDo[i].finishActive) {
-      elAnswerRef.value[0].classList.add("animate-answer");
-      elQuestionRef.value[0].classList.add("active-todo-element");
+      youCanDo[i].refQuestion[0].classList.add("active-todo-element");
+      youCanDo[i].refAnswer[0].classList.add("animate-answer");
       description.value.innerHTML = youCanDo[i].description;
     } else {
-      elQuestionRef.value[0].classList.remove("active-todo-element");
-      elAnswerRef.value[0].classList.remove("animate-answer");
+      youCanDo[i].refQuestion[0].classList.remove("active-todo-element");
+      youCanDo[i].refAnswer[0].classList.remove("animate-answer");
     }
   }
 });
@@ -107,7 +94,7 @@ onMounted(() => {});
             <div
               v-for="(el, index) in youCanDo"
               :key="index"
-              :ref="el.ref"
+              :ref="el.linkForQuestion"
               class="todo-element"
               v-html="el.question"
             ></div>
@@ -122,7 +109,7 @@ onMounted(() => {});
               v-for="(el, index) in youCanDo"
               :key="index"
               class="answer"
-              :ref="el.refForAnswer"
+              :ref="el.linkForAnswer"
             >
               {{ el.answer }}
             </div>
