@@ -1,67 +1,70 @@
 <script setup>
-import {reactive} from 'vue'
-let tours = reactive(
-  {
-    image: "https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg",
-    eventName: "БИ-2",
-  }
-);
+import { reactive } from "vue";
+let tours = reactive({
+  image: "https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg",
+  title: "Легенды Донды Батыра",
+  description: " В такое холодное время года особенно хочется чего-то яркого ",
+  duration: "2 дня/1 ночь",
+  when: "26.08.2022",
+  people: 20,
+  price: "2000 руб./взр.",
+});
 </script>
 <template>
-  <a-row display="flex" justify="center">
+  <a-row display="flex" justify="center" class="mb-16">
     <a-col :xs="22" :lg="16">
+      <a-row display="flex" justify="space-around">
+        <a-col :span="11">
+          <div class="cover mb-16">
+            <img :src="tours.image" alt="" srcset="" />
+          </div>
 
-      <div class="cover mb-16">
-        <img :src="tours.image" alt="" srcset="">
-      </div>
+          <div class="title mt-16">
+            <h1>{{ tours.title }}</h1>
+          </div>
+        </a-col>
 
-      <div class="content mb-16">
+        <a-col class="content ma-8" :span="11">
+          <div class="people ma-8">
+            Количество человек:
+            <a-progress
+              :percent="(tours.people / 27) * 100"
+              :format="(percent) => `20 ч.`"
+            >
+            </a-progress>
+          </div>
 
-        <div class="title mt-16">
-          <h1>Легенды Донды Батыра</h1>
-        </div>
-        
-        <div class="description">
-          <h3> В такое холодное время года особенно хочется чего-то яркого </h3>
-        </div>
+          <div class="prizes">
+            <a-button type="primary" shape="round" class="prize mb-8 mr-8"
+              >25 - 33 чел. + Сувенир</a-button
+            >
+            <a-button type="primary" shape="round" class="prize mb-8 mr-8"
+              >34 - 34 чел. + Ужин</a-button
+            >
+          </div>
 
-      </div>
+          <div>
+            <div class="time mb-8">
+              <div>Продолжительность: {{ tours.duration }}</div>
+              <div>Ближайший выезд: {{ tours.when }}</div>
+            </div>
 
-      <div>
+            <div class="price">Цена: {{ tours.price }}</div>
+          </div>
+          <div class="actions">
+            <a-button
+              style="display: flex; align-items: center; color: #3daff5"
+              type="text"
+              class="mt-8"
+            >
+              Купить
+            </a-button>
+          </div>
+        </a-col>
+      </a-row>
 
-
-        <div class="time">
-          <div>2 дня/1 ночь</div>
-          <div>Ближайший выезд 26.08.2022</div>
-        </div>
-
-        <div class="people">
-          Количество человек:
-          <a-progress :percent="(20 / 27) * 100" :format="(percent) => `20 ч.`">
-          </a-progress>
-        </div>
-
-        <div class="prizes">
-          <a-button type="primary" shape="round" class="prize mb-8 mr-8"
-            >25 - 33 чел. + Сувенир</a-button
-          >
-          <a-button type="primary" shape="round" class="prize mb-8 mr-8"
-            >34 - 34 чел. + Ужин</a-button
-          >
-        </div>
-
-        <div class="price">2000 руб./взр.</div>
-
-        <div class="actions mt-8">
-          <a-button
-            style="display: flex; align-items: center; color: #3daff5"
-            type="text"
-          >
-            Купить
-          </a-button>
-        </div>
-
-
+      <div class="description ml-16">
+        <h3>{{ tours.description }}</h3>
       </div>
     </a-col>
   </a-row>
@@ -81,53 +84,18 @@ let tours = reactive(
     background-color: #c4c4c4;
   }
 
-  .content {
-    margin: 8px;
-
-    // .title {
-    // }
-
-    // .description {
-    // }
-
-    .time {
-      margin-bottom: 8px;
+  .prizes {
+    .prize {
+      font-size: 12px;
+      color: #3daff5;
+      background-color: white;
     }
-
-    .people {
-      margin: 8px;
-    }
-
-    .price {
-      margin: 8px;
-    }
-
-    .prizes {
-      // margin: 8px;
-      .prize {
-        font-size: 12px;
-        color: #3daff5;
-        background-color: white;
-      }
-    }
-
-    /*.actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        }*/
-    /*.avatar {
-            font-weight: bold;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-
-            margin-bottom: 8px;
-        }*/
   }
 }
-img{
+
+img {
   width: 100%;
-  aspect-ratio: 25/10;
-  border-radius: 25px;}
+  aspect-ratio: 1/1;
+  border-radius: 25px;
+}
 </style>

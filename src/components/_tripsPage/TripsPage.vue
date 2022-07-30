@@ -17,7 +17,7 @@ try {
 </script>
 <template>
   <BackButton />
-  <!-- <TripInfo v-if="withTripInfo" /> -->
+  <TripInfo v-if="withTripInfo" />
   <SearchATrip />
   <TripsList />
 </template>
