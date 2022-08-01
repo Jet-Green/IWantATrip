@@ -58,8 +58,9 @@ const handleChange = (value) => {
   <a-row type="flex" justify="center" style="background-color: #f6f6f6">
     <a-col :xs="22" :lg="16">
       <a-row>
-        <a-col class="d-flex">
-          <h2>Гид по городу
+        <a-col class="d-flex" :xs="24">
+          <h2 style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+            <div>Гид по городу</div>
             <a-select class="ma-16 guide-select" v-model:value="city" :focus="focus" @change="handleChange"
               :bordered="false">
               <a-select-option value="glazov">
