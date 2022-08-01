@@ -58,8 +58,9 @@ const handleChange = (value) => {
   <a-row type="flex" justify="center" style="background-color: #f6f6f6">
     <a-col :xs="22" :lg="16">
       <a-row>
-        <a-col class="d-flex">
-          <h2>Гид по городу
+        <a-col class="d-flex" :xs="24">
+          <h2 style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+            <div>Гид по городу</div>
             <a-select class="ma-16 guide-select" v-model:value="city" :focus="focus" @change="handleChange"
               :bordered="false">
               <a-select-option value="glazov">
@@ -85,9 +86,9 @@ const handleChange = (value) => {
         <a-col v-for="(card, index) in cards" :key="index" :xs="11" :lg="5" class="mb-16">
           <div class="guide-card">
             <img :src="card.icon" alt="icon" class="guide-icon" />
-            <a-typography-title :level="5" style="margin: 0 16px 0 0">
+            <p style="margin: 0 16px 0 0">
               {{ card.title }}
-            </a-typography-title>
+            </p>
           </div>
         </a-col>
       </a-row>
