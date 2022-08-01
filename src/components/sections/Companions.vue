@@ -51,8 +51,8 @@ let companions = reactive([
       >
         Показать всех
       </a-button>
-    </a-col></a-row
-  >
+    </a-col>
+  </a-row>
 </template>
 <style scoped>
 .img {
