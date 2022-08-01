@@ -57,33 +57,20 @@ onMounted(() => {
     <a-col :xs="20" :md="16" :lg="14">
       <a-row type="flex" justify="center" style="flex-direction: row">
         <a-col>
-          <h2 style="color: white"
-            >Выбери готовый тур
+          <h2 style="color: white">Выбери готовый тур
           </h2>
         </a-col>
       </a-row>
 
-   
+
 
       <a-row>
         <a-col :span="24">
           <div ref="carousel_container"></div>
-          <Carousel
-            :itemsToShow="postsCount"
-            :autoplay="25000"
-            snapAlign="start"
-            :wrapAround="true"
-            class="unselectable"
-          >
-            <Slide
-              v-for="(cardsGroup, index) in cards"
-              :key="index"
-              class="unselectable"
-            >
-              <div
-                class="carousel__item"
-                style="display: flex; flex-wrap: wrap"
-              >
+          <Carousel :itemsToShow="postsCount" :autoplay="25000" snapAlign="start" :wrapAround="true"
+            class="unselectable">
+            <Slide v-for="(cardsGroup, index) in cards" :key="index" class="unselectable">
+              <div class="carousel__item" style="display: flex; flex-wrap: wrap">
                 <TripCard :tour="tours" :isPreview="true" />
               </div>
             </Slide>
@@ -98,6 +85,6 @@ onMounted(() => {
 </template>
 <style scoped>
 .find_trip_bg {
-    background: linear-gradient(270.04deg, #245159 0.04%, #24594F 99.97%);
+  background: linear-gradient(270.04deg, #245159 0.04%, #24594F 99.97%);
 }
 </style>
