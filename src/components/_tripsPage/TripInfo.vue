@@ -14,7 +14,7 @@ let tours = reactive({
   <a-row display="flex" justify="center" class="mb-16">
     <a-col :xs="22" :lg="16">
       <a-row display="flex" justify="space-around">
-        <a-col :span="11">
+        <a-col :lg="11" :xs="24">
           <div class="cover mb-16">
             <img :src="tours.image" alt="" srcset="" />
           </div>
@@ -24,7 +24,7 @@ let tours = reactive({
           </div>
         </a-col>
 
-        <a-col class="content ma-8" :span="11">
+        <a-col class="content ma-8" :lg="11" :xs="24">
           <div class="people ma-8">
             Количество человек:
             <a-progress
