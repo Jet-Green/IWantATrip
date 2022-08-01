@@ -37,7 +37,7 @@ let props = defineProps({
                 </div>
                 <div class="actions mt-8">
                     <a-button style="display: flex; align-items: center; color: #3DAFF5" type="text"
-                        @click="router.push({ name: 'TripsPage', params: { withTripInfo: true } })">
+                        @click="router.push({ name: 'TripInfoPage' })">
                         Подробнее
                     </a-button>
                 </div>

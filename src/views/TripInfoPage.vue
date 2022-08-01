@@ -1,5 +1,8 @@
 <script setup>
 import { reactive } from "vue";
+
+import BackButton from '../components/BackButton.vue'
+
 let tours = reactive({
   image: "https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg",
   title: "Легенды Донды Батыра",
@@ -11,6 +14,7 @@ let tours = reactive({
 });
 </script>
 <template>
+  <BackButton />
   <a-row display="flex" justify="center" class="mb-16">
     <a-col :xs="22" :lg="16">
       <a-row display="flex" justify="space-around">
@@ -27,20 +31,13 @@ let tours = reactive({
         <a-col class="content ma-8" :lg="11" :xs="24">
           <div class="people ma-8">
             Количество человек:
-            <a-progress
-              :percent="(tours.people / 27) * 100"
-              :format="(percent) => `20 ч.`"
-            >
+            <a-progress :percent="(tours.people / 27) * 100" :format="(percent) => `20 ч.`">
             </a-progress>
           </div>
 
           <div class="prizes">
-            <a-button type="primary" shape="round" class="prize mb-8 mr-8"
-              >25 - 33 чел. + Сувенир</a-button
-            >
-            <a-button type="primary" shape="round" class="prize mb-8 mr-8"
-              >34 - 34 чел. + Ужин</a-button
-            >
+            <a-button type="primary" shape="round" class="prize mb-8 mr-8">25 - 33 чел. + Сувенир</a-button>
+            <a-button type="primary" shape="round" class="prize mb-8 mr-8">34 - 34 чел. + Ужин</a-button>
           </div>
 
           <div>
@@ -52,11 +49,7 @@ let tours = reactive({
             <div class="price">Цена: {{ tours.price }}</div>
           </div>
           <div class="actions">
-            <a-button
-              style="display: flex; align-items: center; color: #3daff5"
-              type="text"
-              class="mt-8"
-            >
+            <a-button style="display: flex; align-items: center; color: #3daff5" type="text" class="mt-8">
               Купить
             </a-button>
           </div>
