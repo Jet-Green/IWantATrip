@@ -1,5 +1,5 @@
 <script setup>
-import BackButton from '../BackButton.vue'
+import BackButton from '../components/BackButton.vue'
 let companions = [
   {
     number: '1',
