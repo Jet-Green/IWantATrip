@@ -3,23 +3,13 @@ import { onMounted, ref, reactive, watch } from "vue";
 import { useElementBounding } from "@vueuse/core";
 
 const marker = ref(null);
-const question0 = ref(null);
-const question1 = ref(null);
-const question2 = ref(null);
-const question3 = ref(null);
-const answer0 = ref(null);
-const answer1 = ref(null);
-const answer2 = ref(null);
-const answer3 = ref(null);
+const questions = ref([]);
+const answers = ref([]);
 
 const { y } = useElementBounding(marker);
 
 let youCanDo = reactive([
   {
-    refQuestion: question0,
-    refAnswer: answer0,
-    linkForQuestion: "question0",
-    linkForAnswer: "answer0",
     question: "Найти </br> тур",
     answer: "текст для найти тур",
     description: "пояснения для найти тур",
@@ -27,10 +17,6 @@ let youCanDo = reactive([
     finishActive: -150,
   },
   {
-    refQuestion: question1,
-    refAnswer: answer1,
-    linkForQuestion: "question1",
-    linkForAnswer: "answer1",
     question: "Заказать </br> тур",
     answer: "текст для заказать тур",
     description: "пояснения для заказать тур",
@@ -38,10 +24,6 @@ let youCanDo = reactive([
     finishActive: -450,
   },
   {
-    refQuestion: question2,
-    refAnswer: answer2,
-    linkForQuestion: "question2",
-    linkForAnswer: "answer2",
     question: "Создать </br> тур",
     answer: "текст для создать тур",
     description: "пояснения для создать тур",
@@ -49,10 +31,6 @@ let youCanDo = reactive([
     finishActive: -750,
   },
   {
-    refQuestion: question3,
-    refAnswer: answer3,
-    linkForQuestion: "question3",
-    linkForAnswer: "answer3",
     question: "Найти </br> попутчика",
     answer: "текст для найти попутчика",
     description: "пояснения для найти попутчика",
@@ -64,12 +42,12 @@ const description = ref(youCanDo[0].description);
 watch(y, (newY) => {
   for (let i = 0; i < youCanDo.length; i++) {
     if (newY < youCanDo[i].startActive && newY >= youCanDo[i].finishActive) {
-      youCanDo[i].refQuestion[0].classList.add("active-todo-element");
-      youCanDo[i].refAnswer[0].classList.add("animate-answer");
+      questions.value[i].classList.add("active-todo-element");
+      answers.value[i].classList.add("animate-answer");
       description.value.innerHTML = youCanDo[i].description;
     } else {
-      youCanDo[i].refQuestion[0].classList.remove("active-todo-element");
-      youCanDo[i].refAnswer[0].classList.remove("animate-answer");
+      questions.value[i].classList.remove("active-todo-element");
+      answers.value[i].classList.remove("animate-answer");
     }
   }
 });
@@ -82,7 +60,7 @@ onMounted(() => {});
       <a-row>
         <!-- ** элемент отслеживание которого влияет на поведение компоненты -->
         <div ref="marker"></div>
-        <a-col  style="width: 50%">
+        <a-col style="width: 50%">
           <!-- TODO: расчитывать высоту этого элемента исходя их высоты экрана vueuse  -->
           <div
             style="height: 600px"
@@ -95,11 +73,12 @@ onMounted(() => {});
             <div
               v-for="(el, index) in youCanDo"
               :key="index"
-              :ref="el.linkForQuestion"
+              ref="questions"
               class="todo-element"
               v-html="el.question"
             ></div>
             <div ref="description">
+              {{ questions }}
               тут описание к вопросу для заполнения пустоты
             </div>
           </div>
@@ -110,7 +89,7 @@ onMounted(() => {});
               v-for="(el, index) in youCanDo"
               :key="index"
               class="answer"
-              :ref="el.linkForAnswer"
+              ref="answers"
             >
               {{ el.answer }}
             </div>
