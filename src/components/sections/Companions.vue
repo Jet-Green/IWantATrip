@@ -1,6 +1,12 @@
 <script setup>
 import { reactive } from "vue";
+
+import { useRouter } from 'vue-router'
+
 import person from "../../assets/icons/person_black_24dp.svg";
+
+let router = useRouter()
+
 let companions = reactive([
   {
     named: "Вася",
@@ -37,7 +43,7 @@ let companions = reactive([
         </a-col>
       </a-row>
 
-      <a-button type="primary" shape="round" size="large" class="mb-16">
+      <a-button type="primary" shape="round" size="large" class="mb-16" @click="router.push('/companions')">
         Показать всех
       </a-button>
     </a-col>
