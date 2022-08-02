@@ -20,12 +20,12 @@ const router = createRouter({
     {
       path: '/trips',
       name: 'TripsPage',
-      component: () => import('../components/_tripsPage/TripsPage.vue'),
+      component: () => import('../views/TripsPage.vue'),
     },
     {
       path: '/create',
       name: 'CreateTripPage',
-      component: () => import('../components/_createTrip/CreateTripPage.vue'),
+      component: () => import('../views/CreateTripPage.vue'),
     },
     {
       path: '/companions',
