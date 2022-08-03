@@ -30,7 +30,7 @@ let companions = reactive([
       <h2 class="mt-16">Найдите попутчиков</h2>
 
       <a-row display="flex" justify="center">
-        <a-col v-for="companion in companions" :xs="4" :lg="4" class="ma-4">
+        <a-col v-for="companion,i in companions"  :key="i" :xs="4" :lg="4" class="ma-4">
           <img :src="person" alt="" srcset="" class="img mb-8" />
           <h2 class="mb-8">{{ companion.named }}</h2>
           <h3 class="mb-16">{{ companion.year }} лет</h3>
