@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 
+
 import fs from 'fs'
 import path from 'path'
 import  lessToJs  from 'less-vars-to-js';
@@ -9,6 +10,7 @@ const themeVariables = lessToJs(fs.readFileSync(path.join(__dirname, 'src/assets
 
 // https://vitejs.dev/config/
 export default defineConfig(
+
   ({
     command,
     mode
@@ -17,7 +19,7 @@ export default defineConfig(
     return {
       base: baseUrl,
       plugins: [
-        vue(),
+        vue()
       ],
       css: {
         preprocessorOptions: {
