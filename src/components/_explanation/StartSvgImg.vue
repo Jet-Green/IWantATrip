@@ -14,13 +14,13 @@
     <rect x=".3029" y=".2166" width="349.5" height="109.9" fill="#64bed8"/>
     <rect x="25.32" y="76.44" width="300.7" height="16.71" ry="8.357" fill="#22b0d6"/>
     <rect x="45.66" y="73.73" width="263.1" height="3.459" ry="1.729" fill="#bbc56a"/>
-    <g transform="translate(-166.8,81.6)" id="sun">
+    <g transform="translate(-166.8,81.6)">
      <path transform="matrix(.6474 0 0 .6474 248.6 -181.4)" d="m252.1 268.4 40.11-69.48 40.11 69.48z" fill="#6a696f"/>
      <path d="m437.7-52.62 12.29 44.85 13.73-0.05646z" fill="#474749"/>
      <path d="m437.8-52.65-12.45 21.55 18.05-0.9709z" fill="#fff"/>
      <path d="m437.9-52.66 10.15 17.68-4.728 3.018z" fill="#ababab"/>
     </g>
-    <circle transform="matrix(.6409 0 0 .4976 10.7 5.227)" cx="144.5" cy="30.78" r="12.16" fill="#bcc663" filter="url(#filter78986)" style="mix-blend-mode:normal"/>
+    <circle transform="translate(10.7 5.227)" cx="144.5" cy="30.78" r="12.16" fill="#bcc663" filter="url(#filter78986)" style="mix-blend-mode:normal" id="sun"/>
     <g transform="translate(292.4,160.7)">
      <path d="m-154.8-86.87 53.82-0.1056-10.31-36.32-26.1-8.626z" fill="#43414f"/>
      <path d="m-137.5-131.8 26.17 8.671-5.071 6.125-16.66-5.081-21.86 35.42z" fill="#595765"/>
@@ -161,14 +161,17 @@
 #ship {
   animation: ship_move 60s ease-in-out infinite;//60
 }
+#sun{
+  animation: sun_move 5s ease-in-out infinite;//180
+}
 @keyframes ship_move {
   0% {
     opacity: 0;
-    transform: translate(320px, -300px);
+    transform: translate(1px, -300px);
   }
   20% {
     opacity: 0;
-    transform: translate(130px, -85px);
+    transform: translate(-100px, -85px);
   }
   30% {
     opacity: 1;
@@ -199,6 +202,25 @@
   100% {
     opacity: 0;
     transform: translate(-130px, 63.65px);
+  }
+}
+@keyframes sun_move {
+0% {
+    opacity: 1;
+    transform:translate(-60px, 17.227px) ;
+  }
+  40% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform:translate(10.7px, -45.227px) ;
   }
 }
 </style>
