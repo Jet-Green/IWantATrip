@@ -20,17 +20,17 @@ const router = createRouter({
     {
       path: '/trips',
       name: 'TripsPage',
-      component: () => import('../components/_tripsPage/TripsPage.vue'),
+      component: () => import('../views/TripsPage.vue'),
     },
     {
       path: '/create',
       name: 'CreateTripPage',
-      component: () => import('../components/_createTrip/CreateTripPage.vue'),
+      component: () => import('../views/CreateTripPage.vue'),
     },
     {
       path: '/companions',
       name: 'CompanionsPage',
-      component: () => import('../components/_companionsPage/CompanionsPage.vue'),
+      component: () => import('../views/CompanionsPage.vue'),
     },
     {
       path: '/trip',
@@ -39,7 +39,7 @@ const router = createRouter({
     }
   ],
   scrollBehavior(to, from, savedPosition) {
-    if ((to.name == 'TripsPage') || (to.name == 'TripInfoPage'))
+    if ((to.name == 'TripsPage') || (to.name == 'TripInfoPage') || (to.name == 'CompanionsPage'))
       return { top: 0 }
   }
 })

@@ -1,5 +1,8 @@
 <script setup>
 import { reactive } from "vue";
+
+import { useRouter } from 'vue-router'
+
 import person from "../../assets/icons/person_black_24dp.svg";
 import { useRouter } from "vue-router";
 let router = useRouter();
