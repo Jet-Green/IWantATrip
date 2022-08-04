@@ -3,73 +3,56 @@ import { onMounted, ref, reactive, watch } from "vue";
 import { useElementBounding } from "@vueuse/core";
 
 const marker = ref(null);
-const question0 = ref(null);
-const question1 = ref(null);
-const question2 = ref(null);
-const question3 = ref(null);
-const answer0 = ref(null);
-const answer1 = ref(null);
-const answer2 = ref(null);
-const answer3 = ref(null);
+const questions = ref([]);
+const answers = ref([]);
+const buttonText = ref(null);
 
 const { y } = useElementBounding(marker);
 
 let youCanDo = reactive([
   {
-    refQuestion: question0,
-    refAnswer: answer0,
-    linkForQuestion: "question0",
-    linkForAnswer: "answer0",
     question: "Найти </br> тур",
-    answer: "текст для найти тур",
-    description: "пояснения для найти тур",
+    answer:
+      "<span>воспользуйтесь фильтром <br> выберите из вариантов <br> отдыхайте там, где выбрали</span>",
+    description: "найти!",
     startActive: 800,
     finishActive: -150,
   },
   {
-    refQuestion: question1,
-    refAnswer: answer1,
-    linkForQuestion: "question1",
-    linkForAnswer: "answer1",
     question: "Заказать </br> тур",
-    answer: "текст для заказать тур",
-    description: "пояснения для заказать тур",
+    answer:
+      "<span>заполните простую форму <br> мы подберем для вас варианты <br>вы получите идеальный отдых</span>",
+    description: "заказать!",
     startActive: -150,
     finishActive: -450,
   },
   {
-    refQuestion: question2,
-    refAnswer: answer2,
-    linkForQuestion: "question2",
-    linkForAnswer: "answer2",
     question: "Создать </br> тур",
-    answer: "текст для создать тур",
-    description: "пояснения для создать тур",
+    answer:
+      "<span>ничего не нашли? <br> создайте тур сами <br> твой тур - твои правила</span>",
+    description: "создать!",
     startActive: -450,
     finishActive: -750,
   },
   {
-    refQuestion: question3,
-    refAnswer: answer3,
-    linkForQuestion: "question3",
-    linkForAnswer: "answer3",
     question: "Найти </br> попутчика",
-    answer: "текст для найти попутчика",
-    description: "пояснения для найти попутчика",
+    answer:
+      "<span> присоеденись к другим <br> пригласи поехать с вами <br> вместе всегда веселей</span>",
+    description: "попутчики!",
     startActive: -750,
     finishActive: -2000,
   },
 ]);
-const description = ref(youCanDo[0].description);
+
 watch(y, (newY) => {
   for (let i = 0; i < youCanDo.length; i++) {
     if (newY < youCanDo[i].startActive && newY >= youCanDo[i].finishActive) {
-      youCanDo[i].refQuestion[0].classList.add("active-todo-element");
-      youCanDo[i].refAnswer[0].classList.add("animate-answer");
-      description.value.innerHTML = youCanDo[i].description;
+      questions.value[i].classList.add("active-todo-element");
+      answers.value[i].classList.add("animate-answer");
+      buttonText.value = youCanDo[i].description;
     } else {
-      youCanDo[i].refQuestion[0].classList.remove("active-todo-element");
-      youCanDo[i].refAnswer[0].classList.remove("animate-answer");
+      questions.value[i].classList.remove("active-todo-element");
+      answers.value[i].classList.remove("animate-answer");
     }
   }
 });
@@ -82,7 +65,7 @@ onMounted(() => {});
       <a-row>
         <!-- ** элемент отслеживание которого влияет на поведение компоненты -->
         <div ref="marker"></div>
-        <a-col  style="width: 50%">
+        <a-col style="width: 50%">
           <!-- TODO: расчитывать высоту этого элемента исходя их высоты экрана vueuse  -->
           <div
             style="height: 600px"
@@ -95,13 +78,14 @@ onMounted(() => {});
             <div
               v-for="(el, index) in youCanDo"
               :key="index"
-              :ref="el.linkForQuestion"
+              ref="questions"
               class="todo-element"
               v-html="el.question"
             ></div>
-            <div ref="description">
-              тут описание к вопросу для заполнения пустоты
-            </div>
+
+            <a-button type="primary" class="lets_go_btn ma-16" size="large">
+              {{ buttonText }}
+            </a-button>
           </div>
         </a-col>
         <a-col style="width: 50%">
@@ -110,10 +94,9 @@ onMounted(() => {});
               v-for="(el, index) in youCanDo"
               :key="index"
               class="answer"
-              :ref="el.linkForAnswer"
-            >
-              {{ el.answer }}
-            </div>
+              ref="answers"
+              v-html="el.answer"
+            ></div>
           </div>
         </a-col>
       </a-row>
@@ -140,12 +123,20 @@ onMounted(() => {});
 .answer {
   opacity: 0;
   transform: translateY(100px);
+  color: white;
+  text-transform: uppercase;
+  font-weight: 500;
+  text-align: center;
+  font-size: clamp(10px, 2vw, 18px);
+  line-height: 50px;
   height: 400px;
   margin: 20px;
-  border: 1px solid black;
+  border-radius: 25%;
   display: flex;
   justify-content: center;
   align-items: center;
+  background: rgb(100, 188, 212);
+  box-shadow: 0 0 25px 25px rgb(100, 188, 212);
   transition: all 1s ease;
 }
 .todo-answer {
@@ -161,12 +152,14 @@ onMounted(() => {});
   line-height: 48px;
   font-weight: 900;
   color: black;
-  opacity: 0.5;
+  opacity: 0.3;
+  transition: all 1s ease;
   text-transform: uppercase;
 }
 .active-todo-element {
   opacity: 1;
-  color: #245159;
+  color: #27728b;
+  transform: scale(1.03);
   transition: all 1s ease;
 }
 </style>

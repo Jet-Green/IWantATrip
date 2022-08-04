@@ -20,6 +20,20 @@ body {
     h1 {
         font-size: clamp(14px, 5vw, 36px);
     }
+    .lets_go_btn {
+        border-width: 2px;
+        border-radius: 15px;
+        margin-left: auto;
+        margin-right: auto;
+        color: white;
+        background: #ff6600;
+        &:hover {
+          transform: scale(1.05);
+     
+        }
+      
+
+      }
 }
 
 .d-flex {

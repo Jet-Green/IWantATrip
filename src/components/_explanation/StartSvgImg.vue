@@ -210,10 +210,10 @@
     transform:translate(-60px, 17.227px) ;
   }
   40% {
-    opacity: 1;
+   
   }
   60% {
-    opacity: 1;
+  
   }
   80% {
     opacity: 1;

@@ -85,6 +85,6 @@ onMounted(() => {
 </template>
 <style scoped>
 .find_trip_bg {
-  background: linear-gradient(270.04deg, #245159 0.04%, #24594F 99.97%);
+  background: linear-gradient(270deg, #24B0D6 , #27728B );
 }
 </style>
