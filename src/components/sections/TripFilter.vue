@@ -17,9 +17,9 @@ function focusOnWhere() {}
 function handleChangeOnWhere() {}
 </script>
 <template>
-  <a-row type="flex" justify="center" align="middle" class="section_bg pt-16 pb-16">
+  <a-row type="flex" justify="center" align="middle" class="section_bg mt-24 pt-16 pb-16">
     <a-col :span="24">
-      <h2 style="text-align: center">Найди свой идеальный отдых</h2>
+      <h2 style="text-align: center; color: white">Найди свой идеальный отдых</h2>
     </a-col>
     <a-col :xs="22" :md="16" :lg="14">
       <a-row :gutter="[8, 8]" type="flex" justify="center">
@@ -103,7 +103,7 @@ function handleChangeOnWhere() {}
 
 <style lang="scss" scoped>
 .section_bg {
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(67, 65, 79);
   min-height: 30vh;
 }
 </style>
