@@ -34,7 +34,7 @@ let companions = reactive([
 <template>
   <a-row display="flex" justify="center">
     <a-col :lg="16" :xs="24" align="middle">
-      <h2 class="mt-16">Найдите попутчиков</h2>
+      <h2 class="mt-16">Найди попутчиков</h2>
 
       <a-row display="flex" justify="center">
         <a-col v-for="companion,i in companions"  :key="i" :xs="4" :lg="4" class="ma-4">
@@ -46,12 +46,11 @@ let companions = reactive([
 
       <a-button
         type="primary"
-        shape="round"
         size="large"
-        class="mb-16"
+        class="mb-16 lets_go_btn"
         @click="toCompanionsPage"
       >
-        Показать всех
+        найти
       </a-button>
     </a-col>
   </a-row>

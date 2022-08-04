@@ -21,7 +21,7 @@ let youCanDo = reactive([
   {
     question: "Заказать </br> тур",
     answer:
-      "<span>заполните простую форму <br> мы подберем для вас варианты <br>вы получите идеальный отдых</span>",
+      "<span>заполните простую форму <br> мы поможем вам с выбором <br>вы получите идеальный отдых</span>",
     description: "заказать!",
     startActive: -150,
     finishActive: -450,
@@ -29,7 +29,7 @@ let youCanDo = reactive([
   {
     question: "Создать </br> тур",
     answer:
-      "<span>ничего не нашли? <br> создайте тур сами <br> твой тур - твои правила</span>",
+      "<span>ничего не нашли? <br> создайте тур сами <br> ваш тур - ваши правила</span>",
     description: "создать!",
     startActive: -450,
     finishActive: -750,
@@ -38,7 +38,7 @@ let youCanDo = reactive([
     question: "Найти </br> попутчика",
     answer:
       "<span> присоеденись к другим <br> пригласи поехать с вами <br> вместе всегда веселей</span>",
-    description: "попутчики!",
+    description: "вместе!",
     startActive: -750,
     finishActive: -2000,
   },
@@ -61,11 +61,11 @@ onMounted(() => {});
 </script>
 <template>
   <a-row type="flex" justify="center" class="pt-32">
-    <a-col :xs="18" :lg="14">
+    <a-col :xs="23" :md="18"  :lg="16">
       <a-row>
         <!-- ** элемент отслеживание которого влияет на поведение компоненты -->
         <div ref="marker"></div>
-        <a-col style="width: 50%">
+        <a-col :xs="8" :md="12">
           <!-- TODO: расчитывать высоту этого элемента исходя их высоты экрана vueuse  -->
           <div
             style="height: 600px"
@@ -81,14 +81,15 @@ onMounted(() => {});
               ref="questions"
               class="todo-element"
               v-html="el.question"
+              style="z-index:1"
             ></div>
 
             <a-button type="primary" class="lets_go_btn ma-16" size="large">
-              {{ buttonText }}
+             {{buttonText}}
             </a-button>
           </div>
         </a-col>
-        <a-col style="width: 50%">
+        <a-col :xs="16" :md="12">
           <div class="todo-answer">
             <div
               v-for="(el, index) in youCanDo"
@@ -148,7 +149,7 @@ onMounted(() => {});
 }
 .todo-element {
   font-family: "Montserrat", sans-serif;
-  font-size: 48px;
+  font-size: clamp(14px, 3.5vw, 48px);
   line-height: 48px;
   font-weight: 900;
   color: black;

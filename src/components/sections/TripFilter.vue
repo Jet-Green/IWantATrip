@@ -84,7 +84,7 @@ function handleChangeOnWhere() {}
         </a-col>
 
         <a-button
-          style="border-radius: 15px; background:#ff6600"
+          class="lets_go_btn ma-16"
           type="primary"
           size="large"
           @click="
@@ -92,7 +92,7 @@ function handleChangeOnWhere() {}
               name: 'TripsPage',
             })
           "
-          class="ma-16"
+         
         >
           Найти
         </a-button>
