@@ -58,8 +58,8 @@ const handleChange = (value) => {
   <a-row type="flex" justify="center" style="background-color: #f6f6f6">
     <a-col :xs="22" :lg="16">
       <a-row>
-        <a-col :xs="8" :offset="8"><h2 style="text-align: center" class="mt-16">Гид по городу</h2></a-col>
-        <a-col class="d-flex justify-center align-center" :xs="8">
+        <a-col :xs="12" :offset="6"><h2 style="text-align: center" class="mt-16">Гид по городу</h2></a-col>
+        <a-col class="d-flex justify-center align-center" :xs="6">
           <a-select
             class="guide-select"
             v-model:value="city"
@@ -104,11 +104,12 @@ const handleChange = (value) => {
   height: 100%;
   display: flex;
   align-items: center;
+  font-size: clamp(10px, 2vw, 14px);
 }
 
 .guide-select {
   text-transform: uppercase;
-  font-size: 20px;
+  font-size: clamp(14px, 2vw, 20px);
   font-weight: bold;
 }
 </style>
