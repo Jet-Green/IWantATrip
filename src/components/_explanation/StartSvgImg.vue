@@ -162,7 +162,7 @@
   animation: ship_move 60s ease-in-out infinite;//60
 }
 #sun{
-  animation: sun_move 5s ease-in-out infinite;//180
+  animation: sun_move 180s ease infinite;//180
 }
 @keyframes ship_move {
   0% {
