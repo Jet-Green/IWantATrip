@@ -41,6 +41,6 @@
 </template>
 <style scoped>
 .bottom_menu {
-  font-size: clamp(8px, 2vw, 14px);
+  font-size: clamp(12px, 2vw, 14px);
 }
 </style>
