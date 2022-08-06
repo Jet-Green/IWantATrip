@@ -15,14 +15,14 @@ function ToStartPage() {
 <template>
     <a-row type="flex" justify="center" class="ma-16">
         <a-col v-if="!sm" :xs="22" :lg="16">
-            <div @click="ToStartPage">
-                <span class="mdi mdi-arrow-left-thick" style="color: #245159"></span>
+            <div @click="ToStartPage" style="font-size:18px;">
+                <span class="mdi mdi-18px mdi-arrow-left-thick" style="color: #245159"></span>
                 Назад
             </div>
         </a-col>
         <a-col v-else :xs="22" :lg="16">
             <div @click="ToStartPage">
-                <span class="mdi mdi-arrow-left-thick" style="color: #245159"></span>
+                <span class="mdi mdi-24px mdi-arrow-left-thick" style="color: #245159"></span>
             </div>
         </a-col>
     </a-row>
