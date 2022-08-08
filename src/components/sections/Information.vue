@@ -30,7 +30,7 @@ let youCanDo = reactive([
     description: "заказать!",
     startActive: -150,
     finishActive: -450,
-    route: "/trips",
+    route: "/create",
   },
   {
     question: "Создать </br> тур",
