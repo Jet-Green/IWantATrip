@@ -6,10 +6,12 @@ import FindTrip from "../components/sections/FindTrip.vue";
 import Explanation from "../components/sections/Explanation.vue";
 import Information from "../components/sections/Information.vue";
 import TripFilter from "../components/sections/TripFilter.vue";
+
 </script>
 <template>
   <Explanation />
-  <Information/>
+  <Information></Information>
+
   <!-- <CreateTrip /> -->
   <TripFilter />
   <FindTrip />

@@ -58,32 +58,29 @@ const handleChange = (value) => {
   <a-row type="flex" justify="center" style="background-color: #f6f6f6">
     <a-col :xs="22" :lg="16">
       <a-row>
-        <a-col class="d-flex" :xs="24">
-          <h2 style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
-            <div>Гид по городу</div>
-            <a-select class="ma-16 guide-select" v-model:value="city" :focus="focus" @change="handleChange"
-              :bordered="false">
-              <a-select-option value="glazov">
-                <h2>
-                  Глазов
-                </h2>
-              </a-select-option>
-              <a-select-option value="izhevsk">
-                <h2>
-                  Ижевск
-                </h2>
-              </a-select-option>
-              <a-select-option value="perm">
-                <h2>
-                  Пермь
-                </h2>
-              </a-select-option>
-            </a-select>
-          </h2>
+        <a-col :xs="12" :offset="6"><h2 style="text-align: center" class="mt-16">Гид по городу</h2></a-col>
+        <a-col class="d-flex justify-center align-center" :xs="6">
+          <a-select
+            class="guide-select"
+            v-model:value="city"
+            :focus="focus"
+            @change="handleChange"
+            :bordered="false"
+          >
+            <a-select-option value="glazov"> Глазов </a-select-option>
+            <a-select-option value="izhevsk"> Ижевск </a-select-option>
+            <a-select-option value="perm"> Пермь </a-select-option>
+          </a-select>
         </a-col>
       </a-row>
       <a-row type="flex" justify="space-between">
-        <a-col v-for="(card, index) in cards" :key="index" :xs="11" :lg="5" class="mb-16">
+        <a-col
+          v-for="(card, index) in cards"
+          :key="index"
+          :xs="11"
+          :lg="5"
+          class="mb-16"
+        >
           <div class="guide-card">
             <img :src="card.icon" alt="icon" class="guide-icon" />
             <p style="margin: 0 16px 0 0">
@@ -95,5 +92,24 @@ const handleChange = (value) => {
     </a-col>
   </a-row>
 </template>
-<style>
+<style lang="scss" scoped>
+.guide-icon {
+  height: 70px;
+  padding: 16px;
+}
+.guide-card {
+  cursor: pointer;
+  background-color: white;
+  border-radius: 20px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  font-size: clamp(10px, 2vw, 14px);
+}
+
+.guide-select {
+  text-transform: uppercase;
+  font-size: clamp(14px, 2vw, 20px);
+  font-weight: bold;
+}
 </style>

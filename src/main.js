@@ -2,12 +2,10 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import 'ant-design-vue/dist/antd.less';
 import './assets/styles/styles.scss'
-
 import router from './router'
-
 import './assets/styles/styles.scss'
 // Ant
-import { Layout, Button, Row, Col, Input, Select, Progress, Table, } from 'ant-design-vue';
+import { Layout, Button, Row, Col, Input, Select, Progress, Table, Divider } from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.less';
 
 createApp(App)
@@ -20,4 +18,5 @@ createApp(App)
     .use(Select)
     .use(Progress)
     .use(Table)
+    .use(Divider)
     .mount('#app')

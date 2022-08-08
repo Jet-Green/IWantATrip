@@ -29,10 +29,7 @@ body {
         background: #ff6600;
         &:hover {
           transform: scale(1.05);
-     
         }
-      
-
       }
 }
 
@@ -46,6 +43,12 @@ body {
 
 .align-center {
     align-items: center;
+}
+.direction-column {
+    flex-direction: column;
+}
+.justify-end{
+    justify-content: flex-end;
 }
 
 // MA
@@ -104,23 +107,6 @@ body {
     }
 }
 
-.guide-icon {
-    height: 70px;
-    padding: 16px;
-}
-
-.guide-card {
-    cursor: pointer;
-    background-color: white;
-    border-radius: 20px;
-    height: 100%;
-    display: flex;
-    align-items: center;
-}
-
-.guide-select {
-    font-size: 32px;
-}
 
 .unselectable {
     -moz-user-select: none;

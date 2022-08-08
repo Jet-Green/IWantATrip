@@ -10,23 +10,23 @@ let router = useRouter();
 
 let companions = reactive([
   {
-    named: "Вася",
+    name: "Вася",
     year: 27,
   },
   {
-    named: "Вася",
+    name: "Вася",
     year: 33,
   },
   {
-    named: "Вася",
+    name: "Вася",
     year: 45,
   },
   {
-    named: "Вася",
+    name: "Вася",
     year: 19,
   },
   {
-    named: "Вася",
+    name: "Вася",
     year: 38,
   },
 ]);
@@ -34,33 +34,35 @@ let companions = reactive([
 <template>
   <a-row display="flex" justify="center">
     <a-col :lg="16" :xs="24" align="middle">
-      <h2 class="mt-16">Найдите попутчиков</h2>
+      <h2 class="mt-16">Найди попутчиков</h2>
 
       <a-row display="flex" justify="center">
         <a-col v-for="companion,i in companions"  :key="i" :xs="4" :lg="4" class="ma-4">
-          <img :src="person" alt="" srcset="" class="img mb-8" />
-          <h2 class="mb-8">{{ companion.named }}</h2>
-          <h3 class="mb-16">{{ companion.year }} лет</h3>
+        <div class="d-flex direction-column align-center">
+          <UserOutlined />
+          <span class="mdi mdi-36px mdi-account-outline"></span>
+          <span >{{ companion.name }}</span>
+          <span >{{ companion.year }} лет</span>
+        </div>
+         
         </a-col>
       </a-row>
 
       <a-button
         type="primary"
-        shape="round"
         size="large"
-        class="mb-16"
+        class="ma-16 lets_go_btn"
         @click="toCompanionsPage"
       >
-        Показать всех
+        найти
       </a-button>
     </a-col>
   </a-row>
 </template>
-<style scoped>
-.img {
-  background-color: azure;
-  width: 60px;
-  height: 60px;
-  border-radius: 60px;
+<style lang="scss" scoped>
+.person_icon{
+height:70px;
 }
 </style>
+
+
