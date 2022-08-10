@@ -44,7 +44,7 @@
         <feGaussianBlur stdDeviation="6.6723892" id="feGaussianBlur2" />
       </filter>
     </defs>
-    <g transform="translate(-.4284 -.4911)" id="sky">
+    <g transform="translate(-.4284 -.4911)">
       <g transform="matrix(.8491 0 0 .8739 .1712 .3018)" id="g215">
         <g stroke-width="0" id="g37">
           <rect
@@ -53,7 +53,7 @@
             width="349.5"
             height="109.9"
             fill="#64bed8"
-            id="rect7"
+            id="sky"
           />
           <rect
             x="25.32"
