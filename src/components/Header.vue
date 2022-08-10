@@ -2,17 +2,22 @@
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
+import RegForm from "./RegForm.vue";
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const sm = breakpoints.smaller("md");
 let router = useRouter();
-const visible = ref(false);
+const visibleDrawer = ref(false);
+const visibleModal = ref(false)
 
 const showDrawer = () => {
-  visible.value = !visible.value;
+  visibleDrawer.value = !visibleDrawer.value;
+};
+const showModal = () => {
+  visibleModal.value = !visibleModal.value;
 };
 const toComponentFromMenu = (routName) => {
   router.push({ name: routName })
-  visible.value = !visible.value;
+  visibleDrawer.value = !visibleDrawer.value;
 }
 // const md = breakpoints.between('sm', 'md')
 // const lg = breakpoints.between('md', 'lg')
@@ -34,6 +39,7 @@ const toComponentFromMenu = (routName) => {
             <div @click="router.push({ name: 'TripsPage' })" class="rout">найти тур</div>
             <div @click="router.push({ name: 'CreateTripPage' })" class="rout">создать тур</div>
             <div @click="router.push({ name: 'CompanionsPage' })" class="rout">попутчики</div>
+            <span class="mdi mdi-24px mdi-home" @click="showModal" style="cursor:pointer" :cancelText="отмена"></span>
           </a-col>
           <a-col v-else>
             <span
@@ -45,11 +51,18 @@ const toComponentFromMenu = (routName) => {
         </a-row>
       </a-col>
     </a-row>
-    <a-drawer placement="right" :closable="false" :visible="visible" @close="showDrawer" width="200">
+    <a-drawer placement="right" :closable="false" :visible="visibleDrawer" @close="showDrawer" width="200">
       <div @click="toComponentFromMenu('TripsPage')" class="rout">найти тур</div>
       <div @click="toComponentFromMenu('CreateTripPage')" class="rout mt-16 mb-16">создать тур</div>
       <div @click="toComponentFromMenu('CompanionsPage')" class="rout">попутчики</div>
     </a-drawer>
+    <a-modal v-model:visible="visibleModal" title="Регистрация" @ok="handleOk">
+      <template #footer>
+        <a-button key="back">Отмена</a-button>
+        <a-button key="submit">Зарегистрироваться</a-button>
+      </template>
+      <RegForm/>
+    </a-modal>
   </a-layout-header>
 </template>
 
