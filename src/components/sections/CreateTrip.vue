@@ -14,7 +14,7 @@ let router = useRouter()
         <a-col :xs="{ span: 20, offset: 2 }" :md="{ span: 6, offset: 3 }">
           <h2>Создай свой тур</h2>
           <p>Твой тур - твои правила</p>
-          <a-button type="primary" shape="round" @click="router.push('/create')">Создать</a-button>
+          <a-button type="primary" class="lets_go_btn" @click="router.push('/create')">Создать</a-button>
         </a-col>
       </a-row>
     </a-col>

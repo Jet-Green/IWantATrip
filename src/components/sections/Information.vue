@@ -1,13 +1,17 @@
 <script setup>
 import { onMounted, ref, reactive, watch } from "vue";
 import { useElementBounding } from "@vueuse/core";
+import { useRouter } from "vue-router";
 
 const marker = ref(null);
 const questions = ref([]);
 const answers = ref([]);
 const buttonText = ref(null);
+const buttonRoute = ref(null)
 
 const { y } = useElementBounding(marker);
+
+let router = useRouter();
 
 let youCanDo = reactive([
   {
@@ -17,6 +21,7 @@ let youCanDo = reactive([
     description: "найти!",
     startActive: 800,
     finishActive: -150,
+    route: "/trips",
   },
   {
     question: "Заказать </br> тур",
@@ -25,6 +30,7 @@ let youCanDo = reactive([
     description: "заказать!",
     startActive: -150,
     finishActive: -450,
+    route: "/create",
   },
   {
     question: "Создать </br> тур",
@@ -33,6 +39,7 @@ let youCanDo = reactive([
     description: "создать!",
     startActive: -450,
     finishActive: -750,
+    route: "/create",
   },
   {
     question: "Найти </br> попутчика",
@@ -41,8 +48,13 @@ let youCanDo = reactive([
     description: "вместе!",
     startActive: -750,
     finishActive: -2000,
+    route: "/companions",
   },
 ]);
+
+function routeTo(buttonRoute) {
+  router.push({ path: buttonRoute });
+}
 
 watch(y, (newY) => {
   for (let i = 0; i < youCanDo.length; i++) {
@@ -50,6 +62,7 @@ watch(y, (newY) => {
       questions.value[i].classList.add("active-todo-element");
       answers.value[i].classList.add("animate-answer");
       buttonText.value = youCanDo[i].description;
+      buttonRoute.value = youCanDo[i].route;
     } else {
       questions.value[i].classList.remove("active-todo-element");
       answers.value[i].classList.remove("animate-answer");
@@ -61,7 +74,7 @@ onMounted(() => {});
 </script>
 <template>
   <a-row type="flex" justify="center" class="pt-32">
-    <a-col :xs="23" :md="18"  :lg="16">
+    <a-col :xs="23" :md="18" :lg="16">
       <a-row>
         <!-- ** элемент отслеживание которого влияет на поведение компоненты -->
         <div ref="marker"></div>
@@ -81,11 +94,16 @@ onMounted(() => {});
               ref="questions"
               class="todo-element"
               v-html="el.question"
-              style="z-index:1"
+              style="z-index: 1"
             ></div>
 
-            <a-button type="primary" class="lets_go_btn ma-16" size="large">
-             {{buttonText}}
+            <a-button
+              type="primary"
+              class="lets_go_btn ma-16"
+              size="large"
+              @click="routeTo(buttonRoute)"
+            >
+              {{ buttonText }}
             </a-button>
           </div>
         </a-col>
@@ -104,8 +122,6 @@ onMounted(() => {});
     </a-col>
   </a-row>
 </template>
-
-
 
 <style lang="scss" scoped>
 .todo {

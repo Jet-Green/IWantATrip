@@ -49,7 +49,7 @@ let tours = reactive({
             <div class="price">Цена: {{ tours.price }}</div>
           </div>
           <div class="actions">
-            <a-button style="display: flex; align-items: center; color: #3daff5" type="text" class="mt-8">
+            <a-button  type="text" class="mt-8 lets_go_btn">
               Купить
             </a-button>
           </div>
