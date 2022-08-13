@@ -11,6 +11,7 @@
   "dependencies": {
     "@vueuse/core": "^8.9.4",
     "ant-design-vue": "^3.2.9",
+    "pinia": "^2.0.18",
     "vue": "^3.2.25",
     "vue-router": "^4.0.16",
     "vue3-carousel": "^0.1.40"

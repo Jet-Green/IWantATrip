@@ -1,13 +1,13 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from "vue";
-
+import { useAuth } from '../../stores/auth.js'
 import { useRouter } from "vue-router";
-
 import { Carousel, Navigation, Slide } from "vue3-carousel";
 import "vue3-carousel/dist/carousel.css";
 
 import TripCard from "../cards/TripCard.vue";
 
+const auth = useAuth()
 
 // внедрение карточек сделано криво
 // tours for working cards
