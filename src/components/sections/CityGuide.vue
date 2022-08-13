@@ -42,6 +42,14 @@ let cards = [
     title: "Отдых и здоровье",
     icon: heart,
   },
+  {
+    title: "Гиды",
+    icon: heart,
+  },
+  {
+    title: "Сувениры",
+    icon: heart,
+  },
 ];
 const city = ref("Глазов");
 
@@ -58,7 +66,11 @@ const handleChange = (value) => {
   <a-row type="flex" justify="center" style="background-color: #f6f6f6">
     <a-col :xs="22" :lg="16">
       <a-row>
-        <a-col :xs="12" :offset="6"><h2 style="text-align: center" class="mt-16">Гид по городу</h2></a-col>
+        <a-col :xs="12" :offset="6"
+          ><h2 style="text-align: center" class="mt-16">
+            Гид по городу
+          </h2></a-col
+        >
         <a-col class="d-flex justify-center align-center" :xs="6">
           <a-select
             class="guide-select"
@@ -73,15 +85,14 @@ const handleChange = (value) => {
           </a-select>
         </a-col>
       </a-row>
-      <a-row type="flex" justify="space-between">
+      <a-row type="flex" justify="space-around">
         <a-col
           v-for="(card, index) in cards"
           :key="index"
-          :xs="11"
-          :lg="5"
+         
           class="mb-16"
         >
-          <div class="guide-card">
+          <div class="guide-card ma-4">
             <img :src="card.icon" alt="icon" class="guide-icon" />
             <p style="margin: 0 16px 0 0">
               {{ card.title }}
@@ -102,9 +113,10 @@ const handleChange = (value) => {
   background-color: white;
   border-radius: 20px;
   height: 100%;
+  width: 200px;
   display: flex;
   align-items: center;
-  font-size: clamp(10px, 2vw, 14px);
+  font-size: clamp(12px, 2vw, 14px);
 }
 
 .guide-select {
