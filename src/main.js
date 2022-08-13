@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import { createPinia } from 'pinia'
 import 'ant-design-vue/dist/antd.less';
 import './assets/styles/styles.scss'
 import router from './router'
@@ -7,8 +8,10 @@ import './assets/styles/styles.scss'
 // Ant
 import { Layout, Button, Row, Col, Input, Select, Progress, Table, Divider } from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.less';
+const pinia = createPinia()
 
 createApp(App)
+    .use(pinia)
     .use(router)
     .use(Layout)
     .use(Button)
