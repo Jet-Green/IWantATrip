@@ -29,6 +29,26 @@ let companions = reactive([
     name: "Вася",
     year: 38,
   },
+  {
+    name: "Вася",
+    year: 27,
+  },
+  {
+    name: "Вася",
+    year: 33,
+  },
+  {
+    name: "Вася",
+    year: 45,
+  },
+  {
+    name: "Вася",
+    year: 19,
+  },
+  {
+    name: "Вася",
+    year: 38,
+  },
 ]);
 </script>
 <template>
@@ -36,17 +56,17 @@ let companions = reactive([
     <a-col :lg="16" :xs="24" align="middle">
       <h2 class="mt-16">Найди попутчиков</h2>
 
-      <a-row display="flex" justify="center">
-        <a-col v-for="companion,i in companions"  :key="i" :xs="4" :lg="4" class="ma-4">
-        <div class="d-flex direction-column align-center">
+      <div class="scroll">
+        <div v-for="companion,i in companions"  :key="i"  style="margin: 15px 25px 15px 25px;">
+        <div class="d-flex direction-column align-center" style="width: 50px">
           <UserOutlined />
           <span class="mdi mdi-36px mdi-account-outline"></span>
           <span >{{ companion.name }}</span>
           <span >{{ companion.year }} лет</span>
         </div>
          
-        </a-col>
-      </a-row>
+        </div>
+      </div>
 
       <a-button
         type="primary"
@@ -62,6 +82,11 @@ let companions = reactive([
 <style lang="scss" scoped>
 .person_icon{
 height:70px;
+}
+.scroll{
+  overflow-x: hidden;
+  display: flex;
+  width: 500px;
 }
 </style>
 
