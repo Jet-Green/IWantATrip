@@ -3,11 +3,12 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 import RegForm from "./RegForm.vue";
+import AuthForm from "./AuthForm.vue"
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const sm = breakpoints.smaller("md");
 let router = useRouter();
 const visibleDrawer = ref(false);
-const visibleModal = ref(false)
+const visibleModal = ref(false);
 
 const showDrawer = () => {
   visibleDrawer.value = !visibleDrawer.value;
@@ -18,6 +19,9 @@ const showModal = () => {
 const toComponentFromMenu = (routName) => {
   router.push({ name: routName })
   visibleDrawer.value = !visibleDrawer.value;
+}
+const authorize = () => {
+  visibleModal.value = !visibleModal.value
 }
 // const md = breakpoints.between('sm', 'md')
 // const lg = breakpoints.between('md', 'lg')
@@ -56,12 +60,12 @@ const toComponentFromMenu = (routName) => {
       <div @click="toComponentFromMenu('CreateTripPage')" class="rout mt-16 mb-16">создать тур</div>
       <div @click="toComponentFromMenu('CompanionsPage')" class="rout">попутчики</div>
     </a-drawer>
-    <a-modal v-model:visible="visibleModal" title="Регистрация" @ok="handleOk">
+    <a-modal v-model:visible="visibleModal" title="Авторизация">
       <template #footer>
-        <a-button key="back">Отмена</a-button>
-        <a-button key="submit">Зарегистрироваться</a-button>
+        <a-button key="back" @click="showModal">Отмена</a-button>
+        <a-button key="submit" @click="authorize">Войти</a-button>
       </template>
-      <RegForm/>
+      <AuthForm/>
     </a-modal>
   </a-layout-header>
 </template>
