@@ -16,7 +16,7 @@ const showModal = () => {
     <a-col :xs="22" :lg="16">
       <p>Что посмотреть</p>
 
-      <a-modal v-model:visible="visibleModal" title="Добавление" @ok="handleOk">
+      <a-modal v-model:visible="visibleModal" title="Добавление" @ok="handleOk" ok-text="ОК" cancel-text="ЗАКРЫТЬ">
         <AddGuideElement />
       </a-modal>
       <a-button type="" @click="showModal">Добавить</a-button>
