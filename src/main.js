@@ -6,7 +6,7 @@ import './assets/styles/styles.scss'
 import router from './router'
 import './assets/styles/styles.scss'
 // Ant
-import { Layout, Button, Row, Col, Input, Select, Progress, Table, Divider, Drawer, Form, Modal } from 'ant-design-vue';
+import { Layout, Button, Row, Col, Input, Select, Progress, Table, Divider, Drawer, Form, Modal, Card } from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.less';
 const pinia = createPinia()
 
@@ -25,4 +25,5 @@ createApp(App)
     .use(Drawer)
     .use(Form)
     .use(Modal)
+    .use(Card)
     .mount('#app')
