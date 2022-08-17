@@ -53,7 +53,7 @@ let companions = reactive([
 </script>
 <template>
   <a-row display="flex" justify="center">
-    <a-col :lg="16" :xs="24" align="middle">
+    <a-col :lg="10" :xs="24" align="middle">
       <h2 class="mt-16">Найди попутчиков</h2>
 
       <div class="scroll">
@@ -86,7 +86,9 @@ height:70px;
 .scroll{
   overflow-x: scroll;
   display: flex;
-  width: 500px;
+}
+::-webkit-scrollbar{
+  display: none;
 }
 </style>
 
