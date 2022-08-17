@@ -1,15 +1,18 @@
 <script setup>
-const props = defineProps(['element'])
-let element = props.element;
-console.log(element);
+const props = defineProps({
+  element: Object
+})
 </script>
 <template>
   <a-card hoverable>
     <template #cover>
-      <img src="https://gorodglazov.com/wp-content/uploads/2020/05/5u3ElJvPRWY-1.jpg" />
+      <img :src="props.element.image" />
     </template>
-    <a-card-meta title="Преображенский храм">
-      <template #description>Площадь Свободы</template>
-    </a-card-meta>
+    <span class="title">{{props.element.name}}</span>
   </a-card>
 </template>
+<style lang="scss" scoped>
+.title{
+  font-size: 18px;
+}
+</style>
