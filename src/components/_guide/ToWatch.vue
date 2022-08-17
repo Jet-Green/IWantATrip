@@ -18,7 +18,7 @@ const showModal = () => {
       <p>Что посмотреть</p>
       <a-row>
         <a-col v-for="item in 8" :lg="5" :xs="10" class="ma-16">
-          <GuideCard/>
+          <GuideCard :element="item" />
         </a-col>
       </a-row>
       <a-modal v-model:visible="visibleModal" title="Добавление" @ok="handleOk">

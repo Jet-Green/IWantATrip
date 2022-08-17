@@ -1,3 +1,8 @@
+<script setup>
+const props = defineProps(['element'])
+let element = props.element;
+console.log(element);
+</script>
 <template>
   <a-card hoverable>
     <template #cover>
