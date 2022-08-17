@@ -40,32 +40,24 @@ const authorize = () => {
             Хочу в поездку
           </a-col>
           <a-col v-if="!sm" :span="12" class="top_menu">
-            <div @click="router.push({ name: 'TripsPage' })" class="rout">найти тур</div>
-            <div @click="router.push({ name: 'CreateTripPage' })" class="rout">создать тур</div>
-            <div @click="router.push({ name: 'CompanionsPage' })" class="rout">попутчики</div>
+            <div @click="router.push({ name: 'TripsPage' })" class="route">найти тур</div>
+            <div @click="router.push({ name: 'CreateTripPage' })" class="route">создать тур</div>
+            <div @click="router.push({ name: 'CompanionsPage' })" class="route">попутчики</div>
             <span class="mdi mdi-24px mdi-home" @click="showModal" style="cursor:pointer" :cancelText="отмена"></span>
           </a-col>
           <a-col v-else>
-            <span
-              class="mdi mdi-24px mdi-menu"
-              style="color: #245159; cursor: pointer"
-              @click="showDrawer"
-            ></span>
+            <span class="mdi mdi-24px mdi-menu" style="color: #245159; cursor: pointer" @click="showDrawer"></span>
           </a-col>
         </a-row>
       </a-col>
     </a-row>
     <a-drawer placement="right" :closable="false" :visible="visibleDrawer" @close="showDrawer" width="200">
-      <div @click="toComponentFromMenu('TripsPage')" class="rout">найти тур</div>
-      <div @click="toComponentFromMenu('CreateTripPage')" class="rout mt-16 mb-16">создать тур</div>
-      <div @click="toComponentFromMenu('CompanionsPage')" class="rout">попутчики</div>
+      <div @click="toComponentFromMenu('TripsPage')" class="route">найти тур</div>
+      <div @click="toComponentFromMenu('CreateTripPage')" class="route mt-16 mb-16">создать тур</div>
+      <div @click="toComponentFromMenu('CompanionsPage')" class="route">попутчики</div>
     </a-drawer>
-    <a-modal v-model:visible="visibleModal" title="Авторизация">
-      <template #footer>
-        <a-button key="back" @click="showModal">Отмена</a-button>
-        <a-button key="submit" @click="authorize">Войти</a-button>
-      </template>
-      <AuthForm/>
+    <a-modal v-model:visible="visibleModal" title="Авторизация" :footer="null">
+      <AuthForm @closeModal="visibleModal = false" />
     </a-modal>
   </a-layout-header>
 </template>
@@ -79,7 +71,8 @@ const authorize = () => {
     justify-content: space-around;
   }
 }
-.rout {
+
+.route {
   cursor: pointer;
   text-transform: uppercase;
 }
