@@ -35,7 +35,7 @@ const formState = reactive({
     </a-form-item>
 
     <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-      <a-button type="primary">Отправить</a-button>
+      <a-button type="primary" class="lets_go_btn" size="large">Отправить</a-button>
     </a-form-item>
   </a-form>
 </template>
