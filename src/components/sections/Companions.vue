@@ -84,7 +84,7 @@ let companions = reactive([
 height:70px;
 }
 .scroll{
-  overflow-x: hidden;
+  overflow-x: scroll;
   display: flex;
   width: 500px;
 }
