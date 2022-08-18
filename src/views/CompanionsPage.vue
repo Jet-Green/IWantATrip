@@ -1,8 +1,8 @@
 <script setup>
-import BackButton from '../components/BackButton.vue'
+import BackButton from "../components/BackButton.vue";
 let companions = [
   {
-    number: '1',
+    number: "1",
     gender: "Ж",
     age: 30,
     way: "Египет",
@@ -10,7 +10,7 @@ let companions = [
     time: "10 - 11 дней",
   },
   {
-    number: '2',
+    number: "2",
     gender: "М",
     age: 35,
     way: "Япония",
@@ -18,7 +18,7 @@ let companions = [
     time: "20 - 25 дней",
   },
   {
-    number: '3',
+    number: "3",
     gender: "Ж",
     age: 25,
     way: "Франция",
@@ -26,7 +26,7 @@ let companions = [
     time: "7 дней",
   },
   {
-    number: '4',
+    number: "4",
     gender: "М",
     age: 27,
     way: "Египет",
@@ -34,7 +34,7 @@ let companions = [
     time: "10 дней",
   },
   {
-    number: '5',
+    number: "5",
     gender: "Ж",
     age: 20,
     way: "Америка",
@@ -42,7 +42,7 @@ let companions = [
     time: "30 - 31 день",
   },
   {
-    number: '6',
+    number: "6",
     gender: "М",
     age: 35,
     way: "Япония",
@@ -50,7 +50,7 @@ let companions = [
     time: "20 - 25 дней",
   },
   {
-    number: '7',
+    number: "7",
     gender: "Ж",
     age: 25,
     way: "Франция",
@@ -58,7 +58,7 @@ let companions = [
     time: "7 дней",
   },
   {
-    number: '8',
+    number: "8",
     gender: "М",
     age: 27,
     way: "Египет",
@@ -122,16 +122,22 @@ let columnssm = [
 ];
 </script>
 <template>
-  <BackButton></BackButton>
-  <a-row type="flex" justify="center">
-    <a-col :xs="22" :lg="16">
-      <a-table :columns="columnslg" :data-source="companions" :pagination="false">
-        <template #bodyCell="{ column, text }">
-          <template v-if="column.dataIndex === 'number'">
-            <a>{{ text }}</a>
+  <div>
+    <BackButton></BackButton>
+    <a-row type="flex" justify="center">
+      <a-col :xs="22" :lg="16">
+        <a-table
+          :columns="columnslg"
+          :data-source="companions"
+          :pagination="false"
+        >
+          <template #bodyCell="{ column, text }">
+            <template v-if="column.dataIndex === 'number'">
+              <a>{{ text }}</a>
+            </template>
           </template>
-        </template>
-      </a-table>
-    </a-col>
-  </a-row>
+        </a-table>
+      </a-col>
+    </a-row>
+  </div>
 </template>

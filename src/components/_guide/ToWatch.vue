@@ -11,16 +11,22 @@ const showModal = () => {
 };
 </script>
 <template>
-  <BackButton />
-  <a-row type="flex" justify="center">
-    <a-col :xs="22" :lg="16">
-      <p>Что посмотреть</p>
+  <div>
+    <BackButton />
+    <a-row type="flex" justify="center">
+      <a-col :xs="22" :lg="16">
+        <p>Что посмотреть</p>
 
-      <a-modal v-model:visible="visibleModal" title="Добавление" @ok="handleOk">
-        <AddGuideElement />
-      </a-modal>
-      <a-button type="" @click="showModal">Добавить</a-button>
-    </a-col>
-  </a-row>
+        <a-modal
+          v-model:visible="visibleModal"
+          title="Добавление"
+          @ok="handleOk"
+        >
+          <AddGuideElement />
+        </a-modal>
+        <a-button type="" @click="showModal">Добавить</a-button>
+      </a-col>
+    </a-row>
+  </div>
 </template>
  

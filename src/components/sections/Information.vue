@@ -95,7 +95,7 @@ onMounted(() => {});
               class="todo-element"
               v-html="el.question"
               style="z-index: 1"
-               @click="routeTo(buttonRoute)"
+               @click="routeTo(el.route)"
             ></div>
 
             <a-button
@@ -116,7 +116,7 @@ onMounted(() => {});
               class="answer"
               ref="answers"
               v-html="el.answer"
-               @click="routeTo(buttonRoute)"
+               @click="routeTo(el.route)"
             ></div>
           </div>
         </a-col>
