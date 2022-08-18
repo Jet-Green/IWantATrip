@@ -6,17 +6,18 @@ import FindTrip from "../components/sections/FindTrip.vue";
 import Explanation from "../components/sections/Explanation.vue";
 import Information from "../components/sections/Information.vue";
 import TripFilter from "../components/sections/TripFilter.vue";
-
 </script>
 <template>
-  <Explanation />
-  <Information></Information>
+  <div>
+    <Explanation />
+    <Information></Information>
 
-  <!-- <CreateTrip /> -->
-  <TripFilter />
-  <FindTrip />
-  <Companions />
-  <CityGuide />
+    <!-- <CreateTrip /> -->
+    <TripFilter />
+    <FindTrip />
+    <Companions />
+    <CityGuide />
+  </div>
 </template>
 <style lang="scss" scoped>
 </style>
