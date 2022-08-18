@@ -2,21 +2,24 @@ import { defineStore } from 'pinia'
 
 export const useAuth = defineStore('auth', {
   state: () => ({
-   isAuth: true,
-   userStatus:'admin'
+    isAuth: false,
+    userStatus: 'user'
   }),
   getters: {
     getUserStatus(state) {
       return state.userStatus
     },
     getAuthStatus(state) {
-        return state.isAuth
-      },
+      return state.isAuth
+    },
 
   },
   actions: {
-    setUserStatus(text) { 
+    setUserStatus(text) {
       this.userStatus = text
     },
+    login() {
+      this.isAuth = true;
+    }
   },
 })

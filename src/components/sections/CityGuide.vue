@@ -13,42 +13,52 @@ let cards = [
   {
     title: "Что посмотреть",
     icon: toSee,
+    route: "/watch",
   },
   {
     title: "Где поесть",
     icon: food,
+    route: "/eat",
   },
   {
     title: "Где остановиться",
     icon: hotel,
+    route: "/stay",
   },
   {
     title: "Афиша",
     icon: poster,
+    route: "/poster",
   },
   {
     title: "Экскурсии",
     icon: guide,
+    route: "/excurs",
   },
   {
     title: "Развлечения",
     icon: entertainment,
+    route: "/enter",
   },
   {
     title: "Спорт и красота",
     icon: sport,
+    route: "/sport",
   },
   {
     title: "Отдых и здоровье",
     icon: heart,
+    route: "/relax",
   },
   {
     title: "Гиды",
     icon: heart,
+    route: "/guides",
   },
   {
     title: "Сувениры",
     icon: heart,
+    route: "/souvenirs",
   },
 ];
 const city = ref("Глазов");
@@ -67,9 +77,7 @@ const handleChange = (value) => {
     <a-col :xs="22" :lg="16">
       <a-row>
         <a-col :xs="12" :offset="6"
-          ><h2 style="text-align: center" class="mt-16">
-            Гид по городу
-          </h2></a-col
+          ><h2 style="text-align: center" class="mt-16">Гид по городу</h2></a-col
         >
         <a-col class="d-flex justify-center align-center" :xs="6">
           <a-select
@@ -86,18 +94,16 @@ const handleChange = (value) => {
         </a-col>
       </a-row>
       <a-row type="flex" justify="space-around">
-        <a-col
-          v-for="(card, index) in cards"
-          :key="index"
-         
-          class="mb-16"
-        >
-          <div class="guide-card ma-4">
-            <img :src="card.icon" alt="icon" class="guide-icon" />
-            <p style="margin: 0 16px 0 0">
-              {{ card.title }}
-            </p>
-          </div>
+        <a-col v-for="(card, index) in cards" :key="index" class="mb-16">
+
+          <router-link :to="card.route">
+            <div class="guide-card ma-4">
+              <img :src="card.icon" alt="icon" class="guide-icon" />
+              <p style="margin: 0 16px 0 0">
+                {{ card.title }}
+              </p>
+            </div>
+          </router-link>
         </a-col>
       </a-row>
     </a-col>
