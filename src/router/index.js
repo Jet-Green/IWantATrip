@@ -23,12 +23,12 @@ const router = createRouter({
       component: () => import('../views/TripsPage.vue'),
     },
     {
-      path: '/create',
+      path: '/create-with-help',
       name: 'CreateTripWithHelp',
       component: () => import('../views/CreateTripWithHelp.vue'),
     },
     {
-      path: '/create',
+      path: '/create-no-help',
       name: 'CreateTripNoHelp',
       component: () => import('../views/CreateTripNoHelp.vue'),
     },
