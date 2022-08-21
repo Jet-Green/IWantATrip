@@ -1,10 +1,10 @@
 <script setup>
-import CreateTrip from "../components/_createTrip/CreateTrip.vue";
+import CreateTripWithHelp from "../components/_createTrip/CreateTripWithHelp.vue";
 import BackButton from "../components/BackButton.vue";
 </script>
 <template>
   <div>
     <BackButton />
-    <CreateTrip />
+    <CreateTripWithHelp />
   </div>
 </template>

@@ -30,7 +30,8 @@ let youCanDo = reactive([
     description: "заказать!",
     startActive: -150,
     finishActive: -450,
-    route: "/create",
+    route: { name: 'CreateTripWithHelp' },
+    withHelp: true
   },
   {
     question: "Создать </br> тур",
@@ -39,7 +40,7 @@ let youCanDo = reactive([
     description: "создать!",
     startActive: -450,
     finishActive: -750,
-    route: "/create",
+    route: { name: 'CreateTripNoHelp' },
   },
   {
     question: "Найти </br> попутчика",
@@ -53,7 +54,7 @@ let youCanDo = reactive([
 ]);
 
 function routeTo(buttonRoute) {
-  router.push({ path: buttonRoute });
+  router.push(buttonRoute);
 }
 
 watch(y, (newY) => {
@@ -70,7 +71,7 @@ watch(y, (newY) => {
   }
 });
 
-onMounted(() => {});
+onMounted(() => { });
 </script>
 <template>
   <a-row type="flex" justify="center" class="pt-32">
@@ -80,44 +81,23 @@ onMounted(() => {});
         <div ref="marker"></div>
         <a-col :xs="8" :md="12">
           <!-- TODO: расчитывать высоту этого элемента исходя их высоты экрана vueuse  -->
-          <div
-            style="height: 600px"
-            :class="{
-              todo: y > 150,
-              'fix-todo': y <= 150 && y > -1000,
-              'absolute-todo': y <= -1000,
-            }"
-          >
-            <div
-              v-for="(el, index) in youCanDo"
-              :key="index"
-              ref="questions"
-              class="todo-element"
-              v-html="el.question"
-              style="z-index: 1"
-               @click="routeTo(el.route)"
-            ></div>
+          <div style="height: 600px" :class="{
+            todo: y > 150,
+            'fix-todo': y <= 150 && y > -1000,
+            'absolute-todo': y <= -1000,
+          }">
+            <div v-for="(el, index) in youCanDo" :key="index" ref="questions" class="todo-element" v-html="el.question"
+              style="z-index: 1" @click="routeTo(el.route)"></div>
 
-            <a-button
-              type="primary"
-              class="lets_go_btn ma-16"
-              size="large"
-              @click="routeTo(buttonRoute)"
-            >
+            <a-button type="primary" class="lets_go_btn ma-16" size="large" @click="routeTo(buttonRoute)">
               {{ buttonText }}
             </a-button>
           </div>
         </a-col>
         <a-col :xs="16" :md="12">
           <div class="todo-answer">
-            <div
-              v-for="(el, index) in youCanDo"
-              :key="index"
-              class="answer"
-              ref="answers"
-              v-html="el.answer"
-               @click="routeTo(el.route)"
-            ></div>
+            <div v-for="(el, index) in youCanDo" :key="index" class="answer" ref="answers" v-html="el.answer"
+              @click="routeTo(el.route)"></div>
           </div>
         </a-col>
       </a-row>
@@ -129,11 +109,13 @@ onMounted(() => {});
 .todo {
   transition: all 1s ease;
 }
+
 .fix-todo {
   transition: all 1s ease;
   position: fixed;
   top: 150px;
 }
+
 .absolute-todo {
   position: absolute;
   bottom: -50px;
@@ -155,9 +137,11 @@ onMounted(() => {});
   justify-content: center;
   align-items: center;
   background: #27728b;
-  box-shadow: 0 0 25px 25px #27728b;;
+  box-shadow: 0 0 25px 25px #27728b;
+  ;
   transition: all 1s ease;
 }
+
 .todo-answer {
   .animate-answer {
     opacity: 1;
@@ -166,6 +150,7 @@ onMounted(() => {});
     transition: all 1s ease;
   }
 }
+
 .todo-element {
   font-family: "Montserrat", sans-serif;
   font-size: clamp(14px, 3.5vw, 48px);
@@ -175,7 +160,9 @@ onMounted(() => {});
   opacity: 0.3;
   transition: all 1s ease;
   text-transform: uppercase;
+  cursor: pointer;
 }
+
 .active-todo-element {
   opacity: 1;
   color: #27728b;
