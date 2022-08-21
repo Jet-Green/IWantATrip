@@ -31,7 +31,6 @@ let youCanDo = reactive([
     startActive: -150,
     finishActive: -450,
     route: { name: 'CreateTripWithHelp' },
-    withHelp: true
   },
   {
     question: "Создать </br> тур",
