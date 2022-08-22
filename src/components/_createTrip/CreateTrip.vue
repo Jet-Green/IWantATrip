@@ -134,13 +134,14 @@ function submit() {
             Описание программы
             <QuillEditor
               theme="snow"
-              style="min-height: 200px"
+              style="height: 320px"
               ref="quill"
               v-model:content="form.description"
               contentType="html"
               :toolbar="[
                 [{ header: [1, 2] }],
                 ['bold', 'italic', 'underline'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
                 [{ color: ['#000000', '#ff6600', '#3daff5'] }],
                 [{ align: [] }],
               ]"
@@ -148,11 +149,10 @@ function submit() {
             <!-- <a-textarea placeholder="Даты" size="large" v-model:value="form.description" :autoSize="true">
                         </a-textarea> -->
           </a-col>
-          <a-col :span="24">
+          <a-col :span="24" class="d-flex justify-center">
             <a-button
               class="mt-16"
               type="primary"
-              shape="round"
               size="large"
               html-type="submit"
               >Отправить
