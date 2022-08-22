@@ -1,15 +1,11 @@
 <script setup>
-import { ref } from 'vue'
+import { QuillEditor } from "@vueup/vue-quill";
+import "@vueup/vue-quill/dist/vue-quill.snow.css";
+import { watch, nextTick, ref } from "vue";
 
-let form = ref({
-    name: 'Река: Чусовая',
-    dates: '05 - 07 августа',
-    time: '3 дня',
-    tripRoute: 'деревня Усть - Койва - город Чусовой.',
-    distance: 'от Перми - 360 км, сплав - 42 км',
-    cost: '6950 р / взросл, 6700 р / дети и пенсионеры(входит в стоимость: из Глазова все переезды и тур по программе) Стоимость из г.Пермь - 5450 р / взросл, 5200 р / дети и пенсионеры.',
-    offer: 'Пожалуй, сплав - это один из самых прекрасных способов отдохнуть на природе, никуда не торопясь, насладиться живописными видами, послушать шум ветра, гуляющего по лесу, и плеск воды, бьющейся о корму Вашего судна.Проплывая по речной глади на катамаранах, Вы можете по достоинству оценить и полюбоваться на огромные камни - останцы, растущие в высь вдоль Чусовой.',
-    description: `ПРОГРАММА ТУРА
+const quill = ref(null);
+let newContent = "";
+let description = ref(`ПРОГРАММА ТУРА
                     1. Камень "Дыроватый", карстовая арка "Царские ворота" и грот "Влюбленных"
                     2. Красный камень.
                     3. Развалины бывшей зоны политических заключенных "Створ" и камень "Печка"
@@ -42,56 +38,128 @@ let form = ref({
                     15:00-17:00 Сдача инвентаря, погрузка снаряжения в автобус. Обед.
                     17:00 Отправление группы домой
                     01:00 (след. день) Ориентировочное время прибытия группы в Глазов
-    `
-})
+    `);
+let form = ref({
+  name: "Река: Чусовая",
+  dates: "05 - 07 августа",
+  time: "3 дня",
+  tripRoute: "деревня Усть - Койва - город Чусовой.",
+  distance: "от Перми - 360 км, сплав - 42 км",
+  cost: "6950 р / взросл, 6700 р / дети и пенсионеры(входит в стоимость: из Глазова все переезды и тур по программе) Стоимость из г.Пермь - 5450 р / взросл, 5200 р / дети и пенсионеры.",
+  offer:
+    "Пожалуй, сплав - это один из самых прекрасных способов отдохнуть на природе, никуда не торопясь, насладиться живописными видами, послушать шум ветра, гуляющего по лесу, и плеск воды, бьющейся о корму Вашего судна.Проплывая по речной глади на катамаранах, Вы можете по достоинству оценить и полюбоваться на огромные камни - останцы, растущие в высь вдоль Чусовой.",
+  description: description.value,
+});
+
+watch(description, (newValue) => {
+  newContent = newValue;
+
+  if (newContent === newValue) return;
+
+  quill.value.setHTML(newValue);
+
+  // Workaround https://github.com/vueup/vue-quill/issues/52
+  // move cursor to end
+  nextTick(() => {
+    let q = quill.value.getQuill();
+    q.setSelection(newValue.length, 0, "api");
+    q.focus();
+  });
+});
 
 function submit() {
-    alert('создать')
+  alert("создать");
+  console.log(form.value.description);
 }
 </script>
 <template>
-    <a-row type="flex" justify="center">
-        <a-col :xs="22" :lg="12">
-            <h1>Создать тур</h1>
-            <form action="POST" @submit.prevent="submit">
-                <a-row :gutter="[16, 16]">
-                    <a-col :span="12">
-                        Название
-                        <a-input placeholder="Название тура" size="large" v-model:value="form.name"></a-input>
-                    </a-col>
-                    <a-col :span="12">
-                        Даты
-                        <a-input placeholder="Даты" size="large" v-model:value="form.dates"></a-input>
-                    </a-col>
-                    <a-col :span="12">
-                        Продолжительность
-                        <a-input placeholder="Продолжительность" size="large" v-model:value="form.time"></a-input>
-                    </a-col>
-                    <a-col :span="12">
-                        Маршрут
-                        <a-input placeholder="Даты" size="large" v-model:value="form.tripRoute"></a-input>
-                    </a-col>
-                    <a-col :span="24">
-                        Цены
-                        <a-textarea placeholder="Даты" size="large" v-model:value="form.cost" :autoSize="true">
-                        </a-textarea>
-                    </a-col>
-                    <a-col :span="24">
-                        Реклама
-                        <a-textarea placeholder="Даты" size="large" v-model:value="form.offer" :autoSize="true">
-                        </a-textarea>
-                    </a-col>
-                    <a-col :span="24">
-                        Описание программы
-                        <a-textarea placeholder="Даты" size="large" v-model:value="form.description" :autoSize="true">
-                        </a-textarea>
-                    </a-col>
-                    <a-col :span="24" class="d-flex justify-center">
-                        <a-button class="mt-16" type="primary" shape="round" size="large" html-type="submit">Отправить
-                        </a-button>
-                    </a-col>
-                </a-row>
-            </form>
-        </a-col>
-    </a-row>
+  <a-row type="flex" justify="center">
+    <a-col :xs="22" :lg="12">
+      <h1>Создать тур</h1>
+      <form action="POST" @submit.prevent="submit">
+        <a-row :gutter="[16, 16]">
+          <a-col :span="12">
+            Название
+            <a-input
+              placeholder="Название тура"
+              size="large"
+              v-model:value="form.name"
+            ></a-input>
+          </a-col>
+          <a-col :span="12">
+            Даты
+            <a-input
+              placeholder="Даты"
+              size="large"
+              v-model:value="form.dates"
+            ></a-input>
+          </a-col>
+          <a-col :span="12">
+            Продолжительность
+            <a-input
+              placeholder="Продолжительность"
+              size="large"
+              v-model:value="form.time"
+            ></a-input>
+          </a-col>
+          <a-col :span="12">
+            Маршрут
+            <a-input
+              placeholder="Даты"
+              size="large"
+              v-model:value="form.tripRoute"
+            ></a-input>
+          </a-col>
+          <a-col :span="24">
+            Цены
+            <a-textarea
+              placeholder="Даты"
+              size="large"
+              v-model:value="form.cost"
+              :autoSize="true"
+            >
+            </a-textarea>
+          </a-col>
+          <a-col :span="24">
+            Реклама
+            <a-textarea
+              placeholder="Даты"
+              size="large"
+              v-model:value="form.offer"
+              :autoSize="true"
+            >
+            </a-textarea>
+          </a-col>
+          <a-col :span="24" style="display: flex; flex-direction: column">
+            Описание программы
+            <QuillEditor
+              theme="snow"
+              style="min-height: 200px"
+              ref="quill"
+              v-model:content="form.description"
+              contentType="html"
+              :toolbar="[
+                [{ header: [1, 2] }],
+                ['bold', 'italic', 'underline'],
+                [{ color: ['#000000', '#ff6600', '#3daff5'] }],
+                [{ align: [] }],
+              ]"
+            />
+            <!-- <a-textarea placeholder="Даты" size="large" v-model:value="form.description" :autoSize="true">
+                        </a-textarea> -->
+          </a-col>
+          <a-col :span="24">
+            <a-button
+              class="mt-16"
+              type="primary"
+              shape="round"
+              size="large"
+              html-type="submit"
+              >Отправить
+            </a-button>
+          </a-col>
+        </a-row>
+      </form>
+    </a-col>
+  </a-row>
 </template>
