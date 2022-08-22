@@ -95,6 +95,7 @@ onMounted(() => {});
               class="todo-element"
               v-html="el.question"
               style="z-index: 1"
+               @click="routeTo(el.route)"
             ></div>
 
             <a-button
@@ -115,6 +116,7 @@ onMounted(() => {});
               class="answer"
               ref="answers"
               v-html="el.answer"
+               @click="routeTo(el.route)"
             ></div>
           </div>
         </a-col>
@@ -139,6 +141,7 @@ onMounted(() => {});
 
 .answer {
   opacity: 0;
+  clip-path: circle(50%);
   transform: translateY(100px);
   color: white;
   text-transform: uppercase;
@@ -148,17 +151,17 @@ onMounted(() => {});
   line-height: 50px;
   height: 400px;
   margin: 20px;
-  border-radius: 25%;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgb(100, 188, 212);
-  box-shadow: 0 0 25px 25px rgb(100, 188, 212);
+  background: #27728b;
+  box-shadow: 0 0 25px 25px #27728b;;
   transition: all 1s ease;
 }
 .todo-answer {
   .animate-answer {
     opacity: 1;
+    clip-path: circle(50%);
     transform: translateY(0);
     transition: all 1s ease;
   }

@@ -1,22 +1,23 @@
 <script setup>
-import { useRouter } from 'vue-router'
+import { useRouter } from "vue-router";
 
 let router = useRouter();
 let props = defineProps({
-    tour: Object,
-    isPreview: Boolean
-})
-
+  tour: Object,
+  isPreview: Boolean,
+});
 </script>
 <template>
-    <!-- :style="props.fixedWidth ? { 'width': '170px' } : {}" -->
-    <div class="custom-card">
-        <!-- <div class="custom-card-avatar">
-      <a-avatar src="https://joeschmoe.io/api/v1/random" />
-      <div class="custom-card-avatar-name">
-        Светлана
-      </div>
-    </div> -->
+  <a-card hoverable class="pa-0">
+    <div style="width: 100%; aspect-ratio: 1.8/1">
+      <img :src="tour.image" style="width: 100%; height:auto"/>
+    </div>
+
+    <span class="title">{{ tour.name }}</span>
+  </a-card>
+
+  <!-- <div class="custom-card">
+     
         <div class="cover">
             <img alt="" :src="props.tour.image" style="width: 100%" />
         </div>
@@ -60,16 +61,16 @@ let props = defineProps({
                     </span>
                 </div>
 
-                <div class="people">
+                <div >
                     Количество человек:
                     <a-progress :percent="(20 / 27) * 100" :format="percent => `20 ч.`">
                     </a-progress>
                 </div>
-                <div class="prizes">
+                <div >
                     <a-button type="primary" shape="round" class="prize mb-8 mr-8">25 - 33 чел. + Сувенир</a-button>
                     <a-button type="primary" shape="round" class="prize mb-8 mr-8">34 - 34 чел. + Ужин</a-button>
                 </div>
-                <div class="price">
+                <div >
                     2000 руб./взр.
                 </div>
                 <div class="actions mt-8">
@@ -79,67 +80,22 @@ let props = defineProps({
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 </template>
 <style lang="scss" scoped>
+
 .custom-card {
-    margin: 8px;
-    overflow: hidden;
-    background: #FFFFFF;
-    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
-    border-radius: 10px;
+  margin: 8px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
 
-    .cover {
-        object-fit: contain;
-        display: flex;
-        justify-content: center;
-        background-color: #C4C4C4;
-    }
-
-    .content {
-        margin: 8px;
-
-        // .title {
-        // }
-
-        // .description {
-        // }
-
-        .time {
-            margin-bottom: 8px;
-        }
-
-        .people {
-            margin: 8px;
-        }
-
-        .price {
-            margin: 8px;
-        }
-
-        .prizes {
-
-            // margin: 8px;
-            .prize {
-                font-size: 12px;
-                color: #3daff5;
-                background-color: white;
-            }
-        }
-
-        /*.actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        }*/
-        /*.avatar {
-            font-weight: bold;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-
-            margin-bottom: 8px;
-        }*/
-    }
+  .cover {
+    object-fit: contain;
+    display: flex;
+    justify-content: center;
+    background-color: #c4c4c4;
+  }
 }
 </style>

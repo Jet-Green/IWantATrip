@@ -1,10 +1,11 @@
 <script setup>
 import { reactive } from "vue";
 
-import BackButton from '../components/BackButton.vue'
+import BackButton from "../components/BackButton.vue";
 
 let tours = reactive({
-  image: "https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg",
+  image:
+    "https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg",
   title: "Легенды Донды Батыра",
   description: " В такое холодное время года особенно хочется чего-то яркого ",
   duration: "2 дня/1 ночь",
@@ -14,53 +15,60 @@ let tours = reactive({
 });
 </script>
 <template>
-  <BackButton />
-  <a-row display="flex" justify="center" class="mb-16">
-    <a-col :xs="22" :lg="16">
-      <a-row display="flex" justify="space-around">
-        <a-col :lg="11" :xs="24">
-          <div class="cover mb-16">
-            <img :src="tours.image" alt="" srcset="" />
-          </div>
-
-          <div class="title mt-16">
-            <h1>{{ tours.title }}</h1>
-          </div>
-        </a-col>
-
-        <a-col class="content ma-8" :lg="11" :xs="24">
-          <div class="people ma-8">
-            Количество человек:
-            <a-progress :percent="(tours.people / 27) * 100" :format="(percent) => `20 ч.`">
-            </a-progress>
-          </div>
-
-          <div class="prizes">
-            <a-button type="primary" shape="round" class="prize mb-8 mr-8">25 - 33 чел. + Сувенир</a-button>
-            <a-button type="primary" shape="round" class="prize mb-8 mr-8">34 - 34 чел. + Ужин</a-button>
-          </div>
-
-          <div>
-            <div class="time mb-8">
-              <div>Продолжительность: {{ tours.duration }}</div>
-              <div>Ближайший выезд: {{ tours.when }}</div>
+  <div>
+    <BackButton />
+    <a-row display="flex" justify="center" class="mb-16">
+      <a-col :xs="22" :lg="16">
+        <a-row display="flex" justify="space-around">
+          <a-col :lg="11" :xs="24">
+            <div class="cover mb-16">
+              <img :src="tours.image" alt="" srcset="" />
             </div>
 
-            <div class="price">Цена: {{ tours.price }}</div>
-          </div>
-          <div class="actions">
-            <a-button  type="text" class="mt-8 lets_go_btn">
-              Купить
-            </a-button>
-          </div>
-        </a-col>
-      </a-row>
+            <div class="title mt-16">
+              <h1>{{ tours.title }}</h1>
+            </div>
+          </a-col>
 
-      <div class="description ml-16">
-        <h3>{{ tours.description }}</h3>
-      </div>
-    </a-col>
-  </a-row>
+          <a-col class="content ma-8" :lg="11" :xs="24">
+            <div class="people ma-8">
+              Количество человек:
+              <a-progress
+                :percent="(tours.people / 27) * 100"
+                :format="(percent) => `20 ч.`"
+              >
+              </a-progress>
+            </div>
+
+            <div class="prizes">
+              <a-button type="primary" shape="round" class="prize mb-8 mr-8"
+                >25 - 33 чел. + Сувенир</a-button
+              >
+              <a-button type="primary" shape="round" class="prize mb-8 mr-8"
+                >34 - 34 чел. + Ужин</a-button
+              >
+            </div>
+
+            <div>
+              <div class="time mb-8">
+                <div>Продолжительность: {{ tours.duration }}</div>
+                <div>Ближайший выезд: {{ tours.when }}</div>
+              </div>
+
+              <div class="price">Цена: {{ tours.price }}</div>
+            </div>
+            <div class="actions">
+              <a-button type="text" class="mt-8 lets_go_btn"> Купить </a-button>
+            </div>
+          </a-col>
+        </a-row>
+
+        <div class="description ml-16">
+          <h3>{{ tours.description }}</h3>
+        </div>
+      </a-col>
+    </a-row>
+  </div>
 </template>
 <style lang="scss" scoped>
 .custom-card {
