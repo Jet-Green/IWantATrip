@@ -1,10 +1,14 @@
 <script setup>
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
-import { watch, nextTick, ref } from "vue";
+import { watch, nextTick, ref, reactive } from "vue";
 
 const quill = ref(null);
 let newContent = "";
+const formRef = ref(null);
+const dynamicValidateForm = reactive({
+  cost: [],
+});
 let description = ref(`ПРОГРАММА ТУРА
                     1. Камень "Дыроватый", карстовая арка "Царские ворота" и грот "Влюбленных"
                     2. Красный камень.
@@ -45,11 +49,27 @@ let form = ref({
   time: "3 дня",
   tripRoute: "деревня Усть - Койва - город Чусовой.",
   distance: "от Перми - 360 км, сплав - 42 км",
-  cost: "6950 р / взросл, 6700 р / дети и пенсионеры(входит в стоимость: из Глазова все переезды и тур по программе) Стоимость из г.Пермь - 5450 р / взросл, 5200 р / дети и пенсионеры.",
+  cost: dynamicValidateForm.cost,
   offer:
     "Пожалуй, сплав - это один из самых прекрасных способов отдохнуть на природе, никуда не торопясь, насладиться живописными видами, послушать шум ветра, гуляющего по лесу, и плеск воды, бьющейся о корму Вашего судна.Проплывая по речной глади на катамаранах, Вы можете по достоинству оценить и полюбоваться на огромные камни - останцы, растущие в высь вдоль Чусовой.",
   description: description.value,
 });
+
+const removeCost = (item) => {
+  let index = dynamicValidateForm.cost.indexOf(item);
+
+  if (index !== -1) {
+    dynamicValidateForm.cost.splice(index, 1);
+  }
+};
+
+const addCost = () => {
+  dynamicValidateForm.cost.push({
+    first: "",
+    last: "",
+    id: Date.now(),
+  });
+};
 
 watch(description, (newValue) => {
   newContent = newValue;
@@ -112,13 +132,51 @@ function submit() {
           </a-col>
           <a-col :span="24">
             Цены
-            <a-textarea
+            <a-form ref="formRef" :model="dynamicValidateForm">
+              <a-space
+                v-for="(item, index) in dynamicValidateForm.cost"
+                :key="item.id"
+                style="display: flex; margin-bottom: 8px"
+                align="baseline"
+              >
+                <a-form-item
+                  :name="['cost', index, 'first']"
+                  :rules="{
+                    required: true,
+                    message: 'Для кого?',
+                  }"
+                >
+                  <a-input v-model:value="item.first" placeholder="Для кого" />
+                </a-form-item>
+                <a-form-item
+                  :name="['cost', index, 'last']"
+                  :rules="{
+                    required: true,
+                    message: '',
+                  }"
+                >
+                  <a-input v-model:value="item.last" placeholder="Цена" />
+                </a-form-item>
+                <span
+                  class="mdi mdi-24px mdi-minus"
+                  style="cursor: pointer"
+                  @click="removeCost(item)"
+                ></span>
+              </a-space>
+              <a-form-item>
+                <a-button type="dashed" block @click="addCost">
+                  <span class="mdi mdi-12px mdi-plus"></span>
+                  Добавить
+                </a-button>
+              </a-form-item>
+            </a-form>
+            <!-- <a-textarea
               placeholder="Даты"
               size="large"
               v-model:value="form.cost"
               :autoSize="true"
-            >
-            </a-textarea>
+            > 
+            </a-textarea>-->
           </a-col>
           <a-col :span="24">
             Реклама
