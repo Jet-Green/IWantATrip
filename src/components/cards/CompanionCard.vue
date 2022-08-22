@@ -18,7 +18,4 @@
   justify-content: center;
   font-size: 64px;
 }
-.card{
-  
-}
 </style>
