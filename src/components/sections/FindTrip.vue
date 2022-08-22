@@ -3,19 +3,15 @@ import { ref, reactive, computed, onMounted } from "vue";
 import { useAuth } from '../../stores/auth.js'
 import { useRouter } from "vue-router";
 import { Carousel, Navigation, Slide } from "vue3-carousel";
+import { useData } from "../../stores/data";
 import "vue3-carousel/dist/carousel.css";
 
 import TripCard from "../cards/TripCard.vue";
 
+const useDataStore = useData()
 const auth = useAuth()
 
-// внедрение карточек сделано криво
-// tours for working cards
-let tours = reactive({
-  image:
-    "https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg",
-  eventName: "БИ-2",
-});
+let trips = useDataStore.getTrips
 
 const poster = reactive({
   cards: [
@@ -69,9 +65,9 @@ onMounted(() => {
           <div ref="carousel_container"></div>
           <Carousel :itemsToShow="postsCount" :autoplay="25000" snapAlign="start" :wrapAround="true"
             class="unselectable">
-            <Slide v-for="(cardsGroup, index) in cards" :key="index" class="unselectable">
+            <Slide v-for="(tours, index) in trips" :key="index" class="unselectable">
               <div class="carousel__item" style="display: flex; flex-wrap: wrap">
-                <TripCard :tour="tours" :isPreview="true" />
+                <TripCard :tour="tours"/>
               </div>
             </Slide>
             <template #addons>

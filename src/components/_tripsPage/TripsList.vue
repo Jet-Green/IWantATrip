@@ -1,59 +1,19 @@
 <script setup>
 import { reactive } from "vue";
+import { useData } from "../../stores/data";
 import TripCard from "../cards/TripCard.vue";
 
-let tours = reactive([
-  {
-    image: "https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg",
-    name: "БИ-2",
-  },
+const useDataStore = useData()
+let trips = useDataStore.getTrips
 
-  {
-    image: "https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg",
-    name: "БИ-2",
-  },
-
-  {
-    image: "https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg",
-    name: "БИ-2",
-  },
-  {
-    image: "https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg",
-    name: "БИ-2",
-  },
-
-  {
-    image: "https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg",
-    name: "БИ-2",
-  },
-
-  {
-    image: "https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg",
-    name: "БИ-2",
-  },
-  {
-    image: "https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg",
-    name: "БИ-2",
-  },
-
-  {
-    image: "https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg",
-    name: "БИ-2",
-  },
-
-  {
-    image: "https://страна2-0.рф/wp-content/uploads/2020/09/W50HIZer2wQ-1024x682.jpg",
-    name: "БИ-2",
-  },
-]);
 </script>
 
 <template>
   <a-row display="flex" justify="center">
     <a-col :xs="22" :lg="16">
       <a-row type="flex" justify="space-between">
-        <a-col v-for="tour, index in tours" :key="index" :xs="24" :sm="11" :md="8" :xl="6">
-          <TripCard :tour="tour" :isPreview="false" class="ma-8" />
+        <a-col v-for="tour in trips" :key="index" :xs="24" :sm="11" :md="8" :xl="6">
+          <TripCard :tour="tour" class="ma-8" />
         </a-col>
       </a-row>
     </a-col>

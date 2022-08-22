@@ -9,7 +9,7 @@ export const useData = defineStore('data', {
     }),
     getters: {
         getTrips(state) {
-            return state.userStatus
+            return state.trips
         },
         getWhereToGo(state) {
             return state.whereToGo

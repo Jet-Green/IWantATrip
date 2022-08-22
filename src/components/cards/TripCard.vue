@@ -4,16 +4,15 @@ import { useRouter } from "vue-router";
 let router = useRouter();
 let props = defineProps({
   tour: Object,
-  isPreview: Boolean,
 });
 </script>
 <template>
   <a-card hoverable class="pa-0">
-    <div style="width: 100%; aspect-ratio: 1.8/1">
-      <img :src="tour.image" style="width: 100%; height:auto"/>
+    <div style="height: 200px;  overflow: hidden; display: flex; justify-content: center; align-items: center;">
+      <img :src="props.tour.image" style="width: 100%;"/>
     </div>
 
-    <span class="title">{{ tour.name }}</span>
+    <span class="title">{{ props.tour.name }}</span>
   </a-card>
 
   <!-- <div class="custom-card">

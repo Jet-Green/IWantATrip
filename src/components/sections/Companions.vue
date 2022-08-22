@@ -50,6 +50,9 @@ let companions = reactive([
     year: 38,
   },
 ]);
+const toCompanionsPage = () =>{
+  router.push({name: "CompanionsPage"})
+}
 </script>
 <template>
   <a-row display="flex" justify="center">
@@ -57,7 +60,7 @@ let companions = reactive([
       <h2 class="mt-16">Найди попутчиков</h2>
 
       <div class="scroll">
-        <div v-for="companion,i in companions"  :key="i"  style="margin: 15px 25px 15px 25px;">
+        <div v-for="companion,i in companions"  :key="i"  class="ma-16">
         <div class="d-flex direction-column align-center" style="width: 50px">
           <UserOutlined />
           <span class="mdi mdi-36px mdi-account-outline"></span>
@@ -86,9 +89,6 @@ height:70px;
 .scroll{
   overflow-x: scroll;
   display: flex;
-}
-::-webkit-scrollbar{
-  width: 0;
 }
 </style>
 
