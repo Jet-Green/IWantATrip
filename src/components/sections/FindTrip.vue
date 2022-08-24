@@ -21,6 +21,7 @@ const poster = reactive({
 });
 let carouselWidth = ref(0);
 const carousel_container = ref(null);
+let isPreview = true
 
 const cards = computed(() => {
   let postersGroup = [];
@@ -65,9 +66,9 @@ onMounted(() => {
           <div ref="carousel_container"></div>
           <Carousel :itemsToShow="postsCount" :autoplay="25000" snapAlign="start" :wrapAround="true"
             class="unselectable">
-            <Slide v-for="(tours, index) in trips" :key="index" class="unselectable">
-              <div class="carousel__item" style="display: flex; flex-wrap: wrap">
-                <TripCard :tour="tours"/>
+            <Slide v-for="tours in trips" class="unselectable">
+              <div class="carousel__item" style="width: 100%">
+                <TripCard :tour="tours" :isPreview="isPreview"/>
               </div>
             </Slide>
             <template #addons>
