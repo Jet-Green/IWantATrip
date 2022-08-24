@@ -89,7 +89,7 @@ watch(description, (newValue) => {
 
 function submit() {
   alert("создать");
-  console.log(form.value.description);
+  console.log(form.value);
 }
 </script>
 <template>
@@ -100,68 +100,38 @@ function submit() {
         <a-row :gutter="[16, 16]">
           <a-col :span="12">
             Название
-            <a-input
-              placeholder="Название тура"
-              size="large"
-              v-model:value="form.name"
-            ></a-input>
+            <a-input placeholder="Название тура" size="large" v-model:value="form.name"></a-input>
           </a-col>
           <a-col :span="12">
             Даты
-            <a-input
-              placeholder="Даты"
-              size="large"
-              v-model:value="form.dates"
-            ></a-input>
+            <a-input placeholder="Даты" size="large" v-model:value="form.dates"></a-input>
           </a-col>
           <a-col :span="12">
             Продолжительность
-            <a-input
-              placeholder="Продолжительность"
-              size="large"
-              v-model:value="form.time"
-            ></a-input>
+            <a-input placeholder="Продолжительность" size="large" v-model:value="form.time"></a-input>
           </a-col>
           <a-col :span="12">
             Маршрут
-            <a-input
-              placeholder="Даты"
-              size="large"
-              v-model:value="form.tripRoute"
-            ></a-input>
+            <a-input placeholder="Даты" size="large" v-model:value="form.tripRoute"></a-input>
           </a-col>
           <a-col :span="24">
             Цены
             <a-form ref="formRef" :model="dynamicValidateForm">
-              <a-space
-                v-for="(item, index) in dynamicValidateForm.cost"
-                :key="item.id"
-                style="display: flex; margin-bottom: 8px"
-                align="baseline"
-              >
-                <a-form-item
-                  :name="['cost', index, 'first']"
-                  :rules="{
-                    required: true,
-                    message: 'Для кого?',
-                  }"
-                >
+              <a-space v-for="(item, index) in dynamicValidateForm.cost" :key="item.id"
+                style="display: flex; margin-bottom: 8px" align="baseline">
+                <a-form-item :name="['cost', index, 'first']" :rules="{
+                  required: true,
+                  message: 'Для кого?',
+                }">
                   <a-input v-model:value="item.first" placeholder="Для кого" />
                 </a-form-item>
-                <a-form-item
-                  :name="['cost', index, 'last']"
-                  :rules="{
-                    required: true,
-                    message: '',
-                  }"
-                >
+                <a-form-item :name="['cost', index, 'last']" :rules="{
+                  required: true,
+                  message: '',
+                }">
                   <a-input v-model:value="item.last" placeholder="Цена" />
                 </a-form-item>
-                <span
-                  class="mdi mdi-24px mdi-minus"
-                  style="cursor: pointer"
-                  @click="removeCost(item)"
-                ></span>
+                <span class="mdi mdi-24px mdi-minus" style="cursor: pointer" @click="removeCost(item)"></span>
               </a-space>
               <a-form-item>
                 <a-button type="dashed" block @click="addCost">
@@ -180,40 +150,24 @@ function submit() {
           </a-col>
           <a-col :span="24">
             Реклама
-            <a-textarea
-              placeholder="Даты"
-              size="large"
-              v-model:value="form.offer"
-              :autoSize="true"
-            >
+            <a-textarea placeholder="Даты" size="large" v-model:value="form.offer" :autoSize="true">
             </a-textarea>
           </a-col>
           <a-col :span="24" style="display: flex; flex-direction: column">
             Описание программы
-            <QuillEditor
-              theme="snow"
-              style="height: 320px"
-              ref="quill"
-              v-model:content="form.description"
-              contentType="html"
-              :toolbar="[
+            <QuillEditor theme="snow" style="height: 320px" ref="quill" v-model:content="form.description"
+              contentType="html" :toolbar="[
                 [{ header: [1, 2] }],
                 ['bold', 'italic', 'underline'],
                 [{ list: 'ordered' }, { list: 'bullet' }],
                 [{ color: ['#000000', '#ff6600', '#3daff5'] }],
                 [{ align: [] }],
-              ]"
-            />
+              ]" />
             <!-- <a-textarea placeholder="Даты" size="large" v-model:value="form.description" :autoSize="true">
                         </a-textarea> -->
           </a-col>
           <a-col :span="24" class="d-flex justify-center">
-            <a-button
-              class="mt-16"
-              type="primary"
-              size="large"
-              html-type="submit"
-              >Отправить
+            <a-button class="mt-16" type="primary" size="large" html-type="submit">Отправить
             </a-button>
           </a-col>
         </a-row>
