@@ -60,33 +60,28 @@ const toCompanionsPage = () =>{
       <h2 class="mt-16">Найди попутчиков</h2>
 
       <div class="scroll">
-        <div v-for="companion,i in companions"  :key="i"  class="ma-16">
-        <div class="d-flex direction-column align-center" style="width: 50px">
-          <UserOutlined />
-          <span class="mdi mdi-36px mdi-account-outline"></span>
-          <span >{{ companion.name }}</span>
-          <span >{{ companion.year }} лет</span>
-        </div>
-         
+        <div v-for="companion, i in companions" :key="i" style="margin: 15px 25px 15px 25px;">
+          <div class="d-flex direction-column align-center" style="width: 50px">
+            <span class="mdi mdi-24px mdi-account-outline"></span>
+            <span>{{ companion.name }}</span>
+            <span>{{ companion.year }} лет</span>
+          </div>
+
         </div>
       </div>
 
-      <a-button
-        type="primary"
-        size="large"
-        class="ma-16 lets_go_btn"
-        @click="toCompanionsPage"
-      >
+      <a-button type="primary" size="large" class="ma-16 lets_go_btn" @click="router.push('/companions')">
         найти
       </a-button>
     </a-col>
   </a-row>
 </template>
 <style lang="scss" scoped>
-.person_icon{
-height:70px;
+.person_icon {
+  height: 70px;
 }
-.scroll{
+
+.scroll {
   overflow-x: scroll;
   display: flex;
 }

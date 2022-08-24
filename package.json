@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vueup/vue-quill": "^1.0.0-beta.9",
     "@vueuse/core": "^8.9.4",
     "ant-design-vue": "^3.2.9",
     "pinia": "^2.0.18",

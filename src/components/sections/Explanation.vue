@@ -4,10 +4,8 @@ import StartImage from "../_explanation/StartSvgImg.vue";
 
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
-
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const sm = breakpoints.smaller("md");
-
 </script>
 <template>
   <a-row>
@@ -15,8 +13,10 @@ const sm = breakpoints.smaller("md");
       <StartImage style="width: 100%"></StartImage>
 
       <div class="lets_go_btn_container">
-        <router-link to="/create">
-          <a-button type="primary" class="lets_go_btn" size="large"> Поехали! </a-button>
+        <router-link to="/create-with-help">
+          <a-button type="primary" class="lets_go_btn" size="large">
+            Поехали!
+          </a-button>
         </router-link>
       </div>
     </a-col>
