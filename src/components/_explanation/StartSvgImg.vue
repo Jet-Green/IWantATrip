@@ -74,44 +74,41 @@
             />
           </g>
         </g>
-        <g id="bird1">
-          <g matrix="(1 0 0 1 100 0)">
-            <path
-              d="m238.3 133.7s-1.146-2.017-2.121-2.525c-1.198-0.6246-1.555-0.4377-1.555-0.4377"
-              fill="none"
-              stroke="#000"
-              stroke-width=".3501"
-              id="wingsl"
-            />
-            <path
-              d="m238.37 133.65s1.146-2.017 2.121-2.525c1.198-0.6246 1.555-0.4377 1.555-0.4377"
-              fill="none"
-              stroke="#000"
-              stroke-width=".3501"
-              id="wingsr"
-            />
-            <circle cx="238.3" cy="133.4" r=".4855" stroke-width="0" />
-          </g>
+
+        <g transform="matrix(1,0,0,1,-135.73195,-60.912392)" id="bird1">
+          <path
+            d="m238.3 133.7s-1.146-2.017-2.121-2.525c-1.198-0.6246-1.555-0.4377-1.555-0.4377"
+            fill="none"
+            stroke="#000"
+            stroke-width=".3501"
+            id="wingsl"
+          />
+          <path
+            d="m238.37 133.65s1.146-2.017 2.121-2.525c1.198-0.6246 1.555-0.4377 1.555-0.4377"
+            fill="none"
+            stroke="#000"
+            stroke-width=".3501"
+            id="wingsr"
+          />
+          <circle cx="238.3" cy="133.4" r=".4855" stroke-width="0" />
         </g>
 
-        <g id="bird2">
-          <g matrix="(1 0 0 1 0 0)">
-            <path
-              d="m238.3 133.7s-1.146-2.017-2.121-2.525c-1.198-0.6246-1.555-0.4377-1.555-0.4377"
-              fill="none"
-              stroke="#000"
-              stroke-width=".3501"
-              id="wingsl"
-            />
-            <path
-              d="m238.58 133.3s1.146-2.017 2.121-2.525c1.198-0.6246 1.555-0.4377 1.555-0.4377"
-              fill="none"
-              stroke="#000"
-              stroke-width=".3501"
-              id="wingsr"
-            />
-            <circle cx="238.3" cy="133.4" r=".4855" stroke-width="0" />
-          </g>
+        <g transform="matrix(1,0,0,1,-132.14809,-59.262672)" id="bird2">
+          <path
+            d="m238.3 133.7s-1.146-2.017-2.121-2.525c-1.198-0.6246-1.555-0.4377-1.555-0.4377"
+            fill="none"
+            stroke="#000"
+            stroke-width=".3501"
+            id="wingsl"
+          />
+          <path
+            d="m238.58 133.3s1.146-2.017 2.121-2.525c1.198-0.6246 1.555-0.4377 1.555-0.4377"
+            fill="none"
+            stroke="#000"
+            stroke-width=".3501"
+            id="wingsr"
+          />
+          <circle cx="238.3" cy="133.4" r=".4855" stroke-width="0" />
         </g>
 
         <g transform="translate(-8.739,2.575)">
@@ -151,25 +148,25 @@
             />
           </g>
         </g>
-        <g id="bird3">
-          <g transform="matrix(1 0 0 1 0 0)">
-            <path
-              d="m238.3 133.7s-1.146-2.017-2.121-2.525c-1.198-0.6246-1.555-0.4377-1.555-0.4377"
-              fill="none"
-              stroke="#000"
-              stroke-width=".3501"
-              id="wingsl"
-            />
-            <path
-              d="m238.32 133.78s1.146-2.017 2.121-2.525c1.198-0.6246 1.555-0.4377 1.555-0.4377"
-              fill="none"
-              stroke="#000"
-              stroke-width=".3501"
-              id="wingsr"
-            />
-            <circle cx="238.3" cy="133.4" r=".4855" stroke-width="0" />
-          </g>
+
+        <g transform="matrix(1,0,0,1,-127.41938,-59.778023)" id="bird3">
+          <path
+            d="m238.3 133.7s-1.146-2.017-2.121-2.525c-1.198-0.6246-1.555-0.4377-1.555-0.4377"
+            fill="none"
+            stroke="#000"
+            stroke-width=".3501"
+            id="wingsl"
+          />
+          <path
+            d="m238.32 133.78s1.146-2.017 2.121-2.525c1.198-0.6246 1.555-0.4377 1.555-0.4377"
+            fill="none"
+            stroke="#000"
+            stroke-width=".3501"
+            id="wingsr"
+          />
+          <circle cx="238.3" cy="133.4" r=".4855" stroke-width="0" />
         </g>
+
         <g transform="matrix(.661 0 0 .661 259.7 -11.42)">
           <ellipse
             cx="-51.15"
@@ -376,7 +373,7 @@
   animation: car_move 40s ease-in-out infinite;
 }
 #ship {
-  animation: ship_move 5s linear infinite;
+  animation: ship_move 60s linear infinite;
 }
 #sun {
   animation: sun_move 180s ease-in-out infinite;
@@ -384,17 +381,14 @@
 #sky {
   animation: skycycle 180s ease-in-out infinite;
 }
-/* #bird1 {
-  animation: bird1_fly 5s linear infinite;
+#bird1 {
+  animation: bird1_fly 35s linear infinite;
 }
-#bird {
-  animation: bird2_fly 5s linear infinite;
+#bird2 {
+  animation: bird2_fly 35s linear infinite;
 }
-#bird {
-  animation: bird3_fly 5s linear infinite;
-} */
 #bird3 {
-  animation: bird3_fly 5s ease-in-out infinite;
+  animation: bird3_fly 35s linear infinite;
 }
 #wingsl {
   animation: wingsl 1s ease-in-out infinite;
@@ -408,7 +402,7 @@
   }
   10% {
     opacity: 1;
-    transform: translate(-100px, -85px);
+    transform: translate(-90px, -85px);
   }
   90% {
     opacity: 1;
@@ -497,18 +491,30 @@
     fill: #89c2e0;
   }
 }
-/* @keyframes bird3_fly {
-  0% {
-    transform-box: fill-box;
-    transform-origin: 50% 50%;
-    transform: matrix(1, 0, 0, 1, -100, -100);
+@keyframes bird1_fly {
+  90% {
+    transform: matrix(0.2299, 0, 0, 0.4176, 104.1621, -50.0047);
   }
   100% {
-    transform-box: fill-box;
-    transform-origin: 50% 50%;
-    transform: matrix(0.25, 0, 0, 0.25, 0, -100);
+    opacity: 0;
   }
-} */
+}
+@keyframes bird2_fly {
+  90% {
+    transform: matrix(0.1389, 0, 0, 0.3526, 128.1501, -42.6859);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes bird3_fly {
+  90% {
+    transform: matrix(0.1887, 0, 0, 0.322, 117.7027, -36.7158);
+  }
+  100% {
+    opacity: 0;
+  }
+}
 @keyframes wingsl {
   0% {
     transform-box: fill-box;
