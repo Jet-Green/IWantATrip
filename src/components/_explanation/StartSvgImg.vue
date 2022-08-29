@@ -376,19 +376,19 @@
   animation: ship_move 60s linear infinite;
 }
 #sun {
-  animation: sun_move 180s ease-in-out infinite;
+  animation: sun_move 180s ease-in infinite;
 }
 #sky {
-  animation: skycycle 180s ease-in-out infinite;
+  animation: skycycle 180s ease-in infinite;
 }
 #bird1 {
-  animation: bird1_fly 35s linear infinite;
+  animation: bird1_fly 35s ease-in infinite;
 }
 #bird2 {
-  animation: bird2_fly 35s linear infinite;
+  animation: bird2_fly 35s ease-in infinite;
 }
 #bird3 {
-  animation: bird3_fly 35s linear infinite;
+  animation: bird3_fly 35s ease-in infinite;
 }
 #wingsl {
   animation: wingsl 1s ease-in-out infinite;
@@ -492,48 +492,35 @@
   }
 }
 @keyframes bird1_fly {
-  1% {
-    opacity: 0;
-  }
-  90% {
+  
+  100% {
     /* matrix(0.81216715,0,0,0.86058846,-89.818176,-62.878727) */
     /* matrix(0.66365079,0,0,0.83281453,-41.860958,-75.408473) */
     /* matrix(0.27537676,0,0,0.55428873,84.203265,-68.450913) */
     transform: matrix(0.2299, 0, 0, 0.4176, 104.1621, -50.0047);
     opacity: 1;
   }
-  100% {
-    opacity: 0;
-  }
+
+
 }
 @keyframes bird2_fly {
-  1% {
-    opacity: 0;
-  }
-  90% {
+
+  100% {
     /* matrix(0.77968207,0,0,0.76598605,-74.838712,-55.201079) */
     /* matrix(0.58854725,0,0,0.82912592,-15.866248,-78.4481) */
     /* matrix(0.28973317,0,0,0.50785511,84.995909,-64.23096) */
     transform: matrix(0.1389, 0, 0, 0.3526, 128.1501, -42.6859);
     opacity: 1;
   }
-  100% {
-    opacity: 0;
-  }
+
 }
 @keyframes bird3_fly {
-  1% {
-    opacity: 0;
-  }
-  90% {
+  100% {
     /* matrix(0.79837117,0,0,0.93417979,-72.850348,-72.168894) */
     /* matrix(0.56413654,0,0,0.84401969,-3.7778929,-75.016157) */
     /* matrix(0.2939134,0,0,0.46678696,87.067079,-55.425746) */
     transform: matrix(0.1887, 0, 0, 0.322, 117.7027, -36.7158);
     opacity: 1;
-  }
-  100% {
-    opacity: 0;
   }
 }
 @keyframes wingsl {
