@@ -106,6 +106,9 @@ function submit() {
             Даты
             <a-input placeholder="Даты" size="large" v-model:value="form.dates"></a-input>
           </a-col>
+          <a-col :span="24">
+            Даты
+          </a-col>
           <a-col :span="12">
             Продолжительность
             <a-input placeholder="Продолжительность" size="large" v-model:value="form.time"></a-input>
