@@ -45,7 +45,8 @@ let description = ref(`ПРОГРАММА ТУРА
     `);
 let form = ref({
   name: "Река: Чусовая",
-  dates: "05 - 07 августа",
+  start: '',
+  end: '',
   time: "3 дня",
   tripRoute: "деревня Усть - Койва - город Чусовой.",
   distance: "от Перми - 360 км, сплав - 42 км",
@@ -98,16 +99,17 @@ function submit() {
       <h1>Создать тур</h1>
       <form action="POST" @submit.prevent="submit">
         <a-row :gutter="[16, 16]">
-          <a-col :span="12">
+          <a-col :span="24">
             Название
             <a-input placeholder="Название тура" size="large" v-model:value="form.name"></a-input>
           </a-col>
           <a-col :span="12">
-            Даты
-            <a-input placeholder="Даты" size="large" v-model:value="form.dates"></a-input>
+            Дата начала
+            <a-date-picker v-model:value="form.start" style="width: 100%" placeholder="Начало" />
           </a-col>
-          <a-col :span="24">
-            Даты
+          <a-col :span="12">
+            Дата конца
+            <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" />
           </a-col>
           <a-col :span="12">
             Продолжительность
