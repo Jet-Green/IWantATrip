@@ -2,10 +2,12 @@
 import BackButton from "../BackButton.vue";
 </script>
 <template>
-  <BackButton />
-  <a-row type="flex" justify="center">
-    <a-col :xs="22" :lg="16">
-      <p>Сувениры</p>
-    </a-col>
-  </a-row>
+  <div>
+    <BackButton />
+    <a-row type="flex" justify="center">
+      <a-col :xs="22" :lg="16">
+        <p>Сувениры</p>
+      </a-col>
+    </a-row>
+  </div>
 </template>
