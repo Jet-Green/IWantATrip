@@ -38,6 +38,7 @@ function addPreview(blob) {
     <a-form-item label="Описание" name="description" :rules="[{ required: true, message: 'Введите описание!' }]">
       <a-textarea placeholder="Описание" :rows="4" />
     </a-form-item>
+    
 
     <a-form-item label="Телефон" name="phone" :rules="[{ required: true, message: 'Введите телефон!' }]">
       <a-input v-model:value="formState.phone" />
