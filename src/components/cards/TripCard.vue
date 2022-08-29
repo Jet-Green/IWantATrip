@@ -4,15 +4,30 @@ import { useRouter } from "vue-router";
 let router = useRouter();
 let props = defineProps({
   tour: Object,
+  isPreview: Boolean,
 });
 </script>
 <template>
-  <a-card hoverable class="pa-0">
-    <div style="height: 200px;  overflow: hidden; display: flex; justify-content: center; align-items: center;">
-      <img :src="props.tour.image" style="width: 100%;"/>
+  <a-card hoverable class="pa-0" style="width: 100%">
+    <div>
+      <img :src="props.tour.image" style="object-fit: cover; width: 100%; height: 175px;"/>
     </div>
 
-    <span class="title">{{ props.tour.name }}</span>
+    <span v-if="props.isPreview" class="title">
+    {{ props.tour.name }}
+    <br>
+    {{ props.tour.cost }}
+    </span>
+
+    <span v-else class="title">
+    {{ props.tour.name }}
+    <br>
+    Стоимость: {{ props.tour.cost }}
+    <br>
+    Дата: {{ props.tour.dates}}
+    <br>
+    Длительность: {{ props.tour.time }}
+    </span>
   </a-card>
 
   <!-- <div class="custom-card">
@@ -96,5 +111,8 @@ let props = defineProps({
     justify-content: center;
     background-color: #c4c4c4;
   }
+}
+.title{
+    font-size: 16px;
 }
 </style>
