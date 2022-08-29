@@ -8,27 +8,32 @@ let props = defineProps({
 });
 </script>
 <template>
-  <a-card hoverable class="pa-0" style="width: 100%">
-    <div>
-      <img :src="props.tour.image" style="object-fit: cover; width: 100%; height: 175px;"/>
-    </div>
+  <a-badge-ribbon :text="props.tour.cost">
+    <a-card hoverable class="pa-4 ma-8" style="width: 100%">
+      <div>
+        <img
+          :src="props.tour.image"
+          style="object-fit: cover; width: 100%; height: 175px"
+        />
+      </div>
 
-    <span v-if="props.isPreview" class="title">
-    {{ props.tour.name }}
-    <br>
-    {{ props.tour.cost }}
-    </span>
+      <span v-if="props.isPreview" class="title">
+        {{ props.tour.name }}
 
-    <span v-else class="title">
-    {{ props.tour.name }}
-    <br>
-    Стоимость: {{ props.tour.cost }}
-    <br>
-    Дата: {{ props.tour.dates}}
-    <br>
-    Длительность: {{ props.tour.time }}
-    </span>
-  </a-card>
+        <br />
+        {{ props.tour.cost }}
+      </span>
+
+      <span v-else class="title">
+        {{ props.tour.name }}
+
+        <br />
+        Дата: {{ props.tour.dates }}
+        <br />
+        Длительность: {{ props.tour.time }}
+      </span>
+    </a-card>
+  </a-badge-ribbon>
 
   <!-- <div class="custom-card">
      
@@ -97,7 +102,6 @@ let props = defineProps({
     </div> -->
 </template>
 <style lang="scss" scoped>
-
 .custom-card {
   margin: 8px;
   overflow: hidden;
@@ -112,7 +116,7 @@ let props = defineProps({
     background-color: #c4c4c4;
   }
 }
-.title{
-    font-size: 16px;
+.title {
+  font-size: 16px;
 }
 </style>
