@@ -22,7 +22,7 @@ export default [
         // вид тура
         tripType: "",
         // возраст
-        ageFrom: "",
+        fromAge: "",
         // июнь 2022 выбираем из справочника
         period: "",
     },
