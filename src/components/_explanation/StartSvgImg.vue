@@ -54,7 +54,7 @@
             style="mix-blend-mode: normal"
           />
         </g>
-        <g transform="translate(-119.18 -64.828)" id="bird1">
+        <g transform="matrix(1,0,0,1,-119.18,-64.828)" id="bird1">
           <path
             id="wingsl"
             d="m238.3 133.7s-1.146-2.017-2.121-2.525c-1.198-0.6246-1.555-0.4377-1.555-0.4377"
@@ -71,7 +71,7 @@
           />
           <circle cx="238.3" cy="133.4" r=".4855" stroke-width="0" />
         </g>
-        <g transform="translate(-118.95 -64.279)" id="bird2">
+        <g transform="matrix(1,0,0,1,-118.95,-64.279)" id="bird2">
           <path
             d="m238.3 133.7s-1.146-2.017-2.121-2.525c-1.198-0.6246-1.555-0.4377-1.555-0.4377"
             fill="none"
@@ -88,7 +88,7 @@
           />
           <circle cx="238.3" cy="133.4" r=".4855" stroke-width="0" />
         </g>
-        <g transform="matrix(.99 0 0 1 -119.69 -67.398)" id="bird3">
+        <g transform="matrix(1, 0, 0, 1, -119.69, -67.398)" id="bird3">
           <path
             d="m238.3 133.7s-1.146-2.017-2.121-2.525c-1.198-0.6246-1.555-0.4377-1.555-0.4377"
             fill="none"
@@ -481,36 +481,48 @@
     fill: #89c2e0;
   }
 }
-//1,0,0,1,-135.73195,-60.912392
+//1,0,0,1,-119.18,-64.828
 @keyframes bird1_fly {
-  1%{
-    opacity:0
+  0%{
+    opacity: 0;
   }
   2%{
+    transform: matrix(1,0,0,1,-119.18,-64.828);
+    opacity:0
+  }
+  3%{
     opacity: 1;
   }
   100% {
     transform: matrix(0.1, 0, 0, 0.1, 255.73195, -10.912392);
   }
 }
-//1,0,0,1,-132.49555,-60.084934
+//1,0,0,1,-118.95,-64.279
 @keyframes bird2_fly {
-    1%{
+  0%{
+    opacity: 0;
+  }
+    2%{
+    transform: matrix(1,0,0,1,-118.95,-64.279);
     opacity:0
   }
-  2%{
+  3%{
     opacity: 1;
   }
   100% {
     transform: matrix(0.1, 0, 0, 0.1, 261.49555, -12.084934);
   }
 }
-//1,0,0,1,-133.42908,-60.845193
+//1,0,0,1,-119.69,-67.398
 @keyframes bird3_fly {
-    1%{
+  0%{
+    opacity: 0;
+  }
+    2%{
+    transform: matrix(1,0,0,1,-119.69,-67.398);
     opacity:0
   }
-  2%{
+  3%{
     opacity: 1;
   }
   100% {
