@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from "vue";
-import { useAuth } from '../../stores/auth.js'
+import { useAuth } from "../../stores/auth.js";
 import { useRouter } from "vue-router";
 import { Carousel, Navigation, Slide } from "vue3-carousel";
 import { useData } from "../../stores/data";
@@ -8,20 +8,14 @@ import "vue3-carousel/dist/carousel.css";
 
 import TripCard from "../cards/TripCard.vue";
 
-const useDataStore = useData()
-const auth = useAuth()
+const useDataStore = useData();
+const auth = useAuth();
 
-let trips = useDataStore.getTrips
+let trips = useDataStore.getTrips;
 
-const poster = reactive({
-  cards: [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22,
-    23, 24, 25,
-  ],
-});
 let carouselWidth = ref(0);
 const carousel_container = ref(null);
-let isPreview = true
+let isPreview = true;
 
 const cards = computed(() => {
   let postersGroup = [];
@@ -34,11 +28,10 @@ const cards = computed(() => {
 // тут будет сортировка и первым элементом будет тот который нужен
 
 let onResize = () => {
-  carouselWidth.value = carousel_container.value.clientWidth;
+  if (carousel_container.value) {
+    carouselWidth.value = carousel_container.value.clientWidth;
+  }
 };
-
-
-
 
 const postsCount = computed(() => {
   return carouselWidth.value / 270;
@@ -54,21 +47,27 @@ onMounted(() => {
     <a-col :xs="20" :md="16" :lg="14">
       <a-row type="flex" justify="center" style="flex-direction: row">
         <a-col>
-          <h2 style="color: white">Выбери готовый тур
-          </h2>
+          <h2 style="color: white">Выбери готовый тур</h2>
         </a-col>
       </a-row>
-
-
 
       <a-row>
         <a-col :span="24">
           <div ref="carousel_container"></div>
-          <Carousel :itemsToShow="postsCount" :autoplay="25000" snapAlign="start" :wrapAround="true"
-            class="unselectable">
-            <Slide v-for="tours in trips" class="unselectable">
-              <div class="carousel__item" style="width: 100%">
-                <TripCard :tour="tours" :isPreview="isPreview"/>
+          <Carousel
+            :itemsToShow="postsCount"
+            :autoplay="25000"
+            snapAlign="start"
+            :wrapAround="true"
+            class="unselectable"
+          >
+            <Slide
+              v-for="(tours, index) in trips"
+              class="unselectable"
+              :key="index"
+            >
+              <div class="carousel__item ma-8" style="width: 100%">
+                <TripCard :tour="tours" :isPreview="isPreview" />
               </div>
             </Slide>
             <template #addons>
@@ -82,6 +81,6 @@ onMounted(() => {
 </template>
 <style scoped>
 .find_trip_bg {
-  background: linear-gradient(270deg, #24B0D6 , #27728B );
+  background: linear-gradient(270deg, #24b0d6, #27728b);
 }
 </style>
