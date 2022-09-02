@@ -1,11 +1,9 @@
 <script setup>
-import { reactive } from "vue";
 import { useData } from "../../stores/data";
 import TripCard from "../cards/TripCard.vue";
 
 const useDataStore = useData()
-let trips = useDataStore.getTrips
-
+let trips = useDataStore.trips
 </script>
 
 <template>

@@ -1,26 +1,28 @@
 <script setup>
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+
 import RegForm from "./RegForm.vue";
 import AuthForm from "./AuthForm.vue"
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const sm = breakpoints.smaller("md");
-let router = useRouter();
-const visibleDrawer = ref(false);
-const visibleModal = ref(false);
 
-const showDrawer = () => {
+let breakpoints = useBreakpoints(breakpointsTailwind);
+let sm = breakpoints.smaller("md");
+let router = useRouter();
+let visibleDrawer = ref(false);
+let visibleModal = ref(false);
+
+function showDrawer() {
   visibleDrawer.value = !visibleDrawer.value;
 };
-const showModal = () => {
+function showModal() {
   visibleModal.value = !visibleModal.value;
 };
-const toComponentFromMenu = (routName) => {
+function toComponentFromMenu(routName) {
   router.push({ name: routName })
-  visibleDrawer.value = !visibleDrawer.value;
+  visibleDrawer.value = false;
 }
-const authorize = () => {
+function authorize() {
   visibleModal.value = !visibleModal.value
 }
 // const md = breakpoints.between('sm', 'md')
@@ -40,9 +42,9 @@ const authorize = () => {
             Хочу в поездку
           </a-col>
           <a-col v-if="!sm" :span="12" class="top_menu">
-            <div @click="router.push({ name: 'TripsPage' })" class="route">найти тур</div>
-            <div @click="router.push({ name: 'CreateTripWithHelp' })" class="route">создать тур</div>
-            <div @click="router.push({ name: 'CompanionsPage' })" class="route">попутчики</div>
+            <div @click="toComponentFromMenu('TripsPage')" class="route">найти тур</div>
+            <div @click="toComponentFromMenu('CreateTripWithHelp')" class="route">создать тур</div>
+            <div @click="toComponentFromMenu('CompanionsPage')" class="route">попутчики</div>
             <span class="mdi mdi-24px mdi-home" @click="showModal" style="cursor: pointer" cancelText="отмена"></span>
           </a-col>
           <a-col v-else>

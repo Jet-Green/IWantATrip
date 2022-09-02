@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import StartPage from '../views/StartPage.vue'
 import Landing from '../views/Landing.vue'
 
 const router = createRouter({
@@ -7,15 +6,8 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'StartPage',
-      component: StartPage,
-      children: [
-        {
-          path: '/',
-          name: 'Landing',
-          component: Landing,
-        }
-      ]
+      name: 'Landing',
+      component: Landing
     },
     {
       path: '/trips',
@@ -92,12 +84,7 @@ const router = createRouter({
       name: 'Souvenirs',
       component: () => import('../components/_guide/Souvenirs.vue')
     },
-  ],
-  scrollBehavior(to, from, savedPosition) {
-    if ((to.name == 'TripsPage') || (to.name == 'TripInfoPage') || (to.name == 'CompanionsPage'))
-      return { top: 0 }
-    return savedPosition
-  }
+  ]
 })
 
 export default router
