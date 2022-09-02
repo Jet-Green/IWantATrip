@@ -1,16 +1,15 @@
 <script setup>
-import { useRouter } from "vue-router";
-
-let router = useRouter();
 let props = defineProps({
-  tour: Object,
-  isPreview: Boolean,
+    tour: Object,
+    isPreview: Boolean,
 });
 </script>
 <template>
-  <a-badge-ribbon :text="props.tour.cost">
-    <a-card hoverable class="pa-4 ma-8" style="width: 100%">
-      <div>
+    <a-badge-ribbon>
+        <!-- :text="props.tour.cost" -->
+
+        <a-card hoverable class="pa-4 ma-8" style="width: 100%">сделать!
+            <!-- <div>
         <img
           :src="props.tour.image"
           style="object-fit: cover; width: 100%; height: 175px"
@@ -31,11 +30,11 @@ let props = defineProps({
         Дата: {{ props.tour.dates }}
         <br />
         Длительность: {{ props.tour.time }}
-      </span>
-    </a-card>
-  </a-badge-ribbon>
+      </span> -->
+        </a-card>
+    </a-badge-ribbon>
 
-  <!-- <div class="custom-card">
+    <!-- <div class="custom-card">
      
         <div class="cover">
             <img alt="" :src="props.tour.image" style="width: 100%" />
@@ -103,20 +102,21 @@ let props = defineProps({
 </template>
 <style lang="scss" scoped>
 .custom-card {
-  margin: 8px;
-  overflow: hidden;
-  background: #ffffff;
-  box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 10px;
+    margin: 8px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
 
-  .cover {
-    object-fit: contain;
-    display: flex;
-    justify-content: center;
-    background-color: #c4c4c4;
-  }
+    .cover {
+        object-fit: contain;
+        display: flex;
+        justify-content: center;
+        background-color: #c4c4c4;
+    }
 }
+
 .title {
-  font-size: 16px;
+    font-size: 16px;
 }
 </style>
