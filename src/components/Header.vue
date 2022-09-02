@@ -18,8 +18,15 @@ function showDrawer() {
 function showModal() {
   visibleModal.value = !visibleModal.value;
 };
-function toComponentFromMenu(routName) {
-  router.push({ name: routName })
+async function toComponentFromMenu(routName) {
+  router.isReady().then(() => {
+    router.push({ name: routName })
+  })
+
+  // try {
+  // } catch (err) {
+  //   console.log('sdfgf')
+  // }
   visibleDrawer.value = false;
 }
 function authorize() {

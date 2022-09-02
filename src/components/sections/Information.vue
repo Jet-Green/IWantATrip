@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, reactive, watch } from "vue";
+import { ref, reactive, watch } from "vue";
 import { useElementBounding } from "@vueuse/core";
 import { useRouter } from "vue-router";
 
@@ -70,7 +70,6 @@ watch(y, (newY) => {
   }
 });
 
-onMounted(() => { });
 </script>
 <template>
   <a-row type="flex" justify="center" class="pt-32">
@@ -89,7 +88,7 @@ onMounted(() => { });
               style="z-index: 1" @click="routeTo(el.route)"></div>
 
             <a-button type="primary" class="lets_go_btn ma-16" size="large" @click="routeTo(buttonRoute)">
-              {{ buttonText }}
+              {{  buttonText  }}
             </a-button>
           </div>
         </a-col>

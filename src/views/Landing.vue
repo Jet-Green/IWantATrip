@@ -10,7 +10,7 @@ import TripFilter from "../components/sections/TripFilter.vue";
 <template>
   <div>
     <Explanation />
-    <Information></Information>
+    <Information />
 
     <!-- <CreateTrip /> -->
     <TripFilter />
