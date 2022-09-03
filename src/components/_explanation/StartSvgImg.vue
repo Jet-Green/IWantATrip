@@ -371,19 +371,19 @@
   animation: skycycle 180s ease-in infinite;
 }
 #bird1 {
-  animation: bird1_fly 35s ease-in infinite;
+  animation: bird1_fly 120s ease-in infinite;
 }
 #bird2 {
-  animation: bird2_fly 35s ease-in infinite;
+  animation: bird2_fly 120s ease-in infinite;
 }
 #bird3 {
-  animation: bird3_fly 35s ease-in infinite;
+  animation: bird3_fly 120s ease-in infinite;
 }
 #wingsl {
-  animation: wingsl 1s ease-in-out infinite;
+  animation: wingsl 1.5s ease-in-out infinite;
 }
 #wingsr {
-  animation: wingsr 1s ease-in-out infinite;
+  animation: wingsr 1.5s ease-in-out infinite;
 }
 @keyframes ship_move {
   0% {
@@ -393,9 +393,9 @@
   10% {
     opacity: 1;
   }
-  99% {
+  90% {
     opacity: 1;
-    transform: translate(-385.7px, -85px);
+   
   }
   100% {
     opacity: 0;

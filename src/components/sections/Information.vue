@@ -7,7 +7,7 @@ const marker = ref(null);
 const questions = ref([]);
 const answers = ref([]);
 const buttonText = ref(null);
-const buttonRoute = ref(null)
+const buttonRoute = ref(null);
 
 const { y } = useElementBounding(marker);
 
@@ -26,11 +26,11 @@ let youCanDo = reactive([
   {
     question: "Заказать </br> тур",
     answer:
-      "<span>заполните простую форму <br> мы поможем вам с выбором <br>вы получите идеальный отдых</span>",
+      "<span>заполните простую форму <br> мы поможем вам с выбором <br>у вас идеальный отдых</span>",
     description: "заказать!",
     startActive: -150,
     finishActive: -450,
-    route: { name: 'CreateTripWithHelp' },
+    route: { name: "CreateTripWithHelp" },
   },
   {
     question: "Создать </br> тур",
@@ -39,7 +39,7 @@ let youCanDo = reactive([
     description: "создать!",
     startActive: -450,
     finishActive: -750,
-    route: { name: 'CreateTripNoHelp' },
+    route: { name: "CreateTripNoHelp" },
   },
   {
     question: "Найти </br> попутчика",
@@ -69,7 +69,6 @@ watch(y, (newY) => {
     }
   }
 });
-
 </script>
 <template>
   <a-row type="flex" justify="center" class="pt-32">
@@ -77,25 +76,50 @@ watch(y, (newY) => {
       <a-row>
         <!-- ** элемент отслеживание которого влияет на поведение компоненты -->
         <div ref="marker"></div>
-        <a-col :xs="8" :md="12">
+        <a-col :xs="10" :md="12">
           <!-- TODO: расчитывать высоту этого элемента исходя их высоты экрана vueuse  -->
-          <div style="height: 600px" :class="{
-            todo: y > 150,
-            'fix-todo': y <= 150 && y > -1000,
-            'absolute-todo': y <= -1000,
-          }">
-            <div v-for="(el, index) in youCanDo" :key="index" ref="questions" class="todo-element" v-html="el.question"
-              style="z-index: 1" @click="routeTo(el.route)"></div>
+          <div
+            style="height: 600px"
+            :class="{
+              todo: y > 150,
+              'fix-todo': y <= 150 && y > -900,
+              'absolute-todo': y <= -900,
+            }"
+          >
+            <div
+              v-for="(el, index) in youCanDo"
+              :key="index"
+              ref="questions"
+              class="todo-element"
+              v-html="el.question"
+              style="z-index: 1"
+              @click="routeTo(el.route)"
+            ></div>
 
-            <a-button type="primary" class="lets_go_btn ma-16" size="large" @click="routeTo(buttonRoute)">
-              {{  buttonText  }}
+            <a-button
+              type="primary"
+              class="lets_go_btn ma-16"
+              size="large"
+              @click="routeTo(buttonRoute)"
+            >
+              {{ buttonText }}
             </a-button>
           </div>
         </a-col>
-        <a-col :xs="16" :md="12">
+        <a-col :xs="14" :md="12">
           <div class="todo-answer">
-            <div v-for="(el, index) in youCanDo" :key="index" class="answer" ref="answers" v-html="el.answer"
-              @click="routeTo(el.route)"></div>
+            <div
+              v-for="(el, index) in youCanDo"
+              :key="index"
+              class="answer"
+              ref="answers"
+            >
+              <div
+                class="answer-text"
+                v-html="el.answer"
+                @click="routeTo(el.route)"
+              ></div>
+            </div>
           </div>
         </a-col>
       </a-row>
@@ -119,31 +143,35 @@ watch(y, (newY) => {
   bottom: -50px;
 }
 
-.answer {
-  opacity: 0;
-  clip-path: circle(50%);
-  transform: translateY(100px);
-  color: white;
-  text-transform: uppercase;
-  font-weight: 500;
-  text-align: center;
-  font-size: clamp(10px, 2vw, 18px);
-  line-height: 50px;
-  height: 400px;
-  margin: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #27728b;
-  box-shadow: 0 0 25px 25px #27728b;
-  ;
-  transition: all 1s ease;
-}
-
 .todo-answer {
+  .answer {
+    opacity: 0;
+    transform: translateY(100px);
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    transition: all 1s ease;
+    .answer-text {
+      color: white;
+      text-transform: uppercase;
+      font-weight: 500;
+      text-align: center;
+      font-size: clamp(12px, 2.5vw, 18px);
+      line-height: clamp(30px, 2.5vw, 50px);
+      background: #27728b;
+      width: 85%;
+      aspect-ratio:1;
+      border-radius: 50%;
+      display: flex;
+    justify-content: center;
+    align-items: center;
+    }
+  }
+
   .animate-answer {
     opacity: 1;
-    clip-path: circle(50%);
     transform: translateY(0);
     transition: all 1s ease;
   }
@@ -151,20 +179,21 @@ watch(y, (newY) => {
 
 .todo-element {
   font-family: "Montserrat", sans-serif;
-  font-size: clamp(14px, 3.5vw, 48px);
+  font-size: clamp(18px, 3.5vw, 48px);
   line-height: 48px;
   font-weight: 900;
-  color: black;
-  opacity: 0.3;
+  color: rgba(0, 0, 0, 0.5);
+
   transition: all 1s ease;
   text-transform: uppercase;
+  -webkit-transform: translateZ(0) scale(1);
   cursor: pointer;
 }
 
 .active-todo-element {
-  opacity: 1;
   color: #27728b;
   transform: scale(1.03);
   transition: all 1s ease;
+  -webkit-transform: translateZ(0) scale(1.03);
 }
 </style>
