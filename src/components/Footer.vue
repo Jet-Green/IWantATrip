@@ -3,6 +3,7 @@
   <a-affix>
 
     <a-layout-footer>
+      <a-divider />
       <a-row type="flex" justify="center">
         <a-col :xs="24" :md="18">
           <a-row class="bottom_menu d-flex">
@@ -35,7 +36,7 @@
         </a-col>
       </a-row>
 
-      <a-divider />
+      
       <a-row type="flex" justify="center" class="mt-16">
         <a-col> <b>Сделано в Кубит</b> </a-col>
       </a-row>

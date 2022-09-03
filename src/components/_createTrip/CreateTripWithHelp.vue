@@ -8,7 +8,7 @@ let phoneNumber = ref('')
         <a-col :xs="22" :lg="16">
             <a-row type="flex" justify="center">
                 <a-col :xs="24" :md="16" :lg="10">
-                    <h2>Создать тур</h2>
+                    <h2>Заказать тур</h2>
                     <a-input placeholder="Введите телефон" size="large" v-model:value="phoneNumber"></a-input>
                 </a-col>
             </a-row>
@@ -22,7 +22,6 @@ let phoneNumber = ref('')
                     <a-button class="mt-16" type="primary" shape="round" size="large">Отправить</a-button>
                 </a-col>
             </a-row>
-
 
         </a-col>
     </a-row>

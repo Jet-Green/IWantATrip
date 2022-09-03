@@ -23,10 +23,6 @@ async function toComponentFromMenu(routName) {
     router.push({ name: routName })
   })
 
-  // try {
-  // } catch (err) {
-  //   console.log('sdfgf')
-  // }
   visibleDrawer.value = false;
 }
 function authorize() {
@@ -44,13 +40,15 @@ function authorize() {
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
         <a-row type="flex" justify="space-between">
-          <a-col :xs="20" :md="12">
+
+          <a-col :xs="20" :md="12" @click="toComponentFromMenu('Landing')">
             <span class="mdi mdi-24px mdi-gnome" style="color: #245159"></span>
             Хочу в поездку
           </a-col>
           <a-col v-if="!sm" :span="12" class="top_menu">
-            <div @click="toComponentFromMenu('TripsPage')" class="route">найти тур</div>
-            <div @click="toComponentFromMenu('CreateTripWithHelp')" class="route">создать тур</div>
+            <div @click="toComponentFromMenu('TripsPage')" class="route">найти</div>
+            <div @click="toComponentFromMenu('CreateTripWithHelp')" class="route">заказать</div>
+            <div @click="toComponentFromMenu('CreateTripNoHelp')" class="route">создать</div>
             <div @click="toComponentFromMenu('CompanionsPage')" class="route">попутчики</div>
             <span class="mdi mdi-24px mdi-home" @click="showModal" style="cursor: pointer" cancelText="отмена"></span>
           </a-col>
@@ -61,9 +59,10 @@ function authorize() {
       </a-col>
     </a-row>
     <a-drawer placement="right" :closable="false" :visible="visibleDrawer" @close="showDrawer" width="200">
-      <div @click="toComponentFromMenu('TripsPage')" class="route">найти тур</div>
-      <div @click="toComponentFromMenu('CreateTripWithHelp')" class="route mt-16 mb-16">создать тур</div>
-      <div @click="toComponentFromMenu('CompanionsPage')" class="route">попутчики</div>
+      <div @click="toComponentFromMenu('TripsPage')" class="route ma-8">найти тур</div>
+      <div @click="toComponentFromMenu('CreateTripWithHelp')" class="route ma-8">заказать тур</div>
+      <div @click="toComponentFromMenu('CreateTripNoHelp')" class="route ma-8">создать тур</div>
+      <div @click="toComponentFromMenu('CompanionsPage')" class="route ma-8">попутчики</div>
     </a-drawer>
     <a-modal v-model:visible="visibleModal" title="Авторизация" :footer="null">
       <AuthForm @closeModal="visibleModal = false" />

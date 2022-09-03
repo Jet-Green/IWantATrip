@@ -139,5 +139,12 @@ let columnssm = [
         </a-table>
       </a-col>
     </a-row>
+    <a-row type="flex" justify="center">
+      <a-col class="d-flex justify-center">
+        <a-button class="mt-16" type="primary" shape="round" size="large"
+          >Добавить себя</a-button
+        >
+      </a-col>
+    </a-row>
   </div>
 </template>
