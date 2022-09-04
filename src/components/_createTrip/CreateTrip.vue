@@ -3,6 +3,7 @@ import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 import { watch, nextTick, ref, reactive, computed, onMounted } from "vue";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
+import ImageCropper from "../ImageCropper.vue";
 
 const ruLocale = locale;
 const quill = ref(null);
@@ -11,6 +12,11 @@ const formRef = ref(null);
 const description = ref(null);
 const start = ref(null);
 const end = ref(null);
+
+// cropper
+let visibleCropperModal = ref(false);
+let previews = ref([]);
+
 const dynamicValidateForm = reactive({
   cost: [],
 });
@@ -47,6 +53,12 @@ const addCost = () => {
 function submit() {
   alert("создать");
   console.log(form.value);
+}
+
+function addPreview(blob) {
+  // imagesFormData.append("image", blob, `product-${previews.value.length}`);
+  visibleCropperModal.value = false;
+  previews.value.push(URL.createObjectURL(blob));
 }
 
 watch(description, (newValue) => {
@@ -97,6 +109,29 @@ watch(end, () => {
               v-model:value="form.name"
             ></a-input>
           </a-col>
+          <a-col :xs="24">
+            Фотографии
+            <div class="d-flex" style="overflow-x: scroll">
+              <img
+                v-for="(pr, i) in previews"
+                :key="i"
+                :src="pr"
+                alt=""
+                class="ma-4"
+                style="max-width: 200px"
+              />
+            </div>
+            <a-button
+              type="dashed"
+              block
+              @click="visibleCropperModal = true"
+              class="ma-8"
+            >
+              <span class="mdi mdi-12px mdi-plus"></span>
+              Добавить фото
+            </a-button>
+          </a-col>
+
           <a-col :span="12">
             Дата начала
             <a-date-picker
@@ -117,9 +152,7 @@ watch(end, () => {
           </a-col>
           <a-col :span="12">
             Продолжительность
-            <p style="font-weight: bold; line-height: 40px">
-              Дней: {{ form.duration }}
-            </p>
+            <p style="line-height: 40px">{{ form.duration }} дн.</p>
           </a-col>
           <a-col :span="12">
             Маршрут
@@ -135,7 +168,7 @@ watch(end, () => {
               <a-space
                 v-for="(item, index) in dynamicValidateForm.cost"
                 :key="item.id"
-                style="display: flex; margin-bottom: 8px"
+                style="display: flex"
                 align="baseline"
               >
                 <a-form-item
@@ -156,14 +189,16 @@ watch(end, () => {
                 >
                   <a-input v-model:value="item.last" placeholder="Цена" />
                 </a-form-item>
-                <span
-                  class="mdi mdi-24px mdi-minus"
-                  style="cursor: pointer"
-                  @click="removeCost(item)"
-                ></span>
+                <a-button shape="circle" type="primary">
+                  <span
+                    class="mdi mdi-minus"
+                    style="cursor: pointer"
+                    @click="removeCost(item)"
+                  ></span>
+                </a-button>
               </a-space>
               <a-form-item>
-                <a-button type="dashed" block @click="addCost">
+                <a-button type="dashed" block @click="addCost" class="ma-8">
                   <span class="mdi mdi-12px mdi-plus"></span>
                   Добавить
                 </a-button>
@@ -210,6 +245,9 @@ watch(end, () => {
           </a-col>
         </a-row>
       </form>
+      <a-modal v-model:visible="visibleCropperModal" :footer="null">
+        <ImageCropper @addImage="addPreview" />
+      </a-modal>
     </a-col>
   </a-row>
 </template>

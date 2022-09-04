@@ -23,11 +23,11 @@ const showModal = () => {
       <a-col :xs="22" :lg="16">
         <h2>Что посмотреть</h2>
         <a-row>
-          <a-col v-for="element in whereToGo" :lg="5" :xs="10" class="ma-16">
+          <a-col v-for="element,index in whereToGo" :key="index" :lg="5" :xs="10" class="ma-16">
             <GuideCard :element="element" />
           </a-col>
         </a-row>
-        <a-modal v-model:visible="visibleModal" title="Добавление" @ok="handleOk">
+        <a-modal v-model:visible="visibleModal" title="Добавление" :footer="null">
           <AddGuideElement />
         </a-modal>
         <a-button type="" @click="showModal">Добавить</a-button>

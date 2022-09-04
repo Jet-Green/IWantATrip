@@ -12,7 +12,6 @@ const formState = reactive({
   description: ''
 });
 
-
 function addPreview(blob) {
   // imagesFormData.append("image", blob, `product-${previews.value.length}`);
   visibleCropperModal.value = false;
@@ -52,7 +51,7 @@ function addPreview(blob) {
       <a-button type="primary" class="lets_go_btn" size="large">Отправить</a-button>
     </a-form-item>
   </a-form>
-  <a-modal v-model:visible="visibleCropperModal" @ok="handleOk" :footer="null">
+  <a-modal v-model:visible="visibleCropperModal" :footer="null">
     <ImageCropper @addImage="addPreview" />
   </a-modal>
 </template>
