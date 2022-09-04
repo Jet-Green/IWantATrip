@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 
@@ -16,6 +16,8 @@ export default defineConfig(
     mode
   }) => {
     let baseUrl = mode == 'development' ? '/' : '/IWantATrip/'
+    process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
+
     return {
       base: baseUrl,
       plugins: [

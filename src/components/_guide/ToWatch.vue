@@ -1,16 +1,16 @@
 <script setup>
 import { ref } from "vue";
 
-import { useData } from "../../stores/data";
+import { useTrips } from "../../stores/";
 
 import BackButton from "../BackButton.vue";
 import AddGuideElement from "../forms/AddGuideElement.vue";
 import GuideCard from "../cards/GuideCard.vue";
 
 const visibleModal = ref(false);
-const useDataStore = useData();
+const useTripsStore = useTrips();
 
-let whereToGo = useDataStore.getWhereToGo;
+let whereToGo = useTripsStore.getWhereToGo;
 
 const showModal = () => {
   visibleModal.value = !visibleModal.value;

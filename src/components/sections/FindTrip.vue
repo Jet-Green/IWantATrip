@@ -1,22 +1,21 @@
 <script setup>
-import { ref, reactive, computed, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useAuth } from "../../stores/auth.js";
-import { useRouter } from "vue-router";
 import { Carousel, Navigation, Slide } from "vue3-carousel";
-import { useData } from "../../stores/data";
+import { useTrips } from "../../stores/trips";
 import "vue3-carousel/dist/carousel.css";
 
 import TripCard from "../cards/TripCard.vue";
 
-const useDataStore = useData();
+const useTripsStore = useTrips();
 const auth = useAuth();
-
-let trips = useDataStore.getTrips;
 
 let carouselWidth = ref(0);
 const carousel_container = ref(null);
-let isPreview = true;
 
+const trips = computed(() => {
+  return useTripsStore.trips
+});
 const cards = computed(() => {
   let postersGroup = [];
   postersGroup.push([poster.cards[0]]);
@@ -51,29 +50,25 @@ onMounted(() => {
         </a-col>
       </a-row>
 
-      <a-row>
+      <a-row v-if="trips.length">
         <a-col :span="24">
           <div ref="carousel_container"></div>
-          <Carousel
-            :itemsToShow="postsCount"
-            :autoplay="25000"
-            snapAlign="start"
-            :wrapAround="true"
-            class="unselectable"
-          >
-            <Slide
-              v-for="(tours, index) in trips"
-              class="unselectable"
-              :key="index"
-            >
+          <Carousel :itemsToShow="postsCount" :autoplay="25000" snapAlign="start" :wrapAround="true"
+            class="unselectable">
+            <Slide v-for="trip in trips" class="unselectable">
               <div class="carousel__item ma-8" style="width: 100%">
-                <TripCard :tour="tours" :isPreview="isPreview" />
+                <TripCard :trip="trip" :isPreview="true" />
               </div>
             </Slide>
             <template #addons>
               <Navigation />
             </template>
           </Carousel>
+        </a-col>
+      </a-row>
+      <a-row v-else>
+        <a-col :span="24" class="d-flex justify-center align-center">
+          <a-spin size="large"></a-spin>
         </a-col>
       </a-row>
     </a-col>

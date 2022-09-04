@@ -1,6 +1,6 @@
 <script setup>
 let props = defineProps({
-    tour: Object,
+    trip: Object,
     isPreview: Boolean,
 });
 </script>
