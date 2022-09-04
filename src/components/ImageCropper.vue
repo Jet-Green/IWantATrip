@@ -8,6 +8,7 @@ let preview = ref({});
 let previewImage = ref(null);
 let imageInput = ref(null)
 let cropper;
+
 const emit = defineEmits(["addImage"]);
 
 function loadImage() {
@@ -24,9 +25,9 @@ function loadImage() {
         preview.value = null;
     }
 }
-function crop() {
+async function crop() {
     if (cropper) {
-        cropper
+        await cropper
             .getCroppedCanvas({
                 fillColor: "#fff",
                 width: 300,
@@ -35,9 +36,14 @@ function crop() {
                 // imageSmoothingQuality: 'low',
             })
             .toBlob((blob) => {
-                console.log(blob);
                 emit("addImage", blob);
-            });
+            })
+        try {
+            cropper.destroy()
+            loadedImages.value = [];
+        } catch(err) {
+            console.log(err);
+        }
     }
 }
 watch(preview, () => {
@@ -61,9 +67,9 @@ watch(preview, () => {
         //     console.log('ready');
         //     cropperReady.value = true;
         // },
-        // cropend: function () {
-        //     console.log('end');
-        // }
+        cropend(cropper) {
+            cropper.destroy();
+        }
     });
 });
 </script>
