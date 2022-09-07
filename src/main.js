@@ -4,8 +4,8 @@ import router from './router'
 import { createPinia } from 'pinia'
 import 'ant-design-vue/dist/antd.less';
 import './assets/styles/styles.scss'
-// Ant
-import { Layout, Button, Row, Col, Input, Select, Progress, Table, Divider, Drawer, Form, Modal, Card, Space, Upload, DatePicker, Badge, Affix, Spin } from 'ant-design-vue';
+
+import { Layout, Button, Row, Col, Input, Select, Progress, Table, Divider, Drawer, Form, Modal, Card, Space, Upload, DatePicker, Badge, Affix,Spin, InputNumber } from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.less';
 const pinia = createPinia()
 
@@ -31,4 +31,5 @@ createApp(App)
     .use(Badge)
     .use(Affix)
     .use(Spin)
+    .use(InputNumber)
     .mount('#app')
