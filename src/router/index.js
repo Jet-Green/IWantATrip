@@ -85,6 +85,11 @@ const router = createRouter({
       name: 'Souvenirs',
       component: () => import('../components/_guide/Souvenirs.vue')
     },
+    {
+      path: '/add-companion',
+      name: 'AddCompanion',
+      component: () => import('../components/forms/AddCompanion.vue')
+    },
   ]
 })
 
