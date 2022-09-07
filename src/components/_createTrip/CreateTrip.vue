@@ -22,9 +22,6 @@ const targetIndex = ref(null);
 let visibleCropperModal = ref(false);
 let previews = ref([]);
 
-const dynamicValidateForm = reactive({
-  cost: [],
-});
 let form = reactive({
   name: "",
   start: start.value,
@@ -33,7 +30,7 @@ let form = reactive({
   images: [],
   tripRoute: "",
   distance: "",
-  cost: dynamicValidateForm.cost,
+  cost: [],
   offer: "",
   description: description.value,
   location: "",
@@ -43,14 +40,14 @@ let form = reactive({
 });
 
 const removeCost = (item) => {
-  let index = dynamicValidateForm.cost.indexOf(item);
+  let index = form.cost.indexOf(item);
   if (index !== -1) {
-    dynamicValidateForm.cost.splice(index, 1);
+    form.cost.splice(index, 1);
   }
 };
 
 const addCost = () => {
-  dynamicValidateForm.cost.push({
+  form.cost.push({
     first: "",
     last: "",
   });
@@ -172,49 +169,35 @@ watch(end, () => {
           </a-col>
           <a-col :span="24">
             Цены
-            <a-form ref="formRef" :model="dynamicValidateForm">
-              <a-space
-                v-for="(item, index) in dynamicValidateForm.cost"
-                :key="item.id"
-                style="display: flex"
-                align="baseline"
-              >
-                <a-form-item
-                  :name="['cost', index, 'first']"
-                  :rules="{
-                    required: true,
-                    message: 'Для кого?',
-                  }"
-                >
-                  <a-input v-model:value="item.first" placeholder="Для кого" />
-                </a-form-item>
-                <a-form-item
-                  :name="['cost', index, 'last']"
-                  :rules="{
-                    required: true,
-                    message: '',
-                  }"
-                >
-                  <a-input-number
-                    id="inputNumber"
-                    v-model:value="item.last"
-                    style="width: 100%"
-                    placeholder="Цена"
-                    :min="0"
-                    :step="0.01"
-                  />
-                </a-form-item>
-                <a-button @click="removeCost(item)" shape="circle">
-                  <span class="mdi mdi-minus" style="cursor: pointer"></span>
-                </a-button>
-              </a-space>
-              <a-form-item>
-                <a-button type="dashed" block @click="addCost" class="ma-8">
-                  <span class="mdi mdi-12px mdi-plus"></span>
-                  Добавить цены
-                </a-button>
-              </a-form-item>
-            </a-form>
+
+            <div
+              v-for="item in form.cost"
+              :key="item.id"
+              style="display: flex"
+              align="baseline"
+              class="mb-16"
+            >
+              <a-input v-model:value="item.first" placeholder="Для кого" />
+
+              <a-input-number
+                id="inputNumber"
+                v-model:value="item.last"
+                style="width: 100%"
+                placeholder="Цена"
+                :min="0"
+                :step="0.01"
+                class="ml-16 mr-16"
+              />
+
+              <a-button @click="removeCost(item)" shape="circle">
+                <span class="mdi mdi-minus" style="cursor: pointer"></span>
+              </a-button>
+            </div>
+
+            <a-button type="dashed" block @click="addCost" class="ma-8">
+              <span class="mdi mdi-12px mdi-plus"></span>
+              Добавить цены
+            </a-button>
           </a-col>
           <a-col :xs="24" :md="12"
             >Тип тура
@@ -303,12 +286,8 @@ watch(end, () => {
       <a-modal v-model:visible="visibleCropperModal" :footer="null">
         <ImageCropper @addImage="addPreview" />
       </a-modal>
-      <a-modal
-        v-model:visible="delPhotoDialog"
-      
-        :footer="null"
-      >
-      <h3>Удалить фото?</h3>
+      <a-modal v-model:visible="delPhotoDialog" :footer="null">
+        <h3>Удалить фото?</h3>
         <div class="d-flex justify-center">
           <a-button class="mt-16" type="primary" size="large" @click="delPhoto"
             >Да
