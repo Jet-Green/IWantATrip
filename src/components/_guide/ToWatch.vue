@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 
-import { useTrips } from "../../stores/";
+import { useTrips } from "../../stores/trips";
 
 import BackButton from "../BackButton.vue";
 import AddGuideElement from "../forms/AddGuideElement.vue";
