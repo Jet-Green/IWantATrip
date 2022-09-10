@@ -5,7 +5,7 @@ import ImageCropper from '../ImageCropper.vue'
 let visibleCropperModal = ref(false)
 let delPhotoDialog = ref(false)
 
-let previews = ref([])
+let preview = ref()
 const formState = reactive({
   image: '',
   name: '',
@@ -18,16 +18,18 @@ const formState = reactive({
 function addPreview(blob) {
   // imagesFormData.append("image", blob, `product-${previews.value.length}`);
   visibleCropperModal.value = false;
-  previews.value.push(URL.createObjectURL(blob));
+  const objUrl = URL.createObjectURL(blob);
+  preview.value = objUrl;
+  formState.image = blob;
 }
 
-function delPhoto(index) {
-  previews.value.splice(index, 1);
+function delPhoto() {
+  preview.value = '';
   delPhotoDialog.value = false;
 }
 
 function submit() {
-  console.log("submit")
+  console.log(formState)
 }
 </script>
 
@@ -39,16 +41,17 @@ function submit() {
         <a-input placeholder="Введите название" size="large" v-model:value="formState.name"></a-input>
       </a-col>
       <a-col :span="24">
-        <a-button @click="visibleCropperModal = true" class="mb-8" type="dashed" block>добавить фото
+        <a-button @click="visibleCropperModal = true" class="mb-8" type="dashed" block>
           <span class="mdi mdi-12px mdi-plus"></span>
+          добавить фото
         </a-button>
         <div class="d-flex ma-2" style="overflow-x: scroll">
-          <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="" class="ma-4"
-            style="max-width: 200px; cursor: pointer;" @click="delPhotoDialog = true;" />
+          <img :src="preview" alt="" class="ma-4" style="max-width: 200px; cursor: pointer;"
+            @click="delPhotoDialog = true;" />
           <a-modal v-model:visible="delPhotoDialog" :footer="null">
             <h3>Удалить фото?</h3>
             <div class="d-flex justify-center">
-              <a-button class="mt-16" type="primary" size="large" @click="delPhoto(i)">Да
+              <a-button class="mt-16" type="primary" size="large" @click="delPhoto">Да
               </a-button>
             </div>
           </a-modal>
