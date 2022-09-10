@@ -2,6 +2,10 @@
 import { ref, reactive } from "vue";
 import ImageCropper from '../ImageCropper.vue'
 
+import { useGuide } from "../../stores/guide"
+
+const useGuideStore = useGuide()
+
 let visibleCropperModal = ref(false)
 let delPhotoDialog = ref(false)
 
@@ -29,7 +33,7 @@ function delPhoto() {
 }
 
 function submit() {
-  console.log(formState)
+  useGuideStore.createGuideElement(formState, 'toWatch')
 }
 </script>
 
@@ -38,7 +42,7 @@ function submit() {
     <a-row :gutter="[16, 16]">
       <a-col :span="24">
         Название
-        <a-input placeholder="Введите название" size="large" v-model:value="formState.name"></a-input>
+        <a-input placeholder="Музей" size="large" v-model:value="formState.name"></a-input>
       </a-col>
       <a-col :span="24">
         <a-button @click="visibleCropperModal = true" class="mb-8" type="dashed" block>
@@ -59,19 +63,20 @@ function submit() {
       </a-col>
       <a-col :span="24">
         Описание
-        <a-textarea placeholder="Введите описание" :rows="4" v-model:value="formState.description" />
+        <a-textarea placeholder="Более 1000 экспонятов из 25 стран мира" :rows="4"
+          v-model:value="formState.description" />
       </a-col>
       <a-col :span="24">
         Адрес
-        <a-input placeholder="Введите адрес" size="large" v-model:value="formState.address" />
+        <a-input placeholder="Калинина 2А" size="large" v-model:value="formState.address" />
       </a-col>
       <a-col :span="24">
         Телефон
-        <a-input placeholder="Введите телефон" size="large" v-model:value="formState.phone" />
+        <a-input placeholder="79127528871" size="large" v-model:value="formState.phone" />
       </a-col>
       <a-col :span="24">
         Социальные сети
-        <a-input placeholder="Введите ссылку" size="large" v-model:value="formState.socialMedia" />
+        <a-input placeholder="https://vk.com/qbitclub" size="large" v-model:value="formState.socialMedia" />
       </a-col>
     </a-row>
     <a-row class="d-flex justify-center">
