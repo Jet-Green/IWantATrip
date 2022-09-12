@@ -9,6 +9,8 @@ const useGuideStore = useGuide()
 let visibleCropperModal = ref(false)
 let delPhotoDialog = ref(false)
 
+let newGuideElementForm = ref(null)
+
 let preview = ref()
 const formState = reactive({
   image: '',
@@ -33,12 +35,22 @@ function delPhoto() {
 }
 
 function submit() {
-  useGuideStore.createGuideElement(formState, 'toWatch')
+  let fd = new FormData(newGuideElementForm.value);
+
+  fd.set('name', formState.name)
+  fd.set('address', formState.address)
+  fd.set('phone', formState.phone)
+  fd.set('socialMedia', formState.socialMedia)
+  fd.set('description', formState.description)
+
+  fd.set('image', formState.image, `${formState.name}-${Date.now()}.png`)
+
+  useGuideStore.createGuideElement(fd, 'toWatch')
 }
 </script>
 
 <template>
-  <form action="POST" @submit.prevent="submit">
+  <form action="POST" @submit.prevent="submit" enctype="multipart/form-data" ref="newGuideElementForm">
     <a-row :gutter="[16, 16]">
       <a-col :span="24">
         Название
