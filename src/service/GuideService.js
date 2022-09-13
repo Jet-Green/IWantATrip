@@ -6,6 +6,6 @@ export default class TripService {
     }
 
     static async createGuideElement(element, name) {
-        return $api.post(`/guide/create-element?name=${name}`, element)
+        return $api.post(`/guide/create-element?name=${name}`, element, { headers: { "Content-Type": 'multipart/form-data' } })
     }
 }
