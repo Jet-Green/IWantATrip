@@ -20,100 +20,86 @@ const formState = reactive({
 
 <template>
   <BackButton />
-
-  <a-row class="mb-16" type="flex" justify="center">
-    <a-col :xs="22" :lg="16">
-      <h1>Найти попутчика</h1>
-
-      <a-row class="mb-16" type="flex" justify="space-between">
-        <a-col :span="12" class="nowrap">
+  <form
+    action="POST"
+    @submit.prevent="submit"
+    enctype="multipart/form-data"
+    ref="newGuideElementForm"
+  >
+    <a-row class="mb-16" type="flex" justify="center">
+      <a-col :xs="22" :lg="16">
+        <h1>Найти попутчика</h1>
+        <a-col :span="12">
           <label>Имя</label>
-          <a-input class="ml-8" v-model:value="formState.name" />
+          <a-input v-model:value="formState.name" />
         </a-col>
 
-        <a-col :span="11" class="nowrap">
+        <a-col :span="12">
           <label>Фамилия</label>
-          <a-input class="ml-8" v-model:value="formState.surname" />
+          <a-input v-model:value="formState.surname" />
         </a-col>
-      </a-row>
 
-      <a-row class="mb-16" type="flex" justify="space-between">
-        <a-col :span="12" class="nowrap">
+        <a-col :span="12">
           <label>Электронная почта</label>
-          <a-input class="ml-8" v-model:value="formState.email" />
+          <a-input v-model:value="formState.email" />
         </a-col>
 
-        <a-col :span="11" class="nowrap">
+        <a-col :span="12">
           <label>Телефон</label>
-          <a-input class="ml-8" v-model:value="formState.phone" />
+          <a-input v-model:value="formState.phone" />
         </a-col>
-      </a-row>
 
-      <a-row class="mb-16" type="flex" justify="space-between">
-        <a-col :span="12" class="nowrap">
+        <a-col :span="12">
           <label>Возраст</label>
-          <a-input class="ml-8" type="number" v-model:value="formState.age" />
+          <a-input type="number" v-model:value="formState.age" />
         </a-col>
 
-        <a-col :span="11" class="nowrap">
+        <a-col :span="12">
           <label>Пол</label>
-          <a-radio-group v-model:value="formState.gender" name="radioGroup" style="justify-content: space-evenly">
+          <a-radio-group v-model:value="formState.gender" name="radioGroup">
             <a-radio :value="'Male'">Мужчина</a-radio>
             <a-radio :value="'Female'">Женщина</a-radio>
           </a-radio-group>
         </a-col>
-      </a-row>
 
-      <a-row class="mb-16 nowrap">
         <a-col :span="2">
           <label>Дата поездки</label>
         </a-col>
+
         <a-col :span="11">
-          Дата начала путешествия
           <a-date-picker
             v-model:value="formState.datestart"
             placeholder="Начало"
             :locale="ruLocale"
             :format="dateFormatList"
-            class="ml-8"
-            style="display: flex; flex-wrap: nowrap"
+            style="width: 100%"
           />
         </a-col>
+
         <a-col :span="11">
-          Дата окончания путешествия
           <a-date-picker
             v-model:value="formState.dateend"
             placeholder="Конец"
             :locale="ruLocale"
             :format="dateFormatList"
-            class="ml-8"
-            style="display: flex; flex-wrap: nowrap"
+            style="width: 100%"
           />
         </a-col>
-      </a-row>
 
-      <a-row class="mb-16">
-        <a-col :span="24" class="nowrap">
-          <label>Пожелания</label>
-          <a-textarea class="ml-8" :rows="4" v-model:value="formState.description" />
+        <a-col :span="24">
+          <label class="mb-4">Пожелания</label>
+          <a-textarea :rows="4" v-model:value="formState.description" />
         </a-col>
-      </a-row>
 
-      <a-button
-        type="primary"
-        class="lets_go_btn"
-        size="large"
-        style="display: flex; justify-content: center"
-        >Отправить
-      </a-button>
-    </a-col>
-  </a-row>
+        <a-button
+          type="primary"
+          class="lets_go_btn"
+          size="large"
+          style="display: flex; justify-content: center"
+          >Отправить
+        </a-button>
+      </a-col>
+    </a-row>
+  </form>
 </template>
-<style scoped>
-.nowrap {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: nowrap;
-}
-</style>
+<style scoped></style>
