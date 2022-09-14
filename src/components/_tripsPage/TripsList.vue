@@ -1,9 +1,12 @@
 <script setup>
+import { computed } from 'vue'
 import { useTrips } from "../../stores/trips";
 import TripCard from "../cards/TripCard.vue";
 
 const useTripsStore = useTrips()
-let trips = useTripsStore.trips;
+let trips = computed(() => {
+  return useTripsStore.trips;
+})
 </script>
 
 <template>
@@ -19,4 +22,5 @@ let trips = useTripsStore.trips;
 </template>
 
 <style scoped>
+
 </style>
