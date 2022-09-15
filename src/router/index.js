@@ -85,7 +85,12 @@ const router = createRouter({
       name: 'Souvenirs',
       component: () => import('../components/_guide/Souvenirs.vue')
     },
-  ]
+  ],
+  scrollBehavior(to, from, savedPosition) {
+    if ((to.name == 'TripsPage') || (to.name == 'TripInfoPage') || (to.name == 'CompanionsPage'))
+      return { top: 0 }
+    else return savedPosition
+  }
 })
 
 export default router

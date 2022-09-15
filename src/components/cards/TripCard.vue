@@ -1,122 +1,57 @@
 <script setup>
 let props = defineProps({
-    trip: Object,
-    isPreview: Boolean,
+  trip: Object,
+  isPreview: Boolean,
 });
 </script>
 <template>
-    <a-badge-ribbon>
-        <!-- :text="props.tour.cost" -->
-
-        <a-card hoverable class="pa-4 ma-8" style="width: 100%">сделать!
-            <!-- <div>
+  <div style="width:270px;">
+    <span
+      v-if="isPreview"
+      class="title"
+      style="color: white; text-transform: uppercase; "
+    >
+      {{ trip.name }}
+    </span>
+    <a-badge-ribbon :text="`${trip.cost[0].cost} руб` ">
+    <a-card hoverable>
+      <div>
         <img
-          :src="props.tour.image"
+          :src="trip.images[0]"
           style="object-fit: cover; width: 100%; height: 175px"
         />
       </div>
-
-      <span v-if="props.isPreview" class="title">
-        {{ props.tour.name }}
-
-        <br />
-        {{ props.tour.cost }}
+      <span v-if="props.isPreview">
+       c {{ trip.start }} по {{ trip.end }}
       </span>
-
       <span v-else class="title">
-        {{ props.tour.name }}
-
+        {{ trip.name }}
         <br />
-        Дата: {{ props.tour.dates }}
+        Дата: {{ trip.dates }}
         <br />
-        Длительность: {{ props.tour.time }}
-      </span> -->
-        </a-card>
+        Длительность: {{ trip.time }}
+      </span>
+    </a-card>
     </a-badge-ribbon>
-
-    <!-- <div class="custom-card">
-     
-        <div class="cover">
-            <img alt="" :src="props.tour.image" style="width: 100%" />
-        </div>
-        <div class="content">
-            <div class="title">
-                <h3>
-                    Легенды Донды Батыра
-                </h3>
-            </div>
-
-
-            <div v-if="isPreview">
-                <div class="description" style="text-align: start;">
-                    В такое холодное время года особенно хочется чего-то яркого
-                </div>
-                <div class="price" style="text-align: start;">
-                    2000 руб./взр.
-                </div>
-                <div class="actions mt-8">
-                    <a-button style="display: flex; align-items: center; color: #3DAFF5" type="text"
-                        @click="router.push({ name: 'TripInfoPage' })">
-                        Подробнее
-                    </a-button>
-                </div>
-            </div>
-
-
-            <div v-else>
-                <div class="time">
-                    <div>
-                        2 дня/1 ночь
-                    </div>
-                    <div>
-                        Ближайший выезд 26.08.2022
-                    </div>
-                </div>
-
-                <div class="description">
-                    <span>
-                        В такое холодное время года особенно хочется чего-то яркого
-                    </span>
-                </div>
-
-                <div >
-                    Количество человек:
-                    <a-progress :percent="(20 / 27) * 100" :format="percent => `20 ч.`">
-                    </a-progress>
-                </div>
-                <div >
-                    <a-button type="primary" shape="round" class="prize mb-8 mr-8">25 - 33 чел. + Сувенир</a-button>
-                    <a-button type="primary" shape="round" class="prize mb-8 mr-8">34 - 34 чел. + Ужин</a-button>
-                </div>
-                <div >
-                    2000 руб./взр.
-                </div>
-                <div class="actions mt-8">
-                    <a-button style="display: flex; align-items: center; color: #3DAFF5" type="text">
-                        Купить
-                    </a-button>
-                </div>
-            </div>
-        </div>
-    </div> -->
+  </div>
 </template>
 <style lang="scss" scoped>
 .custom-card {
-    margin: 8px;
-    overflow: hidden;
-    background: #ffffff;
-    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
-    border-radius: 10px;
+  margin: 8px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
 
-    .cover {
-        object-fit: contain;
-        display: flex;
-        justify-content: center;
-        background-color: #c4c4c4;
-    }
+  .cover {
+    object-fit: contain;
+    display: flex;
+    justify-content: center;
+    background-color: #c4c4c4;
+  }
 }
 
 .title {
-    font-size: 16px;
+  font-size: 16px;
 }
 </style>

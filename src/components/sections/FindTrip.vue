@@ -1,6 +1,5 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { useAuth } from "../../stores/auth.js";
 import { Carousel, Navigation, Slide } from "vue3-carousel";
 import { useTrips } from "../../stores/trips";
 import "vue3-carousel/dist/carousel.css";
@@ -8,7 +7,7 @@ import "vue3-carousel/dist/carousel.css";
 import TripCard from "../cards/TripCard.vue";
 
 const useTripsStore = useTrips();
-const auth = useAuth();
+
 
 let carouselWidth = ref(0);
 const carousel_container = ref(null);
@@ -49,15 +48,14 @@ onMounted(() => {
           <h2 style="color: white">Выбери готовый тур</h2>
         </a-col>
       </a-row>
-
       <a-row v-if="trips.length">
         <a-col :span="24">
           <div ref="carousel_container"></div>
           <Carousel :itemsToShow="postsCount" :autoplay="25000" snapAlign="start" :wrapAround="true"
             class="unselectable">
-            <Slide v-for="trip in trips" class="unselectable">
+            <Slide v-for="trip in trips" :key="trip.index" class="unselectable">
               <div class="carousel__item ma-8" style="width: 100%">
-                <TripCard :trip="trip" :isPreview="true" />
+                <TripCard :trip="trip" :isPreview="true"/>
               </div>
             </Slide>
             <template #addons>
@@ -77,5 +75,8 @@ onMounted(() => {
 <style scoped>
 .find_trip_bg {
   background: linear-gradient(270deg, #24b0d6, #27728b);
+}
+.carousel__slide {
+    align-items: end;
 }
 </style>
