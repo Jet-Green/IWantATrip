@@ -4,9 +4,9 @@ let props = defineProps({
 });
 </script>
 <template>
-  <div style="width: 270px">
-    <span class="title"> {{ trip.name }} {{ props.color }} </span>
-    <a-badge-ribbon :text="`${trip.cost[0].cost} руб`">
+  <div >
+    <div class="title"> {{ trip.name }} </div>
+    <a-badge-ribbon :text="`${trip.cost[0].cost} руб`" color="ff6600">
       <a-card hoverable>
         <div>
           <img
@@ -14,9 +14,9 @@ let props = defineProps({
             style="object-fit: cover; width: 100%; height: 175px"
           />
         </div>
-        <span>
+        <p style="text-align: center">
           c <strong>{{ trip.start }}</strong> по <strong>{{ trip.end }}</strong>
-        </span>
+        </p>
       </a-card>
     </a-badge-ribbon>
   </div>
@@ -36,9 +36,9 @@ let props = defineProps({
     background-color: #c4c4c4;
   }
 }
-.title{
+.title {
   font-size: 16px;
   text-transform: uppercase;
-  color: white;
+  text-align: center;
 }
 </style>

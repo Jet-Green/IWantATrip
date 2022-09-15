@@ -1,20 +1,27 @@
 <script setup>
-import { computed } from 'vue'
+import { computed } from "vue";
 import { useTrips } from "../../stores/trips";
-import TripCard from "../cards/TripCard.vue";
+import TripListCard from "../cards/TripListCard.vue";
 
-const useTripsStore = useTrips()
+const useTripsStore = useTrips();
 let trips = computed(() => {
   return useTripsStore.trips;
-})
+});
 </script>
 
 <template>
-  <a-row display="flex" justify="center">
-    <a-col :xs="22" :lg="16">
-      <a-row type="flex" justify="space-between">
-        <a-col v-for="trip in trips" :xs="24" :sm="11" :md="8" :xl="6">
-          <TripCard :trip="trip" class="ma-8" />
+  <a-row display="flex" justify="center" class="mt-16">
+    <a-col :sm="20">
+      <a-row display="flex" justify="center" :gutter="[16,16]" class="pa-4">
+        <a-col
+          :xs="24"
+          :sm="12"
+          :md="8"
+          :lg="6"
+          v-for="trip in trips"
+          :key="trip.index"
+        >
+          <TripListCard :trip="trip" style="width: 100%" />
         </a-col>
       </a-row>
     </a-col>
@@ -22,5 +29,4 @@ let trips = computed(() => {
 </template>
 
 <style scoped>
-
 </style>

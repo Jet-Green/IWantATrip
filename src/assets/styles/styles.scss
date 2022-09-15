@@ -50,6 +50,9 @@ body {
 .justify-end{
     justify-content: flex-end;
 }
+.flex-wrap{
+    flex-wrap: wrap;
+}
 
 // MA
 @for $i from 1 through 4 {
