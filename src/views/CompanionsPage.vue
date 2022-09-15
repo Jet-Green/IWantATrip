@@ -1,5 +1,7 @@
 <script setup>
+import { useRouter } from "vue-router";
 import BackButton from "../components/BackButton.vue";
+let router = useRouter();
 let companions = [
   {
     number: "1",
@@ -141,7 +143,7 @@ let columnssm = [
     </a-row>
     <a-row type="flex" justify="center">
       <a-col class="d-flex justify-center">
-        <a-button class="mt-16" type="primary" shape="round" size="large"
+        <a-button class="mt-16" type="primary" shape="round" size="large" @click="router.push('/add-companion')"
           >Добавить себя</a-button
         >
       </a-col>

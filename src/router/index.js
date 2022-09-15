@@ -31,6 +31,11 @@ const router = createRouter({
       component: () => import('../views/CompanionsPage.vue'),
     },
     {
+      path: '/add-companion',
+      name: 'AddCompanion',
+      component: () => import('../views/AddCompanion.vue'),
+    },
+    {
       path: '/trip',
       name: 'TripInfoPage',
       component: () => import('../views/TripInfoPage.vue')
