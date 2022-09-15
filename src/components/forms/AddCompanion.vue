@@ -1,14 +1,17 @@
 <script setup>
 import { reactive } from "vue";
+import typeOfTrip from "../../fakeDB/tripType";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import BackButton from "../BackButton.vue";
 const ruLocale = locale;
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
-const formState = reactive({
+const form = reactive({
   name: "",
   surname: "",
   email: "",
   phone: "",
+  start: "",
+  end: "",
   age: "",
   gender: "Male",
   datestart: "",
@@ -26,78 +29,82 @@ const formState = reactive({
     enctype="multipart/form-data"
     ref="newGuideElementForm"
   >
-    <a-row class="mb-16" type="flex" justify="center">
-      <a-col :xs="22" :lg="16">
-        <h1>Найти попутчика</h1>
-        <a-col :span="12">
-          <label>Имя</label>
-          <a-input v-model:value="formState.name" />
-        </a-col>
+    <a-row type="flex" justify="center">
+      <a-col :xs="22" :lg="12">
+        <h2>Найти попутчика</h2>
+        <a-row :gutter="[16, 16]">
+          <a-col :xs="24" :md="12">
+            <label>Имя</label>
+            <a-input v-model:value="form.name" />
+          </a-col>
 
-        <a-col :span="12">
-          <label>Фамилия</label>
-          <a-input v-model:value="formState.surname" />
-        </a-col>
+          <a-col :xs="24" :md="12">
+            <label>Фамилия</label>
+            <a-input v-model:value="form.surname" />
+          </a-col>
 
-        <a-col :span="12">
-          <label>Электронная почта</label>
-          <a-input v-model:value="formState.email" />
-        </a-col>
+          <a-col :xs="24" :md="12">
+            <label>Телефон</label>
+            <a-input v-model:value="form.phone" />
+          </a-col>
+          <a-col :xs="24" :md="12">
+            <label>Электронная почта</label>
+            <a-input v-model:value="form.email" />
+          </a-col>
 
-        <a-col :span="12">
-          <label>Телефон</label>
-          <a-input v-model:value="formState.phone" />
-        </a-col>
+          <a-col :span="12">
+            <label>Возраст</label>
+            <a-input type="number" :min="0" v-model:value="form.age" />
+          </a-col>
 
-        <a-col :span="12">
-          <label>Возраст</label>
-          <a-input type="number" v-model:value="formState.age" />
-        </a-col>
+          <a-col :span="12" class="d-flex align-end">
 
-        <a-col :span="12">
-          <label>Пол</label>
-          <a-radio-group v-model:value="formState.gender" name="radioGroup">
-            <a-radio :value="'Male'">Мужчина</a-radio>
-            <a-radio :value="'Female'">Женщина</a-radio>
-          </a-radio-group>
-        </a-col>
-
-        <a-col :span="2">
-          <label>Дата поездки</label>
-        </a-col>
-
-        <a-col :span="11">
-          <a-date-picker
-            v-model:value="formState.datestart"
-            placeholder="Начало"
-            :locale="ruLocale"
-            :format="dateFormatList"
-            style="width: 100%"
-          />
-        </a-col>
-
-        <a-col :span="11">
-          <a-date-picker
-            v-model:value="formState.dateend"
-            placeholder="Конец"
-            :locale="ruLocale"
-            :format="dateFormatList"
-            style="width: 100%"
-          />
-        </a-col>
-
-        <a-col :span="24">
-          <label class="mb-4">Пожелания</label>
-          <a-textarea :rows="4" v-model:value="formState.description" />
-        </a-col>
-
-        <a-button
-          type="primary"
-          class="lets_go_btn"
-          size="large"
-          style="display: flex; justify-content: center"
-          >Отправить
-        </a-button>
+            <a-radio-group v-model:value="form.gender" name="radioGroup">
+              <a-radio :value="'Male'">Мужчина</a-radio>
+              <a-radio :value="'Female'">Женщина</a-radio>
+            </a-radio-group>
+          </a-col>
+          <a-col :span="12">
+            Дата начала
+            <a-date-picker
+              v-model:value="form.start"
+              style="width: 100%"
+              placeholder="Начало"
+              :locale="ruLocale"
+              :format="dateFormatList"
+            />
+          </a-col>
+          <a-col :span="12">
+            Дата конца
+            <a-date-picker
+              v-model:value="form.end"
+              style="width: 100%"
+              placeholder="Конец"
+              :locale="ruLocale"
+              :format="dateFormatList"
+            />
+          </a-col>
+          <a-col :xs="24">
+            Тип отдыха
+            <a-select
+            
+              style="width: 100%"
+              :options="typeOfTrip"
+              mode="multiple"
+            ></a-select>
+          </a-col>
+          <a-col :xs="24">
+            Пожелания
+            <a-textarea autoSize />
+          </a-col>
+          <a-button
+            type="primary"
+            class="lets_go_btn"
+            size="large"
+            style="display: flex; justify-content: center"
+            >Отправить
+          </a-button>
+        </a-row>
       </a-col>
     </a-row>
   </form>

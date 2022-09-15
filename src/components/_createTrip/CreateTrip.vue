@@ -105,7 +105,7 @@ watch(end, () => {
 <template>
   <a-row type="flex" justify="center">
     <a-col :xs="22" :lg="12">
-      <h1>Создать тур</h1>
+      <h2>Создать тур</h2>
       <form action="POST" @submit.prevent="submit">
         <a-row :gutter="[16, 16]">
           <a-col :span="24">

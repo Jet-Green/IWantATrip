@@ -126,8 +126,10 @@ let columnssm = [
 <template>
   <div>
     <BackButton></BackButton>
+    
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
+        <h2>Поиск попутчиков</h2>
         <a-table
           :columns="columnslg"
           :data-source="companions"

@@ -1,14 +1,19 @@
 <script setup>
 import { reactive, ref } from "vue";
 import typeOfTrip from "../../fakeDB/tripType";
+import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
+const monthFormatList = ["MM.YY"];
+const ruLocale = locale;
 
 let form = reactive({
   duration: "",
   name: "",
   delivery: false,
   type: [],
+  start: "",
+  end: "",
   resource: "",
   desc: "",
   fromAge: "",
@@ -22,6 +27,7 @@ let formState = reactive({
 });
 </script>
 <template>
+  <div>
   <a-row type="flex" justify="center">
     <a-col :xs="22" :lg="12">
       <a-row :gutter="[16, 16]">
@@ -30,7 +36,7 @@ let formState = reactive({
           <div>
             Тип тура
             <a-select
-              v-model:value="form.tripType"
+              v-model:value="form.type"
               style="width: 100%"
               :options="typeOfTrip"
               mode="multiple"
@@ -41,7 +47,7 @@ let formState = reactive({
         <a-col :span="12">
           Дата начала
           <a-date-picker
-            v-model:value="start"
+            v-model:value="form.start"
             style="width: 100%"
             placeholder="Начало"
             :locale="ruLocale"
@@ -51,7 +57,7 @@ let formState = reactive({
         <a-col :span="12">
           Дата конца
           <a-date-picker
-            v-model:value="end"
+            v-model:value="form.end"
             style="width: 100%"
             placeholder="Конец"
             :locale="ruLocale"
@@ -100,9 +106,9 @@ let formState = reactive({
 
         <a-col :xs="24">
           Пожелания
-          <a-form-item>
-            <a-textarea autosize />
-          </a-form-item>
+       
+            <a-textarea autoSize />
+     
         </a-col>
         <a-col :xs="24" :md="12">
           Телефон
@@ -124,5 +130,6 @@ let formState = reactive({
       </a-row>
     </a-col>
   </a-row>
+</div>
 </template>
 <style></style>
