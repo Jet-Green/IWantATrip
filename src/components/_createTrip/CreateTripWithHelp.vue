@@ -1,9 +1,9 @@
 <script setup>
 import { reactive, ref } from "vue";
+import typeOfTrip from "../../fakeDB/tripType";
 
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
 
-let phoneNumber = ref("");
 let form = reactive({
   duration: "",
   name: "",
@@ -12,6 +12,8 @@ let form = reactive({
   resource: "",
   desc: "",
   fromAge: "",
+  phoneNumber: "",
+  tripType: "Любой",
 });
 
 let formState = reactive({
@@ -21,24 +23,19 @@ let formState = reactive({
 </script>
 <template>
   <a-row type="flex" justify="center">
-    <a-col :xs="22" :lg="16">
+    <a-col :xs="22" :lg="12">
       <a-row :gutter="[16, 16]">
         <a-col :span="24">
           <h2>Заказать тур</h2>
-          <a-select
-            style="width: 100%"
-            placeholder="Тип тура"
-            size="large"
-            class="selector"
-          >
-            <a-select-option value="1"> Любой </a-select-option>
-            <a-select-option value="2"> Пляжный </a-select-option>
-            <a-select-option value="3"> Школьный </a-select-option>
-            <a-select-option value="4"> Экскурсионный </a-select-option>
-            <a-select-option value="5"> Активный </a-select-option>
-            <a-select-option value="6"> Оздоровление </a-select-option>
-            <a-select-option value="7"> Круизы </a-select-option>
-          </a-select>
+          <div>
+            Тип тура
+            <a-select
+              v-model:value="form.tripType"
+              style="width: 100%"
+              :options="typeOfTrip"
+              mode="multiple"
+            ></a-select>
+          </div>
         </a-col>
 
         <a-col :span="12">
@@ -62,11 +59,6 @@ let formState = reactive({
           />
         </a-col>
 
-        <a-col :span="12">
-          Продолжительность
-          <p style="line-height: 40px">{{ form.duration }} дн.</p>
-        </a-col>
-
         <a-col :xs="24" :md="12"
           >Направление
           <a-input
@@ -75,29 +67,26 @@ let formState = reactive({
             v-model:value="form.location"
           ></a-input>
         </a-col>
-
-        <a-col :span="24">
-          Количество человек
-          <a-col :span="12">
-            <a-form-item label="Взрослые">
-              <a-input v-model:value="form.desc" />
-            </a-form-item>
-            <!-- </a-col>
-          <a-col :span="12"> -->
-            <a-form-item label="Дети">
-              <a-input v-model:value="form.desc" />
-            </a-form-item>
-          </a-col>
+        <a-col :xs="24" :md="12">
+          Продолжительность, дн.
+          <a-input-number
+            id="inputNumber"
+            v-model:value="form.duration"
+            style="width: 100%"
+            placeholder="5"
+            :min="1"
+          />
         </a-col>
 
-        <a-col :span="12" style="display: flex; flex-direction: column">
-          Описание программы
-          <a-form-item>
-            <a-input type="textarea" />
-          </a-form-item>
+        <a-col :xs="24" :md="8">
+          Взрослые
+          <a-input-number :min="0" style="width: 100%" placeholder="2" />
         </a-col>
-
-        <a-col :xs="24" :md="12"
+        <a-col :xs="24" :md="8">
+          Дети
+          <a-input-number :min="0" style="width: 100%" placeholder="1" />
+        </a-col>
+        <a-col :xs="24" :md="8"
           >Мин. возраст, лет
           <a-input-number
             id="inputNumber"
@@ -109,24 +98,21 @@ let formState = reactive({
           />
         </a-col>
 
-        <a-col :span="12">
-          <a-form-item
-            label="E-mail"
-            name="e-mail"
-            :rules="[{ required: true, message: 'Введите e-mail!' }]"
-          >
-            <a-input v-model:value="formState.email" />
-          </a-form-item>
-
-          <a-form-item
-            label="телефон"
-            name="phone"
-          >
-            <a-input v-model:value="formState.phone" />
+        <a-col :xs="24">
+          Пожелания
+          <a-form-item>
+            <a-textarea autosize />
           </a-form-item>
         </a-col>
+        <a-col :xs="24" :md="12">
+          Телефон
+          <a-input />
+        </a-col>
 
-        <a-col :span="12"> </a-col>
+        <a-col :xs="24" :md="12">
+          E-mail
+          <a-input />
+        </a-col>
       </a-row>
 
       <a-row type="flex" justify="center">
