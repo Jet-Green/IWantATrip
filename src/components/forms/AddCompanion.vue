@@ -57,13 +57,14 @@ const form = reactive({
             <a-input type="number" :min="0" v-model:value="form.age" />
           </a-col>
 
-          <a-col :span="12" class="d-flex align-end">
-
-            <a-radio-group v-model:value="form.gender" name="radioGroup">
+          <a-col :span="12" class="d-flex align-center" style="flex-wrap: wrap;">
+              Пол
+            <a-radio-group v-model:value="form.gender" name="radioGroup" style="width: -moz-available; width: -webkit-fill-available">
               <a-radio :value="'Male'">Мужчина</a-radio>
               <a-radio :value="'Female'">Женщина</a-radio>
             </a-radio-group>
           </a-col>
+
           <a-col :span="12">
             Дата начала
             <a-date-picker
