@@ -4,6 +4,7 @@ import typeOfTrip from "../../fakeDB/tripType";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import BackButton from "../BackButton.vue";
 const ruLocale = locale;
+const backRoute = "/companions";
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
 const form = reactive({
   name: "",
@@ -22,7 +23,7 @@ const form = reactive({
 </script>
 
 <template>
-  <BackButton />
+  <BackButton :backRoute="backRoute"/>
   <form
     action="POST"
     @submit.prevent="submit"
