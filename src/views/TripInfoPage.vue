@@ -13,10 +13,12 @@ let tours = reactive({
   people: 20,
   price: "2000 руб./взр.",
 });
+
+const backRoute="/trips"
 </script>
 <template>
   <div>
-    <BackButton />
+    <BackButton :backRoute="backRoute"/>
     <a-row display="flex" justify="center" class="mb-16">
       <a-col :xs="22" :lg="16">
         <a-row display="flex" justify="space-around">
