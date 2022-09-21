@@ -160,9 +160,9 @@ watch(y, (newY) => {
       font-weight: 500;
       text-align: center;
       font-size: clamp(10px, 2.5vw, 18px);
-      line-height: clamp(18px, 2.5vw, 50px);
+      line-height: clamp(24px, 2.5vw, 50px);
       background: #27728b;
-      width: 85%;
+      width: 75%;
       aspect-ratio:1;
       border-radius: 50%;
       display: flex;

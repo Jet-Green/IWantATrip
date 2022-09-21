@@ -31,6 +31,11 @@ const router = createRouter({
       component: () => import('../views/CompanionsPage.vue'),
     },
     {
+      path: '/add-companion',
+      name: 'AddCompanion',
+      component: () => import('../views/AddCompanion.vue'),
+    },
+    {
       path: '/trip',
       name: 'TripInfoPage',
       component: () => import('../views/TripInfoPage.vue')
@@ -85,7 +90,12 @@ const router = createRouter({
       name: 'Souvenirs',
       component: () => import('../components/_guide/Souvenirs.vue')
     },
-  ]
+  ],
+  scrollBehavior(to, from, savedPosition) {
+    if ((to.name == 'TripsPage') || (to.name == 'TripInfoPage') || (to.name == 'CompanionsPage'))
+      return { top: 0 }
+    else return savedPosition
+  }
 })
 
 export default router

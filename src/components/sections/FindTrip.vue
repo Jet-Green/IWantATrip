@@ -1,6 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { useAuth } from "../../stores/auth.js";
+import { ref, computed, onMounted, watch } from "vue";
 import { Carousel, Navigation, Slide } from "vue3-carousel";
 import { useTrips } from "../../stores/trips";
 import "vue3-carousel/dist/carousel.css";
@@ -8,13 +7,12 @@ import "vue3-carousel/dist/carousel.css";
 import TripCard from "../cards/TripCard.vue";
 
 const useTripsStore = useTrips();
-const auth = useAuth();
 
 let carouselWidth = ref(0);
 const carousel_container = ref(null);
 
 const trips = computed(() => {
-  return useTripsStore.trips
+  return useTripsStore.trips;
 });
 const cards = computed(() => {
   let postersGroup = [];
@@ -36,6 +34,9 @@ const postsCount = computed(() => {
   return carouselWidth.value / 270;
 });
 
+watch(carousel_container, () => {
+  onResize();
+});
 onMounted(() => {
   onResize();
   window.addEventListener("resize", onResize);
@@ -49,15 +50,19 @@ onMounted(() => {
           <h2 style="color: white">Выбери готовый тур</h2>
         </a-col>
       </a-row>
-
       <a-row v-if="trips.length">
         <a-col :span="24">
           <div ref="carousel_container"></div>
-          <Carousel :itemsToShow="postsCount" :autoplay="25000" snapAlign="start" :wrapAround="true"
-            class="unselectable">
-            <Slide v-for="trip in trips" class="unselectable">
+          <Carousel
+            :itemsToShow="postsCount"
+            :autoplay="25000"
+            snapAlign="center"
+            :wrapAround="true"
+            class="unselectable"
+          >
+            <Slide v-for="trip in trips" :key="trip.index" class="unselectable ma-8">
               <div class="carousel__item ma-8" style="width: 100%">
-                <TripCard :trip="trip" :isPreview="true" />
+                <TripCard :trip="trip" :isPreview="true"  />
               </div>
             </Slide>
             <template #addons>
@@ -77,5 +82,8 @@ onMounted(() => {
 <style scoped>
 .find_trip_bg {
   background: linear-gradient(270deg, #24b0d6, #27728b);
+}
+.carousel__slide {
+  align-items: end;
 }
 </style>

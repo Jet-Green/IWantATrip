@@ -44,11 +44,17 @@ body {
 .align-center {
     align-items: center;
 }
+.align-end {
+    align-items: end;
+}
 .direction-column {
     flex-direction: column;
 }
 .justify-end{
     justify-content: flex-end;
+}
+.flex-wrap{
+    flex-wrap: wrap;
 }
 
 // MA
