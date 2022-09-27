@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Landing from '../views/Landing.vue'
 import TripsPage from '../views/TripsPage.vue'
 
+
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -14,6 +16,12 @@ const router = createRouter({
       path: '/trips',
       name: 'TripsPage',
       component: TripsPage,
+    },
+    {
+      path: '/company-info-page/:company',
+      name: 'CompanyInfoPage',
+      component: () => import('../views/CompanyInfoPage.vue'),
+      props: true,
     },
     {
       path: '/create-with-help',
@@ -90,6 +98,7 @@ const router = createRouter({
       name: 'Souvenirs',
       component: () => import('../components/_guide/Souvenirs.vue')
     },
+    
   ],
   scrollBehavior(to, from, savedPosition) {
     if ((to.name == 'TripsPage') || (to.name == 'TripInfoPage') || (to.name == 'CompanionsPage'))
