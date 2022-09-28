@@ -11,6 +11,8 @@ let sm = breakpoints.smaller("md");
 let router = useRouter();
 let visibleDrawer = ref(false);
 let visibleModal = ref(false);
+let isTripCreator = ref(false);
+let visibleCreator = ref(false);
 
 function showDrawer() {
   visibleDrawer.value = !visibleDrawer.value;
@@ -27,6 +29,16 @@ async function toComponentFromMenu(routName) {
 }
 function authorize() {
   visibleModal.value = !visibleModal.value
+}
+let changeVisibleCreator = () =>{
+  visibleCreator.value = !visibleCreator.value;
+}
+let ToCreateTripNoHelp = () => {
+  if(isTripCreator.value){
+
+  } else {
+    changeVisibleCreator();
+  }
 }
 // const md = breakpoints.between('sm', 'md')
 // const lg = breakpoints.between('md', 'lg')
@@ -48,7 +60,16 @@ function authorize() {
           <a-col v-if="!sm" :span="12" class="top_menu">
             <div @click="toComponentFromMenu('TripsPage')" class="route">найти</div>
             <div @click="toComponentFromMenu('CreateTripWithHelp')" class="route">заказать</div>
-            <div @click="toComponentFromMenu('CreateTripNoHelp')" class="route">создать</div>
+            <div @click="ToCreateTripNoHelp" class="route">
+              создать
+              <a-modal v-model:visible="visibleCreator" title="Вы не зарегистрированы как создатель поездок">
+                Зарегистрироваться?
+                <template #footer>
+                  <a-button key="back" @click="changeVisibleCreator">Нет</a-button>
+                  <a-button key="submit">Да</a-button>
+                </template>
+              </a-modal>
+            </div>
             <div @click="toComponentFromMenu('CompanionsPage')" class="route">попутчики</div>
             <span class="mdi mdi-24px mdi-home" @click="showModal" style="cursor: pointer" cancelText="отмена"></span>
           </a-col>
@@ -64,9 +85,6 @@ function authorize() {
       <div @click="toComponentFromMenu('CreateTripNoHelp')" class="route ma-8">создать тур</div>
       <div @click="toComponentFromMenu('CompanionsPage')" class="route ma-8">попутчики</div>
     </a-drawer>
-    <a-modal v-model:visible="visibleModal" title="Авторизация" :footer="null">
-      <AuthForm @closeModal="visibleModal = false" />
-    </a-modal>
   </a-layout-header>
 </template>
 
