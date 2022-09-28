@@ -1,14 +1,18 @@
 <script setup>
+import { useRouter } from "vue-router";
+
 let props = defineProps({
   trip: Object,
 });
+
+let router = useRouter();
 </script>
 <template>
-  <div >
-    <div class="title"> {{ trip.name }} </div>
+  <div @click="router.push('/trip')">
+    <div class="title">{{ trip.name }}</div>
     <a-badge-ribbon :text="`${trip.cost[0].cost} руб`" color="ff6600">
       <a-card hoverable>
-        <div>
+        <div >
           <img
             :src="trip.images[0]"
             style="object-fit: cover; width: 100%; height: 175px"
