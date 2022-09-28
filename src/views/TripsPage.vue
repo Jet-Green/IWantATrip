@@ -8,5 +8,6 @@ import BackButton from "../components/BackButton.vue";
     <BackButton />
     <TripFilter />
     <TripsList />
+    
   </div>
 </template>

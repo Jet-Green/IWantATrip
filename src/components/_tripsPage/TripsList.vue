@@ -7,6 +7,7 @@ const useTripsStore = useTrips();
 let trips = computed(() => {
   return useTripsStore.trips;
 });
+
 </script>
 
 <template>

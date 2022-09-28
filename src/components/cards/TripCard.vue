@@ -1,10 +1,14 @@
 <script setup>
+import { useRouter } from "vue-router";
+
 let props = defineProps({
   trip: Object,
 });
+
+let router = useRouter();
 </script>
 <template>
-  <div style="width: 270px">
+  <div @click="router.push('/trip')" style="width: 270px">
     <span class="title"> {{ trip.name }} {{ props.color }} </span>
     <a-badge-ribbon :text="`${trip.cost[0].cost} руб`">
       <a-card hoverable>
@@ -36,7 +40,7 @@ let props = defineProps({
     background-color: #c4c4c4;
   }
 }
-.title{
+.title {
   font-size: 16px;
   text-transform: uppercase;
   color: white;
