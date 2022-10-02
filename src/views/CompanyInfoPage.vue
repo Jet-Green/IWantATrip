@@ -1,35 +1,44 @@
 <script setup>
-import { computed } from "vue";
-import BackButton from "../components/BackButton.vue";
-import { useGuide } from "../stores/guide";
-const backRoute = "/watch";
-const props = defineProps({
-  company: String,
-});
-const useGuideStore = useGuide();
-let toWatch = computed(() => useGuideStore.toWatch);
+  import { ref } from "vue";
+  import { useRoute } from "vue-router"
+  import axios from 'axios'
 
-useGuideStore.fetchElementsByQuery("toWatch");
-</script>
+  import BackButton from "../components/BackButton.vue";
+  const route = useRoute()
+  
+  const _id = route.query._id;
+  
+  const backRoute = "/watch"
+  
+  let watch = ref({})
+  
+  axios.get(`http://localhost:3030/guide/get-by-id?_id=${_id}`)
+    .then((response) => {
+      watch.value = response.data;
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+  </script>
 <template>
   <BackButton :backRoute="backRoute" />
   <a-row display="flex" justify="center" class="mb-16">
     <a-col :xs="22" :lg="16">
       <div class="cover mb-16">
-        <img :src="toWatch[company].image" alt="" srcset="" />
+        <img :src="response.data.image" alt="" srcset="" />
       </div>
 
       <div class="title mt-16">
-        <h1>{{ toWatch[company].name }}</h1>
+        <h1>{{ response.data.name }}</h1>
       </div>
 
       <div class="ml-16">
-        <h3>{{ toWatch[company].description }}</h3>
+        <h3>{{ response.data.description }}</h3>
       </div>
       <div style="display: flex; justify-content: flex-end; flex-direction: column">
-        <span>Адрес: {{ toWatch[company].address }}</span>
-        <span>Телефон: {{ toWatch[company].phone }}</span>
-        <span>Социальные сети: {{ toWatch[company].socialMedia }}</span>
+        <span>Адрес: {{ response.data.address }}</span>
+        <span>Телефон: {{ response.data.phone }}</span>
+        <span>Социальные сети: {{ response.data.socialMedia }}</span>
       </div>
     </a-col>
   </a-row>

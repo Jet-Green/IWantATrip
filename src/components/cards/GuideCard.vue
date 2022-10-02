@@ -4,16 +4,17 @@ let router = useRouter();
 const props = defineProps({
   element: Object,
 });
+function goToTripPage() {
+  router.push(`/company-info-page?_id=${props.element._id}`)
+}
 </script>
 <template>
-  <router-link :to="{ name: 'CompanyInfoPage', params: { company: element.id } }">
-    <a-card hoverable>
+    <a-card hoverable @click="goToTripPage">
       <template #cover>
         <img :src="props.element.image" />
       </template>
       <span class="title">{{ props.element.name }}</span>
     </a-card>
-  </router-link>
 </template>
 <style lang="scss" scoped>
 .title {

@@ -21,7 +21,6 @@ const router = createRouter({
       path: '/company-info-page/:company',
       name: 'CompanyInfoPage',
       component: () => import('../views/CompanyInfoPage.vue'),
-      props: true,
     },
     {
       path: '/create-with-help',
