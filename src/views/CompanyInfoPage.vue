@@ -23,7 +23,13 @@
 <template>
   <BackButton :backRoute="backRoute" />
 
-  <a-row display="flex" justify="center" class="mb-16">
+  <a-row v-if="!tour._id">
+      <a-col :span="24" class="d-flex justify-center">
+        <a-spin size="large"></a-spin>
+      </a-col>
+    </a-row>
+
+  <a-row v-else display="flex" justify="center" class="mb-16">
     <a-col :xs="22" :lg="16">
       <div class="cover mb-16">
         <img :src="watch.image" alt="" srcset="" />
