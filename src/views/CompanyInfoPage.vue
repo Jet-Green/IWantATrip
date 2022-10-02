@@ -23,7 +23,7 @@
 <template>
   <BackButton :backRoute="backRoute" />
 
-  <a-row v-if="!tour._id">
+  <a-row v-if="!watch._id">
       <a-col :span="24" class="d-flex justify-center">
         <a-spin size="large"></a-spin>
       </a-col>
