@@ -6,9 +6,12 @@ let props = defineProps({
 });
 
 let router = useRouter();
+function goToTripPage() {
+  router.push(`/trip?_id=${props.trip._id}`)
+}
 </script>
 <template>
-  <div @click="router.push('/trip')" style="width: 270px">
+  <div @click="goToTripPage" style="width: 270px">
     <span class="title"> {{ trip.name }} {{ props.color }} </span>
     <a-badge-ribbon :text="`${trip.cost[0].cost} руб`">
       <a-card hoverable>
