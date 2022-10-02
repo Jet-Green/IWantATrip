@@ -18,7 +18,7 @@ const router = createRouter({
       component: TripsPage,
     },
     {
-      path: '/company-info-page/:company',
+      path: '/company-info-page',
       name: 'CompanyInfoPage',
       component: () => import('../views/CompanyInfoPage.vue'),
     },

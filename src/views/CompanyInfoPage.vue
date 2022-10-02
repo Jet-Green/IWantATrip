@@ -22,23 +22,23 @@
   </script>
 <template>
   <BackButton :backRoute="backRoute" />
+
   <a-row display="flex" justify="center" class="mb-16">
     <a-col :xs="22" :lg="16">
       <div class="cover mb-16">
-        <img :src="response.data.image" alt="" srcset="" />
+        <img :src="watch.image" alt="" srcset="" />
       </div>
-
-      <div class="title mt-16">
-        <h1>{{ response.data.name }}</h1>
+       <div class="title mt-16">
+        <h1>{{ watch.name }}</h1>
       </div>
 
       <div class="ml-16">
-        <h3>{{ response.data.description }}</h3>
+        <h3>{{ watch.description }}</h3>
       </div>
       <div style="display: flex; justify-content: flex-end; flex-direction: column">
-        <span>Адрес: {{ response.data.address }}</span>
-        <span>Телефон: {{ response.data.phone }}</span>
-        <span>Социальные сети: {{ response.data.socialMedia }}</span>
+        <span>Адрес: {{ watch.address }}</span>
+        <span>Телефон: {{ watch.phone }}</span>
+        <span>Социальные сети: {{ watch.socialMedia }}</span>
       </div>
     </a-col>
   </a-row>
