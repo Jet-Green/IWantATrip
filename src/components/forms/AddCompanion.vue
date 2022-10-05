@@ -3,7 +3,7 @@ import { reactive } from "vue";
 import typeOfTrip from "../../fakeDB/tripType";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import BackButton from "../BackButton.vue";
-import TripService from "../../service/TripService";
+import CompanionService from "../../service/CompanionService";
 const ruLocale = locale;
 const backRoute = "/companions";
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
@@ -20,7 +20,7 @@ const form = reactive({
   description: "",
 });
 function submit() {
-  TripService.createCompanion(form)
+  CompanionService.createCompanion(form)
 }
 </script>
 
