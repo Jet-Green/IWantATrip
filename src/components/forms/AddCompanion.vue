@@ -3,6 +3,7 @@ import { reactive } from "vue";
 import typeOfTrip from "../../fakeDB/tripType";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import BackButton from "../BackButton.vue";
+import TripService from "../../service/TripService";
 const ruLocale = locale;
 const backRoute = "/companions";
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
@@ -15,11 +16,12 @@ const form = reactive({
   end: "",
   age: "",
   gender: "Male",
-  datestart: "",
-  dateend: "",
-  days: "",
+  type: "Любой",
   description: "",
 });
+function submit() {
+  TripService.createCompanion(form)
+}
 </script>
 
 <template>
@@ -89,7 +91,7 @@ const form = reactive({
           <a-col :xs="24">
             Тип отдыха
             <a-select
-            
+              v-model:value="form.type"
               style="width: 100%"
               :options="typeOfTrip"
               mode="multiple"
@@ -97,13 +99,14 @@ const form = reactive({
           </a-col>
           <a-col :xs="24">
             Пожелания
-            <a-textarea autoSize />
+            <a-textarea autoSize v-model:value="form.description"/>
           </a-col>
           <a-button
             type="primary"
             class="lets_go_btn"
             size="large"
             style="display: flex; justify-content: center"
+            html-type="submit"
             >Отправить
           </a-button>
         </a-row>
