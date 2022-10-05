@@ -3,6 +3,7 @@ import { useRouter } from "vue-router";
 import { ref } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
+import TripCreatorReg from "./forms/TripCreatorReg.vue"
 import RegForm from "./RegForm.vue";
 import AuthForm from "./AuthForm.vue"
 
@@ -35,7 +36,7 @@ let changeVisibleCreator = () =>{
 }
 let ToCreateTripNoHelp = () => {
   if(isTripCreator.value){
-
+    router.push({ name: "CreateTripNoHelp" })
   } else {
     changeVisibleCreator();
   }
@@ -62,12 +63,8 @@ let ToCreateTripNoHelp = () => {
             <div @click="toComponentFromMenu('CreateTripWithHelp')" class="route">заказать</div>
             <div @click="ToCreateTripNoHelp" class="route">
               создать
-              <a-modal v-model:visible="visibleCreator" title="Вы не зарегистрированы как создатель поездок">
-                Зарегистрироваться?
-                <template #footer>
-                  <a-button key="back" @click="changeVisibleCreator">Нет</a-button>
-                  <a-button key="submit">Да</a-button>
-                </template>
+              <a-modal v-model:visible="visibleCreator" title="Зарегистрируйтесь как создатель поездок" :footer="null">
+                <TripCreatorReg/>
               </a-modal>
             </div>
             <div @click="toComponentFromMenu('CompanionsPage')" class="route">попутчики</div>
