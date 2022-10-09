@@ -7,5 +7,9 @@ export default {
 
     async createTrip(trip) {
         return $api.post('/trips/create', trip)
+    },
+
+    async bookingTrip(booking) {
+        return $api.post('/trips/booking', booking)
     }
 }
