@@ -3,6 +3,8 @@ import { reactive, ref } from "vue";
 import typeOfTrip from "../../fakeDB/tripType";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 
+import TripService from "../../service/TripService";
+
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
 const monthFormatList = ["MM.YY"];
 const ruLocale = locale;
@@ -24,10 +26,19 @@ let form = reactive({
 let formState = reactive({
   email: "",
   password: "",
+  username: "",
 });
+
+function submit() {
+//  console.log(form)
+
+ TripService.bookingTrip(form)
+}
+
+const value2 = ref([3, 20]);
 </script>
 <template>
-  <div>
+<form action="POST" @submit.prevent="submit" enctype="multipart/form-data" ref="newGuideElementForm"> 
   <a-row type="flex" justify="center">
     <a-col :xs="22" :lg="12">
       <a-row :gutter="[16, 16]">
@@ -123,13 +134,13 @@ let formState = reactive({
 
       <a-row type="flex" justify="center">
         <a-col :xs="24" :md="16" :lg="10" class="d-flex justify-center">
-          <a-button class="mt-16" type="primary" shape="round" size="large"
+          <a-button type="primary" html-type="submit" class="lets_go_btn mt-8" size="large"
             >Отправить</a-button
           >
         </a-col>
       </a-row>
     </a-col>
   </a-row>
-</div>
+</form>
 </template>
 <style></style>

@@ -3,7 +3,9 @@ import { reactive } from "vue";
 import typeOfTrip from "../../fakeDB/tripType";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import BackButton from "../BackButton.vue";
+import CompanionService from "../../service/CompanionService";
 const ruLocale = locale;
+const backRoute = "/companions";
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
 const form = reactive({
   name: "",
@@ -14,15 +16,16 @@ const form = reactive({
   end: "",
   age: "",
   gender: "Male",
-  datestart: "",
-  dateend: "",
-  days: "",
+  type: "Любой",
   description: "",
 });
+function submit() {
+  CompanionService.createCompanion(form)
+}
 </script>
 
 <template>
-  <BackButton />
+  <BackButton :backRoute="backRoute"/>
   <form
     action="POST"
     @submit.prevent="submit"
@@ -57,13 +60,14 @@ const form = reactive({
             <a-input type="number" :min="0" v-model:value="form.age" />
           </a-col>
 
-          <a-col :span="12" class="d-flex align-end">
-
-            <a-radio-group v-model:value="form.gender" name="radioGroup">
+          <a-col :span="12" class="d-flex align-center" style="flex-wrap: wrap;">
+              Пол
+            <a-radio-group v-model:value="form.gender" name="radioGroup" style="width: -moz-available; width: -webkit-fill-available">
               <a-radio :value="'Male'">Мужчина</a-radio>
               <a-radio :value="'Female'">Женщина</a-radio>
             </a-radio-group>
           </a-col>
+
           <a-col :span="12">
             Дата начала
             <a-date-picker
@@ -87,7 +91,7 @@ const form = reactive({
           <a-col :xs="24">
             Тип отдыха
             <a-select
-            
+              v-model:value="form.type"
               style="width: 100%"
               :options="typeOfTrip"
               mode="multiple"
@@ -95,13 +99,14 @@ const form = reactive({
           </a-col>
           <a-col :xs="24">
             Пожелания
-            <a-textarea autoSize />
+            <a-textarea autoSize v-model:value="form.description"/>
           </a-col>
           <a-button
             type="primary"
             class="lets_go_btn"
             size="large"
             style="display: flex; justify-content: center"
+            html-type="submit"
             >Отправить
           </a-button>
         </a-row>
