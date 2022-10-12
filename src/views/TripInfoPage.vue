@@ -14,102 +14,91 @@ const _id = route.query._id;
 
 //   return res.data
 // })
-let duration = "12";
 const backRoute = "/trips";
-let tour = ref({});
-let x = ref();
-async function durationCounter(){
-  let promise = new Promise((resolve, reject) => {
-    setTimeout(() => resolve(tour.value.start), 100)
-  });
-  let result = await promise; // будет ждать, пока промис не выполнится (*)
-  const date1 = new Date('7/13/2010');
-const date2 = new Date('12/15/2010');
-const diffTime = Math.abs(date2 - date1);
-const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-
-}
+let trip = ref({});
 axios
   .get(`http://localhost:3030/trips/get-by-id?_id=${_id}`)
   .then((response) => {
-    tour.value = response.data;
+    trip.value = response.data;
+    console.log(trip.value)
   })
   .catch((error) => {
     console.log(error);
   });
-  tour.duration=durationCounter()
 </script>
 <template>
   <div>
     <BackButton :backRoute="backRoute" />
 
-    <a-row v-if="!tour._id">
+    <a-row v-if="!trip._id">
       <a-col :span="24" class="d-flex justify-center">
         <a-spin size="large"></a-spin>
       </a-col>
     </a-row>
 
-    <a-row v-else display="flex" justify="center">
-      <a-col :xs="22" :lg="16">
-        <a-row display="flex" justify="space-around">
-        
-          <a-col :lg="11" :xs="24">
-            <img :src="tour.image" alt="" srcset="" />
+    <a-row v-else display="flex" justify="center" :gutter="[16, 16]">
+      <a-col :xs="11" :lg="8">
+        <img :src="trip.image" alt="" srcset="" />
+      </a-col>
+      <a-col :xs="11" :lg="8" class="content">
+        <a-row display="flex">
+          <a-col :xs="22" :lg="16" class="title">
+            <h1>{{ trip.name }}</h1>
           </a-col>
 
-          <a-col class="content" :lg="11" :xs="24">
-            <div class="title">
-              <h1>{{ x }}</h1>
-            </div>
+          <a-col :xs="22" :lg="16" class="description">
+            <span v-html="trip.description"></span>
+          </a-col>
 
-            <div class="description ml-16">
-              <h3>{{ tour.description }}</h3>
-            </div>
+          <a-col :xs="22" :lg="16" class="time" style="display: flex; flex-direction: column">
+            <span style="display: flex; flex-wrap: nowrap"
+              >Продолжительность:
+              <h3 class="ml-8 mb-4">{{ trip.duration }} дней</h3>
+            </span>
+            <span style="display: flex; flex-wrap: nowrap"
+              >Ближайший выезд:
+              <h3 class="ml-8 mb-4">{{ trip.start }}</h3>
+            </span>
+          </a-col>
 
-            <div class="time mb-8" style="display:flex;flex-direction: column;">
-                <span  style="display:flex;flex-wrap: nowrap;">Продолжительность: <h3 class="ml-8 mb-4">{{ duration }} дней</h3>
-                </span>
-                <span  style="display:flex;flex-wrap: nowrap;">Ближайший выезд: <h3 class="ml-8 mb-4">{{ tour.start }}</h3>
-                </span>
-              </div>
+          <a-col :xs="22" :lg="16" class="people">
+            Количество человек:
+            <a-progress
+              :percent="(trip.fromAge / 27) * 100"
+              :format="(percent) => `20 ч.`"
+            >
+            </a-progress>
+          </a-col>
 
-            <div class="people ma-8">
-              Количество человек:
-              <a-progress
-                :percent="(tour.fromAge / 27) * 100"
-                :format="(percent) => `20 ч.`"
-              >
-              </a-progress>
-            </div>
+          <a-col :xs="22" :lg="16" class="prizes">
+            <a-button type="primary" shape="round" class="prize mb-8 mr-8"
+              >25 - 33 чел. + Сувенир</a-button
+            >
+            <a-button type="primary" shape="round" class="prize mb-8 mr-8"
+              >34 - 34 чел. + Ужин</a-button
+            >
+          </a-col>
 
-            <div class="prizes">
-              <a-button type="primary" shape="round" class="prize mb-8 mr-8"
-                >25 - 33 чел. + Сувенир</a-button
-              >
-              <a-button type="primary" shape="round" class="prize mb-8 mr-8"
-                >34 - 34 чел. + Ужин</a-button
-              >
-            </div>
 
-            <div>
-              <div style="display:flex;flex-direction: column;" class="mt-16 mb-16">
+            <a-col :xs="22" :lg="16" style="display: flex;">Цена: </a-col>
+            <a-col
+              :xs="22" :lg="16"
+              style="display: flex; align-items: flex-start;"
+              v-for="item in trip.cost"
+            >
+              {{ item.first }} : {{ item.last }}
+            </a-col>
 
-                <span style="display:flex;flex-wrap: wrap;">Цена: <h3 class="ml-8 mb-8" style="width:80%" v-for="item in tour.cost" >
-                  {{ item.name }} : {{ item.cost }}
-                </h3>
-                </span>
-              </div>
-            </div>
-            <div class="actions">
-              <a-button
-                type="primary"
-                class="lets_go_btn"
-                size="large"
-                style="display: flex; justify-content: center"
-              >
-                Купить
-              </a-button>
-            </div>
+
+          <a-col :xs="22" :lg="16" class="actions">
+            <a-button
+              type="primary"
+              class="lets_go_btn"
+              size="large"
+              style="display: flex; justify-content: center"
+            >
+              Купить
+            </a-button>
           </a-col>
         </a-row>
       </a-col>
