@@ -26,8 +26,8 @@ let previews = ref([]);
 
 let form = reactive({
   name: "",
-  start: start.value,
-  end: end.value,
+  start: null,
+  end: null,
   duration: "",
   images: [],
   tripRoute: "",
@@ -36,7 +36,7 @@ let form = reactive({
   offer: "",
   description: description.value,
   location: "",
-  tripType: "пляжный",
+  tripType: "",
   fromAge: "",
   period: "",
 });
@@ -60,6 +60,9 @@ const delPhoto = () => {
 };
 
 function submit() {
+  form.start = start.value.$d.toString();
+  form.end = end.value.$d.toString();
+
   TripService.createTrip(form)
 }
 
