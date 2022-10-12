@@ -70,7 +70,7 @@ axios
             </a-progress>
           </a-col>
 
-          <a-col :xs="22" :lg="16" class="prizes">
+          <a-col :span="24" class="prizes">
             <a-button type="primary" shape="round" class="prize mb-8 mr-8"
               >25 - 33 чел. + Сувенир</a-button
             >
@@ -79,15 +79,16 @@ axios
             >
           </a-col>
 
-
-            <a-col :xs="22" :lg="16" style="display: flex;">Цена: </a-col>
+          <a-row>
+            <a-col :xs="2" :lg="2" >Цена: </a-col>
             <a-col
-              :xs="22" :lg="16"
-              style="display: flex; align-items: flex-start;"
+              :xs="18" :lg="20"
+             
               v-for="item in trip.cost"
             >
               {{ item.first }} : {{ item.last }}
             </a-col>
+          </a-row>
 
 
           <a-col :xs="22" :lg="16" class="actions">
