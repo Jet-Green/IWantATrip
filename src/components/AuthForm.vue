@@ -36,7 +36,6 @@ function login() {
       <a-input-password v-model:value="formState.password" />
     </a-form-item>
     <a-form-item>
-      <a-button key="back" @click="emit('closeModal')" class="mr-16">Отмена</a-button>
       <a-button key="submit" html-type="submit">Войти</a-button>
     </a-form-item>
   </a-form>

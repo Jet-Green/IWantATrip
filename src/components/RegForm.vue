@@ -36,5 +36,8 @@ const formState = reactive({
     >
       <a-input-password v-model:value="formState.password" />
     </a-form-item>
+    <a-form-item>
+      <a-button key="submit" html-type="submit">Зарегистрироваться</a-button>
+    </a-form-item>
   </a-form>
 </template>

@@ -2,23 +2,26 @@
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { useAuth } from '../stores/auth'
 
+import TripCreatorReg from "./forms/TripCreatorReg.vue"
 import RegForm from "./RegForm.vue";
 import AuthForm from "./AuthForm.vue"
+
+let authStore=useAuth();
 
 let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
 let router = useRouter();
 let visibleDrawer = ref(false);
 let visibleModal = ref(false);
+let isAuth = ref(authStore.getAuthStatus);
 let isTripCreator = ref(false);
 let visibleCreator = ref(false);
+let value=ref("Reg")
 
 function showDrawer() {
   visibleDrawer.value = !visibleDrawer.value;
-};
-function showModal() {
-  visibleModal.value = !visibleModal.value;
 };
 async function toComponentFromMenu(routName) {
   router.isReady().then(() => {
@@ -27,17 +30,18 @@ async function toComponentFromMenu(routName) {
 
   visibleDrawer.value = false;
 }
-function authorize() {
-  visibleModal.value = !visibleModal.value
-}
 let changeVisibleCreator = () =>{
   visibleCreator.value = !visibleCreator.value;
 }
 let ToCreateTripNoHelp = () => {
-  if(isTripCreator.value){
-
+  if(isAuth.value){
+    if(isTripCreator.value){
+      router.push({ name: "CreateTripNoHelp" })
+    } else {
+      changeVisibleCreator();
+    }
   } else {
-    changeVisibleCreator();
+    visibleModal.value = !visibleModal.value
   }
 }
 // const md = breakpoints.between('sm', 'md')
@@ -62,12 +66,8 @@ let ToCreateTripNoHelp = () => {
             <div @click="toComponentFromMenu('CreateTripWithHelp')" class="route">заказать</div>
             <div @click="ToCreateTripNoHelp" class="route">
               создать
-              <a-modal v-model:visible="visibleCreator" title="Вы не зарегистрированы как создатель поездок">
-                Зарегистрироваться?
-                <template #footer>
-                  <a-button key="back" @click="changeVisibleCreator">Нет</a-button>
-                  <a-button key="submit">Да</a-button>
-                </template>
+              <a-modal v-model:visible="visibleCreator" title="Зарегистрируйтесь как создатель поездок" :footer="null">
+                <TripCreatorReg/>
               </a-modal>
             </div>
             <div @click="toComponentFromMenu('CompanionsPage')" class="route">попутчики</div>
@@ -85,6 +85,14 @@ let ToCreateTripNoHelp = () => {
       <div @click="toComponentFromMenu('CreateTripNoHelp')" class="route ma-8">создать тур</div>
       <div @click="toComponentFromMenu('CompanionsPage')" class="route ma-8">попутчики</div>
     </a-drawer>
+    <a-modal v-model:visible="visibleModal" :footer="null">
+      <a-radio-group v-model:value="value" class="mb-16">
+        <a-radio value="Reg">Регистрация</a-radio>
+        <a-radio value="Auth">Вход</a-radio>
+      </a-radio-group>
+      <RegForm v-if="value=='Reg'"/>
+      <AuthForm v-if="value=='Auth'"/>
+    </a-modal>
   </a-layout-header>
 </template>
 
