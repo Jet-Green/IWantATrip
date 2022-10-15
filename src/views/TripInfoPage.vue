@@ -20,7 +20,7 @@ axios
   .get(`http://localhost:3030/trips/get-by-id?_id=${_id}`)
   .then((response) => {
     trip.value = response.data;
-    console.log(trip.value)
+    console.log(trip.value);
   })
   .catch((error) => {
     console.log(error);
@@ -50,7 +50,12 @@ axios
             <span v-html="trip.description"></span>
           </a-col>
 
-          <a-col :xs="22" :lg="16" class="time" style="display: flex; flex-direction: column">
+          <a-col
+            :xs="22"
+            :lg="16"
+            class="time"
+            style="display: flex; flex-direction: column"
+          >
             <span style="display: flex; flex-wrap: nowrap"
               >Продолжительность:
               <h3 class="ml-8 mb-4">{{ trip.duration }} дней</h3>
@@ -71,25 +76,20 @@ axios
           </a-col>
 
           <a-col :span="24" class="prizes">
-            <a-button type="primary" shape="round" class="prize mb-8 mr-8"
+            <a-button type="primary" ghost shape="round" class="prize mb-8 mr-8"
               >25 - 33 чел. + Сувенир</a-button
             >
-            <a-button type="primary" shape="round" class="prize mb-8 mr-8"
+            <a-button type="primary" ghost shape="round" class="prize mb-8 mr-8"
               >34 - 34 чел. + Ужин</a-button
             >
           </a-col>
 
-          <a-row>
-            <a-col :xs="2" :lg="2" >Цена: </a-col>
-            <a-col
-              :xs="18" :lg="20"
-             
-              v-for="item in trip.cost"
-            >
+          <a-col :span="24"
+            >Цена:
+            <span v-for="item in trip.cost" class="cost">
               {{ item.first }} : {{ item.last }}
-            </a-col>
-          </a-row>
-
+            </span>
+          </a-col>
 
           <a-col :xs="22" :lg="16" class="actions">
             <a-button
@@ -133,5 +133,12 @@ axios
 img {
   width: 100%;
   aspect-ratio: 1/1;
+}
+.coster:nth-of-type(1n + 2) {
+  display: flex;
+}
+
+.ant-row > .ant-col {
+  margin-bottom: 8px;
 }
 </style>

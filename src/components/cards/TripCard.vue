@@ -13,7 +13,7 @@ function goToTripPage() {
 <template>
   <div @click="goToTripPage" style="width: 270px">
     <span class="title"> {{ trip.name }} {{ props.color }} </span>
-    <a-badge-ribbon :text="`${trip.cost[0].cost} руб`">
+    <a-badge-ribbon :text="`${trip.cost.last} руб`">
       <a-card hoverable>
         <div>
           <img
