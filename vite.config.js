@@ -15,11 +15,11 @@ export default defineConfig(
     command,
     mode
   }) => {
-    let baseUrl = mode == 'development' ? '/' : '/IWantATrip/'
+    // let baseUrl = mode == 'development' ? '/' : '/IWantATrip/'
     process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
 
     return {
-      base: baseUrl,
+      // base: baseUrl,
       plugins: [
         vue()
       ],
