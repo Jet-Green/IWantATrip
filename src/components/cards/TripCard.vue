@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 
 let props = defineProps({
@@ -9,11 +10,15 @@ let router = useRouter();
 function goToTripPage() {
   router.push(`/trip?_id=${props.trip._id}`)
 }
+const clearData = (dataString) => {
+  const dataFromString = new Date(dataString)
+  return dataFromString.toLocaleDateString()
+}
 </script>
 <template>
   <div @click="goToTripPage" style="width: 270px">
     <span class="title"> {{ trip.name }} {{ props.color }} </span>
-    <a-badge-ribbon :text="`${trip.cost[0].cost} руб`">
+    <a-badge-ribbon :text="`${trip.cost[0].cost} руб`" >
       <a-card hoverable>
         <div>
           <img
@@ -22,7 +27,7 @@ function goToTripPage() {
           />
         </div>
         <span>
-          c <strong>{{ trip.start }}</strong> по <strong>{{ trip.end }}</strong>
+          c <strong>{{clearData(trip.start) }}</strong> по <strong>{{ clearData(trip.end) }}</strong>
         </span>
       </a-card>
     </a-badge-ribbon>
