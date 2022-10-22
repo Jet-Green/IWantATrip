@@ -5,7 +5,7 @@ import TripsPage from '../views/TripsPage.vue'
 
 
 const router = createRouter({
-  // history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
@@ -97,7 +97,7 @@ const router = createRouter({
       name: 'Souvenirs',
       component: () => import('../components/_guide/Souvenirs.vue')
     },
-    
+
   ],
   scrollBehavior(to, from, savedPosition) {
     if ((to.name == 'TripsPage') || (to.name == 'TripInfoPage') || (to.name == 'CompanionsPage'))
