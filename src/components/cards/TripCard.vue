@@ -18,13 +18,10 @@ const clearData = (dataString) => {
 <template>
   <div @click="goToTripPage" style="width: 270px">
     <span class="title"> {{ trip.name }} {{ props.color }} </span>
-    <a-badge-ribbon :text="`${trip.cost[0].cost} руб`" >
+    <a-badge-ribbon :text="`${trip.cost.last} руб`">
       <a-card hoverable>
         <div>
-          <img
-            :src="trip.images[0]"
-            style="object-fit: cover; width: 100%; height: 175px"
-          />
+          <img :src="trip.images[0]" style="object-fit: cover; width: 100%; height: 175px" />
         </div>
         <span>
           c <strong>{{clearData(trip.start) }}</strong> по <strong>{{ clearData(trip.end) }}</strong>
@@ -48,6 +45,7 @@ const clearData = (dataString) => {
     background-color: #c4c4c4;
   }
 }
+
 .title {
   font-size: 16px;
   text-transform: uppercase;
