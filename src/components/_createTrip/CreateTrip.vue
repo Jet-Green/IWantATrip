@@ -5,6 +5,8 @@ import { watch, nextTick, ref, reactive, computed, onMounted } from "vue";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import ImageCropper from "../ImageCropper.vue";
 import typeOfTrip from "../../fakeDB/tripType";
+import { message } from 'ant-design-vue';
+import { useRouter } from 'vue-router'
 
 import TripService from "../../service/TripService";
 
@@ -19,6 +21,8 @@ const start = ref(null);
 const end = ref(null);
 const delPhotoDialog = ref(false);
 const targetIndex = ref(null);
+
+const router = useRouter();
 
 // cropper
 let visibleCropperModal = ref(false);
@@ -71,7 +75,34 @@ function submit() {
     for (let i = 0; i < images.length; i++) {
       imagesFormData.append('trip-image', images[i], _id + '_' + i + '.png')
     }
-    TripService.uploadTripImages(imagesFormData)
+    function close() {
+      router.push('/trips')
+    }
+    TripService.uploadTripImages(imagesFormData).then((res) => {
+      Object.assign(form,
+        {
+          name: "",
+          start: null,
+          end: null,
+          maxPeople: null,
+          duration: "",
+          images: [],
+          tripRoute: "",
+          distance: "",
+          cost: [],
+          offer: "",
+          description: description.value,
+          location: "",
+          tripType: "",
+          fromAge: "",
+          period: "",
+        })
+      images = []
+      previews.value = []
+      quill.value.setHTML('');
+      message.config({ duration: 3, top: '90vh' })
+      message.success({ content: 'Тур создан!', onClose: close })
+    })
   })
   // необходимо отчистить форму и сделать редирект на tripList, вывести уведомление снизу об успехе
 }
