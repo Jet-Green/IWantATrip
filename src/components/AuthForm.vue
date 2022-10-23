@@ -1,47 +1,56 @@
 <script setup>
 import { reactive } from "vue";
 import { useAuth } from "../stores/auth";
-import users from "../fakeDB/users";
+import { useRouter } from "vue-router";
+import BackButton from "../components/BackButton.vue";
 
-let authStore = useAuth();
+const user = useAuth();
+const router = useRouter();
+const logIn = () => {
+  user.login();
+  router.push("/");
+};
 
-let formState = reactive({
+const formState = reactive({
+  username: "",
   email: "",
   password: "",
 });
-
-const emit = defineEmits(["closeModal"]);
-
-let currentUser = null;
-function login() {
-  for (let user of users) {
-    if (user.email == formState.email && user.password == formState.password) {
-      console.log("login");
-      authStore.setUserStatus(user.userStatus);
-      authStore.login();
-    }
-  }
-}
 </script>
 <template>
-  <div
-    :model="formState"
-    name="auth"
-    :label-col="{ xs: 2, sm: 5 }"
-    :wrapper-col="{ xs: 16, sm: 18 }"
-    @submit="login"
-  >
-    <!-- <a-form-item label="E-mail" name="e-mail" :rules="[{ required: true, message: 'Введите e-mail!' }]"> -->
-    E-mail
-    <a-input v-model:value="formState.email" />
-    <!-- </a-form-item> -->
-
-    <!-- <a-form-item label="Пароль" name="password" :rules="[{ required: true, message: 'Введите пароль!' }]"> -->
-    Пароль
-    <a-input-password v-model:value="formState.password" />
-    <!-- </a-form-item> -->
-    <!-- <a-form-item> -->
-      <a-button key="submit" html-type="submit" class="lets_go_btn mt-8">Войти</a-button>
-    <!-- </a-form-item> -->
+  <div>
+    <BackButton />
+    <a-row type="flex" justify="center">
+      <a-col :span="24" :md="8" class="pa-16">
+        <h2>Вход</h2>
+        <a-row type="flex" justify="center">
+          <a-col :span="24"
+            >E-mail
+            <a-input
+              placeholder="email@email.com"
+              size="large"
+              v-model="email"
+            ></a-input>
+          </a-col>
+          <a-col :span="24"
+            >Пароль
+            <a-input
+              placeholder="qwerty"
+              size="large"
+              v-model="password"
+              type="password"
+            ></a-input>
+          </a-col>
+          <a-col :span="24" class="d-flex justify-center">
+            <a-button class="ma-16 lets_go_btn" type="primary" size="large" @click="logIn()"
+              >Войти</a-button
+            >
+          </a-col>
+          <a-col :span="24" class="d-flex justify-center">
+            <router-link to="/reg">регистрация</router-link>
+          </a-col>
+        </a-row>
+      </a-col>
+    </a-row>
   </div>
 </template>

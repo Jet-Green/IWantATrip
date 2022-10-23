@@ -20,6 +20,9 @@ export const useAuth = defineStore('auth', {
     },
     login() {
       this.isAuth = true;
+    },
+    logout() {
+      this.isAuth = false;
     }
   },
 })
