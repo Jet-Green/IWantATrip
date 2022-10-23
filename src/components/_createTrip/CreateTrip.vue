@@ -29,6 +29,7 @@ let form = reactive({
   name: "",
   start: null,
   end: null,
+  maxPeople: null,
   duration: "",
   images: [],
   tripRoute: "",
@@ -147,7 +148,8 @@ watch(end, () => {
             <p style="line-height: 40px">{{ form.duration }} дн.</p>
           </a-col>
           <a-col :span="12">
-
+            Макс. число людей
+            <a-input-number v-model:value="form.maxPeople" style="width: 100%" placeholder="11" :min="1" />
           </a-col>
           <a-col :span="24">
             Цены
@@ -155,8 +157,8 @@ watch(end, () => {
             <div v-for="item in form.cost" :key="item.id" style="display: flex" align="baseline" class="mb-16">
               <a-input v-model:value="item.first" placeholder="Для кого" />
 
-              <a-input-number id="inputNumber" v-model:value="item.last" style="width: 100%" placeholder="Цена" :min="0"
-                :step="0.01" class="ml-16 mr-16" />
+              <a-input-number v-model:value="item.last" style="width: 100%" placeholder="Цена" :min="0" :step="0.01"
+                class="ml-16 mr-16" />
 
               <a-button @click="removeCost(item)" shape="circle">
                 <span class="mdi mdi-minus" style="cursor: pointer"></span>
@@ -174,8 +176,7 @@ watch(end, () => {
             </div>
           </a-col>
           <a-col :xs="24" :md="12">Мин. возраст, лет
-            <a-input-number id="inputNumber" v-model:value="form.fromAge" style="width: 100%" placeholder="10" :min="0"
-              :max="100" />
+            <a-input-number v-model:value="form.fromAge" style="width: 100%" placeholder="10" :min="0" :max="100" />
           </a-col>
           <a-col :xs="24" :md="12">Направление
             <a-input placeholder="Байкал" size="large" v-model:value="form.location"></a-input>
