@@ -2,48 +2,44 @@
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { useAuth } from '../stores/auth'
+import { useAuth } from "../stores/auth";
 
-import TripCreatorReg from "./forms/TripCreatorReg.vue"
+import TripCreatorReg from "./forms/TripCreatorReg.vue";
 import RegForm from "./RegForm.vue";
-import AuthForm from "./AuthForm.vue"
+import AuthForm from "./AuthForm.vue";
 
-let authStore=useAuth();
+const user = useAuth();
 
 let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
 let router = useRouter();
 let visibleDrawer = ref(false);
 let visibleModal = ref(false);
-let isAuth = ref(authStore.getAuthStatus);
+
 let isTripCreator = ref(false);
 let visibleCreator = ref(false);
-let value=ref("Reg")
+let value = ref("Reg");
 
 function showDrawer() {
   visibleDrawer.value = !visibleDrawer.value;
-};
-async function toComponentFromMenu(routName) {
+}
+function toComponentFromMenu(routName) {
   router.isReady().then(() => {
-    router.push({ name: routName })
-  })
+    router.push({ name: routName });
+  });
 
   visibleDrawer.value = false;
 }
-let changeVisibleCreator = () =>{
+let changeVisibleCreator = () => {
   visibleCreator.value = !visibleCreator.value;
-}
-let ToCreateTripNoHelp = () => {
-  if(isAuth.value){
-    if(isTripCreator.value){
-      router.push({ name: "CreateTripNoHelp" })
-    } else {
-      changeVisibleCreator();
-    }
+};
+const ToCreateTripNoHelp = () => {
+  if (user.isAuth) {
+    router.push("/create-no-help");
   } else {
-    visibleModal.value = !visibleModal.value
+    router.push("/reg");
   }
-}
+};
 // const md = breakpoints.between('sm', 'md')
 // const lg = breakpoints.between('md', 'lg')
 // const xl = breakpoints.between('lg', 'xl')
@@ -56,43 +52,76 @@ let ToCreateTripNoHelp = () => {
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
         <a-row type="flex" justify="space-between">
-
           <a-col :xs="20" :md="12" @click="toComponentFromMenu('Landing')">
             <span class="mdi mdi-24px mdi-gnome" style="color: #245159"></span>
             Хочу в поездку
           </a-col>
           <a-col v-if="!sm" :span="12" class="top_menu">
-            <div @click="toComponentFromMenu('TripsPage')" class="route">найти</div>
-            <div @click="toComponentFromMenu('CreateTripWithHelp')" class="route">заказать</div>
-            <div @click="ToCreateTripNoHelp" class="route">
-              создать
-              <a-modal v-model:visible="visibleCreator" title="Зарегистрируйтесь как создатель поездок" :footer="null">
-                <TripCreatorReg/>
-              </a-modal>
+            <div @click="toComponentFromMenu('TripsPage')" class="route">
+              найти
             </div>
-            <div @click="toComponentFromMenu('CompanionsPage')" class="route">попутчики</div>
-            <span class="mdi mdi-24px mdi-home" @click="showModal" style="cursor: pointer" cancelText="отмена"></span>
+            <div
+              @click="toComponentFromMenu('CreateTripWithHelp')"
+              class="route"
+            >
+              заказать
+            </div>
+            <div @click="ToCreateTripNoHelp" class="route">создать</div>
+            <div @click="toComponentFromMenu('CompanionsPage')" class="route">
+              попутчики
+            </div>
+            <span
+              v-if="user.isAuth"
+              class="mdi mdi-24px mdi-home"
+              @click="toComponentFromMenu('Cabinet')"
+              style="cursor: pointer"
+              cancelText="отмена"
+            >
+            </span>
+            <span
+              v-if="!user.isAuth"
+              class="mdi mdi-24px mdi-login"
+              @click="toComponentFromMenu('RegForm')"
+              style="cursor: pointer"
+            >
+            </span>
           </a-col>
           <a-col v-else>
-            <span class="mdi mdi-24px mdi-menu" style="color: #245159; cursor: pointer" @click="showDrawer"></span>
+            <span
+              class="mdi mdi-24px mdi-menu"
+              style="color: #245159; cursor: pointer"
+              @click="showDrawer"
+            ></span>
           </a-col>
         </a-row>
       </a-col>
     </a-row>
-    <a-drawer placement="right" :closable="false" :visible="visibleDrawer" @close="showDrawer" width="200">
-      <div @click="toComponentFromMenu('TripsPage')" class="route ma-8">найти тур</div>
-      <div @click="toComponentFromMenu('CreateTripWithHelp')" class="route ma-8">заказать тур</div>
-      <div @click="toComponentFromMenu('CreateTripNoHelp')" class="route ma-8">создать тур</div>
-      <div @click="toComponentFromMenu('CompanionsPage')" class="route ma-8">попутчики</div>
+    <a-drawer
+      placement="right"
+      :closable="false"
+      :visible="visibleDrawer"
+      @close="showDrawer"
+      width="200"
+    >
+      <div @click="toComponentFromMenu('TripsPage')" class="route ma-8">
+        найти тур
+      </div>
+      <div
+        @click="toComponentFromMenu('CreateTripWithHelp')"
+        class="route ma-8"
+      >
+        заказать тур
+      </div>
+      <div @click="toComponentFromMenu('CreateTripNoHelp')" class="route ma-8">
+        создать тур
+      </div>
+      <div @click="toComponentFromMenu('CompanionsPage')" class="route ma-8">
+        попутчики
+      </div>
+      <div @click="toComponentFromMenu('Cabinet')" class="route ma-8">
+        кабинет
+      </div>
     </a-drawer>
-    <a-modal v-model:visible="visibleModal" :footer="null">
-      <a-radio-group v-model:value="value" class="mb-16">
-        <a-radio value="Reg">Регистрация</a-radio>
-        <a-radio value="Auth">Вход</a-radio>
-      </a-radio-group>
-      <RegForm v-if="value=='Reg'"/>
-      <AuthForm v-if="value=='Auth'"/>
-    </a-modal>
   </a-layout-header>
 </template>
 

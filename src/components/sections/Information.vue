@@ -2,6 +2,7 @@
 import { ref, reactive, watch } from "vue";
 import { useElementBounding } from "@vueuse/core";
 import { useRouter } from "vue-router";
+import { useAuth } from "../../stores/auth";
 
 const marker = ref(null);
 const questions = ref([]);
@@ -11,7 +12,8 @@ const buttonRoute = ref(null);
 
 const { y } = useElementBounding(marker);
 
-let router = useRouter();
+const user = useAuth();
+const router = useRouter();
 
 let youCanDo = reactive([
   {
@@ -39,7 +41,7 @@ let youCanDo = reactive([
     description: "создать!",
     startActive: -450,
     finishActive: -750,
-    route: { name: "CreateTripNoHelp" },
+    route: "/create-no-help",
   },
   {
     question: "Найти </br> попутчика",
@@ -53,7 +55,11 @@ let youCanDo = reactive([
 ]);
 
 function routeTo(buttonRoute) {
-  router.push(buttonRoute);
+  if (buttonRoute == "/create-no-help") {
+    user.isAuth ? router.push("/create-no-help") : router.push("/reg");
+  } else {
+    router.push(buttonRoute);
+  }
 }
 
 watch(y, (newY) => {
@@ -146,7 +152,7 @@ watch(y, (newY) => {
 .todo-answer {
   .answer {
     opacity: 0;
-    transform:scale(0.1);
+    transform: scale(0.1);
     // transform: translateY(10px);
     height: 400px;
     display: flex;
@@ -163,17 +169,17 @@ watch(y, (newY) => {
       line-height: clamp(24px, 2.5vw, 50px);
       background: #27728b;
       width: 75%;
-      aspect-ratio:1;
+      aspect-ratio: 1;
       border-radius: 50%;
       display: flex;
-    justify-content: center;
-    align-items: center;
+      justify-content: center;
+      align-items: center;
     }
   }
 
   .animate-answer {
     opacity: 1;
-    transform:scale(1);
+    transform: scale(1);
     // transform: translateY(0);
     transition: all 1s ease;
   }

@@ -1,58 +1,67 @@
 <script setup>
 import { reactive } from "vue";
+import { useAuth } from "../stores/auth";
+import { useRouter } from "vue-router";
+import BackButton from "./BackButton.vue";
+
+const user = useAuth();
+const router = useRouter();
 const formState = reactive({
   username: "",
   email: "",
   password: "",
 });
+
+const sendRegInfo = () => {
+  user.login()
+  router.push("/")
+};
 </script>
 <template>
-  <div
-    :model="formState"
-    name="basic"
-    :label-col="{ xs: 2, sm: 5 }"
-    :wrapper-col="{ xs: 16, sm: 18 }"
-  >
-    <a-select v-model:value="value1" style="width: 100%">
-      <a-select-option value="jack"> Турист </a-select-option>
-      <a-select-option value="lucy"> Создатель тура </a-select-option>
-      <a-select-option value="disabled"> Владелец тур. объекта </a-select-option>
-    </a-select>
-
-    <!-- <a-form-item
-      label="Ф.И.О"
-      name="username"
-      :rules="[{ required: true, message: 'Введите Ф.И.О!' }]"
-    > -->
-    Ф. И. О.
-    <a-input v-model:value="formState.username" />
-    <!-- </a-form-item> -->
-
-    <!-- <a-form-item
-      label="E-mail"
-      name="e-mail"
-      :rules="[{ required: true, message: 'Введите e-mail!' }]"
-    > -->
-    E-mail
-    <a-input v-model:value="formState.email" />
-    <!-- </a-form-item> -->
-
-    <!-- <a-form-item
-      label="Пароль"
-      name="password"
-      :rules="[{ required: true, message: 'Введите пароль!' }]"
-    > -->
-    Пароль
-    <a-input-password v-model:value="formState.password" />
-    <!-- </a-form-item> -->
-    <a-form-item style="d.-flex">
-      <a-button
-        key="submit"
-        html-type="submit"
-        class="lets_go_btn mt-8"
-        style="justify-center"
-        >Зарегистрироваться</a-button
-      >
-    </a-form-item>
+  <div>
+    <BackButton />
+    <a-row type="flex" justify="center">
+      <a-col :span="24" :md="8" class="pa-16">
+        <h2>Регистрация</h2>
+        <a-row type="flex" justify="center">
+          <a-col :span="24"
+            >Имя Фамилия
+            <a-input
+              placeholder="Иван Иванов"
+              size="large"
+              v-model="username"
+              required
+            ></a-input>
+          </a-col>
+          <a-col :span="24"
+            >E-mail
+            <a-input
+              placeholder="email@email.com"
+              size="large"
+              v-model="email"
+              required
+            ></a-input>
+          </a-col>
+          <a-col :span="24"
+            >Пароль
+            <a-input
+              placeholder="qwerty"
+              size="large"
+              v-model="password"
+              type="password"
+              required
+            ></a-input>
+          </a-col>
+          <a-col :span="24" class="d-flex justify-center">
+            <a-button class="ma-16 lets_go_btn" type="primary" size="large" @click="sendRegInfo()"
+              >Отправить</a-button
+            >
+          </a-col>
+          <a-col :span="24" class="d-flex justify-center">
+            <router-link to="/auth">войти</router-link>
+          </a-col>
+        </a-row>
+      </a-col>
+    </a-row>
   </div>
 </template>

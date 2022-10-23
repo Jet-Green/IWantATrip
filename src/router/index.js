@@ -102,11 +102,26 @@ const router = createRouter({
       name: 'Dev',
       component: () => import('../components/DevPage.vue')
     },
+    {
+      path: '/cabinet',
+      name: 'Cabinet',
+      component: () => import('../views/Cabinet.vue')
+    },
+    {
+      path: '/reg',
+      name: 'RegForm',
+      component: () => import('../components/RegForm.vue')
+    },
+    {
+      path: '/auth',
+      name: 'AuthForm',
+      component: () => import('../components/AuthForm.vue')
+    },
 
 
   ],
   scrollBehavior(to, from, savedPosition) {
-    if ((to.name == 'TripsPage') || (to.name == 'TripInfoPage') || (to.name == 'CompanionsPage'))
+    if ((to.name == 'TripsPage') || (to.name == 'TripInfoPage') || (to.name == 'CompanionsPage') || (to.name == 'CreateTripNoHelp'))
       return { top: 0 }
     else return savedPosition
   }
