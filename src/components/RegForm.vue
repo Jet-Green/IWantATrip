@@ -29,7 +29,7 @@ const sendRegInfo = () => {
             <a-input
               placeholder="Иван Иванов"
               size="large"
-              v-model="username"
+              v-model="formState.username"
               required
             ></a-input>
           </a-col>
@@ -38,7 +38,7 @@ const sendRegInfo = () => {
             <a-input
               placeholder="email@email.com"
               size="large"
-              v-model="email"
+              v-model="formState.email"
               required
             ></a-input>
           </a-col>
@@ -47,7 +47,7 @@ const sendRegInfo = () => {
             <a-input
               placeholder="qwerty"
               size="large"
-              v-model="password"
+              v-model="formState.password"
               type="password"
               required
             ></a-input>
