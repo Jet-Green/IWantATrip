@@ -146,6 +146,9 @@ watch(end, () => {
             Продолжительность
             <p style="line-height: 40px">{{ form.duration }} дн.</p>
           </a-col>
+          <a-col :span="12">
+
+          </a-col>
           <a-col :span="24">
             Цены
 
@@ -194,7 +197,7 @@ watch(end, () => {
           <a-col :span="24" style="display: flex; flex-direction: column">
             Описание программы
             <QuillEditor theme="snow" ref="quill" v-model:content="form.description" contentType="html" :toolbar="[
-              [{ header: [1, 2] }],
+              // [{ header: [2, 3] }],
               ['bold', 'italic', 'underline'],
               [{ list: 'ordered' }, { list: 'bullet' }],
               [{ color: ['#000000', '#ff6600', '#3daff5'] }],
