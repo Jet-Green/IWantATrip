@@ -37,13 +37,13 @@ async function crop() {
             })
             .toBlob((blob) => {
                 emit("addImage", blob);
+                try {
+                    cropper.destroy()
+                    loadedImages.value = [];
+                } catch (err) {
+                    console.log(err);
+                }
             })
-        try {
-            cropper.destroy()
-            loadedImages.value = [];
-        } catch(err) {
-            console.log(err);
-        }
     }
 }
 watch(preview, () => {

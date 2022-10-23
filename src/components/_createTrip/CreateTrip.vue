@@ -166,10 +166,10 @@ watch(end, () => {
           <a-col :span="24">
             Цены
 
-            <div v-for="item in form.cost" :key="item.id" style="display: flex" align="baseline" class="mb-16">
+            <div v-for="item in form.cost" :key="item.type" style="display: flex" align="baseline" class="mb-16">
               <a-input v-model:value="item.first" placeholder="Для кого" />
 
-              <a-input-number v-model:value="item.last" style="width: 100%" placeholder="Цена" :min="0" :step="0.01"
+              <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0" :step="0.01"
                 class="ml-16 mr-16" />
 
               <a-button @click="removeCost(item)" shape="circle">
