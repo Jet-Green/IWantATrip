@@ -97,6 +97,12 @@ const router = createRouter({
       name: 'Souvenirs',
       component: () => import('../components/_guide/Souvenirs.vue')
     },
+    {
+      path: '/dev',
+      name: 'Dev',
+      component: () => import('../components/DevPage.vue')
+    },
+
 
   ],
   scrollBehavior(to, from, savedPosition) {

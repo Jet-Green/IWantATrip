@@ -33,6 +33,7 @@ function submit() {
 //  console.log(form)
 
  TripService.bookingTrip(form)
+ // очистить форму, сделать редирект на главную, вывести уведомление снизу об успехе
 }
 
 const value2 = ref([3, 20]);

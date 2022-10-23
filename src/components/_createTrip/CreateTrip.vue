@@ -65,7 +65,7 @@ function submit() {
   form.end = end.value.$d.toString();
 
   TripService.createTrip(form)
-  // необходимо отчистить форму и сделать редирект на tripList
+  // необходимо отчистить форму и сделать редирект на tripList, вывести уведомление снизу об успехе
 }
 
 function addPreview(blob) {

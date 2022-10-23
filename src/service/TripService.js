@@ -11,5 +11,8 @@ export default {
 
     async bookingTrip(booking) {
         return $api.post('/trips/booking', booking)
+    },
+    async clearTripsDB() {
+        return $api.get('/trips/clear')
     }
 }
