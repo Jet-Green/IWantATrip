@@ -24,6 +24,7 @@ const targetIndex = ref(null);
 let visibleCropperModal = ref(false);
 let previews = ref([]);
 
+// необходимо добавить поле количество людей в туре
 let form = reactive({
   name: "",
   start: null,
@@ -50,8 +51,8 @@ const removeCost = (item) => {
 
 const addCost = () => {
   form.cost.push({
-    first: "",
-    last: "",
+    type: "",
+    price: "",
   });
 };
 const delPhoto = () => {
@@ -64,6 +65,7 @@ function submit() {
   form.end = end.value.$d.toString();
 
   TripService.createTrip(form)
+  // необходимо отчистить форму и сделать редирект на tripList
 }
 
 function addPreview(blob) {

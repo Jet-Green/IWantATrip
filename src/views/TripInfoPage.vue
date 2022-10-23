@@ -25,6 +25,10 @@ axios
   .catch((error) => {
     console.log(error);
   });
+  const clearData = (dataString) => {
+  const dataFromString = new Date(dataString)
+  return dataFromString.toLocaleDateString()
+}
 </script>
 <template>
   <div>
@@ -58,11 +62,11 @@ axios
           >
             <span style="display: flex; flex-wrap: nowrap"
               >Продолжительность:
-              <h3 class="ml-8 mb-4">{{ trip.duration }} дней</h3>
+              <p class="ml-8 mb-4"> <b>{{ trip.duration }}  дней</b></p>
             </span>
             <span style="display: flex; flex-wrap: nowrap"
               >Ближайший выезд:
-              <h3 class="ml-8 mb-4">{{ trip.start }}</h3>
+              <p class="ml-8 mb-4"> <b>{{ clearData(trip.start) }}</b> </p>
             </span>
           </a-col>
 
@@ -75,19 +79,20 @@ axios
             </a-progress>
           </a-col>
 
-          <a-col :span="24" class="prizes">
-            <a-button type="primary" ghost shape="round" class="prize mb-8 mr-8"
+          <!-- НЕ ПОНЯТНО ЧТО ЭТО И ОТУДА ДАННЫЕ -->
+          <!-- <a-col :span="24" >
+            <a-button type="primary" ghost shape="round" class="ma-8"
               >25 - 33 чел. + Сувенир</a-button
             >
-            <a-button type="primary" ghost shape="round" class="prize mb-8 mr-8"
+            <a-button type="primary" ghost shape="round" class="ma-8"
               >34 - 34 чел. + Ужин</a-button
             >
-          </a-col>
+          </a-col> -->
 
           <a-col :span="24"
             >Цена:
-            <span v-for="item in trip.cost" class="cost">
-              {{ item.first }} : {{ item.last }}
+            <span v-for="item,index in trip.cost" :key="index" class="cost">
+             {{ item.first }} : {{ item.last }} руб., 
             </span>
           </a-col>
 
@@ -121,13 +126,6 @@ axios
     background-color: #c4c4c4;
   }
 
-  .prizes {
-    .prize {
-      font-size: 12px;
-      color: #3daff5;
-      background-color: white;
-    }
-  }
 }
 
 img {

@@ -10,6 +10,10 @@ let router = useRouter();
 function goToTripPage() {
   router.push(`/trip?_id=${props.trip._id}`)
 }
+const clearData = (dataString) => {
+  const dataFromString = new Date(dataString)
+  return dataFromString.toLocaleDateString()
+}
 </script>
 <template>
   <div @click="goToTripPage">
@@ -20,7 +24,7 @@ function goToTripPage() {
           <img :src="trip.images[0]" style="object-fit: cover; width: 100%; height: 175px" />
         </div>
         <p style="text-align: center">
-          c <strong>{{ trip.start }}</strong> по <strong>{{ trip.end }}</strong>
+          c <strong>{{ clearData(trip.start)  }}</strong> по <strong>{{clearData(trip.end)}}</strong>
         </p>
       </a-card>
     </a-badge-ribbon>
