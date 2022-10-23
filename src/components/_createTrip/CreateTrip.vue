@@ -23,6 +23,8 @@ const targetIndex = ref(null);
 // cropper
 let visibleCropperModal = ref(false);
 let previews = ref([]);
+// отправляем на сервер
+let images = []; // type: blob
 
 // необходимо добавить поле количество людей в туре
 let form = reactive({
@@ -58,20 +60,26 @@ const addCost = () => {
 };
 const delPhoto = () => {
   previews.value.splice(targetIndex.value, 1);
+  images.splice(targetIndex.value, 1)
   delPhotoDialog.value = false;
 };
 
 function submit() {
-  form.start = start.value.$d.toString();
-  form.end = end.value.$d.toString();
-
-  TripService.createTrip(form)
+  TripService.createTrip(form).then((req) => {
+    const _id = req.data._id;
+    let imagesFormData = new FormData();
+    for (let i = 0; i < images.length; i++) {
+      imagesFormData.append('trip-image', images[i], _id + '_' + i + '.png')
+    }
+    TripService.uploadTripImages(imagesFormData)
+  })
   // необходимо отчистить форму и сделать редирект на tripList, вывести уведомление снизу об успехе
 }
 
 function addPreview(blob) {
   // imagesFormData.append("image", blob, `product-${previews.value.length}`);
   visibleCropperModal.value = false;
+  images.push(blob)
   previews.value.push(URL.createObjectURL(blob));
 }
 
@@ -87,6 +95,7 @@ watch(description, (newValue) => {
     q.focus();
   });
 });
+
 watch(start, () => {
   let result =
     Number(JSON.parse(JSON.stringify(end.value))) -
@@ -96,6 +105,7 @@ watch(start, () => {
   } else {
     form.duration = "";
   }
+  form.start = start.value.$d.toString();
 });
 watch(end, () => {
   let result =
@@ -104,9 +114,11 @@ watch(end, () => {
   form.duration = Math.round(result / 86400000);
   if (result >= 0) {
     form.duration = Math.round(result / 86400000);
+
   } else {
     form.duration = "";
   }
+  form.end = end.value.$d.toString();
 });
 </script>
 <template>
