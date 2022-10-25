@@ -1,24 +1,26 @@
 <script setup>
 import { ref } from "vue";
-import { useRoute } from "vue-router"
-import axios from 'axios'
+import { useRoute } from "vue-router";
+import axios from "axios";
 
 import BackButton from "../components/BackButton.vue";
-const route = useRoute()
+const route = useRoute();
 
 const _id = route.query._id;
 
-const backRoute = "/watch"
+const backRoute = "/watch";
 
-let watch = ref({})
+let watch = ref({});
 
-axios.get(`http://localhost:3030/guide/get-by-id?_id=${_id}`)
+axios
+  .get(`http://localhost:3030/guide/get-by-id?_id=${_id}`)
   .then((response) => {
     watch.value = response.data;
+    console.log(watch.value);
   })
   .catch((error) => {
-    console.log(error)
-  })
+    console.log(error);
+  });
 </script>
 <template>
   <div>
@@ -30,23 +32,38 @@ axios.get(`http://localhost:3030/guide/get-by-id?_id=${_id}`)
       </a-col>
     </a-row>
 
-    <a-row v-else display="flex" justify="center" class="mb-16">
-      <a-col :xs="22" :lg="16">
-        <div class="cover mb-16">
-          <img :src="watch.image" alt="" srcset="" />
-        </div>
-        <div class="title mt-16">
-          <h1>{{ watch.name }}</h1>
-        </div>
+    <a-row v-else display="flex" justify="center" :gutter="[16, 16]">
+      <a-col :xs="24" :lg="24" class="title">
+        <h1>{{ watch.name }}</h1>
+      </a-col>
 
-        <div class="ml-16">
-          <h3>{{ watch.description }}</h3>
-        </div>
-        <div style="display: flex; justify-content: flex-end; flex-direction: column">
-          <span>Адрес: {{ watch.address }}</span>
-          <span>Телефон: {{ watch.phone }}</span>
-          <span>Социальные сети: {{ watch.socialMedia }}</span>
-        </div>
+      <a-col :xs="11" :lg="8">
+        <a-row display="flex">
+          <img
+            :src="watch.image"
+            alt=""
+            srcset=""
+          />
+        </a-row>
+
+      </a-col>
+      <a-col :xs="11" :lg="8" class="content">
+        <a-row display="flex"> 
+          <a-col :xs="22" :lg="16" class="description">
+            <span v-html="watch.address"></span>
+          </a-col>
+          <a-col :xs="22" :lg="16" class="description">
+            <span v-html="watch.phone"></span>
+          </a-col>
+          <a-col :xs="22" :lg="16" class="description">
+            <span v-html="watch.socialMedia"></span>
+          </a-col>
+          <a-col :xs="22" :lg="16" class="description">
+            <span v-html="watch.description"></span>
+          </a-col>
+          
+
+        </a-row>
       </a-col>
     </a-row>
   </div>
@@ -76,8 +93,14 @@ axios.get(`http://localhost:3030/guide/get-by-id?_id=${_id}`)
 }
 
 img {
-  width: 50%;
+  width: 100%;
   aspect-ratio: 1/1;
-  border-radius: 25px;
+}
+.title {
+  display: flex;
+  justify-content: center;
+}
+.ant-row > .ant-col {
+  margin-bottom: 8px;
 }
 </style>

@@ -25,10 +25,10 @@ axios
   .catch((error) => {
     console.log(error);
   });
-  const clearData = (dataString) => {
-  const dataFromString = new Date(dataString)
-  return dataFromString.toLocaleDateString()
-}
+const clearData = (dataString) => {
+  const dataFromString = new Date(dataString);
+  return dataFromString.toLocaleDateString();
+};
 </script>
 <template>
   <div>
@@ -41,17 +41,25 @@ axios
     </a-row>
 
     <a-row v-else display="flex" justify="center" :gutter="[16, 16]">
+      <a-col :xs="24" :lg="24" class="title">
+        <h1>{{ trip.name }}</h1>
+      </a-col>
+
       <a-col :xs="11" :lg="8">
-        <img :src="trip.image" alt="" srcset="" />
+        <a-row display="flex">
+          <img
+            :src="'https://glazov-flash.ru/image/cache/catalog/tur/active/usva/splav_main-800x800.jpg'"
+            alt=""
+            srcset=""
+          />
+
+          <span v-html="trip.description"></span>
+        </a-row>
       </a-col>
       <a-col :xs="11" :lg="8" class="content">
         <a-row display="flex">
-          <a-col :xs="22" :lg="16" class="title">
-            <h1>{{ trip.name }}</h1>
-          </a-col>
-
           <a-col :xs="22" :lg="16" class="description">
-            <span v-html="trip.description"></span>
+            <span v-html="trip.offer"></span>
           </a-col>
 
           <a-col
@@ -62,11 +70,15 @@ axios
           >
             <span style="display: flex; flex-wrap: nowrap"
               >Продолжительность:
-              <p class="ml-8 mb-4"> <b>{{ trip.duration }}  дней</b></p>
+              <p class="ml-8 mb-4">
+                <b>{{ trip.duration }} дней</b>
+              </p>
             </span>
             <span style="display: flex; flex-wrap: nowrap"
               >Ближайший выезд:
-              <p class="ml-8 mb-4"> <b>{{ clearData(trip.start) }}</b> </p>
+              <p class="ml-8 mb-4">
+                <b>{{ clearData(trip.start) }}</b>
+              </p>
             </span>
           </a-col>
 
@@ -91,8 +103,8 @@ axios
 
           <a-col :span="24"
             >Цена:
-            <span v-for="item,index in trip.cost" :key="index" class="cost">
-             {{ item.first }} : {{ item.last }} руб., 
+            <span v-for="(item, index) in trip.cost" :key="index" class="cost">
+              {{ item.first }} : {{ item.last }} руб.,
             </span>
           </a-col>
 
@@ -125,7 +137,6 @@ axios
     justify-content: center;
     background-color: #c4c4c4;
   }
-
 }
 
 img {
@@ -138,5 +149,9 @@ img {
 
 .ant-row > .ant-col {
   margin-bottom: 8px;
+}
+.title {
+  display: flex;
+  justify-content: center;
 }
 </style>
