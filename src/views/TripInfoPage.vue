@@ -40,23 +40,19 @@ const clearData = (dataString) => {
       </a-col>
     </a-row>
 
-    <a-row v-else display="flex" justify="center" :gutter="[16, 16]">
+    <a-row v-else display="flex" justify="center" :gutter="[16, 16]" style="font-size: clamp(14px,2.5vw,16px)">
       <a-col :xs="24" :lg="24" class="title">
         <h1>{{ trip.name }}</h1>
       </a-col>
 
-      <a-col :xs="11" :lg="8">
-        <a-row display="flex">
+      <a-col :xs="24" :lg="8">
           <img
-            :src="'https://glazov-flash.ru/image/cache/catalog/tur/active/usva/splav_main-800x800.jpg'"
+            :src="trip.images"
             alt=""
             srcset=""
           />
-
-          <span v-html="trip.description"></span>
-        </a-row>
       </a-col>
-      <a-col :xs="11" :lg="8" class="content">
+      <a-col :xs="22" :lg="8" class="content">
         <a-row display="flex">
           <a-col :xs="22" :lg="16" class="description">
             <span v-html="trip.offer"></span>
@@ -104,7 +100,7 @@ const clearData = (dataString) => {
           <a-col :span="24"
             >Цена:
             <span v-for="(item, index) in trip.cost" :key="index" class="cost">
-              {{ item.first }} : {{ item.last }} руб.,
+              {{ item.first }} : {{ item.price }} руб.,
             </span>
           </a-col>
 
@@ -119,6 +115,10 @@ const clearData = (dataString) => {
             </a-button>
           </a-col>
         </a-row>
+        
+      </a-col>
+      <a-col :xs="22" :lg="16">
+        <span v-html="trip.description"></span>
       </a-col>
     </a-row>
   </div>
