@@ -10,11 +10,12 @@ const _id = route.query._id;
 
 const backRoute = "/watch"
 
-let watch = ref({})
+let company = ref({})
 
 axios.get(`http://localhost:3030/guide/get-by-id?_id=${_id}`)
   .then((response) => {
-    watch.value = response.data;
+    company.value = response.data;
+    cosole.log(company.value)
   })
   .catch((error) => {
     console.log(error)
@@ -24,29 +25,36 @@ axios.get(`http://localhost:3030/guide/get-by-id?_id=${_id}`)
   <div>
     <BackButton :backRoute="backRoute" />
 
-    <a-row v-if="!watch._id">
+    <a-row v-if="!company._id">
       <a-col :span="24" class="d-flex justify-center">
         <a-spin size="large"></a-spin>
       </a-col>
     </a-row>
 
-    <a-row v-else display="flex" justify="center" class="mb-16">
-      <a-col :xs="22" :lg="16">
-        <div class="cover mb-16">
-          <img :src="watch.image" alt="" srcset="" />
-        </div>
-        <div class="title mt-16">
-          <h1>{{ watch.name }}</h1>
-        </div>
+    <a-row v-else display="flex" justify="center" :gutter="[16, 16]">
+      <a-col :xs="11" :lg="8">
+          <img :src="company.image" alt="" srcset="" />
+      </a-col>
+      <a-col :xs="11" :lg="8" class="content">
+        <a-row display="flex">
+          <a-col :xs="22" :lg="16" class="title">
+            <h1>{{ company.name }}</h1>
+          </a-col>
 
-        <div class="ml-16">
-          <h3>{{ watch.description }}</h3>
-        </div>
-        <div style="display: flex; justify-content: flex-end; flex-direction: column">
-          <span>Адрес: {{ watch.address }}</span>
-          <span>Телефон: {{ watch.phone }}</span>
-          <span>Социальные сети: {{ watch.socialMedia }}</span>
-        </div>
+          <a-col :xs="22" class="description">
+          <h3>{{ company.description }}</h3>
+        </a-col>
+
+        <a-col :xs="22"
+            :lg="16"
+            class="time"
+            style="display: flex; flex-direction: column"
+          >
+          <span>Адрес: {{ company.address }}</span>
+          <span>Телефон: {{ company.phone }}</span>
+          <span>Социальные сети: {{ company.socialMedia }}</span>
+      </a-col>
+      </a-row>
       </a-col>
     </a-row>
   </div>
@@ -76,8 +84,8 @@ axios.get(`http://localhost:3030/guide/get-by-id?_id=${_id}`)
 }
 
 img {
-  width: 50%;
+  width: 100%;
   aspect-ratio: 1/1;
-  border-radius: 25px;
+  border-radius: 5px;
 }
 </style>
