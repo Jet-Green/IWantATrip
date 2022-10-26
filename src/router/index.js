@@ -43,6 +43,11 @@ const router = createRouter({
       component: () => import('../views/AddCompanion.vue'),
     },
     {
+      path: '/add-guide-element',
+      name: 'AddGuideElement',
+      component: () => import('../views/AddGuideElement.vue'),
+    },
+    {
       path: '/trip',
       name: 'TripInfoPage',
       component: () => import('../views/TripInfoPage.vue')

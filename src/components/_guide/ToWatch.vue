@@ -1,23 +1,18 @@
 <script setup>
-import { ref, computed } from "vue";
+import { computed } from "vue";
+import { useRouter } from 'vue-router';
 
 import { useGuide } from "../../stores/guide";
 
 import BackButton from "../BackButton.vue";
-import AddGuideElement from "../forms/AddGuideElement.vue";
 import GuideCard from "../cards/GuideCard.vue";
 
-const visibleModal = ref(false);
+const router = useRouter()
 const useGuideStore = useGuide();
-
 
 useGuideStore.fetchElementsByQuery('toWatch');
 
 let toWatch = computed(() => useGuideStore.toWatch)
-
-const showModal = () => {
-  visibleModal.value = !visibleModal.value;
-};
 </script>
 <template>
   <div>
@@ -38,11 +33,9 @@ const showModal = () => {
           </a-col>
         </a-row>
 
-        <a-modal v-model:visible="visibleModal" title="Добавление" :footer="null">
-          <AddGuideElement />
-        </a-modal>
-
-        <a-button type="" @click="showModal">Добавить</a-button>
+        <a-button class="lets_go_btn mb-8" type="primary" large
+          @click="router.push(`/add-guide-element?type=${router.currentRoute.value.path.slice(1)}`)">Добавить
+        </a-button>
       </a-col>
     </a-row>
   </div>
