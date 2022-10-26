@@ -15,7 +15,7 @@ let company = ref({})
 axios.get(`http://localhost:3030/guide/get-by-id?_id=${_id}`)
   .then((response) => {
     company.value = response.data;
-    cosole.log(company.value)
+    console.log(company.value)
   })
   .catch((error) => {
     console.log(error)
@@ -33,7 +33,7 @@ axios.get(`http://localhost:3030/guide/get-by-id?_id=${_id}`)
 
     <a-row v-else display="flex" justify="center" :gutter="[16, 16]">
       <a-col :xs="11" :lg="8">
-          <img :src="company.image" alt="" srcset="" />
+        <img :src="company.image" alt="" srcset="" />
       </a-col>
       <a-col :xs="11" :lg="8" class="content">
         <a-row display="flex">
@@ -42,19 +42,15 @@ axios.get(`http://localhost:3030/guide/get-by-id?_id=${_id}`)
           </a-col>
 
           <a-col :xs="22" class="description">
-          <h3>{{ company.description }}</h3>
-        </a-col>
+            <h3>{{ company.description }}</h3>
+          </a-col>
 
-        <a-col :xs="22"
-            :lg="16"
-            class="time"
-            style="display: flex; flex-direction: column"
-          >
-          <span>Адрес: {{ company.address }}</span>
-          <span>Телефон: {{ company.phone }}</span>
-          <span>Социальные сети: {{ company.socialMedia }}</span>
-      </a-col>
-      </a-row>
+          <a-col :xs="22" :lg="16" class="time" style="display: flex; flex-direction: column">
+            <span>Адрес: {{ company.address }}</span>
+            <span>Телефон: {{ company.phone }}</span>
+            <span>Социальные сети: {{ company.socialMedia }}</span>
+          </a-col>
+        </a-row>
       </a-col>
     </a-row>
   </div>
