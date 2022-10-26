@@ -2,19 +2,27 @@
 import { ref, reactive } from "vue";
 import { useRoute } from 'vue-router'
 
+import { message } from 'ant-design-vue';
+
+import GuideService from "../service/GuideService";
+
 import ImageCropper from '../components/ImageCropper.vue'
 import BackButton from '../components/BackButton.vue'
+
+import { useRouter } from 'vue-router'
 
 import { useGuide } from "../stores/guide"
 
 const useGuideStore = useGuide()
 const route = useRoute()
+const router = useRouter()
 
 let visibleCropperModal = ref(false)
 let delPhotoDialog = ref(false)
 
 let newGuideElementForm = ref(null)
 
+let image = null;
 let preview = ref()
 const formState = reactive({
   image: '',
@@ -22,15 +30,16 @@ const formState = reactive({
   address: '',
   phone: '',
   socialMedia: '',
-  description: ''
+  description: '',
+  type: ''
 });
 
 function addPreview(blob) {
   // imagesFormData.append("image", blob, `product-${previews.value.length}`);
   visibleCropperModal.value = false;
+  image = blob;
   const objUrl = URL.createObjectURL(blob);
   preview.value = objUrl;
-  formState.image = blob;
 }
 
 function delPhoto() {
@@ -39,17 +48,30 @@ function delPhoto() {
 }
 
 function submit() {
-  let fd = new FormData(newGuideElementForm.value);
-
-  fd.set('name', formState.name)
-  fd.set('address', formState.address)
-  fd.set('phone', formState.phone)
-  fd.set('socialMedia', formState.socialMedia)
-  fd.set('description', formState.description)
-
-  fd.set('image', formState.image, `${formState.name}-${Date.now()}.png`)
-
-  useGuideStore.createGuideElement(fd, 'toWatch')
+  formState.type = route.query.type;
+  useGuideStore.createGuideElement(formState).then((res) => {
+    function close() {
+      router.push('/' + route.query.type)
+    }
+    const _id = res.data._id;
+    let imageFormData = new FormData()
+    imageFormData.append('guide-element-image', image, _id + '_' + '0' + '.png')
+    GuideService.uploadGuideElementImage(imageFormData).then((res) => {
+      Object.assign(formState, {
+        image: '',
+        name: '',
+        address: '',
+        phone: '',
+        socialMedia: '',
+        description: '',
+        type: ''
+      })
+      image = null;
+      preview.value = null;
+      message.config({ duration: 3, top: '90vh' })
+      message.success({ content: 'Объект создан!', onClose: close })
+    })
+  })
 }
 </script>
 

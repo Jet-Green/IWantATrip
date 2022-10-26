@@ -69,8 +69,8 @@ const delPhoto = () => {
 };
 
 function submit() {
-  TripService.createTrip(form).then((req) => {
-    const _id = req.data._id;
+  TripService.createTrip(form).then((res) => {
+    const _id = res.data._id;
     let imagesFormData = new FormData();
     for (let i = 0; i < images.length; i++) {
       imagesFormData.append('trip-image', images[i], _id + '_' + i + '.png')
@@ -166,8 +166,8 @@ watch(end, () => {
             Фотографии
             <div class="d-flex" style="overflow-x: scroll">
               <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px" @click="
-                delPhotoDialog = true;
-                targetIndex = i;
+  delPhotoDialog = true;
+targetIndex = i;
               " />
             </div>
             <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
