@@ -1,25 +1,26 @@
 <script setup>
 import { ref } from "vue";
-import { useRoute } from "vue-router"
-import axios from 'axios'
+import { useRoute } from "vue-router";
+import axios from "axios";
 
 import BackButton from "../components/BackButton.vue";
-const route = useRoute()
+const route = useRoute();
 
 const _id = route.query._id;
 
-const backRoute = "/watch"
+const backRoute = "/watch";
 
-let company = ref({})
+let company = ref({});
 
-axios.get(`http://localhost:3030/guide/get-by-id?_id=${_id}`)
+axios
+  .get(`http://localhost:3030/guide/get-by-id?_id=${_id}`)
   .then((response) => {
     company.value = response.data;
-    console.log(company.value)
+    console.log(company.value);
   })
   .catch((error) => {
-    console.log(error)
-  })
+    console.log(error);
+  });
 </script>
 <template>
   <div>
@@ -32,25 +33,31 @@ axios.get(`http://localhost:3030/guide/get-by-id?_id=${_id}`)
     </a-row>
 
     <a-row v-else display="flex" justify="center" :gutter="[16, 16]">
-      <a-col :xs="11" :lg="8">
-        <img :src="company.image" alt="" srcset="" />
+      <a-col :xs="24" :lg="24" class="title">
+        <h1>{{ company.name }}</h1>
       </a-col>
-      <a-col :xs="11" :lg="8" class="content">
+
+      <a-col :xs="22" :md="6" :lg="5">
         <a-row display="flex">
-          <a-col :xs="22" :lg="16" class="title">
-            <h1>{{ company.name }}</h1>
-          </a-col>
-
-          <a-col :xs="22" class="description">
-            <h3>{{ company.description }}</h3>
-          </a-col>
-
-          <a-col :xs="22" :lg="16" class="time" style="display: flex; flex-direction: column">
-            <span>Адрес: {{ company.address }}</span>
-            <span>Телефон: {{ company.phone }}</span>
-            <span>Социальные сети: {{ company.socialMedia }}</span>
-          </a-col>
+          <img :src="company.image" alt="" srcset="" />
         </a-row>
+      </a-col>
+      <a-col :xs="22" :md="12" :lg="10" class="content">
+        <a-col :xs="22" class="description">
+          <h3>{{ company.description }}</h3>
+        </a-col>
+
+        <a-col
+          :xs="22"
+          :md="16"
+          :lg="16"
+          class="time"
+          style="display: flex; flex-direction: column"
+        >
+          <span>Адрес: {{ company.address }}</span>
+          <span>Телефон: {{ company.phone }}</span>
+          <span>Социальные сети: {{ company.socialMedia }}</span>
+        </a-col>
       </a-col>
     </a-row>
   </div>
@@ -83,5 +90,10 @@ img {
   width: 100%;
   aspect-ratio: 1/1;
   border-radius: 5px;
+}
+
+.title {
+  display: flex;
+  justify-content: center;
 }
 </style>
