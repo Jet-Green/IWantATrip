@@ -44,10 +44,10 @@ const clearData = (dataString) => {
       <a-col :xs="24" :lg="24" class="title">
         <h1>{{ trip.name }}</h1>
       </a-col>
-
+      <!-- добавить карусель фотографий -->
       <a-col :xs="24" :lg="8">
           <img
-            :src="trip.images"
+            :src="trip.images[0]"
             alt=""
             srcset=""
           />
