@@ -17,7 +17,7 @@ const _id = route.query._id;
 const backRoute = "/trips";
 let trip = ref({});
 axios
-  .get(`http://localhost:3030/trips/get-by-id?_id=${_id}`)
+  .get(`${import.meta.env.VITE_API_URL}/trips/get-by-id?_id=${_id}`)
   .then((response) => {
     trip.value = response.data;
     console.log(trip.value);

@@ -23,7 +23,7 @@ let toWatch = computed(() => useGuideStore.toWatch)
         <h2>Что посмотреть</h2>
 
         <a-row v-if="toWatch.length">
-          <a-col v-for="element in toWatch" :lg="5" :xs="10" class="ma-16">
+          <a-col v-for="element, index in toWatch" :key="index" :lg="5" :xs="10" class="ma-16">
             <GuideCard :element="element" />
           </a-col>
         </a-row>

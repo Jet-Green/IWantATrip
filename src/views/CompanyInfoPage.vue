@@ -13,7 +13,7 @@ const backRoute = "/watch";
 let company = ref({});
 
 axios
-  .get(`http://localhost:3030/guide/get-by-id?_id=${_id}`)
+  .get(`${import.meta.env.VITE_API_URL}/guide/get-by-id?_id=${_id}`)
   .then((response) => {
     company.value = response.data;
     console.log(company.value);
