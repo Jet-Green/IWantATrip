@@ -10,9 +10,9 @@ import GuideCard from "../cards/GuideCard.vue";
 const router = useRouter()
 const useGuideStore = useGuide();
 
-useGuideStore.fetchElementsByQuery('toWatch');
+useGuideStore.fetchElementsByQuery('watch');
 
-let toWatch = computed(() => useGuideStore.toWatch)
+let watch = computed(() => useGuideStore.watch)
 </script>
 <template>
   <div>
@@ -22,8 +22,8 @@ let toWatch = computed(() => useGuideStore.toWatch)
       <a-col :xs="22" :lg="16">
         <h2>Что посмотреть</h2>
 
-        <a-row v-if="toWatch.length">
-          <a-col v-for="element, index in toWatch" :key="index" :lg="5" :xs="10" class="ma-16">
+        <a-row v-if="watch.length">
+          <a-col v-for="element, index in watch" :key="index" :lg="5" :xs="10" class="ma-16">
             <GuideCard :element="element" />
           </a-col>
         </a-row>

@@ -4,21 +4,15 @@ import GuideService from '../service/GuideService.js'
 
 export const useGuide = defineStore('guide', {
     state: () => ({
-        toWatch: []
+        watch: []
     }),
     getters: {
-        getTrips(state) {
-            return state.trips
-        },
-        getWhereToGo(state) {
-            return state.whereToGo
-        }
+
     },
     actions: {
         async fetchElementsByQuery(name) {
             try {
                 const response = await GuideService.fetchElementsByQuery(name);
-
                 console.log(response);
 
                 this[name] = response.data;

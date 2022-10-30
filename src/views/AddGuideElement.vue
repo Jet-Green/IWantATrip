@@ -55,7 +55,7 @@ function submit() {
     }
     const _id = res.data._id;
     let imageFormData = new FormData()
-    imageFormData.append('guide-element-image', image, _id + '_' + '0' + '.png')
+    imageFormData.append('guide-element-image', image, _id + '_' + '0.png')
     GuideService.uploadGuideElementImage(imageFormData).then((res) => {
       Object.assign(formState, {
         image: '',
