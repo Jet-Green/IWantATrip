@@ -22,7 +22,7 @@ let watch = computed(() => useGuideStore.watch)
       <a-col :xs="22" :lg="16">
         <h2>Что посмотреть</h2>
 
-        <a-row v-if="watch.length">
+        <a-row v-if="watch.length" style="align-items: flex-end">
           <a-col v-for="element, index in watch" :key="index" :lg="5" :xs="10" class="ma-16">
             <GuideCard :element="element" />
           </a-col>
@@ -33,7 +33,7 @@ let watch = computed(() => useGuideStore.watch)
           </a-col>
         </a-row>
 
-        <a-button class="lets_go_btn mb-8" type="primary" large
+        <a-button class="lets_go_btn" type="primary" large
           @click="router.push(`/add-guide-element?type=${router.currentRoute.value.path.slice(1)}`)">Добавить
         </a-button>
       </a-col>
