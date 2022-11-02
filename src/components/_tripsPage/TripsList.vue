@@ -11,9 +11,9 @@ let trips = computed(() => {
 </script>
 
 <template>
-  <a-row display="flex" justify="center" class="mt-16">
+  <a-row display="flex" justify="center" class="mt-16" >
     <a-col :sm="20">
-      <a-row display="flex" justify="center" :gutter="[16,16]" class="pa-4">
+      <a-row display="flex" justify="center" :gutter="[16,16]" class="pa-4" style="align-items: flex-end">
         <a-col
           :xs="24"
           :sm="12"

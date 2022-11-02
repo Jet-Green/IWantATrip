@@ -16,10 +16,10 @@ const clearData = (dataString) => {
 }
 </script>
 <template>
-  <div @click="goToTripPage">
-    <div class="title">{{ trip.name }}</div>
+  <div @click="goToTripPage" style="max-width: 300px;">
+    <div class="title">{{ trip.name }} </div>
     <a-badge-ribbon :text="`${trip.cost.length?trip.cost[0].price:0} руб`" color="ff6600">
-      <a-card hoverable>
+      <a-card hoverable >
         <div>
           <img :src="trip.images[0]" style="object-fit: cover; width: 100%; height: 175px" />
         </div>
