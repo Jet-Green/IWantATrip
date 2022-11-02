@@ -69,6 +69,9 @@ const delPhoto = () => {
 };
 
 function submit() {
+  form.description = description.value;
+  console.log(form);
+  return
   TripService.createTrip(form).then((res) => {
     const _id = res.data._id;
     let imagesFormData = new FormData();
@@ -116,6 +119,7 @@ function addPreview(blob) {
 
 watch(description, (newValue) => {
   newContent = newValue;
+  console.log(newValue);
   if (newContent === newValue) return;
   quill.value.setHTML(newValue);
   // Workaround https://github.com/vueup/vue-quill/issues/52
@@ -240,7 +244,7 @@ targetIndex = i;
           </a-col>
           <a-col :span="24" style="display: flex; flex-direction: column">
             Описание программы
-            <QuillEditor theme="snow" ref="quill" v-model:content="form.description" contentType="html" :toolbar="[
+            <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" :toolbar="[
               // [{ header: [2, 3] }],
               ['bold', 'italic', 'underline'],
               [{ list: 'ordered' }, { list: 'bullet' }],
