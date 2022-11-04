@@ -6,16 +6,16 @@ import BackButton from "../components/BackButton.vue";
 
 const user = useAuth();
 const router = useRouter();
-const logIn = () => {
-  user.login();
-  router.push("/");
-};
-
 const formState = reactive({
   username: "",
   email: "",
   password: "",
 });
+const logIn = () => {
+  user.login();
+  router.push("/");
+};
+
 </script>
 <template>
   <div>
@@ -24,27 +24,14 @@ const formState = reactive({
       <a-col :span="24" :md="8" class="pa-16">
         <h2>Вход</h2>
         <a-row type="flex" justify="center">
-          <a-col :span="24"
-            >E-mail
-            <a-input
-              placeholder="email@email.com"
-              size="large"
-              v-model="email"
-            ></a-input>
+          <a-col :span="24">E-mail
+            <a-input placeholder="email@email.com" size="large" v-model="email"></a-input>
           </a-col>
-          <a-col :span="24"
-            >Пароль
-            <a-input
-              placeholder="qwerty"
-              size="large"
-              v-model="password"
-              type="password"
-            ></a-input>
+          <a-col :span="24">Пароль
+            <a-input placeholder="qwerty" size="large" v-model="password" type="password"></a-input>
           </a-col>
           <a-col :span="24" class="d-flex justify-center">
-            <a-button class="ma-16 lets_go_btn" type="primary" size="large" @click="logIn()"
-              >Войти</a-button
-            >
+            <a-button class="ma-16 lets_go_btn" type="primary" size="large" @click="logIn()">Войти</a-button>
           </a-col>
           <a-col :span="24" class="d-flex justify-center">
             <router-link to="/reg">регистрация</router-link>
