@@ -1,8 +1,10 @@
 <script setup>
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import { useAuth } from "../stores/auth";
 import { useRouter } from "vue-router";
 import BackButton from "./BackButton.vue";
+
+import { message } from 'ant-design-vue';
 
 const user = useAuth();
 const router = useRouter();
@@ -11,9 +13,21 @@ let formState = reactive({
   email: "",
   password: "",
 });
-
-function sendRegInfo() {
-  user.registration({ email: formState.email, password: formState.password, fullname: formState.fullname })
+async function sendRegInfo() {
+  let result = await user.registration({ email: formState.email, password: formState.password, fullname: formState.fullname })
+  message.config({ duration: 1.5, top: '70vh' })
+  if (result.success) {
+    formState.fullname = ''
+    formState.email = ''
+    formState.password = ''
+    message.success({
+      content: 'Успешно!', onClose: () => {
+        router.push('/')
+      }
+    })
+  } else {
+    message.error({ content: result.message })
+  }
   // router.push("/")
 };
 </script>

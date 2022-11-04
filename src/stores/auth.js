@@ -29,8 +29,12 @@ export const useAuth = defineStore('auth', {
 
         this.isAuth = true
         this.user = response.data.user
+        return { success: true };
       } catch (err) {
-        alert(err.response?.data?.message)
+        return {
+          success: false,
+          message: err.response?.data?.message
+        }
       }
     },
     async login(email, password) {
@@ -42,8 +46,12 @@ export const useAuth = defineStore('auth', {
 
         this.isAuth = true;
         this.user = response.data.user
+        return { success: true };
       } catch (err) {
-        alert(err.response?.data?.message);
+        return {
+          success: false,
+          message: err.response?.data?.message
+        }
       }
     },
     logout() {

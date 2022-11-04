@@ -3,14 +3,27 @@ import { ref } from "vue";
 import { useAuth } from "../stores/auth";
 import { useRouter } from "vue-router";
 import BackButton from "../components/BackButton.vue";
+import { message } from 'ant-design-vue';
 
 const user = useAuth();
 const router = useRouter();
 let email = ref(null)
 let password = ref(null)
-const logIn = () => {
-  user.login(email.value, password.value);
-  // router.push("/");
+
+async function logIn() {
+  let result = await user.login(email.value, password.value);
+  message.config({ duration: 1.5, top: '70vh' })
+  if (result.success) {
+    email.value = ''
+    password.value = ''
+    message.success({
+      content: 'Успешно!', onClose: () => {
+        router.push('/')
+      }
+    })
+  } else {
+    message.error({ content: result.message })
+  }
 };
 
 </script>
