@@ -33,8 +33,18 @@ export const useAuth = defineStore('auth', {
         alert(err.response?.data?.message)
       }
     },
-    login() {
-      this.isAuth = true;
+    async login(email, password) {
+      try {
+        const response = await UserService.login(email, password);
+        localStorage.setItem('token', response.data.accessToken);
+
+        console.log(response);
+
+        this.isAuth = true;
+        this.user = response.data.user
+      } catch (err) {
+        alert(err.response?.data?.message);
+      }
     },
     logout() {
       this.isAuth = false;
