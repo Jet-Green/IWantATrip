@@ -7,6 +7,7 @@ import { useAuth } from "../stores/auth";
 import TripCreatorReg from "./forms/TripCreatorReg.vue";
 import RegForm from "./RegForm.vue";
 import AuthForm from "./AuthForm.vue";
+import LogoSvg from "../components/_explanation/LogoSvg.vue";
 
 const user = useAuth();
 
@@ -53,8 +54,7 @@ const ToCreateTripNoHelp = () => {
       <a-col :xs="22" :lg="16">
         <a-row type="flex" justify="space-between">
           <a-col :xs="20" :md="12" @click="toComponentFromMenu('Landing')">
-            <span class="mdi mdi-24px mdi-gnome" style="color: #245159"></span>
-            Хочу в поездку
+            <LogoSvg style="height: 100%"></LogoSvg>
           </a-col>
           <a-col v-if="!sm" :span="12" class="top_menu">
             <div @click="toComponentFromMenu('TripsPage')" class="route">
