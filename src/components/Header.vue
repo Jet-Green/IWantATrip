@@ -54,7 +54,7 @@ const ToCreateTripNoHelp = () => {
       <a-col :xs="22" :lg="16">
         <a-row type="flex" justify="space-between">
           <a-col :xs="20" :md="12" @click="toComponentFromMenu('Landing')">
-            <LogoSvg style="height: 100%"></LogoSvg>
+            <LogoSvg></LogoSvg>
           </a-col>
           <a-col v-if="!sm" :span="12" class="top_menu">
             <div @click="toComponentFromMenu('TripsPage')" class="route">
