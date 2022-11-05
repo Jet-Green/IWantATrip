@@ -21,11 +21,11 @@ const clearData = (dataString) => {
 };
 </script>
 <template>
-  <span
+  <!-- <span
     class="mdi mdi-12px mdi-close"
     style="color: #245159; cursor: pointer; float: right"
     @click="tripToDelete(trip._id)"
-  ></span>
+  ></span> -->
   <div @click="goToTripPage" style="max-width: 300px">
     <div class="title">{{ trip.name }}</div>
     <a-badge-ribbon
