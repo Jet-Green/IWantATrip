@@ -69,9 +69,8 @@ const delPhoto = () => {
 };
 
 function submit() {
+  description.value = description.value.split('<p><br></p>').join('')
   form.description = description.value;
-  console.log(form);
-  return
   TripService.createTrip(form).then((res) => {
     const _id = res.data._id;
     let imagesFormData = new FormData();
