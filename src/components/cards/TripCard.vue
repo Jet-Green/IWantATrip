@@ -2,6 +2,7 @@
 
 import { useRouter } from "vue-router";
 
+
 let props = defineProps({
   trip: Object,
 });

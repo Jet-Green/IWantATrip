@@ -1,9 +1,10 @@
 <script setup>
-import { computed } from "vue";
+import { computed, watch, } from "vue";
 import { useTrips } from "../../stores/trips";
 import TripListCard from "../cards/TripListCard.vue";
 
 const useTripsStore = useTrips();
+
 let trips = computed(() => {
   return useTripsStore.trips;
 });

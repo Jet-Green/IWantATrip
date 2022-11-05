@@ -4,6 +4,9 @@ export default {
     async fetchTrips() {
         return $api.get('/trips/get-all')
     },
+    async deleteTrip(_id) {
+        return $api.post('/trips/delete-by-id', _id)
+    },
 
     async createTrip(trip) {
         return $api.post('/trips/create', trip)
