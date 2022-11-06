@@ -1,6 +1,8 @@
 <script setup>
 import BackButton from "../components/BackButton.vue";
 import ImageCropper from "../components/ImageCropper.vue";
+import UserFullInfo from '../components/forms/UserFullInfo.vue'
+
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 import { watch, nextTick, ref, reactive } from "vue";
@@ -8,9 +10,11 @@ import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import typeOfTrip from "../fakeDB/tripType";
 import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router'
+import { useAuth } from '../stores/auth'
 
 import TripService from "../service/TripService";
 
+const userStore = useAuth()
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
 const monthFormatList = ["MM.YY"];
 const ruLocale = locale;
@@ -161,10 +165,13 @@ watch(end, () => {
     <BackButton />
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="12">
-        <h2>Создать тур</h2>
         <form action="POST" @submit.prevent="submit">
           <a-row :gutter="[16, 16]">
+            <a-col v-if="!userStore.user?.fullInfo" :span="24">
+              <UserFullInfo />
+            </a-col>
             <a-col :span="24">
+              <h2>Создать тур</h2>
               Название
               <a-input placeholder="Название тура" size="large" v-model:value="form.name"></a-input>
             </a-col>

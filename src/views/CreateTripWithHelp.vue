@@ -1,14 +1,19 @@
 <script setup>
-import BackButton from "../components/BackButton.vue";
+import BackButton from "../components/BackButton.vue"
+import UserFullInfo from '../components/forms/UserFullInfo.vue'
+
 import { reactive, ref } from "vue";
 import typeOfTrip from "../fakeDB/tripType";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 
 import TripService from "../service/TripService";
+import { useAuth } from '../stores/auth'
 
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
 const monthFormatList = ["MM.YY"];
 const ruLocale = locale;
+
+const userStore = useAuth()
 
 let form = reactive({
   duration: "",
@@ -42,10 +47,14 @@ const value2 = ref([3, 20]);
 <template>
   <div>
     <BackButton />
+
     <form action="POST" @submit.prevent="submit" enctype="multipart/form-data" ref="newGuideElementForm">
       <a-row type="flex" justify="center">
         <a-col :xs="22" :lg="12">
           <a-row :gutter="[16, 16]">
+            <a-col v-if="!userStore.user?.fullInfo" :span="24">
+              <UserFullInfo />
+            </a-col>
             <a-col :span="24">
               <h2>Заказать тур</h2>
               <div>
