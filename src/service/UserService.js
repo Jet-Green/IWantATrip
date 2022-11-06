@@ -6,5 +6,5 @@ export default {
     },
     async login(email, password) {
         return $api.post('/auth/login', { email, password })
-    }
+    },
 }

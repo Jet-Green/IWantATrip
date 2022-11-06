@@ -1,14 +1,21 @@
 <script setup>
+import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import Header from "./components/Header.vue";
 import Footer from "./components/Footer.vue";
 
 import { useTrips } from './stores/trips'
+import { useAuth } from './stores/auth'
 
 const route = useRoute()
+const userStore = useAuth()
 
-useTrips().fetchTrips()
-
+onMounted(() => {
+  useTrips().fetchTrips()
+  if (localStorage.getItem('token')) {
+    userStore.checkAuth()
+  }
+})
 </script>
 <template>
   <a-layout style="min-height: 100vh">
@@ -25,4 +32,5 @@ useTrips().fetchTrips()
   </a-layout>
 </template>
 <style>
+
 </style>
