@@ -7,4 +7,7 @@ export default {
     async login(email, password) {
         return $api.post('/auth/login', { email, password })
     },
+    async updateUser(user) {
+        return $api.post('/auth/update', user)
+    }
 }

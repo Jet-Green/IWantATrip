@@ -19,6 +19,16 @@ export const useAuth = defineStore('auth', {
 
     },
     actions: {
+        updateUser(user) {
+            try {
+                return UserService.updateUser(user)
+            } catch (err) {
+                return {
+                    success: false,
+                    message: err.response?.data?.message
+                }
+            }
+        },
         setUserStatus(text) {
             this.userStatus = text
         },

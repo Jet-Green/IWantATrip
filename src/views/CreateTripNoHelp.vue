@@ -53,6 +53,7 @@ let form = reactive({
   fromAge: "",
   period: "",
 });
+let fullUserInfo = null;
 
 const removeCost = (item) => {
   let index = form.cost.indexOf(item);
@@ -104,11 +105,17 @@ function submit() {
           fromAge: "",
           period: "",
         })
-      images = []
-      previews.value = []
-      quill.value.setHTML('');
-      message.config({ duration: 3, top: '90vh' })
-      message.success({ content: 'Тур создан!', onClose: close })
+      userStore.updateUser({ email: userStore.user.email, fullinfo: fullUserInfo, $push: { trips: _id } })
+        .then((response) => {
+          userStore.user = response.data
+          images = []
+          previews.value = []
+          quill.value.setHTML('');
+          message.config({ duration: 3, top: '90vh' })
+          message.success({ content: 'Тур создан!', onClose: close })
+        }).catch((err) => {
+          console.log(err);
+        })
     })
   })
   // необходимо отчистить форму и сделать редирект на tripList, вывести уведомление снизу об успехе
@@ -120,10 +127,12 @@ function addPreview(blob) {
   images.push(blob)
   previews.value.push(URL.createObjectURL(blob));
 }
+function updateUserInfo(info) {
+  fullUserInfo = info;
+}
 
 watch(description, (newValue) => {
   newContent = newValue;
-  console.log(newValue);
   if (newContent === newValue) return;
   quill.value.setHTML(newValue);
   // Workaround https://github.com/vueup/vue-quill/issues/52
@@ -167,8 +176,8 @@ watch(end, () => {
       <a-col :xs="22" :lg="12">
         <form action="POST" @submit.prevent="submit">
           <a-row :gutter="[16, 16]">
-            <a-col v-if="!userStore.user?.fullInfo" :span="24">
-              <UserFullInfo />
+            <a-col v-if="!userStore.user?.fullinfo" :span="24">
+              <UserFullInfo @fullInfo="updateUserInfo" />
             </a-col>
             <a-col :span="24">
               <h2>Создать тур</h2>

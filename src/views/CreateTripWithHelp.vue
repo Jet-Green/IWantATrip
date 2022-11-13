@@ -52,7 +52,7 @@ function submit() {
       <a-row type="flex" justify="center">
         <a-col :xs="22" :lg="12">
           <a-row :gutter="[16, 16]">
-            <a-col v-if="!userStore.user?.fullInfo" :span="24">
+            <a-col v-if="!userStore.user?.fullinfo" :span="24">
               <UserFullInfo />
             </a-col>
             <a-col :span="24">
