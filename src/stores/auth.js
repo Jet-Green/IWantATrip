@@ -78,12 +78,22 @@ export const useAuth = defineStore('auth', {
                 this.user = response.data.user
             } catch (err) {
                 console.log(err);
-                message.config({ duration: 3, top: '90vh' })
-                message.error({ content: err.response?.data?.message })
+                // message.config({ duration: 3, top: '90vh' })
+                // message.error({ content: err.response?.data?.message })
             }
         },
-        logout() {
-            this.isAuth = false;
-        }
+        async logout() {
+            try {
+                const response = await UserService.logout();
+                localStorage.removeItem('token');
+
+                console.log(response);
+
+                this.isAuth = false;
+                this.user = null
+            } catch (err) {
+                console.log(err);
+            }
+        },
     },
 })

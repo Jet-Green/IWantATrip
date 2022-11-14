@@ -3,10 +3,10 @@ import { useAuth } from "../stores/auth";
 import { useRouter } from "vue-router";
 import BackButton from "../components/BackButton.vue";
 
-const user = useAuth();
+const userStore = useAuth();
 const router = useRouter();
 const logOut = () => {
-  user.logout();
+  userStore.logout();
   router.push("/");
 };
 </script>
@@ -18,17 +18,19 @@ const logOut = () => {
       <a-col :xs="22" :lg="12">
         <h2>
           Кабинет
-          <span
-            @click="logOut()"
-            class="mdi mdi-24px mdi-logout"
-            style="cursor: pointer; float: right"
-          >
+          <span @click="logOut()" class="mdi mdi-24px mdi-logout" style="cursor: pointer; float: right">
           </span>
         </h2>
+      </a-col>
+    </a-row>
+    <a-row type="flex" justify="center">
+      <a-col :xs="22" :lg="12">
+        {{ userStore }}
       </a-col>
     </a-row>
   </div>
 </template>
 
 <style lang="scss" scoped>
+
 </style>
