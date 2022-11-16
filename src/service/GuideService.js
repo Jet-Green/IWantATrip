@@ -5,6 +5,10 @@ export default {
         return $api.get(`/guide/get-all-elements?name=${name}`)
     },
 
+    async deleteGuide(_id) {
+        return $api.post('/guide/delete-by-id', _id)
+    },
+
     async createGuideElement(element) {
         return $api.post('/guide/create-element', element)
     },
