@@ -22,10 +22,8 @@ let watch = computed(() => useGuideStore.watch)
       <a-col :xs="22" :lg="16">
         <h2>Что посмотреть</h2>
 
-        <a-row v-if="watch.length" style="align-items: flex-end">
-          <a-col v-for="element, index in watch" :key="index" :lg="5" :xs="10" class="ma-16">
-            <GuideCard :element="element" />
-          </a-col>
+        <a-row v-if="watch.length" :gutter="[16, 16, 16, 16]">
+          <GuideCard v-for="element in watch" :element="element" />
         </a-row>
         <a-row v-else>
           <a-col :span="24" class="d-flex justify-center align-center">

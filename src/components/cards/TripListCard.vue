@@ -8,6 +8,7 @@ let props = defineProps({
 let router = useRouter();
 // 'Привет ' + name + ' ' + 'Приятно познакомиться' то же самое, что и:
 //  `Привет ${name} Приятно Познакомиться`
+
 async function tripToDelete() {
   await TripService.deleteTrip({ _id: props.trip._id });
 }
@@ -21,11 +22,11 @@ const clearData = (dataString) => {
 };
 </script>
 <template>
-  <!-- <span
+  <span
     class="mdi mdi-12px mdi-close"
     style="color: #245159; cursor: pointer; float: right"
     @click="tripToDelete(trip._id)"
-  ></span> -->
+  ></span>
   <div @click="goToTripPage" style="max-width: 300px">
     <div class="title">{{ trip.name }}</div>
     <a-badge-ribbon
