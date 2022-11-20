@@ -141,6 +141,8 @@ onMounted(() => {
             delete d._id
             delete d.__v
             d.period = dayjs(d.period, monthFormatList)
+            start.value = dayjs(d.start)
+            end.value = dayjs(d.end)
 
             form.value = d;
             for (let i of form.value.images)
@@ -221,14 +223,12 @@ watch(end, () => {
 
                         <a-col :span="12">
                             Дата начала
-                            <a-date-picker v-model:value="start" style="width: 100%"
-                                :placeholder="new Date(form.start).getDay() + '.' + new Date(form.start).getMonth() + '.' + new Date(form.start).getFullYear()"
+                            <a-date-picker v-model:value="start" style="width: 100%" placeholder="Начало"
                                 :locale="ruLocale" :format="dateFormatList" />
                         </a-col>
                         <a-col :span="12">
                             Дата конца
-                            <a-date-picker v-model:value="end" style="width: 100%"
-                                :placeholder="new Date(form.end).getDay() + '.' + new Date(form.end).getMonth() + '.' + new Date(form.end).getFullYear()"
+                            <a-date-picker v-model:value="end" style="width: 100%" placeholder="Конец"
                                 :locale="ruLocale" :format="dateFormatList" />
                         </a-col>
                         <a-col :span="12">
