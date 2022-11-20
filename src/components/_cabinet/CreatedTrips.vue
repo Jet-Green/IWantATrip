@@ -20,7 +20,7 @@ async function tripToDelete(_id) {
   // await TripService.deleteTrip({ _id: _id });
 }
 function editTrip(_id) {
-  alert('не работает')
+  router.push(`/edit-trip?_id=${_id}`);
 }
 async function hideTrip(_id) {
   for (let t of trips.value) {
@@ -60,11 +60,16 @@ onMounted(() => {
         </a-badge-ribbon>
       </div>
       <div class="actions">
-        <span class="mdi mdi-delete" style="color: red; cursor: pointer;" @click="tripToDelete(trip._id)"></span>
-        <span class="mdi mdi-pen" style="color: #245159; cursor: pointer;" @click="editTrip(trip._id)"></span>
-        <span v-if="!trip.isHidden" class="mdi mdi-eye-off" style="color: #245159; cursor: pointer;"
-          @click="hideTrip(trip._id)"></span>
-        <span v-else class="mdi mdi-eye" style="color: #245159; cursor: pointer;" @click="hideTrip(trip._id)"></span>
+        <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="tripToDelete(trip._id)">
+          <span class="mdi mdi-delete" style="color: red; cursor: pointer;"></span>
+        </a-popconfirm>
+        <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="editTrip(trip._id)">
+          <span class="mdi mdi-pen" style="color: #245159; cursor: pointer;"></span>
+        </a-popconfirm>
+        <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="hideTrip(trip._id)">
+          <span v-if="!trip.isHidden" class="mdi mdi-eye-off" style="color: #245159; cursor: pointer;"></span>
+          <span v-else class="mdi mdi-eye" style="color: #245159; cursor: pointer;"></span>
+        </a-popconfirm>
       </div>
     </a-col>
   </a-row>
