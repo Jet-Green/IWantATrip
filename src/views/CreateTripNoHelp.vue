@@ -81,12 +81,10 @@ function submit() {
   for (let key in form) {
     send[key] = form[key]
   }
-  console.log(send.period);
   let m = send.period.month().toString()
   let month = m.length == 1 ? '0' + m : m
   send.period = month + '.' + send.period.year().toString().slice(2)
-  console.log(send);
-  return
+
   TripService.createTrip(form).then((res) => {
     const _id = res.data._id;
     let imagesFormData = new FormData();
