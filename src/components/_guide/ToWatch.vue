@@ -31,7 +31,7 @@ let watch = computed(() => useGuideStore.watch)
           </a-col>
         </a-row>
 
-        <a-button class="lets_go_btn" type="primary" large
+        <a-button class="lets_go_btn mt-16" type="primary" large
           @click="router.push(`/add-guide-element?type=${router.currentRoute.value.path.slice(1)}`)">Добавить
         </a-button>
       </a-col>
