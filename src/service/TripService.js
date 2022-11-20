@@ -13,6 +13,10 @@ export default {
         return $api.post('/trips/create', trip)
     },
 
+    async updateTrip(trip) {
+        return $api.post('/trips/update', trip)
+    },
+
     async uploadTripImages(images) {
         return $api.post('/trips/upload-images', images)
     },

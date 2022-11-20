@@ -54,7 +54,6 @@ let form = ref({
     fromAge: "",
     period: "",
 });
-let fullUserInfo = null;
 
 const removeCost = (item) => {
     let index = form.value.cost.indexOf(item);
@@ -72,54 +71,39 @@ const addCost = () => {
 const delPhoto = () => {
     previews.value.splice(targetIndex.value, 1);
     images.splice(targetIndex.value, 1)
+    form.value.images.splice(targetIndex.value, 1)
     delPhotoDialog.value = false;
 };
 
 function submit() {
     description.value = description.value.split('<p><br></p>').join('')
     form.value.description = description.value;
-    console.log(form.value);
-    return
-    TripService.createTrip(form.value).then((res) => {
+    for (let img of previews.value) {
+        if (!img.startsWith('blob'))
+            form.value.images.push(img)
+    }
+    // важно разобраться с обновлением фото. Пользователь может загрузить свои и они будут храниться в images, УЖЕ ЕСТЬ: обновляем те фото, которые есть на сервере
+
+    TripService.updateTrip(form.value).then((res) => {
         const _id = res.data._id;
         let imagesFormData = new FormData();
+
         for (let i = 0; i < images.length; i++) {
-            imagesFormData.append('trip-image', images[i], _id + '_' + i + '.png')
+            let index = i + form.value.images.length - 1
+            imagesFormData.append('trip-image', images[i], _id + '_' + index + '.png')
         }
         function close() {
-            router.push('/trips')
+            router.push('/cabinet')
         }
-        TripService.uploadTripImages(imagesFormData).then((res) => {
-            Object.assign(form.value,
-                {
-                    name: "",
-                    start: null,
-                    end: null,
-                    maxPeople: null,
-                    duration: "",
-                    images: [],
-                    tripRoute: "",
-                    distance: "",
-                    cost: [],
-                    offer: "",
-                    description: description.value,
-                    location: "",
-                    tripType: "",
-                    fromAge: "",
-                    period: "",
-                })
-            userStore.updateUser({ email: userStore.user.email, fullinfo: fullUserInfo, $push: { trips: _id } })
-                .then((response) => {
-                    userStore.user = response.data
-                    images = []
-                    previews.value = []
-                    quill.value.setHTML('');
-                    message.config({ duration: 3, top: '90vh' })
-                    message.success({ content: 'Тур создан!', onClose: close })
-                }).catch((err) => {
-                    console.log(err);
-                })
-        })
+        if (images.length) {
+            TripService.uploadTripImages(imagesFormData).then((res) => {
+                message.config({ duration: 3, top: '90vh' })
+                message.success({ content: 'Тур обновлён!', onClose: close })
+            })
+        } else {
+            message.config({ duration: 3, top: '90vh' })
+            message.success({ content: 'Тур обновлён!', onClose: close })
+        }
     })
 }
 
@@ -138,7 +122,6 @@ onMounted(() => {
         .get(`${import.meta.env.VITE_API_URL}/trips/get-by-id?_id=${router.currentRoute.value.query._id}`)
         .then((response) => {
             let d = response.data
-            delete d._id
             delete d.__v
             d.period = dayjs(d.period, monthFormatList)
             start.value = dayjs(d.start)
