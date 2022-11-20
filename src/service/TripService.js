@@ -4,6 +4,7 @@ export default {
     async fetchTrips() {
         return $api.get('/trips/get-all')
     },
+
     async deleteTrip(_id) {
         return $api.post('/trips/delete-by-id', _id)
     },
@@ -18,6 +19,10 @@ export default {
 
     async bookingTrip(booking) {
         return $api.post('/trips/booking', booking)
+    },
+
+    async hideTrip(_id, v) {
+        return $api.get(`/trips/hide?_id=${_id}&v=${v}`)
     },
     async clearTripsDB() {
         return $api.get('/trips/clear')
