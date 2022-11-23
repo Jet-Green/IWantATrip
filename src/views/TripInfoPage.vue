@@ -1,11 +1,11 @@
 <script setup>
 import { ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter  } from "vue-router";
 import axios from "axios";
 import FindTrip from "../components/sections/FindTrip.vue";
 import BackButton from "../components/BackButton.vue";
 const route = useRoute();
-
+let router = useRouter();
 const _id = route.query._id;
 
 // let response = computed(async () => {
@@ -29,6 +29,9 @@ const clearData = (dataString) => {
   const dataFromString = new Date(dataString);
   return dataFromString.toLocaleDateString();
 };
+async function goToPriceCalc() {
+  router.push(`/calc?_id=${trip.value._id}`);
+}
 </script>
 <template>
   <div>
@@ -99,9 +102,8 @@ const clearData = (dataString) => {
 
           <a-col :span="24"
             >Цена:
-            <span v-for="(item, index) in trip.cost" :key="index" class="cost">
-              {{ item.first }} : {{ item.price }} руб.,
-            </span>
+            <button @click="goToPriceCalc">Подробнее</button>
+
           </a-col>
 
           <a-col :xs="22" :lg="16" class="actions">

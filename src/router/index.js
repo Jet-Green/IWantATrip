@@ -127,7 +127,11 @@ const router = createRouter({
       name: 'CompanyInfoPage',
       component: () => import('../components/_cabinet/EditTrip.vue'),
     },
-
+    {
+      path: '/calc',
+      name: 'PriceCalc',
+      component: () => import('../components/forms/PriceCalc.vue'),
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     if ((to.name == 'TripsPage') || (to.name == 'TripInfoPage') || (to.name == 'CompanionsPage') || (to.name == 'CreateTripNoHelp'))
