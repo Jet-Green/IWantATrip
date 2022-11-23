@@ -122,7 +122,11 @@ const router = createRouter({
       name: 'AuthForm',
       component: () => import('../components/AuthForm.vue')
     },
-
+    {
+      path: '/edit-trip',
+      name: 'CompanyInfoPage',
+      component: () => import('../components/_cabinet/EditTrip.vue'),
+    },
 
   ],
   scrollBehavior(to, from, savedPosition) {

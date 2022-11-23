@@ -73,10 +73,18 @@ const delPhoto = () => {
   images.splice(targetIndex.value, 1)
   delPhotoDialog.value = false;
 };
-
 function submit() {
   description.value = description.value.split('<p><br></p>').join('')
   form.description = description.value;
+
+  let send = {}
+  for (let key in form) {
+    send[key] = form[key]
+  }
+  let m = send.period.month().toString()
+  let month = m.length == 1 ? '0' + m : m
+  send.period = month + '.' + send.period.year().toString().slice(2)
+
   TripService.createTrip(form).then((res) => {
     const _id = res.data._id;
     let imagesFormData = new FormData();
