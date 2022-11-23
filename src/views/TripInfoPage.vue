@@ -19,6 +19,9 @@ let trip = ref({});
 axios
   .get(`${import.meta.env.VITE_API_URL}/trips/get-by-id?_id=${_id}`)
   .then((response) => {
+    response.data.images.push(
+      "https://static.vecteezy.com/system/resources/previews/000/207/535/original/desert-road-trip-vector.jpg"
+    );
     trip.value = response.data;
     console.log(trip.value);
   })
@@ -29,6 +32,10 @@ const clearData = (dataString) => {
   const dataFromString = new Date(dataString);
   return dataFromString.toLocaleDateString();
 };
+
+function getImg(index) {
+  return trip.value.images[index]
+}
 </script>
 <template>
   <div>
@@ -40,17 +47,28 @@ const clearData = (dataString) => {
       </a-col>
     </a-row>
 
-    <a-row v-else display="flex" justify="center" :gutter="[16, 16]" style="font-size: clamp(14px,2.5vw,16px)">
+    <a-row
+      v-else
+      display="flex"
+      justify="center"
+      :gutter="[16, 16]"
+      style="font-size: clamp(14px, 2.5vw, 16px)"
+    >
       <a-col :xs="24" :lg="24" class="title">
         <h1>{{ trip.name }}</h1>
       </a-col>
       <!-- добавить карусель фотографий -->
       <a-col :xs="24" :lg="8">
-          <img
-            :src="trip.images[0]"
-            alt=""
-            srcset=""
-          />
+        <a-carousel arrows dots-class="slick-dots slick-thumb">
+          <template #customPaging="props">
+            <a>
+              <img :src="getImg(props.i)" />
+            </a>
+          </template>
+          <div v-for="(item, i) in trip.images" :key="i">
+            <img :src="item" alt="" srcset="" />
+          </div>
+        </a-carousel>
       </a-col>
       <a-col :xs="22" :lg="8" class="content">
         <a-row display="flex">
@@ -115,7 +133,6 @@ const clearData = (dataString) => {
             </a-button>
           </a-col>
         </a-row>
-        
       </a-col>
       <a-col :xs="22" :lg="16">
         <span v-html="trip.description"></span>
@@ -153,5 +170,35 @@ img {
 .title {
   display: flex;
   justify-content: center;
+}
+
+.ant-carousel :deep(.slick-dots) {
+  position: relative;
+  height: auto;
+}
+.ant-carousel :deep(.slick-slide img) {
+  border: 5px solid #fff;
+  display: block;
+  margin: auto;
+  max-width: 80%;
+}
+.ant-carousel :deep(.slick-arrow) {
+  display: none !important;
+}
+.ant-carousel :deep(.slick-thumb) {
+  bottom: 0px;
+}
+.ant-carousel :deep(.slick-thumb li) {
+  width: 60px;
+  height: 45px;
+}
+.ant-carousel :deep(.slick-thumb li img) {
+  width: 100%;
+  height: 100%;
+  filter: grayscale(100%);
+  display: block;
+}
+.ant-carousel :deep(.slick-thumb li.slick-active img){
+  filter: grayscale(0%);
 }
 </style>
