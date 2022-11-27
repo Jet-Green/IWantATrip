@@ -85,10 +85,6 @@ function submit() {
     //     }
     // }
     // важно разобраться с обновлением фото. Пользователь может загрузить свои и они будут храниться в images, УЖЕ ЕСТЬ: обновляем те фото, которые есть на сервере
-    // console.log('imaegs', images);
-    // console.log(previews);
-    // console.log(form.value);
-    // return
     TripService.updateTrip(form.value).then((res) => {
         const _id = res.data._id;
         let imagesFormData = new FormData();
