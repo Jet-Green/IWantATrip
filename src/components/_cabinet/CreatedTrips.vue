@@ -16,6 +16,11 @@ function goToTripPage(_id) {
   router.push(`/trip?_id=${_id}`);
 }
 async function tripToDelete(_id) {
+  for (let i = 0; i < trips.value.length; i++) {
+    if (trips.value[i]._id == _id) {
+      trips.value.splice(i, 1)
+    }
+  }
   await TripService.deleteTrip({ _id: _id });
 }
 function editTrip(_id) {
