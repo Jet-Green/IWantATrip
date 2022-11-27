@@ -78,12 +78,17 @@ const delPhoto = () => {
 function submit() {
     description.value = description.value.split('<p><br></p>').join('')
     form.value.description = description.value;
-    for (let img of previews.value) {
-        if (!img.startsWith('blob'))
-            form.value.images.push(img)
-    }
+    // for (let img of previews.value) {
+    //     let isUnique = true;
+    //     if (img.startsWith('blob')) {
+    //         form.value.images.push(img)
+    //     }
+    // }
     // важно разобраться с обновлением фото. Пользователь может загрузить свои и они будут храниться в images, УЖЕ ЕСТЬ: обновляем те фото, которые есть на сервере
-
+    // console.log('imaegs', images);
+    // console.log(previews);
+    // console.log(form.value);
+    // return
     TripService.updateTrip(form.value).then((res) => {
         const _id = res.data._id;
         let imagesFormData = new FormData();

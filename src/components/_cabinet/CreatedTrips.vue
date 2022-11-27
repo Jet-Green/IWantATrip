@@ -16,8 +16,7 @@ function goToTripPage(_id) {
   router.push(`/trip?_id=${_id}`);
 }
 async function tripToDelete(_id) {
-  alert('не работает')
-  // await TripService.deleteTrip({ _id: _id });
+  await TripService.deleteTrip({ _id: _id });
 }
 function editTrip(_id) {
   router.push(`/edit-trip?_id=${_id}`);
@@ -36,7 +35,11 @@ onMounted(() => {
     axios
       .get(`${import.meta.env.VITE_API_URL}/trips/get-by-id?_id=${_id}`)
       .then((response) => {
-        trips.value.push(response.data)
+        if (response.data) {
+          trips.value.push(response.data)
+        }
+      }).catch((err) => {
+        console.log(err);
       })
   }
 })
