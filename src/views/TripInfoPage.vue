@@ -1,12 +1,10 @@
 <script setup>
 import { ref } from "vue";
-import { useRoute, useRouter  } from "vue-router";
-import axios from "axios";
+import { useRoute } from "vue-router";
 import FindTrip from "../components/sections/FindTrip.vue";
 import BackButton from "../components/BackButton.vue";
 import { useTrips } from "../stores/trips";
 const route = useRoute();
-let router = useRouter();
 const _id = route.query._id;
 
 // let response = computed(async () => {
@@ -33,8 +31,6 @@ const clearData = (dataString) => {
   const dataFromString = new Date(dataString);
   return dataFromString.toLocaleDateString();
 };
-async function goToPriceCalc() {
-  router.push(`/calc?_id=${trip.value._id}`);
 
 function getImg(index) {
   return trip.value.images[index]
@@ -102,10 +98,10 @@ function getImg(index) {
             >
           </a-col> -->
 
-          <a-col :span="24"
-            >Цена:
-            <button @click="goToPriceCalc">Подробнее</button>
-
+          <a-col :span="24">Цена:
+            <span v-for="(item, index) in trip.cost" :key="index" class="cost">
+              {{ item.first }} : {{ item.price }} руб.,
+            </span>
           </a-col>
 
           <a-col :xs="22" :lg="16" class="actions">
