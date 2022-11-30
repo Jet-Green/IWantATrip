@@ -12,17 +12,15 @@ let password = ref(null)
 
 async function logIn() {
   let result = await user.login(email.value, password.value);
-  message.config({ duration: 1.5, top: '70vh' })
   if (result.success) {
     email.value = ''
     password.value = ''
+    message.config({ duration: 1.5, top: '70vh' })
     message.success({
       content: 'Успешно!', onClose: () => {
         router.push('/')
       }
     })
-  } else {
-    message.error({ content: result.message })
   }
 };
 
