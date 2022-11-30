@@ -68,6 +68,9 @@ const addCost = () => {
     price: "",
   });
 };
+function goToPriceCalc() {
+      router.push('/calc')
+    }
 const delPhoto = () => {
   previews.value.splice(targetIndex.value, 1);
   images.splice(targetIndex.value, 1)
@@ -252,7 +255,7 @@ targetIndex = i;
                 </a-button>
               </div>
 
-              <a-button type="dashed" block @click="addCost" class="ma-8">
+              <a-button type="dashed" block @click="goToPriceCalc" class="ma-8"> <!-- addCost --->
                 <span class="mdi mdi-12px mdi-plus"></span>
                 Добавить цены
               </a-button>
