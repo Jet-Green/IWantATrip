@@ -1,6 +1,5 @@
 <script setup>
 import { ref, onMounted, computed } from "vue"
-import axios from "axios"
 import TripService from "../../service/TripService";
 
 import { useRouter } from "vue-router"
@@ -24,7 +23,7 @@ async function tripToDelete(_id) {
       trips.value.splice(i, 1)
     }
   }
-  await TripService.deleteTrip({ _id: _id });
+  await tripStore.deleteById(_id)
 }
 function editTrip(_id) {
   router.push(`/edit-trip?_id=${_id}`);
@@ -41,7 +40,6 @@ async function hideTrip(_id) {
 onMounted(async () => {
   for (let _id of tripsIds.value) {
     let res = await tripStore.getById(_id)
-    console.log(res);
     if (res.data) {
       trips.value.push(res.data)
     }
