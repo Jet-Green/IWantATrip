@@ -5,10 +5,13 @@ import TripService from "../../service/TripService";
 
 import { useRouter } from "vue-router"
 import { useAuth } from "../../stores/auth.js";
+import { useTrips } from "../../stores/trips.js";
+
 
 let userStore = useAuth()
 let router = useRouter()
 
+let tripStore = useTrips()
 let trips = ref([])
 let tripsIds = computed(() => userStore.user.trips)
 
@@ -35,17 +38,13 @@ async function hideTrip(_id) {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   for (let _id of tripsIds.value) {
-    axios
-      .get(`${import.meta.env.VITE_API_URL}/trips/get-by-id?_id=${_id}`)
-      .then((response) => {
-        if (response.data) {
-          trips.value.push(response.data)
-        }
-      }).catch((err) => {
-        console.log(err);
-      })
+    let res = await tripStore.getById(_id)
+    console.log(res);
+    if (res.data) {
+      trips.value.push(res.data)
+    }
   }
 })
 </script>

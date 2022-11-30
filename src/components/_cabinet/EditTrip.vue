@@ -2,7 +2,6 @@
 import BackButton from "../BackButton.vue";
 import ImageCropper from "../ImageCropper.vue";
 
-import axios from 'axios';
 import dayjs from 'dayjs'
 
 import { QuillEditor } from "@vueup/vue-quill";
@@ -13,10 +12,12 @@ import typeOfTrip from "../../fakeDB/tripType";
 import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router'
 import { useAuth } from '../../stores/auth'
+import { useTrips } from "../../stores/trips.js";
 
 import TripService from "../../service/TripService";
 
 const userStore = useAuth()
+const tripStore = useTrips()
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
 const monthFormatList = ["MM.YY"];
 const ruLocale = locale;
@@ -119,8 +120,7 @@ function updateUserInfo(info) {
 }
 
 onMounted(() => {
-    axios
-        .get(`${import.meta.env.VITE_API_URL}/trips/get-by-id?_id=${router.currentRoute.value.query._id}`)
+    tripStore.getById(router.currentRoute.value.query._id)
         .then((response) => {
             let d = response.data
             delete d.__v
