@@ -4,6 +4,7 @@ import { useRoute, useRouter  } from "vue-router";
 import axios from "axios";
 import FindTrip from "../components/sections/FindTrip.vue";
 import BackButton from "../components/BackButton.vue";
+import { useTrips } from "../stores/trips";
 const route = useRoute();
 let router = useRouter();
 const _id = route.query._id;
@@ -14,11 +15,14 @@ const _id = route.query._id;
 
 //   return res.data
 // })
+const tripStore = useTrips()
 const backRoute = "/trips";
 let trip = ref({});
-axios
-  .get(`${import.meta.env.VITE_API_URL}/trips/get-by-id?_id=${_id}`)
+tripStore.getById(_id)
   .then((response) => {
+    // response.data.images.push(
+    //   "https://static.vecteezy.com/system/resources/previews/000/207/535/original/desert-road-trip-vector.jpg"
+    // );
     trip.value = response.data;
     console.log(trip.value);
   })
@@ -31,6 +35,9 @@ const clearData = (dataString) => {
 };
 async function goToPriceCalc() {
   router.push(`/calc?_id=${trip.value._id}`);
+
+function getImg(index) {
+  return trip.value.images[index]
 }
 </script>
 <template>
@@ -43,17 +50,22 @@ async function goToPriceCalc() {
       </a-col>
     </a-row>
 
-    <a-row v-else display="flex" justify="center" :gutter="[16, 16]" style="font-size: clamp(14px,2.5vw,16px)">
+    <a-row v-else display="flex" justify="center" :gutter="[16, 16]" style="font-size: clamp(14px, 2.5vw, 16px)">
       <a-col :xs="24" :lg="24" class="title">
         <h1>{{ trip.name }}</h1>
       </a-col>
       <!-- добавить карусель фотографий -->
       <a-col :xs="24" :lg="8">
-          <img
-            :src="trip.images[0]"
-            alt=""
-            srcset=""
-          />
+        <a-carousel arrows dots-class="slick-dots slick-thumb">
+          <template #customPaging="props">
+            <a>
+              <img :src="getImg(props.i)" />
+            </a>
+          </template>
+          <div v-for="(item, i) in trip.images" :key="i">
+            <img :src="item" alt="" srcset="" />
+          </div>
+        </a-carousel>
       </a-col>
       <a-col :xs="22" :lg="8" class="content">
         <a-row display="flex">
@@ -61,20 +73,13 @@ async function goToPriceCalc() {
             <span v-html="trip.offer"></span>
           </a-col>
 
-          <a-col
-            :xs="22"
-            :lg="16"
-            class="time"
-            style="display: flex; flex-direction: column"
-          >
-            <span style="display: flex; flex-wrap: nowrap"
-              >Продолжительность:
+          <a-col :xs="22" :lg="16" class="time" style="display: flex; flex-direction: column">
+            <span style="display: flex; flex-wrap: nowrap">Продолжительность:
               <p class="ml-8 mb-4">
                 <b>{{ trip.duration }} дней</b>
               </p>
             </span>
-            <span style="display: flex; flex-wrap: nowrap"
-              >Ближайший выезд:
+            <span style="display: flex; flex-wrap: nowrap">Ближайший выезд:
               <p class="ml-8 mb-4">
                 <b>{{ clearData(trip.start) }}</b>
               </p>
@@ -83,10 +88,7 @@ async function goToPriceCalc() {
 
           <a-col :xs="22" :lg="16" class="people">
             Количество человек:
-            <a-progress
-              :percent="(trip.fromAge / 27) * 100"
-              :format="(percent) => `20 ч.`"
-            >
+            <a-progress :percent="(trip.fromAge / 27) * 100" :format="(percent) => `20 ч.`">
             </a-progress>
           </a-col>
 
@@ -107,17 +109,11 @@ async function goToPriceCalc() {
           </a-col>
 
           <a-col :xs="22" :lg="16" class="actions">
-            <a-button
-              type="primary"
-              class="lets_go_btn"
-              size="large"
-              style="display: flex; justify-content: center"
-            >
+            <a-button type="primary" class="lets_go_btn" size="large" style="display: flex; justify-content: center">
               Купить
             </a-button>
           </a-col>
         </a-row>
-        
       </a-col>
       <a-col :xs="22" :lg="16">
         <span v-html="trip.description"></span>
@@ -145,15 +141,53 @@ img {
   width: 100%;
   aspect-ratio: 1/1;
 }
+
 .coster:nth-of-type(1n + 2) {
   display: flex;
 }
 
-.ant-row > .ant-col {
+.ant-row>.ant-col {
   margin-bottom: 8px;
 }
+
 .title {
   display: flex;
   justify-content: center;
+}
+
+.ant-carousel :deep(.slick-dots) {
+  position: relative;
+  height: auto;
+}
+
+.ant-carousel :deep(.slick-slide img) {
+  border: 5px solid #fff;
+  display: block;
+  margin: auto;
+  max-width: 80%;
+}
+
+.ant-carousel :deep(.slick-arrow) {
+  display: none !important;
+}
+
+.ant-carousel :deep(.slick-thumb) {
+  bottom: 0px;
+}
+
+.ant-carousel :deep(.slick-thumb li) {
+  width: 60px;
+  height: 45px;
+}
+
+.ant-carousel :deep(.slick-thumb li img) {
+  width: 100%;
+  height: 100%;
+  filter: grayscale(100%);
+  display: block;
+}
+
+.ant-carousel :deep(.slick-thumb li.slick-active img) {
+  filter: grayscale(0%);
 }
 </style>

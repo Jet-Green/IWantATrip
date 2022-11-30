@@ -15,6 +15,25 @@ onMounted(() => {
   if (localStorage.getItem('token')) {
     userStore.checkAuth()
   }
+  function notify() {
+    let notification = new Notification("Привет", {
+      tag: "ache-mail",
+      body: "Хочу в поездку - крутой проект. Это уведомление будет показано только один раз",
+      icon: "https://glazov-flash.ru/image/cache/catalog/icon/1_1-100x100.png"
+    })
+  }
+
+  // if (Notification.permission == 'granted') {
+  //   notify()
+  // } else
+  if (Notification.permission != 'denied' & Notification.permission != 'granted') {
+    Notification.requestPermission(function (permission) {
+      if (!('permission' in Notification))
+        Notification.permission = permission
+      if (permission == 'granted')
+        notify()
+    })
+  }
 })
 </script>
 <template>
