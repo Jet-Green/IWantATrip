@@ -13,4 +13,15 @@ $api.interceptors.request.use((config) => {
     return config;
 })
 
+$api.interceptors.response.use(function (response) {
+    // Любой код состояния, находящийся в диапазоне 2xx, вызывает срабатывание этой функции
+    // Здесь можете сделать что-нибудь с ответом
+    return response;
+}, function (error) {
+    // Любые коды состояния, выходящие за пределы диапазона 2xx, вызывают срабатывание этой функции
+    // Здесь можете сделать что-то с ошибкой ответа
+    console.log('r', error);
+    return Promise.reject(error);
+});
+
 export default $api;
