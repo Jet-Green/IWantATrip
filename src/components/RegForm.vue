@@ -15,20 +15,17 @@ let formState = reactive({
 });
 async function sendRegInfo() {
   let result = await user.registration({ email: formState.email, password: formState.password, fullname: formState.fullname })
-  message.config({ duration: 1.5, top: '70vh' })
   if (result.success) {
     formState.fullname = ''
     formState.email = ''
     formState.password = ''
+    message.config({ duration: 1.5, top: '70vh' })
     message.success({
       content: 'Успешно!', onClose: () => {
         router.push('/')
       }
     })
-  } else {
-    message.error({ content: result.message })
   }
-  // router.push("/")
 };
 </script>
 <template>

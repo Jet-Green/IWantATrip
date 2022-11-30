@@ -113,9 +113,22 @@ function submit() {
           fromAge: "",
           period: "",
         })
-      userStore.updateUser({ email: userStore.user.email, fullinfo: fullUserInfo, $push: { trips: _id } })
-        .then((response) => {
+      if (fullUserInfo) {
+        userStore.updateUser({ email: userStore.user.email, fullinfo: fullUserInfo, $push: { trips: _id } })
+          .then((response) => {
+            userStore.user = response.data
+            images = []
+            previews.value = []
+            quill.value.setHTML('');
+            message.config({ duration: 3, top: '90vh' })
+            message.success({ content: 'Тур создан!', onClose: close })
+          }).catch((err) => {
+            console.log(err);
+          })
+      } else {
+        userStore.updateUser({ email: userStore.user.email, $push: { trips: _id } }).then((response) => {
           userStore.user = response.data
+          console.log(response.data);
           images = []
           previews.value = []
           quill.value.setHTML('');
@@ -124,6 +137,7 @@ function submit() {
         }).catch((err) => {
           console.log(err);
         })
+      }
     })
   })
   // необходимо отчистить форму и сделать редирект на tripList, вывести уведомление снизу об успехе
