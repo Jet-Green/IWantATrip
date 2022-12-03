@@ -18,9 +18,9 @@ const backRoute = "/trips";
 let trip = ref({});
 tripStore.getById(_id)
   .then((response) => {
-    // response.data.images.push(
-    //   "https://static.vecteezy.com/system/resources/previews/000/207/535/original/desert-road-trip-vector.jpg"
-    // );
+    response.data.images.push(
+      "https://static.vecteezy.com/system/resources/previews/000/207/535/original/desert-road-trip-vector.jpg"
+    );
     trip.value = response.data;
     console.log(trip.value);
   })
@@ -59,8 +59,18 @@ function getImg(index) {
             </a>
           </template>
           <div v-for="(item, i) in trip.images" :key="i">
-            <img :src="item" alt="" srcset="" />
+            <img :src="item" alt="" srcset=""/>
           </div>
+          <template #prevArrow>
+            <div class="custom-slick-arrow" style="left: 10px; z-index: 1">
+              <span class="mdi mdi-48px mdi-arrow-left-bold-circle-outline" style="color: #245159; line-height: normal;"></span>
+            </div>
+          </template>
+          <template #nextArrow>
+            <div class="custom-slick-arrow" style="right: 10px">
+              <span class="mdi mdi-48px mdi-arrow-right-bold-circle-outline" style="color: #245159; line-height: normal;"></span>
+            </div>
+          </template>
         </a-carousel>
       </a-col>
       <a-col :xs="22" :lg="8" class="content">
@@ -160,11 +170,7 @@ img {
   border: 5px solid #fff;
   display: block;
   margin: auto;
-  max-width: 80%;
-}
-
-.ant-carousel :deep(.slick-arrow) {
-  display: none !important;
+  max-width: 100%;
 }
 
 .ant-carousel :deep(.slick-thumb) {
@@ -185,5 +191,19 @@ img {
 
 .ant-carousel :deep(.slick-thumb li.slick-active img) {
   filter: grayscale(0%);
+}
+
+.ant-carousel :deep(.slick-arrow.custom-slick-arrow) {
+  width: 50px;
+  height: 50px;
+  opacity: 0.3;
+  z-index: 1;
+  top: 45%;
+}
+.ant-carousel :deep(.custom-slick-arrow:before) {
+  display: none;
+}
+.ant-carousel :deep(.custom-slick-arrow:hover) {
+  opacity: 0.5;
 }
 </style>
