@@ -64,12 +64,12 @@ function getImg(index) {
           </div>
           <template #prevArrow>
             <div class="custom-slick-arrow" style="left: 10px; z-index: 1">
-              <span class="mdi mdi-48px mdi-arrow-left-bold-circle-outline" style="color: #245159; line-height: normal;"></span>
+              <span class="mdi mdi-48px mdi-chevron-left" ></span>
             </div>
           </template>
           <template #nextArrow>
             <div class="custom-slick-arrow" style="right: 10px">
-              <span class="mdi mdi-48px mdi-arrow-right-bold-circle-outline" style="color: #245159; line-height: normal;"></span>
+              <span class="mdi mdi-48px mdi-chevron-right" ></span>
             </div>
           </template>
         </a-carousel>
@@ -195,9 +195,11 @@ img {
 }
 
 .ant-carousel :deep(.slick-arrow.custom-slick-arrow) {
+  color: white;
+  line-height: normal;
   width: 50px;
   height: 50px;
-  opacity: 0.3;
+  opacity: 1;
   z-index: 1;
   top: 45%;
 }
@@ -205,6 +207,6 @@ img {
   display: none;
 }
 .ant-carousel :deep(.custom-slick-arrow:hover) {
-  opacity: 0.5;
+  opacity: 0.8;
 }
 </style>
