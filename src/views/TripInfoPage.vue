@@ -5,7 +5,6 @@ import FindTrip from "../components/sections/FindTrip.vue";
 import BackButton from "../components/BackButton.vue";
 import { useTrips } from "../stores/trips";
 const route = useRoute();
-
 const _id = route.query._id;
 
 // let response = computed(async () => {
