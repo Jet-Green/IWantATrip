@@ -6,11 +6,14 @@ import Footer from "./components/Footer.vue";
 
 import { useTrips } from './stores/trips'
 import { useAuth } from './stores/auth'
+import { useAppState } from './stores/appState'
 
 const route = useRoute()
 const userStore = useAuth()
+const appStateStore = useAppState()
 
 onMounted(() => {
+  appStateStore.refreshState()
   useTrips().fetchTrips()
   if (localStorage.getItem('token')) {
     userStore.checkAuth()
