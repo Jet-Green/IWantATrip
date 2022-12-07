@@ -1,13 +1,12 @@
 <script setup>
-import { computed, watch, } from "vue";
-import { useTrips } from "../../stores/trips";
+import { computed } from "vue";
+// import { useTrips } from "../../stores/trips";
 import TripListCard from "../cards/TripListCard.vue";
 
-const useTripsStore = useTrips();
-
-let trips = computed(() => {
-  return useTripsStore.trips;
-});
+let props = defineProps({
+  trips: Array,
+})
+let trips = computed(() => props.trips)
 
 </script>
 

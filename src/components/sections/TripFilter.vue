@@ -4,12 +4,18 @@ import { useRouter } from "vue-router";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const sm = breakpoints.smaller("md");
+const emit=defineEmits(['inputName'])
 
 let router = useRouter();
 let where = ref(null);
 let how = ref(null);
 let time = ref(null);
 
+let query = ref('')
+
+function find(){
+  emit('inputName', query.value)
+}
 function toEventPage() {
   router.push({ name: "EventPage", params: { type: "event" } });
 }
@@ -49,6 +55,10 @@ function handleChangeOnWhere() { }
             @change="handleChangeOnWhere" :bordered="true" size="large" class="selector">
             <a-select-option value="1"> На столько </a-select-option>
           </a-select>
+        </a-col>
+
+        <a-col :xs="24">
+          <a-input placeholder="Название поездки" v-model:value="query" @input="find"></a-input>
         </a-col>
 
         <a-button class="lets_go_btn ma-16" type="primary" size="large" @click="
