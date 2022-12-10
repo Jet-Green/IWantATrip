@@ -1,17 +1,15 @@
 <script setup>
 import { computed } from "vue";
-// import { useTrips } from "../../stores/trips";
+import { useTrips } from "../../stores/trips";
 import TripListCard from "../cards/TripListCard.vue";
+const tripStore = useTrips()
 
-let props = defineProps({
-  trips: Array,
-})
-let trips = computed(() => props.trips)
 
 </script>
 
 <template>
   <a-row display="flex" justify="center" class="mt-16" >
+   
     <a-col :sm="20">
       <a-row display="flex" justify="center" :gutter="[16,16]" class="pa-4" style="align-items: flex-end">
         <a-col
@@ -19,7 +17,7 @@ let trips = computed(() => props.trips)
           :sm="12"
           :md="8"
           :lg="6"
-          v-for="trip in trips"
+          v-for="trip in tripStore.filteredTrips"
           :key="trip.index"
         >
           <TripListCard :trip="trip" style="width: 100%" />

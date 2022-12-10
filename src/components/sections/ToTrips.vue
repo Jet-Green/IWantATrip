@@ -10,13 +10,12 @@ let search = ref("");
 function find() {
   router.push({
     name: "TripsPage",
-    query: { search: search.value},
+    query: { search: search.value },
   });
 }
 // function toEventPage() {
 //   router.push({ name: "EventPage", params: { type: "event" } });
 // }
-
 </script>
 <template>
   <a-row
@@ -33,7 +32,13 @@ function find() {
     <a-col :xs="22" :md="16" :lg="14">
       <a-row :gutter="[8, 8]" type="flex" justify="center">
         <a-col :xs="24" :md="12">
-          <a-input placeholder="поиск" v-model:value="search"></a-input>
+          <a-input-search
+            v-model:value="search"
+            placeholder="поиск"
+            enter-button
+            style="z-index: 0"
+            @search="find()"
+          />
         </a-col>
         <a-col :span="24" class="d-flex justify-center">
           <a-button

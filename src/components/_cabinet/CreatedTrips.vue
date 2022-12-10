@@ -48,7 +48,7 @@ onMounted(async () => {
 </script>
 <template>
   <a-row>
-    <a-col :span="12" v-for="trip of trips">
+    <a-col :span="12" v-for="trip,index of trips" :key="index">
       <div @click="goToTripPage(trip._id)" class="custom-card" style="max-width: 300px;">
         <div class="title">{{ trip.name }}</div>
         <a-badge-ribbon :text="`${trip.cost.length ? trip.cost[0].price : 0} руб`" color="ff6600">

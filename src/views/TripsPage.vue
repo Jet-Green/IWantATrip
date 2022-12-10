@@ -9,32 +9,30 @@ import { useRoute } from "vue-router";
 const tripStore = useTrips();
 
 const route = useRoute();
-let trips = ref([]);
+// let trips = ref([]);
 
-function findTrip(nameTrip) {
-  let k = 0;
-  let t = [];
-  while (k < tripStore.trips.length) {
-    if (
-      tripStore.trips[k].name.toLowerCase().includes(nameTrip.toLowerCase())
-    ) {
-      t.push(tripStore.trips[k]);
-    }
-    k++;
-  }
-  trips.value = t;
+// function findTrip(nameTrip) {
+//   let k = 0;
+//   let t = [];
+//   while (k < tripStore.trips.length) {
+//     if (
+//       tripStore.trips[k].name.toLowerCase().includes(nameTrip.toLowerCase())
+//     ) {
+//       t.push(tripStore.trips[k]);
+//     }
+//     k++;
+//   }
+//   trips.value = t;
 
-  // const filterResult  = tripStore.trips.filter((trip) => {
-  //   trip.name.toLowerCase().includes(nameTrip.toLowerCase())
-  // });
-}
-onMounted(() => {
-  if (route.query.search) {
-    findTrip(route.query.search);
-  } else {
-    findTrip("");
-  }
-});
+  
+// }
+// onMounted(() => {
+//   if (route.query.search) {
+//     findTrip(route.query.search);
+//   } else {
+//     findTrip("");
+//   }
+// });
 </script>
 <template>
   <div>
@@ -44,7 +42,7 @@ onMounted(() => {
         <h2>Туры</h2>
       </a-col>
     </a-row>
-    <TripFilter @inputName="findTrip" :search="route.query.search" />
-    <TripsList :trips="trips" />
+    <TripFilter :search="route.query.search" />
+    <TripsList />
   </div>
 </template>

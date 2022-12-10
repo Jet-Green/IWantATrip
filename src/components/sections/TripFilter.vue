@@ -1,10 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const sm = breakpoints.smaller("md");
-const emit = defineEmits(["inputName"]);
+import { useTrips } from "../../stores/trips";
 
 let props = defineProps({
   search: String,
@@ -19,7 +16,7 @@ let visible = ref(false);
 let query = ref("");
 
 function find() {
-  emit("inputName", query.value);
+  useTrips().searchTrips(query.value);
 }
 
 watch(query, (newQuery) => {
@@ -29,7 +26,10 @@ watch(query, (newQuery) => {
 });
 
 onMounted(() => {
-  query.value = props.search;
+  if (props.search) {
+    query.value = props.search;
+  }
+  useTrips().searchTrips(query.value);
 });
 </script>
 <template>
@@ -83,7 +83,7 @@ onMounted(() => {
             <a-select
               style="width: 100%"
               placeholder="На сколько"
-              v-model:value="time"       
+              v-model:value="time"
               :bordered="true"
               size="large"
               class="selector"
@@ -97,7 +97,6 @@ onMounted(() => {
               style="width: 100%"
               placeholder="На сколько"
               v-model:value="time"
-    
               :bordered="true"
               size="large"
               class="selector"
