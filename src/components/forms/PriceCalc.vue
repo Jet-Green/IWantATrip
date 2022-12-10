@@ -1,7 +1,6 @@
 <script setup>
 import BackButton from "../BackButton.vue";
 import { ref, reactive, onUpdated } from "vue";
-const count = ref(0);
 const backRoute = "/trips";
 let form = reactive({
   people: 5,
@@ -47,10 +46,16 @@ const tRemoveCost = (item) => {
     form.transport.splice(index, 1);
   }
 };
-onUpdated(() => {
-  // text content should be the same as current `count.value`
-  console.log(document.getElementById("count").textContent);
-});
+let marks = {}
+const onAfterChange = (value) => {
+      console.log('afterChange: ', value);
+    };
+const onAfterChange1 = (value) => {
+  form.maxPeople=value;
+  for(var i=1 ;i <= form.maxPeople; i++){ 
+    marks[i] = i
+  }
+};
 </script>
 <template>
   <BackButton :backRoute="backRoute" />
@@ -176,23 +181,38 @@ onUpdated(() => {
         </a-col>
 
         <a-col :span="24">
+
           <div class="slidecontainer">
-            <input
+            <a-slider
+              :min="1"
+              :max="100"
+              :step="1"
+              class="slider"
+              :marks="marks"
+              v-model="form.maxPeople"
+              @afterChange="onAfterChange1"
+              :included="false"
+              />
+              
+              
+            <a-slider
               v-model="form.people"
-              type="range"
-              id="count"
-              @click="count++"
               :min="1"
               :max="form.maxPeople"
               class="slider"
               :tooltipVisible="true"
-              list="tickmarks"
+              :marks="marks"
+              @afterChange="onAfterChange"
+              :included="false"
             />
-            <datalist id="tickmarks">
+            <!-- <datalist id="tickmarks">
               <option v-for="num in form.maxPeople" :value="num">{{num}}</option>
-            </datalist>
+              list="tickmarks"
+                            id="count"
+              @click="count++"
+            </datalist>               -->
 
-            {{ count }}
+
           </div>
         </a-col>
       </a-row>
