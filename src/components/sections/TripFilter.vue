@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -20,10 +20,13 @@ let query = ref("");
 
 function find() {
   emit("inputName", query.value);
-  router.push({
-    name: "TripsPage",
-  });
 }
+
+watch(query, (newQuery) => {
+  if (newQuery == "") {
+    find("");
+  }
+});
 
 onMounted(() => {
   query.value = props.search;
@@ -55,8 +58,6 @@ onMounted(() => {
               style="width: 100%"
               placeholder="Куда едем"
               v-model:value="where"
-              @focus="focusOnWhere"
-              @change="handleChangeOnWhere"
               :bordered="true"
               size="large"
               class="selector"
@@ -70,8 +71,6 @@ onMounted(() => {
               style="width: 100%"
               placeholder="Как едем"
               v-model:value="how"
-              @focus="focusOnWhere"
-              @change="handleChangeOnWhere"
               :bordered="true"
               size="large"
               class="selector"
@@ -84,9 +83,7 @@ onMounted(() => {
             <a-select
               style="width: 100%"
               placeholder="На сколько"
-              v-model:value="time"
-              @focus="focusOnWhere"
-              @change="handleChangeOnWhere"
+              v-model:value="time"       
               :bordered="true"
               size="large"
               class="selector"
@@ -100,8 +97,7 @@ onMounted(() => {
               style="width: 100%"
               placeholder="На сколько"
               v-model:value="time"
-              @focus="focusOnWhere"
-              @change="handleChangeOnWhere"
+    
               :bordered="true"
               size="large"
               class="selector"

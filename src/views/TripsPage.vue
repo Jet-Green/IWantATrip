@@ -29,7 +29,11 @@ function findTrip(nameTrip) {
   // });
 }
 onMounted(() => {
-  console.log(route.query.search);
+  if (route.query.search) {
+    findTrip(route.query.search);
+  } else {
+    findTrip("");
+  }
 });
 </script>
 <template>

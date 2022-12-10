@@ -184,7 +184,7 @@ img {
 
 .ant-carousel :deep(.slick-thumb li img) {
   width: 100%;
-  height: 100%;
+  // height: 100%;
   filter: grayscale(100%);
   display: block;
 }
