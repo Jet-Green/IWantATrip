@@ -20,5 +20,12 @@ export const useCompanions = defineStore('companions', {
                 console.log(err);
             }
         },
-    },
+        async getById(_id) {
+            try {
+                return CompanionsService.getById(_id);
+            } catch (err) {
+                console.log(err);
+            }
+        },
+    }
 })

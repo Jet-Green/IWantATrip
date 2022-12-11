@@ -1,10 +1,13 @@
 import $api from "../plugins/axios";
 
 export default {
-    async fetchCompanions() {
+    fetchCompanions() {
         return $api.get('/companion/get-all')
     },
-    async createCompanion(companion) {
+    getById(_id) {
+        return $api.get(`/companion/get-by-id?_id=${_id}`)
+    },
+    createCompanion(companion) {
         return $api.post('/companion/create', companion)
     }
 }
