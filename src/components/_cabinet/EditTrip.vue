@@ -91,7 +91,7 @@ function submit() {
         let imagesFormData = new FormData();
 
         for (let i = 0; i < images.length; i++) {
-            let index = i + form.value.images.length - 1
+            let index = i + form.value.images.length
             imagesFormData.append('trip-image', images[i], _id + '_' + index + '.png')
         }
         function close() {
