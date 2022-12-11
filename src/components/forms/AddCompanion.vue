@@ -20,7 +20,9 @@ const form = reactive({
   description: "",
 });
 function submit() {
-  CompanionService.createCompanion(form)
+  CompanionService.createCompanion(form).then ((res)=>{
+    console.log(res.data)
+  })
 }
 </script>
 
@@ -30,7 +32,7 @@ function submit() {
     action="POST"
     @submit.prevent="submit"
     enctype="multipart/form-data"
-    ref="newGuideElementForm"
+   
   >
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="12">
