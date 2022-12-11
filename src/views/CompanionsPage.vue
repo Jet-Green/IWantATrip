@@ -126,14 +126,25 @@ let columnssm = [
 <template>
   <div>
     <BackButton></BackButton>
-    
+
+    <a-row type="flex" justify="center">
+      <a-col class="d-flex justify-center">
+        <a-button
+        class="lets_go_btn ma-16"
+            type="primary"
+            size="large"
+          @click="router.push('/add-companion')"
+          >Добавить себя</a-button
+        >
+      </a-col>
+    </a-row>
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
-        <h2>Поиск попутчиков</h2>
+        <h2>Ищу попутчика</h2>
         <a-table
           :columns="columnslg"
           :data-source="companions"
-          :pagination="false"
+          :pagination="true"
         >
           <template #bodyCell="{ column, text }">
             <template v-if="column.dataIndex === 'number'">
@@ -141,13 +152,6 @@ let columnssm = [
             </template>
           </template>
         </a-table>
-      </a-col>
-    </a-row>
-    <a-row type="flex" justify="center">
-      <a-col class="d-flex justify-center">
-        <a-button class="mt-16" type="primary" shape="round" size="large" @click="router.push('/add-companion')"
-          >Добавить себя</a-button
-        >
       </a-col>
     </a-row>
   </div>
