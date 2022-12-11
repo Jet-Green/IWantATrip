@@ -3,6 +3,6 @@
 </script>
 <template>
   <div>
-    <p>Купленные туры</p>
+    <p>RequestedTrips</p>
   </div>
 </template>
