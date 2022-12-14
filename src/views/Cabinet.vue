@@ -5,7 +5,7 @@ import { useRouter } from "vue-router";
 import BackButton from "../components/BackButton.vue";
 import AboutClient from "../components/_cabinet/AboutClient.vue";
 import CreatedTrips from "../components/_cabinet/CreatedTrips.vue";
-import BuyedTrips from "../components/_cabinet/BuyedTrips.vue";
+import RequestedTrips from "../components/_cabinet/RequestedTrips.vue";
 import CreatedObjects from "../components/_cabinet/CreatedObjects.vue";
 
 const userStore = useAuth();
@@ -26,26 +26,32 @@ onMounted(() => {
       <a-col :xs="22" :lg="12">
         <h2>
           Кабинет
-          <span
-            @click="logOut()"
-            class="mdi mdi-24px mdi-logout"
-            style="cursor: pointer; float: right"
-          >
+          <span @click="logOut()" class="mdi mdi-24px mdi-logout" style="cursor: pointer; float: right">
           </span>
         </h2>
       </a-col>
     </a-row>
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="12">
-        <a-tabs >
-          <a-tab-pane key="1" tab="О пользователе"> <AboutClient/> </a-tab-pane>
-          <a-tab-pane key="2" tab="Созданные туры"> <CreatedTrips /> </a-tab-pane>
-          <a-tab-pane key="3" tab="Купленные туры"> <BuyedTrips /> </a-tab-pane>
-          <a-tab-pane key="4" tab="Созданные объекты"> <CreatedObjects /> </a-tab-pane>
+        <a-tabs>
+          <a-tab-pane key="1" tab="О пользователе">
+            <AboutClient />
+          </a-tab-pane>
+          <a-tab-pane key="2" tab="Созданные туры">
+            <CreatedTrips />
+          </a-tab-pane>
+          <a-tab-pane key="3" tab="Заказанные туры">
+            <RequestedTrips />
+          </a-tab-pane>
+          <a-tab-pane key="4" tab="Созданные объекты">
+            <CreatedObjects />
+          </a-tab-pane>
         </a-tabs>
       </a-col>
     </a-row>
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+
+</style>

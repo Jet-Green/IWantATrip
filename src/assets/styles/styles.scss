@@ -65,21 +65,21 @@ body {
 }
 
 // MA
-@for $i from 1 through 4 {
+@for $i from 0 through 8 {
     .ma-#{$i*4} {
         margin: #{$i*4}px;
     }
 }
 
 // MT
-@for $i from 1 through 12 {
+@for $i from 0 through 12 {
     .mt-#{$i*4} {
         margin-top: #{$i*4}px;
     }
 }
 
 // MR
-@for $i from 1 through 4 {
+@for $i from 0 through 4 {
     .mr-#{$i*4} {
         margin-right: #{$i*4}px;
     }
@@ -156,6 +156,9 @@ body {
 .fade-leave-to {
   opacity: 0;
 }
-button {
-    border-radius: 15px !important;
+// button {
+//     border-radius: 15px !important;
+// }
+a {
+    color: black
 }
