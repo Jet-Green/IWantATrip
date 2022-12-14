@@ -1,6 +1,6 @@
 <script setup>
 import BackButton from "../BackButton.vue";
-import { ref, reactive, onUpdated,createVNode,h  } from "vue";
+import { reactive, createVNode } from "vue";
 const backRoute = "/trips";
 let form = reactive({
   people: 5,
@@ -23,11 +23,11 @@ const groupAddCost = () => {
 };
 const tAddCost = () => {
   form.transport.push({
-    type:"",
+    type: "",
     peopleRange: 0,
     price: "",
   });
-  console.log(form.transport)
+  console.log(form.transport);
 };
 const indRemoveCost = (item) => {
   let index = form.indCost.indexOf(item);
@@ -49,63 +49,77 @@ const tRemoveCost = (item) => {
 };
 let marks = {};
 const onAfterChange = (value) => {
-  form.people=value;
+  form.people = value;
 };
 const clearDict = (dict) => {
   Object.keys(dict).map((key) => delete dict[key]);
 };
+const formParser = (value) => {
+  var peoples = [];
+  var prices = [];
+  var x=[]
+  form[value].forEach(function (item, index) {
+    peoples[index] = item.peopleRange;
+    prices[index] = item.price;
+  });
+  x=peoples
+  return x
+}
 const costParser1 = (value) => {
-  var x=0
-  form.indCost.forEach(function(item, index) {
-    x= x + item.price
-});
+  var x = 0;
+  form['indCost'].forEach(function (item, index) {
+    x = x + item.price;
+  });
   return x;
 };
 
 const costParser2 = (value) => {
-  var x=0
-  form.groupCost.forEach(function(item, index) {
-    x= x + item.price
-});
+  var x = 0;
+  form.groupCost.forEach(function (item, index) {
+    x = x + item.price;
+  });
   return x;
 };
 
 const costParser3 = (value) => {
-  var x=0
-  form.transport.forEach(function(item, index) {
-    x= x + item.price
-});
-  return x;
+
+  console.log(  formParser('transport'))
+  for (let item of peoples) {
+    if (item >= form.people) {
+      var price = prices[peoples.indexOf(item)];
+      break;
+    }
+  }
+  return price;
 };
 const findFinalPrice = (value) => {
-  var individual=costParser1(form.indCost)
-  var group=costParser2(form.groupCost)
-  var vehicle=costParser3(form.transport)
-  var finalPrice=individual+(group+vehicle)/form.people
-  console.log(individual,group,vehicle,finalPrice)
+  var individual = costParser1(form.indCost);
+  var group = costParser2(form.groupCost);
+  var vehicle = costParser3(form.transport);
+  var finalPrice = individual + (group + vehicle) / form.people;
+  console.log(individual, group, vehicle, finalPrice);
   return finalPrice;
-}
+};
 const transportRange = (value) => {
   clearDict(marks);
 
-                         //[fruits.length - 1]
-    for (var i = 1; i <= form.transport[form.transport.length-1].peopleRange; i++) {
-      marks[i] = i;
-      form.maxPeople=i
-    }
-  
-    form.transport.forEach(function(item, index) {
-      marks[item.peopleRange] = {
-        style: {
-          color: '#000000',
-        },
-        label: createVNode('strong', {}, item.peopleRange),
-      }
-    });
+  for (var i = 1; i <= form.transport[form.transport.length - 1].peopleRange; i++) {
+    marks[i] = i;
+    form.maxPeople = i;
+  }
+
+  form.transport.forEach(function (item) {
+    marks[item.peopleRange] = {
+      style: {
+        color: "#000000",
+      },
+      label: createVNode("strong", {}, item.peopleRange),
+    };
+  });
+
 };
 
-const formatter = (value) => value=findFinalPrice()
-;
+const formatter = (value) => (value = findFinalPrice());
 </script>
 <template>
   <BackButton :backRoute="backRoute" />
@@ -179,11 +193,7 @@ const formatter = (value) => value=findFinalPrice()
           <h1>Транспорт</h1>
         </a-col>
         <a-col :span="12" class="centrify">
-          <a-row
-            v-for="item in form.transport"
-            style="display: flex"
-            class="ma-16"
-          >
+          <a-row v-for="item in form.transport" style="display: flex" class="ma-16">
             <a-col :span="24">
               <a-input
                 v-model:value="item.type"
@@ -231,7 +241,7 @@ const formatter = (value) => value=findFinalPrice()
 
         <a-col :span="24">
           <div class="slidecontainer">
-    <a-slider
+            <a-slider
               v-model="form.people"
               :min="1"
               :max="form.maxPeople"
@@ -241,10 +251,8 @@ const formatter = (value) => value=findFinalPrice()
               @afterChange="onAfterChange"
               :included="false"
               :tipFormatter="formatter"
-              :dots="true"
             >
             </a-slider>
-
 
             <!-- <datalist id="tickmarks">
               <option v-for="num in form.maxPeople" :value="num">{{num}}</option>
