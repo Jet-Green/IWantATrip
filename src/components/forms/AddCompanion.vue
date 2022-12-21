@@ -4,12 +4,13 @@ import typeOfTrip from "../../fakeDB/tripType";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import BackButton from "../BackButton.vue";
 import CompanionService from "../../service/CompanionService";
-import { useAuth } from '../../stores/auth'
+import { useAuth } from "../../stores/auth";
 import { message } from "ant-design-vue";
 
-const userStore = useAuth()
+const userStore = useAuth();
 const ruLocale = locale;
 const backRoute = "/companions";
+
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
 const form = reactive({
   name: "",
@@ -42,7 +43,8 @@ function submit() {
           end: "",
           age: "",
           gender: "Male",
-          type: "Любой",
+          // type: "Любой",
+          direction: "",
           description: "",
         });
         userStore.user = response.data;
@@ -52,7 +54,7 @@ function submit() {
       .catch((err) => {
         console.log(err);
       });
-  })
+  });
 }
 </script>
 
@@ -87,10 +89,13 @@ function submit() {
             <a-input type="number" :min="0" v-model:value="form.age" />
           </a-col>
 
-          <a-col :span="12" class="d-flex align-center" style="flex-wrap: wrap;">
+          <a-col :span="12" class="d-flex align-center" style="flex-wrap: wrap">
             Пол
-            <a-radio-group v-model:value="form.gender" name="radioGroup"
-              style="width: -moz-available; width: -webkit-fill-available">
+            <a-radio-group
+              v-model:value="form.gender"
+              name="radioGroup"
+              style="width: -moz-available; width: -webkit-fill-available"
+            >
               <a-radio :value="'Male'">Мужчина</a-radio>
               <a-radio :value="'Female'">Женщина</a-radio>
             </a-radio-group>
@@ -98,30 +103,47 @@ function submit() {
 
           <a-col :span="12">
             Дата начала
-            <a-date-picker v-model:value="form.start" style="width: 100%" placeholder="Начало" :locale="ruLocale"
-              :format="dateFormatList" />
+            <a-date-picker
+              v-model:value="form.start"
+              style="width: 100%"
+              placeholder="Начало"
+              :locale="ruLocale"
+              :format="dateFormatList"
+            />
           </a-col>
           <a-col :span="12">
             Дата конца
-            <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
-              :format="dateFormatList" />
+            <a-date-picker
+              v-model:value="form.end"
+              style="width: 100%"
+              placeholder="Конец"
+              :locale="ruLocale"
+              :format="dateFormatList"
+            />
           </a-col>
           <a-col :xs="24">
-            Тип отдыха
-            <a-select v-model:value="form.type" style="width: 100%" :options="typeOfTrip" mode="multiple"></a-select>
+            <!-- Тип отдыха
+            <a-select v-model:value="form.type" style="width: 100%" :options="typeOfTrip" mode="multiple"></a-select> -->
+            <label>Направление</label>
+            <a-input v-model:value="form.direction" />
           </a-col>
           <a-col :xs="24">
             Пожелания
             <a-textarea autoSize v-model:value="form.description" />
           </a-col>
-          <a-button type="primary" class="lets_go_btn" size="large" style="display: flex; justify-content: center"
-            html-type="submit">Отправить
-          </a-button>
+          <div class="d-flex justify-center" style="width: 100%">
+            <a-button
+              type="primary"
+              class="lets_go_btn"
+              size="large"
+              html-type="submit"
+              >Отправить
+            </a-button>
+          </div>
         </a-row>
       </a-col>
     </a-row>
   </form>
 </template>
 <style scoped>
-
 </style>
