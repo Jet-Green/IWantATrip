@@ -26,8 +26,9 @@ const tAddCost = () => {
     type: "",
     peopleRange: 0,
     price: "",
+    minPeople: 1,
   });
-  console.log(form.transport);
+  console.log(form.transport)
 };
 const indRemoveCost = (item) => {
   let index = form.indCost.indexOf(item);
@@ -54,17 +55,7 @@ const onAfterChange = (value) => {
 const clearDict = (dict) => {
   Object.keys(dict).map((key) => delete dict[key]);
 };
-const formParser = (value) => {
-  var peoples = [];
-  var prices = [];
-  var x=[]
-  form[value].forEach(function (item, index) {
-    peoples[index] = item.peopleRange;
-    prices[index] = item.price;
-  });
-  x=peoples
-  return x
-}
+
 const costParser1 = (value) => {
   var x = 0;
   form['indCost'].forEach(function (item, index) {
@@ -83,7 +74,12 @@ const costParser2 = (value) => {
 
 const costParser3 = (value) => {
 
-  console.log(  formParser('transport'))
+  var peoples = [];
+  var prices = [];
+  form.transport.forEach(function (item, index) {
+    peoples[index] = item.peopleRange;
+    prices[index] = item.price;
+  });
   for (let item of peoples) {
     if (item >= form.people) {
       var price = prices[peoples.indexOf(item)];
@@ -92,15 +88,16 @@ const costParser3 = (value) => {
   }
   return price;
 };
-const findFinalPrice = (value) => {
+
+const findFinalPrice = () => {
   var individual = costParser1(form.indCost);
   var group = costParser2(form.groupCost);
   var vehicle = costParser3(form.transport);
   var finalPrice = individual + (group + vehicle) / form.people;
-  console.log(individual, group, vehicle, finalPrice);
+  console.log(individual,group,vehicle,finalPrice);
   return finalPrice;
 };
-const transportRange = (value) => {
+const transportRange = () => {
   clearDict(marks);
 
   for (var i = 1; i <= form.transport[form.transport.length - 1].peopleRange; i++) {
@@ -228,6 +225,16 @@ const formatter = (value) => (value = findFinalPrice());
                 :min="0"
               /> -->
               <span>человек</span>
+              <span>Мин. кол-во человек</span>
+              <a-input-number
+                :controls="false"
+                v-model:value.lazy="item.minPeople"
+                style="width: 25%"
+                placeholder="1"
+                :min="0"
+                @change="transportRange(value)"
+              />
+              
               <a-button @click="tRemoveCost(item)" shape="circle">
                 <span class="mdi mdi-minus" style="cursor: pointer"></span>
               </a-button>
@@ -237,6 +244,7 @@ const formatter = (value) => (value = findFinalPrice());
             <span class="mdi mdi-12px mdi-plus"></span>
             Добавить виды транспорта
           </a-button>
+          <h1>Итого: {{findFinalPrice()}}</h1>
         </a-col>
 
         <a-col :span="24">
@@ -253,7 +261,7 @@ const formatter = (value) => (value = findFinalPrice());
               :tipFormatter="formatter"
             >
             </a-slider>
-
+            
             <!-- <datalist id="tickmarks">
               <option v-for="num in form.maxPeople" :value="num">{{num}}</option>
               list="tickmarks"
