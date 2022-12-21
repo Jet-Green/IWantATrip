@@ -2,67 +2,16 @@
 import { useRouter } from "vue-router";
 import { useCompanions } from "../stores/companions";
 import BackButton from "../components/BackButton.vue";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
 const companionStore = useCompanions();
 let router = useRouter();
-
-const columns = [
-  {
-    title: "Имя",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Возраст",
-    dataIndex: "age",
-    key: "age",
-    defaultSortOrder: "descend",
-    sorter: (a, b) => a.age - b.age,
-  },
-  {
-    title: "Пол",
-    dataIndex: "gender",
-    key: "gender",
-    filters: [
-      {
-        text: "муж",
-        value: "Male",
-      },
-      {
-        text: "жен",
-        value: "Female",
-      },
-    ],
-    filterMultiple: false,
-    onFilter: (value, record) => record.gender.indexOf(value) === 0,
-  },
-  {
-    title: "Направление",
-    dataIndex: "type",
-    key: "type",
-  },
-  {
-    title: "Начало",
-    dataIndex: "start",
-    key: "start",
-    sorter: (a, b) => a.age - b.age,
-  },
-  {
-    title: "Конец",
-    dataIndex: "end",
-    key: "end",
-    sorter: (a, b) => a.age - b.age,
-  },
-  {
-    title: "Пожелания",
-    dataIndex: "description",
-    key: "description",
-  },
-];
-
+let breakpoints = useBreakpoints(breakpointsTailwind);
+let sm = breakpoints.smaller("md");
 const clearData = (dataString) => {
   const dataFromString = new Date(dataString);
-  return dataFromString.toLocaleDateString();
+  
+  return dataFromString.toLocaleDateString("ru-Ru",{year: '2-digit', month: '2-digit', day: '2-digit'})
 };
 const ageString = (age) => {
   if (age >= 10 && age <= 20) {
@@ -100,19 +49,59 @@ const ageString = (age) => {
       >
 
       <a-col :xs="22" :lg="16">
-        <a-table :dataSource="companionStore.companions" :columns="columns">
-          <template #bodyCell="{ column, record }">
-            <template v-if="column.key === 'gender'">
-              {{ record.gender == "Male" ? "муж" : "жен" }}
-            </template>
-            <template v-if="column.key === 'start'">
-              {{ clearData(record.start) }}
-            </template>
-            <template v-if="column.key === 'end'">
-              {{ clearData(record.end) }}
-            </template>
-          </template>
-        </a-table>
+        <a-row class="table_header">
+          <a-col :xs="4" :md="3"  >имя</a-col>
+          <a-col :xs="4"  :md="2">возраст</a-col>
+          <a-col :xs="12"  :md="5">направление</a-col>
+          <a-col :xs="4"  :md="3">попутчик</a-col>
+          <a-divider v-if="sm" class="ma-0"></a-divider>
+          <a-col :xs="4"  :md="2">начало</a-col>
+          <a-col :xs="4"  :md="2">конец</a-col>
+          <a-col :xs="12"  :md="5">пожелания</a-col>
+          <a-col :xs="4"  :md="2">отклик</a-col>
+        </a-row>
+        <a-row
+          v-for="(companion, i) in companionStore.companions"
+          :key="i"
+          :class="companion.gender == 'Male' ? 'men' : 'women'"
+          class="mt-4 pa-8"
+          style="text-align:center"
+        >
+        <a-col :xs="4" :md="3">{{ companion.name }}</a-col>
+          <a-col :xs="4" :md="2">{{ ageString(companion.age) }}</a-col>
+          <a-col :xs="12" :md="5">{{companion.direction}}</a-col>
+          <a-col :xs="4" :md="3">{{ companion.gender == "Male" ? "муж" : "жен" }}</a-col>
+          <a-divider v-if="sm" class="ma-0"></a-divider>
+          <a-col :xs="4" :md="2">{{ clearData(companion.start) }}</a-col>
+          <a-col :xs="4" :md="2">{{ clearData(companion.end) }}</a-col>
+          <a-col :xs="12" :md="5">{{ companion.description }}</a-col>
+          <a-col :xs="4" :md="2"> <a-button shape="circle">
+              <span class="mdi mdi-thumb-up-outline"></span>
+            </a-button></a-col>
+
+
+<!-- 
+          <a-col :xs="22"
+            >Меня зовут <b>{{ companion.name }}</b
+            >, мне <b>{{ ageString(companion.age) }}</b> . Ищу в попутчики
+            {{ companion.gender == "Male" ? "мужчину" : "женщину" }} для поезки
+            на(в) направление с {{ clearData(companion.start) }} по
+            {{ clearData(companion.end) }}.
+
+            <br />
+            {{
+              ` Предпочитаю ${companion.direction}
+                Комментарии: ${
+                companion.description
+              }`
+            }}</a-col
+          > -->
+          <!-- <a-col :xs="2" class="d-flex justify-center align-center">
+            <a-button shape="circle">
+              <span class="mdi mdi-thumb-up-outline"></span>
+            </a-button>
+          </a-col> -->
+        </a-row>
       </a-col>
     </a-row>
   </div>
@@ -125,34 +114,9 @@ const ageString = (age) => {
 .men {
   background: rgba(34, 176, 214, 0.05);
 }
+.table_header {
+  text-align: center;
+  // background: rgba(34, 176, 214, 0.05) ;
+}
 </style>
 
-<!-- <a-row
-v-for="(companion, i) in companionStore.companions"
-:key="i"
-:class="companion.gender == 'Male' ? 'men' : 'women'"
-class="ma-4 pa-8"
->
-<a-col :xs="22"
-  >Меня зовут <b>{{ companion.name }}</b>, мне
-  <b>{{ ageString(companion.age) }}</b> . Ищу в попутчики
-  {{ companion.gender == "Male" ? "мужчину" : "женщину" }} для поезки
-  на(в) направление с {{ clearData(companion.start) }} по
-  {{ clearData(companion.end) }}.
-
-  <br />
-  {{
-    ` Предпочитаю ${companion.type
-      .join(", ")
-      .toLowerCase()} тип отдыха. Комментарии: ${
-      companion.description
-    }`
-  }}</a-col
->
-<a-col :xs="2" class="d-flex justify-center align-center">
-  <a-button shape="circle">
-    <span class="mdi mdi-thumb-up-outline"></span>
-  </a-button>
-</a-col>
-
-</a-row> -->
