@@ -7,11 +7,15 @@ import TripService from '../service/TripService.js'
 export const useTrips = defineStore('trips', {
     state: () => ({
         trips: [],
+        filteredTrips: [],
         whereToGo
     }),
     getters: {
         getTrips(state) {
             return state.trips
+        },
+        getFilteredTrips(state) {
+            return state.filteredTrips
         },
         getWhereToGo(state) {
             return state.whereToGo
@@ -23,6 +27,14 @@ export const useTrips = defineStore('trips', {
             try {
                 const response = await TripService.fetchTrips();
                 this.trips = response.data;
+            } catch (err) {
+                console.log(err);
+            }
+        },
+        async searchTrips(query) {
+            try {
+                const response = await TripService.searchTrips(query);
+                this.filteredTrips = response.data;
             } catch (err) {
                 console.log(err);
             }

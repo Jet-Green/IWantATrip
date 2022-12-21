@@ -5,13 +5,19 @@ import Header from "./components/Header.vue";
 import Footer from "./components/Footer.vue";
 
 import { useTrips } from './stores/trips'
+import {useCompanions} from './stores/companions'
 import { useAuth } from './stores/auth'
+import { useAppState } from './stores/appState'
 
 const route = useRoute()
 const userStore = useAuth()
+const appStateStore = useAppState()
 
 onMounted(() => {
+  appStateStore.refreshState()
   useTrips().fetchTrips()
+  useCompanions().fetchCompanions()
+  
   if (localStorage.getItem('token')) {
     userStore.checkAuth()
   }
