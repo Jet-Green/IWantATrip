@@ -21,6 +21,7 @@ onMounted(async () => {
   }
 });
 </script>
+
 <template>
  
   <a-row v-for="(companion, index) in companions" :key="index">
