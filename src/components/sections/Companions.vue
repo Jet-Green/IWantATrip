@@ -1,58 +1,19 @@
 <script setup>
 import { reactive } from "vue";
 
-import { useRouter } from 'vue-router'
+import { useRouter } from "vue-router";
+
+import {useCompanions} from "../../stores/companions"
 
 import person from "../../assets/icons/person_black_24dp.svg";
 
+const companionStore = useCompanions()
+
 let router = useRouter();
 
-
-let companions = reactive([
-  {
-    name: "Вася",
-    year: 27,
-  },
-  {
-    name: "Вася",
-    year: 33,
-  },
-  {
-    name: "Вася",
-    year: 45,
-  },
-  {
-    name: "Вася",
-    year: 19,
-  },
-  {
-    name: "Вася",
-    year: 38,
-  },
-  {
-    name: "Вася",
-    year: 27,
-  },
-  {
-    name: "Вася",
-    year: 33,
-  },
-  {
-    name: "Вася",
-    year: 45,
-  },
-  {
-    name: "Вася",
-    year: 19,
-  },
-  {
-    name: "Вася",
-    year: 38,
-  },
-]);
-const toCompanionsPage = () =>{
-  router.push({name: "CompanionsPage"})
-}
+const toCompanionsPage = () => {
+  router.push({ name: "CompanionsPage" });
+};
 </script>
 <template>
   <a-row display="flex" justify="center">
@@ -60,17 +21,26 @@ const toCompanionsPage = () =>{
       <h2 class="mt-16">Найди попутчиков</h2>
 
       <div class="scroll">
-        <div v-for="companion, i in companions" :key="i" style="margin: 15px 25px 15px 25px;">
-          <div class="d-flex direction-column align-center" style="width: 50px">
-            <span class="mdi mdi-24px mdi-account-outline"></span>
-            <span>{{ companion.name }}</span>
-            <span>{{ companion.year }} лет</span>
+        <div
+          v-for="(companion, i) in companionStore.companions"
+          :key="i"
+          style="margin: 15px 25px 15px 25px"
+          
+        >
+          <div class="d-flex direction-column align-center ">
+            <span :class="companion.gender == 'Male' ? 'men' : 'women'" class="mdi mdi-24px mdi-account-cowboy-hat-outline"></span>
+            <span class="ma-0" style="font-size: 16px;line-height: 15px">{{ companion.name }}</span>
+            <span class="ma-0" style="font-size: 13px; line-height: 10px">{{ companion.age }} лет</span>
           </div>
-
         </div>
       </div>
 
-      <a-button type="primary" size="large" class="ma-16 lets_go_btn" @click="router.push('/companions')">
+      <a-button
+        type="primary"
+        size="large"
+        class="ma-16 lets_go_btn"
+        @click="router.push('/companions')"
+      >
         найти
       </a-button>
     </a-col>
@@ -85,6 +55,13 @@ const toCompanionsPage = () =>{
   overflow-x: scroll;
   display: flex;
 }
+
+.women {
+  color: rgb(255, 102, 0);
+}
+.men {
+  color: rgba(34, 176, 214);
+  
+}
+
 </style>
-
-
