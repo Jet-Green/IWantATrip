@@ -67,6 +67,9 @@ onMounted(() => {
               <a-range-picker style="width: 100%" v-model:value="time" />
             </a-col>
           </a-row>
+          <a-row type="flex" justify="center" class="mt-8">
+            <a-button @click="find" type="primary">поиск</a-button>
+          </a-row>
         </div>
       </Transition>
     </a-col>
