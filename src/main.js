@@ -5,7 +5,7 @@ import { createPinia } from 'pinia'
 import 'ant-design-vue/dist/antd.less';
 import './assets/styles/styles.scss'
 
-import { Layout, Button, Row, Col, Input, Select, Progress, Table, Divider, Drawer, Form, Modal, Card, Space, Upload, DatePicker, Badge, Affix, Spin, InputNumber, Radio, Tabs, Popconfirm, Carousel, Slider, Typography, Avatar } from 'ant-design-vue';
+import { Layout, Button, Row, Col, Input, Select, Progress, Table, Divider, Drawer, Form, Modal, Card, Space, Upload, DatePicker, Badge, Affix, Spin, InputNumber, Radio, Tabs, Popconfirm, Carousel, Slider, Typography, Avatar, RangePicker } from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.less';
 const pinia = createPinia()
 
@@ -39,4 +39,5 @@ createApp(App)
     .use(Slider)
     .use(Typography)
     .use(Avatar)
+    .use(RangePicker)
     .mount('#app')
