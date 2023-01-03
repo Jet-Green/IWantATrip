@@ -78,7 +78,7 @@ onMounted(async () => {
         <a-col :md="2" :xs="4">
           <img
             :src="trip.images[0]"
-            style="height: 50px"
+          
             @click="goToTripPage(trip._id)"
           />
         </a-col>
@@ -158,5 +158,12 @@ onMounted(async () => {
 
   opacity: 0.5;
  
+}
+img{
+  width: 100%;
+  height: 50px;
+  aspect-ratio: 270/175;
+  object-fit: cover;
+
 }
 </style>
