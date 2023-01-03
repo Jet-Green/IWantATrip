@@ -15,7 +15,7 @@ import { useAuth } from "../stores/auth";
 import TripService from "../service/TripService";
 
 const userStore = useAuth();
-const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
+const dateFormatList = ["DD.MM.YY", "DD.MM.YY"];
 const monthFormatList = ["MM.YY"];
 const ruLocale = locale;
 const quill = ref(null);
@@ -138,7 +138,6 @@ function submit() {
           .updateUser({ email: userStore.user.email, $push: { trips: _id } })
           .then((response) => {
             userStore.user = response.data;
-            console.log(response.data);
             images = [];
             previews.value = [];
             quill.value.setHTML("");
