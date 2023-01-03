@@ -78,29 +78,6 @@ const ageString = (age) => {
           <a-col :xs="4" :md="2"> <a-button shape="circle">
               <span class="mdi mdi-thumb-up-outline"></span>
             </a-button></a-col>
-
-
-<!-- 
-          <a-col :xs="22"
-            >Меня зовут <b>{{ companion.name }}</b
-            >, мне <b>{{ ageString(companion.age) }}</b> . Ищу в попутчики
-            {{ companion.gender == "Male" ? "мужчину" : "женщину" }} для поезки
-            на(в) направление с {{ clearData(companion.start) }} по
-            {{ clearData(companion.end) }}.
-
-            <br />
-            {{
-              ` Предпочитаю ${companion.direction}
-                Комментарии: ${
-                companion.description
-              }`
-            }}</a-col
-          > -->
-          <!-- <a-col :xs="2" class="d-flex justify-center align-center">
-            <a-button shape="circle">
-              <span class="mdi mdi-thumb-up-outline"></span>
-            </a-button>
-          </a-col> -->
         </a-row>
       </a-col>
     </a-row>
