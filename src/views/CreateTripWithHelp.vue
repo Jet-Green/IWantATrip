@@ -6,7 +6,7 @@ import { reactive, ref } from "vue";
 import typeOfTrip from "../fakeDB/tripType";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 
-import TripService from "../service/TripService";
+import BookingService from "../service/BookingService";
 import { useAuth } from '../stores/auth'
 
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
@@ -38,7 +38,7 @@ let formState = reactive({
 function submit() {
   //  console.log(form)
 
-  TripService.bookingTrip(form)
+  BookingService.createBookingElement(form)
   // очистить форму, сделать редирект на главную, вывести уведомление снизу об успехе
 }
 
