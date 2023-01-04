@@ -4,6 +4,7 @@ import { useRoute } from "vue-router";
 import FindTrip from "../components/sections/FindTrip.vue";
 import BackButton from "../components/BackButton.vue";
 import { useTrips } from "../stores/trips";
+import { useAuth } from "../stores/auth"
 const route = useRoute();
 const _id = route.query._id;
 
@@ -14,6 +15,7 @@ const _id = route.query._id;
 //   return res.data
 // })
 const tripStore = useTrips()
+const userStore = useAuth()
 const backRoute = "/trips";
 let trip = ref({});
 tripStore.getById(_id)
@@ -22,18 +24,23 @@ tripStore.getById(_id)
       "https://static.vecteezy.com/system/resources/previews/000/207/535/original/desert-road-trip-vector.jpg"
     );
     trip.value = response.data;
-   
+
   })
   .catch((error) => {
     console.log(error);
   });
-const clearData = (dataString) => {
+function clearData(dataString) {
   const dataFromString = new Date(dataString);
   return dataFromString.toLocaleDateString();
 };
 
 function getImg(index) {
   return trip.value.images[index]
+}
+let buyDialog = ref(false)
+async function buyTrip() {
+  await userStore.buyTrip(trip.value._id)
+  buyDialog.value = false
 }
 </script>
 <template>
@@ -59,16 +66,16 @@ function getImg(index) {
             </a>
           </template>
           <div v-for="(item, i) in trip.images" :key="i">
-            <img :src="item" alt="" srcset=""/>
+            <img :src="item" alt="" srcset="" />
           </div>
           <template #prevArrow>
             <div class="custom-slick-arrow" style="left: 10px; z-index: 1">
-              <span class="mdi mdi-48px mdi-chevron-left" ></span>
+              <span class="mdi mdi-48px mdi-chevron-left"></span>
             </div>
           </template>
           <template #nextArrow>
             <div class="custom-slick-arrow" style="right: 10px">
-              <span class="mdi mdi-48px mdi-chevron-right" ></span>
+              <span class="mdi mdi-48px mdi-chevron-right"></span>
             </div>
           </template>
         </a-carousel>
@@ -106,11 +113,19 @@ function getImg(index) {
           </a-col>
 
           <a-col :xs="22" :lg="16" class="actions">
-            <a-button type="primary" class="lets_go_btn" size="large" style="display: flex; justify-content: center">
+            <a-button type="primary" class="lets_go_btn" size="large" style="display: flex; justify-content: center"
+              @click="buyDialog = true">
               Купить
             </a-button>
           </a-col>
         </a-row>
+        <a-modal v-model:visible="buyDialog" :footer="null">
+          <h3 class="mb-2 text-center">Вы уверены?</h3>
+          <div class="">
+            <a-button class="mr-4" type="primary" @click="buyTrip"> купить </a-button>
+            <a-button @click="buyDialog = false"> отмена </a-button>
+          </div>
+        </a-modal>
       </a-col>
       <a-col :xs="22" :lg="16">
         <span v-html="trip.description"></span>
@@ -194,9 +209,11 @@ img {
   z-index: 1;
   top: 45%;
 }
+
 .ant-carousel :deep(.custom-slick-arrow:before) {
   display: none;
 }
+
 .ant-carousel :deep(.custom-slick-arrow:hover) {
   opacity: 0.8;
 }
