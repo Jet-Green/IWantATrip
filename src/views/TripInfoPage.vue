@@ -4,7 +4,9 @@ import { useRoute } from "vue-router";
 import FindTrip from "../components/sections/FindTrip.vue";
 import BackButton from "../components/BackButton.vue";
 import { useTrips } from "../stores/trips";
-import { useAuth } from "../stores/auth"
+import { useAuth } from "../stores/auth";
+
+import UserFullInfo from "../components/forms/UserFullInfo.vue";
 const route = useRoute();
 const _id = route.query._id;
 
@@ -17,6 +19,7 @@ const _id = route.query._id;
 const tripStore = useTrips()
 const userStore = useAuth()
 const backRoute = "/trips";
+
 let trip = ref({});
 tripStore.getById(_id)
   .then((response) => {
@@ -41,7 +44,13 @@ let buyDialog = ref(false)
 async function buyTrip() {
   await userStore.buyTrip(trip.value._id)
   buyDialog.value = false
+};
+
+function updateUserInfo(info) {
+  fullUserInfo = info;
 }
+
+
 </script>
 <template>
   <div>
@@ -120,10 +129,11 @@ async function buyTrip() {
           </a-col>
         </a-row>
         <a-modal v-model:visible="buyDialog" :footer="null">
-          <h3 class="mb-2 text-center">Вы уверены?</h3>
+          <!-- <h3 class="mb-2 text-center">Введите полную информацию о Вас</h3> -->
           <div class="">
-            <a-button class="mr-4" type="primary" @click="buyTrip"> купить </a-button>
-            <a-button @click="buyDialog = false"> отмена </a-button>
+            <UserFullInfo @fullInfo="updateUserInfo" />
+            <a-button class="mr-4" type="primary" @click="buyTrip"> оплатить сейчас </a-button>
+            <a-button @click="buyDialog = false"> оплатить позже </a-button>
           </div>
         </a-modal>
       </a-col>
