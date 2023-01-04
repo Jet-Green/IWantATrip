@@ -3,6 +3,8 @@ import BackButton from "../components/BackButton.vue";
 import ImageCropper from "../components/ImageCropper.vue";
 import UserFullInfo from "../components/forms/UserFullInfo.vue";
 
+import axios from 'axios'
+
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 import { watch, nextTick, ref, reactive } from "vue";
@@ -88,8 +90,13 @@ function submit() {
   let month = m.length == 1 ? "0" + m : m;
   send.period = month + "." + send.period.year().toString().slice(2);
 
-  TripService.createTrip(form).then((res) => {
+  TripService.createTrip(form).then(async (res) => {
     const _id = res.data._id;
+
+    let response = await axios.post(`http://localhost:4089/create-trip?_id=${_id}`)
+
+    console.log(response);
+
     let imagesFormData = new FormData();
     for (let i = 0; i < images.length; i++) {
       imagesFormData.append("trip-image", images[i], _id + "_" + i + ".png");
