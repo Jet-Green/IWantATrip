@@ -10,8 +10,8 @@ let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
 const clearData = (dataString) => {
   const dataFromString = new Date(dataString);
-  
-  return dataFromString.toLocaleDateString("ru-Ru",{year: '2-digit', month: '2-digit', day: '2-digit'})
+
+  return dataFromString.toLocaleDateString("ru-Ru", { year: '2-digit', month: '2-digit', day: '2-digit' })
 };
 const ageString = (age) => {
   if (age >= 10 && age <= 20) {
@@ -37,45 +37,37 @@ const ageString = (age) => {
         <h2>Ищу попутчика</h2>
         <a-row type="flex" justify="center">
           <a-col class="d-flex justify-center">
-            <a-button
-              class="lets_go_btn ma-16"
-              type="primary"
-              size="large"
-              @click="router.push('/add-companion')"
-              >Добавить себя</a-button
-            >
+            <a-button class="lets_go_btn ma-16" type="primary" size="large"
+              @click="router.push('/add-companion')">Добавить себя</a-button>
           </a-col>
-        </a-row></a-col
-      >
+        </a-row>
+      </a-col>
 
       <a-col :xs="22" :lg="16">
         <a-row class="table_header">
-          <a-col :xs="4" :md="3"  >имя</a-col>
-          <a-col :xs="4"  :md="2">возраст</a-col>
-          <a-col :xs="12"  :md="5">направление</a-col>
-          <a-col :xs="4"  :md="3">попутчик</a-col>
+          <a-col :xs="4" :md="3">имя</a-col>
+          <a-col :xs="4" :md="2">возраст</a-col>
+          <a-col :xs="12" :md="5">направление</a-col>
+          <a-col :xs="4" :md="3">попутчик</a-col>
           <a-divider v-if="sm" class="ma-0"></a-divider>
-          <a-col :xs="4"  :md="2">начало</a-col>
-          <a-col :xs="4"  :md="2">конец</a-col>
-          <a-col :xs="12"  :md="5">пожелания</a-col>
-          <a-col :xs="4"  :md="2">отклик</a-col>
+          <a-col :xs="4" :md="2">начало</a-col>
+          <a-col :xs="4" :md="2">конец</a-col>
+          <a-col :xs="12" :md="5">пожелания</a-col>
+          <a-col :xs="4" :md="2">отклик</a-col>
         </a-row>
-        <a-row
-          v-for="(companion, i) in companionStore.companions"
-          :key="i"
-          :class="companion.gender == 'Male' ? 'men' : 'women'"
-          class="mt-4 pa-8"
-          style="text-align:center"
-        >
-        <a-col :xs="4" :md="3">{{ companion.name }}</a-col>
+        <a-row v-for="(companion, i) in companionStore.companions" :key="i"
+          :class="companion.gender == 'Male' ? 'men' : 'women'" class="mt-4 pa-8" style="text-align:center">
+          <a-col :xs="4" :md="3">{{ companion.name }}</a-col>
           <a-col :xs="4" :md="2">{{ ageString(companion.age) }}</a-col>
-          <a-col :xs="12" :md="5">{{companion.direction}}</a-col>
+          <a-col :xs="12" :md="5">{{ companion.direction }}</a-col>
           <a-col :xs="4" :md="3">{{ companion.gender == "Male" ? "муж" : "жен" }}</a-col>
           <a-divider v-if="sm" class="ma-0"></a-divider>
           <a-col :xs="4" :md="2">{{ clearData(companion.start) }}</a-col>
           <a-col :xs="4" :md="2">{{ clearData(companion.end) }}</a-col>
           <a-col :xs="12" :md="5">{{ companion.description }}</a-col>
-          <a-col :xs="4" :md="2"> <a-button shape="circle">
+          <a-col :xs="4" :md="2">
+            <a-button shape="circle" class="ma-16" 
+              @click="router.push('/add-feedback')">
               <span class="mdi mdi-thumb-up-outline"></span>
             </a-button></a-col>
         </a-row>
@@ -88,9 +80,11 @@ const ageString = (age) => {
 .women {
   background: rgba(255, 102, 0, 0.05);
 }
+
 .men {
   background: rgba(34, 176, 214, 0.05);
 }
+
 .table_header {
   text-align: center;
   // background: rgba(34, 176, 214, 0.05) ;

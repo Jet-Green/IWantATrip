@@ -19,6 +19,13 @@ export const useAuth = defineStore('auth', {
 
     },
     actions: {
+        addFeedback(feedback) {
+            try {
+               return UserService.addFeedback({ feedback, email: this.user.email})
+            } catch (error) {
+                console.log(error);
+            }
+        },
         updateUser(user) {
             try {
                 return UserService.updateUser(user)

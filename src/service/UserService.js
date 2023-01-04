@@ -12,5 +12,9 @@ export default {
     },
     async updateUser(user) {
         return $api.post('/auth/update', user)
+    },
+    async addFeedback(feedbackAndEmail) {
+        return $api.post('/add-feedback', feedbackAndEmail)
     }
+
 }

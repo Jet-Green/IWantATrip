@@ -43,6 +43,11 @@ const router = createRouter({
       component: () => import('../views/AddCompanion.vue'),
     },
     {
+      path: '/add-feedback',
+      name: 'AddFeedback',
+      component: () => import('../views/AddFeedback.vue'),
+    },
+    {
       path: '/add-guide-element',
       name: 'AddGuideElement',
       component: () => import('../views/AddGuideElement.vue'),

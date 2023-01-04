@@ -9,5 +9,9 @@ export default {
     },
     createCompanion(companion) {
         return $api.post('/companion/create', companion)
+    },
+    createFeedback(feedback) {
+        return $api.post('/auth/add-feedback', feedback)
     }
+
 }
