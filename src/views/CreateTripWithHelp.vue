@@ -36,9 +36,11 @@ let formState = reactive({
 });
 
 function submit() {
-  //  console.log(form)
-
-  TripService.bookingTrip(form)
+  let toSend = Object.assign(form)
+  toSend.start = new Date(form.start).getTime()  
+  toSend.end = new Date(form.end).getTime()  
+  
+return TripService.bookingTrip(toSend)
   // очистить форму, сделать редирект на главную, вывести уведомление снизу об успехе
 }
 
