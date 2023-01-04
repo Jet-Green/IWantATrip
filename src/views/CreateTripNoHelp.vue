@@ -2,19 +2,21 @@
 import BackButton from "../components/BackButton.vue";
 import ImageCropper from "../components/ImageCropper.vue";
 import UserFullInfo from "../components/forms/UserFullInfo.vue";
-
+import dayjs from 'dayjs'
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
-import { watch, nextTick, ref, reactive } from "vue";
+import { watch, nextTick, ref, reactive, onMounted } from "vue";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import typeOfTrip from "../fakeDB/tripType";
 import { message } from "ant-design-vue";
 import { useRouter } from "vue-router";
 import { useAuth } from "../stores/auth";
-
+import { useTrips } from "../stores/trips";
 import TripService from "../service/TripService";
 
+const tripStore = useTrips()
 const userStore = useAuth();
+
 const dateFormatList = ["DD.MM.YY", "DD.MM.YY"];
 const monthFormatList = ["MM.YY"];
 const ruLocale = locale;
@@ -200,6 +202,27 @@ watch(end, () => {
   }
   form.end = Date.parse(end.value.$d.toString());
 });
+onMounted(() => {
+  if (router.currentRoute.value.query._id) {
+
+    tripStore.getById(router.currentRoute.value.query._id).then((response) => {
+      let d = response.data;
+      delete d.__v;
+      d.images.value = []
+      d.period = dayjs(d.period, monthFormatList);
+      start.value = dayjs(d.start);
+      end.value = dayjs(d.end);
+
+      form.value = d;
+      quill.value.setHTML(d.description);
+  
+      console.log(d);
+    });
+    // .catch((error) => {
+    //     console.log(error);
+    // });
+  }
+});
 </script>
 <template>
   <div>
@@ -214,17 +237,34 @@ watch(end, () => {
             <a-col :span="24">
               <h2>Создать тур</h2>
               Название
-              <a-input placeholder="Название тура" size="large" v-model:value="form.name"></a-input>
+              <a-input
+                placeholder="Название тура"
+                size="large"
+                v-model:value="form.name"
+              ></a-input>
             </a-col>
             <a-col :xs="24">
               Фотографии
               <div class="d-flex" style="overflow-x: scroll">
-                <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px" @click="
-  delPhotoDialog = true;
-targetIndex = i;
-                  " />
+                <img
+                  v-for="(pr, i) in previews"
+                  :key="i"
+                  :src="pr"
+                  alt=""
+                  class="ma-4"
+                  style="max-width: 200px"
+                  @click="
+                    delPhotoDialog = true;
+                    targetIndex = i;
+                  "
+                />
               </div>
-              <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
+              <a-button
+                type="dashed"
+                block
+                @click="visibleCropperModal = true"
+                class="ma-8"
+              >
                 <span class="mdi mdi-12px mdi-plus"></span>
                 Добавить фото
               </a-button>
@@ -232,13 +272,23 @@ targetIndex = i;
 
             <a-col :span="12">
               Дата начала
-              <a-date-picker v-model:value="start" style="width: 100%" placeholder="Начало" :locale="ruLocale"
-                :format="dateFormatList" />
+              <a-date-picker
+                v-model:value="start"
+                style="width: 100%"
+                placeholder="Начало"
+                :locale="ruLocale"
+                :format="dateFormatList"
+              />
             </a-col>
             <a-col :span="12">
               Дата конца
-              <a-date-picker v-model:value="end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
-                :format="dateFormatList" />
+              <a-date-picker
+                v-model:value="end"
+                style="width: 100%"
+                placeholder="Конец"
+                :locale="ruLocale"
+                :format="dateFormatList"
+              />
             </a-col>
             <a-col :span="12">
               Продолжительность
@@ -246,16 +296,33 @@ targetIndex = i;
             </a-col>
             <a-col :span="12">
               Макс. число людей
-              <a-input-number v-model:value="form.maxPeople" style="width: 100%" placeholder="11" :min="1" />
+              <a-input-number
+                v-model:value="form.maxPeople"
+                style="width: 100%"
+                placeholder="11"
+                :min="1"
+              />
             </a-col>
             <a-col :span="24">
               Цены
 
-              <div v-for="item in form.cost" :key="item.type" style="display: flex" align="baseline" class="mb-16">
+              <div
+                v-for="item in form.cost"
+                :key="item.type"
+                style="display: flex"
+                align="baseline"
+                class="mb-16"
+              >
                 <a-input v-model:value="item.first" placeholder="Для кого" />
 
-                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0" :step="0.01"
-                  class="ml-16 mr-16" />
+                <a-input-number
+                  v-model:value="item.price"
+                  style="width: 100%"
+                  placeholder="Цена"
+                  :min="0"
+                  :step="0.01"
+                  class="ml-16 mr-16"
+                />
 
                 <a-button @click="removeCost(item)" shape="circle">
                   <span class="mdi mdi-minus" style="cursor: pointer"></span>
@@ -267,45 +334,87 @@ targetIndex = i;
                 Добавить цены
               </a-button>
             </a-col>
-            <a-col :xs="24" :md="12">Тип тура
+            <a-col :xs="24" :md="12"
+              >Тип тура
               <div>
-                <a-select v-model:value="form.tripType" style="width: 100%" :options="typeOfTrip">
+                <a-select
+                  v-model:value="form.tripType"
+                  style="width: 100%"
+                  :options="typeOfTrip"
+                >
                 </a-select>
               </div>
             </a-col>
-            <a-col :xs="24" :md="12">Мин. возраст, лет
-              <a-input-number v-model:value="form.fromAge" style="width: 100%" placeholder="10" :min="0" :max="100" />
+            <a-col :xs="24" :md="12"
+              >Мин. возраст, лет
+              <a-input-number
+                v-model:value="form.fromAge"
+                style="width: 100%"
+                placeholder="10"
+                :min="0"
+                :max="100"
+              />
             </a-col>
-            <a-col :xs="24" :md="12">Направление
-              <a-input placeholder="Байкал" size="large" v-model:value="form.location"></a-input>
+            <a-col :xs="24" :md="12"
+              >Направление
+              <a-input
+                placeholder="Байкал"
+                size="large"
+                v-model:value="form.location"
+              ></a-input>
             </a-col>
 
-            <a-col :xs="24" :md="12">Период
-              <a-date-picker v-model:value="form.period" style="width: 100%; height: 40px" picker="month"
-                :locale="ruLocale" :format="monthFormatList" />
+            <a-col :xs="24" :md="12"
+              >Период
+              <a-date-picker
+                v-model:value="form.period"
+                style="width: 100%; height: 40px"
+                picker="month"
+                :locale="ruLocale"
+                :format="monthFormatList"
+              />
             </a-col>
             <a-col :span="24">
               Реклама
-              <a-textarea placeholder="завлекательное описание" size="large" v-model:value="form.offer">
+              <a-textarea
+                placeholder="завлекательное описание"
+                size="large"
+                v-model:value="form.offer"
+              >
               </a-textarea>
             </a-col>
             <a-col :span="24">
               Маршрут
-              <a-textarea placeholder="Глазов-Пермь 300км" size="large" v-model:value="form.tripRoute">
+              <a-textarea
+                placeholder="Глазов-Пермь 300км"
+                size="large"
+                v-model:value="form.tripRoute"
+              >
               </a-textarea>
             </a-col>
             <a-col :span="24" style="display: flex; flex-direction: column">
               Описание программы
-              <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" :toolbar="[
-  // [{ header: [2, 3] }],
-  ['bold', 'italic', 'underline'],
-  [{ list: 'ordered' }, { list: 'bullet' }],
-  [{ color: ['#000000', '#ff6600', '#3daff5'] }],
-  [{ align: [] }],
-]" />
+              <QuillEditor
+                theme="snow"
+                ref="quill"
+                v-model:content="description"
+                contentType="html"
+                :toolbar="[
+                  // [{ header: [2, 3] }],
+                  ['bold', 'italic', 'underline'],
+                  [{ list: 'ordered' }, { list: 'bullet' }],
+                  [{ color: ['#000000', '#ff6600', '#3daff5'] }],
+                  [{ align: [] }],
+                ]"
+              />
             </a-col>
             <a-col :span="24" class="d-flex justify-center">
-              <a-button class="mt-16" type="primary" size="large" html-type="submit">Отправить
+              <a-button
+                class="mt-16"
+                type="primary"
+                size="large"
+                html-type="submit"
+                >Отправить
               </a-button>
             </a-col>
           </a-row>
@@ -316,7 +425,12 @@ targetIndex = i;
         <a-modal v-model:visible="delPhotoDialog" :footer="null">
           <h3>Удалить фото?</h3>
           <div class="d-flex justify-center">
-            <a-button class="mt-16" type="primary" size="large" @click="delPhoto">Да
+            <a-button
+              class="mt-16"
+              type="primary"
+              size="large"
+              @click="delPhoto"
+              >Да
             </a-button>
           </div>
         </a-modal>

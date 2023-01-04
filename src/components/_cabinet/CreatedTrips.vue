@@ -30,6 +30,10 @@ async function tripToDelete(_id) {
 function editTrip(_id) {
   router.push(`/edit-trip?_id=${_id}`);
 }
+
+function copyTrip(_id) {
+  router.push(`/create-no-help?_id=${_id}`);
+}
 async function hideTrip(_id) {
   for (let t of trips.value) {
     if (t._id == _id) {
@@ -126,7 +130,21 @@ onMounted(async () => {
                 class="mdi mdi-eye-off"
                 style="color: #245159; cursor: pointer"
               ></span>
-            </a-popconfirm></div
+            </a-popconfirm>
+            <a-popconfirm
+              title="Вы уверены?"
+              ok-text="Да"
+              cancel-text="Нет"
+              @confirm="copyTrip(trip._id)"
+            >
+              <span
+                v-if="!trip.isHidden"
+                class="mdi mdi-content-copy"
+                style="color: #245159; cursor: pointer"
+              ></span>
+             
+            </a-popconfirm>
+            </div
         ></a-col>
       </a-row>
     </a-col>
