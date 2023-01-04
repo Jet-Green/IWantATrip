@@ -12,7 +12,7 @@ const tripsStore = useTrips();
 let router = useRouter();
 
 let where = ref("");
-let time = ref([]);
+let time = ref(null);
 let locations = computed(() => {
   let result = [];
   for (let t of tripsStore.trips) {
@@ -27,8 +27,8 @@ let query = ref("");
 
 function find() {
   tripsStore.searchTrips(query.value, where.value, {
-    start: time.value.length ? time.value[0].$d.getTime() : "",
-    end: time.value.length ? time.value[1].$d.getTime() : "",
+    start: time.value ? time.value[0].$d.getTime() : "",
+    end: time.value ? time.value[1].$d.getTime() : "",
   });
 }
 
@@ -46,8 +46,8 @@ onMounted(() => {
     query.value = props.search;
   }
   tripsStore.searchTrips(query.value, where.value, {
-    start: time.value.length ? time.value[0].$d.getTime() : null,
-    end: time.value.length ? time.value[1].$d.getTime() : null,
+    start: time.value ? time.value[0].$d.getTime() : null,
+    end: time.value ? time.value[1].$d.getTime() : null,
   });
 });
 </script>
