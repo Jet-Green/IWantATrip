@@ -93,9 +93,7 @@ function submit() {
   TripService.createTrip(form).then(async (res) => {
     const _id = res.data._id;
 
-    let response = await axios.post(`http://localhost:4089/create-trip?_id=${_id}`)
-
-    console.log(response);
+    await axios.post(`http://localhost:4089/create-trip?_id=${_id}`)
 
     let imagesFormData = new FormData();
     for (let i = 0; i < images.length; i++) {
