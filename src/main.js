@@ -2,17 +2,18 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import { createPinia } from 'pinia'
+import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.less';
 import './assets/styles/styles.scss'
 
-import { Layout, Button, Row, Col, Input, Select, Progress, Table, Divider, Drawer, Form, Modal, Card, Space, Upload, DatePicker, Badge, Affix, Spin, InputNumber, Radio, Tabs, Popconfirm, Carousel, Slider, Typography, Avatar } from 'ant-design-vue';
+import { Layout, Button, Row, Col, Input, Select, Progress, Table, Divider, Drawer, Form, Modal, Card, Space, Upload, DatePicker, Badge, Affix, Spin, InputNumber, Radio, Tabs, Popconfirm, Carousel, Slider, Typography, Avatar, RangePicker } from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.less';
 const pinia = createPinia()
 
 createApp(App)
     .use(pinia)
     .use(router)
-    .use(Card)
+    .use(Antd)
     .use(Layout)
     .use(Button)
     .use(Col)
@@ -39,4 +40,5 @@ createApp(App)
     .use(Slider)
     .use(Typography)
     .use(Avatar)
+    .use(RangePicker)
     .mount('#app')

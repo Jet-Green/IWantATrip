@@ -4,8 +4,8 @@ export default {
     async fetchTrips() {
         return $api.get('/trips/get-all')
     },
-    async searchTrips(query) {
-        return $api.get(`/trips/search?query=${query}`)
+    async searchTrips(req) {
+        return $api.post(`/trips/search`, req)
     },
 
     async deleteTrip(_id) {

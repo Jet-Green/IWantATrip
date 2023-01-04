@@ -22,7 +22,7 @@ tripStore.getById(_id)
       "https://static.vecteezy.com/system/resources/previews/000/207/535/original/desert-road-trip-vector.jpg"
     );
     trip.value = response.data;
-    console.log(trip.value);
+   
   })
   .catch((error) => {
     console.log(error);
@@ -98,15 +98,6 @@ function getImg(index) {
             </a-progress>
           </a-col>
 
-          <!-- НЕ ПОНЯТНО ЧТО ЭТО И ОТУДА ДАННЫЕ -->
-          <!-- <a-col :span="24" >
-            <a-button type="primary" ghost shape="round" class="ma-8"
-              >25 - 33 чел. + Сувенир</a-button
-            >
-            <a-button type="primary" ghost shape="round" class="ma-8"
-              >34 - 34 чел. + Ужин</a-button
-            >
-          </a-col> -->
 
           <a-col :span="24">Цена:
             <span v-for="(item, index) in trip.cost" :key="index" class="cost">
@@ -145,7 +136,8 @@ function getImg(index) {
 
 img {
   width: 100%;
-  aspect-ratio: 1/1;
+  aspect-ratio: 270/175;
+  object-fit: cover;
 }
 
 .coster:nth-of-type(1n + 2) {

@@ -31,9 +31,9 @@ export const useTrips = defineStore('trips', {
                 console.log(err);
             }
         },
-        async searchTrips(query) {
+        async searchTrips(query, place, when) {
             try {
-                const response = await TripService.searchTrips(query);
+                const response = await TripService.searchTrips({ query, place: place, when: when });
                 this.filteredTrips = response.data;
             } catch (err) {
                 console.log(err);

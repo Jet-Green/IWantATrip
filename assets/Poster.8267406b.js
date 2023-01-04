@@ -1,0 +1,1 @@
+import{a as t,o as n,f as c,b as e,w as o,B as _,d as r}from"./index.3ca1cfdd.js";const l=r("p",null,"\u0410\u0444\u0438\u0448\u0430",-1),m={__name:"Poster",setup(p){return(u,d)=>{const a=t("a-col"),s=t("a-row");return n(),c("div",null,[e(_),e(s,{type:"flex",justify:"center"},{default:o(()=>[e(a,{xs:22,lg:16},{default:o(()=>[l]),_:1})]),_:1})])}}};export{m as default};

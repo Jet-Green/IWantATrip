@@ -9,30 +9,7 @@ import { useRoute } from "vue-router";
 const tripStore = useTrips();
 
 const route = useRoute();
-// let trips = ref([]);
 
-// function findTrip(nameTrip) {
-//   let k = 0;
-//   let t = [];
-//   while (k < tripStore.trips.length) {
-//     if (
-//       tripStore.trips[k].name.toLowerCase().includes(nameTrip.toLowerCase())
-//     ) {
-//       t.push(tripStore.trips[k]);
-//     }
-//     k++;
-//   }
-//   trips.value = t;
-
-  
-// }
-// onMounted(() => {
-//   if (route.query.search) {
-//     findTrip(route.query.search);
-//   } else {
-//     findTrip("");
-//   }
-// });
 </script>
 <template>
   <div>
