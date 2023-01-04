@@ -25,7 +25,11 @@ const form = reactive({
   description: "",
 });
 function submit() {
-  CompanionService.createCompanion(form).then((res) => {
+  let toSend = Object.assign(form)
+  toSend.start = new Date(form.start).getTime()  
+  toSend.end = new Date(form.end).getTime() 
+
+  CompanionService.createCompanion(toSend).then((res) => {
     const _id = res.data._id;
 
     userStore
@@ -55,6 +59,7 @@ function submit() {
         console.log(err);
       });
   });
+  
 }
 </script>
 
