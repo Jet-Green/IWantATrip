@@ -32,7 +32,7 @@ function submit() {
 
   CompanionService.createCompanion(toSend).then((res) => {
     const _id = res.data._id;
-    
+    axios.post(`http://localhost:4089/add-companion?name=${form.name}`)
     userStore
       .updateUser({
         email: userStore.user.email,
@@ -55,7 +55,6 @@ function submit() {
         userStore.user = response.data;
         message.config({ duration: 3, top: "90vh" });
         message.success({ content: "Попутчик добавлен!", onClose: close });
-        console.log(response.data)
       })
       .catch((err) => {
         console.log(err);
