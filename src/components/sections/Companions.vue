@@ -28,7 +28,8 @@ const toCompanionsPage = () => {
           
         >
           <div class="d-flex direction-column align-center ">
-            <span :class="companion.gender == 'Male' ? 'men' : 'women'" class="mdi mdi-24px mdi-account-cowboy-hat-outline"></span>
+            <span v-if="companion.gender == 'Male'" class="mdi mdi-24px mdi-account-cowboy-hat-outline men"></span>
+            <span v-else class="mdi mdi-24px mdi-account-outline women"></span>
             <span class="ma-0" style="font-size: 16px;line-height: 15px">{{ companion.name }}</span>
             <span class="ma-0" style="font-size: 13px; line-height: 10px">{{ companion.age }} лет</span>
           </div>

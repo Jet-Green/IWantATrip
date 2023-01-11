@@ -1,6 +1,9 @@
 import $api from "../plugins/axios";
 
 export default {
+    async buyTrip(_id, userEmail) {
+        return $api.post('/auth/buy-trip', { _id, userEmail })
+    },
     async registration(user) {
         return $api.post('/auth/registration', user)
     },

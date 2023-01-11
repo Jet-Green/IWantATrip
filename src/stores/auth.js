@@ -39,6 +39,14 @@ export const useAuth = defineStore('auth', {
         setUserStatus(text) {
             this.userStatus = text
         },
+        async buyTrip(_id) {
+            try {
+                this.user.boughtTrips.push(_id)
+                return UserService.buyTrip(_id, this.user.email)
+            } catch (error) {
+                console.log(error);
+            }
+        },
         async registration(email, password) {
             try {
                 const response = await UserService.registration(email, password);

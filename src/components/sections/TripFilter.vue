@@ -12,7 +12,7 @@ const tripsStore = useTrips();
 let router = useRouter();
 
 let where = ref("");
-let time = ref("");
+let time = ref(null);
 let locations = computed(() => {
   let result = [];
   for (let t of tripsStore.trips) {
@@ -56,38 +56,19 @@ onMounted(() => {
     <a-col :xs="22" :md="12">
       <a-row class="ma-8" type="flex" justify="center">
         <a-col :xs="24" :md="12" class="d-flex">
-          <a-input-search
-            v-model:value="query"
-            placeholder="поиск"
-            enter-button
-            style="z-index: 0"
-            @search="find()"
-          />
-          <span
-            class="mdi mdi-24px mdi-filter-outline ml-16"
-            :class="{ active_filter: visible, filter: !visible }"
-            @click="visible = !visible"
-          ></span>
+          <a-input-search v-model:value="query" placeholder="поиск" enter-button style="z-index: 0" @search="find()" />
+          <span class="mdi mdi-24px mdi-filter-outline ml-16" :class="{ active_filter: visible, filter: !visible }"
+            @click="visible = !visible"></span>
         </a-col>
       </a-row>
       <Transition name="fade">
         <div v-if="visible">
           <a-row type="flex" justify="center">
             <a-col :xs="12">
-              <a-select
-                style="width: 100%"
-                placeholder="Куда едем"
-                v-model:value="where"
-                :bordered="true"
-                size="large"
-                class="selector"
-              >
+              <a-select style="width: 100%" placeholder="Куда едем" v-model:value="where" :bordered="true" size="large"
+                class="selector">
                 <a-select-option value=""> </a-select-option>
-                <a-select-option
-                  v-for="(l, index) of locations"
-                  :value="l"
-                  :key="index"
-                >
+                <a-select-option v-for="(l, index) of locations" :value="l" :key="index">
                   {{ l }}
                 </a-select-option>
               </a-select>

@@ -2,19 +2,24 @@
 import BackButton from "../components/BackButton.vue";
 import ImageCropper from "../components/ImageCropper.vue";
 import UserFullInfo from "../components/forms/UserFullInfo.vue";
+import dayjs from 'dayjs'
+
+import axios from 'axios'
 
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
-import { watch, nextTick, ref, reactive } from "vue";
+import { watch, nextTick, ref, reactive, onMounted } from "vue";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import typeOfTrip from "../fakeDB/tripType";
 import { message } from "ant-design-vue";
 import { useRouter } from "vue-router";
 import { useAuth } from "../stores/auth";
-
+import { useTrips } from "../stores/trips";
 import TripService from "../service/TripService";
 
+const tripStore = useTrips()
 const userStore = useAuth();
+
 const dateFormatList = ["DD.MM.YY", "DD.MM.YY"];
 const monthFormatList = ["MM.YY"];
 const ruLocale = locale;
@@ -88,8 +93,11 @@ function submit() {
   let month = m.length == 1 ? "0" + m : m;
   send.period = month + "." + send.period.year().toString().slice(2);
 
-  TripService.createTrip(form).then((res) => {
+  TripService.createTrip(form).then(async (res) => {
     const _id = res.data._id;
+
+    await axios.post(`http://localhost:4089/create-trip?_id=${_id}`)
+
     let imagesFormData = new FormData();
     for (let i = 0; i < images.length; i++) {
       imagesFormData.append("trip-image", images[i], _id + "_" + i + ".png");
@@ -180,12 +188,13 @@ watch(start, () => {
   let result =
     Number(JSON.parse(JSON.stringify(end.value))) -
     Number(JSON.parse(JSON.stringify(start.value)));
+
   if (result >= 0) {
     form.duration = Math.round(result / 86400000);
   } else {
     form.duration = "";
   }
-  form.start = start.value.$d.toString();
+  form.start = Date.parse(start.value.$d.toString());
 });
 watch(end, () => {
   let result =
@@ -197,7 +206,28 @@ watch(end, () => {
   } else {
     form.duration = "";
   }
-  form.end = end.value.$d.toString();
+  form.end = Date.parse(end.value.$d.toString());
+});
+onMounted(() => {
+  if (router.currentRoute.value.query._id) {
+
+    tripStore.getById(router.currentRoute.value.query._id).then((response) => {
+      let d = response.data;
+      delete d.__v;
+      d.images.value = []
+      d.period = dayjs(d.period, monthFormatList);
+      start.value = dayjs(d.start);
+      end.value = dayjs(d.end);
+
+      form.value = d;
+      quill.value.setHTML(d.description);
+  
+      console.log(d);
+    });
+    // .catch((error) => {
+    //     console.log(error);
+    // });
+  }
 });
 </script>
 <template>
