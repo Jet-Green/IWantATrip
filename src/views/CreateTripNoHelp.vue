@@ -48,10 +48,10 @@ let form = reactive({
   maxPeople: null,
   duration: "",
   images: [],
-  tripRoute: "",
+  tripRoute: "route",
   distance: "",
   cost: [],
-  offer: "",
+  offer: "offer",
   description: description.value,
   location: "",
   tripType: "",
@@ -213,19 +213,27 @@ watch(end, () => {
 });
 onMounted(() => {
   if (router.currentRoute.value.query._id) {
-
+    let textarea = document.getElementById("textarea")
+    console.dir(textarea)
     tripStore.getById(router.currentRoute.value.query._id).then((response) => {
       let d = response.data;
       delete d.__v;
-      d.images.value = []
-      d.period = dayjs(d.period, monthFormatList);
-      start.value = dayjs(d.start);
-      end.value = dayjs(d.end);
+      form.name = d.name
+        form.start = d.start
+        form.end = d.end
+        form.maxPeople = d.maxPeople
+        form.duration = d.duration
+        form.tripRoute = d.tripRoute
+        form.distance = d.distance
+        form.cost = d.cost
+        form.offer = d.offer
+        quill.value.setHTML(d.description);
+        form.location = d.location
+        form.tripType = d.tripType
+        form.fromAge = d.fromAge
+        form.period = d.period
+      // console.log(d.offer);
 
-      form.value = d;
-      quill.value.setHTML(d.description);
-  
-      console.log(d);
     });
     // .catch((error) => {
     //     console.log(error);
@@ -398,6 +406,7 @@ onMounted(() => {
                 placeholder="Глазов-Пермь 300км"
                 size="large"
                 v-model:value="form.tripRoute"
+                id="textarea"
               >
               </a-textarea>
             </a-col>
