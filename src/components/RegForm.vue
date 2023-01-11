@@ -17,7 +17,11 @@ let formState = reactive({
 async function sendRegInfo() {
   let result = await user.registration({ email: formState.email, password: formState.password, fullname: formState.fullname })
   if (result.success) {
-    axios.post(`http://localhost:4089/create-user?_fullname=${formState.fullname}&_email=${formState.email}`)
+    try {
+      axios.post(`http://localhost:4089/add-companion?name=${res.data.name}`)
+    } catch (error) {
+      
+    }
     formState.fullname = ''
     formState.email = ''
     formState.password = ''
