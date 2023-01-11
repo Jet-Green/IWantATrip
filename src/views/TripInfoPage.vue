@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import FindTrip from "../components/sections/FindTrip.vue";
 import BackButton from "../components/BackButton.vue";
@@ -20,29 +20,55 @@ const tripStore = useTrips()
 const userStore = useAuth()
 const backRoute = "/trips";
 
+let selectedByUser = ref([])
 let trip = ref({});
 tripStore.getById(_id)
   .then((response) => {
     response.data.images.push(
       "https://static.vecteezy.com/system/resources/previews/000/207/535/original/desert-road-trip-vector.jpg"
     );
-    trip.value = response.data;
 
+    trip.value = response.data;
+    console.log(trip.value);
+
+    for (let cost of response.data.cost) {
+      selectedByUser.value.push({ cost: cost.price, count: 0, costType: cost.first })
+    }
   })
   .catch((error) => {
     console.log(error);
   });
+
 function clearData(dataString) {
-  const dataFromString = new Date(dataString);
+  const dataFromString = new Date(Number(dataString));
   return dataFromString.toLocaleDateString();
 };
 
 function getImg(index) {
   return trip.value.images[index]
 }
+
+let finalCost = computed(() => {
+  let sum = 0
+  if (selectedByUser.value.length) {
+    for (let c of selectedByUser.value) {
+      sum += c.cost * c.count
+    }
+  }
+  return sum
+})
+
 let buyDialog = ref(false)
-async function buyTrip() {
-  await userStore.buyTrip(trip.value._id)
+async function buyTrip(isBoughtNow) {
+  let bill = { isBoughtNow, cart: [...selectedByUser.value], userId: userStore.user._id, }
+
+  for (let i = 0; i < bill.cart.length; i++) {
+    if (bill.cart[i].count == 0) {
+      bill.cart.splice(i, 1)
+    }
+  }
+
+  await userStore.buyTrip(trip.value._id, bill)
   buyDialog.value = false
 };
 
@@ -53,7 +79,7 @@ function updateUserInfo(info) {
 
 </script>
 <template>
-  <div>
+  <div style="overflow-x: hidden">
     <BackButton :backRoute="backRoute" />
 
     <a-row v-if="!trip._id">
@@ -117,7 +143,7 @@ function updateUserInfo(info) {
 
           <a-col :span="24">Цена:
             <span v-for="(item, index) in trip.cost" :key="index" class="cost">
-              {{ item.first }} : {{ item.price }} руб.,
+              <b> {{ item.first }} </b> : {{ item.price }} руб.,
             </span>
           </a-col>
 
@@ -130,11 +156,34 @@ function updateUserInfo(info) {
         </a-row>
         <a-modal v-model:visible="buyDialog" :footer="null">
           <!-- <h3 class="mb-2 text-center">Введите полную информацию о Вас</h3> -->
-          <div class="">
-            <UserFullInfo @fullInfo="updateUserInfo" />
-            <a-button class="mr-4" type="primary" @click="buyTrip"> оплатить сейчас </a-button>
-            <a-button @click="buyDialog = false"> оплатить позже </a-button>
-          </div>
+          <!-- v-if="!userStore.user?.fullinfo" -->
+          <UserFullInfo @fullInfo="updateUserInfo" />
+
+          <a-row class="mt-16">
+            <a-col :span="24" v-for="(cost, index) of trip.cost" :key="index"
+              style="display: flex; justify-content: space-between">
+              <b>
+                {{ cost.first }}
+              </b>
+              <span>
+                Цена: {{ cost.price }} руб.
+              </span>
+              <span>
+                Кол-во: <a-input-number v-model:value="selectedByUser[index].count" :min="0"
+                  placeholder="чел"></a-input-number>
+              </span>
+            </a-col>
+            <a-col :span="24">
+              <b>Итого: </b> {{ finalCost }} руб.
+            </a-col>
+          </a-row>
+
+          <a-row class="mt-16">
+            <a-col :span="24">
+              <a-button class="mr-4" type="primary" @click="buyTrip(true)"> оплатить сейчас </a-button>
+              <a-button @click="buyTrip(false)"> оплатить позже </a-button>
+            </a-col>
+          </a-row>
         </a-modal>
       </a-col>
       <a-col :xs="22" :lg="16">
