@@ -12,8 +12,7 @@ function goToTripPage() {
   router.push(`/trip?_id=${props.trip._id}`)
 }
 const clearData = (dataString) => {
-  const dataFromString = new Date(dataString)
-  return dataFromString.toLocaleDateString()
+  return new Date(Number(dataString)).toLocaleDateString()
 }
 </script>
 <template>

@@ -6,6 +6,7 @@ import BackButton from "../BackButton.vue";
 import CompanionService from "../../service/CompanionService";
 import { useAuth } from "../../stores/auth";
 import { message } from "ant-design-vue";
+import axios from 'axios'
 
 const userStore = useAuth();
 const ruLocale = locale;
@@ -31,7 +32,7 @@ function submit() {
 
   CompanionService.createCompanion(toSend).then((res) => {
     const _id = res.data._id;
-
+    
     userStore
       .updateUser({
         email: userStore.user.email,
@@ -53,7 +54,8 @@ function submit() {
         });
         userStore.user = response.data;
         message.config({ duration: 3, top: "90vh" });
-        message.success({ content: "Тур создан!", onClose: close });
+        message.success({ content: "Попутчик добавлен!", onClose: close });
+        console.log(response.data)
       })
       .catch((err) => {
         console.log(err);
