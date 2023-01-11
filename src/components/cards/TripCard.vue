@@ -6,14 +6,13 @@ import { useRouter } from "vue-router";
 let props = defineProps({
   trip: Object,
 });
-
+console.log(props.trip);
 let router = useRouter();
 function goToTripPage() {
   router.push(`/trip?_id=${props.trip._id}`)
 }
 const clearData = (dataString) => {
-  const dataFromString = new Date(dataString)
-  return dataFromString.toLocaleDateString()
+  return new Date(Number(dataString)).toLocaleDateString()
 }
 </script>
 <template>
