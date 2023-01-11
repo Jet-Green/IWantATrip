@@ -6,7 +6,7 @@ const user = userStore.user;
 const info = user.fullinfo;
 </script>
 <template>
-  <div>
+  <div v-if="info">
     <a-row>
       <a-avatar
         style="margin-right: 8px; font-size: large; font-weight: bold"
