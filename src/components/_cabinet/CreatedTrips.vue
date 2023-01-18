@@ -27,7 +27,6 @@ async function tripToDelete(_id) {
     for (let i = 0; i < trips.value.length; i++) {
       if (trips.value[i]._id == _id) {
         trips.value.splice(i, 1);
-
       }
     }
   }
@@ -47,6 +46,11 @@ async function hideTrip(_id) {
     }
   }
 }
+let visibleBills = ref([])
+function showBills(index) {
+  visibleBills.value[index] = !visibleBills.value[index]
+}
+
 const clearData = (dataString) => {
   const dataFromString = new Date(Number(dataString));
 
@@ -62,6 +66,8 @@ onMounted(async () => {
     let res = await tripStore.getById(_id);
     if (res.data) {
       trips.value.push(res.data);
+      visibleBills.value.push(false)
+      console.log(res.data);
     }
   }
 });
@@ -103,8 +109,14 @@ onMounted(async () => {
             <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="copyTrip(trip._id)">
               <span v-if="!trip.isHidden" class="mdi mdi-content-copy" style="color: #245159; cursor: pointer"></span>
             </a-popconfirm>
+            <span class="mdi mdi-information-outline" @click="showBills(index)"></span>
           </div>
         </a-col>
+        <transition name="fade">
+          <a-col v-if="visibleBills[index]">
+            {{ trip.billsList }}
+          </a-col>
+        </transition>
       </a-row>
     </a-col>
   </a-row>
@@ -116,6 +128,7 @@ onMounted(async () => {
 
   * {
     margin: 8px;
+    cursor: pointer;
   }
 }
 
