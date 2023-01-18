@@ -12,6 +12,7 @@ import BackButton from '../components/BackButton.vue'
 import { useRouter } from 'vue-router'
 
 import { useGuide } from "../stores/guide"
+import axios from "axios";
 
 const useGuideStore = useGuide()
 const route = useRoute()
@@ -50,6 +51,7 @@ function delPhoto() {
 function submit() {
   formState.type = route.query.type;
   useGuideStore.createGuideElement(formState).then((res) => {
+    axios.post(`http://localhost:4089/add-guide?name=${formState.name}`)
     function close() {
       router.push('/' + route.query.type)
     }
