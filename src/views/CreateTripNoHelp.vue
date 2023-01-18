@@ -16,6 +16,7 @@ import { useRouter } from "vue-router";
 import { useAuth } from "../stores/auth";
 import { useTrips } from "../stores/trips";
 import TripService from "../service/TripService";
+import { refAutoReset } from "@vueuse/core";
 
 const tripStore = useTrips()
 const userStore = useAuth();
@@ -173,7 +174,6 @@ function addPreview(blob) {
 function updateUserInfo(info) {
   fullUserInfo = info;
 }
-
 watch(description, (newValue) => {
   newContent = newValue;
   if (newContent === newValue) return;
@@ -213,19 +213,32 @@ watch(end, () => {
 });
 onMounted(() => {
   if (router.currentRoute.value.query._id) {
-
     tripStore.getById(router.currentRoute.value.query._id).then((response) => {
       let d = response.data;
       delete d.__v;
-      d.images.value = []
-      d.period = dayjs(d.period, monthFormatList);
-      start.value = dayjs(d.start);
-      end.value = dayjs(d.end);
+      form.name = d.name
+        form.start = d.start
+        form.end = d.end
+        form.maxPeople = d.maxPeople
+        form.duration = d.duration
+        form.tripType = d.tripType
+        form.distance = d.distance
+        form.cost = d.cost
+        quill.value.setHTML(d.description);
+        form.location = d.location
+        form.fromAge = d.fromAge
+        form.period = d.period
 
-      form.value = d;
-      quill.value.setHTML(d.description);
-  
-      console.log(d);
+        // form.tripRoute = d.tripRoute
+        //   form.offer = d.offer
+
+          let ad = document.getElementById("ad")
+          let route = document.getElementById("route")
+          ad.value = d.tripRoute
+          route.value = d.offer
+        
+      // console.log(d.offer);
+
     });
     // .catch((error) => {
     //     console.log(error);
@@ -389,7 +402,9 @@ onMounted(() => {
                 placeholder="завлекательное описание"
                 size="large"
                 v-model:value="form.offer"
+                id="ad"
               >
+              
               </a-textarea>
             </a-col>
             <a-col :span="24">
@@ -398,6 +413,7 @@ onMounted(() => {
                 placeholder="Глазов-Пермь 300км"
                 size="large"
                 v-model:value="form.tripRoute"
+                id="route"
               >
               </a-textarea>
             </a-col>

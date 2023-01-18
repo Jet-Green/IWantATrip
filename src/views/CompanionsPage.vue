@@ -9,9 +9,7 @@ let router = useRouter();
 let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
 const clearData = (dataString) => {
-  const dataFromString = new Date(dataString);
-
-  return dataFromString.toLocaleDateString("ru-Ru", { year: '2-digit', month: '2-digit', day: '2-digit' })
+  return new Date(Number(dataString)).toLocaleDateString("ru-Ru", { year: '2-digit', month: '2-digit', day: '2-digit' }).replaceAll("/", ".")
 };
 const ageString = (age) => {
   if (age >= 10 && age <= 20) {
