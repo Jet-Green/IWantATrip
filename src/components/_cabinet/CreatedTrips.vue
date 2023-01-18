@@ -20,12 +20,17 @@ function goToTripPage(_id) {
   router.push(`/trip?_id=${_id}`);
 }
 async function tripToDelete(_id) {
-  for (let i = 0; i < trips.value.length; i++) {
-    if (trips.value[i]._id == _id) {
-      trips.value.splice(i, 1);
+  let { response } = await tripStore.deleteById(_id);
+  let { status } = response
+
+  if (status != "400") {
+    for (let i = 0; i < trips.value.length; i++) {
+      if (trips.value[i]._id == _id) {
+        trips.value.splice(i, 1);
+
+      }
     }
   }
-  await tripStore.deleteById(_id);
 }
 function editTrip(_id) {
   router.push(`/edit-trip?_id=${_id}`);
@@ -43,7 +48,7 @@ async function hideTrip(_id) {
   }
 }
 const clearData = (dataString) => {
-  const dataFromString = new Date(dataString);
+  const dataFromString = new Date(Number(dataString));
 
   return dataFromString.toLocaleDateString("ru-Ru", {
     year: "2-digit",
@@ -73,18 +78,10 @@ onMounted(async () => {
         <a-col :md="4" :xs="8">действия</a-col>
       </a-row>
 
-      <a-row
-        v-for="(trip, index) of trips"
-        :key="index"
-        class="mt-4 pa-8"
-        :class="[index % 2 ? 'odd' : 'even', trip.isHidden ? 'overlay' : '']"
-      >
+      <a-row v-for="(trip, index) of trips" :key="index" class="mt-4 pa-8"
+        :class="[index % 2 ? 'odd' : 'even', trip.isHidden ? 'overlay' : '']">
         <a-col :md="2" :xs="4">
-          <img
-            :src="trip.images[0]"
-          
-            @click="goToTripPage(trip._id)"
-          />
+          <img :src="trip.images[0]" @click="goToTripPage(trip._id)" />
         </a-col>
         <a-col :md="8" :xs="12" @click="goToTripPage(trip._id)">{{ trip.name }}</a-col>
         <a-col :md="4" v-if="!sm">{{ trip.location }}</a-col>
@@ -92,60 +89,22 @@ onMounted(async () => {
         <a-col :md="3" v-if="!sm">{{ clearData(trip.end) }}</a-col>
         <a-col :md="4" :xs="8">
           <div class="actions">
-            <a-popconfirm
-              title="Вы уверены?"
-              ok-text="Да"
-              cancel-text="Нет"
-              @confirm="tripToDelete(trip._id)"
-            >
-              <span
-                class="mdi mdi-delete"
-                style="color: red; cursor: pointer"
-              ></span>
+            <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="tripToDelete(trip._id)"
+              v-if="!trip.billsList.length > 0">
+              <span class="mdi mdi-delete" style="color: red; cursor: pointer"></span>
             </a-popconfirm>
-            <a-popconfirm
-              title="Вы уверены?"
-              ok-text="Да"
-              cancel-text="Нет"
-              @confirm="editTrip(trip._id)"
-            >
-              <span
-                class="mdi mdi-pen"
-                style="color: #245159; cursor: pointer"
-              ></span>
+            <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="editTrip(trip._id)">
+              <span class="mdi mdi-pen" style="color: #245159; cursor: pointer"></span>
             </a-popconfirm>
-            <a-popconfirm
-              title="Вы уверены?"
-              ok-text="Да"
-              cancel-text="Нет"
-              @confirm="hideTrip(trip._id)"
-            >
-              <span
-                v-if="!trip.isHidden"
-                class="mdi mdi-eye"
-                style="color: #245159; cursor: pointer"
-              ></span>
-              <span
-                v-else
-                class="mdi mdi-eye-off"
-                style="color: #245159; cursor: pointer"
-              ></span>
+            <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="hideTrip(trip._id)">
+              <span v-if="!trip.isHidden" class="mdi mdi-eye" style="color: #245159; cursor: pointer"></span>
+              <span v-else class="mdi mdi-eye-off" style="color: #245159; cursor: pointer"></span>
             </a-popconfirm>
-            <a-popconfirm
-              title="Вы уверены?"
-              ok-text="Да"
-              cancel-text="Нет"
-              @confirm="copyTrip(trip._id)"
-            >
-              <span
-                v-if="!trip.isHidden"
-                class="mdi mdi-content-copy"
-                style="color: #245159; cursor: pointer"
-              ></span>
-             
+            <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="copyTrip(trip._id)">
+              <span v-if="!trip.isHidden" class="mdi mdi-content-copy" style="color: #245159; cursor: pointer"></span>
             </a-popconfirm>
-            </div
-        ></a-col>
+          </div>
+        </a-col>
       </a-row>
     </a-col>
   </a-row>
@@ -165,9 +124,11 @@ onMounted(async () => {
   text-transform: uppercase;
   text-align: center;
 }
+
 .odd {
   background: rgba(255, 102, 0, 0.05);
 }
+
 .even {
   background: rgba(34, 176, 214, 0.05);
 }
@@ -175,9 +136,10 @@ onMounted(async () => {
 .overlay {
 
   opacity: 0.5;
- 
+
 }
-img{
+
+img {
   width: 100%;
   height: 50px;
   aspect-ratio: 270/175;

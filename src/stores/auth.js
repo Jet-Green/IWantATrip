@@ -16,7 +16,6 @@ export const useAuth = defineStore('auth', {
         getAuthStatus(state) {
             return state.isAuth
         },
-
     },
     actions: {
         updateUser(user) {
@@ -47,8 +46,6 @@ export const useAuth = defineStore('auth', {
                 const response = await UserService.registration(email, password);
                 localStorage.setItem('token', response.data.accessToken);
 
-                console.log(response);
-
                 this.isAuth = true
                 this.user = response.data.user
                 return { success: true };
@@ -63,8 +60,6 @@ export const useAuth = defineStore('auth', {
             try {
                 const response = await UserService.login(email, password);
                 localStorage.setItem('token', response.data.accessToken);
-
-                console.log(response);
 
                 this.isAuth = true;
                 this.user = response.data.user
@@ -82,8 +77,6 @@ export const useAuth = defineStore('auth', {
 
                 localStorage.setItem('token', response.data.accessToken);
 
-                console.log(response);
-
                 this.isAuth = true;
                 this.user = response.data.user
             } catch (err) {
@@ -96,8 +89,6 @@ export const useAuth = defineStore('auth', {
             try {
                 const response = await UserService.logout();
                 localStorage.removeItem('token');
-
-                console.log(response);
 
                 this.isAuth = false;
                 this.user = null
