@@ -18,7 +18,7 @@ function goToTripPage() {
   router.push(`/trip?_id=${props.trip._id}`);
 }
 const clearData = (dataString) => {
-  const dataFromString = new Date(dataString);
+  const dataFromString = new Date(Number(dataString));
   return dataFromString.toLocaleDateString();
 };
 </script>
@@ -41,4 +41,5 @@ const clearData = (dataString) => {
   </div>
 </template>
 <style lang="scss" scoped>
+
 </style>
