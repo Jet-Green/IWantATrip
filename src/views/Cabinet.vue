@@ -49,7 +49,7 @@ onMounted(() => {
           >
             <CreatedTrips />
           </a-tab-pane>
-          <a-tab-pane key="3" tab="Заказанные туры">
+          <a-tab-pane key="3" tab="Купленные туры">
             <RequestedTrips />
           </a-tab-pane>
           <a-tab-pane
