@@ -29,6 +29,7 @@ const formRef = ref(null);
 const description = ref(null);
 const start = ref(null);
 const end = ref(null);
+const period = ref(null)
 const delPhotoDialog = ref(false);
 const targetIndex = ref(null);
 
@@ -185,9 +186,8 @@ watch(description, (newValue) => {
 });
 watch(start, () => {
   let result =
-    Number(JSON.parse(JSON.stringify(end.value))) -
-    Number(JSON.parse(JSON.stringify(start.value)));
-
+    Date.parse(JSON.parse(JSON.stringify(end.value))) -
+    Date.parse(JSON.parse(JSON.stringify(start.value)));
   if (result >= 0) {
     form.duration = Math.round(result / 86400000);
   } else {
@@ -206,33 +206,38 @@ watch(end, () => {
     form.duration = "";
   }
   form.end = Date.parse(end.value.$d.toString());
+
+});
+watch(period, () => {
+    form.period = Date.parse(period.value.$d.toString());
 });
 onMounted(() => {
   if (router.currentRoute.value.query._id) {
     tripStore.getById(router.currentRoute.value.query._id).then((response) => {
-      let d = response.data;
-      delete d.__v;
-      form.name = d.name;
-      form.maxPeople = d.maxPeople;
+      let tripFromDB = response.data;
+      delete tripFromDB.__v;
+      form.name = tripFromDB.name;
+      form.maxPeople = tripFromDB.maxPeople;
+      form.duration = tripFromDB.duration;
 
-      form.tripType = d.tripType;
-      form.distance = d.distance;
-      form.cost = d.cost;
-      quill.value.setHTML(d.description);
-      form.location = d.location;
-      form.fromAge = d.fromAge;
-      d.period = dayjs(d.period, monthFormatList);
-      start.value = dayjs(d.start);
-      end.value = dayjs(d.end);
+      form.tripType = tripFromDB.tripType;
+      form.distance = tripFromDB.distance;
+      form.cost = tripFromDB.cost;
+      quill.value.setHTML(tripFromDB.description);
+      form.location = tripFromDB.location;
+      form.fromAge = tripFromDB.fromAge;
+      tripFromDB.period = dayjs(tripFromDB.period);
+      form.period = tripFromDB.period
+      start.value = dayjs.unix(tripFromDB.start/1000);
+      end.value = dayjs.unix(tripFromDB.end/1000);
+
       // form.tripRoute = d.tripRoute
       //   form.offer = d.offer
 
       let ad = document.getElementById("ad");
       let route = document.getElementById("route");
-      ad.value = d.tripRoute;
-      route.value = d.offer;
-      form.duration = d.duration;
-      console.log(d);
+      ad.value = tripFromDB.tripRoute;
+      route.value = tripFromDB.offer;
     });
     // .catch((error) => {
     //     console.log(error);
