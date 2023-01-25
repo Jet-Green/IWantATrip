@@ -2,9 +2,9 @@
 import BackButton from "../components/BackButton.vue";
 import ImageCropper from "../components/ImageCropper.vue";
 import UserFullInfo from "../components/forms/UserFullInfo.vue";
-import dayjs from 'dayjs'
+import dayjs from "dayjs";
 
-import axios from 'axios'
+import axios from "axios";
 
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
@@ -16,9 +16,8 @@ import { useRouter } from "vue-router";
 import { useAuth } from "../stores/auth";
 import { useTrips } from "../stores/trips";
 import TripService from "../service/TripService";
-import { refAutoReset } from "@vueuse/core";
 
-const tripStore = useTrips()
+const tripStore = useTrips();
 const userStore = useAuth();
 
 const dateFormatList = ["DD.MM.YY", "DD.MM.YY"];
@@ -97,10 +96,8 @@ function submit() {
   TripService.createTrip(form).then(async (res) => {
     const _id = res.data._id;
     try {
-      await axios.post(`http://localhost:4089/create-trip?_id=${_id}`)
-    } catch (error) {
-      
-    }
+      await axios.post(`http://localhost:4089/create-trip?_id=${_id}`);
+    } catch (error) {}
 
     let imagesFormData = new FormData();
     for (let i = 0; i < images.length; i++) {
@@ -186,7 +183,6 @@ watch(description, (newValue) => {
     q.focus();
   });
 });
-
 watch(start, () => {
   let result =
     Number(JSON.parse(JSON.stringify(end.value))) -
@@ -216,29 +212,27 @@ onMounted(() => {
     tripStore.getById(router.currentRoute.value.query._id).then((response) => {
       let d = response.data;
       delete d.__v;
-      form.name = d.name
-        form.start = d.start
-        form.end = d.end
-        form.maxPeople = d.maxPeople
-        form.duration = d.duration
-        form.tripType = d.tripType
-        form.distance = d.distance
-        form.cost = d.cost
-        quill.value.setHTML(d.description);
-        form.location = d.location
-        form.fromAge = d.fromAge
-        form.period = d.period
+      form.name = d.name;
+      form.maxPeople = d.maxPeople;
 
-        // form.tripRoute = d.tripRoute
-        //   form.offer = d.offer
+      form.tripType = d.tripType;
+      form.distance = d.distance;
+      form.cost = d.cost;
+      quill.value.setHTML(d.description);
+      form.location = d.location;
+      form.fromAge = d.fromAge;
+      d.period = dayjs(d.period, monthFormatList);
+      start.value = dayjs(d.start);
+      end.value = dayjs(d.end);
+      // form.tripRoute = d.tripRoute
+      //   form.offer = d.offer
 
-          let ad = document.getElementById("ad")
-          let route = document.getElementById("route")
-          ad.value = d.tripRoute
-          route.value = d.offer
-        
-      // console.log(d.offer);
-
+      let ad = document.getElementById("ad");
+      let route = document.getElementById("route");
+      ad.value = d.tripRoute;
+      route.value = d.offer;
+      form.duration = d.duration;
+      console.log(d);
     });
     // .catch((error) => {
     //     console.log(error);
@@ -404,7 +398,6 @@ onMounted(() => {
                 v-model:value="form.offer"
                 id="ad"
               >
-              
               </a-textarea>
             </a-col>
             <a-col :span="24">
@@ -434,11 +427,7 @@ onMounted(() => {
               />
             </a-col>
             <a-col :span="24" class="d-flex justify-center">
-              <a-button
-                class="mt-16"
-                type="primary"
-                size="large"
-                html-type="submit"
+              <a-button class="mt-16" type="primary" size="large" html-type="submit"
                 >Отправить
               </a-button>
             </a-col>
@@ -450,11 +439,7 @@ onMounted(() => {
         <a-modal v-model:visible="delPhotoDialog" :footer="null">
           <h3>Удалить фото?</h3>
           <div class="d-flex justify-center">
-            <a-button
-              class="mt-16"
-              type="primary"
-              size="large"
-              @click="delPhoto"
+            <a-button class="mt-16" type="primary" size="large" @click="delPhoto"
               >Да
             </a-button>
           </div>
