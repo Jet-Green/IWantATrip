@@ -1,12 +1,13 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, reactive } from "vue";
 import { useAuth } from "../../stores/auth";
 import { useCompanions } from "../../stores/companions";
 import { useTrips } from "../../stores/trips";
 
 const userStore = useAuth();
 const companionStore = useCompanions();
-const tripStore = useTrips()
+const tripStore = useTrips();
+const tripInfo = reactive({});
 
 // let trips = ref([])
 // const companionRequests = userStore.user.companionRequests
@@ -18,7 +19,8 @@ onMounted(async () => {
   // }
   for (let trip of userStore.user.boughtTrips) {
     const response = await tripStore.getById(trip.tripId);
-
+    console.log(response)
+    tripInfo = [response];
   }
 });
 </script>
@@ -30,6 +32,7 @@ onMounted(async () => {
           <a-col :md="8" :xs="4">тур</a-col>
           <a-col :md="8" :xs="12">корзина</a-col>
           <a-col :md="8" v-if="!sm">оплачено</a-col>
+          
         </a-row>
 
         <a-row
@@ -39,7 +42,7 @@ onMounted(async () => {
           :class="[index % 2 ? 'odd' : 'even']"
         >
           <a-col :md="8" :xs="4">
-            {{ description }}
+            {{ tripInfo.fromAge }}
           </a-col>
           <a-col :md="8" :xs="12">{{ trip.cart }}</a-col>
           <a-col :md="8" v-if="!sm">{{ trip.isBoughtNow }}</a-col>
