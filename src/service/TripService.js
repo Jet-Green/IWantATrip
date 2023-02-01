@@ -1,6 +1,9 @@
 import $api from "../plugins/axios";
 
 export default {
+    async getCustomers(ids) {
+        return $api.post('/trips/get-customers', ids)
+    },
     async fetchTrips() {
         return $api.get('/trips/get-all')
     },

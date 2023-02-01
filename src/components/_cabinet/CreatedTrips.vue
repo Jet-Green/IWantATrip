@@ -60,16 +60,29 @@ const clearData = (dataString) => {
     day: "2-digit",
   });
 };
-
+let customers = ref([])
 onMounted(async () => {
   for (let _id of tripsIds.value) {
     let res = await tripStore.getById(_id);
+
     if (res.data) {
+      let billsListFromDB = res.data.billsList
+
+      let customersIds = []
+      for (let bill of billsListFromDB) {
+        customersIds.push(bill.userId)
+      }
+
+      if (customersIds.length) {
+        let { data } = await tripStore.getCustomers(customersIds)
+        res.data.customers = data
+      }
+
       trips.value.push(res.data);
       visibleBills.value.push(false)
-      console.log(res.data);
     }
   }
+  console.log(trips.value);
 });
 </script>
 <template>
@@ -112,11 +125,50 @@ onMounted(async () => {
             <span class="mdi mdi-information-outline" @click="showBills(index)"></span>
           </div>
         </a-col>
-        <transition name="fade">
-          <a-col v-if="visibleBills[index]">
-            {{ trip.billsList }}
-          </a-col>
-        </transition>
+        <a-col :span="24">
+          <transition name="fade">
+            <a-row>
+              <a-col :span="24" v-if="visibleBills[index]" class="ma-16" v-for="(BILL, bill_index) of trip.billsList">
+                <a-row>
+                  <a-col>
+                    Билет №{{ bill_index + 1 }}
+                  </a-col>
+                  <a-col :span="24">
+                    <b>тип оплаты: </b> {{ BILL.isBoughtNow ? "сейчас" : "потом" }}
+                  </a-col>
+                  <a-col :span="8">
+                    ФИО: <b>{{ trip.customers[bill_index].fullname }}</b>
+                  </a-col>
+                  <a-col :span="8">
+                    Телефон: <b>{{ trip.customers[bill_index].phone }}</b>
+                  </a-col>
+                  <a-col :span="8">
+                    <b>
+                      {{ trip.customers[bill_index].type }}
+                    </b>
+                  </a-col>
+                </a-row>
+                <a-row style="font-weight: bold">
+                  <a-col :span="8">тип билета</a-col>
+                  <a-col :span="8">цена</a-col>
+                  <a-col :span="8">количество</a-col>
+                </a-row>
+                <a-row v-for="cartItem of BILL.cart">
+                  <a-col :span="8">
+                    {{ cartItem.costType }}
+                  </a-col>
+                  <a-col :span="8">
+                    {{ cartItem.cost }}
+                  </a-col>
+                  <a-col :span="8">
+                    {{ cartItem.count }}
+                  </a-col>
+                  <a-col></a-col>
+                </a-row>
+              </a-col>
+            </a-row>
+          </transition>
+        </a-col>
       </a-row>
     </a-col>
   </a-row>
