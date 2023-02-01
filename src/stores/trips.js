@@ -44,6 +44,9 @@ export const useTrips = defineStore('trips', {
         },
         deleteById(_id) {
             return TripService.deleteTrip({ _id: _id });
+        },
+        getCustomers(ids) {
+            return TripService.getCustomers(ids)
         }
     },
 })

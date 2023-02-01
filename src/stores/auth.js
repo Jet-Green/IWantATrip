@@ -16,7 +16,6 @@ export const useAuth = defineStore('auth', {
         getAuthStatus(state) {
             return state.isAuth
         },
-
     },
     actions: {
         addFeedback(feedback) {
@@ -39,10 +38,12 @@ export const useAuth = defineStore('auth', {
         setUserStatus(text) {
             this.userStatus = text
         },
-        async buyTrip(_id) {
+        async buyTrip(tripId, bill) {
             try {
-                this.user.boughtTrips.push(_id)
-                return UserService.buyTrip(_id, this.user.email)
+                let { data } = await UserService.buyTrip(tripId, bill)
+
+                this.user.boughtTrips.push(data)
+                return
             } catch (error) {
                 console.log(error);
             }
@@ -51,8 +52,6 @@ export const useAuth = defineStore('auth', {
             try {
                 const response = await UserService.registration(email, password);
                 localStorage.setItem('token', response.data.accessToken);
-
-                console.log(response);
 
                 this.isAuth = true
                 this.user = response.data.user
@@ -68,8 +67,6 @@ export const useAuth = defineStore('auth', {
             try {
                 const response = await UserService.login(email, password);
                 localStorage.setItem('token', response.data.accessToken);
-
-                console.log(response);
 
                 this.isAuth = true;
                 this.user = response.data.user
@@ -87,8 +84,6 @@ export const useAuth = defineStore('auth', {
 
                 localStorage.setItem('token', response.data.accessToken);
 
-                console.log(response);
-
                 this.isAuth = true;
                 this.user = response.data.user
             } catch (err) {
@@ -101,8 +96,6 @@ export const useAuth = defineStore('auth', {
             try {
                 const response = await UserService.logout();
                 localStorage.removeItem('token');
-
-                console.log(response);
 
                 this.isAuth = false;
                 this.user = null
