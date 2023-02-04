@@ -82,7 +82,7 @@ onMounted(async () => {
       visibleBills.value.push(false)
     }
   }
-  console.log(trips.value);
+
 });
 </script>
 <template>
@@ -134,7 +134,7 @@ onMounted(async () => {
                     Билет №{{ bill_index + 1 }}
                   </a-col>
                   <a-col :span="24">
-                    <b>тип оплаты: </b> {{ BILL.isBoughtNow ? "сейчас" : "потом" }}
+                    <b>оплачен: </b> {{ BILL.isBoughtNow ? "да" : "нет" }}
                   </a-col>
                   <a-col :span="8">
                     ФИО: <b>{{ trip.customers[bill_index].fullname }}</b>
