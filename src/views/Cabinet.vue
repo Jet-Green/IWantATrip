@@ -5,7 +5,7 @@ import { useRouter } from "vue-router";
 import BackButton from "../components/BackButton.vue";
 import AboutClient from "../components/_cabinet/AboutClient.vue";
 import CreatedTrips from "../components/_cabinet/CreatedTrips.vue";
-import RequestedTrips from "../components/_cabinet/RequestedTrips.vue";
+import PurchasedTrips from "../components/_cabinet/PurchasedTrips.vue";
 import CreatedObjects from "../components/_cabinet/CreatedObjects.vue";
 import MyCompanions from "../components/_cabinet/MyCompanions.vue";
 
@@ -49,8 +49,8 @@ onMounted(() => {
           >
             <CreatedTrips />
           </a-tab-pane>
-          <a-tab-pane key="3" tab="Заказанные туры">
-            <RequestedTrips />
+          <a-tab-pane key="3" tab="Купленные туры">
+            <PurchasedTrips />
           </a-tab-pane>
           <a-tab-pane
             v-if="userStore.user.guideElements.length"
