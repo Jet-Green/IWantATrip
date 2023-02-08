@@ -96,11 +96,12 @@ function submit() {
 
   TripService.createTrip(form).then(async (res) => {
     const _id = res.data._id;
-    try {
-      await axios.post(`http://localhost:4089/create-trip?_id=${_id}`)
-    } catch (error) {
-      
-    }
+    // try {
+    //   // что тут происходит?
+    //   await axios.post(`http://localhost:4089/create-trip?_id=${_id}`)
+    // } catch (error) {
+    //   console.log(error);
+    // }
 
     let imagesFormData = new FormData();
     for (let i = 0; i < images.length; i++) {
