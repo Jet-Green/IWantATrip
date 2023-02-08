@@ -24,7 +24,7 @@ const ageString = (age) => {
     return `${age} года`;
   }
   return `${age} лет`;
-};
+};// это гениально
 </script>
 <template>
   <div>
@@ -65,7 +65,7 @@ const ageString = (age) => {
           <a-col :xs="12" :md="5">{{ companion.description }}</a-col>
           <a-col :xs="4" :md="2">
             <a-button shape="circle" class="ma-16" 
-              @click="router.push('/add-feedback')">
+              @click="router.push({ path: '/add-feedback', query: { id: companion.email }})">
               <span class="mdi mdi-thumb-up-outline"></span>
             </a-button></a-col>
         </a-row>
