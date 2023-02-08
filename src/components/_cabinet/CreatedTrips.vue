@@ -97,7 +97,7 @@ onMounted(async () => {
         <a-col :md="4" :xs="8">действия</a-col>
       </a-row>
 
-      <a-row v-for="(trip, index) of trips" :key="index" class="mt-4 pa-8"
+      <a-row v-if="trips.length > 0" v-for="(trip, index) of trips" :key="index" class="mt-4 pa-8"
         :class="[index % 2 ? 'odd' : 'even', trip.isHidden ? 'overlay' : '']">
         <a-col :md="2" :xs="4">
           <img :src="trip.images[0]" @click="goToTripPage(trip._id)" />
