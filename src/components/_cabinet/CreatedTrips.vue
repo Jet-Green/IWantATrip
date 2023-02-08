@@ -127,9 +127,71 @@ onMounted(async () => {
         </a-col>
         <a-col :span="24">
           <transition name="fade">
-            <a-row>
-              <a-col :span="24" v-if="visibleBills[index]" class="ma-16" v-for="(BILL, bill_index) of trip.billsList">
-                <a-row>
+            <a-row style="display: flex; justify-content: space-between;">
+              <a-col v-if="visibleBills[index]" :xs="24" :md="12" :lg="8" class="pa-4"
+                v-for="(BILL, bill_index) of trip.billsList">
+                <a-popover placement="bottom" trigger="click">
+                  <template #content>
+                    <a-row>
+                      <a-col :span="24" v-for="(cartItem, item_index) of BILL.cart">
+                        {{ cartItem.costType }} {{ cartItem.cost }} руб. {{ cartItem.count }} шт.
+                        <a-divider class="ma-0" v-if="BILL.cart.length > 1" />
+                      </a-col>
+                    </a-row>
+                  </template>
+                  <a-card hoverable v-if="trip.customers[bill_index]" class="pa-8">
+                    <a-row>
+                      <a-col :span="12">
+                        <a-row>
+                          <a-col :span="24">
+                            <span class="mdi mdi-account-outline" style="font-size: 20px;"></span>
+                            {{ trip.customers[bill_index].fullname }}
+                          </a-col>
+                          <a-col :span="24">
+                            <span class="mdi mdi-phone-outline" style="font-size: 20px;"></span>
+                            {{ trip.customers[bill_index].phone }}
+                          </a-col>
+                          <a-col :span="24">
+                            <b>
+                              <span v-if="BILL.isBoughtNow" style="color: #BCC662">
+                                <span class="mdi mdi-check-all" style="font-size: 20px;"></span>
+                                оплачен
+                              </span>
+                              <span v-else style="display: flex; align-items: center;">
+                                <span class="mdi mdi-close" style="font-size: 20px;"></span>
+                                не оплачен
+                              </span>
+                            </b>
+                          </a-col>
+                        </a-row>
+                      </a-col>
+                      <a-col :span="12">
+                        <a-row v-if="BILL.cart">
+                          <a-col :span="24">
+                            <span class="mdi mdi-account-group" style="font-size: 20px;"></span>
+                            {{
+                              BILL.cart.reduce((accumulator, object) => {
+                                return accumulator + object.count;
+                              }, 0)
+                            }}
+                          </a-col>
+                          <a-col :span="24">
+                            <span class="mdi mdi-cash" style="font-size: 20px;"></span>
+                            {{
+  BILL.cart.reduce((accumulator, object) => {
+    return accumulator + object.cost *
+      object.count;
+  }, 0)
+                            }} ₽
+                          </a-col>
+                        </a-row>
+                      </a-col>
+                    </a-row>
+                  </a-card>
+                </a-popover>
+              </a-col>
+            </a-row>
+            <!-- <a-row>
                   <a-col>
                     Билет №{{ bill_index + 1 }}
                   </a-col>
@@ -164,9 +226,7 @@ onMounted(async () => {
                     {{ cartItem.count }}
                   </a-col>
                   <a-col></a-col>
-                </a-row>
-              </a-col>
-            </a-row>
+                </a-row> -->
           </transition>
         </a-col>
       </a-row>
@@ -209,6 +269,5 @@ img {
   height: 50px;
   aspect-ratio: 270/175;
   object-fit: cover;
-
 }
 </style>
