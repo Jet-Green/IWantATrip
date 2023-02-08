@@ -34,7 +34,6 @@ export const useAuth = defineStore('auth', {
         async buyTrip(tripId, bill) {
             try {
                 let { data } = await UserService.buyTrip(tripId, bill)
-
                 this.user.boughtTrips.push(data)
                 return
             } catch (error) {

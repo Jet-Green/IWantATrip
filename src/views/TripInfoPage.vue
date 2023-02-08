@@ -1,7 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
-import FindTrip from "../components/sections/FindTrip.vue";
 import BackButton from "../components/BackButton.vue";
 import { useTrips } from "../stores/trips";
 import { useAuth } from "../stores/auth";
@@ -10,27 +9,17 @@ import UserFullInfo from "../components/forms/UserFullInfo.vue";
 const route = useRoute();
 const _id = route.query._id;
 
-// let response = computed(async () => {
-//   let res = await axios.get(`http://localhost:3030/trips/get-by-id?_id=${_id}`)
-//   console.log(res);
 
-//   return res.data
-// })
 const tripStore = useTrips()
 const userStore = useAuth()
 const backRoute = "/trips";
 
 let selectedByUser = ref([])
 let trip = ref({});
+
 tripStore.getById(_id)
   .then((response) => {
-    response.data.images.push(
-      "https://static.vecteezy.com/system/resources/previews/000/207/535/original/desert-road-trip-vector.jpg"
-    );
-
     trip.value = response.data;
-    console.log(trip.value);
-
     for (let cost of response.data.cost) {
       selectedByUser.value.push({ cost: cost.price, count: 0, costType: cost.first })
     }

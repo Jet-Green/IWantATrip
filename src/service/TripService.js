@@ -10,6 +10,9 @@ export default {
     async searchTrips(req) {
         return $api.post(`/trips/search`, req)
     },
+    async getById(_id) {
+        return $api.get(`/trips/get-by-id?_id=${_id}`)
+    },
 
     async deleteTrip(_id) {
         return $api.post('/trips/delete-by-id', _id)
