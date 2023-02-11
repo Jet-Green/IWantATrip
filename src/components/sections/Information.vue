@@ -82,7 +82,7 @@ watch(y, (newY) => {
       <a-row>
         <!-- ** элемент отслеживание которого влияет на поведение компоненты -->
         <div ref="marker"></div>
-        <a-col :xs="8" :md="12">
+        <a-col :xs="23" :md="12">
           <!-- TODO: расчитывать высоту этого элемента исходя их высоты экрана vueuse  -->
           <div
             style="height: 600px"
@@ -112,7 +112,7 @@ watch(y, (newY) => {
             </a-button>
           </div>
         </a-col>
-        <a-col :xs="16" :md="12">
+        <a-col :xs="1" :md="12">
           <div class="todo-answer">
             <div
               v-for="(el, index) in youCanDo"
@@ -170,7 +170,7 @@ watch(y, (newY) => {
       background: #27728b;
       width: 75%;
       aspect-ratio: 1;
-      border-radius: 50%;
+      border-radius: 10%;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -184,10 +184,15 @@ watch(y, (newY) => {
     transition: all 1s ease;
   }
 }
-
+@media (max-width: 770px) {
+  .todo-answer {
+    opacity: 0;
+  }
+}
 .todo-element {
   font-family: "Montserrat", sans-serif;
-  font-size: clamp(18px, 3.5vw, 48px);
+  // font-size: clamp(18px, 3.5vw, 48px);
+  font-size: 48px;
   line-height: 48px;
   font-weight: 900;
   color: rgba(0, 0, 0, 0.5);

@@ -1,27 +1,39 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, reactive } from "vue";
 import { useRoute } from "vue-router";
 import BackButton from "../components/BackButton.vue";
 import { useTrips } from "../stores/trips";
 import { useAuth } from "../stores/auth";
+import { message } from "ant-design-vue";
+import { useRouter } from 'vue-router';
+const router = useRouter()
 
-import UserFullInfo from "../components/forms/UserFullInfo.vue";
 const route = useRoute();
+
 const _id = route.query._id;
 
+const tripStore = useTrips();
+const userStore = useAuth();
 
-const tripStore = useTrips()
-const userStore = useAuth()
 const backRoute = "/trips";
 
-let selectedByUser = ref([])
+let selectedByUser = ref([]);
 let trip = ref({});
+let userInfo = reactive({
+  fullname: "",
+  phone: "",
+});
 
-tripStore.getById(_id)
+tripStore
+  .getById(_id)
   .then((response) => {
     trip.value = response.data;
     for (let cost of response.data.cost) {
-      selectedByUser.value.push({ cost: cost.price, count: 0, costType: cost.first })
+      selectedByUser.value.push({
+        cost: cost.price,
+        count: 0,
+        costType: cost.first,
+      });
     }
   })
   .catch((error) => {
@@ -31,41 +43,86 @@ tripStore.getById(_id)
 function clearData(dataString) {
   const dataFromString = new Date(Number(dataString));
   return dataFromString.toLocaleDateString();
-};
+}
 
 function getImg(index) {
-  return trip.value.images[index]
+  return trip.value.images[index];
 }
-
+// function close() {
+//   router.push("/trips");
+// }
 let finalCost = computed(() => {
-  let sum = 0
+  let sum = 0;
   if (selectedByUser.value.length) {
     for (let c of selectedByUser.value) {
-      sum += c.cost * c.count
+      sum += c.cost * c.count;
     }
   }
-  return sum
-})
+  return sum;
+});
 
-let buyDialog = ref(false)
-async function buyTrip(isBoughtNow) {
-  let bill = { isBoughtNow, cart: [...selectedByUser.value], userId: userStore.user._id, }
+let buyDialog = ref(false);
 
-  for (let i = 0; i < bill.cart.length; i++) {
-    if (bill.cart[i].count == 0) {
-      bill.cart.splice(i, 1)
-    }
+let buyTripDialog = () => {
+  if (userStore.user) {
+    buyDialog.value = true;
+  } else {
+    router.push("/reg");
   }
-
-  await userStore.buyTrip(trip.value._id, bill)
-  buyDialog.value = false
 };
 
-function updateUserInfo(info) {
-  fullUserInfo = info;
+async function buyTrip(isBoughtNow) {
+  if (userInfo.phone) {
+    let bill = {
+      isBoughtNow,
+      cart: [...selectedByUser.value],
+      userId: userStore.user._id,
+    };
+
+    for (let i = 0; i < bill.cart.length; i++) {
+      if (bill.cart[i].count == 0) {
+        bill.cart.splice(i, 1);
+      }
+    }
+
+    await userStore
+      .buyTrip(trip.value._id, bill)
+      .then(() => {
+        message.config({ duration: 3, top: "90vh" });
+        message.success({ content: "Тур заказан!" });
+        buyDialog.value = false;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    userStore.user.fullinfo.fullname = userInfo.fullname;
+    userStore.user.fullinfo.phone = userInfo.phone;
+
+    await userStore
+      .updateUser({
+        email: userStore.user.email,
+        fullinfo: userStore.user.fullinfo,
+      })
+      .then((response) => {
+        userStore.user = response.data;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  } else {
+    message.config({ duration: 3, top: "90vh" });
+    message.success({ content: "Нужен телефон" });
+  }
+
+  //тут обновить полную информацию о юзере
 }
-
-
+onMounted(() => {
+  if (userStore.user) {
+    userInfo.fullname = userStore.user.fullinfo.fullname;
+    userInfo.phone = userStore.user.fullinfo.phone;
+  }
+});
 </script>
 <template>
   <div style="overflow-x: hidden">
@@ -77,7 +134,13 @@ function updateUserInfo(info) {
       </a-col>
     </a-row>
 
-    <a-row v-else display="flex" justify="center" :gutter="[16, 16]" style="font-size: clamp(14px, 2.5vw, 16px)">
+    <a-row
+      v-else
+      display="flex"
+      justify="center"
+      :gutter="[16, 16]"
+      style="font-size: clamp(14px, 2.5vw, 16px)"
+    >
       <a-col :xs="24" :lg="24" class="title">
         <h1>{{ trip.name }}</h1>
       </a-col>
@@ -110,13 +173,20 @@ function updateUserInfo(info) {
             <span v-html="trip.offer"></span>
           </a-col>
 
-          <a-col :xs="22" :lg="16" class="time" style="display: flex; flex-direction: column">
-            <span style="display: flex; flex-wrap: nowrap">Продолжительность:
+          <a-col
+            :xs="22"
+            :lg="16"
+            class="time"
+            style="display: flex; flex-direction: column"
+          >
+            <span style="display: flex; flex-wrap: nowrap"
+              >Продолжительность:
               <p class="ml-8 mb-4">
                 <b>{{ trip.duration }} дней</b>
               </p>
             </span>
-            <span style="display: flex; flex-wrap: nowrap">Ближайший выезд:
+            <span style="display: flex; flex-wrap: nowrap"
+              >Ближайший выезд:
               <p class="ml-8 mb-4">
                 <b>{{ clearData(trip.start) }}</b>
               </p>
@@ -125,51 +195,79 @@ function updateUserInfo(info) {
 
           <a-col :xs="22" :lg="16" class="people">
             Количество человек:
-            <a-progress :percent="(trip.fromAge / 27) * 100" :format="(percent) => `20 ч.`">
+            <a-progress
+              :percent="(trip.fromAge / 27) * 100"
+              :format="(percent) => `20 ч.`"
+            >
             </a-progress>
           </a-col>
 
-
-          <a-col :span="24">Цена:
+          <a-col :span="24"
+            >Цена:
             <span v-for="(item, index) in trip.cost" :key="index" class="cost">
               <b> {{ item.first }} </b> : {{ item.price }} руб.,
             </span>
           </a-col>
 
           <a-col :xs="22" :lg="16" class="actions">
-            <a-button type="primary" class="lets_go_btn" size="large" style="display: flex; justify-content: center"
-              @click="buyDialog = true">
+            <a-button
+              type="primary"
+              class="lets_go_btn"
+              size="large"
+              style="display: flex; justify-content: center"
+              @click="buyTripDialog()"
+            >
               Купить
             </a-button>
           </a-col>
         </a-row>
         <a-modal v-model:visible="buyDialog" :footer="null">
-          <!-- <h3 class="mb-2 text-center">Введите полную информацию о Вас</h3> -->
-          <!-- v-if="!userStore.user?.fullinfo" -->
-          <UserFullInfo @fullInfo="updateUserInfo" />
-
-          <a-row class="mt-16">
-            <a-col :span="24" v-for="(cost, index) of trip.cost" :key="index"
-              style="display: flex; justify-content: space-between">
-              <b>
-                {{ cost.first }}
-              </b>
-              <span>
-                Цена: {{ cost.price }} руб.
-              </span>
-              <span>
-                Кол-во: <a-input-number v-model:value="selectedByUser[index].count" :min="0"
-                  placeholder="чел"></a-input-number>
-              </span>
+          <a-row :gutter="[16, 16]">
+            <a-col :span="12">
+              Фaмилия Имя
+              <a-input
+                style="width: 100%"
+                v-model:value="userInfo.fullname"
+                placeholder="Иванов Иван Иванович"
+              />
             </a-col>
-            <a-col :span="24">
-              <b>Итого: </b> {{ finalCost }} руб.
+            <a-col :span="12">
+              Телефон
+              <a-input
+                style="width: 100%"
+                v-model:value="userInfo.phone"
+                placeholder="79127528874"
+              />
             </a-col>
           </a-row>
 
           <a-row class="mt-16">
+            <a-col
+              :span="24"
+              v-for="(cost, index) of trip.cost"
+              :key="index"
+              style="display: flex; justify-content: space-between"
+            >
+              <b>
+                {{ cost.first }}
+              </b>
+              <span> Цена: {{ cost.price }} руб. </span>
+              <span>
+                Кол-во:
+                <a-input-number
+                  v-model:value="selectedByUser[index].count"
+                  :min="0"
+                  placeholder="чел"
+                ></a-input-number>
+              </span>
+            </a-col>
+            <a-col :span="24"> <b>Итого: </b> {{ finalCost }} руб. </a-col>
+          </a-row>
+          <a-row class="mt-16">
             <a-col :span="24">
-              <a-button class="mr-4" type="primary" @click="buyTrip(true)"> оплатить сейчас </a-button>
+              <a-button class="mr-4" type="primary" @click="buyTrip(true)">
+                оплатить сейчас
+              </a-button>
               <a-button @click="buyTrip(false)"> оплатить позже </a-button>
             </a-col>
           </a-row>
@@ -207,7 +305,7 @@ img {
   display: flex;
 }
 
-.ant-row>.ant-col {
+.ant-row > .ant-col {
   margin-bottom: 8px;
 }
 
