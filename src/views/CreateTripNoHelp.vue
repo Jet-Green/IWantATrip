@@ -111,9 +111,6 @@ function submit() {
       router.push("/trips");
     }
     TripService.uploadTripImages(imagesFormData).then((res) => {
-      console.log(
-        res.data
-      );
       Object.assign(form, {
         name: "",
         start: null,
