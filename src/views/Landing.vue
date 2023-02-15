@@ -7,12 +7,14 @@ import FindTrip from "../components/sections/FindTrip.vue";
 import Explanation from "../components/sections/Explanation.vue";
 import Information from "../components/sections/Information.vue";
 import ToTrips from "../components/sections/ToTrips.vue";
+import Hello from '../components/sections/Hello.vue';
 </script>
 <template>
   <div>
     <MainPageMessage />
     <Explanation />
-    <Information />
+    <Hello />
+    <!-- <Information /> -->
 
     <!-- <CreateTrip /> -->
     <ToTrips />

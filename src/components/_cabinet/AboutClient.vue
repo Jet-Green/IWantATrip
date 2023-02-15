@@ -1,18 +1,18 @@
 <script setup>
+import { computed } from 'vue'
 import { useAuth } from "../../stores/auth";
 
 const userStore = useAuth();
-const user = userStore.user;
-const info = user.fullinfo;
+const user = computed(() => userStore.user);
+
+const info = computed(() => userStore.user?.fullinfo);
 </script>
 <template>
-  <div v-if="info">
+  <div v-if="info && user">
     <a-row>
-      <a-avatar
-        style="margin-right: 8px; font-size: large; font-weight: bold"
-        size="large"
-        >{{ user.fullname[0] }}</a-avatar
-      >
+      <a-avatar style="margin-right: 8px; font-size: large; font-weight: bold" size="large">{{
+        user.fullname[0]
+      }}</a-avatar>
       <h3 style="font-size: 28px; font-weight: bold">{{ user.fullname }}</h3>
     </a-row>
 
@@ -34,7 +34,7 @@ const info = user.fullinfo;
 
       <a-col :xs="11" :md="8" :lg="5">
         <a-typography-text type="secondary">Название фирмы</a-typography-text>
-        <h5 style="font-size: 16px">{{ info.companyName ? info.companyName : "**********"}}</h5>
+        <h5 style="font-size: 16px">{{ info.companyName ? info.companyName : "**********" }}</h5>
       </a-col>
     </a-row>
 
@@ -46,8 +46,8 @@ const info = user.fullinfo;
             info.creatorsType == "author"
               ? "Автор тура"
               : info.creatorsType == "operator"
-              ? "Туроператор"
-              : "Турагенство"
+                ? "Туроператор"
+                : "Турагенство"
           }}
         </h5>
       </a-col>
@@ -59,15 +59,15 @@ const info = user.fullinfo;
             info.type == "phys"
               ? "Физическое лицо"
               : info.type == "company"
-              ? "Юридическое лицо"
-              : "Индивидуальный предприниматель"
+                ? "Юридическое лицо"
+                : "Индивидуальный предприниматель"
           }}
         </h5>
       </a-col>
 
       <a-col :xs="11" :md="8" :lg="5">
         <a-typography-text type="secondary">ИНН</a-typography-text>
-        <h5 style="font-size: 16px">{{ info.govermentRegNumber ? info.govermentRegNumber : "**********"}}</h5>
+        <h5 style="font-size: 16px">{{ info.govermentRegNumber ? info.govermentRegNumber : "**********" }}</h5>
       </a-col>
     </a-row>
   </div>
