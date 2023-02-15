@@ -10,6 +10,9 @@ function deleteGuideEls() {
 function deleteAllCompanions() {
   axios.get(import.meta.env.VITE_API_URL + "/companion/clear")
 }
+function dropDatabase() {
+  axios.get(import.meta.env.VITE_API_URL + "/app-state/drop")
+}
 </script>
 <template>
   <div class="d-flex align-center direction-column">
@@ -22,8 +25,8 @@ function deleteAllCompanions() {
     <a-button type="primary" size="large" class="ma-16 lets_go_btn" @click="deleteAllCompanions">
       Удалить попутчиков
     </a-button>
-    <a-button type="primary" size="large" class="ma-16 lets_go_btn">
-      Что-то еще
+    <a-button type="primary" size="large" class="ma-16 lets_go_btn" @click="dropDatabase">
+      drop database
     </a-button>
   </div>
 </template>
