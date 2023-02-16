@@ -117,6 +117,14 @@ function routeTo(buttonRoute) {
     -webkit-box-shadow: 1px 1px 13px 0px rgba(0, 0, 0, 0.75);
     -moz-box-shadow: 1px 1px 13px 0px rgba(0, 0, 0, 0.75);
   }
+  @media (max-width: 768px) {
+    aspect-ratio: 3/2;
+    border-radius: 10px;
+    .help-text {
+      font-size: 9px;
+      opacity: 1;
+    }
+  }
 }
 .create {
   background: linear-gradient(rgb(32, 95, 121), rgb(34, 117, 151));
