@@ -60,16 +60,29 @@ const clearData = (dataString) => {
     day: "2-digit",
   });
 };
-
+let customers = ref([])
 onMounted(async () => {
   for (let _id of tripsIds.value) {
     let res = await tripStore.getById(_id);
+
     if (res.data) {
+      let billsListFromDB = res.data.billsList
+
+      let customersIds = []
+      for (let bill of billsListFromDB) {
+        customersIds.push(bill.userId)
+      }
+
+      if (customersIds.length) {
+        let { data } = await tripStore.getCustomers(customersIds)
+        res.data.customers = data
+      }
+
       trips.value.push(res.data);
       visibleBills.value.push(false)
-      console.log(res.data);
     }
   }
+
 });
 </script>
 <template>
@@ -84,7 +97,7 @@ onMounted(async () => {
         <a-col :md="4" :xs="8">действия</a-col>
       </a-row>
 
-      <a-row v-for="(trip, index) of trips" :key="index" class="mt-4 pa-8"
+      <a-row v-if="trips.length > 0" v-for="(trip, index) of trips" :key="index" class="mt-4 pa-8"
         :class="[index % 2 ? 'odd' : 'even', trip.isHidden ? 'overlay' : '']">
         <a-col :md="2" :xs="4">
           <img :src="trip.images[0]" @click="goToTripPage(trip._id)" />
@@ -113,8 +126,70 @@ onMounted(async () => {
           </div>
         </a-col>
         <transition name="fade">
-          <a-col v-if="visibleBills[index]">
-            {{ trip.billsList }}
+          <a-col :span="24" v-if="visibleBills[index]">
+            <a-row style="display: flex; justify-content: space-between;">
+              <a-col :xs="24" :md="12" :lg="8" class="pa-4" v-for="(BILL, bill_index) of trip.billsList">
+                <a-popover placement="bottom" trigger="click">
+                  <template #content>
+                    <a-row>
+                      <a-col :span="24" v-for="cartItem of BILL.cart">
+                        {{ cartItem.costType }} {{ cartItem.cost }} руб. {{ cartItem.count }} шт.
+                        <a-divider class="ma-0" v-if="BILL.cart.length > 1" />
+                      </a-col>
+                    </a-row>
+                  </template>
+                  <a-card hoverable v-if="trip.customers[bill_index]" class="pa-8">
+                    <a-row>
+                      <a-col :span="12">
+                        <a-row>
+                          <a-col :span="24">
+                            <span class="mdi mdi-account-outline" style="font-size: 20px;"></span>
+                            {{ trip.customers[bill_index].fullname }}
+                          </a-col>
+                          <a-col :span="24">
+                            <span class="mdi mdi-phone-outline" style="font-size: 20px;"></span>
+                            {{ trip.customers[bill_index].phone }}
+                          </a-col>
+                          <a-col :span="24">
+                            <b>
+                              <span v-if="BILL.isBoughtNow" style="color: #BCC662">
+                                <span class="mdi mdi-check-all" style="font-size: 20px;"></span>
+                                оплачен
+                              </span>
+                              <span v-else style="display: flex; align-items: center;">
+                                <span class="mdi mdi-close" style="font-size: 20px;"></span>
+                                не оплачен
+                              </span>
+                            </b>
+                          </a-col>
+                        </a-row>
+                      </a-col>
+                      <a-col :span="12">
+                        <a-row v-if="BILL.cart">
+                          <a-col :span="24">
+                            <span class="mdi mdi-account-group" style="font-size: 20px;"></span>
+                            {{
+                              BILL.cart.reduce((accumulator, object) => {
+                                return accumulator + object.count;
+                              }, 0)
+                            }}
+                          </a-col>
+                          <a-col :span="24">
+                            <span class="mdi mdi-cash" style="font-size: 20px;"></span>
+                            {{
+  BILL.cart.reduce((accumulator, object) => {
+    return accumulator + object.cost *
+      object.count;
+  }, 0)
+                            }} ₽
+                          </a-col>
+                        </a-row>
+                      </a-col>
+                    </a-row>
+                  </a-card>
+                </a-popover>
+              </a-col>
+            </a-row>
           </a-col>
         </transition>
       </a-row>
@@ -157,6 +232,5 @@ img {
   height: 50px;
   aspect-ratio: 270/175;
   object-fit: cover;
-
 }
 </style>

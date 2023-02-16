@@ -1,11 +1,17 @@
 import $api from "../plugins/axios";
 
 export default {
+    async getCustomers(ids) {
+        return $api.post('/trips/get-customers', ids)
+    },
     async fetchTrips() {
         return $api.get('/trips/get-all')
     },
     async searchTrips(req) {
         return $api.post(`/trips/search`, req)
+    },
+    async getById(_id) {
+        return $api.get(`/trips/get-by-id?_id=${_id}`)
     },
 
     async deleteTrip(_id) {

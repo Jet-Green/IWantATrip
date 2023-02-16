@@ -41,7 +41,6 @@ export const useAuth = defineStore('auth', {
         async buyTrip(tripId, bill) {
             try {
                 let { data } = await UserService.buyTrip(tripId, bill)
-
                 this.user.boughtTrips.push(data)
                 return
             } catch (error) {
@@ -80,8 +79,8 @@ export const useAuth = defineStore('auth', {
         },
         async checkAuth() {
             try {
+                //использовать service для вызова
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/auth/refresh`, { withCredentials: true })
-
                 localStorage.setItem('token', response.data.accessToken);
 
                 this.isAuth = true;

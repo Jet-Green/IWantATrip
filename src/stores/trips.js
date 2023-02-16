@@ -40,10 +40,13 @@ export const useTrips = defineStore('trips', {
             }
         },
         getById(_id) {
-            return axios.get(`${import.meta.env.VITE_API_URL}/trips/get-by-id?_id=${_id}`)
+            return TripService.getById( _id )
         },
         deleteById(_id) {
             return TripService.deleteTrip({ _id: _id });
+        },
+        getCustomers(ids) {
+            return TripService.getCustomers(ids)
         }
     },
 })
