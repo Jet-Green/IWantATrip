@@ -78,10 +78,10 @@ function routeTo(buttonRoute) {
               style="width: 100%; height: 100%"
               class="big-button city-guide"
             >
-              <div>Гид по городу</div>
+              <div>По городу</div>
               <div class="help-text">
                 узнайте город <br />
-                получите от отдыха всё
+              отдохните по полной
               </div>
             </div>
           </a>
@@ -96,12 +96,13 @@ function routeTo(buttonRoute) {
   width: 100%;
   aspect-ratio: 3/1;
   background: grey;
-  opacity: 0.8;
+  opacity: 0.9;
   box-shadow: 5px 5px 13px 0px rgba(0, 0, 0, 0.75);
   -webkit-box-shadow: 5px 5px 13px 0px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 5px 5px 13px 0px rgba(0, 0, 0, 0.75);
   cursor: pointer;
   border-radius: 25px;
+  font-size: clamp(0.875rem, 0.5725rem + 0.6303vw, 1.25rem);
   color: white;
   display: flex;
   justify-content: center;
@@ -109,7 +110,7 @@ function routeTo(buttonRoute) {
   flex-direction: column;
   text-transform: uppercase;
   &:hover {
-    opacity: 0.9;
+    opacity: 0.8;
   }
   &:active {
     opacity: 1;
@@ -120,10 +121,7 @@ function routeTo(buttonRoute) {
   @media (max-width: 768px) {
     aspect-ratio: 3/2;
     border-radius: 10px;
-    .help-text {
-      font-size: 9px;
-      opacity: 1;
-    }
+ 
   }
 }
 .create {
@@ -147,8 +145,8 @@ function routeTo(buttonRoute) {
   align-items: flex-end;
 }
 .help-text {
-  font-size: 10px;
-  opacity: 0.8;
+  font-size: clamp(0.75rem, 0.5483rem + 0.4202vw, 1rem);
   text-align: center;
+  text-transform: lowercase;
 }
 </style>

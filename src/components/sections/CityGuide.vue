@@ -1,63 +1,60 @@
 <script setup>
 import { ref } from "vue";
-import toSee from "../../assets/icons/to-see.svg";
-import entertainment from "../../assets/icons/entertainment.svg";
-import food from "../../assets/icons/food.svg";
-import hotel from "../../assets/icons/hotel.svg";
-import poster from "../../assets/icons/poster.svg";
-import guide from "../../assets/icons/guide.svg";
-import heart from "../../assets/icons/heart.svg";
-import sport from "../../assets/icons/sport.svg";
 
 let cards = [
   {
     title: "Что посмотреть",
-    icon: toSee,
+    icon: "mdi-eiffel-tower",
     route: "/watch",
   },
   {
-    title: "Где поесть",
-    icon: food,
+    title: "Еда",
+    icon: "mdi-food-outline",
     route: "/eat",
   },
   {
-    title: "Где остановиться",
-    icon: hotel,
+    title: "Жилье",
+    icon: "mdi-home-city-outline",
     route: "/stay",
   },
   {
     title: "Афиша",
-    icon: poster,
+    icon: "mdi-movie-roll",
     route: "/poster",
   },
   {
     title: "Экскурсии",
-    icon: guide,
+    icon: "mdi-crowd",
     route: "/excurs",
   },
   {
     title: "Развлечения",
-    icon: entertainment,
+    icon: "mdi-human-female-dance",
     route: "/enter",
   },
-  {
-    title: "Спорт и красота",
-    icon: sport,
-    route: "/sport",
-  },
-  {
-    title: "Отдых и здоровье",
-    icon: heart,
-    route: "/relax",
-  },
+  // {
+  //   title: "Спорт",
+  //   icon: "sport",
+  //   route: "/sport",
+  // },
+  // {
+  //   title: "Красота",
+  //   icon: "sport",
+  //   route: "/sport",
+  // },
+  // {
+  //   title: "Здоровье",
+  //   icon: "heart",
+  //   route: "/relax",
+  // },
   {
     title: "Гиды",
-    icon: heart,
+    icon: "mdi-human-greeting-proximity",
     route: "/guides",
   },
   {
     title: "Сувениры",
-    icon: heart,
+    icon: "mdi-gift-outline",
     route: "/souvenirs",
   },
 ];
@@ -73,36 +70,35 @@ const handleChange = (value) => {
 </script>
 
 <template>
-  <a-row type="flex" justify="center" style="background-color: #f6f6f6">
-    <a-col :xs="22" :lg="16">
-      <a-row>
-        <a-col :xs="12" :offset="6"
-          ><h2 style="text-align: center" class="mt-16">Гид по городу</h2></a-col
-        >
-        <a-col class="d-flex justify-center align-center" :xs="6">
-          <a-select
-            class="guide-select"
-            v-model:value="city"
-            :focus="focus"
-            @change="handleChange"
-            :bordered="false"
-          >
-            <a-select-option value="glazov"> Глазов </a-select-option>
-            <a-select-option value="izhevsk"> Ижевск </a-select-option>
-            <a-select-option value="perm"> Пермь </a-select-option>
-          </a-select>
-        </a-col>
-      </a-row>
-      <a-row type="flex" justify="space-around">
-        <a-col v-for="(card, index) in cards" :key="index" class="mb-16">
+  <a-row style="background-color: #f6f6f6" class="pa-16 justify-center">
+    <a-col :xs="24" :md="20" :xl="16">
+      <h2 style="text-align: center; margin-bottom: 0">Гид по городу</h2>
 
+      <div class="d-flex justify-center align-center">
+        <a-select
+          class="guide-select"
+          v-model:value="city"
+          :focus="focus"
+          @change="handleChange"
+          :bordered="false"
+        >
+          <a-select-option value="glazov"> Глазов </a-select-option>
+          <a-select-option value="izhevsk"> Ижевск </a-select-option>
+          <a-select-option value="perm"> Пермь </a-select-option>
+        </a-select>
+      </div>
+
+      <a-row :gutter="[12, 12]" class="justify-center">
+        <a-col v-for="(card, index) in cards" :key="index" :xs="12" :md="8">
           <router-link :to="card.route">
-            <div class="guide-card ma-4">
-              <img :src="card.icon" alt="icon" class="guide-icon" />
-              <p style="margin: 0 16px 0 0">
-                {{ card.title }}
-              </p>
-            </div>
+            <a-card hoverable class="guide-card">
+              <div>
+                <span class="mdi" :class="card.icon"> </span>
+                <span>
+                  {{ card.title }}
+                </span>
+              </div>
+            </a-card>
           </router-link>
         </a-col>
       </a-row>
@@ -110,24 +106,26 @@ const handleChange = (value) => {
   </a-row>
 </template>
 <style lang="scss" scoped>
-.guide-icon {
-  height: 70px;
-  padding: 16px;
+.guide-select {
+  font-size: 20px;
+  margin-bottom: 16px;
 }
 .guide-card {
-  cursor: pointer;
-  background-color: white;
-  border-radius: 20px;
-  height: 100%;
-  width: 200px;
+  font-size: clamp(1rem, 0.7983rem + 0.4202vw, 1.25rem);
   display: flex;
   align-items: center;
-  font-size: clamp(12px, 2vw, 14px);
-}
-
-.guide-select {
-  text-transform: uppercase;
-  font-size: clamp(14px, 2vw, 20px);
-  font-weight: bold;
+  justify-content: center;
+  width: 100%;
+  border-radius: 10px;
+  aspect-ratio: 3/1;
+  position: relative;
+  padding: 8px;
+  .mdi{
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: clamp(1.5rem, 1.1975rem + 0.6303vw, 1.875rem);
+    color:rgb(32, 95, 121);
+  }
 }
 </style>
