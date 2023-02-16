@@ -3,7 +3,7 @@ import { ref } from "vue";
 
 let cards = [
   {
-    title: "Что посмотреть",
+    title: "Посмотреть",
     icon: "mdi-eiffel-tower",
     route: "/watch",
   },
@@ -88,7 +88,7 @@ const handleChange = (value) => {
         </a-select>
       </div>
 
-      <a-row :gutter="[12, 12]" class="justify-center">
+      <a-row :gutter="[8, 8]" class="justify-center">
         <a-col v-for="(card, index) in cards" :key="index" :xs="12" :md="8">
           <router-link :to="card.route">
             <a-card hoverable class="guide-card">
