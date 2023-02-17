@@ -128,12 +128,12 @@ onMounted(() => {
   <div style="overflow-x: hidden">
     <BackButton :backRoute="backRoute" />
     <a-row class="justify-center d-flex" >
-      <a-col :xs="24" :md="22" :xl="16">
+      <a-col :xs="22" :xl="16">
         <h2 class="ma-0">{{ trip.name }}</h2>
         <a-spin v-if="!trip._id" size="large"></a-spin>
         <a-row v-if="trip._id" :gutter="[12, 12]" class="text justify-center d-flex">
           <!-- добавить карусель фотографий -->
-          <a-col :xs="24" :md="12">
+          <a-col :xs="22" :md="12">
             <a-carousel arrows dots-class="slick-dots slick-thumb">
               <template #customPaging="props">
                 <a>
