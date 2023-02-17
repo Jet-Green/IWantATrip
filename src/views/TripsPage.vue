@@ -15,11 +15,14 @@ const route = useRoute();
   <div>
     <BackButton />
     <a-row type="flex" justify="center">
-      <a-col :xs="22" :lg="12">
+      <a-col :xs="22">
         <h2>Туры</h2>
+        
       </a-col>
+
     </a-row>
     <TripFilter :search="route.query.search" />
+    
     <TripsList />
   </div>
 </template>

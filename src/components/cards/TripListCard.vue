@@ -24,7 +24,7 @@ const clearData = (dataString) => {
 <template>
   <!-- <span class="mdi mdi-12px mdi-close" style="color: #245159; cursor: pointer; float: right"
     @click="tripToDelete(trip._id)"></span> -->
-  <div @click="goToTripPage" style="max-width: 270px">
+  <div @click="goToTripPage" >
     <div class="title">{{ trip.name }}</div>
     <a-badge-ribbon :text="`${trip.cost.length ? trip.cost[0].price : 0} руб`" color="ff6600">
       <a-card hoverable>

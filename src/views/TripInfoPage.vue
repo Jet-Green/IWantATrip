@@ -173,13 +173,13 @@ onMounted(() => {
             </div>
             <div>
               Цена
-              <span
+              <div
                 v-for="(item, index) in trip.cost"
                 :key="index"
                 class="cost"
               >
                 {{ item.first }} : <b>{{ item.price }} руб.</b>
-              </span>
+            </div>
             </div>
             <div class="d-flex justify-center ma-8">
                <a-button
