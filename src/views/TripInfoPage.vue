@@ -5,8 +5,8 @@ import BackButton from "../components/BackButton.vue";
 import { useTrips } from "../stores/trips";
 import { useAuth } from "../stores/auth";
 import { message } from "ant-design-vue";
-import { useRouter } from 'vue-router';
-const router = useRouter()
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 const route = useRoute();
 
@@ -127,7 +127,6 @@ onMounted(() => {
 <template>
   <div style="overflow-x: hidden">
     <BackButton :backRoute="backRoute" />
-
     <a-row v-if="!trip._id">
       <a-col :span="24" class="d-flex justify-center">
         <a-spin size="large"></a-spin>
@@ -138,11 +137,10 @@ onMounted(() => {
       v-else
       display="flex"
       justify="center"
-      :gutter="[16, 16]"
       style="font-size: clamp(14px, 2.5vw, 16px)"
     >
-      <a-col :xs="24" :lg="24" class="title">
-        <h1>{{ trip.name }}</h1>
+      <a-col :xs="24" class="title">
+        <h1 class="ma-0">{{ trip.name }}</h1>
       </a-col>
       <!-- добавить карусель фотографий -->
       <a-col :xs="24" :lg="8">
@@ -168,23 +166,20 @@ onMounted(() => {
         </a-carousel>
       </a-col>
       <a-col :xs="22" :lg="8" class="content">
-        <a-row display="flex">
+        <a-row>
           <a-col :xs="22" :lg="16" class="description">
             <span v-html="trip.offer"></span>
           </a-col>
 
           <a-col
-            :xs="22"
+            :xs="24"
             :lg="16"
             class="time"
             style="display: flex; flex-direction: column"
           >
-            <span style="display: flex; flex-wrap: nowrap"
-              >Продолжительность:
-              <p class="ml-8 mb-4">
-                <b>{{ trip.duration }} дней</b>
-              </p>
-            </span>
+            <div
+              >Продолжительность: <b>{{ trip.duration }} дн.</b>
+            </div>
             <span style="display: flex; flex-wrap: nowrap"
               >Ближайший выезд:
               <p class="ml-8 mb-4">
@@ -309,10 +304,7 @@ img {
   margin-bottom: 8px;
 }
 
-.title {
-  display: flex;
-  justify-content: center;
-}
+
 
 .ant-carousel :deep(.slick-dots) {
   position: relative;
