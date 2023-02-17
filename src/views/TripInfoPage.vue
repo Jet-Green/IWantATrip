@@ -196,7 +196,7 @@ onMounted(() => {
           </a-col>
 
          
-          <a-col :xs="22" :md="24" >
+          <a-col :xs="24"  >
             <span v-html="trip.description"></span>
           </a-col>
         </a-row>
