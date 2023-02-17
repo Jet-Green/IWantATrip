@@ -40,5 +40,9 @@ const clearData = (dataString) => {
   </div>
 </template>
 <style lang="scss" scoped>
-
+.title {
+  font-size: 16px;
+  text-transform: uppercase;
+  color: black;
+}
 </style>
