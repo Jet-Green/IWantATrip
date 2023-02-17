@@ -133,7 +133,7 @@ onMounted(() => {
         <a-spin v-if="!trip._id" size="large"></a-spin>
         <a-row v-if="trip._id" :gutter="[12, 12]" class="text justify-center d-flex">
           <!-- добавить карусель фотографий -->
-          <a-col :xs="22" :md="12">
+          <a-col :xs="24" :md="12">
             <a-carousel arrows dots-class="slick-dots slick-thumb">
               <template #customPaging="props">
                 <a>
@@ -155,7 +155,7 @@ onMounted(() => {
               </template>
             </a-carousel>
           </a-col>
-          <a-col :xs="22" :md="12" class="pa-8" >
+          <a-col :xs="24" :md="12" class="pa-8" >
             <p>{{ trip.offer }}</p>
             <div>
               Продолжительность: <b>{{ trip.duration }} дн.</b>
