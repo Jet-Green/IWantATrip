@@ -56,22 +56,20 @@ const ageString = (age) => {
       <a-col :lg="16" :xs="22">
         <a-row :gutter="[8, 8]">
           <a-col
-            :lg="6"
-            :md="8"
+            :lg="8"
+         
             :sm="12"
-            :xs="12"
+            :xs="24"
             v-for="(companion, i) in companionStore.companions"
             :key="i"
           >
             <a-card class="card">
               <div>
                 <span class="mdi mdi-human-male-female"></span
-                >{{ companion.name }}
-              </div>
-              <div>
-                <span class="mdi mdi-human-cane"></span
+                >{{ companion.name }} <span class="mdi mdi-human-cane"></span
                 >{{ ageString(companion.age) }}
               </div>
+          
               <div>
                 <span class="mdi mdi-compass-outline"></span
                 >{{ companion.direction }}
@@ -82,12 +80,10 @@ const ageString = (age) => {
               </div>
               <div>
                 <span class="mdi mdi-calendar-arrow-right"></span>
-                {{ `c ${clearData(companion.start)}` }}
-              </div>
-              <div>
-                <span class="mdi mdi-calendar-arrow-left"></span
+                {{ `c ${clearData(companion.start)}` }} <span class="mdi mdi-calendar-arrow-left"></span
                 >{{ `по ${clearData(companion.end)}` }}
               </div>
+           
               <div>
                 <span class="mdi mdi-list-status"></span
                 >{{ companion.description }}
@@ -159,8 +155,8 @@ const ageString = (age) => {
   }
   .accept {
     position: absolute;
-    top: 4px;
-    right: 4px;
+    top: -6px;
+    right: -6px;
     display: flex;
     justify-content: center;
     align-items: center;
