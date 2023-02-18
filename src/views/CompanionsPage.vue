@@ -44,7 +44,7 @@ const ageString = (age) => {
     <a-row type="flex" justify="center">
       <a-col class="d-flex justify-center">
         <a-button
-          class="lets_go_btn ma-16"
+          class="lets_go_btn mb-4"
           type="primary"
           size="large"
           @click="router.push('/add-companion')"
