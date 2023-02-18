@@ -202,7 +202,7 @@ onMounted(() => {
     </a-row>
 
     <a-modal v-model:visible="buyDialog" :footer="null">
-      <a-row :gutter="[8, 8]">
+      <a-row :gutter="[4, 4]">
         <a-col :span="24">
           Фaмилия Имя
           <a-input
@@ -225,7 +225,7 @@ onMounted(() => {
           <div class="d-flex  space-around align-center">
             {{ cost.first }}<span>{{ cost.price }} руб. </span>
             <div class="d-flex direction-column">
-              <span>кол-во</span>
+              <span style="font-size: 8px;">кол-во</span>
               <a-input-number
                 v-model:value="selectedByUser[index].count"
                 :min="0"
