@@ -127,11 +127,15 @@ onMounted(() => {
 <template>
   <div style="overflow-x: hidden">
     <BackButton :backRoute="backRoute" />
-    <a-row class="justify-center d-flex" >
+    <a-row class="justify-center d-flex">
       <a-col :xs="22" :xl="16">
         <h2 class="ma-0">{{ trip.name }}</h2>
         <a-spin v-if="!trip._id" size="large"></a-spin>
-        <a-row v-if="trip._id" :gutter="[12, 12]" class="text justify-center d-flex">
+        <a-row
+          v-if="trip._id"
+          :gutter="[12, 12]"
+          class="text justify-center d-flex"
+        >
           <!-- добавить карусель фотографий -->
           <a-col :xs="24" :md="12">
             <a-carousel arrows dots-class="slick-dots slick-thumb">
@@ -155,7 +159,7 @@ onMounted(() => {
               </template>
             </a-carousel>
           </a-col>
-          <a-col :xs="24" :md="12" class="pa-8" >
+          <a-col :xs="24" :md="12" class="pa-8">
             <p>{{ trip.offer }}</p>
             <div>
               Продолжительность: <b>{{ trip.duration }} дн.</b>
@@ -173,93 +177,79 @@ onMounted(() => {
             </div>
             <div>
               Цена
-              <div
-                v-for="(item, index) in trip.cost"
-                :key="index"
-                class="cost"
-              >
+              <div v-for="(item, index) in trip.cost" :key="index" class="cost">
                 {{ item.first }} : <b>{{ item.price }} руб.</b>
-            </div>
+              </div>
             </div>
             <div class="d-flex justify-center ma-8">
-               <a-button
-              type="primary"
-              class="lets_go_btn"
-              size="large"
-              style="display: flex; justify-content: center"
-              @click="buyTripDialog()"
-            >
-              Купить
-            </a-button>
+              <a-button
+                type="primary"
+                class="lets_go_btn"
+                size="large"
+                style="display: flex; justify-content: center"
+                @click="buyTripDialog()"
+              >
+                Купить
+              </a-button>
             </div>
-           
           </a-col>
 
-         
-          <a-col :xs="24"  >
+          <a-col :xs="24">
             <span v-html="trip.description"></span>
           </a-col>
         </a-row>
       </a-col>
     </a-row>
-    <a-col :xs="22" :lg="16" class="actions">
-            <a-modal v-model:visible="buyDialog" :footer="null">
-              <a-row :gutter="[16, 16]">
-                <a-col :span="12">
-                  Фaмилия Имя
-                  <a-input
-                    style="width: 100%"
-                    v-model:value="userInfo.fullname"
-                    placeholder="Иванов Иван Иванович"
-                  />
-                </a-col>
-                <a-col :span="12">
-                  Телефон
-                  <a-input
-                    style="width: 100%"
-                    v-model:value="userInfo.phone"
-                    placeholder="79127528874"
-                  />
-                </a-col>
-              </a-row>
 
-              <a-row class="mt-16">
-                <a-col
-                  :span="24"
-                  v-for="(cost, index) of trip.cost"
-                  :key="index"
-                  style="display: flex; justify-content: space-between"
-                >
-                  <b>
-                    {{ cost.first }}
-                  </b>
-                  <span> Цена: {{ cost.price }} руб. </span>
-                  <span>
-                    Кол-во:
-                    <a-input-number
-                      v-model:value="selectedByUser[index].count"
-                      :min="0"
-                      placeholder="чел"
-                    ></a-input-number>
-                  </span>
-                </a-col>
-                <a-col :span="24"> <b>Итого: </b> {{ finalCost }} руб. </a-col>
-              </a-row>
-              <a-row class="mt-16">
-                <a-col :span="24">
-                  <a-button class="mr-4" type="primary" @click="buyTrip(true)">
-                    оплатить сейчас
-                  </a-button>
-                  <a-button @click="buyTrip(false)"> оплатить позже </a-button>
-                </a-col>
-              </a-row>
-            </a-modal>
-          </a-col>
+    <a-modal v-model:visible="buyDialog" :footer="null">
+      <a-row :gutter="[8, 8]">
+        <a-col :span="24">
+          Фaмилия Имя
+          <a-input
+            style="width: 100%"
+            v-model:value="userInfo.fullname"
+            placeholder="Иванов Иван Иванович"
+          />
+        </a-col>
+        <a-col :span="24">
+          Телефон
+          <a-input
+            style="width: 100%"
+            v-model:value="userInfo.phone"
+            placeholder="79127528874"
+          />
+        </a-col>
+
+        <a-col :span="24" v-for="(cost, index) of trip.cost" :key="index">
+          <div>Цена</div>
+          <div class="d-flex  space-around align-center">
+            {{ cost.first }}<span>{{ cost.price }} руб. </span>
+            <div class="d-flex direction-column">
+              <span>кол-во</span>
+              <a-input-number
+                v-model:value="selectedByUser[index].count"
+                :min="0"
+                placeholder="чел"
+              ></a-input-number>
+            </div>
+          </div>
+        </a-col>
+        <a-col :span="24">
+          <b>Итого: {{ finalCost }} руб.</b>
+        </a-col>
+
+        <a-col :span="24">
+          <div>Оплатить</div>
+          <div class="d-flex space-around">
+            <a-button type="primary" @click="buyTrip(true)"> сейчас </a-button>
+            <a-button @click="buyTrip(false)"> потом </a-button>
+          </div>
+        </a-col>
+      </a-row>
+    </a-modal>
   </div>
 </template>
 <style lang="scss" scoped>
-
-
 img {
   width: 100%;
   aspect-ratio: 270/175;
@@ -269,8 +259,6 @@ img {
 // .coster:nth-of-type(1n + 2) {
 //   display: flex;
 // }
-
-
 
 .ant-carousel :deep(.slick-dots) {
   position: relative;
@@ -311,14 +299,14 @@ img {
   height: 50px;
   opacity: 1;
   z-index: 1;
-  top: 45%;
+  top: 40%;
 }
 
-.ant-carousel :deep(.custom-slick-arrow:before) {
-  display: none;
-}
+// .ant-carousel :deep(.custom-slick-arrow:before) {
+//   display: none;
+// }
 
-.ant-carousel :deep(.custom-slick-arrow:hover) {
-  opacity: 0.8;
-}
+// .ant-carousel :deep(.custom-slick-arrow:hover) {
+//   opacity: 0.8;
+// }
 </style>

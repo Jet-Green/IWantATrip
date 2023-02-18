@@ -72,17 +72,12 @@ function routeTo(buttonRoute) {
           ><img src="../../assets/images/trees.png" alt="" style="height: 30%"
         /></a-col>
 
-        <a-col :xs="10">
-          <a href="#guide">
-            <div
-              style="width: 100%; height: 100%"
-              class="big-button city-guide"
-            >
-              <div>По городу</div>
-              <div class="help-text">
-                узнайте город <br />
+        <a-col :xs="10" class="big-button city-guide">
+          <a href="#guide" style="width: 100%; height: 100%">
+            <div>По городу</div>
+            <div class="help-text">
+              узнайте город <br />
               отдохните по полной
-              </div>
             </div>
           </a>
         </a-col>
@@ -109,6 +104,13 @@ function routeTo(buttonRoute) {
   align-items: center;
   flex-direction: column;
   text-transform: uppercase;
+  a {
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
   &:hover {
     opacity: 0.8;
   }
@@ -121,7 +123,6 @@ function routeTo(buttonRoute) {
   @media (max-width: 768px) {
     aspect-ratio: 3/2;
     border-radius: 10px;
- 
   }
 }
 .create {
