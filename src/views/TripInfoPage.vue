@@ -203,7 +203,7 @@ onMounted(() => {
 
     <a-modal v-model:visible="buyDialog" :footer="null">
       <a-row :gutter="[4, 4]">
-        <a-col :span="24">
+        <a-col :span="24" :md="12">
           Фaмилия Имя
           <a-input
             style="width: 100%"
@@ -211,7 +211,7 @@ onMounted(() => {
             placeholder="Иванов Иван Иванович"
           />
         </a-col>
-        <a-col :span="24">
+        <a-col :span="24" :md="12">
           Телефон
           <a-input
             style="width: 100%"
@@ -220,9 +220,9 @@ onMounted(() => {
           />
         </a-col>
 
-        <a-col :span="24" v-for="(cost, index) of trip.cost" :key="index">
+        <a-col :span="24">
           <div>Цена</div>
-          <div class="d-flex  space-around align-center">
+          <div class="d-flex  space-around align-center" v-for="(cost, index) of trip.cost" :key="index">
             {{ cost.first }}<span>{{ cost.price }} руб. </span>
             <div class="d-flex direction-column">
               <span style="font-size: 8px;">кол-во</span>
