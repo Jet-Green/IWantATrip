@@ -27,16 +27,16 @@ const form = reactive({
 });
 function submit() {
   let toSend = Object.assign(form)
-  toSend.start = new Date(form.start).getTime()  
-  toSend.end = new Date(form.end).getTime() 
+  toSend.start = new Date(form.start).getTime()
+  toSend.end = new Date(form.end).getTime()
 
   CompanionService.createCompanion(toSend).then((res) => {
     const _id = res.data._id;
-    axios.post(`http://localhost:4089/add-companion?name=${form.name}`)
+    // axios.post(`http://localhost:4089/add-companion?name=${form.name}`)
     userStore
       .updateUser({
         email: userStore.user.email,
-        $push: { companionRequests: _id },
+        $push: { createdCompanions: _id },
       })
       .then((response) => {
         Object.assign(form, {
@@ -60,7 +60,7 @@ function submit() {
         console.log(err);
       });
   });
-  
+
 }
 </script>
 
@@ -97,11 +97,8 @@ function submit() {
 
           <a-col :span="12" class="d-flex align-center" style="flex-wrap: wrap">
             Пол
-            <a-radio-group
-              v-model:value="form.gender"
-              name="radioGroup"
-              style="width: -moz-available; width: -webkit-fill-available"
-            >
+            <a-radio-group v-model:value="form.gender" name="radioGroup"
+              style="width: -moz-available; width: -webkit-fill-available">
               <a-radio :value="'Male'">Мужчина</a-radio>
               <a-radio :value="'Female'">Женщина</a-radio>
             </a-radio-group>
@@ -109,23 +106,13 @@ function submit() {
 
           <a-col :span="12">
             Дата начала
-            <a-date-picker
-              v-model:value="form.start"
-              style="width: 100%"
-              placeholder="Начало"
-              :locale="ruLocale"
-              :format="dateFormatList"
-            />
+            <a-date-picker v-model:value="form.start" style="width: 100%" placeholder="Начало" :locale="ruLocale"
+              :format="dateFormatList" />
           </a-col>
           <a-col :span="12">
             Дата конца
-            <a-date-picker
-              v-model:value="form.end"
-              style="width: 100%"
-              placeholder="Конец"
-              :locale="ruLocale"
-              :format="dateFormatList"
-            />
+            <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
+              :format="dateFormatList" />
           </a-col>
           <a-col :xs="24">
             <!-- Тип отдыха
@@ -138,12 +125,7 @@ function submit() {
             <a-textarea autoSize v-model:value="form.description" show-count :maxlength="54" />
           </a-col>
           <div class="d-flex justify-center" style="width: 100%">
-            <a-button
-              type="primary"
-              class="lets_go_btn"
-              size="large"
-              html-type="submit"
-              >Отправить
+            <a-button type="primary" class="lets_go_btn" size="large" html-type="submit">Отправить
             </a-button>
           </div>
         </a-row>
@@ -152,4 +134,5 @@ function submit() {
   </form>
 </template>
 <style scoped>
+
 </style>
