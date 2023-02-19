@@ -1,8 +1,10 @@
 <script setup>
+import {ref} from 'vue'
 import { useAuth } from "../../stores/auth";
 const userStore = useAuth();
 const user = userStore.user;
 const info = user.fullinfo;
+let onChange = ref(false)
 info.companyName ? info.companyName : "**********";
 console.log(user)
 if (info.companyName) {
@@ -47,7 +49,7 @@ function submit() {
 </script>
 <template>
   <div v-if="info">
-  <form action="POST" @submit.prevent="submit" enctype="multipart/form-data">
+  <form action="POST" @submit.prevent="submit" @change=" onChange = true" enctype="multipart/form-data">
     <a-row style="padding-left: 12px">
       <a-avatar style="margin-right: 8px; font-size: large; font-weight: bold" size="large">{{
         user.fullname[0]
@@ -59,7 +61,7 @@ function submit() {
       <a-col :xs="11" :md="8" :lg="5">
         <a-typography-text type="secondary">E-mail</a-typography-text>
         <!-- <h5 style="font-size: 16px">{{ user.email }}</h5> -->
-        <a-typography-paragraph v-model:content="user.email" editable />
+        <a-typography-paragraph v-model:content="user.email"/>
       </a-col>
 
       <a-col :xs="11" :md="8" :lg="5">
@@ -96,7 +98,7 @@ function submit() {
         <a-typography-text type="secondary">ИНН</a-typography-text>
         <a-typography-paragraph v-model:content="info.govermentRegNumber" editable>
         </a-typography-paragraph>
-        <a-button class="mt-16" type="primary" size="large" html-type="submit"
+        <a-button v-show="onChange" class="mt-16" type="primary" size="large" html-type="submit"
                 >Отправить
               </a-button>
       </a-col>
@@ -105,5 +107,4 @@ function submit() {
   </div>
 </template>
 <style>
-
 </style>
