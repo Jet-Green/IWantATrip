@@ -2,16 +2,13 @@
 import { computed } from "vue";
 import { useTrips } from "../../stores/trips";
 import TripListCard from "../cards/TripListCard.vue";
-const tripStore = useTrips()
-
-
+const tripStore = useTrips();
 </script>
 
 <template>
-  <a-row display="flex" justify="center" class="mt-16" >
-   
-    <a-col :sm="20">
-      <a-row display="flex" justify="center" :gutter="[16,16]" class="pa-4" style="align-items: flex-end" >
+  <a-row class="d-flex justify-center">
+    <a-col :xs="22">
+      <a-row :gutter="[16, 16]" class="d-flex justify-center mt-8">
         <a-col
           :xs="24"
           :sm="12"
@@ -20,7 +17,7 @@ const tripStore = useTrips()
           v-for="trip in tripStore.filteredTrips"
           :key="trip.index"
         >
-          <TripListCard :trip="trip" style="width: 100%"  />
+          <TripListCard :trip="trip" style="width: 100%" />
         </a-col>
       </a-row>
     </a-col>
