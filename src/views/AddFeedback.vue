@@ -23,6 +23,7 @@ const form = reactive({
 function submit() {
   CompanionService.createFeedback(form).then((res) => {
     const _id = res.data._id;
+    console.log(_id);
     
     userStore.addFeedback(res.data)
   });
