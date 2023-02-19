@@ -92,7 +92,8 @@ const ageString = (age) => {
                 <template #title>
                   <span>отклик</span>
                 </template>
-                <a-button shape="circle" class="accept">
+                <a-button shape="circle" class="accept"
+                 @click="router.push({ path: '/add-feedback', query: { id: companion._id }})">
                   <span class="mdi mdi-thumb-up-outline"></span>
                 </a-button>
               </a-tooltip>

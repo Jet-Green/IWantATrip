@@ -20,9 +20,6 @@ const form = reactive({
   gender: "Male",
   id: companionId 
 });
-function submit2() {
-  console.log(router.query.id);
-}
 function submit() {
   CompanionService.createFeedback(form).then((res) => {
     const _id = res.data._id;
@@ -34,7 +31,7 @@ function submit() {
 
 <template>
   <BackButton :backRoute="backRoute" />
-  <form action="POST" @submit.prevent="submit && submit2" enctype="multipart/form-data">
+  <form action="POST" @submit.prevent="submit" enctype="multipart/form-data">
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="12">
         <h2>Оставить отклик</h2>
