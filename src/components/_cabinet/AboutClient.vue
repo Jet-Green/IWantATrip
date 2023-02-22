@@ -111,7 +111,6 @@ function submit() {
         <h5 style="font-size: 16px">{{ info.govermentRegNumber ? info.govermentRegNumber : "**********" }}</h5>
       </a-col>
     </a-row>
-  </form>
   </div>
 </template>
 <style>
