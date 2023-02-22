@@ -10,8 +10,8 @@ export default {
     createCompanion(companion) {
         return $api.post('/companion/create', companion)
     },
-    createFeedback(feedback) {
-        return $api.post('/auth/add-feedback', feedback)
+    addFeedback(feedback, com_id) {
+        return $api.post(`/companion/add-feedback?companion_id=${com_id}`, feedback)
     }
 
 }

@@ -43,56 +43,41 @@ const ageString = (age) => {
     </a-row>
     <a-row type="flex" justify="center">
       <a-col class="d-flex justify-center">
-        <a-button
-          class="lets_go_btn mb-4"
-          type="primary"
-          size="large"
-          @click="router.push('/add-companion')"
-          >Добавить себя</a-button
-        >
+        <a-button class="lets_go_btn mb-4" type="primary" size="large" @click="router.push('/add-companion')">Добавить
+          себя</a-button>
       </a-col>
     </a-row>
     <a-row class="d-flex justify-center">
       <a-col :lg="16" :xs="22">
         <a-row :gutter="[8, 8]">
-          <a-col
-            :lg="8"
-         
-            :sm="12"
-            :xs="24"
-            v-for="(companion, i) in companionStore.companions"
-            :key="i"
-          >
+          <a-col :lg="8" :sm="12" :xs="24" v-for="(companion, i) in companionStore.companions" :key="i">
             <a-card class="card">
               <div>
-                <span class="mdi mdi-human-male-female"></span
-                >{{ companion.name }} <span class="mdi mdi-human-cane"></span
-                >{{ ageString(companion.age) }}
+                <span class="mdi mdi-human-male-female"></span>{{ companion.name }} <span
+                  class="mdi mdi-human-cane"></span>{{ ageString(companion.age) }}
               </div>
-          
+
               <div>
-                <span class="mdi mdi-compass-outline"></span
-                >{{ companion.direction }}
+                <span class="mdi mdi-compass-outline"></span>{{ companion.direction }}
               </div>
               <div :class="[companion.gender == 'Male' ? 'male' : 'female']">
-                <span class="mdi mdi-gender-male-female"></span
-                >{{ companion.gender == "Male" ? "Мужчину" : "Женщину" }}
+                <span class="mdi mdi-gender-male-female"></span>{{ companion.gender == "Male" ? "Мужчину" : "Женщину" }}
               </div>
               <div>
                 <span class="mdi mdi-calendar-arrow-right"></span>
-                {{ `c ${clearData(companion.start)}` }} <span class="mdi mdi-calendar-arrow-left"></span
-                >{{ `по ${clearData(companion.end)}` }}
+                {{ `c ${clearData(companion.start)}` }} <span class="mdi mdi-calendar-arrow-left"></span>{{ `по
+                ${clearData(companion.end)}` }}
               </div>
-           
+
               <div>
-                <span class="mdi mdi-list-status"></span
-                >{{ companion.description }}
+                <span class="mdi mdi-list-status"></span>{{ companion.description }}
               </div>
               <a-tooltip placement="bottom">
                 <template #title>
                   <span>отклик</span>
                 </template>
-                <a-button shape="circle" class="accept">
+                <a-button shape="circle" class="accept"
+                  @click="router.push({ path: '/add-feedback', query: { companion_id: companion._id } })">
                   <span class="mdi mdi-thumb-up-outline"></span>
                 </a-button>
               </a-tooltip>
@@ -147,14 +132,17 @@ const ageString = (age) => {
   text-align: center;
   // background: rgba(34, 176, 214, 0.05) ;
 }
+
 .card {
   width: 100%;
   background: #f6f6f6;
   padding: 8px;
   position: relative;
+
   .mdi {
     margin: 4px;
   }
+
   .accept {
     position: absolute;
     top: -6px;
@@ -163,9 +151,11 @@ const ageString = (age) => {
     justify-content: center;
     align-items: center;
   }
+
   .male {
     color: rgba(34, 176, 214);
   }
+
   .female {
     color: rgb(255, 102, 0);
   }
