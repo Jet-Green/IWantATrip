@@ -1,153 +1,158 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
 body {
-    font-family: "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
 
-    p {
-        color: rgba(0, 0, 0, 0.9);
-    }
+  p {
+    color: rgba(0, 0, 0, 0.9);
+  }
 
-    button {
-        text-transform: uppercase;
-    }
+  button {
+    text-transform: uppercase;
+  }
 
-    h2 {
-        font-size: clamp(12px, 5vw, 30px);
-    }
+  h2 {
+    font-size: clamp(1.5rem, 1.1975rem + 0.6303vw, 1.875rem);
+    margin-bottom: 4px;
+  }
 
-    h1 {
-        font-size: clamp(14px, 5vw, 36px);
+  h1 {
+    font-size: clamp(1.75rem, 1.3466rem + 0.8403vw, 2.25rem);
+  }
+  .text {
+    font-size: clamp(0.875rem, 0.6733rem + 0.4202vw, 1.125rem);
+  }
+  .lets_go_btn {
+    border-width: 2px;
+    border-radius: 15px;
+    color: white;
+    background: #ff6600;
+    &:hover {
+      transform: scale(1.05);
     }
-    .lets_go_btn {
-        border-width: 2px;
-        border-radius: 15px;
-        color: white;
-        background: #ff6600;
-        &:hover {
-          transform: scale(1.05);
-        }
-      }
-      .btn_light {
-        border-width: 2px;
-        border-radius: 15px;
-        border-color: #ff6600;
-        color: #ff6600;
-        &:hover {
-            transform: scale(1.05);
-          }
-      }
+  }
+  .btn_light {
+    border-width: 2px;
+    border-radius: 15px;
+    border-color: #ff6600;
+    color: #ff6600;
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
 }
 
 .d-flex {
-    display: flex;
+  display: flex;
 }
 
 .justify-center {
-    justify-content: center;
+  justify-content: center;
 }
 
 .align-center {
-    align-items: center;
+  align-items: center;
 }
 .space-between {
-    justify-content: space-between;
+  justify-content: space-between;
+}
+.space-around {
+  justify-content: space-around;
 }
 .align-end {
-    align-items: end;
+  align-items: end;
 }
 .direction-column {
-    flex-direction: column;
+  flex-direction: column;
 }
-.justify-end{
-    justify-content: flex-end;
+.justify-end {
+  justify-content: flex-end;
 }
-.flex-wrap{
-    flex-wrap: wrap;
+.flex-wrap {
+  flex-wrap: wrap;
 }
 
 // MA
 @for $i from 0 through 8 {
-    .ma-#{$i*4} {
-        margin: #{$i*4}px;
-    }
+  .ma-#{$i*4} {
+    margin: #{$i * 4}px;
+  }
 }
 
 // MT
 @for $i from 0 through 12 {
-    .mt-#{$i*4} {
-        margin-top: #{$i*4}px;
-    }
+  .mt-#{$i*4} {
+    margin-top: #{$i * 4}px;
+  }
 }
 
 // MR
 @for $i from 0 through 4 {
-    .mr-#{$i*4} {
-        margin-right: #{$i*4}px;
-    }
+  .mr-#{$i*4} {
+    margin-right: #{$i * 4}px;
+  }
 }
 
 // MB
 @for $i from 1 through 10 {
-    .mb-#{$i*4} {
-        margin-bottom: #{$i*4}px;
-    }
+  .mb-#{$i*4} {
+    margin-bottom: #{$i * 4}px;
+  }
 }
 
 // ML
 @for $i from 1 through 4 {
-    .ml-#{$i*4} {
-        margin-left: #{$i*4}px;
-    }
+  .ml-#{$i*4} {
+    margin-left: #{$i * 4}px;
+  }
 }
 
 // PA
-@for $i from 1 through 4 {
-    .pa-#{$i*4} {
-        padding: #{$i*4}px;
-    }
+@for $i from 1 through 10 {
+  .pa-#{$i*4} {
+    padding: #{$i * 4}px;
+  }
 }
 
 // PT
 @for $i from 1 through 8 {
-    .pt-#{$i*4} {
-        padding-top: #{$i*4}px;
-    }
+  .pt-#{$i*4} {
+    padding-top: #{$i * 4}px;
+  }
 }
 
 // PB
 @for $i from 1 through 4 {
-    .pb-#{$i*4} {
-        padding-bottom: #{$i*4}px;
-    }
+  .pb-#{$i*4} {
+    padding-bottom: #{$i * 4}px;
+  }
 }
 
-
 .unselectable {
-    -moz-user-select: none;
-    -khtml-user-select: none;
-    -webkit-user-select: none;
-    user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .carousel__prev,
 .carousel__next {
-    background-color: white !important;
-    box-sizing: content-box;
-    box-shadow: 1px 2px 2px #3daff5 !important;
-    color: black !important;
+  background-color: white !important;
+  box-sizing: content-box;
+  box-shadow: 1px 2px 2px #3daff5 !important;
+  color: black !important;
 
-    &:active {
-        box-shadow: 1px 1px 1px #3daff5 !important;
-        font-size: 18px;
-    }
+  &:active {
+    box-shadow: 1px 1px 1px #3daff5 !important;
+    font-size: 18px;
+  }
 }
 
 .select-container {
-    background-color: white;
-    border-radius: 15px;
-    overflow: hidden;
+  background-color: white;
+  border-radius: 15px;
+  overflow: hidden;
 }
 
 .fade-enter-active,
@@ -163,5 +168,5 @@ body {
 //     border-radius: 15px !important;
 // }
 a {
-    color: black
+  color: black;
 }
