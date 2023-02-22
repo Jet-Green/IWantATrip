@@ -1,8 +1,10 @@
 <script setup>
+import { computed } from 'vue'
 import { useAuth } from "../../stores/auth";
 const userStore = useAuth();
-const user = userStore.user;
-const info = user.fullinfo;
+const user = computed(() => userStore.user);
+
+const info = computed(() => userStore.user?.fullinfo);
 info.companyName ? info.companyName : "**********";
 console.log(user)
 if (info.companyName) {
@@ -46,9 +48,8 @@ function submit() {
 }
 </script>
 <template>
-  <div v-if="info">
-  <form action="POST" @submit.prevent="submit" enctype="multipart/form-data">
-    <a-row style="padding-left: 12px">
+  <div v-if="info && user">
+    <a-row>
       <a-avatar style="margin-right: 8px; font-size: large; font-weight: bold" size="large">{{
         user.fullname[0]
       }}</a-avatar>
@@ -74,31 +75,40 @@ function submit() {
 
       <a-col :xs="11" :md="8" :lg="5">
         <a-typography-text type="secondary">Название фирмы</a-typography-text>
-        <!-- <h5 style="font-size: 16px">{{ info.companyName ? info.companyName : "**********"}}</h5> -->
-        <a-typography-paragraph v-model:content="info.companyName" editable></a-typography-paragraph>
+        <h5 style="font-size: 16px">{{ info.companyName ? info.companyName : "**********" }}</h5>
       </a-col>
     </a-row>
 
     <a-row :xs="22" :md="18" :lg="16" style="padding-left: 12px">
       <a-col :xs="11" :md="8" :lg="5">
         <a-typography-text type="secondary">Статус пользователя</a-typography-text>
-        <a-typography-paragraph v-model:content="info.creatorsType" editable>
-        </a-typography-paragraph>
+        <h5 style="font-size: 16px">
+          {{
+            info.creatorsType == "author"
+              ? "Автор тура"
+              : info.creatorsType == "operator"
+                ? "Туроператор"
+                : "Турагенство"
+          }}
+        </h5>
       </a-col>
 
       <a-col :xs="11" :md="8" :lg="5">
         <a-typography-text type="secondary">Юр. статус</a-typography-text>
-        <a-typography-paragraph v-model:content="info.type" editable>
-        </a-typography-paragraph>
+        <h5 style="font-size: 16px">
+          {{
+            info.type == "phys"
+              ? "Физическое лицо"
+              : info.type == "company"
+                ? "Юридическое лицо"
+                : "Индивидуальный предприниматель"
+          }}
+        </h5>
       </a-col>
 
       <a-col :xs="11" :md="8" :lg="5">
         <a-typography-text type="secondary">ИНН</a-typography-text>
-        <a-typography-paragraph v-model:content="info.govermentRegNumber" editable>
-        </a-typography-paragraph>
-        <a-button class="mt-16" type="primary" size="large" html-type="submit"
-                >Отправить
-              </a-button>
+        <h5 style="font-size: 16px">{{ info.govermentRegNumber ? info.govermentRegNumber : "**********" }}</h5>
       </a-col>
     </a-row>
   </form>

@@ -3,11 +3,9 @@ import { reactive } from "vue";
 
 import { useRouter } from "vue-router";
 
-import {useCompanions} from "../../stores/companions"
+import { useCompanions } from "../../stores/companions";
 
-import person from "../../assets/icons/person_black_24dp.svg";
-
-const companionStore = useCompanions()
+const companionStore = useCompanions();
 
 let router = useRouter();
 
@@ -25,13 +23,22 @@ const toCompanionsPage = () => {
           v-for="(companion, i) in companionStore.companions"
           :key="i"
           style="margin: 15px 25px 15px 25px"
-          
         >
-          <div class="d-flex direction-column align-center ">
-            <span v-if="companion.gender == 'Male'" class="mdi mdi-24px mdi-account-cowboy-hat-outline men"></span>
-            <span v-else class="mdi mdi-24px mdi-account-outline women"></span>
-            <span class="ma-0" style="font-size: 16px;line-height: 15px">{{ companion.name }}</span>
-            <span class="ma-0" style="font-size: 13px; line-height: 10px">{{ companion.age }} лет</span>
+          <div class="d-flex direction-column align-center">
+            <span
+              v-if="companion.gender == 'Male'"
+              class="mdi mdi-24px mdi-face-man-outline men"
+            ></span>
+            <span
+              v-else
+              class="mdi mdi-24px mdi-face-woman-outline women"
+            ></span>
+            <span class="ma-0" style="font-size: 16px; line-height: 15px">{{
+              companion.name
+            }}</span>
+            <span class="ma-0" style="font-size: 13px; line-height: 10px"
+              >{{ companion.age }} лет</span
+            >
           </div>
         </div>
       </div>
@@ -62,7 +69,5 @@ const toCompanionsPage = () => {
 }
 .men {
   color: rgba(34, 176, 214);
-  
 }
-
 </style>

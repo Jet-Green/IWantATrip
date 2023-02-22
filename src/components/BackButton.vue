@@ -12,12 +12,16 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const sm = breakpoints.smaller("md");
 </script>
 <template>
-
-  <a-row type="flex" justify="center" class="ma-16">
+  <a-row type="flex" justify="center">
     <a-col :xs="22" :lg="16">
-
-      <div @click="router.push(backRoute?backRoute:'/')" style="font-size: 18px">
-        <span class="mdi mdi-18px mdi-arrow-left-thick" style="color: #245159"></span>
+      <div
+        @click="router.push(backRoute ? backRoute : '/')"
+        style="font-size: 16px; margin-top: 8px; line-height: 32px;"
+        class="d-flex"
+      >
+        <a-button shape="circle" class="d-flex justify-center align-center">
+          <span class="mdi mdi-arrow-left" style="font-size:20px"></span>
+        </a-button>
 
         <span v-if="!sm">Назад</span>
       </div>

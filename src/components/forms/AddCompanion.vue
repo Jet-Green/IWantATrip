@@ -131,11 +131,11 @@ function submit() {
             <!-- Тип отдыха
             <a-select v-model:value="form.type" style="width: 100%" :options="typeOfTrip" mode="multiple"></a-select> -->
             <label>Направление</label>
-            <a-input v-model:value="form.direction" />
+            <a-input v-model:value="form.direction" show-count :maxlength="16" />
           </a-col>
           <a-col :xs="24">
             Пожелания
-            <a-textarea autoSize v-model:value="form.description" />
+            <a-textarea autoSize v-model:value="form.description" show-count :maxlength="54" />
           </a-col>
           <div class="d-flex justify-center" style="width: 100%">
             <a-button
