@@ -105,7 +105,7 @@ function submit() {
 
     let imagesFormData = new FormData();
     for (let i = 0; i < images.length; i++) {
-      imagesFormData.append("trip-image", images[i], _id + "_" + i + ".png");
+      imagesFormData.append("trip-image", new File([images[i]], _id + "_" + i + ".png"), _id + "_" + i + ".png");
     }
     function close() {
       router.push("/trips");
@@ -218,26 +218,26 @@ onMounted(() => {
       let d = response.data;
       delete d.__v;
       form.name = d.name
-        form.start = d.start
-        form.end = d.end
-        form.maxPeople = d.maxPeople
-        form.duration = d.duration
-        form.tripType = d.tripType
-        form.distance = d.distance
-        form.cost = d.cost
-        quill.value.setHTML(d.description);
-        form.location = d.location
-        form.fromAge = d.fromAge
-        form.period = d.period
+      form.start = d.start
+      form.end = d.end
+      form.maxPeople = d.maxPeople
+      form.duration = d.duration
+      form.tripType = d.tripType
+      form.distance = d.distance
+      form.cost = d.cost
+      quill.value.setHTML(d.description);
+      form.location = d.location
+      form.fromAge = d.fromAge
+      form.period = d.period
 
-        // form.tripRoute = d.tripRoute
-        //   form.offer = d.offer
+      // form.tripRoute = d.tripRoute
+      //   form.offer = d.offer
 
-          let ad = document.getElementById("ad")
-          let route = document.getElementById("route")
-          ad.value = d.tripRoute
-          route.value = d.offer
-        
+      let ad = document.getElementById("ad")
+      let route = document.getElementById("route")
+      ad.value = d.tripRoute
+      route.value = d.offer
+
       // console.log(d.offer);
 
     });
@@ -260,34 +260,17 @@ onMounted(() => {
             <a-col :span="24">
               <h2>Создать тур</h2>
               Название
-              <a-input
-                placeholder="Название тура"
-                size="large"
-                v-model:value="form.name"
-              ></a-input>
+              <a-input placeholder="Название тура" size="large" v-model:value="form.name"></a-input>
             </a-col>
             <a-col :xs="24">
               Фотографии
               <div class="d-flex" style="overflow-x: scroll">
-                <img
-                  v-for="(pr, i) in previews"
-                  :key="i"
-                  :src="pr"
-                  alt=""
-                  class="ma-4"
-                  style="max-width: 200px"
-                  @click="
-                    delPhotoDialog = true;
-                    targetIndex = i;
-                  "
-                />
+                <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px" @click="
+  delPhotoDialog = true;
+targetIndex = i;
+                " />
               </div>
-              <a-button
-                type="dashed"
-                block
-                @click="visibleCropperModal = true"
-                class="ma-8"
-              >
+              <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
                 Добавить фото
               </a-button>
@@ -295,23 +278,13 @@ onMounted(() => {
 
             <a-col :span="12">
               Дата начала
-              <a-date-picker
-                v-model:value="start"
-                style="width: 100%"
-                placeholder="Начало"
-                :locale="ruLocale"
-                :format="dateFormatList"
-              />
+              <a-date-picker v-model:value="start" style="width: 100%" placeholder="Начало" :locale="ruLocale"
+                :format="dateFormatList" />
             </a-col>
             <a-col :span="12">
               Дата конца
-              <a-date-picker
-                v-model:value="end"
-                style="width: 100%"
-                placeholder="Конец"
-                :locale="ruLocale"
-                :format="dateFormatList"
-              />
+              <a-date-picker v-model:value="end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
+                :format="dateFormatList" />
             </a-col>
             <a-col :span="12">
               Продолжительность
@@ -319,33 +292,16 @@ onMounted(() => {
             </a-col>
             <a-col :span="12">
               Макс. число людей
-              <a-input-number
-                v-model:value="form.maxPeople"
-                style="width: 100%"
-                placeholder="11"
-                :min="1"
-              />
+              <a-input-number v-model:value="form.maxPeople" style="width: 100%" placeholder="11" :min="1" />
             </a-col>
             <a-col :span="24">
               Цены
 
-              <div
-                v-for="item in form.cost"
-                :key="item.type"
-                style="display: flex"
-                align="baseline"
-                class="mb-16"
-              >
+              <div v-for="item in form.cost" :key="item.type" style="display: flex" align="baseline" class="mb-16">
                 <a-input v-model:value="item.first" placeholder="Для кого" />
 
-                <a-input-number
-                  v-model:value="item.price"
-                  style="width: 100%"
-                  placeholder="Цена"
-                  :min="0"
-                  :step="0.01"
-                  class="ml-16 mr-16"
-                />
+                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0" :step="0.01"
+                  class="ml-16 mr-16" />
 
                 <a-button @click="removeCost(item)" shape="circle">
                   <span class="mdi mdi-minus" style="cursor: pointer"></span>
@@ -357,90 +313,46 @@ onMounted(() => {
                 Добавить цены
               </a-button>
             </a-col>
-            <a-col :xs="24" :md="12"
-              >Тип тура
+            <a-col :xs="24" :md="12">Тип тура
               <div>
-                <a-select
-                  v-model:value="form.tripType"
-                  style="width: 100%"
-                  :options="typeOfTrip"
-                >
+                <a-select v-model:value="form.tripType" style="width: 100%" :options="typeOfTrip">
                 </a-select>
               </div>
             </a-col>
-            <a-col :xs="24" :md="12"
-              >Мин. возраст, лет
-              <a-input-number
-                v-model:value="form.fromAge"
-                style="width: 100%"
-                placeholder="10"
-                :min="0"
-                :max="100"
-              />
+            <a-col :xs="24" :md="12">Мин. возраст, лет
+              <a-input-number v-model:value="form.fromAge" style="width: 100%" placeholder="10" :min="0" :max="100" />
             </a-col>
-            <a-col :xs="24" :md="12"
-              >Направление
-              <a-input
-                placeholder="Байкал"
-                size="large"
-                v-model:value="form.location"
-              ></a-input>
+            <a-col :xs="24" :md="12">Направление
+              <a-input placeholder="Байкал" size="large" v-model:value="form.location"></a-input>
             </a-col>
 
-            <a-col :xs="24" :md="12"
-              >Период
-              <a-date-picker
-                v-model:value="form.period"
-                style="width: 100%; height: 40px"
-                picker="month"
-                :locale="ruLocale"
-                :format="monthFormatList"
-              />
+            <a-col :xs="24" :md="12">Период
+              <a-date-picker v-model:value="form.period" style="width: 100%; height: 40px" picker="month"
+                :locale="ruLocale" :format="monthFormatList" />
             </a-col>
             <a-col :span="24">
               Реклама
-              <a-textarea
-                placeholder="завлекательное описание"
-                size="large"
-                v-model:value="form.offer"
-                id="ad"
-              >
-              
+              <a-textarea placeholder="завлекательное описание" size="large" v-model:value="form.offer" id="ad">
+
               </a-textarea>
             </a-col>
             <a-col :span="24">
               Маршрут
-              <a-textarea
-                placeholder="Глазов-Пермь 300км"
-                size="large"
-                v-model:value="form.tripRoute"
-                id="route"
-              >
+              <a-textarea placeholder="Глазов-Пермь 300км" size="large" v-model:value="form.tripRoute" id="route">
               </a-textarea>
             </a-col>
             <a-col :span="24" style="display: flex; flex-direction: column">
               Описание программы
-              <QuillEditor
-                theme="snow"
-                ref="quill"
-                v-model:content="description"
-                contentType="html"
-                :toolbar="[
-                  // [{ header: [2, 3] }],
-                  ['bold', 'italic', 'underline'],
-                  [{ list: 'ordered' }, { list: 'bullet' }],
-                  [{ color: ['#000000', '#ff6600', '#3daff5'] }],
-                  [{ align: [] }],
-                ]"
-              />
+              <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" :toolbar="[
+                // [{ header: [2, 3] }],
+                ['bold', 'italic', 'underline'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                [{ color: ['#000000', '#ff6600', '#3daff5'] }],
+                [{ align: [] }],
+              ]" />
             </a-col>
             <a-col :span="24" class="d-flex justify-center">
-              <a-button
-                class="mt-16"
-                type="primary"
-                size="large"
-                html-type="submit"
-                >Отправить
+              <a-button class="lets_go_btn mt-8" type="primary" size="large" html-type="submit">Отправить
               </a-button>
             </a-col>
           </a-row>
@@ -451,12 +363,7 @@ onMounted(() => {
         <a-modal v-model:visible="delPhotoDialog" :footer="null">
           <h3>Удалить фото?</h3>
           <div class="d-flex justify-center">
-            <a-button
-              class="mt-16"
-              type="primary"
-              size="large"
-              @click="delPhoto"
-              >Да
+            <a-button class="mt-16" type="primary"  size="large" @click="delPhoto">Да
             </a-button>
           </div>
         </a-modal>

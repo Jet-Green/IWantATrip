@@ -26,7 +26,7 @@ function find() {
   >
     <a-col :span="24">
       <h2 style="text-align: center; color: white">
-        Найди свой идеальный отдых
+        Найди идеальный отдых
       </h2>
     </a-col>
     <a-col :xs="22" :md="16" :lg="14">
