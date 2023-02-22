@@ -1,10 +1,12 @@
 <script setup>
 import { computed } from 'vue'
+import {ref} from 'vue'
 import { useAuth } from "../../stores/auth";
 const userStore = useAuth();
 const user = computed(() => userStore.user);
 
 const info = computed(() => userStore.user?.fullinfo);
+let onChange = ref(false)
 info.companyName ? info.companyName : "**********";
 console.log(user)
 if (info.companyName) {
@@ -60,7 +62,7 @@ function submit() {
       <a-col :xs="11" :md="8" :lg="5">
         <a-typography-text type="secondary">E-mail</a-typography-text>
         <!-- <h5 style="font-size: 16px">{{ user.email }}</h5> -->
-        <a-typography-paragraph v-model:content="user.email" editable />
+        <a-typography-paragraph v-model:content="user.email"/>
       </a-col>
 
       <a-col :xs="11" :md="8" :lg="5">
@@ -114,5 +116,4 @@ function submit() {
   </div>
 </template>
 <style>
-
 </style>
