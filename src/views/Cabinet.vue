@@ -47,7 +47,7 @@ onMounted(() => {
           <a-tab-pane v-if="userStore.user?.guideElements?.length" key="4" tab="Созданные объекты">
             <CreatedObjects />
           </a-tab-pane>
-          <a-tab-pane v-if="userStore.user?.companionRequests?.length" key="5" tab="Попутчики">
+          <a-tab-pane v-if="userStore.user?.createdCompanions?.length" key="5" tab="Попутчики">
             <MyCompanions />
           </a-tab-pane>
         </a-tabs>

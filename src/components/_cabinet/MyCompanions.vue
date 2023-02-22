@@ -5,14 +5,27 @@ import { useCompanions } from "../../stores/companions";
 
 const userStore = useAuth();
 const companionStore = useCompanions();
+const companionIds = userStore.user?.createdCompanions;
 
-let companions = ref([]);
-const companionRequests = userStore.user.companionRequests;
+let companions = ref();
+
+
 const clearData = (dataString) => {
   const dataFromString = new Date(dataString);
   return dataFromString.toLocaleDateString();
 };
 onMounted(async () => {
+  let comps = [];
+  for (let id of companionIds) {
+    const response = await companionStore.getById(id);
+    comps.push(response.data.companionRequests);
+  }
+
+  console.log(comps);
+
+  companions.value = comps
+  return
+
   if (companionRequests.length) {
     for (let _id of companionRequests) {
       const { data } = await companionStore.getById(_id);
