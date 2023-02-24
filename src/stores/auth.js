@@ -18,9 +18,17 @@ export const useAuth = defineStore('auth', {
         },
     },
     actions: {
-        async resetPassword(email) {
+        async resetPassword(password, token, user_id) {
+            let response = await UserService.resetPassword(password, token, user_id)
+
+            localStorage.setItem('token', response.data.accessToken);
+
+            this.isAuth = true
+            this.user = response.data.user
+        },
+        async forgotPassword(email) {
             try {
-                return await UserService.resetPassword(email);
+                return await UserService.forgotPassword(email);
             } catch (error) {
                 console.log(error);
             }

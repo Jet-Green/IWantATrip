@@ -1,7 +1,10 @@
 import $api from "../plugins/axios";
 
 export default {
-    async resetPassword(email) {
+    async resetPassword(password, token, user_id) {
+        return $api.post('/auth/reset-password', { password, token, user_id })
+    },
+    async forgotPassword(email) {
         return $api.post('/auth/forgot-password', { 'email': email })
     },
     async buyTrip(tripId, bill) {
