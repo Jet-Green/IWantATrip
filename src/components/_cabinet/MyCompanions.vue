@@ -9,31 +9,18 @@ const companionIds = userStore.user?.createdCompanions;
 
 let companions = ref();
 
-
 const clearData = (dataString) => {
   const dataFromString = new Date(dataString);
   return dataFromString.toLocaleDateString();
 };
 onMounted(async () => {
-  let comps = [];
+  let createdCompanions = [];
   for (let id of companionIds) {
     const response = await companionStore.getById(id);
-    comps.push(response.data.companionRequests);
+    createdCompanions.push(response.data);
   }
-
-  console.log(comps);
-
-  companions.value = comps
-  return
-
-  if (companionRequests.length) {
-    for (let _id of companionRequests) {
-      const { data } = await companionStore.getById(_id);
-      if (data) {
-        companions.value.push(data);
-      }
-    }
-  }
+  console.log(createdCompanions);
+  companions.value = createdCompanions;
 });
 </script>
 
@@ -45,10 +32,16 @@ onMounted(async () => {
       {{ clearData(companion.end) }} <br />
       <b>Направление: </b> {{ companion.direction }} <br />
     </a-col>
-    <a-col :xs="24" :md="12">
-      <b>Отклики:</b> Имя, возраст, пол, телефон
+    <b>Отклики:</b>
+    <a-col
+      v-for="request in companion.companionRequests"
+      :key="request.name"
+      :xs="24"
+      :md="10"
+    >
+      {{ request.name }} {{ request.surname }} {{ request.age }} {{ request.gender }} {{ request.phone }}
     </a-col>
-
-    <a-divider />
+    
   </a-row>
+  <a-divider />
 </template>
