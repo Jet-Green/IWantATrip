@@ -123,6 +123,11 @@ const router = createRouter({
       component: () => import('../components/AuthForm.vue')
     },
     {
+      path: '/forgot-password',
+      name: 'ForgotPassword',
+      component: () => import('../components/ForgotPassword.vue')
+    },
+    {
       path: '/edit-trip',
       name: 'CompanyInfoPage',
       component: () => import('../components/_cabinet/EditTrip.vue'),

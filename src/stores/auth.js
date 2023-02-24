@@ -18,6 +18,13 @@ export const useAuth = defineStore('auth', {
         },
     },
     actions: {
+        async resetPassword(email) {
+            try {
+                return await UserService.resetPassword(email);
+            } catch (error) {
+                console.log(error);
+            }
+        },
         updateUser(user) {
             try {
                 return UserService.updateUser(user)
