@@ -18,8 +18,8 @@ export default {
         return $api.post('/trips/delete-by-id', _id)
     },
 
-    async createTrip(trip) {
-        return $api.post('/trips/create', trip)
+    async createTrip(trip, authorEmail) {
+        return $api.post('/trips/create', { trip, emails: [authorEmail] })
     },
 
     async updateTrip(trip) {
