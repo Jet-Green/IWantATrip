@@ -3,8 +3,10 @@ import { reactive } from "vue";
 import BackButton from "./BackButton.vue";
 import { useAuth } from "../stores/auth";
 import { useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 
 const route = useRoute();
+const router = useRouter();
 const userStore = useAuth();
 
 let form = reactive({
@@ -14,11 +16,14 @@ let form = reactive({
 
 async function forgotPassword() {
   let res = await userStore.forgotPassword(form.email);
+  form.email = "";
+  router.push("/cabinet");
 }
 
 async function resetPassword() {
   let { query } = route;
   await userStore.resetPassword(form.password, query.token, query.user_id);
+  router.push("/cabinet");
 }
 </script>
 <template>

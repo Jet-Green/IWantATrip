@@ -28,7 +28,8 @@ export const useAuth = defineStore('auth', {
         },
         async forgotPassword(email) {
             try {
-                return await UserService.forgotPassword(email);
+                let response = await UserService.forgotPassword(email);
+                return response
             } catch (error) {
                 console.log(error);
             }
