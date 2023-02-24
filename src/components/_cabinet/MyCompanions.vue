@@ -32,16 +32,17 @@ onMounted(async () => {
       {{ clearData(companion.end) }} <br />
       <b>Направление: </b> {{ companion.direction }} <br />
     </a-col>
-    <b>Отклики:</b>
-    <a-col
-      v-for="request in companion.companionRequests"
-      :key="request.name"
-      :xs="24"
-      :md="10"
-    >
-      {{ request.name }} {{ request.surname }} {{ request.age }} {{ request.gender }} {{ request.phone }}
+    <a-col :xs="24" :md="12">
+      <b>Отклики:</b>
+      <a-col
+        v-for="request in companion.companionRequests"
+        :key="request.name"
+        :md="24"
+      >
+        {{ request.name }} {{ request.surname }} {{ request.age }} лет
+        {{ request.gender }} {{ request.phone }}
+      </a-col>
     </a-col>
-    
   </a-row>
   <a-divider />
 </template>
