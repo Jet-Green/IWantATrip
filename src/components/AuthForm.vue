@@ -79,5 +79,6 @@ const formSchema = yup.object({
 <style scoped lang="scss">
 .error-message {
   color: red;
+  font-size: 13px;
 }
 </style>
