@@ -22,8 +22,8 @@ const clearData = (dataString) => {
 };
 </script>
 <template>
-  <!-- <span class="mdi mdi-12px mdi-close" style="color: #245159; cursor: pointer; float: right"
-    @click="tripToDelete(trip._id)"></span> -->
+  <span class="mdi mdi-12px mdi-close" style="color: #245159; cursor: pointer; float: right"
+    @click="tripToDelete(trip._id)"></span>
   <div @click="goToTripPage" >
     <div class="title mt-4">{{ trip.name }}</div>
     <a-badge-ribbon :text="`${trip.cost.length ? trip.cost[0].price : 0} руб`" color="ff6600">
