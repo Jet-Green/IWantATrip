@@ -34,11 +34,11 @@ function submit() {
 
   CompanionService.createCompanion(toSend).then((res) => {
     const _id = res.data._id;
-    axios.post(`http://localhost:4089/add-companion?name=${form.name}`)
+    // axios.post(`http://localhost:4089/add-companion?name=${form.name}`)
     userStore
       .updateUser({
         email: userStore.user.email,
-        $push: { companionRequests: _id },
+        $push: { createdCompanions: _id },
       })
       .then((response) => {
         Object.assign(form, {
