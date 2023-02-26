@@ -1,4 +1,5 @@
 <script setup>
+import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useCompanions } from "../stores/companions";
 import BackButton from "../components/BackButton.vue";
@@ -31,11 +32,11 @@ const ageString = (age) => {
   }
   return `${age} лет`;
 };// это гениально
+
 </script>
 <template>
   <div>
     <BackButton />
-    {{ companionStore.filteredСompanions }}
     <a-row class="d-flex justify-center">
       <a-col :xs="22" :lg="16">
         <h2>Ищу попутчика</h2>
@@ -55,7 +56,7 @@ const ageString = (age) => {
           </a-col>
         </a-row>
         <a-row :gutter="[8, 8]" class="mt-8">
-          <a-col :lg="8" :sm="12" :xs="24" v-for="(companion, i) in companionStore.companions" :key="i">
+          <a-col :lg="8" :sm="12" :xs="24" v-for="(companion, i) in companionStore.filteredСompanions" :key="i">
             <a-card class="card">
               <div>
                 <span class="mdi mdi-human-male-female"></span>{{ companion.name }} <span
@@ -66,9 +67,9 @@ const ageString = (age) => {
                 <span class="mdi mdi-compass-outline"></span>{{ companion.direction }}
               </div>
               <div
-                :class="[companion.companionGender == 'Male' ? 'male' : companion.companionGender == 'Female' ? 'female' : 'not-matter']">
-                <span class="mdi mdi-gender-male-female"></span>{{ companion.companionGender == "Male" ? "Мужчину"
-                  : companion.companionGender == "Female" ? "Женщину" : "Не важно" }}
+                :class="[companion.companionGender == 'Мужчина' ? 'male' : companion.companionGender == 'Женщина' ? 'female' : 'not-matter']">
+                <span class="mdi mdi-gender-male-female"></span>{{ companion.companionGender == "Мужчина" ? "Мужчину"
+                  : companion.companionGender == "Женщина" ? "Женщину" : "Не важно" }}
               </div>
               <div>
                 <span class="mdi mdi-calendar-arrow-right"></span>

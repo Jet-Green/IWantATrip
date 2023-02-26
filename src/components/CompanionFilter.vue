@@ -14,7 +14,9 @@ let query = reactive({
     start: "",
     end: ""
   },
-  time: []
+  start: "",
+  end: "",
+
 })
 
 
@@ -22,28 +24,23 @@ function find() {
   companionStore.searchCompanions(query);
 }
 
-let dateToMilliseconds = () => {
-  query.time[0] = date.value ? date.value[0].$d.getTime() : ""
-  query.time[0] = date.value ? date.value[1].$d.getTime() : ""
-}
-
-
-watch(() => query.find, () => {
-  if (query.find == "") {
+watch(query, () => {
+  if (query.find == "" || query.gender == "" || query.age.start || query.age.end || query.start || query.end) {
     find();
   }
 });
-watch(date, () => {
-  query.time[0] = date.value ? date.value[0].$d.getTime() : ""
-  query.time[1] = date.value ? date.value[1].$d.getTime() : ""
+watch(date, (newDate) => {
+  query.start = newDate ? date.value[0].$d.getTime() : ""
+  query.end = newDate ? date.value[1].$d.getTime() : ""
 });
 
 onMounted(() => {
-
+  find()
 });
 </script>
 <template>
   <a-row>
+
     <a-col :xs="24">
       <a-row type="flex" justify="center">
         <a-col :xs="24" class="d-flex">
@@ -78,11 +75,11 @@ onMounted(() => {
 
             <a-col :xs="24">
               <label for="date">дата</label>
-              <a-range-picker @onchange="dateToMilliseconds()" name="date" style="width:100%" v-model:value="date" />
+              <a-range-picker name="date" style="width:100%" v-model:value="date" />
             </a-col>
             <!-- <a-col :xs="24" class="d-flex justify-center">
-                              <a-button @click="find" class="lets_go_btn" type="primary">поиск</a-button>
-                            </a-col> -->
+                                            <a-button @click="find" class="lets_go_btn" type="primary">поиск</a-button>
+                                          </a-col> -->
 
           </a-row>
         </div>

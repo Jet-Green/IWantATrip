@@ -24,7 +24,6 @@ export const useCompanions = defineStore('companions', {
         async searchCompanions(query) {
             try {
                 const response = await CompanionsService.searchCompanions({ query });
-                console.log(response.data);
                 this.filteredСompanions = response.data;
             } catch (err) {
                 console.log(err);

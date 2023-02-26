@@ -1,5 +1,5 @@
 <script setup>
-import { reactive } from "vue";
+import { reactive, ref, watch } from "vue";
 import typeOfTrip from "../../fakeDB/tripType";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import BackButton from "../BackButton.vue";
@@ -11,8 +11,8 @@ import axios from 'axios'
 const userStore = useAuth();
 const ruLocale = locale;
 const backRoute = "/companions";
-
-const dateFormatList = ["DD.MM.YY"];
+let date = ref(null)
+const dateFormatList = ["DD.MM.YYYY", "DD.MM.YYYY"];
 const form = reactive({
   name: "",
   surname: "",
@@ -21,12 +21,14 @@ const form = reactive({
   start: "",
   end: "",
   age: "",
-  companionGender:"NotMatter",
+  companionGender: "Не важно",
   gender: "Мужчина",
   type: "Любой",
   direction: "",
   description: "",
 });
+
+
 function submit() {
   let toSend = Object.assign(form)
   toSend.start = new Date(form.start).getTime()
@@ -50,11 +52,13 @@ function submit() {
           end: "",
           age: "",
           gender: "Male",
-          companionGender: "NotMatter",
+          companionGender: "Не важно",
           // type: "Любой",
           direction: "",
           description: "",
+
         });
+        date.value = null
         userStore.user = response.data;
         message.config({ duration: 3, top: "90vh" });
         message.success({ content: "Попутчик добавлен!", onClose: close });
@@ -64,7 +68,12 @@ function submit() {
       });
   });
 
+
 }
+watch(date, () => {
+  form.start = date ? date.value[0].$d.getTime() : ""
+  form.end = date ? date.value[1].$d.getTime() : ""
+});
 </script>
 
 <template>
@@ -74,7 +83,7 @@ function submit() {
       <a-col :xs="22" :lg="12">
         <h2>Найти попутчика</h2>
         <a-row :gutter="[8, 8]">
-          <a-col :xs="12"  class="d-flex align-center" style="flex-wrap: wrap">
+          <a-col :xs="12" class="d-flex align-center" style="flex-wrap: wrap">
             Мой пол
             <a-radio-group v-model:value="form.gender" name="radioGroup"
               style="width: -moz-available; width: -webkit-fill-available">
@@ -95,7 +104,7 @@ function submit() {
             <label>Фамилия</label>
             <a-input v-model:value="form.surname" />
           </a-col>
-          
+
 
           <a-col :xs="24" :md="12">
             <label>Телефон</label>
@@ -106,9 +115,9 @@ function submit() {
             <a-input v-model:value="form.email" />
           </a-col>
 
-         
 
-          <a-col :span="24" class="d-flex align-center" style="flex-wrap: wrap">
+
+          <a-col :xs="24" :md="12" class="d-flex align-center" style="flex-wrap: wrap">
             Пол попутчика
             <a-radio-group v-model:value="form.companionGender" name="radioGroup"
               style="width: -moz-available; width: -webkit-fill-available">
@@ -118,19 +127,23 @@ function submit() {
             </a-radio-group>
           </a-col>
 
-          <a-col :span="12">
-            Дата начала
-            <a-date-picker v-model:value="form.start" style="width: 100%" placeholder="Начало" :locale="ruLocale"
-              :format="dateFormatList" />
-          </a-col>
-          <a-col :span="12">
-            Дата конца
-            <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
-              :format="dateFormatList" />
+          <a-col :xs="24" :md="12">
+
+            Период
+            <a-range-picker style="width:100%" v-model:value="date" />
+
+
+            <!-- <a-date-picker v-model:value="form.start" style="width: 100%" placeholder="Начало" :locale="ruLocale"
+                            :format="dateFormatList" />
+                        </a-col>
+                        <a-col :span="12">
+                          Дата конца
+                          <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
+                            :format="dateFormatList" /> -->
           </a-col>
           <a-col :xs="24">
             <!-- Тип отдыха
-              <a-select v-model:value="form.type" style="width: 100%" :options="typeOfTrip" mode="multiple"></a-select> -->
+                            <a-select v-model:value="form.type" style="width: 100%" :options="typeOfTrip" mode="multiple"></a-select> -->
             <label>Направление</label>
             <a-input v-model:value="form.direction" show-count :maxlength="30" />
           </a-col>
