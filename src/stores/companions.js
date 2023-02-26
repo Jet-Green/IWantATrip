@@ -5,6 +5,7 @@ import CompanionsService from '../service/CompanionService'
 export const useCompanions = defineStore('companions', {
     state: () => ({
         companions: [],
+        filteredСompanions: [],
     }),
     getters: {
         getCompanions(state) {
@@ -16,6 +17,15 @@ export const useCompanions = defineStore('companions', {
             try {
                 const response = await CompanionsService.fetchCompanions();
                 this.companions = response.data;
+            } catch (err) {
+                console.log(err);
+            }
+        },
+        async searchCompanions(query) {
+            try {
+                const response = await CompanionsService.searchCompanions({ query });
+                console.log(response.data);
+                this.filteredСompanions = response.data;
             } catch (err) {
                 console.log(err);
             }

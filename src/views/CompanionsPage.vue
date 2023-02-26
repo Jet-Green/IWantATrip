@@ -3,12 +3,11 @@ import { useRouter } from "vue-router";
 import { useCompanions } from "../stores/companions";
 import BackButton from "../components/BackButton.vue";
 import CompanionFilter from "../components/CompanionFilter.vue";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+
 
 const companionStore = useCompanions();
 let router = useRouter();
-let breakpoints = useBreakpoints(breakpointsTailwind);
-let sm = breakpoints.smaller("md");
+
 const clearData = (dataString) => {
   return new Date(Number(dataString))
     .toLocaleDateString("ru-Ru", {
@@ -36,7 +35,7 @@ const ageString = (age) => {
 <template>
   <div>
     <BackButton />
-
+    {{ companionStore.filteredСompanions }}
     <a-row class="d-flex justify-center">
       <a-col :xs="22" :lg="16">
         <h2>Ищу попутчика</h2>
@@ -46,10 +45,12 @@ const ageString = (age) => {
     <a-row class="d-flex justify-center">
       <a-col :lg="16" :xs="22">
         <a-row class="d-flex space-between align-center" :gutter="[8, 8]">
-        
+          <a-col :md="8" :xs="24" :sm="12">
             <CompanionFilter />
-       
-          <a-col>
+          </a-col>
+
+
+          <a-col :md="8" :xs="24" :sm="12" class="d-flex justify-center">
             <a-button class="lets_go_btn" type="primary" @click="router.push('/add-companion')">Добавить себя</a-button>
           </a-col>
         </a-row>
@@ -71,8 +72,9 @@ const ageString = (age) => {
               </div>
               <div>
                 <span class="mdi mdi-calendar-arrow-right"></span>
-                {{ `c ${clearData(companion.start)}` }} <span class="mdi mdi-calendar-arrow-left"></span>{{ `по
-                                ${clearData(companion.end)}` }}
+                {{ `c ${clearData(companion.start)}` }}
+                <span class="mdi mdi-calendar-arrow-left"></span>
+                {{ `по ${clearData(companion.end)}` }}
               </div>
 
               <div>
@@ -91,8 +93,6 @@ const ageString = (age) => {
           </a-col>
         </a-row>
       </a-col>
-
-
     </a-row>
   </div>
 </template>

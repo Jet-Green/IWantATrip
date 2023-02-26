@@ -12,7 +12,7 @@ const userStore = useAuth();
 const ruLocale = locale;
 const backRoute = "/companions";
 
-const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
+const dateFormatList = ["DD.MM.YY"];
 const form = reactive({
   name: "",
   surname: "",
@@ -22,7 +22,7 @@ const form = reactive({
   end: "",
   age: "",
   companionGender:"NotMatter",
-  gender: "Male",
+  gender: "Мужчина",
   type: "Любой",
   direction: "",
   description: "",
@@ -78,8 +78,8 @@ function submit() {
             Мой пол
             <a-radio-group v-model:value="form.gender" name="radioGroup"
               style="width: -moz-available; width: -webkit-fill-available">
-              <a-radio :value="'Male'">Мужчина</a-radio>
-              <a-radio :value="'Female'">Женщина</a-radio>
+              <a-radio :value="'Мужчина'">Мужчина</a-radio>
+              <a-radio :value="'Женщина'">Женщина</a-radio>
             </a-radio-group>
           </a-col>
           <a-col :span="12">
@@ -112,9 +112,9 @@ function submit() {
             Пол попутчика
             <a-radio-group v-model:value="form.companionGender" name="radioGroup"
               style="width: -moz-available; width: -webkit-fill-available">
-              <a-radio :value="'Male'">Мужчина</a-radio>
-              <a-radio :value="'Female'">Женщина</a-radio>
-              <a-radio :value="'NotMatter'">Не важно</a-radio>
+              <a-radio :value="'Мужчина'">Мужчина</a-radio>
+              <a-radio :value="'Женщина'">Женщина</a-radio>
+              <a-radio :value="'Не важно'">Не важно</a-radio>
             </a-radio-group>
           </a-col>
 

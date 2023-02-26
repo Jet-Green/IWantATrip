@@ -4,6 +4,9 @@ export default {
     fetchCompanions() {
         return $api.get('/companion/get-all')
     },
+    searchCompanions(query) {
+        return $api.post(`/companion/search`, query)
+    },
     getById(_id) {
         return $api.get(`/companion/get-by-id?_id=${_id}`)
     },
