@@ -94,7 +94,7 @@ function submit() {
   let month = m.length == 1 ? "0" + m : m;
   send.period = month + "." + send.period.year().toString().slice(2);
 
-  TripService.createTrip(form).then(async (res) => {
+  TripService.createTrip(form, userStore.user.email).then(async (res) => {
     const _id = res.data._id;
     // try {
     //   // что тут происходит?
@@ -267,9 +267,9 @@ onMounted(() => {
               Фотографии
               <div class="d-flex" style="overflow-x: scroll">
                 <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px" @click="
-  delPhotoDialog = true;
-targetIndex = i;
-                " />
+                  delPhotoDialog = true;
+                targetIndex = i;
+                                  " />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
@@ -364,7 +364,7 @@ targetIndex = i;
         <a-modal v-model:visible="delPhotoDialog" :footer="null">
           <h3>Удалить фото?</h3>
           <div class="d-flex justify-center">
-            <a-button class="mt-16" type="primary"  size="large" @click="delPhoto">Да
+            <a-button class="mt-16" type="primary" size="large" @click="delPhoto">Да
             </a-button>
           </div>
         </a-modal>

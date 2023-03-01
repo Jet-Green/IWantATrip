@@ -1,6 +1,12 @@
 import $api from "../plugins/axios";
 
 export default {
+    async resetPassword(password, token, user_id) {
+        return $api.post('/auth/reset-password', { password, token, user_id })
+    },
+    async forgotPassword(email) {
+        return $api.post('/auth/forgot-password', { 'email': email })
+    },
     async buyTrip(tripId, bill) {
         return $api.post(`/trips/buy-trip?_id=${tripId}`, bill)
     },
@@ -15,5 +21,9 @@ export default {
     },
     async updateUser(user) {
         return $api.post('/auth/update', user)
+    },
+    async addFeedback(feedbackAndEmail) {
+        return $api.post('/add-feedback', feedbackAndEmail)
     }
+
 }
