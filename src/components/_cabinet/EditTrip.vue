@@ -127,7 +127,6 @@ onMounted(() => {
             d.period = dayjs(d.period, monthFormatList)
             start.value = dayjs(d.start)
             end.value = dayjs(d.end)
-
             form.value = d;
             for (let i of form.value.images)
                 previews.value.push(i)
@@ -178,7 +177,9 @@ watch(end, () => {
     } else {
         form.value.duration = "";
     }
+    end.value.$d = end.value.$d / 1000
     form.value.end = end.value.$d.toString();
+    console.log(form.value.end)
 });
 </script>
 <template>

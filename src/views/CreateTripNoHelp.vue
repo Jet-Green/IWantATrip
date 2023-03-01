@@ -214,14 +214,26 @@ watch(end, () => {
 watch(period, () => {
     form.period = Date.parse(period.value.$d.toString());
 });
+
+
+const clearData = (dataString) => {
+const dataFromString = new Date(Number(dataString));
+return dataFromString.toLocaleDateString("ru-Ru", {
+  year: "2-digit",
+  month: "2-digit",
+  day: "2-digit",
+});
+};
+
 onMounted(() => {
   if (router.currentRoute.value.query._id) {
     tripStore.getById(router.currentRoute.value.query._id).then((response) => {
       let d = response.data;
       delete d.__v;
       form.name = d.name
-      form.start = d.start
-      form.end = d.end
+      form.start = d.start/1000
+      console.log(form.start, d.start)
+      form.end = clearData(d.end)
       form.maxPeople = d.maxPeople
       form.duration = d.duration
       form.tripType = d.tripType
