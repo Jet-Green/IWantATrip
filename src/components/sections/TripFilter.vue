@@ -84,7 +84,6 @@ onMounted(() => {
                 placeholder="Куда едем"
                 v-model:value="where"
                 :bordered="true"
-                size="large"
                 class="selector"
               >
                 <a-select-option value="" placeholder="Куда едем"> </a-select-option>

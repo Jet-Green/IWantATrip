@@ -126,7 +126,7 @@ function routeTo(buttonRoute) {
   }
 }
 .create {
-  background: linear-gradient(rgb(32, 95, 121), rgb(34, 117, 151));
+  background: linear-gradient(rgb(32, 95, 121), #227597);
 }
 .find {
   background: linear-gradient(rgb(52, 49, 62), rgb(69, 65, 84));

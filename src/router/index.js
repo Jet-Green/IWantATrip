@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Landing from '../views/Landing.vue'
 import TripsPage from '../views/TripsPage.vue'
+import { useAuth } from '../stores/auth'
 
 
 
@@ -26,11 +27,27 @@ const router = createRouter({
       path: '/create-with-help',
       name: 'CreateTripWithHelp',
       component: () => import('../views/CreateTripWithHelp.vue'),
+      beforeEnter: async (to, from) => {
+        let userStore = useAuth()
+        if (!localStorage.getItem('token'))
+          await userStore.checkAuth()
+
+        if (!userStore.isAuth)
+          return '/auth'
+      }
     },
     {
       path: '/create-no-help',
       name: 'CreateTripNoHelp',
       component: () => import('../views/CreateTripNoHelp.vue'),
+      beforeEnter: async (to, from) => {
+        let userStore = useAuth()
+        if (!localStorage.getItem('token'))
+          await userStore.checkAuth()
+
+        if (!userStore.isAuth)
+          return '/auth'
+      }
     },
     {
       path: '/companions',
@@ -41,11 +58,32 @@ const router = createRouter({
       path: '/add-companion',
       name: 'AddCompanion',
       component: () => import('../views/AddCompanion.vue'),
+      beforeEnter: async (to, from) => {
+        let userStore = useAuth()
+        if (!localStorage.getItem('token'))
+          await userStore.checkAuth()
+
+        if (!userStore.isAuth)
+          return '/auth'
+      }
+    },
+    {
+      path: '/add-feedback',
+      name: 'AddFeedback',
+      component: () => import('../views/AddFeedback.vue'),
     },
     {
       path: '/add-guide-element',
       name: 'AddGuideElement',
       component: () => import('../views/AddGuideElement.vue'),
+      beforeEnter: async (to, from) => {
+        let userStore = useAuth()
+        if (!localStorage.getItem('token'))
+          await userStore.checkAuth()
+
+        if (!userStore.isAuth)
+          return '/auth'
+      }
     },
     {
       path: '/trip',
@@ -110,7 +148,15 @@ const router = createRouter({
     {
       path: '/cabinet',
       name: 'Cabinet',
-      component: () => import('../views/Cabinet.vue')
+      component: () => import('../views/Cabinet.vue'),
+      beforeEnter: async (to, from) => {
+        let userStore = useAuth()
+        if (!localStorage.getItem('token'))
+          await userStore.checkAuth()
+
+        if (!userStore.isAuth)
+          return '/auth'
+      }
     },
     {
       path: '/reg',
@@ -131,11 +177,27 @@ const router = createRouter({
       path: '/edit-trip',
       name: 'CompanyInfoPage',
       component: () => import('../components/_cabinet/EditTrip.vue'),
+      beforeEnter: async (to, from) => {
+        let userStore = useAuth()
+        if (!localStorage.getItem('token'))
+          await userStore.checkAuth()
+
+        if (!userStore.isAuth)
+          return '/auth'
+      }
     },
     {
       path: '/calc',
       name: 'PriceCalc',
       component: () => import('../components/forms/PriceCalc.vue'),
+      beforeEnter: async (to, from) => {
+        let userStore = useAuth()
+        if (!localStorage.getItem('token'))
+          await userStore.checkAuth()
+
+        if (!userStore.isAuth)
+          return '/auth'
+      }
     },
   ],
   scrollBehavior(to, from, savedPosition) {
