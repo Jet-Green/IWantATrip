@@ -1,12 +1,13 @@
 <script setup>
 import { reactive, ref, watch } from "vue";
-import typeOfTrip from "../../fakeDB/tripType";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import BackButton from "../BackButton.vue";
 import CompanionService from "../../service/CompanionService";
 import { useAuth } from "../../stores/auth";
 import { message } from "ant-design-vue";
-import axios from 'axios'
+
+import { Form, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
 
 const userStore = useAuth();
 const ruLocale = locale;
@@ -74,11 +75,25 @@ watch(date, () => {
   form.start = date ? date.value[0].$d.getTime() : ""
   form.end = date ? date.value[1].$d.getTime() : ""
 });
-</script>
 
+
+const formSchema = yup.object({
+  age: yup.string().required("заполните поле"),
+  name: yup.string().required("заполните поле"),
+  surname: yup.string().required("заполните поле"),
+  email: yup.string().required("заполните поле").email('неверный формат'),
+  phone: yup.string().required("заполните поле"),
+  // start: yup.string().required("заполните поле"),
+  // end: yup.string().required("заполните поле"),
+  // companionGender: yup.string().required("заполните поле"),
+  // type: yup.string().required("заполните поле"),
+  direction: yup.string().required("заполните поле"),
+  description: yup.string().required("заполните поле"),
+})
+</script>
 <template>
   <BackButton :backRoute="backRoute" />
-  <form action="POST" @submit.prevent="submit" enctype="multipart/form-data">
+  <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="12">
         <h2>Найти попутчика</h2>
@@ -91,28 +106,55 @@ watch(date, () => {
               <a-radio :value="'Женщина'">Женщина</a-radio>
             </a-radio-group>
           </a-col>
+
           <a-col :span="12">
-            <label>Мой возраст</label>
-            <a-input type="number" :min="0" v-model:value="form.age" />
+            <Field name="age" v-slot="{ field, handleChange }">
+              <label>Мой возраст</label>
+              <a-input @change="handleChange" :value="field.value" type="number" :min="0" v-model:value="form.age" />
+            </Field>
+            <Transition name="fade">
+              <ErrorMessage name="age" class="error-message" />
+            </Transition>
           </a-col>
+
           <a-col :xs="24" :md="12">
-            <label>Имя</label>
-            <a-input v-model:value="form.name" />
+            <Field name="name" v-slot="{ field, handleChange }">
+              <label>Имя</label>
+              <a-input @change="handleChange" :value="field.value" v-model:value="form.name" />
+            </Field>
+            <Transition name="fade">
+              <ErrorMessage name="name" class="error-message" />
+            </Transition>
           </a-col>
 
           <a-col :xs="24" :md="12">
-            <label>Фамилия</label>
-            <a-input v-model:value="form.surname" />
+            <Field name="surname" v-slot="{ field, handleChange }">
+              <label>Фамилия</label>
+              <a-input @change="handleChange" :value="field.value" v-model:value="form.surname" />
+            </Field>
+            <Transition name="fade">
+              <ErrorMessage name="surname" class="error-message" />
+            </Transition>
           </a-col>
 
 
           <a-col :xs="24" :md="12">
-            <label>Телефон</label>
-            <a-input v-model:value="form.phone" />
+            <Field name="phone" v-slot="{ field, handleChange }">
+              <label>Телефон</label>
+              <a-input @change="handleChange" :value="field.value" v-model:value="form.phone" />
+            </Field>
+            <Transition name="fade">
+              <ErrorMessage name="phone" class="error-message" />
+            </Transition>
           </a-col>
           <a-col :xs="24" :md="12">
-            <label>Электронная почта</label>
-            <a-input v-model:value="form.email" />
+            <Field name="email" v-slot="{ field, handleChange }">
+              <label>Электронная почта</label>
+              <a-input @change="handleChange" :value="field.value" v-model:value="form.email" />
+            </Field>
+            <Transition name="fade">
+              <ErrorMessage name="email" class="error-message" />
+            </Transition>
           </a-col>
 
 
@@ -134,25 +176,37 @@ watch(date, () => {
 
 
             <!-- <a-date-picker v-model:value="form.start" style="width: 100%" placeholder="Начало" :locale="ruLocale"
-                            :format="dateFormatList" />
-                        </a-col>
-                        <a-col :span="12">
-                          Дата конца
-                          <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
-                            :format="dateFormatList" /> -->
+                                                                                                                    :format="dateFormatList" />
+                                                                                                                </a-col>
+                                                                                                                <a-col :span="12">
+                                                                                                                  Дата конца
+                                                                                                                  <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
+                                                                                                                    :format="dateFormatList" />
+                                                                                                                -->
           </a-col>
           <a-col :xs="24">
-            <!-- Тип отдыха
-                            <a-select v-model:value="form.type" style="width: 100%" :options="typeOfTrip" mode="multiple"></a-select> -->
-            <label>Направление</label>
-            <a-input v-model:value="form.direction" show-count :maxlength="30" />
+            <!-- Тип отдыха <a-select v-model:value="form.type" style="width: 100%" :options="typeOfTrip" mode="multiple"></a-select> -->
+            <Field name="direction" v-slot="{ field, handleChange }">
+              <label>Направление</label>
+              <a-input @change="handleChange" :value="field.value" v-model:value="form.direction" show-count
+                :maxlength="30" />
+            </Field>
+            <Transition name="fade">
+              <ErrorMessage name="direction" class="error-message" />
+            </Transition>
           </a-col>
           <a-col :xs="24">
-            Пожелания
-            <a-textarea autoSize v-model:value="form.description" show-count :maxlength="60" />
+            <Field name="description" v-slot="{ field, handleChange }">
+              Пожелания
+              <a-textarea @change="handleChange" :value="field.value" autoSize v-model:value="form.description" show-count
+                :maxlength="60" />
+            </Field>
+            <Transition name="fade">
+              <ErrorMessage name="description" class="error-message" />
+            </Transition>
           </a-col>
           <div class="d-flex justify-center" style="width: 100%">
-            <a-button type="primary" class="lets_go_btn" size="large" html-type="submit">Отправить
+            <a-button :disabled="!meta.valid" type="primary" class="lets_go_btn" size="large" html-type="submit">Отправить
             </a-button>
           </div>
         </a-row>
@@ -160,4 +214,9 @@ watch(date, () => {
     </a-row>
   </form>
 </template>
-<style scoped></style>
+<style scoped lang="scss">
+.error-message {
+  color: red;
+  font-size: clamp(0.625rem, 0.4261rem + 0.5682vw, 0.875rem);
+}
+</style>
