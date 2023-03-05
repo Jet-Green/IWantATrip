@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import { VitePWA } from 'vite-plugin-pwa'
 
 
 
@@ -21,7 +22,47 @@ export default defineConfig(
     return {
       // base: baseUrl,
       plugins: [
-        vue()
+        vue(),
+        VitePWA({
+          registerType: 'autoUpdate',
+          includeAssets: ['favicon.ico', 'robots.txt', 'images/apple-touch-icon.png'],  
+          manifest: {
+            name: 'Хочу в поездку',
+            short_name: 'Хочу в поездку',
+            description: 'Description of your app',
+            theme_color: '#ffffff',
+            icons: [
+              {
+                src: 'android-chrome-192x192.png',
+                sizes: '192x192',
+                type: 'image/png',
+              },
+              {
+                src: 'android-chrome-512x512.png',
+                sizes: '512x512',
+                type: 'image/png',
+              },
+              {
+                src: 'apple-touch-icon.png',
+                sizes: '180x180',
+                type: 'image/png',
+              },
+         
+              {
+                src: 'mstile-150x150.png',
+                sizes: '150x150',
+                type: 'image/png',
+              },
+           
+              {
+                src: 'pwa-512x512.png',
+                sizes: '512x512',
+                type: 'image/png',
+                purpose: 'any maskable',
+              }
+            ]
+          }
+        })
       ],
       css: {
         preprocessorOptions: {
