@@ -251,16 +251,14 @@ let formSchema = yup.object({
   start: yup.string().required("заполните поле"),
   end: yup.string().required("заполните поле"),
   maxPeople: yup.string().required("заполните поле"),
-  duration: yup.string().required("заполните поле"),
-  tripRoute: yup.string().required("заполните поле"),
-  distance: yup.string().required("заполните поле"),
-  cost: yup.string().required("заполните поле"),
-  offer: yup.string().required("заполните поле"),
-  description: yup.string().required("заполните поле"),
-  location: yup.string().required("заполните поле"),
   tripType: yup.string().required("заполните поле"),
   fromAge: yup.string().required("заполните поле"),
+  location: yup.string().required("заполните поле"),
   period: yup.string().required("заполните поле"),
+  offer: yup.string().required("заполните поле"),
+  tripRoute: yup.string().required("заполните поле"),
+  // distance: yup.string().required("заполните поле"),
+  // cost: yup.string().required("заполните поле"),
 })
 </script>
 <template>
@@ -298,8 +296,8 @@ let formSchema = yup.object({
             </a-col>
 
             <a-col :span="12">
-              Дата начала
               <Field name="start" v-slot="{ field, handleChange }">
+                Дата начала
                 <a-date-picker @change="handleChange" :value="field.value" v-model:value="start" style="width: 100%"
                   placeholder="Начало" :locale="ruLocale" :format="dateFormatList" />
               </Field>
@@ -309,8 +307,8 @@ let formSchema = yup.object({
             </a-col>
 
             <a-col :span="12">
-              Дата конца
               <Field name="end" v-slot="{ field, handleChange }">
+                Дата конца
                 <a-date-picker @change="handleChange" :value="field.value" v-model:value="end" style="width: 100%"
                   placeholder="Конец" :locale="ruLocale" :format="dateFormatList" />
               </Field>
@@ -318,6 +316,7 @@ let formSchema = yup.object({
                 <ErrorMessage name="end" class="error-message" />
               </Transition>
             </a-col>
+
             <a-col :span="12">
               Продолжительность
               <p style="line-height: 40px">{{ form.duration }} дн.</p>
@@ -332,6 +331,7 @@ let formSchema = yup.object({
                 <ErrorMessage name="maxPeople" class="error-message" />
               </Transition>
             </a-col>
+
             <a-col :span="24">
               Цены
               <div v-for="item in form.cost" :key="item.type" style="display: flex" align="baseline" class="mb-16">
@@ -350,6 +350,7 @@ let formSchema = yup.object({
                 Добавить цены
               </a-button>
             </a-col>
+
             <a-col :xs="24" :md="12">
               <Field name="tripType" v-slot="{ field, handleChange }">
                 Тип тура
@@ -363,6 +364,7 @@ let formSchema = yup.object({
                 <ErrorMessage name="tripType" class="error-message" />
               </Transition>
             </a-col>
+
             <a-col :xs="24" :md="12">
               <Field name="fromAge" v-slot="{ field, handleChange }">
                 Мин. возраст, лет
@@ -373,14 +375,29 @@ let formSchema = yup.object({
                 <ErrorMessage name="fromAge" class="error-message" />
               </Transition>
             </a-col>
-            <a-col :xs="24" :md="12">Направление
-              <a-input placeholder="Байкал" size="large" v-model:value="form.location"></a-input>
+
+            <a-col :xs="24" :md="12">
+              <Field name="location" v-slot="{ field, handleChange }">
+                Направление
+                <a-input @change="handleChange" :value="field.value" placeholder="Байкал" size="large"
+                  v-model:value="form.location"></a-input>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="location" class="error-message" />
+              </Transition>
             </a-col>
 
-            <a-col :xs="24" :md="12">Период
-              <a-date-picker v-model:value="form.period" style="width: 100%; height: 40px" picker="month"
-                :locale="ruLocale" :format="monthFormatList" />
+            <a-col :xs="24" :md="12">
+              <Field name="period" v-slot="{ field, handleChange }">
+                Период
+                <a-date-picker @change="handleChange" :value="field.value" v-model:value="form.period"
+                  style="width: 100%; height: 40px" picker="month" :locale="ruLocale" :format="monthFormatList" />
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="period" class="error-message" />
+              </Transition>
             </a-col>
+
             <a-col :span="24">
               <Field name="offer" v-slot="{ field, handleChange }">
                 Реклама
@@ -392,11 +409,19 @@ let formSchema = yup.object({
                 <ErrorMessage name="offer" class="error-message" />
               </Transition>
             </a-col>
+
             <a-col :span="24">
-              Маршрут
-              <a-textarea placeholder="Глазов-Пермь 300км" size="large" v-model:value="form.tripRoute" id="route">
-              </a-textarea>
+              <Field name="tripRoute" v-slot="{ field, handleChange }">
+                Маршрут
+                <a-textarea @change="handleChange" :value="field.value" placeholder="Глазов-Пермь 300км" size="large"
+                  v-model:value="form.tripRoute" id="route">
+                </a-textarea>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="tripRoute" class="error-message" />
+              </Transition>
             </a-col>
+
             <a-col :span="24" style="display: flex; flex-direction: column">
               Описание программы
               <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" :toolbar="[
