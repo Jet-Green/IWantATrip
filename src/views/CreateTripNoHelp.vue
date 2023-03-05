@@ -2,13 +2,10 @@
 import BackButton from "../components/BackButton.vue";
 import ImageCropper from "../components/ImageCropper.vue";
 import UserFullInfo from "../components/forms/UserFullInfo.vue";
-import dayjs from 'dayjs'
 
-import axios from 'axios'
-
+import { watch, nextTick, ref, reactive, onMounted } from "vue";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
-import { watch, nextTick, ref, reactive, onMounted } from "vue";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import typeOfTrip from "../fakeDB/tripType";
 import { message } from "ant-design-vue";
@@ -16,7 +13,9 @@ import { useRouter } from "vue-router";
 import { useAuth } from "../stores/auth";
 import { useTrips } from "../stores/trips";
 import TripService from "../service/TripService";
-import { refAutoReset } from "@vueuse/core";
+
+import { Form, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
 
 const tripStore = useTrips()
 const userStore = useAuth();
@@ -246,29 +245,51 @@ onMounted(() => {
     // });
   }
 });
+
+let formSchema = yup.object({
+  name: yup.string("неверный формат").required("заполните поле"),
+  start: yup.string("неверный формат").required("заполните поле"),
+  end: yup.string("неверный формат").required("заполните поле"),
+  maxPeople: yup.string("неверный формат").required("заполните поле"),
+  duration: yup.string("неверный формат").required("заполните поле"),
+  tripRoute: yup.string("неверный формат").required("заполните поле"),
+  distance: yup.string("неверный формат").required("заполните поле"),
+  cost: yup.string("неверный формат").required("заполните поле"),
+  offer: yup.string("неверный формат").required("заполните поле"),
+  description: yup.string("неверный формат").required("заполните поле"),
+  location: yup.string("неверный формат").required("заполните поле"),
+  tripType: yup.string("неверный формат").required("заполните поле"),
+  fromAge: yup.string().required("заполните поле"),
+  period: yup.string("неверный формат").required("заполните поле"),
+})
 </script>
 <template>
   <div>
     <BackButton />
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="12">
-        <form action="POST" @submit.prevent="submit">
+        <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
           <a-row :gutter="[16, 16]">
             <a-col v-if="!userStore.user?.fullinfo" :span="24">
               <UserFullInfo @fullInfo="updateUserInfo" />
             </a-col>
             <a-col :span="24">
               <h2>Создать тур</h2>
-              Название
-              <a-input placeholder="Название тура" size="large" v-model:value="form.name"></a-input>
+              <Field name="name" v-slot="{ field, handleChange }">
+                Название
+                <a-input placeholder="Название тура" size="large" @change="handleChange" :value="field.value"
+                  v-model:value="form.name"></a-input>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="name" class="error-message" />
+              </Transition>
             </a-col>
             <a-col :xs="24">
               Фотографии
               <div class="d-flex" style="overflow-x: scroll">
                 <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px" @click="
                   delPhotoDialog = true;
-                targetIndex = i;
-                                  " />
+                targetIndex = i;" />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
@@ -291,12 +312,17 @@ onMounted(() => {
               <p style="line-height: 40px">{{ form.duration }} дн.</p>
             </a-col>
             <a-col :span="12">
-              Макс. число людей
-              <a-input-number v-model:value="form.maxPeople" style="width: 100%" placeholder="11" :min="1" />
+              <Field name="maxPeople" v-slot="{ field, handleChange }">
+                Макс. число людей
+                <a-input-number @change="handleChange" :value="field.value" v-model:value="form.maxPeople"
+                  style="width: 100%" placeholder="11" :min="1" />
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="maxPeople" class="error-message" />
+              </Transition>
             </a-col>
             <a-col :span="24">
               Цены
-
               <div v-for="item in form.cost" :key="item.type" style="display: flex" align="baseline" class="mb-16">
                 <a-input v-model:value="item.first" placeholder="Для кого" />
 
@@ -313,14 +339,28 @@ onMounted(() => {
                 Добавить цены
               </a-button>
             </a-col>
-            <a-col :xs="24" :md="12">Тип тура
-              <div>
-                <a-select v-model:value="form.tripType" style="width: 100%" :options="typeOfTrip">
-                </a-select>
-              </div>
+            <a-col :xs="24" :md="12">
+              <Field name="tripType" v-slot="{ field, handleChange }">
+                Тип тура
+                <div>
+                  <a-select @change="handleChange" :value="field.value" v-model:value="form.tripType" style="width: 100%"
+                    :options="typeOfTrip">
+                  </a-select>
+                </div>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="tripType" class="error-message" />
+              </Transition>
             </a-col>
-            <a-col :xs="24" :md="12">Мин. возраст, лет
-              <a-input-number v-model:value="form.fromAge" style="width: 100%" placeholder="10" :min="0" :max="100" />
+            <a-col :xs="24" :md="12">
+              <Field name="fromAge" v-slot="{ field, handleChange }">
+                Мин. возраст, лет
+                <a-input-number @change="handleChange" :value="field.value" v-model:value="form.fromAge"
+                  style="width: 100%" placeholder="10" :min="0" :max="100" />
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="fromAge" class="error-message" />
+              </Transition>
             </a-col>
             <a-col :xs="24" :md="12">Направление
               <a-input placeholder="Байкал" size="large" v-model:value="form.location"></a-input>
@@ -331,10 +371,15 @@ onMounted(() => {
                 :locale="ruLocale" :format="monthFormatList" />
             </a-col>
             <a-col :span="24">
-              Реклама
-              <a-textarea placeholder="завлекательное описание" size="large" v-model:value="form.offer" id="ad">
-
-              </a-textarea>
+              <Field name="offer" v-slot="{ field, handleChange }">
+                Реклама
+                <a-textarea @change="handleChange" :value="field.value" placeholder="завлекательное описание" size="large"
+                  v-model:value="form.offer" id="ad">
+                </a-textarea>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="offer" class="error-message" />
+              </Transition>
             </a-col>
             <a-col :span="24">
               Маршрут
@@ -352,11 +397,12 @@ onMounted(() => {
               ]" />
             </a-col>
             <a-col :span="24" class="d-flex justify-center">
-              <a-button class="lets_go_btn mt-8" type="primary" size="large" html-type="submit">Отправить
+              <a-button :disabled="!meta.valid" class="lets_go_btn mt-8" type="primary" size="large"
+                html-type="submit">Отправить
               </a-button>
             </a-col>
           </a-row>
-        </form>
+        </Form>
         <a-modal v-model:visible="visibleCropperModal" :footer="null">
           <ImageCropper @addImage="addPreview" />
         </a-modal>
@@ -371,3 +417,9 @@ onMounted(() => {
     </a-row>
   </div>
 </template>
+<style scoped lang="scss">
+.error-message {
+  color: red;
+  font-size: clamp(0.625rem, 0.4261rem + 0.5682vw, 0.875rem);
+}
+</style>
