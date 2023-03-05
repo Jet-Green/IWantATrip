@@ -26,13 +26,13 @@ const toCompanionsPage = () => {
         >
           <div class="d-flex direction-column align-center">
             <span
-              v-if="companion.gender == 'Male'"
+              v-if="companion.gender == 'Мужчина'"
               class="mdi mdi-24px mdi-face-man-outline men"
             ></span>
             <span
-              v-else
-              class="mdi mdi-24px mdi-face-woman-outline women"
-            ></span>
+              v-if="companion.gender == 'Женщина'"
+              class="mdi mdi-24px mdi-face-woman-outline woman"
+            ></span>   
             <span class="ma-0" style="font-size: 16px; line-height: 15px">{{
               companion.name
             }}</span>
@@ -64,10 +64,11 @@ const toCompanionsPage = () => {
   display: flex;
 }
 
-.women {
+.woman {
   color: rgb(255, 102, 0);
 }
 .men {
   color: rgba(34, 176, 214);
 }
+
 </style>
