@@ -247,20 +247,20 @@ onMounted(() => {
 });
 
 let formSchema = yup.object({
-  name: yup.string("неверный формат").required("заполните поле"),
-  start: yup.string("неверный формат").required("заполните поле"),
-  end: yup.string("неверный формат").required("заполните поле"),
-  maxPeople: yup.string("неверный формат").required("заполните поле"),
-  duration: yup.string("неверный формат").required("заполните поле"),
-  tripRoute: yup.string("неверный формат").required("заполните поле"),
-  distance: yup.string("неверный формат").required("заполните поле"),
-  cost: yup.string("неверный формат").required("заполните поле"),
-  offer: yup.string("неверный формат").required("заполните поле"),
-  description: yup.string("неверный формат").required("заполните поле"),
-  location: yup.string("неверный формат").required("заполните поле"),
-  tripType: yup.string("неверный формат").required("заполните поле"),
+  name: yup.string().required("заполните поле"),
+  start: yup.string().required("заполните поле"),
+  end: yup.string().required("заполните поле"),
+  maxPeople: yup.string().required("заполните поле"),
+  duration: yup.string().required("заполните поле"),
+  tripRoute: yup.string().required("заполните поле"),
+  distance: yup.string().required("заполните поле"),
+  cost: yup.string().required("заполните поле"),
+  offer: yup.string().required("заполните поле"),
+  description: yup.string().required("заполните поле"),
+  location: yup.string().required("заполните поле"),
+  tripType: yup.string().required("заполните поле"),
   fromAge: yup.string().required("заполните поле"),
-  period: yup.string("неверный формат").required("заполните поле"),
+  period: yup.string().required("заполните поле"),
 })
 </script>
 <template>
@@ -299,13 +299,24 @@ let formSchema = yup.object({
 
             <a-col :span="12">
               Дата начала
-              <a-date-picker v-model:value="start" style="width: 100%" placeholder="Начало" :locale="ruLocale"
-                :format="dateFormatList" />
+              <Field name="start" v-slot="{ field, handleChange }">
+                <a-date-picker @change="handleChange" :value="field.value" v-model:value="start" style="width: 100%"
+                  placeholder="Начало" :locale="ruLocale" :format="dateFormatList" />
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="start" class="error-message" />
+              </Transition>
             </a-col>
+
             <a-col :span="12">
               Дата конца
-              <a-date-picker v-model:value="end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
-                :format="dateFormatList" />
+              <Field name="end" v-slot="{ field, handleChange }">
+                <a-date-picker @change="handleChange" :value="field.value" v-model:value="end" style="width: 100%"
+                  placeholder="Конец" :locale="ruLocale" :format="dateFormatList" />
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="end" class="error-message" />
+              </Transition>
             </a-col>
             <a-col :span="12">
               Продолжительность
