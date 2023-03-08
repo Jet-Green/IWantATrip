@@ -5,7 +5,6 @@ import { useAuth } from "../../stores/auth";
 const userStore = useAuth();
 const user = userStore.user;
 const info = userStore.user.fullinfo;
-console.log(info);
 let onChange = ref(false);
 const companyName = computed(() => {
   return info.companyName ? info.companyName : "**********";
