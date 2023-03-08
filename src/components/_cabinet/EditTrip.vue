@@ -42,21 +42,21 @@ let images = []; // type: blob
 
 // необходимо добавить поле количество людей в туре
 let form = ref({
-  name: "",
-  start: null,
-  end: null,
-  maxPeople: null,
-  duration: "",
-  images: [],
-  tripRoute: "",
-  distance: "",
-  cost: [],
-  offer: "",
-  description: description.value,
-  location: "",
-  tripType: "",
-  fromAge: "",
-  period: "",
+    name: "",
+    start: null,
+    end: null,
+    maxPeople: null,
+    duration: "",
+    images: [],
+    tripRoute: "",
+    distance: "",
+    cost: [],
+    offer: "",
+    description: description.value,
+    location: "",
+    tripType: "",
+    fromAge: "",
+   
 });
 
 const removeCost = (item) => {
@@ -94,23 +94,23 @@ function submit() {
     const _id = res.data._id;
     let imagesFormData = new FormData();
 
-    for (let i = 0; i < images.length; i++) {
-      let index = i + form.value.images.length;
-      imagesFormData.append("trip-image", images[i], _id + "_" + index + ".png");
-    }
-    function close() {
-      router.push("/cabinet");
-    }
-    if (images.length) {
-      TripService.uploadTripImages(imagesFormData).then((res) => {
-        message.config({ duration: 3, top: "90vh" });
-        message.success({ content: "Тур обновлён!", onClose: close });
-      });
-    } else {
-      message.config({ duration: 3, top: "90vh" });
-      message.success({ content: "Тур обновлён!", onClose: close });
-    }
-  });
+        for (let i = 0; i < images.length; i++) {
+            let index = i + form.value.images.length
+            imagesFormData.append('trip-image', images[i], _id + '_' + index + '.img')
+        }
+        function close() {
+            router.push('/cabinet')
+        }
+        if (images.length) {
+            TripService.uploadTripImages(imagesFormData).then((res) => {
+                message.config({ duration: 3, top: '90vh' })
+                message.success({ content: 'Тур обновлён!', onClose: close })
+            })
+        } else {
+            message.config({ duration: 3, top: '90vh' })
+            message.success({ content: 'Тур обновлён!', onClose: close })
+        }
+    })
 }
 
 function addPreview(blob) {
@@ -129,25 +129,26 @@ const clearData = (dataString) => {
 };
 
 onMounted(() => {
-  tripStore.getById(router.currentRoute.value.query._id).then((response) => {
-    let d = response.data;
-    console.log(d);
-    delete d.__v;
-    start.value = baseTimeStart;
-    end.value = baseTimeEnd;
-    period.value = baseTimePeriod;
-    start.value.$d = clearData(d.start);
-    end.value.$d = clearData(d.end);
-    period.value.$d = clearData(Date.parse(d.period));
-    form.value = d;
-    for (let i of form.value.images) previews.value.push(i);
-    quill.value.setHTML(d.description);
-    // form.period = dayjs(response.data.period, monthFormatList).toJSON()
-  });
-  // .catch((error) => {
-  //     console.log(error);
-  // });
-});
+    tripStore.getById(router.currentRoute.value.query._id)
+        .then((response) => {
+            let d = response.data
+            delete d.__v
+         
+            start.value = dayjs(d.start)
+            end.value = dayjs(d.end)
+
+            form.value = d;
+            for (let i of form.value.images)
+                previews.value.push(i)
+            quill.value.setHTML(d.description)
+       
+            console.log(form.value);
+        })
+    // .catch((error) => {
+    //     console.log(error);
+    // });
+
+})
 
 watch(description, (newValue) => {
   newContent = newValue;
@@ -325,69 +326,44 @@ watch(period, () => {
               ></a-input>
             </a-col>
 
-            <a-col :xs="24" :md="12"
-              >Период
-              <a-date-picker
-                v-model:value="period"
-                style="width: 100%; height: 40px"
-                picker="month"
-                :locale="ruLocale"
-                :format="monthFormatList"
-              />
+                        <a-col :span="24">
+                            Реклама
+                            <a-textarea placeholder="завлекательное описание" size="large" v-model:value="form.offer">
+                            </a-textarea>
+                        </a-col>
+                        <a-col :span="24">
+                            Маршрут
+                            <a-textarea placeholder="Глазов-Пермь 300км" size="large" v-model:value="form.tripRoute">
+                            </a-textarea>
+                        </a-col>
+                        <a-col :span="24" style="display: flex; flex-direction: column">
+                            Описание программы
+                            <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html"
+                                :toolbar="[
+                                    // [{ header: [2, 3] }],
+                                    ['bold', 'italic', 'underline'],
+                                    [{ list: 'ordered' }, { list: 'bullet' }],
+                                    [{ color: ['#000000', '#ff6600', '#3daff5'] }],
+                                    [{ align: [] }],
+                                ]" />
+                        </a-col>
+                        <a-col :span="24" class="d-flex justify-center">
+                            <a-button class="mt-16" type="primary" size="large" html-type="submit">Отправить
+                            </a-button>
+                        </a-col>
+                    </a-row>
+                </form>
+                <a-modal v-model:visible="visibleCropperModal" :footer="null">
+                    <ImageCropper @addImage="addPreview" />
+                </a-modal>
+                <a-modal v-model:visible="delPhotoDialog" :footer="null">
+                    <h3>Удалить фото?</h3>
+                    <div class="d-flex justify-center">
+                        <a-button class="mt-16" type="primary" size="large" @click="delPhoto">Да
+                        </a-button>
+                    </div>
+                </a-modal>
             </a-col>
-            <a-col :span="24">
-              Реклама
-              <a-textarea
-                placeholder="завлекательное описание"
-                size="large"
-                v-model:value="form.offer"
-              >
-              </a-textarea>
-            </a-col>
-            <a-col :span="24">
-              Маршрут
-              <a-textarea
-                placeholder="Глазов-Пермь 300км"
-                size="large"
-                v-model:value="form.tripRoute"
-              >
-              </a-textarea>
-            </a-col>
-            <a-col :span="24" style="display: flex; flex-direction: column">
-              Описание программы
-              <QuillEditor
-                theme="snow"
-                ref="quill"
-                v-model:content="description"
-                contentType="html"
-                :toolbar="[
-                  // [{ header: [2, 3] }],
-                  ['bold', 'italic', 'underline'],
-                  [{ list: 'ordered' }, { list: 'bullet' }],
-                  [{ color: ['#000000', '#ff6600', '#3daff5'] }],
-                  [{ align: [] }],
-                ]"
-              />
-            </a-col>
-            <a-col :span="24" class="d-flex justify-center">
-              <a-button class="mt-16" type="primary" size="large" html-type="submit"
-                >Отправить
-              </a-button>
-            </a-col>
-          </a-row>
-        </form>
-        <a-modal v-model:visible="visibleCropperModal" :footer="null">
-          <ImageCropper @addImage="addPreview" />
-        </a-modal>
-        <a-modal v-model:visible="delPhotoDialog" :footer="null">
-          <h3>Удалить фото?</h3>
-          <div class="d-flex justify-center">
-            <a-button class="mt-16" type="primary" size="large" @click="delPhoto"
-              >Да
-            </a-button>
-          </div>
-        </a-modal>
-      </a-col>
-    </a-row>
-  </div>
+        </a-row>
+    </div>
 </template>
