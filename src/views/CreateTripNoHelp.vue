@@ -56,7 +56,7 @@ let form = reactive({
   location: "",
   tripType: "",
   fromAge: "",
-  period: "",
+
 });
 let fullUserInfo = null;
 
@@ -89,9 +89,7 @@ function submit() {
   for (let key in form) {
     send[key] = form[key];
   }
-  let m = send.period.month().toString();
-  let month = m.length == 1 ? "0" + m : m;
-  send.period = month + "." + send.period.year().toString().slice(2);
+
 
   TripService.createTrip(form, userStore.user.email).then(async (res) => {
     const _id = res.data._id;
@@ -125,7 +123,7 @@ function submit() {
         location: "",
         tripType: "",
         fromAge: "",
-        period: "",
+       
       });
       if (fullUserInfo) {
         userStore
@@ -227,7 +225,7 @@ onMounted(() => {
       quill.value.setHTML(d.description);
       form.location = d.location
       form.fromAge = d.fromAge
-      form.period = d.period
+   
 
       // form.tripRoute = d.tripRoute
       //   form.offer = d.offer
@@ -254,7 +252,6 @@ let formSchema = yup.object({
   tripType: yup.string().required("заполните поле"),
   fromAge: yup.string().required("заполните поле"),
   location: yup.string().required("заполните поле"),
-  period: yup.string().required("заполните поле"),
   offer: yup.string().required("заполните поле"),
   tripRoute: yup.string().required("заполните поле"),
   // distance: yup.string().required("заполните поле"),
@@ -387,16 +384,7 @@ let formSchema = yup.object({
               </Transition>
             </a-col>
 
-            <a-col :xs="24" :md="12">
-              <Field name="period" v-slot="{ field, handleChange }">
-                Период
-                <a-date-picker @change="handleChange" :value="field.value" v-model:value="form.period"
-                  style="width: 100%; height: 40px" picker="month" :locale="ruLocale" :format="monthFormatList" />
-              </Field>
-              <Transition name="fade">
-                <ErrorMessage name="period" class="error-message" />
-              </Transition>
-            </a-col>
+     
 
             <a-col :span="24">
               <Field name="offer" v-slot="{ field, handleChange }">
