@@ -102,7 +102,7 @@ function submit() {
 
     let imagesFormData = new FormData();
     for (let i = 0; i < images.length; i++) {
-      imagesFormData.append("trip-image", new File([images[i]], _id + "_" + i + ".png"), _id + "_" + i + ".png");
+      imagesFormData.append("trip-image", new File([images[i]], _id + "_" + i + ".jpg"), _id + "_" + i + ".jpg");
     }
     function close() {
       router.push("/trips");
