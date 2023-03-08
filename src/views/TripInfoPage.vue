@@ -25,13 +25,13 @@ let userInfo = reactive({
 });
 
 let tripsCount = computed(() => {
+  let sum = 0;
   for (let i = 0; i < trip.value.billsList.length; i++) {
-    for (let i = 0; i < trip.value.billsList[i].cart.length; i++) {
-      console.log(trip.value.billsList[i].cart[i]);
+    for (let j = 0; j < trip.value.billsList[i].cart.length; j++) {
+      sum += trip.value.billsList[i].cart[j].count
     }
   }
-
-  // return trip.value.billsList[i].cart[i]
+  return sum
 });
 
 tripStore
@@ -139,7 +139,7 @@ onMounted(() => {
   <div style="overflow-x: hidden">
     <BackButton :backRoute="backRoute" />
     <!-- {{ trip.billsList[0].cart[0].count }} -->
-    {{ tripsCount }}
+    
 
     <a-row class="justify-center d-flex">
       <a-col :xs="22" :xl="16">
@@ -180,7 +180,7 @@ onMounted(() => {
             <div>Количество человек:</div>
             <div style="width: 50%">
               <a-progress
-                :percent="(trip.billsList.length / trip.maxPeople) * 100"
+                :percent="(tripsCount / trip.maxPeople) * 100"
                 :format="() => `${trip.maxPeople} чел`"
               >
               </a-progress>
