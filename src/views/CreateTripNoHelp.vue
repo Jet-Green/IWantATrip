@@ -2,13 +2,10 @@
 import BackButton from "../components/BackButton.vue";
 import ImageCropper from "../components/ImageCropper.vue";
 import UserFullInfo from "../components/forms/UserFullInfo.vue";
-import dayjs from 'dayjs'
 
-import axios from 'axios'
-
+import { watch, nextTick, ref, reactive, onMounted } from "vue";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
-import { watch, nextTick, ref, reactive, onMounted } from "vue";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import typeOfTrip from "../fakeDB/tripType";
 import { message } from "ant-design-vue";
@@ -16,7 +13,9 @@ import { useRouter } from "vue-router";
 import { useAuth } from "../stores/auth";
 import { useTrips } from "../stores/trips";
 import TripService from "../service/TripService";
-import { refAutoReset } from "@vueuse/core";
+
+import { Form, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
 
 const tripStore = useTrips()
 const userStore = useAuth();
@@ -57,7 +56,7 @@ let form = reactive({
   location: "",
   tripType: "",
   fromAge: "",
-  period: "",
+
 });
 let fullUserInfo = null;
 
@@ -90,9 +89,7 @@ function submit() {
   for (let key in form) {
     send[key] = form[key];
   }
-  let m = send.period.month().toString();
-  let month = m.length == 1 ? "0" + m : m;
-  send.period = month + "." + send.period.year().toString().slice(2);
+
 
   TripService.createTrip(form, userStore.user.email).then(async (res) => {
     const _id = res.data._id;
@@ -126,7 +123,7 @@ function submit() {
         location: "",
         tripType: "",
         fromAge: "",
-        period: "",
+       
       });
       if (fullUserInfo) {
         userStore
@@ -228,7 +225,7 @@ onMounted(() => {
       quill.value.setHTML(d.description);
       form.location = d.location
       form.fromAge = d.fromAge
-      form.period = d.period
+   
 
       // form.tripRoute = d.tripRoute
       //   form.offer = d.offer
@@ -246,29 +243,48 @@ onMounted(() => {
     // });
   }
 });
+
+let formSchema = yup.object({
+  name: yup.string().required("заполните поле"),
+  start: yup.string().required("заполните поле"),
+  end: yup.string().required("заполните поле"),
+  maxPeople: yup.string().required("заполните поле"),
+  tripType: yup.string().required("заполните поле"),
+  fromAge: yup.string().required("заполните поле"),
+  location: yup.string().required("заполните поле"),
+  offer: yup.string().required("заполните поле"),
+  tripRoute: yup.string().required("заполните поле"),
+  // distance: yup.string().required("заполните поле"),
+  // cost: yup.string().required("заполните поле"),
+})
 </script>
 <template>
   <div>
     <BackButton />
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="12">
-        <form action="POST" @submit.prevent="submit">
+        <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
           <a-row :gutter="[16, 16]">
             <a-col v-if="!userStore.user?.fullinfo" :span="24">
               <UserFullInfo @fullInfo="updateUserInfo" />
             </a-col>
             <a-col :span="24">
               <h2>Создать тур</h2>
-              Название
-              <a-input placeholder="Название тура" size="large" v-model:value="form.name"></a-input>
+              <Field name="name" v-slot="{ field, handleChange }">
+                Название
+                <a-input placeholder="Название тура" size="large" @change="handleChange" :value="field.value"
+                  v-model:value="form.name"></a-input>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="name" class="error-message" />
+              </Transition>
             </a-col>
             <a-col :xs="24">
               Фотографии
               <div class="d-flex" style="overflow-x: scroll">
                 <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px" @click="
                   delPhotoDialog = true;
-                targetIndex = i;
-                                  " />
+                targetIndex = i;" />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
@@ -277,26 +293,44 @@ onMounted(() => {
             </a-col>
 
             <a-col :span="12">
-              Дата начала
-              <a-date-picker v-model:value="start" style="width: 100%" placeholder="Начало" :locale="ruLocale"
-                :format="dateFormatList" />
+              <Field name="start" v-slot="{ field, handleChange }">
+                Дата начала
+                <a-date-picker @change="handleChange" :value="field.value" v-model:value="start" style="width: 100%"
+                  placeholder="Начало" :locale="ruLocale" :format="dateFormatList" />
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="start" class="error-message" />
+              </Transition>
             </a-col>
+
             <a-col :span="12">
-              Дата конца
-              <a-date-picker v-model:value="end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
-                :format="dateFormatList" />
+              <Field name="end" v-slot="{ field, handleChange }">
+                Дата конца
+                <a-date-picker @change="handleChange" :value="field.value" v-model:value="end" style="width: 100%"
+                  placeholder="Конец" :locale="ruLocale" :format="dateFormatList" />
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="end" class="error-message" />
+              </Transition>
             </a-col>
+
             <a-col :span="12">
               Продолжительность
               <p style="line-height: 40px">{{ form.duration }} дн.</p>
             </a-col>
             <a-col :span="12">
-              Макс. число людей
-              <a-input-number v-model:value="form.maxPeople" style="width: 100%" placeholder="11" :min="1" />
+              <Field name="maxPeople" v-slot="{ field, handleChange }">
+                Макс. число людей
+                <a-input-number @change="handleChange" :value="field.value" v-model:value="form.maxPeople"
+                  style="width: 100%" placeholder="11" :min="1" />
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="maxPeople" class="error-message" />
+              </Transition>
             </a-col>
+
             <a-col :span="24">
               Цены
-
               <div v-for="item in form.cost" :key="item.type" style="display: flex" align="baseline" class="mb-16">
                 <a-input v-model:value="item.first" placeholder="Для кого" />
 
@@ -313,34 +347,69 @@ onMounted(() => {
                 Добавить цены
               </a-button>
             </a-col>
-            <a-col :xs="24" :md="12">Тип тура
-              <div>
-                <a-select v-model:value="form.tripType" style="width: 100%" :options="typeOfTrip">
-                </a-select>
-              </div>
-            </a-col>
-            <a-col :xs="24" :md="12">Мин. возраст, лет
-              <a-input-number v-model:value="form.fromAge" style="width: 100%" placeholder="10" :min="0" :max="100" />
-            </a-col>
-            <a-col :xs="24" :md="12">Направление
-              <a-input placeholder="Байкал" size="large" v-model:value="form.location"></a-input>
+
+            <a-col :xs="24" :md="12">
+              <Field name="tripType" v-slot="{ field, handleChange }">
+                Тип тура
+                <div>
+                  <a-select @change="handleChange" :value="field.value" v-model:value="form.tripType" style="width: 100%"
+                    :options="typeOfTrip">
+                  </a-select>
+                </div>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="tripType" class="error-message" />
+              </Transition>
             </a-col>
 
-            <a-col :xs="24" :md="12">Период
-              <a-date-picker v-model:value="form.period" style="width: 100%; height: 40px" picker="month"
-                :locale="ruLocale" :format="monthFormatList" />
+            <a-col :xs="24" :md="12">
+              <Field name="fromAge" v-slot="{ field, handleChange }">
+                Мин. возраст, лет
+                <a-input-number @change="handleChange" :value="field.value" v-model:value="form.fromAge"
+                  style="width: 100%" placeholder="10" :min="0" :max="100" />
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="fromAge" class="error-message" />
+              </Transition>
             </a-col>
-            <a-col :span="24">
-              Реклама
-              <a-textarea placeholder="завлекательное описание" size="large" v-model:value="form.offer" id="ad">
 
-              </a-textarea>
+            <a-col :xs="24" :md="12">
+              <Field name="location" v-slot="{ field, handleChange }">
+                Направление
+                <a-input @change="handleChange" :value="field.value" placeholder="Байкал" size="large"
+                  v-model:value="form.location"></a-input>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="location" class="error-message" />
+              </Transition>
             </a-col>
+
+     
+
             <a-col :span="24">
-              Маршрут
-              <a-textarea placeholder="Глазов-Пермь 300км" size="large" v-model:value="form.tripRoute" id="route">
-              </a-textarea>
+              <Field name="offer" v-slot="{ field, handleChange }">
+                Реклама
+                <a-textarea @change="handleChange" :value="field.value" placeholder="завлекательное описание" size="large"
+                  v-model:value="form.offer" id="ad">
+                </a-textarea>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="offer" class="error-message" />
+              </Transition>
             </a-col>
+
+            <a-col :span="24">
+              <Field name="tripRoute" v-slot="{ field, handleChange }">
+                Маршрут
+                <a-textarea @change="handleChange" :value="field.value" placeholder="Глазов-Пермь 300км" size="large"
+                  v-model:value="form.tripRoute" id="route">
+                </a-textarea>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="tripRoute" class="error-message" />
+              </Transition>
+            </a-col>
+
             <a-col :span="24" style="display: flex; flex-direction: column">
               Описание программы
               <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" :toolbar="[
@@ -352,11 +421,12 @@ onMounted(() => {
               ]" />
             </a-col>
             <a-col :span="24" class="d-flex justify-center">
-              <a-button class="lets_go_btn mt-8" type="primary" size="large" html-type="submit">Отправить
+              <a-button :disabled="!meta.valid" class="lets_go_btn mt-8" type="primary" size="large"
+                html-type="submit">Отправить
               </a-button>
             </a-col>
           </a-row>
-        </form>
+        </Form>
         <a-modal v-model:visible="visibleCropperModal" :footer="null">
           <ImageCropper @addImage="addPreview" />
         </a-modal>
@@ -371,3 +441,9 @@ onMounted(() => {
     </a-row>
   </div>
 </template>
+<style scoped lang="scss">
+.error-message {
+  color: red;
+  font-size: clamp(0.625rem, 0.4261rem + 0.5682vw, 0.875rem);
+}
+</style>
