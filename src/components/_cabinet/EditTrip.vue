@@ -53,7 +53,7 @@ let form = ref({
     location: "",
     tripType: "",
     fromAge: "",
-    period: "",
+   
 });
 
 const removeCost = (item) => {
@@ -92,7 +92,7 @@ function submit() {
 
         for (let i = 0; i < images.length; i++) {
             let index = i + form.value.images.length
-            imagesFormData.append('trip-image', images[i], _id + '_' + index + '.png')
+            imagesFormData.append('trip-image', images[i], _id + '_' + index + '.img')
         }
         function close() {
             router.push('/cabinet')
@@ -124,7 +124,7 @@ onMounted(() => {
         .then((response) => {
             let d = response.data
             delete d.__v
-            d.period = dayjs(d.period, monthFormatList)
+         
             start.value = dayjs(d.start)
             end.value = dayjs(d.end)
 
@@ -132,7 +132,7 @@ onMounted(() => {
             for (let i of form.value.images)
                 previews.value.push(i)
             quill.value.setHTML(d.description)
-            // form.period = dayjs(response.data.period, monthFormatList).toJSON()
+       
             console.log(form.value);
         })
     // .catch((error) => {
@@ -256,10 +256,6 @@ watch(end, () => {
                             <a-input placeholder="Байкал" size="large" v-model:value="form.location"></a-input>
                         </a-col>
 
-                        <a-col :xs="24" :md="12">Период
-                            <a-date-picker v-model:value="form.period" style="width: 100%; height: 40px" picker="month"
-                                :locale="ruLocale" :format="monthFormatList" />
-                        </a-col>
                         <a-col :span="24">
                             Реклама
                             <a-textarea placeholder="завлекательное описание" size="large" v-model:value="form.offer">
