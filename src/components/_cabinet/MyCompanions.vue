@@ -10,8 +10,28 @@ const companionIds = userStore.user?.createdCompanions;
 let companions = ref();
 
 const clearData = (dataString) => {
-  const dataFromString = new Date(dataString);
-  return dataFromString.toLocaleDateString();
+  return new Date(Number(dataString))
+    .toLocaleDateString("ru-Ru", {
+      year: "2-digit",
+      month: "2-digit",
+      day: "2-digit",
+    })
+    .replaceAll("/", ".");
+};
+
+const ageString = (age) => {
+  if (age >= 10 && age <= 20) {
+    return `${age} лет`;
+  }
+  let arr = age.split("");
+  let lastNumber = arr[arr.length - 1];
+  if (lastNumber == 1) {
+    return `${age} год`;
+  }
+  if (lastNumber == 2 || lastNumber == 3 || lastNumber == 4) {
+    return `${age} года`;
+  }
+  return `${age} лет`;
 };
 onMounted(async () => {
   let createdCompanions = [];
@@ -20,29 +40,134 @@ onMounted(async () => {
     createdCompanions.push(response.data);
   }
   console.log(createdCompanions);
-  companions.value = createdCompanions;
+  companions.value = createdCompanions.filter((element) => element !== null);
 });
 </script>
 
 <template>
-  <a-row v-for="(companion, index) in companions" :key="index">
-    <a-col :xs="24" :md="12">
-      <b>Описание:</b> {{ companion.description }} <br />
-      <b>Время:</b> с {{ clearData(companion.start) }} по
-      {{ clearData(companion.end) }} <br />
-      <b>Направление: </b> {{ companion.direction }} <br />
-    </a-col>
-    <a-col :xs="24" :md="12">
-      <b>Отклики:</b>
-      <a-col
-        v-for="request in companion.companionRequests"
-        :key="request.name"
-        :md="24"
+  <a-row
+    v-for="(companion, index) in companions"
+    :key="index"
+    :gutter="[8, 8]"
+    class="d-flex justify-center mt-8"
+  >
+    <a-card class="card" :lg="8" :sm="12" :xs="24">
+      <div>
+        <span class="mdi mdi-human-male-female"></span>{{ companion?.name }}
+        <span class="mdi mdi-human-cane"></span>{{ ageString(companion?.age) }}
+      </div>
+
+      <div>
+        <span class="mdi mdi-compass-outline"></span>{{ companion?.direction }}
+      </div>
+      <div
+        :class="[
+          companion?.companionGender == 'Мужчина'
+            ? 'male'
+            : companion?.companionGender == 'Женщина'
+            ? 'female'
+            : 'not-matter',
+        ]"
       >
-        {{ request.name }} {{ request.surname }} {{ request.age }} лет
-        {{ request.gender }} {{ request.phone }}
-      </a-col>
-    </a-col>
+        <span
+          :class="
+            companion?.companionGender == 'Женщина'
+              ? 'mdi mdi-gender-female'
+              : companion?.companionGender == 'Мужчина'
+              ? 'mdi mdi-gender-male'
+              : 'mdi mdi-human-male-female'
+          "
+        ></span
+        >{{
+          companion?.companionGender == "Мужчина"
+            ? "Мужчину"
+            : companion?.companionGender == "Женщина"
+            ? "Женщину"
+            : "Не важно"
+        }}
+      </div>
+      <div>
+        <span class="mdi mdi-calendar-arrow-right"></span>
+        {{ `c ${clearData(companion?.start)}` }}
+        <span class="mdi mdi-calendar-arrow-left"></span>
+        {{ `по ${clearData(companion?.end)}` }}
+      </div>
+
+      <div>
+        <span class="mdi mdi-list-status"></span>{{ companion?.description }}
+      </div>
+      <!-- <a-tooltip placement="bottom">
+        <template #title>
+          <span>отклик</span>
+        </template>
+      </a-tooltip> -->
+
+      <a-collapse v-model:activeKey="activeKey" ghost>
+        <a-collapse-panel header="Отклики" >
+          <a-row class="d-flex">
+          <a-col :xs="24" :lg="8" :sm="12"
+            v-for="request in companion?.companionRequests"
+            :key="request.name"
+          >
+            <a-card hoverable>
+<div>              <span class="mdi mdi-human-male-female"></span> {{ request?.name }}
+               {{ request?.surname }}
+               <span class="mdi mdi-human-cane"></span>{{ ageString( request?.age ) }}</div>
+              {{ request?.gender }} {{ request?.phone }}</a-card
+            >
+            
+          </a-col>
+        </a-row>
+        </a-collapse-panel>
+      </a-collapse>
+    </a-card>
   </a-row>
   <a-divider />
 </template>
+
+<style lang="scss" scoped>
+.women {
+  background: rgba(255, 102, 0, 0.05);
+}
+
+.men {
+  background: rgba(34, 176, 214, 0.05);
+}
+
+.table_header {
+  text-align: center;
+  // background: rgba(34, 176, 214, 0.05) ;
+}
+
+.card {
+  width: 100%;
+  background: #f6f6f6;
+  padding: 8px;
+  position: relative;
+
+  .mdi {
+    margin: 4px;
+  }
+
+  .accept {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .male {
+    color: rgba(34, 176, 214);
+  }
+
+  .female {
+    color: rgb(255, 102, 0);
+  }
+
+  .not-matter {
+    color: rgb(111, 133, 43);
+  }
+}
+</style>
