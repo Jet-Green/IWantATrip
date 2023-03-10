@@ -96,23 +96,28 @@ onMounted(async () => {
       <div>
         <span class="mdi mdi-list-status"></span>{{ companion?.description }}
       </div>
-      <a-tooltip placement="bottom">
+      <!-- <a-tooltip placement="bottom">
         <template #title>
           <span>отклик</span>
         </template>
-      </a-tooltip>
+      </a-tooltip> -->
 
-      <b>Отклики:</b>
-      <a-col
-      class="mt-4"
-        v-for="request in companion?.companionRequests"
-        :key="request.name"
-      >
-      <a-card>
-        {{ request?.name }} {{ request?.surname }} {{ request?.age }} лет
-        {{ request?.gender }} {{ request?.phone }}
-      </a-card>
-      </a-col>
+      <a-collapse v-model:activeKey="activeKey" ghost>
+        <a-collapse-panel header="Отклики" >
+          <a-row class="d-flex justify-center">
+          <a-col
+            v-for="request in companion?.companionRequests"
+            :key="request.name"
+          >
+            <a-card hoverable>
+              {{ request?.name }} {{ request?.surname }} {{ request?.age }} лет
+              {{ request?.gender }} {{ request?.phone }}</a-card
+            >
+            
+          </a-col>
+        </a-row>
+        </a-collapse-panel>
+      </a-collapse>
     </a-card>
   </a-row>
   <a-divider />
