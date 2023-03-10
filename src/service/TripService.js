@@ -39,5 +39,6 @@ export default {
     },
     async clearTripsDB() {
         return $api.get('/trips/clear')
-    }
+    },
+  
 }

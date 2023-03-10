@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from "vue"
 import BackButton from "../components/BackButton.vue";
 import ImageCropper from "../components/ImageCropper.vue";
 import UserFullInfo from "../components/forms/UserFullInfo.vue";
@@ -6,11 +7,12 @@ import { watch, nextTick, ref, reactive, onMounted } from "vue";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
-import typeOfTrip from "../fakeDB/tripType";
+// import typeOfTrip from "../fakeDB/tripType";
 import { message } from "ant-design-vue";
 import { useRouter } from "vue-router";
 import { useAuth } from "../stores/auth";
 import { useTrips } from "../stores/trips";
+import { useAppState } from "../stores/appState";
 import TripService from "../service/TripService";
 
 import { Form, Field, ErrorMessage } from 'vee-validate';
@@ -18,6 +20,7 @@ import * as yup from 'yup';
 
 const tripStore = useTrips()
 const userStore = useAuth();
+const appStore = useAppState();
 
 const dateFormatList = ["DD.MM.YY", "DD.MM.YY"];
 const monthFormatList = ["MM.YY"];
@@ -122,7 +125,7 @@ function submit() {
         location: "",
         tripType: "",
         fromAge: "",
-       
+
       });
       if (fullUserInfo) {
         userStore
@@ -171,6 +174,9 @@ function addPreview(blob) {
 function updateUserInfo(info) {
   fullUserInfo = info;
 }
+
+
+
 watch(description, (newValue) => {
   newContent = newValue;
   if (newContent === newValue) return;
@@ -224,7 +230,7 @@ onMounted(() => {
       quill.value.setHTML(d.description);
       form.location = d.location
       form.fromAge = d.fromAge
-   
+
 
       // form.tripRoute = d.tripRoute
       //   form.offer = d.offer
@@ -348,18 +354,19 @@ let formSchema = yup.object({
             </a-col>
 
             <a-col :xs="24" :md="12">
-              <Field name="tripType" v-slot="{ field, handleChange }">
-                Тип тура
-                <div>
-                  <a-select @change="handleChange" :value="field.value" v-model:value="form.tripType" style="width: 100%"
-                    :options="typeOfTrip">
-                  </a-select>
-                </div>
-              </Field>
-              <Transition name="fade">
-                <ErrorMessage name="tripType" class="error-message" />
-              </Transition>
-            </a-col>
+                <Field name="tripType" v-slot="{ field, handleChange }">
+                  Тип тура
+                  <div>
+                    <a-select @change="handleChange" :value="field.value" v-model:value="form.tripType" style="width: 100%"
+                     >
+                       <a-select-option v-for="value in appStore.appState[0].tripType" :value="value">{{value}}</a-select-option>
+                    </a-select>
+                  </div>
+                </Field>
+                <Transition name="fade">
+                  <ErrorMessage name="tripType" class="error-message" />
+                </Transition>
+              </a-col>
 
             <a-col :xs="24" :md="12">
               <Field name="fromAge" v-slot="{ field, handleChange }">
@@ -383,7 +390,7 @@ let formSchema = yup.object({
               </Transition>
             </a-col>
 
-     
+
 
             <a-col :span="24">
               <Field name="offer" v-slot="{ field, handleChange }">

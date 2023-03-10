@@ -8,16 +8,18 @@ import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 import { watch, nextTick, ref, reactive, onMounted } from "vue";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
-import typeOfTrip from "../../fakeDB/tripType";
 import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router'
 import { useAuth } from '../../stores/auth'
 import { useTrips } from "../../stores/trips.js";
+import { useAppState } from "../../stores/appState";
 
 import TripService from "../../service/TripService";
 
 const userStore = useAuth()
 const tripStore = useTrips()
+const appStore = useAppState();
+
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
 const monthFormatList = ["MM.YY"];
 const ruLocale = locale;
@@ -244,7 +246,8 @@ watch(end, () => {
                         </a-col>
                         <a-col :xs="24" :md="12">Тип тура
                             <div>
-                                <a-select v-model:value="form.tripType" style="width: 100%" :options="typeOfTrip">
+                                <a-select v-model:value="form.tripType" style="width: 100%" >
+                                    <a-select-option v-for="value in appStore.appState[0].tripType" :value="value">{{value}}</a-select-option>
                                 </a-select>
                             </div>
                         </a-col>

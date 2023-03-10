@@ -3,17 +3,18 @@ import BackButton from "../components/BackButton.vue"
 import UserFullInfo from '../components/forms/UserFullInfo.vue'
 
 import { reactive, ref } from "vue";
-import typeOfTrip from "../fakeDB/tripType";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 
 import BookingService from "../service/BookingService";
 import { useAuth } from '../stores/auth'
+import { useAppState } from "../stores/appState";
 
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
 const monthFormatList = ["MM.YY"];
 const ruLocale = locale;
 
 const userStore = useAuth()
+const appStore = useAppState();
 
 let form = reactive({
   duration: "",
@@ -61,7 +62,8 @@ return TripService.bookingTrip(toSend)
               <h2>Заказать тур</h2>
               <div>
                 Тип тура
-                <a-select v-model:value="form.type" style="width: 100%" :options="typeOfTrip" mode="multiple">
+                <a-select v-model:value="form.type" style="width: 100%"  mode="multiple">
+                  <a-select-option v-for="value in appStore.appState[0].tripType" :value="value">{{value}}</a-select-option>
                 </a-select>
               </div>
             </a-col>

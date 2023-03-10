@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import whereToGo from '../fakeDB/whereToGo.js'
+
 import axios from 'axios'
 
 import TripService from '../service/TripService.js'
@@ -8,7 +8,7 @@ export const useTrips = defineStore('trips', {
     state: () => ({
         trips: [],
         filteredTrips: [],
-        whereToGo
+     
     }),
     getters: {
         getTrips(state) {
@@ -17,9 +17,7 @@ export const useTrips = defineStore('trips', {
         getFilteredTrips(state) {
             return state.filteredTrips
         },
-        getWhereToGo(state) {
-            return state.whereToGo
-        },
+     
 
     },
     actions: {
