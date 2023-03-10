@@ -2,7 +2,6 @@
 import BackButton from "../components/BackButton.vue";
 import ImageCropper from "../components/ImageCropper.vue";
 import UserFullInfo from "../components/forms/UserFullInfo.vue";
-
 import { watch, nextTick, ref, reactive, onMounted } from "vue";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";

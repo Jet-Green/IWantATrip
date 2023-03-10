@@ -29,7 +29,21 @@ function dropDatabase() {
       drop database
     </a-button>
   </div>
-</template>
-<style lang="scss" scoped>
+  <a-divider type="vertical" />
 
-</style>
+  <a-row class="d-flex justify-center">
+    <a-col :xs="22" :md="16" class="d-flex align-center direction-column">
+      <h3>Добавить тип тура</h3>
+      <a-col :span="12">
+        <a-input style="width: 100%" placeholder="Gляжный" />
+        <div>
+          <a-button type="primary" size="large" class="ma-16 lets_go_btn">
+            Отправить тип тура
+          </a-button>
+        </div>
+
+      </a-col>
+    </a-col>
+  </a-row>
+</template>
+<style lang="scss" scoped></style>
