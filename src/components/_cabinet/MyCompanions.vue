@@ -104,13 +104,15 @@ onMounted(async () => {
 
       <a-collapse v-model:activeKey="activeKey" ghost>
         <a-collapse-panel header="Отклики" >
-          <a-row class="d-flex justify-center">
-          <a-col
+          <a-row class="d-flex">
+          <a-col :xs="24" :lg="8" :sm="12"
             v-for="request in companion?.companionRequests"
             :key="request.name"
           >
             <a-card hoverable>
-              {{ request?.name }} {{ request?.surname }} {{ request?.age }} лет
+<div>              <span class="mdi mdi-human-male-female"></span> {{ request?.name }}
+               {{ request?.surname }}
+               <span class="mdi mdi-human-cane"></span>{{ ageString( request?.age ) }}</div>
               {{ request?.gender }} {{ request?.phone }}</a-card
             >
             
