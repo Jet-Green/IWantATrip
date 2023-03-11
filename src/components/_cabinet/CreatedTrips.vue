@@ -90,7 +90,7 @@ onMounted(async () => {
     <a-col :span="24">
       <a-row :gutter="[8, 8]" class="mt-8">
         <a-col :lg="8" :sm="12" :xs="24" v-if="trips.length > 0" v-for="(trip, index) of trips" :key="index">
-          <a-card class="card " hoverable :class="[trip.isHidden ? 'overlay' : '']" >
+          <a-card class="card " hoverable :class="[trip.isHidden ? 'overlay' : '']">
             <div>
               <b>{{ trip.name }}</b>
             </div>
@@ -119,7 +119,7 @@ onMounted(async () => {
               <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="copyTrip(trip._id)">
                 <span class="mdi mdi-content-copy" style="color: #245159; cursor: pointer"></span>
               </a-popconfirm>
-              <span class="mdi mdi-information-outline" @click="showBills(index)"></span>
+              <span class="mdi mdi-information-outline" @click="showBills(index)" v-if="trip.billsList.length"></span>
             </div>
           </a-card>
 
@@ -128,17 +128,17 @@ onMounted(async () => {
 
 
             <a-row :gutter="[16, 16]" class="justify-center">
-              <a-col :xs="24" :sm="12"  :xl="6" v-for="(BILL, bill_index) of trip.billsList">
+              <a-col :xs="24" :sm="12" :xl="6" v-for="(BILL, bill_index) of trip.billsList">
 
                 <a-card hoverable v-if="trip.customers[bill_index]" class="pa-8" style="width: 100%;">
-                  <div >
+                  <div>
                     <span class="mdi mdi-account-outline" style=""></span>
                     {{ trip.customers[bill_index].fullname }}
                   </div>
                   <div>
                     <span class="mdi mdi-phone-outline" style=""></span>
-                    <a :href ='trip.customers[bill_index].phone'> {{ trip.customers[bill_index].phone }}</a>
-                   
+                    <a :href='trip.customers[bill_index].phone'> {{ trip.customers[bill_index].phone }}</a>
+
                   </div>
                   <div v-for="cartItem of BILL.cart" class="d-flex justify-end">
                     {{ cartItem.costType }} {{ cartItem.count }} x {{ cartItem.cost }} руб.
