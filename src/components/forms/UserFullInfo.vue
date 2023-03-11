@@ -1,5 +1,7 @@
 <script setup>
-import { reactive, watch } from "vue";
+import { reactive, watch, onMounted } from "vue";
+import { useAuth } from '../../stores/auth'
+const userStore = useAuth();
 const userTypes = [
   {
     value: "phys",
@@ -27,6 +29,17 @@ let fullInfo = reactive({
 watch(fullInfo, (newValue) => {
   emit('fullInfo', newValue)
 })
+onMounted(() => {
+  if (userStore.user.fullinfo) {
+    userStore.user.fullinfo.fullname ? fullInfo.fullname = userStore.user.fullinfo.fullname : fullInfo.fullname = "";
+    userStore.user.fullinfo.phone ? fullInfo.phone = userStore.user.fullinfo.phone : fullInfo.phone = "";
+    userStore.user.fullinfo.type ? fullInfo.type = userStore.user.fullinfo.type : fullInfo.type = "phys";
+    userStore.user.fullinfo.creatorsType ? fullInfo.creatorsType = userStore.user.fullinfo.creatorsType : fullInfo.creatorsType = "author";
+    userStore.user.fullinfo.govermentRegNumber ? fullInfo.govermentRegNumber = userStore.user.fullinfo.govermentRegNumber : fullInfo.govermentRegNumber = "";
+    userStore.user.fullinfo.companyName ? fullInfo.companyName = userStore.user.fullinfo.companyName : fullInfo.companyName = "";
+
+  }
+});
 </script>
 <template>
   <h2>О вас</h2>

@@ -270,7 +270,7 @@ let formSchema = yup.object({
       <a-col :xs="22" :lg="12">
         <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
           <a-row :gutter="[16, 16]">
-            <a-col v-if="!userStore.user?.fullinfo" :span="24">
+            <a-col :span="24">
               <UserFullInfo @fullInfo="updateUserInfo" />
             </a-col>
             <a-col :span="24">

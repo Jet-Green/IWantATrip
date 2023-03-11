@@ -24,7 +24,7 @@ onMounted(() => {
     <BackButton></BackButton>
 
     <a-row type="flex" justify="center">
-      <a-col :xs="22" :sm="12">
+      <a-col :xs="22" :sm="16">
         <h2>
           Кабинет
           <span @click="logOut()" class="mdi mdi-24px mdi-logout" style="cursor: pointer; float: right">

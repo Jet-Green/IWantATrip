@@ -52,6 +52,7 @@ const ageString = (age) => {
             <a-button
               class="lets_go_btn"
               type="primary"
+              size="large"
               @click="router.push('/add-companion')"
               >Добавить себя</a-button
             >
