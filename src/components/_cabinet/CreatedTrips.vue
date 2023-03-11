@@ -88,111 +88,106 @@ onMounted(async () => {
 <template>
   <a-row>
     <a-col :span="24">
-      <a-row class="table_header">
-        <a-col :md="2" :xs="4"></a-col>
-        <a-col :md="8" :xs="12">название</a-col>
-        <a-col :md="4" v-if="!sm">направление</a-col>
-        <a-col :md="3" v-if="!sm">дата начала</a-col>
-        <a-col :md="3" v-if="!sm">дата конца</a-col>
-        <a-col :md="4" :xs="8">действия</a-col>
-      </a-row>
+      <a-row :gutter="[8, 8]" class="mt-8">
+        <a-col :lg="8" :sm="12" :xs="24" v-if="trips.length > 0" v-for="(trip, index) of trips" :key="index">
+          <a-card class="card " hoverable :class="[trip.isHidden ? 'overlay' : '']" >
+            <div>
+              <b>{{ trip.name }}</b>
+            </div>
+            <div>
+              <span class="mdi mdi-compass-outline"></span>{{ trip.location }}
+            </div>
+            <div>
+              <span class="mdi mdi-calendar-arrow-right"></span>
+              {{ `c ${clearData(trip.start)}` }}
+              <span class="mdi mdi-calendar-arrow-left"></span>
+              {{ `по ${clearData(trip.end)}` }}
+            </div>
+            <a-divider class="ma-0"></a-divider>
+            <div class="actions d-flex justify-center">
+              <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="tripToDelete(trip._id)"
+                v-if="!trip.billsList.length > 0">
+                <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+              </a-popconfirm>
+              <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="editTrip(trip._id)">
+                <span class="mdi mdi-pen" style="color: #245159; cursor: pointer"></span>
+              </a-popconfirm>
+              <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="hideTrip(trip._id)">
+                <span v-if="!trip.isHidden" class="mdi mdi-eye" style="color: #245159; cursor: pointer"></span>
+                <span v-else class="mdi mdi-eye-off" style="color: #245159; cursor: pointer"></span>
+              </a-popconfirm>
+              <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="copyTrip(trip._id)">
+                <span class="mdi mdi-content-copy" style="color: #245159; cursor: pointer"></span>
+              </a-popconfirm>
+              <span class="mdi mdi-information-outline" @click="showBills(index)"></span>
+            </div>
+          </a-card>
 
-      <a-row v-if="trips.length > 0" v-for="(trip, index) of trips" :key="index" class="mt-4 pa-8"
-        :class="[index % 2 ? 'odd' : 'even', trip.isHidden ? 'overlay' : '']">
-        <a-col :md="2" :xs="4">
-          <img :src="trip.images[0]" @click="goToTripPage(trip._id)" />
-        </a-col>
-        <a-col :md="8" :xs="12" @click="goToTripPage(trip._id)">{{ trip.name }}</a-col>
-        <a-col :md="4" v-if="!sm">{{ trip.location }}</a-col>
-        <a-col :md="3" v-if="!sm"> {{ clearData(trip.start) }}</a-col>
-        <a-col :md="3" v-if="!sm">{{ clearData(trip.end) }}</a-col>
-        <a-col :md="4" :xs="8">
-          <div class="actions">
-            <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="tripToDelete(trip._id)"
-              v-if="!trip.billsList.length > 0">
-              <span class="mdi mdi-delete" style="color: red; cursor: pointer"></span>
-            </a-popconfirm>
-            <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="editTrip(trip._id)">
-              <span class="mdi mdi-pen" style="color: #245159; cursor: pointer"></span>
-            </a-popconfirm>
-            <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="hideTrip(trip._id)">
-              <span v-if="!trip.isHidden" class="mdi mdi-eye" style="color: #245159; cursor: pointer"></span>
-              <span v-else class="mdi mdi-eye-off" style="color: #245159; cursor: pointer"></span>
-            </a-popconfirm>
-            <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="copyTrip(trip._id)">
-              <span v-if="!trip.isHidden" class="mdi mdi-content-copy" style="color: #245159; cursor: pointer"></span>
-            </a-popconfirm>
-            <span class="mdi mdi-information-outline" @click="showBills(index)"></span>
-          </div>
-        </a-col>
-        <transition name="fade">
-          <a-col :span="24" v-if="visibleBills[index]">
-            <a-row style="display: flex; justify-content: space-between;">
-              <a-col :xs="24" :md="12" :lg="8" class="pa-4" v-for="(BILL, bill_index) of trip.billsList">
-                <a-popover placement="bottom" trigger="click">
-                  <template #content>
-                    <a-row>
-                      <a-col :span="24" v-for="cartItem of BILL.cart">
-                        {{ cartItem.costType }} {{ cartItem.cost }} руб. {{ cartItem.count }} шт.
-                        <a-divider class="ma-0" v-if="BILL.cart.length > 1" />
-                      </a-col>
-                    </a-row>
-                  </template>
-                  <a-card hoverable v-if="trip.customers[bill_index]" class="pa-8">
-                    <a-row>
-                      <a-col :span="12">
-                        <a-row>
-                          <a-col :span="24">
-                            <span class="mdi mdi-account-outline" style="font-size: 20px;"></span>
-                            {{ trip.customers[bill_index].fullname }}
-                          </a-col>
-                          <a-col :span="24">
-                            <span class="mdi mdi-phone-outline" style="font-size: 20px;"></span>
-                            {{ trip.customers[bill_index].phone }}
-                          </a-col>
-                          <a-col :span="24">
-                            <b>
-                              <span v-if="BILL.isBoughtNow" style="color: #BCC662">
-                                <span class="mdi mdi-check-all" style="font-size: 20px;"></span>
-                                оплачен
-                              </span>
-                              <span v-else style="display: flex; align-items: center;">
-                                <span class="mdi mdi-close" style="font-size: 20px;"></span>
-                                не оплачен
-                              </span>
-                            </b>
-                          </a-col>
-                        </a-row>
-                      </a-col>
-                      <a-col :span="12">
-                        <a-row v-if="BILL.cart">
-                          <a-col :span="24">
-                            <span class="mdi mdi-account-group" style="font-size: 20px;"></span>
-                            {{
-                              BILL.cart.reduce((accumulator, object) => {
-                                return accumulator + object.count;
-                              }, 0)
-                            }}
-                          </a-col>
-                          <a-col :span="24">
-                            <span class="mdi mdi-cash" style="font-size: 20px;"></span>
-                            {{
-  BILL.cart.reduce((accumulator, object) => {
-    return accumulator + object.cost *
-      object.count;
-  }, 0)
-                            }} ₽
-                          </a-col>
-                        </a-row>
-                      </a-col>
-                    </a-row>
-                  </a-card>
-                </a-popover>
+          <a-modal v-model:visible="visibleBills[index]" :title="trip.name" :footer="null" wrap-class-name="full-modal"
+            width="80%">
+
+
+            <a-row :gutter="[16, 16]" class="justify-center">
+              <a-col :xs="24" :sm="12"  :xl="6" v-for="(BILL, bill_index) of trip.billsList">
+
+                <a-card hoverable v-if="trip.customers[bill_index]" class="pa-8" style="width: 100%;">
+                  <div >
+                    <span class="mdi mdi-account-outline" style=""></span>
+                    {{ trip.customers[bill_index].fullname }}
+                  </div>
+                  <div>
+                    <span class="mdi mdi-phone-outline" style=""></span>
+                    <a :href ='trip.customers[bill_index].phone'> {{ trip.customers[bill_index].phone }}</a>
+                   
+                  </div>
+                  <div v-for="cartItem of BILL.cart" class="d-flex justify-end">
+                    {{ cartItem.costType }} {{ cartItem.count }} x {{ cartItem.cost }} руб.
+
+                  </div>
+
+                  <div class="d-flex justify-end"> <span>Итого: </span>
+                    {{
+                      BILL.cart.reduce((accumulator, object) => {
+                        return accumulator + object.cost *
+                          object.count;
+                      }, 0)
+                    }} руб.
+                  </div>
+
+                  <div class="d-flex justify-end">
+                    <b>
+                      <span v-if="BILL.isBoughtNow" style="color: #BCC662">
+                        <span class="mdi mdi-check-all" style="font-size: 20px;"></span>
+                        оплачен
+                      </span>
+                      <span v-else style="display: flex; align-items: center;">
+                        <span class="mdi mdi-close" style="font-size: 20px;"></span>
+                        не оплачен
+                      </span>
+                    </b>
+                  </div>
+
+
+
+
+
+
+                </a-card>
+
               </a-col>
             </a-row>
-          </a-col>
-        </transition>
+
+
+          </a-modal>
+        </a-col>
       </a-row>
+
+
+
+
+
+
+
     </a-col>
   </a-row>
 </template>
@@ -202,24 +197,12 @@ onMounted(async () => {
   position: relative;
 
   * {
-    margin: 8px;
+    margin: 4px;
     cursor: pointer;
   }
 }
 
-.title {
-  font-size: 16px;
-  text-transform: uppercase;
-  text-align: center;
-}
 
-.odd {
-  background: rgba(255, 102, 0, 0.05);
-}
-
-.even {
-  background: rgba(34, 176, 214, 0.05);
-}
 
 .overlay {
 
@@ -227,10 +210,11 @@ onMounted(async () => {
 
 }
 
-img {
-  width: 100%;
-  height: 50px;
-  aspect-ratio: 270/175;
-  object-fit: cover;
+
+
+.card {
+
+  background: #f6f6f6;
+  padding: 8px 8px 0 8px;
 }
 </style>

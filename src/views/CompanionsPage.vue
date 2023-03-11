@@ -66,7 +66,7 @@ const ageString = (age) => {
             v-for="(companion, i) in companionStore.filteredСompanions"
             :key="i"
           >
-            <a-card class="card">
+            <a-card class="card" hoverable>
               <div>
                 <span class="mdi mdi-human-male-female"></span
                 >{{ companion.name }} <span class="mdi mdi-human-cane"></span
