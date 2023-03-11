@@ -24,6 +24,16 @@ let userInfo = reactive({
   phone: "",
 });
 
+let tripsCount = computed(() => {
+  let sum = 0;
+  for (let i = 0; i < trip.value.billsList.length; i++) {
+    for (let j = 0; j < trip.value.billsList[i].cart.length; j++) {
+      sum += trip.value.billsList[i].cart[j].count
+    }
+  }
+  return sum
+});
+
 tripStore
   .getById(_id)
   .then((response) => {
@@ -117,6 +127,7 @@ async function buyTrip(isBoughtNow) {
 
   //тут обновить полную информацию о юзере
 }
+
 onMounted(() => {
   if (userStore.user) {
     userInfo.fullname = userStore.user.fullinfo.fullname;
@@ -127,15 +138,14 @@ onMounted(() => {
 <template>
   <div style="overflow-x: hidden">
     <BackButton :backRoute="backRoute" />
+    <!-- {{ trip.billsList[0].cart[0].count }} -->
+    
+
     <a-row class="justify-center d-flex">
       <a-col :xs="22" :xl="16">
         <h2 class="ma-0">{{ trip.name }}</h2>
         <a-spin v-if="!trip._id" size="large"></a-spin>
-        <a-row
-          v-if="trip._id"
-          :gutter="[12, 12]"
-          class="text justify-center d-flex"
-        >
+        <a-row v-if="trip._id" :gutter="[12, 12]" class="text justify-center d-flex">
           <!-- добавить карусель фотографий -->
           <a-col :xs="24" :md="12">
             <a-carousel arrows dots-class="slick-dots slick-thumb">
@@ -170,7 +180,7 @@ onMounted(() => {
             <div>Количество человек:</div>
             <div style="width: 50%">
               <a-progress
-                :percent="(trip.billsList.length / trip.maxPeople) * 100"
+                :percent="(tripsCount / trip.maxPeople) * 100"
                 :format="() => `${trip.maxPeople} чел`"
               >
               </a-progress>
@@ -222,10 +232,14 @@ onMounted(() => {
 
         <a-col :span="24">
           <div>Цена</div>
-          <div class="d-flex  space-around align-center" v-for="(cost, index) of trip.cost" :key="index">
+          <div
+            class="d-flex space-around align-center"
+            v-for="(cost, index) of trip.cost"
+            :key="index"
+          >
             {{ cost.first }}<span>{{ cost.price }} руб. </span>
             <div class="d-flex direction-column">
-              <span style="font-size: 8px;">кол-во</span>
+              <span style="font-size: 8px">кол-во</span>
               <a-input-number
                 v-model:value="selectedByUser[index].count"
                 :min="0"

@@ -76,38 +76,44 @@ function submit() {
           <a-typography-paragraph v-model:content="info.fullname" editable />
         </a-col>
 
-        <a-col :xs="11" :md="8" :lg="5">
-          <a-typography-text type="secondary">Название фирмы</a-typography-text>
-          <a-typography-paragraph v-model:content="companyName" editable />
-        </a-col>
-      </a-row>
+      <a-col :xs="11" :md="8" :lg="5" v-if="info.companyName">
+        <a-typography-text type="secondary">Название фирмы</a-typography-text>
+        <h5 style="font-size: 16px">{{ info.companyName  }}</h5>
+      </a-col>
+    </a-row>
 
-      <a-row :xs="22" :md="18" :lg="16" style="padding-left: 12px">
-        <a-col :xs="11" :md="8" :lg="5">
-          <a-typography-text type="secondary">Статус пользователя</a-typography-text>
-          <a-typography-paragraph v-model:content="creatorsType" editable />
-        </a-col>
+    <a-row :xs="22" :md="18" :lg="16">
+      <a-col :xs="11" :md="8" :lg="5"  v-if="info.creatorsType">
+        <a-typography-text type="secondary">Статус пользователя</a-typography-text>
+        <h5 style="font-size: 16px">
+          {{
+            info.creatorsType == "author"
+              ? "Автор тура"
+              : info.creatorsType == "operator"
+                ? "Туроператор"
+                : "Турагенство"
+          }}
+        </h5>
+      </a-col>
 
-        <a-col :xs="11" :md="8" :lg="5">
-          <a-typography-text type="secondary">Юр. статус</a-typography-text>
-          <a-typography-paragraph v-model:content="type" editable />
-        </a-col>
+      <a-col :xs="11" :md="8" :lg="5" v-if="info.type">
+        <a-typography-text type="secondary">Юр. статус</a-typography-text>
+        <h5 style="font-size: 16px">
+          {{
+            info.type == "phys"
+              ? "Физическое лицо"
+              : info.type == "company"
+                ? "Юридическое лицо"
+                : "Индивидуальный предприниматель"
+          }}
+        </h5>
+      </a-col>
 
-        <a-col :xs="11" :md="8" :lg="5">
-          <a-typography-text type="secondary">ИНН</a-typography-text>
-          <a-typography-paragraph v-model:content="govermentRegNumber" editable />
-        </a-col>
-      </a-row>
-
-      <a-button
-        v-show="onChange"
-        class="mt-16"
-        type="primary"
-        size="large"
-        html-type="submit"
-        >Отправить
-      </a-button>
-    </form>
+      <a-col :xs="11" :md="8" :lg="5" v-if="info.govermentRegNumber">
+        <a-typography-text type="secondary">ИНН</a-typography-text>
+        <h5 style="font-size: 16px">{{ info.govermentRegNumber}}</h5>
+      </a-col>
+    </a-row>
   </div>
 </template>
 <style></style>

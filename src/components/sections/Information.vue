@@ -183,6 +183,7 @@ watch(y, (newY) => {
     // transform: translateY(0);
     transition: all 1s ease;
   }
+
 }
 @media (max-width: 770px) {
   .todo-answer {

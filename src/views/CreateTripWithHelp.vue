@@ -1,19 +1,21 @@
 <script setup>
+
 import BackButton from "../components/BackButton.vue"
 import UserFullInfo from '../components/forms/UserFullInfo.vue'
 
-import { reactive, ref } from "vue";
-import typeOfTrip from "../fakeDB/tripType";
+import { reactive, ref, onMounted } from "vue";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 
 import BookingService from "../service/BookingService";
 import { useAuth } from '../stores/auth'
+import { useAppState } from "../stores/appState";
 
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
 const monthFormatList = ["MM.YY"];
 const ruLocale = locale;
 
 const userStore = useAuth()
+const appStore = useAppState();
 
 let form = reactive({
   duration: "",
@@ -28,6 +30,10 @@ let form = reactive({
   phoneNumber: "",
   tripType: "Любой",
 });
+let userInfo = reactive({
+  fullname: "",
+  phone: "",
+});
 
 let formState = reactive({
   email: "",
@@ -35,16 +41,34 @@ let formState = reactive({
   username: "",
 });
 
-function submit() {
+async function submit() {
   let toSend = Object.assign(form)
-  toSend.start = new Date(form.start).getTime()  
-  toSend.end = new Date(form.end).getTime()  
-  
-return TripService.bookingTrip(toSend)
+  toSend.start = new Date(form.start).getTime()
+  toSend.end = new Date(form.end).getTime()
+
+ 
+  await userStore
+    .updateUser({
+      email: userStore.user.email,
+      fullinfo: userInfo,
+    })
+    .then((response) => {
+      userStore.user = response.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+  return TripService.bookingTrip(toSend)
   // очистить форму, сделать редирект на главную, вывести уведомление снизу об успехе
 }
 
-
+onMounted(() => {
+  if (userStore.user.fullinfo) {
+    userStore.user.fullinfo.fullname ? userInfo.fullname = userStore.user.fullinfo.fullname : userInfo.fullname = "";
+    userStore.user.fullinfo.phone ? userInfo.phone = userStore.user.fullinfo.phone : userInfo.phone = "";
+  }
+});
 </script>
 <template>
   <div>
@@ -53,15 +77,24 @@ return TripService.bookingTrip(toSend)
     <form action="POST" @submit.prevent="submit" enctype="multipart/form-data" ref="newGuideElementForm">
       <a-row type="flex" justify="center">
         <a-col :xs="22" :lg="12">
+          <h2>О вас</h2>
           <a-row :gutter="[16, 16]">
-            <a-col v-if="!userStore.user?.fullinfo" :span="24">
-              <UserFullInfo />
+            <a-col :span="24" :md="12">
+              Фaмилия Имя
+              <a-input style="width: 100%" v-model:value="userInfo.fullname" placeholder="Иванов Иван Иванович" />
             </a-col>
+            <a-col :span="24" :md="12">
+              Телефон
+              <a-input style="width: 100%" v-model:value="userInfo.phone" placeholder="79127528874" />
+            </a-col>
+
             <a-col :span="24">
               <h2>Заказать тур</h2>
               <div>
                 Тип тура
-                <a-select v-model:value="form.type" style="width: 100%" :options="typeOfTrip" mode="multiple">
+                <a-select v-model:value="form.type" style="width: 100%" mode="multiple">
+                  <a-select-option v-for="value in appStore.appState[0].tripType" :value="value">{{ value
+                  }}</a-select-option>
                 </a-select>
               </div>
             </a-col>
@@ -95,8 +128,8 @@ return TripService.bookingTrip(toSend)
               <a-input-number :min="0" style="width: 100%" placeholder="1" />
             </a-col>
             <a-col :xs="24" :md="8">Мин. возраст, лет
-              <a-input-number id="inputNumber" v-model:value="form.fromAge" style="width: 100%" placeholder="10"
-                :min="0" :max="100" />
+              <a-input-number id="inputNumber" v-model:value="form.fromAge" style="width: 100%" placeholder="10" :min="0"
+                :max="100" />
             </a-col>
 
             <a-col :xs="24">
