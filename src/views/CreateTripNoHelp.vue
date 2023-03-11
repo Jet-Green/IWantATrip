@@ -3,6 +3,7 @@ import { computed } from "vue"
 import BackButton from "../components/BackButton.vue";
 import ImageCropper from "../components/ImageCropper.vue";
 import UserFullInfo from "../components/forms/UserFullInfo.vue";
+
 import { watch, nextTick, ref, reactive, onMounted } from "vue";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
@@ -246,7 +247,7 @@ onMounted(() => {
       quill.value.setHTML(d.description);
       form.location = d.location
       form.fromAge = d.fromAge
-
+   
 
       // form.tripRoute = d.tripRoute
       //   form.offer = d.offer
