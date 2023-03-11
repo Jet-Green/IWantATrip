@@ -50,9 +50,21 @@ tripStore
     console.log(error);
   });
 
-function clearData(dataString) {
-  const dataFromString = new Date(Number(dataString));
-  return dataFromString.toLocaleDateString();
+  const clearData = (dataString) => {
+  let date
+  if (dataString.length == 13) {
+    const dataFromString = new Date(Number(dataString));
+    date = dataFromString
+
+  } else {
+    date = new Date(dataString)
+  };
+  return date.toLocaleDateString("ru-Ru", {
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit",
+
+  })
 }
 
 function getImg(index) {
