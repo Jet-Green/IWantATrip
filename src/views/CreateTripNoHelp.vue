@@ -235,8 +235,8 @@ onMounted(() => {
       form.tripRoute = d.tripRoute
       form.offer = d.offer
 
-      start.value = dayjs(Date(d.start))
-      end.value = dayjs(Date(d.end))
+      start.value = dayjs(new Date(d.start))
+      end.value = dayjs(new Date(d.end))
     });
     // .catch((error) => {
     //     console.log(error);
