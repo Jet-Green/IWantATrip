@@ -50,8 +50,8 @@ tripStore
     console.log(error);
   });
 
-const clearData = (dataString) => {
-  let date = new Date(Number(dataString)).toLocaleDateString("ru-Ru", {
+const clearData = (dateNumber) => {
+  let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
     year: "2-digit",
     month: "2-digit",
     day: "2-digit",

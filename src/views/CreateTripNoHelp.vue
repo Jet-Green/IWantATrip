@@ -92,7 +92,6 @@ function submit() {
     send[key] = form[key];
   }
 
-
   TripService.createTrip(form, userStore.user.email).then(async (res) => {
     const _id = res.data._id;
     // try {
@@ -201,7 +200,7 @@ watch(start, () => {
     form.duration = "";
   }
   if (start.value)
-    form.start = Date.parse(start.value.$d.toString());
+    form.start = Number(Date.parse(start.value.$d.toString()));
 });
 watch(end, () => {
   let result =
@@ -214,7 +213,7 @@ watch(end, () => {
     form.duration = "";
   }
   if (end.value)
-    form.end = Date.parse(end.value.$d.toString());
+    form.end = Number(Date.parse(end.value.$d.toString()));
 });
 onMounted(() => {
   if (router.currentRoute.value.query._id) {
@@ -247,7 +246,7 @@ onMounted(() => {
 let formSchema = yup.object({
   name: yup.string().required("заполните поле"),
   start: yup.object().required("заполните поле"),
-  end: yup.string().required("заполните поле"),
+  end: yup.object().required("заполните поле"),
   maxPeople: yup.string().required("заполните поле"),
   tripType: yup.string().required("заполните поле"),
   fromAge: yup.string().required("заполните поле"),

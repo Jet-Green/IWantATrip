@@ -129,8 +129,8 @@ onMounted(() => {
             let d = response.data
             delete d.__v
 
-            start.value = dayjs(Date(d.start))
-            end.value = dayjs(Date(d.end))
+            start.value = dayjs(new Date(d.start))
+            end.value = dayjs(new Date(d.end))
 
             form.value = d;
             for (let i of form.value.images)
@@ -167,7 +167,7 @@ watch(start, () => {
         form.value.duration = "";
     }
     if (start.value)
-        form.value.start = start.value.$d.toString();
+        form.value.start = Number(Date.parse(start.value.$d.toString()));
 
 });
 watch(end, () => {
@@ -182,12 +182,12 @@ watch(end, () => {
         form.value.duration = "";
     }
     if (end.value)
-        form.value.end = end.value.$d.toString();
+        form.value.end = Number(Date.parse(end.value.$d.toString()));
 });
 let formSchema = yup.object({
     name: yup.string().required("заполните поле"),
     start: yup.object().required("заполните поле"),
-    end: yup.string().required("заполните поле"),
+    end: yup.object().required("заполните поле"),
     maxPeople: yup.string().required("заполните поле"),
     tripType: yup.string().required("заполните поле"),
     fromAge: yup.string().required("заполните поле"),
