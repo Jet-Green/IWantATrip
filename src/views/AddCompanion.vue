@@ -31,11 +31,7 @@ const form = reactive({
 
 
 function submit() {
-  let toSend = Object.assign(form)
-  toSend.start = new Date(form.start).getTime()
-  toSend.end = new Date(form.end).getTime()
-
-  CompanionService.createCompanion(toSend).then((res) => {
+  CompanionService.createCompanion(form).then((res) => {
     const _id = res.data._id;
     // axios.post(`http://localhost:4089/add-companion?name=${form.name}`)
     userStore
@@ -72,8 +68,8 @@ function submit() {
 
 }
 watch(date, () => {
-  form.start = date ? date.value[0].$d.getTime() : ""
-  form.end = date ? date.value[1].$d.getTime() : ""
+  form.start = date ? Number(Date.parse(date.value[0].$d.toString())) : ""
+  form.end = date ? Number(Date.parse(date.value[1].$d.toString())) : ""
 });
 
 
@@ -94,9 +90,9 @@ const formSchema = yup.object({
 </script>
 <template>
   <div>
-    <BackButton :backRoute="backRoute" />
-    <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
-      <a-row type="flex" justify="center">
+  <BackButton :backRoute="backRoute" />
+  <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
+    <a-row type="flex" justify="center">
         <a-col :xs="22" :lg="12">
           <h2>Найти попутчика</h2>
           <a-row :gutter="[8, 8]">
@@ -150,7 +146,7 @@ const formSchema = yup.object({
               </Transition>
             </a-col>
             <a-col :xs="24" :md="12">
-              <Field name="email" v-slot="{ value, handleChange }" v-model:value="form.email">
+              <Field name="email" v-slot="{ value, handleChange }" v-model="form.email">
                 <label>Электронная почта</label>
                 <a-input @update:value="handleChange" :value="value" />
               </Field>
@@ -181,12 +177,12 @@ const formSchema = yup.object({
               </Transition>
 
               <!-- <a-date-picker v-model:value="form.start" style="width: 100%" placeholder="Начало" :locale="ruLocale":format="dateFormatList" />
-                                                    </a-col>
-                                                    <a-col :span="12">
-                                                      Дата конца
-                                                      <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
-                                                        :format="dateFormatList" /> 
-                                                -->
+                                                                    </a-col>
+                                                                    <a-col :span="12">
+                                                                      Дата конца
+                                                                      <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
+                                                                        :format="dateFormatList" /> 
+                                                                -->
             </a-col>
             <a-col :xs="24">
               <!-- Тип отдыха <a-select v-model:value="form.type" style="width: 100%" :options="typeOfTrip" mode="multiple"></a-select> -->

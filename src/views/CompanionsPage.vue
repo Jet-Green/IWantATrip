@@ -8,13 +8,14 @@ import CompanionFilter from "../components/CompanionFilter.vue";
 const companionStore = useCompanions();
 let router = useRouter();
 
-const clearData = (dataString) => {
-  if (dataString) {
-    return new Date(Number(dataString)).toLocaleDateString("ru-Ru", {
-      year: "2-digit",
-      month: "2-digit",
-      day: "2-digit",
-    })
+const clearData = (dateNumber) => {
+  let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit",
+  })
+  if (date !== 'Invalid Date' && date) {
+    return date
   }
   return ''
 }
