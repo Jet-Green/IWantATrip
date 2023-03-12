@@ -41,7 +41,7 @@ onMounted(() => {
           <a-tab-pane v-if="userStore.user?.trips?.length" key="2" tab="Созданные туры">
             <CreatedTrips />
           </a-tab-pane>
-          <a-tab-pane key="3" tab="Купленные туры">
+          <a-tab-pane key="3" tab="Забронированные">
             <PurchasedTrips />
           </a-tab-pane>
           <a-tab-pane v-if="userStore.user?.guideElements?.length" key="4" tab="Созданные объекты">

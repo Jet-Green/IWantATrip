@@ -52,14 +52,21 @@ function showBills(index) {
 }
 
 const clearData = (dataString) => {
-  const dataFromString = new Date(Number(dataString));
+  let date
+  if (dataString.length == 13) {
+    const dataFromString = new Date(Number(dataString));
+    date = dataFromString
 
-  return dataFromString.toLocaleDateString("ru-Ru", {
+  } else {
+    date = new Date(dataString)
+  };
+  return date.toLocaleDateString("ru-Ru", {
     year: "2-digit",
     month: "2-digit",
     day: "2-digit",
-  });
-};
+
+  })
+}
 let customers = ref([])
 onMounted(async () => {
   for (let _id of tripsIds.value) {
@@ -126,7 +133,6 @@ onMounted(async () => {
           <a-modal v-model:visible="visibleBills[index]" :title="trip.name" :footer="null" wrap-class-name="full-modal"
             width="80%">
 
-
             <a-row :gutter="[16, 16]" class="justify-center">
               <a-col :xs="24" :sm="12" :xl="6" v-for="(BILL, bill_index) of trip.billsList">
 
@@ -167,26 +173,13 @@ onMounted(async () => {
                     </b>
                   </div>
 
-
-
-
-
-
                 </a-card>
 
               </a-col>
             </a-row>
-
-
           </a-modal>
         </a-col>
       </a-row>
-
-
-
-
-
-
 
     </a-col>
   </a-row>
