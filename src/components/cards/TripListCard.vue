@@ -19,10 +19,9 @@ function goToTripPage() {
 }
 const clearData = (dataString) => {
   let date
-  if (dataString.length == 13) {
+  if (dataString?.length == 13) {
     const dataFromString = new Date(Number(dataString));
     date = dataFromString
-
   } else {
     date = new Date(dataString)
   };
@@ -30,14 +29,13 @@ const clearData = (dataString) => {
     year: "2-digit",
     month: "2-digit",
     day: "2-digit",
-
   })
 }
 </script>
 <template>
   <span class="mdi mdi-12px mdi-close" style="color: #245159; cursor: pointer; float: right"
     @click="tripToDelete(trip._id)"></span>
-  <div @click="goToTripPage" >
+  <div @click="goToTripPage">
     <div class="title mt-4">{{ trip.name }}</div>
     <a-badge-ribbon :text="`${trip.cost.length ? trip.cost[0].price : 0} руб`" color="ff6600">
       <a-card hoverable>

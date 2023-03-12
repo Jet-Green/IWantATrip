@@ -13,10 +13,9 @@ function goToTripPage() {
 }
 const clearData = (dataString) => {
   let date
-  if (dataString.length == 13) {
+  if (dataString?.length == 13) {
     const dataFromString = new Date(Number(dataString));
     date = dataFromString
-
   } else {
     date = new Date(dataString)
   };
@@ -24,7 +23,6 @@ const clearData = (dataString) => {
     year: "2-digit",
     month: "2-digit",
     day: "2-digit",
-
   })
 }
 </script>
