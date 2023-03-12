@@ -181,12 +181,12 @@ const formSchema = yup.object({
               </Transition>
 
               <!-- <a-date-picker v-model:value="form.start" style="width: 100%" placeholder="Начало" :locale="ruLocale":format="dateFormatList" />
-                                                  </a-col>
-                                                  <a-col :span="12">
-                                                    Дата конца
-                                                    <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
-                                                      :format="dateFormatList" /> 
-                                              -->
+                                                    </a-col>
+                                                    <a-col :span="12">
+                                                      Дата конца
+                                                      <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
+                                                        :format="dateFormatList" /> 
+                                                -->
             </a-col>
             <a-col :xs="24">
               <!-- Тип отдыха <a-select v-model:value="form.type" style="width: 100%" :options="typeOfTrip" mode="multiple"></a-select> -->
@@ -218,9 +218,3 @@ const formSchema = yup.object({
     </form>
   </div>
 </template>
-<style scoped lang="scss">
-.error-message {
-  color: red;
-  font-size: clamp(0.625rem, 0.4261rem + 0.5682vw, 0.875rem);
-}
-</style>
