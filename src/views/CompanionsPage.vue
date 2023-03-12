@@ -9,14 +9,15 @@ const companionStore = useCompanions();
 let router = useRouter();
 
 const clearData = (dataString) => {
-  return new Date(Number(dataString))
-    .toLocaleDateString("ru-Ru", {
+  if (dataString) {
+    return new Date(Number(dataString)).toLocaleDateString("ru-Ru", {
       year: "2-digit",
       month: "2-digit",
       day: "2-digit",
     })
-    .replaceAll("/", ".");
-};
+  }
+  return ''
+}
 const ageString = (age) => {
   if (age >= 10 && age <= 20) {
     return `${age} лет`;
@@ -49,59 +50,41 @@ const ageString = (age) => {
           </a-col>
 
           <a-col :md="8" :xs="24" :sm="12" class="d-flex justify-center">
-            <a-button
-              class="lets_go_btn"
-              type="primary"
-              size="large"
-              @click="router.push('/add-companion')"
-              >Добавить себя</a-button
-            >
+            <a-button class="lets_go_btn" type="primary" size="large" @click="router.push('/add-companion')">Добавить
+              себя</a-button>
           </a-col>
         </a-row>
         <a-row :gutter="[8, 8]" class="mt-8">
-          <a-col
-            :lg="8"
-            :sm="12"
-            :xs="24"
-            v-for="(companion, i) in companionStore.filteredСompanions"
-            :key="i"
-          >
+          <a-col :lg="8" :sm="12" :xs="24" v-for="(companion, i) in companionStore.filteredСompanions" :key="i">
             <a-card class="card" hoverable>
               <div>
-                <span class="mdi mdi-human-male-female"></span
-                >{{ companion.name }} <span class="mdi mdi-human-cane"></span
-                >{{ ageString(companion.age) }}
+                <span class="mdi mdi-human-male-female"></span>{{ companion.name }} <span
+                  class="mdi mdi-human-cane"></span>{{ ageString(companion.age) }}
               </div>
 
               <div>
-                <span class="mdi mdi-compass-outline"></span
-                >{{ companion.direction }}
+                <span class="mdi mdi-compass-outline"></span>{{ companion.direction }}
               </div>
-              <div
-                :class="[
-                  companion.companionGender == 'Мужчина'
-                    ? 'male'
-                    : companion.companionGender == 'Женщина'
+              <div :class="[
+                companion.companionGender == 'Мужчина'
+                  ? 'male'
+                  : companion.companionGender == 'Женщина'
                     ? 'female'
                     : 'not-matter',
-                ]"
-              >
-                <span
-                  :class="
-                    companion.companionGender == 'Женщина'
-                      ? 'mdi mdi-gender-female'
-                      : companion.companionGender == 'Мужчина'
+              ]">
+                <span :class="
+                  companion.companionGender == 'Женщина'
+                    ? 'mdi mdi-gender-female'
+                    : companion.companionGender == 'Мужчина'
                       ? 'mdi mdi-gender-male'
                       : 'mdi mdi-human-male-female'
-                  "
-                ></span
-                >{{
-                  companion.companionGender == "Мужчина"
-                    ? "Мужчину"
-                    : companion.companionGender == "Женщина"
-                    ? "Женщину"
-                    : "Не важно"
-                }}
+                "></span>{{
+  companion.companionGender == "Мужчина"
+  ? "Мужчину"
+  : companion.companionGender == "Женщина"
+    ? "Женщину"
+    : "Не важно"
+}}
               </div>
               <div>
                 <span class="mdi mdi-calendar-arrow-right"></span>
@@ -111,23 +94,18 @@ const ageString = (age) => {
               </div>
 
               <div>
-                <span class="mdi mdi-list-status"></span
-                >{{ companion.description }}
+                <span class="mdi mdi-list-status"></span>{{ companion.description }}
               </div>
               <a-tooltip placement="bottom">
                 <template #title>
                   <span>отклик</span>
                 </template>
-                <a-button
-                  shape="circle"
-                  class="accept"
-                  @click="
-                    router.push({
-                      path: '/add-feedback',
-                      query: { companion_id: companion._id },
-                    })
-                  "
-                >
+                <a-button shape="circle" class="accept" @click="
+                  router.push({
+                    path: '/add-feedback',
+                    query: { companion_id: companion._id },
+                  })
+                ">
                   <span class="mdi mdi-thumb-up-outline"></span>
                 </a-button>
               </a-tooltip>

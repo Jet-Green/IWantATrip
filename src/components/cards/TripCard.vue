@@ -12,19 +12,17 @@ function goToTripPage() {
   router.push(`/trip?_id=${props.trip._id}`)
 }
 const clearData = (dataString) => {
-  let date
-  if (dataString?.length == 13) {
-    const dataFromString = new Date(Number(dataString));
-    date = dataFromString
-  } else {
-    date = new Date(dataString)
-  };
-  return date.toLocaleDateString("ru-Ru", {
+  let date = new Date(Number(dataString)).toLocaleDateString("ru-Ru", {
     year: "2-digit",
     month: "2-digit",
     day: "2-digit",
   })
+  if (date !== 'Invalid Date' && date) {
+    return date
+  }
+  return ''
 }
+
 </script>
 <template>
   <div @click="goToTripPage" style="width: 270px">
