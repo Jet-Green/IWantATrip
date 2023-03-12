@@ -55,26 +55,25 @@ const formSchema = yup.object({
         <a-row type="flex" justify="center">
 
           <a-col :span="24">
-            <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="sendRegInfo()">
-              <Field name="fullname" v-slot="{ field, handleChange }">
-                <a-input @change="handleChange" :value="field.value" v-model:value="formState.fullname"
-                  placeholder="Иван Иванов" size="large"></a-input>
+            <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="sendRegInfo()" :validateOnMount="true">
+              <Field name="fullname" v-slot="{ value, handleChange }" v-model="formState.fullname">
+                <a-input @change="handleChange" :value="value" placeholder="Иван Иванов" size="large"></a-input>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="fullname" class="error-message" />
               </Transition>
 
-              <Field name="email" type="email" v-slot="{ field, handleChange }">
-                <a-input @change="handleChange" :value="field.value" placeholder="email@email.com" size="large"
-                  v-model:value="formState.email" class="mt-8"></a-input>
+              <Field name="email" type="email" v-slot="{ value, handleChange }" v-model="formState.email">
+                <a-input @update:value="handleChange" :value="value" placeholder="email@email.com" size="large"
+                  class="mt-8"></a-input>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="email" class="error-message" />
               </Transition>
 
-              <Field name="password" type="password" v-slot="{ field, handleChange }">
-                <a-input @change="handleChange" :value="field.value" placeholder="Введите пароль" size="large"
-                  v-model:value="formState.password" type="password" class="mt-8"></a-input>
+              <Field name="password" type="password" v-slot="{ value, handleChange }" v-model="formState.password">
+                <a-input @update:value="handleChange" :value="value" placeholder="Введите пароль" size="large"
+                  type="password" class="mt-8"></a-input>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="password" class="error-message" />

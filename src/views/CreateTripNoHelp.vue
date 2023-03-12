@@ -84,8 +84,6 @@ const delPhoto = () => {
   delPhotoDialog.value = false;
 };
 function submit() {
-  console.log(form);
-  return
   description.value = description.value.split("<p><br></p>").join("");
   form.description = description.value;
 
