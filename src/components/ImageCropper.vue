@@ -43,12 +43,15 @@ async function crop() {
                 } catch (err) {
                     console.log(err);
                 }
-            })
+            }, 'image/jpeg',
+                // quality is
+                // 0.9,
+            )
     }
 }
 watch(preview, () => {
     cropper = new Cropper(previewImage.value, {
-        aspectRatio: 270/175,
+        aspectRatio: 270 / 175,
         maxContainerWidth: 300,
         maxContainerHeight: 300,
         minContainerWidth: 300,
