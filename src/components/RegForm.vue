@@ -55,7 +55,7 @@ const formSchema = yup.object({
         <a-row type="flex" justify="center">
 
           <a-col :span="24">
-            <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="sendRegInfo()" :validateOnMount="true">
+            <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="sendRegInfo()">
               <Field name="fullname" v-slot="{ value, handleChange }" v-model="formState.fullname">
                 <a-input @change="handleChange" :value="value" placeholder="Иван Иванов" size="large"></a-input>
               </Field>

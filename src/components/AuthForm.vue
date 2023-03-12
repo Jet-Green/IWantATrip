@@ -45,7 +45,7 @@ const formSchema = yup.object({
         <a-row>
           <a-col :span="24">
             <h2>Вход</h2>
-            <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="logIn" :validateOnMount="true">
+            <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="logIn">
               <Field name="email" type="email" v-slot="{ value, handleChange }" v-model="formState.email">
                 <a-input @update:value="handleChange" :value="value" placeholder="email@email.com" size="large"></a-input>
               </Field>

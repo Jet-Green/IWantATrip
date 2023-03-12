@@ -262,7 +262,7 @@ let formSchema = yup.object({
     <BackButton />
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="12">
-        <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit" :validateOnMount="true">
+        <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
           <a-row :gutter="[16, 16]">
             <a-col :span="24">
               <UserFullInfo @fullInfo="updateUserInfo" />

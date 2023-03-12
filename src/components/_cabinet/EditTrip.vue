@@ -55,7 +55,7 @@ let form = ref({
     location: "",
     tripType: "",
     fromAge: "",
-   
+
 });
 
 const removeCost = (item) => {
@@ -126,16 +126,14 @@ onMounted(() => {
         .then((response) => {
             let d = response.data
             delete d.__v
-         
-            start.value = dayjs(d.start)
-            end.value = dayjs(d.end)
+
+            start.value = dayjs(Date(d.start))
+            end.value = dayjs(Date(d.end))
 
             form.value = d;
             for (let i of form.value.images)
                 previews.value.push(i)
             quill.value.setHTML(d.description)
-       
-            console.log(form.value);
         })
     // .catch((error) => {
     //     console.log(error);
@@ -209,13 +207,13 @@ watch(end, () => {
 
                         <a-col :span="12">
                             Дата начала
-                            <a-date-picker v-model:value="start" style="width: 100%" placeholder="Начало"
-                                :locale="ruLocale" :format="dateFormatList" />
+                            <a-date-picker v-model:value="start" style="width: 100%" placeholder="Начало" :locale="ruLocale"
+                                :format="dateFormatList" />
                         </a-col>
                         <a-col :span="12">
                             Дата конца
-                            <a-date-picker v-model:value="end" style="width: 100%" placeholder="Конец"
-                                :locale="ruLocale" :format="dateFormatList" />
+                            <a-date-picker v-model:value="end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
+                                :format="dateFormatList" />
                         </a-col>
                         <a-col :span="12">
                             Продолжительность
@@ -231,8 +229,8 @@ watch(end, () => {
                                 class="mb-16">
                                 <a-input v-model:value="item.first" placeholder="Для кого" />
 
-                                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена"
-                                    :min="0" :step="0.01" class="ml-16 mr-16" />
+                                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0"
+                                    :step="0.01" class="ml-16 mr-16" />
 
                                 <a-button @click="removeCost(item)" shape="circle">
                                     <span class="mdi mdi-minus" style="cursor: pointer"></span>
@@ -246,8 +244,9 @@ watch(end, () => {
                         </a-col>
                         <a-col :xs="24" :md="12">Тип тура
                             <div>
-                                <a-select v-model:value="form.tripType" style="width: 100%" >
-                                    <a-select-option v-for="value in appStore.appState[0].tripType" :value="value">{{value}}</a-select-option>
+                                <a-select v-model:value="form.tripType" style="width: 100%">
+                                    <a-select-option v-for="value in appStore.appState[0].tripType" :value="value">{{ value
+                                    }}</a-select-option>
                                 </a-select>
                             </div>
                         </a-col>
@@ -271,14 +270,13 @@ watch(end, () => {
                         </a-col>
                         <a-col :span="24" style="display: flex; flex-direction: column">
                             Описание программы
-                            <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html"
-                                :toolbar="[
-                                    // [{ header: [2, 3] }],
-                                    ['bold', 'italic', 'underline'],
-                                    [{ list: 'ordered' }, { list: 'bullet' }],
-                                    [{ color: ['#000000', '#ff6600', '#3daff5'] }],
-                                    [{ align: [] }],
-                                ]" />
+                            <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" :toolbar="[
+                                // [{ header: [2, 3] }],
+                                ['bold', 'italic', 'underline'],
+                                [{ list: 'ordered' }, { list: 'bullet' }],
+                                [{ color: ['#000000', '#ff6600', '#3daff5'] }],
+                                [{ align: [] }],
+                            ]" />
                         </a-col>
                         <a-col :span="24" class="d-flex justify-center">
                             <a-button class="mt-16" type="primary" size="large" html-type="submit">Отправить

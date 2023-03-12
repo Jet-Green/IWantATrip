@@ -95,7 +95,7 @@ const formSchema = yup.object({
 <template>
   <div>
     <BackButton :backRoute="backRoute" />
-    <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit" :validateOnMount="true">
+    <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
       <a-row type="flex" justify="center">
         <a-col :xs="22" :lg="12">
           <h2>Найти попутчика</h2>
@@ -181,12 +181,12 @@ const formSchema = yup.object({
               </Transition>
 
               <!-- <a-date-picker v-model:value="form.start" style="width: 100%" placeholder="Начало" :locale="ruLocale":format="dateFormatList" />
-                                                </a-col>
-                                                <a-col :span="12">
-                                                  Дата конца
-                                                  <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
-                                                    :format="dateFormatList" /> 
-                                            -->
+                                                  </a-col>
+                                                  <a-col :span="12">
+                                                    Дата конца
+                                                    <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
+                                                      :format="dateFormatList" /> 
+                                              -->
             </a-col>
             <a-col :xs="24">
               <!-- Тип отдыха <a-select v-model:value="form.type" style="width: 100%" :options="typeOfTrip" mode="multiple"></a-select> -->
