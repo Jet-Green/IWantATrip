@@ -56,7 +56,7 @@ onMounted(() => {
           <Carousel
             :itemsToShow="postsCount"
             :autoplay="25000"
-            snapAlign="center"
+            :snapAlign="center"
             :wrapAround="true"
             class="unselectable"
           >
