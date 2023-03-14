@@ -1,14 +1,17 @@
 <script setup>
 import { reactive, ref, watch } from "vue";
+import { useRouter } from "vue-router";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import BackButton from "../components/BackButton.vue";
 import CompanionService from "../service/CompanionService";
+
 import { useAuth } from "../stores/auth";
 import { message } from "ant-design-vue";
 
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 
+let router = useRouter();
 const userStore = useAuth();
 const ruLocale = locale;
 const backRoute = "/companions";
@@ -40,25 +43,29 @@ function submit() {
         $push: { createdCompanions: _id },
       })
       .then((response) => {
-        Object.assign(form, {
-          name: "",
-          surname: "",
-          email: "",
-          phone: "",
-          start: "",
-          end: "",
-          age: "",
-          gender: "Male",
-          companionGender: "Не важно",
-          // type: "Любой",
-          direction: "",
-          description: "",
+        userStore.user = response.data;
+        message.config({ top: "90vh",duration: 2 });
+
+        message.success({ content: "Попутчик добавлен!" }).then(() => {
+          router.push('/companions')
+          Object.assign(form, {
+            name: "",
+            surname: "",
+            email: "",
+            phone: "",
+            start: "",
+            end: "",
+            age: "",
+            gender: "Male",
+            companionGender: "Не важно",
+            // type: "Любой",
+            direction: "",
+            description: "",
+
+          });
+          date.value = null
 
         });
-        date.value = null
-        userStore.user = response.data;
-        message.config({ duration: 3, top: "90vh" });
-        message.success({ content: "Попутчик добавлен!", onClose: close });
       })
       .catch((err) => {
         console.log(err);
@@ -68,8 +75,11 @@ function submit() {
 
 }
 watch(date, () => {
-  form.start = date ? Number(Date.parse(date.value[0].$d.toString())) : ""
-  form.end = date ? Number(Date.parse(date.value[1].$d.toString())) : ""
+  if (date.value) {
+    form.start = date ? Number(Date.parse(date.value[0].$d.toString())) : ""
+    form.end = date ? Number(Date.parse(date.value[1].$d.toString())) : ""
+  }
+
 });
 
 
@@ -90,9 +100,9 @@ const formSchema = yup.object({
 </script>
 <template>
   <div>
-  <BackButton :backRoute="backRoute" />
-  <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
-    <a-row type="flex" justify="center">
+    <BackButton :backRoute="backRoute" />
+    <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
+      <a-row type="flex" justify="center">
         <a-col :xs="22" :lg="12">
           <h2>Найти попутчика</h2>
           <a-row :gutter="[8, 8]">
@@ -177,12 +187,12 @@ const formSchema = yup.object({
               </Transition>
 
               <!-- <a-date-picker v-model:value="form.start" style="width: 100%" placeholder="Начало" :locale="ruLocale":format="dateFormatList" />
-                                                                    </a-col>
-                                                                    <a-col :span="12">
-                                                                      Дата конца
-                                                                      <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
-                                                                        :format="dateFormatList" /> 
-                                                                -->
+                                                                          </a-col>
+                                                                          <a-col :span="12">
+                                                                            Дата конца
+                                                                            <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
+                                                                              :format="dateFormatList" /> 
+                                                                      -->
             </a-col>
             <a-col :xs="24">
               <!-- Тип отдыха <a-select v-model:value="form.type" style="width: 100%" :options="typeOfTrip" mode="multiple"></a-select> -->

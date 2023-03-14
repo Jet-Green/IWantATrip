@@ -80,6 +80,10 @@ body {
 .align-end {
   align-items: end;
 }
+.align-between {
+  align-content: space-between;
+}
+
 
 .direction-column {
   flex-direction: column;

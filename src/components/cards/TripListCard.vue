@@ -32,9 +32,10 @@ const clearData = (dateNumber) => {
 </script>
 <template>
   <!-- <span class="mdi mdi-12px mdi-close" style="color: #245159; cursor: pointer; float: right"
-    @click="tripToDelete(trip._id)"></span> -->
-  <div @click="goToTripPage">
+      @click="tripToDelete(trip._id)"></span> -->
+  <div @click="goToTripPage" style="height: 100%;" class="d-flex direction-column space-between">
     <div class="title mt-4">{{ trip.name }}</div>
+
     <a-badge-ribbon :text="`${trip.cost.length ? trip.cost[0].price : 0} руб`" color="ff6600">
       <a-card hoverable>
         <div>
@@ -46,12 +47,15 @@ const clearData = (dateNumber) => {
         </p>
       </a-card>
     </a-badge-ribbon>
+
+
   </div>
 </template>
 <style lang="scss" scoped>
 .title {
   font-size: 16px;
-  text-transform: uppercase;
+  // text-transform: uppercase;
   color: black;
+  text-align: center;
 }
 </style>
