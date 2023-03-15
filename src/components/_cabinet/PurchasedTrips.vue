@@ -2,13 +2,11 @@
 import { onMounted, reactive, computed, ref } from "vue";
 import { useAuth } from "../../stores/auth";
 import { useTrips } from "../../stores/trips";
+
 const userStore = useAuth();
 const tripStore = useTrips();
 let boughtTrips = reactive([]);
-function clearData(dataString) {
-  const dataFromString = new Date(Number(dataString));
-  return dataFromString.toLocaleDateString();
-}
+
 const myTrip = async () => {
   if (userStore.user.boughtTrips) {
     for (let i = 0; i < userStore.user.boughtTrips.length; i++) {

@@ -29,6 +29,7 @@ const type = computed(() => {
 const govermentRegNumber = computed(() => {
   return info.govermentRegNumber ? info.govermentRegNumber : "**********";
 });
+console.log(user)
 function submit() {
   userStore
     .updateUser({
@@ -114,6 +115,7 @@ function submit() {
         <h5 style="font-size: 16px">{{ info.govermentRegNumber}}</h5>
       </a-col>
     </a-row>
+    </form>
   </div>
 </template>
 <style></style>

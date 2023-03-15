@@ -61,7 +61,7 @@ let form = reactive({
   location: "",
   tripType: "",
   fromAge: "",
-
+  creatorId: "",
 });
 let fullUserInfo = null;
 
@@ -128,7 +128,7 @@ function submit() {
         location: "",
         tripType: "",
         fromAge: "",
-
+        creatorId: userStore.user.fullinfo.fullname,
       });
       if (fullUserInfo) {
         userStore

@@ -138,6 +138,7 @@ async function buyTrip(isBoughtNow) {
 onMounted(() => {
   if (userStore.user) {
     userInfo.fullname = userStore.user.fullinfo.fullname;
+    console.log(trip)
     userInfo.phone = userStore.user.fullinfo.phone;
   }
 });
@@ -194,6 +195,7 @@ onMounted(() => {
               <div v-for="(item, index) in trip.cost" :key="index" class="cost">
                 {{ item.first }} : <b>{{ item.price }} руб.</b>
               </div>
+              <p>{{ trip.creatorId }}</p>
             </div>
             <div class="d-flex justify-center ma-8">
               <a-button type="primary" class="lets_go_btn" size="large" style="display: flex; justify-content: center"
