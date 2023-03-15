@@ -45,12 +45,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <a-row
-    v-for="(companion, index) in companions"
-    :key="index"
-    :gutter="[8, 8]"
-    class="d-flex justify-center mt-8"
-  >
+  <a-row v-for="(companion, index) in companions" :key="index" :gutter="[8, 8]" class="d-flex justify-center mt-8">
     <a-card class="card" :lg="8" :sm="12" :xs="24">
       <div>
         <span class="mdi mdi-human-male-female"></span>{{ companion?.name }}
@@ -60,31 +55,26 @@ onMounted(async () => {
       <div>
         <span class="mdi mdi-compass-outline"></span>{{ companion?.direction }}
       </div>
-      <div
-        :class="[
-          companion?.companionGender == 'Мужчина'
-            ? 'male'
-            : companion?.companionGender == 'Женщина'
+      <div :class="[
+        companion?.companionGender == 'Мужчина'
+          ? 'male'
+          : companion?.companionGender == 'Женщина'
             ? 'female'
             : 'not-matter',
-        ]"
-      >
-        <span
-          :class="
-            companion?.companionGender == 'Женщина'
-              ? 'mdi mdi-gender-female'
-              : companion?.companionGender == 'Мужчина'
+      ]">
+        <span :class="
+          companion?.companionGender == 'Женщина'
+            ? 'mdi mdi-gender-female'
+            : companion?.companionGender == 'Мужчина'
               ? 'mdi mdi-gender-male'
               : 'mdi mdi-human-male-female'
-          "
-        ></span
-        >{{
-          companion?.companionGender == "Мужчина"
-            ? "Мужчину"
-            : companion?.companionGender == "Женщина"
-            ? "Женщину"
-            : "Не важно"
-        }}
+        "></span>{{
+  companion?.companionGender == "Мужчина"
+  ? "Мужчину"
+  : companion?.companionGender == "Женщина"
+    ? "Женщину"
+    : "Не важно"
+}}
       </div>
       <div>
         <span class="mdi mdi-calendar-arrow-right"></span>
@@ -97,27 +87,29 @@ onMounted(async () => {
         <span class="mdi mdi-list-status"></span>{{ companion?.description }}
       </div>
       <!-- <a-tooltip placement="bottom">
-        <template #title>
-          <span>отклик</span>
-        </template>
-      </a-tooltip> -->
+          <template #title>
+            <span>отклик</span>
+          </template>
+        </a-tooltip> -->
 
       <a-collapse v-model:activeKey="activeKey" ghost>
-        <a-collapse-panel header="Отклики" >
-          <a-row class="d-flex">
-          <a-col :xs="24" :lg="8" :sm="12"
-            v-for="request in companion?.companionRequests"
-            :key="request.name"
-          >
-            <a-card hoverable>
-<div>              <span class="mdi mdi-human-male-female"></span> {{ request?.name }}
-               {{ request?.surname }}
-               <span class="mdi mdi-human-cane"></span>{{ ageString( request?.age ) }}</div>
-              {{ request?.gender }} {{ request?.phone }}</a-card
-            >
-            
-          </a-col>
-        </a-row>
+        <a-collapse-panel header="Отклики">
+          <a-row>
+            <a-col :span="24">
+              <a-row :gutter="[8, 8]" class="mt-8">
+                <a-col :lg="8" :sm="12" :xs="24" v-for="request in companion?.companionRequests" :key="request.name">
+                  <a-card class="card " hoverable>
+                    <span class="mdi mdi-human-male-female"></span> {{ request?.name }}
+                    {{ request?.surname }}
+                    <span class="mdi mdi-human-cane"></span>{{ ageString(request?.age) }} 
+                    {{ request?.gender }} {{ request?.phone }}
+                    <a-divider class="ma-4"></a-divider>
+                    <div class="d-flex justify-end"><a-button>Хочу</a-button></div>
+                  </a-card>
+                </a-col>
+              </a-row>
+            </a-col>
+          </a-row>
         </a-collapse-panel>
       </a-collapse>
     </a-card>
