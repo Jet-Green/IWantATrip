@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { reactive } from "vue"
 import { useAuth } from "../stores/auth";
 import { useRouter } from "vue-router";
 import BackButton from "../components/BackButton.vue";
@@ -10,14 +10,17 @@ import * as yup from 'yup';
 
 const user = useAuth();
 const router = useRouter();
-let email = ref(null);
-let password = ref(null);
+
+let formState = reactive({
+  email: "",
+  password: "",
+});
 
 async function logIn() {
-  let result = await user.login(email.value, password.value);
+  let result = await user.login(formState.email, formState.password);
   if (result.success) {
-    email.value = "";
-    password.value = "";
+    formState.email = ''
+    formState.password = ''
     message.config({ duration: 1.5, top: "70vh" });
     message.success({
       content: "Успешно!",
@@ -42,18 +45,17 @@ const formSchema = yup.object({
         <a-row>
           <a-col :span="24">
             <h2>Вход</h2>
-            <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="logIn()">
-              <Field name="email" type="email" v-slot="{ field, handleChange }">
-                <a-input @change="handleChange" :value="field.value" placeholder="email@email.com" size="large"
-                  v-model:value="email"></a-input>
+            <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="logIn">
+              <Field name="email" type="email" v-slot="{ value, handleChange }" v-model="formState.email">
+                <a-input @update:value="handleChange" :value="value" placeholder="email@email.com" size="large"></a-input>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="email" class="error-message" />
               </Transition>
 
-              <Field name="password" type="password" v-slot="{ field, handleChange }">
-                <a-input @change="handleChange" :value="field.value" placeholder="Введите пароль" size="large"
-                  v-model:value="password" type="password" class="mt-8"></a-input>
+              <Field name="password" type="password" v-slot="{ value, handleChange }" v-model="formState.password">
+                <a-input @update:value="handleChange" :value="value" placeholder="Введите пароль" size="large"
+                  type="password" class="mt-8"></a-input>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="password" class="error-message" />
@@ -76,9 +78,3 @@ const formSchema = yup.object({
     </a-row>
   </div>
 </template>
-<style scoped lang="scss">
-.error-message {
-  color: red;
-  font-size: clamp(0.625rem, 0.4261rem + 0.5682vw, 0.875rem);
-}
-</style>

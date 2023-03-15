@@ -29,7 +29,7 @@ const router = createRouter({
       component: () => import('../views/CreateTripWithHelp.vue'),
       beforeEnter: async (to, from) => {
         let userStore = useAuth()
-        if (!localStorage.getItem('token'))
+        if (!localStorage.getItem('token') || !userStore.isAuth)
           await userStore.checkAuth()
 
         if (!userStore.isAuth)
@@ -42,7 +42,7 @@ const router = createRouter({
       component: () => import('../views/CreateTripNoHelp.vue'),
       beforeEnter: async (to, from) => {
         let userStore = useAuth()
-        if (!localStorage.getItem('token'))
+        if (!localStorage.getItem('token') || !userStore.isAuth)
           await userStore.checkAuth()
 
         if (!userStore.isAuth)
@@ -60,7 +60,7 @@ const router = createRouter({
       component: () => import('../views/AddCompanion.vue'),
       beforeEnter: async (to, from) => {
         let userStore = useAuth()
-        if (!localStorage.getItem('token'))
+        if (!localStorage.getItem('token') || !userStore.isAuth)
           await userStore.checkAuth()
 
         if (!userStore.isAuth)
@@ -78,7 +78,7 @@ const router = createRouter({
       component: () => import('../views/AddGuideElement.vue'),
       beforeEnter: async (to, from) => {
         let userStore = useAuth()
-        if (!localStorage.getItem('token'))
+        if (!localStorage.getItem('token') || !userStore.isAuth)
           await userStore.checkAuth()
 
         if (!userStore.isAuth)
@@ -151,7 +151,7 @@ const router = createRouter({
       component: () => import('../views/Cabinet.vue'),
       beforeEnter: async (to, from) => {
         let userStore = useAuth()
-        if (!localStorage.getItem('token'))
+        if (!localStorage.getItem('token') || !userStore.isAuth)
           await userStore.checkAuth()
 
         if (!userStore.isAuth)
@@ -179,7 +179,7 @@ const router = createRouter({
       component: () => import('../components/_cabinet/EditTrip.vue'),
       beforeEnter: async (to, from) => {
         let userStore = useAuth()
-        if (!localStorage.getItem('token'))
+        if (!localStorage.getItem('token') || !userStore.isAuth)
           await userStore.checkAuth()
 
         if (!userStore.isAuth)
@@ -192,7 +192,7 @@ const router = createRouter({
       component: () => import('../components/forms/PriceCalc.vue'),
       beforeEnter: async (to, from) => {
         let userStore = useAuth()
-        if (!localStorage.getItem('token'))
+        if (!localStorage.getItem('token') || !userStore.isAuth)
           await userStore.checkAuth()
 
         if (!userStore.isAuth)

@@ -11,9 +11,18 @@ let router = useRouter();
 function goToTripPage() {
   router.push(`/trip?_id=${props.trip._id}`)
 }
-const clearData = (dataString) => {
-  return new Date(Number(dataString)).toLocaleDateString("ru-Ru", { year: '2-digit', month: '2-digit', day: '2-digit' }).replaceAll("/", ".")
+const clearData = (dateNumber) => {
+  let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit",
+  })
+  if (date !== 'Invalid Date' && date) {
+    return date
+  }
+  return ''
 }
+
 </script>
 <template>
   <div @click="goToTripPage" style="width: 270px">
