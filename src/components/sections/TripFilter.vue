@@ -59,7 +59,7 @@ onMounted(() => {
 <template>
   <a-row type="flex" justify="center" align="middle" class="section_bg pa-16">
     <a-col :xs="22" :md="12">
-      <a-row class="ma-8" type="flex" justify="center">
+      <a-row class="mb-8" type="flex" justify="center">
         <a-col :xs="24" :md="12" class="d-flex">
           <a-input-search
             v-model:value="query"
@@ -78,15 +78,14 @@ onMounted(() => {
       <Transition name="fade">
         <div v-if="visible">
           <a-row type="flex" justify="center">
-            <a-col :xs="12">
+            <a-col :xs="24" :md="12">
               <a-select
                 style="width: 100%"
-                placeholder="Куда едем"
                 v-model:value="where"
                 :bordered="true"
                 class="selector"
               >
-                <a-select-option value="" placeholder="Куда едем"> </a-select-option>
+                <a-select-option value=""> </a-select-option>
                 <a-select-option
                   v-for="(l, index) of locations"
                   :value="l"
@@ -98,7 +97,7 @@ onMounted(() => {
             </a-col>
           </a-row>
           <a-row type="flex" justify="center" class="mt-16">
-            <a-col :xs="12">
+            <a-col :xs="24" :md="12">
               <a-range-picker style="width: 100%" v-model:value="time" />
             </a-col>
           </a-row>

@@ -32,19 +32,21 @@ const clearData = (dateNumber) => {
 </script>
 <template>
   <!-- <span class="mdi mdi-12px mdi-close" style="color: #245159; cursor: pointer; float: right"
-      @click="tripToDelete(trip._id)"></span> -->
-  <div @click="goToTripPage" style="height: 100%;" class="d-flex direction-column space-between">
-    <div class="title mt-4">{{ trip.name }}</div>
+              @click="tripToDelete(trip._id)"></span> -->
+  <div @click="goToTripPage" style="height: 100%;" class="card">
+    <div class="title">
+     <p>{{ trip.name }}</p> 
+    </div>
 
     <a-badge-ribbon :text="`${trip.cost.length ? trip.cost[0].price : 0} руб`" color="ff6600">
       <a-card hoverable>
         <div>
           <img :src="trip.images[0]" style="object-fit: cover; width: 100%; height: 175px" />
         </div>
-        <p style="text-align: center;">
+        <div style="text-align: center;">
           c <strong>{{ clearData(trip.start) }}</strong> по
           <strong>{{ clearData(trip.end) }}</strong>
-        </p>
+        </div>
       </a-card>
     </a-badge-ribbon>
 
@@ -53,9 +55,18 @@ const clearData = (dateNumber) => {
 </template>
 <style lang="scss" scoped>
 .title {
-  font-size: 16px;
+  height: 100%;
+  font-size: clamp(0.875rem, 0.7647rem + 0.1961vw, 1rem);
   // text-transform: uppercase;
   color: black;
   text-align: center;
+  font-weight: 500;
+}
+
+.card {
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 </style>
