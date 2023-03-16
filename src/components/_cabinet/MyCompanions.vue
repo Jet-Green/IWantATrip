@@ -45,8 +45,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <a-row v-for="(companion, index) in companions" :key="index" :gutter="[8, 8]" class="d-flex justify-center mt-8">
-    <a-card class="card" :lg="8" :sm="12" :xs="24">
+  <a-row :gutter="[8, 8]" class="mt-8">
+    <a-col v-for="(companion, index) in companions" :key="index" :lg="8" :sm="12" :xs="24">
+    <a-card class="card">
       <div>
         <span class="mdi mdi-human-male-female"></span>{{ companion?.name }}
         <span class="mdi mdi-human-cane"></span>{{ ageString(companion?.age) }}
@@ -92,12 +93,12 @@ onMounted(async () => {
           </template>
         </a-tooltip> -->
 
-      <a-collapse v-model:activeKey="activeKey" ghost>
+      <a-collapse v-model:activeKey="activeKey" ghost >
         <a-collapse-panel header="Отклики">
           <a-row>
             <a-col :span="24">
               <a-row :gutter="[8, 8]" class="mt-8">
-                <a-col :lg="8" :sm="12" :xs="24" v-for="request in companion?.companionRequests" :key="request.name">
+                <a-col :lg="12" :sm="12" :xs="24" v-for="request in companion?.companionRequests" :key="request.name">
                   <a-card class="card " hoverable>
                     <span class="mdi mdi-human-male-female"></span> {{ request?.name }}
                     {{ request?.surname }}
@@ -113,6 +114,7 @@ onMounted(async () => {
         </a-collapse-panel>
       </a-collapse>
     </a-card>
+  </a-col>
   </a-row>
   <a-divider />
 </template>
