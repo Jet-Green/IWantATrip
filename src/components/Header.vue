@@ -48,7 +48,8 @@ const bot = () => {
       <a-col :xs="22" :lg="16">
         <a-row type="flex" justify="space-between">
           <a-col :xs="20" :md="12" @click="toComponentFromMenu('Landing')">
-            <LogoSvg></LogoSvg>
+            <img src="../assets/images/logo.png" style="height: 90%; padding: 4px;" alt="">
+            <!-- <LogoSvg></LogoSvg> -->
           </a-col>
           <a-col v-if="!sm" :span="12" class="top_menu">
             <div @click="toComponentFromMenu('TripsPage')" class="route">
