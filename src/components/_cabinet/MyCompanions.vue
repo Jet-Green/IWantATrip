@@ -105,40 +105,37 @@ onMounted(async () => {
             <span>отклик</span>
           </template>
         </a-tooltip> -->
-        <a-dropdown :trigger="['click']">
-          <a class="ant-dropdown-link" @click.prevent>
-            Click me
-            <DownOutlined />
-          </a>
+        <a-dropdown :trigger="['click']" v-if="companion.companionRequests !== null">
+          <a class="ant-dropdown-link" @click.prevent> Click me </a>
           <template #overlay>
             <a-menu>
-            <a-row>
-              <a-col :span="24">
-                <a-row :gutter="[8, 8]" class="mt-8">
-                  <a-col
-                    :lg="12"
-                    :sm="12"
-                    :xs="24"
-                    v-for="request in companion?.companionRequests"
-                    :key="request.name"
-                  >
-                    <a-card class="card" hoverable>
-                      <span class="mdi mdi-human-male-female"></span>
-                      {{ request?.name }}
-                      {{ request?.surname }}
-                      <span class="mdi mdi-human-cane"></span
-                      >{{ ageString(request?.age) }} {{ request?.gender }}
-                      {{ request?.phone }}
-                      <a-divider class="ma-4"></a-divider>
-                      <div class="d-flex justify-end">
-                        <a-button>Хочу</a-button>
-                      </div>
-                    </a-card>
-                  </a-col>
-                </a-row>
-              </a-col>
-            </a-row>
-          </a-menu>
+              <a-row>
+                <a-col :span="24">
+                  <a-row :gutter="[8, 8]" class="mt-8">
+                    <a-col
+                      :lg="12"
+                      :sm="12"
+                      :xs="24"
+                      v-for="request in companion?.companionRequests"
+                      :key="request.name"
+                    >
+                      <a-card class="card" hoverable>
+                        <span class="mdi mdi-human-male-female"></span>
+                        {{ request?.name }}
+                        {{ request?.surname }}
+                        <span class="mdi mdi-human-cane"></span
+                        >{{ ageString(request?.age) }} {{ request?.gender }}
+                        {{ request?.phone }}
+                        <a-divider class="ma-4"></a-divider>
+                        <div class="d-flex justify-end">
+                          <a-button>Хочу</a-button>
+                        </div>
+                      </a-card>
+                    </a-col>
+                  </a-row>
+                </a-col>
+              </a-row>
+            </a-menu>
           </template>
         </a-dropdown>
       </a-card>
