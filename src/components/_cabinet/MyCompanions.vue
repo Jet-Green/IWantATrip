@@ -47,7 +47,7 @@ onMounted(async () => {
 <template>
   <a-row :gutter="[8, 8]" class="mt-8">
     <a-col v-for="(companion, index) in companions" :key="index" :lg="8" :sm="12" :xs="24">
-    <a-card class="card">
+    <a-card class="card" hoverable>
       <div>
         <span class="mdi mdi-human-male-female"></span>{{ companion?.name }}
         <span class="mdi mdi-human-cane"></span>{{ ageString(companion?.age) }}
