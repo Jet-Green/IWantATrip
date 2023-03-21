@@ -39,12 +39,14 @@ const baseTimeStart = dayjs(1679492631000);
 const baseTimeEnd = dayjs(1679492631000);
 const baseTimePeriod = dayjs(1679492631000);
 const router = useRouter();
+
+let creatorId = userStore.user.fullinfo.fullname
+
 // cropper
 let visibleCropperModal = ref(false);
 let previews = ref([]);
 // отправляем на сервер
 let images = []; // type: blob
-
 // необходимо добавить поле количество людей в туре
 let form = reactive({
   name: "",
@@ -61,7 +63,7 @@ let form = reactive({
   location: "",
   tripType: "",
   fromAge: "",
-  creatorId: "",
+  creatorId: creatorId,
 });
 let fullUserInfo = null;
 
@@ -77,7 +79,7 @@ const addCost = () => {
     type: "",
     price: "",
   });
-  console.log(form.period,period);
+  console.log(userStore.user.fullinfo.fullname);
 };
 function goToPriceCalc() {
   router.push("/calc");
@@ -128,7 +130,7 @@ function submit() {
         location: "",
         tripType: "",
         fromAge: "",
-        creatorId: userStore.user.fullinfo.fullname,
+        creatorId: creatorId,
       });
       if (fullUserInfo) {
         userStore
@@ -239,7 +241,7 @@ onMounted(() => {
       form.fromAge = d.fromAge
       form.tripRoute = d.tripRoute
       form.offer = d.offer
-
+      form.creatorId = d.creatorId
       start.value = dayjs(new Date(d.start))
       end.value = dayjs(new Date(d.end))
     });

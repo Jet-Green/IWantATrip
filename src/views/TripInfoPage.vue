@@ -14,7 +14,6 @@ const _id = route.query._id;
 
 const tripStore = useTrips();
 const userStore = useAuth();
-
 const backRoute = "/trips";
 
 let selectedByUser = ref([]);
@@ -138,10 +137,10 @@ async function buyTrip(isBoughtNow) {
 onMounted(() => {
   if (userStore.user) {
     userInfo.fullname = userStore.user.fullinfo.fullname;
-    console.log(trip)
     userInfo.phone = userStore.user.fullinfo.phone;
   }
 });
+console.log(trip)
 </script>
 <template>
   <div style="overflow-x: hidden">
@@ -194,8 +193,9 @@ onMounted(() => {
               Цена
               <div v-for="(item, index) in trip.cost" :key="index" class="cost">
                 {{ item.first }} : <b>{{ item.price }} руб.</b>
+                <p>Автор тура: {{ trip.creatorId }}</p>
               </div>
-              <p>{{ trip.creatorId }}</p>
+
             </div>
             <div class="d-flex justify-center ma-8">
               <a-button type="primary" class="lets_go_btn" size="large" style="display: flex; justify-content: center"
