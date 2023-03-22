@@ -79,7 +79,6 @@ const addCost = () => {
     type: "",
     price: "",
   });
-  console.log(userStore.user.fullinfo.fullname);
 };
 function goToPriceCalc() {
   router.push("/calc");
