@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import * as _ from 'lodash'
 
 import axios from 'axios'
 
@@ -8,7 +9,7 @@ export const useTrips = defineStore('trips', {
     state: () => ({
         trips: [],
         filteredTrips: [],
-     
+        cursor: 0
     }),
     getters: {
         getTrips(state) {
@@ -17,14 +18,13 @@ export const useTrips = defineStore('trips', {
         getFilteredTrips(state) {
             return state.filteredTrips
         },
-     
-
     },
     actions: {
-        async fetchTrips() {
+        async fetchTrips(query, place, when) {
             try {
-                const response = await TripService.fetchTrips();
-                this.trips = response.data;
+                const response = await TripService.fetchTrips({ query, place: place, when: when }, this.cursor);
+                let tempTrips = this.filteredTrips.concat(response.data);
+                this.filteredTrips = _.uniq(tempTrips)
             } catch (err) {
                 console.log(err);
             }
@@ -38,7 +38,7 @@ export const useTrips = defineStore('trips', {
             }
         },
         getById(_id) {
-            return TripService.getById( _id )
+            return TripService.getById(_id)
         },
         deleteById(_id) {
             return TripService.deleteTrip({ _id: _id });
