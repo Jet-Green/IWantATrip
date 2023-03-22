@@ -8,13 +8,15 @@ let props = defineProps({
   backRoute: String,
 });
 
+const getHistoryLength = () => { return window.history.length }
+
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const sm = breakpoints.smaller("md");
 </script>
 <template>
   <a-row type="flex" justify="center">
     <a-col :xs="22" :lg="16">
-      <span @click="router.push(backRoute ? backRoute : '/')" style="font-size: 16px; line-height: 32px; cursor: pointer">
+      <span @click="getHistoryLength() > 0 ? router.back() : router.push('/')" style="font-size: 16px; line-height: 32px; cursor: pointer">
         <a-button shape="circle" type="text">
           <template #icon>
             <span class="mdi mdi-arrow-left" style="font-size:20px"></span>
