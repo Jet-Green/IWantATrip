@@ -39,7 +39,6 @@ const baseTimeStart = dayjs(1679492631000);
 const baseTimeEnd = dayjs(1679492631000);
 const baseTimePeriod = dayjs(1679492631000);
 const router = useRouter();
-
 let creatorId = userStore.user.fullinfo.fullname
 
 // cropper
@@ -63,7 +62,7 @@ let form = reactive({
   location: "",
   tripType: "",
   fromAge: "",
-  creatorId: creatorId,
+  creatorId: "",
 });
 let fullUserInfo = null;
 
@@ -79,6 +78,7 @@ const addCost = () => {
     type: "",
     price: "",
   });
+  console.log(creatorId)
 };
 function goToPriceCalc() {
   router.push("/calc");
@@ -91,6 +91,7 @@ const delPhoto = () => {
 function submit() {
   description.value = description.value.split("<p><br></p>").join("");
   form.description = description.value;
+  form.creatorId = creatorId
 
   let send = {};
   for (let key in form) {
@@ -129,7 +130,7 @@ function submit() {
         location: "",
         tripType: "",
         fromAge: "",
-        creatorId: creatorId,
+        creatorId: "",
       });
       if (fullUserInfo) {
         userStore
@@ -177,6 +178,7 @@ function addPreview(blob) {
 }
 function updateUserInfo(info) {
   fullUserInfo = info;
+  creatorId = fullUserInfo.fullname
 }
 
 
