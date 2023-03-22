@@ -14,7 +14,7 @@ const sm = breakpoints.smaller("md");
 <template>
   <a-row type="flex" justify="center">
     <a-col :xs="22" :lg="16">
-      <span @click="window.history.state.back === null ? router.push('/') : router.back()" style="font-size: 16px; line-height: 32px; cursor: pointer">
+      <span @click="window.history.state.back === null ? router.push('/') : router.go(-1)" style="font-size: 16px; line-height: 32px; cursor: pointer">
         <a-button shape="circle" type="text">
           <template #icon>
             <span class="mdi mdi-arrow-left" style="font-size:20px"></span>
