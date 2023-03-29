@@ -3,6 +3,8 @@ import { ref, onMounted } from "vue";
 import { useAuth } from "../../stores/auth";
 import { useCompanions } from "../../stores/companions";
 import dayjs from "dayjs";
+import { DownOutlined } from '@ant-design/icons-vue';
+
 const userStore = useAuth();
 const companionStore = useCompanions();
 const companionIds = userStore.user?.createdCompanions;
@@ -17,6 +19,15 @@ const clearData = (dataString) => {
       day: "2-digit",
     })
     .replaceAll("/", ".");
+};
+
+const visible = ref(false);
+const showModal = () => {
+  visible.value = true;
+};
+const handleOk = e => {
+  console.log(e);
+  visible.value = false;
 };
 
 const ageString = (age) => {
@@ -45,82 +56,73 @@ onMounted(async () => {
 </script>
 
 <template>
-  <a-row
-    v-for="(companion, index) in companions"
-    :key="index"
-    :gutter="[8, 8]"
-    class="d-flex justify-center mt-8"
-  >
-    <a-card class="card" :lg="8" :sm="12" :xs="24">
-      <div>
-        <span class="mdi mdi-human-male-female"></span>{{ companion?.name }}
-        <span class="mdi mdi-human-cane"></span>{{ ageString(companion?.age) }}
-      </div>
+  <a-row :gutter="[8, 8]" class="mt-8">
+    <a-col v-for="(companion, index) in companions" :key="index" :lg="8" :sm="12" :xs="24">
+      <a-card class="card" hoverable>
+        <div>
+          <span class="mdi mdi-human-male-female"></span>{{ companion?.name }}
+          <span class="mdi mdi-human-cane"></span>{{ ageString(companion?.age) }}
+        </div>
 
-      <div>
-        <span class="mdi mdi-compass-outline"></span>{{ companion?.direction }}
-      </div>
-      <div
-        :class="[
+        <div>
+          <span class="mdi mdi-compass-outline"></span>{{ companion?.direction }}
+        </div>
+        <div :class="[
           companion?.companionGender == 'Мужчина'
             ? 'male'
             : companion?.companionGender == 'Женщина'
-            ? 'female'
-            : 'not-matter',
-        ]"
-      >
-        <span
-          :class="
+              ? 'female'
+              : 'not-matter',
+        ]">
+          <span :class="
             companion?.companionGender == 'Женщина'
               ? 'mdi mdi-gender-female'
               : companion?.companionGender == 'Мужчина'
-              ? 'mdi mdi-gender-male'
-              : 'mdi mdi-human-male-female'
-          "
-        ></span
-        >{{
-          companion?.companionGender == "Мужчина"
-            ? "Мужчину"
-            : companion?.companionGender == "Женщина"
-            ? "Женщину"
-            : "Не важно"
-        }}
-      </div>
-      <div>
-        <span class="mdi mdi-calendar-arrow-right"></span>
-        {{ `c ${clearData(companion?.start)}` }}
-        <span class="mdi mdi-calendar-arrow-left"></span>
-        {{ `по ${clearData(companion?.end)}` }}
-      </div>
+                ? 'mdi mdi-gender-male'
+                : 'mdi mdi-human-male-female'
+          "></span>{{
+  companion?.companionGender == "Мужчина"
+  ? "Мужчину"
+  : companion?.companionGender == "Женщина"
+    ? "Женщину"
+    : "Не важно"
+}}
+        </div>
+        <div>
+          <span class="mdi mdi-calendar-arrow-right"></span>
+          {{ `c ${clearData(companion?.start)}` }}
+          <span class="mdi mdi-calendar-arrow-left"></span>
+          {{ `по ${clearData(companion?.end)}` }}
+        </div>
 
-      <div>
-        <span class="mdi mdi-list-status"></span>{{ companion?.description }}
-      </div>
-      <!-- <a-tooltip placement="bottom">
-        <template #title>
-          <span>отклик</span>
-        </template>
-      </a-tooltip> -->
-
-      <a-collapse v-model:activeKey="activeKey" ghost>
-        <a-collapse-panel header="Отклики" >
-          <a-row class="d-flex">
-          <a-col :xs="24" :lg="8" :sm="12"
-            v-for="request in companion?.companionRequests"
-            :key="request.name"
-          >
-            <a-card hoverable>
-<div>              <span class="mdi mdi-human-male-female"></span> {{ request?.name }}
-               {{ request?.surname }}
-               <span class="mdi mdi-human-cane"></span>{{ ageString( request?.age ) }}</div>
-              {{ request?.gender }} {{ request?.phone }}</a-card
-            >
-            
-          </a-col>
-        </a-row>
-        </a-collapse-panel>
-      </a-collapse>
-    </a-card>
+        <div>
+          <span class="mdi mdi-list-status"></span>{{ companion?.description }}
+        </div>
+        <!-- <a-tooltip placement="bottom">
+                <template #title>
+                  <span>отклик</span>
+                </template>
+              </a-tooltip> -->
+        <div>
+          <a-button @click="showModal">Попутчики <DownOutlined /></a-button>
+          <a-modal v-model:visible="visible" title="Ваши попутчики" width="100%" wrap-class-name="full-modal" @ok="handleOk">
+            <a-col :lg="12" :sm="12" :xs="24" v-for="request in companion?.companionRequests" :key="request.name">
+                    <a-card class="card" hoverable>
+                      <span class="mdi mdi-human-male-female"></span>
+                      {{ request?.name }}
+                      {{ request?.surname }}
+                      <span class="mdi mdi-human-cane"></span>{{ ageString(request?.age) }} {{ request?.gender }}
+                      {{ request?.phone }}
+                      <a-divider class="ma-4"></a-divider>
+                      <div class="d-flex justify-end">
+                        <a-button>Хочу</a-button>
+                      </div>
+                    </a-card>
+                  </a-col>
+          </a-modal>
+        </div>
+      </a-card>
+    </a-col>
   </a-row>
   <a-divider />
 </template>
