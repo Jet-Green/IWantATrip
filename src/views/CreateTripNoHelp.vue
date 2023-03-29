@@ -289,6 +289,8 @@ let formSchema = yup.object({
                   size="large"
                   @update:value="handleChange"
                   :value="value"
+                  :maxlength="35"
+                  show-count
                 ></a-input>
               </Field>
               <Transition name="fade">
