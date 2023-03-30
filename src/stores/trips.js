@@ -7,7 +7,7 @@ import TripService from '../service/TripService.js'
 
 export const useTrips = defineStore('trips', {
     state: () => ({
-        // trips: [],
+        trips: [],
         filteredTrips: [],
         cursor: 0
     }),
@@ -20,9 +20,9 @@ export const useTrips = defineStore('trips', {
         },
     },
     actions: {
-        async fetchTrips(query, place, when, limit = 5) {
+        async fetchTrips(query, place, when) {
             try {
-                const response = await TripService.fetchTrips({ query, place: place, when: when }, this.cursor, limit);
+                const response = await TripService.fetchTrips({ query, place: place, when: when }, this.cursor);
                 let tempTrips = this.filteredTrips.concat(response.data);
                 this.filteredTrips = _.uniq(tempTrips)
             } catch (err) {

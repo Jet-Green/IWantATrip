@@ -4,8 +4,8 @@ export default {
     async getCustomers(ids) {
         return $api.post('/trips/get-customers', ids)
     },
-    async fetchTrips(query, cursor, limit) {
-        return $api.post(`/trips/get-all?cursor=${cursor}&?limit=${limit}`, query)
+    async fetchTrips(query, cursor) {
+        return $api.post(`/trips/get-all?cursor=${cursor}`, query)
     },
     async getById(_id) {
         return $api.get(`/trips/get-by-id?_id=${_id}`)

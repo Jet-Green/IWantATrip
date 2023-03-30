@@ -1,40 +1,28 @@
 <script setup>
-import { onMounted } from 'vue'
+import { watch } from 'vue'
+
+import { useScroll } from '@vueuse/core'
 
 import { useTrips } from "../../stores/trips";
 import TripListCard from "../cards/TripListCard.vue";
 
 const tripStore = useTrips();
 
-function setupScrollEvent() {
-  const onScroll = () => {
-    const windowHeight = document.documentElement.clientHeight;
-    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-    const scrollHeight = document.documentElement.scrollHeight;
-    const nearBottom = scrollTop + windowHeight >= scrollHeight - 350;
+let scroll = useScroll(window)
+let { arrivedState } = scroll
 
-    if (nearBottom) {
-      tripStore.cursor += 5
-      tripStore.fetchTrips()
-    }
-  };
-
-  window.addEventListener('scroll', onScroll);
-  return () => {
-    window.removeEventListener('scroll', onScroll);
-  };
-}
-
-onMounted(() => {
-  setupScrollEvent();
-});
-
+watch(arrivedState, (newValue) => {
+  if (newValue.bottom) {
+    tripStore.cursor += 5
+    tripStore.fetchTrips()
+  }
+})
 </script>
 
 <template>
   <a-row class="d-flex justify-center">
     <a-col :xs="22" :lg="16">
-      <a-row :gutter="[16, 16]" class="mt-8">
+      <a-row :gutter="[16, 16]" class="d-flex justify-center mt-8">
         <TransitionGroup name="list">
           <a-col :xs="24" :sm="12" :md="8" :lg="6" v-for="(trip, index) in tripStore.filteredTrips" :key="index">
             <TripListCard :trip="trip" />

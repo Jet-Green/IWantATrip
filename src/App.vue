@@ -16,8 +16,7 @@ const appStateStore = useAppState()
 onMounted(() => {
   appStateStore.refreshState()
   useTrips().cursor = 0
-  // need to pass null to pass the limit of trips
-  useTrips().fetchTrips(null, null, null, 10)
+  useTrips().fetchTrips()
 
   useCompanions().fetchCompanions()
 
