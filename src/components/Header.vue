@@ -14,10 +14,14 @@ let sm = breakpoints.smaller("md");
 let router = useRouter();
 let visibleDrawer = ref(false);
 let visibleModal = ref(false);
-
+let showCity = ref(null)
 let isTripCreator = ref(false);
 let visibleCreator = ref(false);
 let value = ref("Reg");
+
+function getCity(city){
+  showCity.value = city.key
+}
 
 function showDrawer() {
   visibleDrawer.value = !visibleDrawer.value;
@@ -27,7 +31,6 @@ function toComponentFromMenu(routName) {
   router.isReady().then(() => {
     router.push({ name: routName });
   });
-
   visibleDrawer.value = false;
 }
 let changeVisibleCreator = () => {
@@ -48,11 +51,12 @@ const bot = () => {
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
         <a-row type="flex" justify="space-between">
-          <a-col :xs="20" :md="12" @click="toComponentFromMenu('Landing')">
+          <a-col :xs="20" :md="12" >
             <img
               src="../assets/images/logo.png"
               style="height: 90%; padding: 4px; margin-right: 32px"
               alt=""
+              @click="toComponentFromMenu('Landing')"
             />
             <!-- <LogoSvg></LogoSvg> -->
             <a-dropdown :trigger="['click']">
@@ -60,20 +64,20 @@ const bot = () => {
                  
                </span>
               <template #overlay>
-                <a-menu @click="">
-                  <a-menu-item >
+                <a-menu @click="getCity">
+                  <a-menu-item key="Глазов">
                     Глазов
                   </a-menu-item>
-                  <a-menu-item >
+                  <a-menu-item key="Пермь">
                     Пермь
                   </a-menu-item>
-                  <a-menu-item >
+                  <a-menu-item key="Москва">
                     Москва
                   </a-menu-item>
                 </a-menu>
               </template>
             </a-dropdown>
-            <span>{{  }}</span>
+            <span class="ml-8">{{ showCity }}</span>
           </a-col>
           <a-col v-if="!sm" :span="12" class="top_menu">
             <div @click="toComponentFromMenu('TripsPage')" class="route">найти</div>
