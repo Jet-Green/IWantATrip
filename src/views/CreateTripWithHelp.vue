@@ -9,8 +9,9 @@ import BookingService from "../service/BookingService";
 import { useAuth } from "../stores/auth";
 import { useAppState } from "../stores/appState";
 
+
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
-const monthFormatList = ["MM.YY"];
+// const monthFormatList = ["MM.YY"];
 const ruLocale = locale;
 
 const userStore = useAuth();
@@ -18,8 +19,8 @@ const appStore = useAppState();
 const router = useRouter();
 let form = reactive({
   type: [],
-  start: "",
-  end: "",
+  start: null,
+  end: null,
   location: "",
   duration: "",
   adults: "",
@@ -43,8 +44,8 @@ function close() {
 }
 function clearForm() {
   form.type = []
-  form.start = ""
-  form.end = ""
+  form.start = null
+  form.end = null
   form.location = ""
   form.duration = ""
   form.adults = ""
@@ -58,6 +59,7 @@ async function submit() {
   let toSend = Object.assign(form);
   toSend.start = new Date(form.start).getTime();
   toSend.end = new Date(form.end).getTime();
+  toSend.creatorId = userStore.user._id
 
   await userStore
     .updateUser({
@@ -71,7 +73,7 @@ async function submit() {
       console.log(err);
     });
 
-  TripService.bookingTrip(toSend).then(() => {
+  BookingService.bookingTrip(toSend).then(() => {
     message.config({ duration: 1.5, top: "70vh" });
     message.success({
       content: "Успешно!",
@@ -105,7 +107,6 @@ onMounted(() => {
     <img src="../assets/images/бокп.png" style="position: fixed; right: 0px; bottom: 0px; width: 20% " />
 
     <form action="POST" @submit.prevent="submit" enctype="multipart/form-data">
-
       <a-row type="flex" justify="center">
         <a-col :xs="22" :lg="12">
           <h2>О вас</h2>
@@ -131,12 +132,12 @@ onMounted(() => {
 
             <a-col :span="12">
               Дата начала
-              <a-date-picker v-model:value="form.start" style="width: 100%" placeholder="Начало" :locale="ruLocale"
+              <a-date-picker v-model:value="form.start" style="width: 100%" placeholder="Начало" 
                 :format="dateFormatList" />
             </a-col>
             <a-col :span="12">
               Дата конца
-              <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
+              <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" 
                 :format="dateFormatList" />
             </a-col>
 
