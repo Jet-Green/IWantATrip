@@ -8,6 +8,10 @@ import { message } from "ant-design-vue";
 import BookingService from "../service/BookingService";
 import { useAuth } from "../stores/auth";
 import { useAppState } from "../stores/appState";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+
+let breakpoints = useBreakpoints(breakpointsTailwind);
+let sm = breakpoints.smaller("md");
 
 
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
@@ -102,9 +106,9 @@ onMounted(() => {
   <div>
     <BackButton />
 
-    <img src="../assets/images/бокл.png" style="position: fixed; left: 0px; bottom: 0px;  width: 20%;" />
+    <img v-if="!sm" src="../assets/images/бокл.png" style="position: fixed; left: 0px; bottom: 0px;  width: 20%;" />
 
-    <img src="../assets/images/бокп.png" style="position: fixed; right: 0px; bottom: 0px; width: 20% " />
+    <img v-if="!sm" src="../assets/images/бокп.png" style="position: fixed; right: 0px; bottom: 0px; width: 20% " />
 
     <form action="POST" @submit.prevent="submit" enctype="multipart/form-data">
       <a-row type="flex" justify="center">
