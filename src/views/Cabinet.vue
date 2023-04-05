@@ -8,6 +8,7 @@ import CreatedTrips from "../components/_cabinet/CreatedTrips.vue";
 import PurchasedTrips from "../components/_cabinet/PurchasedTrips.vue";
 import CreatedObjects from "../components/_cabinet/CreatedObjects.vue";
 import MyCompanions from "../components/_cabinet/MyCompanions.vue";
+import BookingTrips from "../components/_cabinet/BookingTrips.vue";
 
 const userStore = useAuth();
 const router = useRouter();
@@ -50,12 +51,13 @@ onMounted(() => {
           <a-tab-pane v-if="userStore.user?.createdCompanions?.length" key="5" tab="Попутчики">
             <MyCompanions />
           </a-tab-pane>
+          <a-tab-pane key="6" tab="Заказ тура">
+            <BookingTrips />
+          </a-tab-pane>
         </a-tabs>
       </a-col>
     </a-row>
   </div>
 </template>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

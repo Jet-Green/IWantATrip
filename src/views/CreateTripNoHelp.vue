@@ -15,9 +15,10 @@ import { useTrips } from "../stores/trips";
 import { useAppState } from "../stores/appState";
 import TripService from "../service/TripService";
 
-import dayjs from "dayjs";
-import { Form, Field, ErrorMessage } from "vee-validate";
-import * as yup from "yup";
+import dayjs from 'dayjs'
+import { Form, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
+
 
 const tripStore = useTrips();
 const userStore = useAuth();
@@ -274,6 +275,7 @@ let formSchema = yup.object({
   <div>
     <BackButton />
     <a-row type="flex" justify="center">
+    
       <a-col :xs="22" :lg="12">
         <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
           <a-row :gutter="[16, 16]">
