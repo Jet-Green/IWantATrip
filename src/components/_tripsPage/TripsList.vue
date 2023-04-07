@@ -1,33 +1,50 @@
 <script setup>
-import { ref } from 'vue'
-
-import { useScroll } from '@vueuse/core'
+import { onMounted } from 'vue'
 
 import { useTrips } from "../../stores/trips";
 import TripListCard from "../cards/TripListCard.vue";
 
 const tripStore = useTrips();
 
-let scrollComponent = ref(null)
-let scroll = useScroll(scrollComponent)
+function setupScrollEvent() {
+  const onScroll = () => {
+    const windowHeight = document.documentElement.clientHeight;
+    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight;
+    const nearBottom = scrollTop + windowHeight >= scrollHeight - 350;
 
-const loadMorePosts = () => {
-  console.log('load');
+    if (nearBottom && tripStore.filteredTrips.length == 0) {
+      tripStore.cursor += 7
+      tripStore.fetchTrips()
+    }
+  };
+
+  window.addEventListener('scroll', onScroll);
+  return () => {
+    window.removeEventListener('scroll', onScroll);
+  };
 }
+
+onMounted(() => {
+  setupScrollEvent();
+});
 
 </script>
 
 <template>
-  <div ref="scrollComponent">
-    <a-row class="d-flex justify-center">
-      <a-col :xs="22" :lg="16">
-        <a-row :gutter="[16, 16]" class="d-flex justify-center mt-8">
-          <a-col :xs="24" :sm="12" :md="8" :lg="6" v-for="trip in tripStore.filteredTrips" :key="trip.index">
-            <TripListCard :trip="trip" />
-          </a-col>
-        </a-row>
-      </a-col>
-    </a-row>
-  </div>
+  <a-row class="d-flex justify-center">
+    <a-col :xs="22" :lg="16">
+      <a-row :gutter="[16, 16]" class="d-flex justify-center mt-8">
+        <a-col v-if="tripStore.filteredTrips.length == 0" :xs="24" :sm="12" :md="8" :lg="6"
+          v-for="trip in tripStore.trips" :key="trip.index">
+          <TripListCard :trip="trip" />
+        </a-col>
+        <a-col v-else :xs="24" :sm="12" :md="8" :lg="6" v-for="filteredTrip in tripStore.filteredTrips"
+          :key="filteredTrip.index">
+          <TripListCard :trip="filteredTrip" />
+        </a-col>
+      </a-row>
+    </a-col>
+  </a-row>
 </template>
 
