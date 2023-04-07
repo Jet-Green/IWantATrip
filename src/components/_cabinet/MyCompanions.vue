@@ -4,6 +4,7 @@ import { useAuth } from "../../stores/auth";
 import { useCompanions } from "../../stores/companions";
 import dayjs from "dayjs";
 import { DownOutlined } from "@ant-design/icons-vue";
+import { message } from "ant-design-vue";
 
 const userStore = useAuth();
 const companionStore = useCompanions();
@@ -23,9 +24,17 @@ const clearData = (dataString) => {
 
 const visible = ref(false);
 let chosenCompanion = ref();
+
 const showModal = (companion) => {
-  chosenCompanion.value = companion;
-  visible.value = true;
+  if (companion === null) {
+    message.config({ duration: 1.5, top: "70vh" });
+    message.error({
+      content: "This is an error message!",
+    });
+  } else {
+    chosenCompanion.value = companion;
+    visible.value = true;
+  }
 };
 const handleOk = (e) => {
   console.log(e);
@@ -126,18 +135,15 @@ onMounted(async () => {
       wrap-class-name="full-modal"
       @ok="handleOk"
     >
-      <a-col
-        v-for="(request, index) in chosenCompanion"
-        :key="index"
-      >
+      <a-col v-for="(request, index) in chosenCompanion" :key="index">
         <a-card class="card">
-          {{ request.name}}
+          {{ request.name }}
           {{ request.surname }}
           {{ request.phone }}
           <span class="mdi mdi-human-cane"></span>{{ ageString(request?.age) }}
           {{ request.gender }}
-           </a-card
-      ></a-col>
+        </a-card></a-col
+      >
     </a-modal>
   </a-row>
   <a-divider />
