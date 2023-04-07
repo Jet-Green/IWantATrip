@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useAuth } from "../../stores/auth";
 import { useCompanions } from "../../stores/companions";
+import dayjs from "dayjs";
 import { DownOutlined } from '@ant-design/icons-vue';
 
 const userStore = useAuth();

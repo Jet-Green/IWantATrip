@@ -30,9 +30,12 @@ let newContent = "";
 const description = ref(null);
 const start = ref(null);
 const end = ref(null);
+const period = ref(null);
 const delPhotoDialog = ref(false);
 const targetIndex = ref(null);
-
+const baseTimeStart = dayjs(1679492631000);
+const baseTimeEnd = dayjs(1679492631000);
+const baseTimePeriod = dayjs(1679492631000);
 const router = useRouter();
 
 // cropper
@@ -61,38 +64,39 @@ let form = ref({
 });
 
 const removeCost = (item) => {
-    let index = form.value.cost.indexOf(item);
-    if (index !== -1) {
-        form.value.cost.splice(index, 1);
-    }
+  let index = form.value.cost.indexOf(item);
+  if (index !== -1) {
+    form.value.cost.splice(index, 1);
+  }
 };
 
 const addCost = () => {
-    form.value.cost.push({
-        type: "",
-        price: "",
-    });
+  form.value.cost.push({
+    type: "",
+    price: "",
+  });
 };
 const delPhoto = () => {
-    previews.value.splice(targetIndex.value, 1);
-    images.splice(targetIndex.value, 1)
-    form.value.images.splice(targetIndex.value, 1)
-    delPhotoDialog.value = false;
+  previews.value.splice(targetIndex.value, 1);
+  images.splice(targetIndex.value, 1);
+  form.value.images.splice(targetIndex.value, 1);
+  delPhotoDialog.value = false;
 };
 
 function submit() {
-    description.value = description.value.split('<p><br></p>').join('')
-    form.value.description = description.value;
-    // for (let img of previews.value) {
-    //     let isUnique = true;
-    //     if (img.startsWith('blob')) {
-    //         form.value.images.push(img)
-    //     }
-    // }
-    // важно разобраться с обновлением фото. Пользователь может загрузить свои и они будут храниться в images, УЖЕ ЕСТЬ: обновляем те фото, которые есть на сервере
-    TripService.updateTrip(form.value).then((res) => {
-        const _id = res.data._id;
-        let imagesFormData = new FormData();
+  description.value = description.value.split("<p><br></p>").join("");
+  form.value.description = description.value;
+  // form.value.period = dayjs(dayjs(d.period), monthFormatList)
+  // for (let img of previews.value) {
+  //     let isUnique = true;
+  //     if (img.startsWith('blob')) {
+  //         form.value.images.push(img)
+  //     }
+  // }
+  // важно разобраться с обновлением фото. Пользователь может загрузить свои и они будут храниться в images, УЖЕ ЕСТЬ: обновляем те фото, которые есть на сервере
+  TripService.updateTrip(form.value).then((res) => {
+    const _id = res.data._id;
+    let imagesFormData = new FormData();
 
         for (let i = 0; i < images.length; i++) {
             let index = i + form.value.images.length
@@ -114,14 +118,19 @@ function submit() {
 }
 
 function addPreview(blob) {
-    // imagesFormData.append("image", blob, `product-${previews.value.length}`);
-    visibleCropperModal.value = false;
-    images.push(blob)
-    previews.value.push(URL.createObjectURL(blob));
+  // imagesFormData.append("image", blob, `product-${previews.value.length}`);
+  visibleCropperModal.value = false;
+  images.push(blob);
+  previews.value.push(URL.createObjectURL(blob));
 }
 function updateUserInfo(info) {
-    fullUserInfo = info;
+  fullUserInfo = info;
 }
+
+const clearData = (dataString) => {
+  const dataFromString = new Date(Number(dataString));
+  return dataFromString;
+};
 
 onMounted(() => {
     tripStore.getById(router.currentRoute.value.query._id)
@@ -144,17 +153,16 @@ onMounted(() => {
 })
 
 watch(description, (newValue) => {
-    newContent = newValue;
-    if (newContent === newValue) return;
-    quill.value.setHTML(newValue);
-    // Workaround https://github.com/vueup/vue-quill/issues/52
-    // move cursor to end
-    nextTick(() => {
-        let q = quill.value.getQuill();
-        q.setSelection(newValue.length, 0, "api");
-        q.focus();
-    });
-
+  newContent = newValue;
+  if (newContent === newValue) return;
+  quill.value.setHTML(newValue);
+  // Workaround https://github.com/vueup/vue-quill/issues/52
+  // move cursor to end
+  nextTick(() => {
+    let q = quill.value.getQuill();
+    q.setSelection(newValue.length, 0, "api");
+    q.focus();
+  });
 });
 
 watch(start, () => {
@@ -277,10 +285,10 @@ let formSchema = yup.object({
                                 <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0"
                                     :step="0.01" class="ml-16 mr-16" />
 
-                                <a-button @click="removeCost(item)" shape="circle">
-                                    <span class="mdi mdi-minus" style="cursor: pointer"></span>
-                                </a-button>
-                            </div>
+                <a-button @click="removeCost(item)" shape="circle">
+                  <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                </a-button>
+              </div>
 
                             <a-button type="dashed" block @click="addCost" class="ma-8">
                                 <span class="mdi mdi-12px mdi-plus"></span>
