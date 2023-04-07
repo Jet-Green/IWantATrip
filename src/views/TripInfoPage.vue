@@ -203,9 +203,9 @@ onMounted(() => {
               </a-button>
             </div>
             <div>
-              <h3 v-if="(tripsCount = trip.maxPeople)" style="color: rgba(34, 176, 214)">
-                тур распродан
-              </h3>
+              <b v-if="(tripsCount == trip.maxPeople)" >
+                мест больше нет
+              </b>
             </div>
           </a-col>
 
