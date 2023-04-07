@@ -22,8 +22,10 @@ const clearData = (dataString) => {
 };
 
 const visible = ref(false);
-const showModal = () => {
+const showModal = (companion) => {
+  this.name  =  companion.name
   visible.value = true;
+  
 };
 const handleOk = e => {
   console.log(e);
@@ -104,9 +106,10 @@ onMounted(async () => {
                 </template>
               </a-tooltip> -->
         <div>
-          <a-button @click="showModal">Попутчики <DownOutlined /></a-button>
+          <a-button @click="showModal(companion.companionRequests)">Попутчики <DownOutlined /></a-button>
           <a-modal v-model:visible="visible" title="Ваши попутчики" width="100%" wrap-class-name="full-modal" @ok="handleOk">
-            <a-col :lg="12" :sm="12" :xs="24" v-for="request in companion?.companionRequests" :key="request.name">
+            {{ name }}
+            <!-- <a-col :lg="12" :sm="12" :xs="24" v-for="request in companion?.companionRequests" :key="request.name">
                     <a-card class="card" hoverable>
                       <span class="mdi mdi-human-male-female"></span>
                       {{ request?.name }}
@@ -118,7 +121,7 @@ onMounted(async () => {
                         <a-button>Хочу</a-button>
                       </div>
                     </a-card>
-                  </a-col>
+                  </a-col> -->
           </a-modal>
         </div>
       </a-card>
