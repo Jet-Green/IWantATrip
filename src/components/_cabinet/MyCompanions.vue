@@ -137,11 +137,28 @@ onMounted(async () => {
     >
       <a-col v-for="(request, index) in chosenCompanion" :key="index">
         <a-card class="card">
+          <span class="mdi mdi-human-cane"></span>{{ ageString(request?.age) }}
+          <div :class="[request.gender == 'Male' ? 'male' : 'female']">
+            <span
+              :class="
+              request.gender == 'Female'
+                  ? 'mdi mdi-gender-female'
+                  :  request.gender == 'Male'
+                  ? 'mdi mdi-gender-male'
+                  : 'mdi mdi-human-male-female'
+              "
+            ></span
+            >{{
+              request.gender == "Male"
+                ? "Мужчина"
+                : request.gender == "Female"
+                ? "Женщина"
+                : "Не важно"
+            }}
+          </div>
           {{ request.name }}
           {{ request.surname }}
           {{ request.phone }}
-          <span class="mdi mdi-human-cane"></span>{{ ageString(request?.age) }}
-          {{ request.gender }}
         </a-card></a-col
       >
     </a-modal>
