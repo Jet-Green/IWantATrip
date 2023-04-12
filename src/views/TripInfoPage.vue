@@ -14,7 +14,6 @@ const _id = route.query._id;
 
 const tripStore = useTrips();
 const userStore = useAuth();
-
 const backRoute = "/trips";
 
 let selectedByUser = ref([]);
@@ -28,10 +27,10 @@ let tripsCount = computed(() => {
   let sum = 0;
   for (let i = 0; i < trip.value.billsList.length; i++) {
     for (let j = 0; j < trip.value.billsList[i].cart.length; j++) {
-      sum += trip.value.billsList[i].cart[j].count
+      sum += trip.value.billsList[i].cart[j].count;
     }
   }
-  return sum
+  return sum;
 });
 
 tripStore
@@ -55,12 +54,12 @@ const clearData = (dateNumber) => {
     year: "2-digit",
     month: "2-digit",
     day: "2-digit",
-  })
-  if (date !== 'Invalid Date' && date) {
-    return date
+  });
+  if (date !== "Invalid Date" && date) {
+    return date;
   }
-  return ''
-}
+  return "";
+};
 
 function getImg(index) {
   return trip.value.images[index];
@@ -141,12 +140,12 @@ onMounted(() => {
     userInfo.phone = userStore.user.fullinfo.phone;
   }
 });
+console.log(trip)
 </script>
 <template>
   <div style="overflow-x: hidden">
     <BackButton :backRoute="backRoute" />
     <!-- {{ trip.billsList[0].cart[0].count }} -->
-
 
     <a-row class="justify-center d-flex">
       <a-col :xs="22" :xl="16">
@@ -177,6 +176,7 @@ onMounted(() => {
             </a-carousel>
           </a-col>
           <a-col :xs="24" :md="12" class="pa-8">
+          <p>Автор тура: {{ trip.creatorId }}</p>
             <p>{{ trip.offer }}</p>
             <div>
               Продолжительность: <b>{{ trip.duration }} дн.</b>
@@ -186,7 +186,8 @@ onMounted(() => {
             </div>
             <div>Количество человек:</div>
             <div style="width: 50%">
-              <a-progress :percent="(tripsCount / trip.maxPeople) * 100" :format="() => `${trip.maxPeople} чел`">
+              <a-progress
+                :percent="(tripsCount / trip.maxPeople) * 100" :format="() => `${trip.maxPeople} чел`">
               </a-progress>
             </div>
             <div>
@@ -194,12 +195,19 @@ onMounted(() => {
               <div v-for="(item, index) in trip.cost" :key="index" class="cost">
                 {{ item.first }} : <b>{{ item.price }} руб.</b>
               </div>
+
             </div>
             <div class="d-flex justify-center ma-8">
-              <a-button type="primary" class="lets_go_btn" size="large" style="display: flex; justify-content: center"
-                @click="buyTripDialog()">
+              <a-button
+                v-if="tripsCount != trip.maxPeople" type="primary" class="lets_go_btn" size="large" style="display: flex; justify-content: center" @click="buyTripDialog()"
+              >
                 Купить
               </a-button>
+            </div>
+            <div>
+              <b v-if="(tripsCount == trip.maxPeople)" >
+                мест больше нет
+              </b>
             </div>
           </a-col>
 
@@ -214,20 +222,37 @@ onMounted(() => {
       <a-row :gutter="[4, 4]">
         <a-col :span="24" :md="12">
           Фaмилия Имя
-          <a-input style="width: 100%" v-model:value="userInfo.fullname" placeholder="Иванов Иван Иванович" />
+          <a-input
+            style="width: 100%"
+            v-model:value="userInfo.fullname"
+            placeholder="Иванов Иван Иванович"
+          />
         </a-col>
         <a-col :span="24" :md="12">
           Телефон
-          <a-input style="width: 100%" v-model:value="userInfo.phone" placeholder="79127528874" />
+          <a-input
+            style="width: 100%"
+            v-model:value="userInfo.phone"
+            placeholder="79127528874"
+          />
         </a-col>
 
         <a-col :span="24">
           <div>Цена</div>
-          <div class="d-flex space-around align-center" v-for="(cost, index) of trip.cost" :key="index">
+          <div
+            class="d-flex space-around align-center"
+            v-for="(cost, index) of trip.cost"
+            :key="index"
+          >
             {{ cost.first }}<span>{{ cost.price }} руб. </span>
             <div class="d-flex direction-column">
               <span style="font-size: 8px">кол-во</span>
-              <a-input-number v-model:value="selectedByUser[index].count" :min="0" placeholder="чел"></a-input-number>
+              <a-input-number
+                v-model:value="selectedByUser[index].count"
+                :min="0"
+                :max="trip.maxPeople - tripsCount"
+                placeholder="чел"
+              ></a-input-number>
             </div>
           </div>
         </a-col>

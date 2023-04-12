@@ -5,7 +5,7 @@ import Header from "./components/Header.vue";
 import Footer from "./components/Footer.vue";
 
 import { useTrips } from './stores/trips'
-import { useCompanions } from './stores/companions'
+import {useCompanions} from './stores/companions'
 import { useAuth } from './stores/auth'
 import { useAppState } from './stores/appState'
 
@@ -15,12 +15,9 @@ const appStateStore = useAppState()
 
 onMounted(() => {
   appStateStore.refreshState()
-  useTrips().cursor = 0
-  // need to pass null to pass the limit of trips
-  useTrips().fetchTrips(null, null, null, 10)
-
+  useTrips().fetchTrips()
   useCompanions().fetchCompanions()
-
+  
   if (localStorage.getItem('token')) {
     userStore.checkAuth()
   }
@@ -59,4 +56,6 @@ onMounted(() => {
     <Footer></Footer>
   </a-layout>
 </template>
-<style></style>
+<style>
+
+</style>

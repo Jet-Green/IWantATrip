@@ -27,9 +27,9 @@ async function sendRegInfo() {
     try {
       axios.post(`http://localhost:4089/add-companion?name=${res.data.name}`);
     } catch (error) { }
-    formState.fullname = "";
-    formState.email = "";
-    formState.password = "";
+    // formState.fullname = "";
+    // formState.email = "";
+    // formState.password = "";
     message.config({ duration: 1.5, top: "70vh" });
     message.success({
       content: "Успешно!",

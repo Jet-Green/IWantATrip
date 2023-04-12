@@ -1,34 +1,37 @@
 <script setup>
-
-import BackButton from "../components/BackButton.vue"
-import UserFullInfo from '../components/forms/UserFullInfo.vue'
-
+import BackButton from "../components/BackButton.vue";
+import UserFullInfo from "../components/forms/UserFullInfo.vue";
+import { useRouter } from "vue-router";
 import { reactive, ref, onMounted } from "vue";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
-
+import { message } from "ant-design-vue";
 import BookingService from "../service/BookingService";
-import { useAuth } from '../stores/auth'
+import { useAuth } from "../stores/auth";
 import { useAppState } from "../stores/appState";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+
+let breakpoints = useBreakpoints(breakpointsTailwind);
+let sm = breakpoints.smaller("md");
+
 
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
-const monthFormatList = ["MM.YY"];
+// const monthFormatList = ["MM.YY"];
 const ruLocale = locale;
 
-const userStore = useAuth()
+const userStore = useAuth();
 const appStore = useAppState();
-
+const router = useRouter();
 let form = reactive({
-  duration: "",
-  name: "",
-  delivery: false,
   type: [],
-  start: "",
-  end: "",
-  resource: "",
-  desc: "",
+  start: null,
+  end: null,
+  location: "",
+  duration: "",
+  adults: "",
+  children: "",
   fromAge: "",
-  phoneNumber: "",
-  tripType: "Любой",
+  wishes: "",
+
 });
 let userInfo = reactive({
   fullname: "",
@@ -40,13 +43,28 @@ let formState = reactive({
   password: "",
   username: "",
 });
+function close() {
+  router.push("/trips");
+}
+function clearForm() {
+  form.type = []
+  form.start = null
+  form.end = null
+  form.location = ""
+  form.duration = ""
+  form.adults = ""
+  form.children = ""
+  form.fromAge = ""
+  form.wishes = ""
+
+}
 
 async function submit() {
-  let toSend = Object.assign(form)
-  toSend.start = new Date(form.start).getTime()
-  toSend.end = new Date(form.end).getTime()
+  let toSend = Object.assign(form);
+  toSend.start = new Date(form.start).getTime();
+  toSend.end = new Date(form.end).getTime();
+  toSend.creatorId = userStore.user._id
 
- 
   await userStore
     .updateUser({
       email: userStore.user.email,
@@ -59,14 +77,28 @@ async function submit() {
       console.log(err);
     });
 
-  return TripService.bookingTrip(toSend)
+  BookingService.bookingTrip(toSend).then(() => {
+    message.config({ duration: 1.5, top: "70vh" });
+    message.success({
+      content: "Успешно!",
+      onClose: () => {
+        close()
+        clearForm()
+      },
+    });
+  });
+
   // очистить форму, сделать редирект на главную, вывести уведомление снизу об успехе
 }
 
 onMounted(() => {
   if (userStore.user.fullinfo) {
-    userStore.user.fullinfo.fullname ? userInfo.fullname = userStore.user.fullinfo.fullname : userInfo.fullname = "";
-    userStore.user.fullinfo.phone ? userInfo.phone = userStore.user.fullinfo.phone : userInfo.phone = "";
+    userStore.user.fullinfo.fullname
+      ? (userInfo.fullname = userStore.user.fullinfo.fullname)
+      : (userInfo.fullname = "");
+    userStore.user.fullinfo.phone
+      ? (userInfo.phone = userStore.user.fullinfo.phone)
+      : (userInfo.phone = "");
   }
 });
 </script>
@@ -74,7 +106,11 @@ onMounted(() => {
   <div>
     <BackButton />
 
-    <form action="POST" @submit.prevent="submit" enctype="multipart/form-data" ref="newGuideElementForm">
+    <img v-if="!sm" src="../assets/images/бокл.png" style="position: fixed; left: 0px; bottom: 0px;  width: 20%;" />
+
+    <img v-if="!sm" src="../assets/images/бокп.png" style="position: fixed; right: 0px; bottom: 0px; width: 20% " />
+
+    <form action="POST" @submit.prevent="submit" enctype="multipart/form-data">
       <a-row type="flex" justify="center">
         <a-col :xs="22" :lg="12">
           <h2>О вас</h2>
@@ -87,7 +123,6 @@ onMounted(() => {
               Телефон
               <a-input style="width: 100%" v-model:value="userInfo.phone" placeholder="79127528874" />
             </a-col>
-
             <a-col :span="24">
               <h2>Заказать тур</h2>
               <div>
@@ -101,12 +136,12 @@ onMounted(() => {
 
             <a-col :span="12">
               Дата начала
-              <a-date-picker v-model:value="form.start" style="width: 100%" placeholder="Начало" :locale="ruLocale"
+              <a-date-picker v-model:value="form.start" style="width: 100%" placeholder="Начало" 
                 :format="dateFormatList" />
             </a-col>
             <a-col :span="12">
               Дата конца
-              <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
+              <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" 
                 :format="dateFormatList" />
             </a-col>
 
@@ -121,11 +156,11 @@ onMounted(() => {
 
             <a-col :xs="24" :md="8">
               Взрослые
-              <a-input-number :min="0" style="width: 100%" placeholder="2" />
+              <a-input-number :min="0" style="width: 100%" placeholder="2" v-model:value="form.adults" />
             </a-col>
             <a-col :xs="24" :md="8">
               Дети
-              <a-input-number :min="0" style="width: 100%" placeholder="1" />
+              <a-input-number :min="0" style="width: 100%" placeholder="1" v-model:value="form.children" />
             </a-col>
             <a-col :xs="24" :md="8">Мин. возраст, лет
               <a-input-number id="inputNumber" v-model:value="form.fromAge" style="width: 100%" placeholder="10" :min="0"
@@ -135,18 +170,10 @@ onMounted(() => {
             <a-col :xs="24">
               Пожелания
 
-              <a-textarea autoSize />
-
-            </a-col>
-            <a-col :xs="24" :md="12">
-              Телефон
-              <a-input />
+              <a-textarea autoSize v-model:value="form.wishes" />
             </a-col>
 
-            <a-col :xs="24" :md="12">
-              E-mail
-              <a-input />
-            </a-col>
+
           </a-row>
 
           <a-row type="flex" justify="center">

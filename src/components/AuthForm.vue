@@ -19,8 +19,8 @@ let formState = reactive({
 async function logIn() {
   let result = await user.login(formState.email, formState.password);
   if (result.success) {
-    formState.email = ''
-    formState.password = ''
+    // formState.email = ''
+    // formState.password = ''
     message.config({ duration: 1.5, top: "70vh" });
     message.success({
       content: "Успешно!",
