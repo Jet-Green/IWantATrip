@@ -3,7 +3,7 @@ import Landing from '../views/Landing.vue'
 import TripsPage from '../views/TripsPage.vue'
 import { useAuth } from '../stores/auth'
 
-
+let positions = []
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -201,9 +201,18 @@ const router = createRouter({
     },
   ],
   scrollBehavior(to, from, savedPosition) {
-    if ((to.name == 'TripsPage') || (to.name == 'TripInfoPage') || (to.name == 'CompanionsPage') || (to.name == 'CreateTripNoHelp'))
-      return { top: 0 }
-    else return savedPosition
+    // if ((to.name == 'TripsPage') || (to.name == 'TripInfoPage') || (to.name == 'CompanionsPage') || (to.name == 'CreateTripNoHelp'))
+    //   return { top: 0 }
+    // else return savedPosition
+
+    console.log()
+    // if (savedPosition) {
+    //   positions.push({ route: from.fullPath, top: savedPosition.top })
+    //   return { top: positions.filter(pos => pos.route === to.fullPath).slice(-1) }
+    // }
+    // else {
+    //   return { top: 0 }
+    // }
   }
 })
 
