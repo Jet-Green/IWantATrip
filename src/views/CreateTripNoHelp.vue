@@ -186,6 +186,9 @@ function updateUserInfo(info) {
   fullUserInfo = info;
   creatorId = fullUserInfo.fullname;
 }
+function uploadPdf(){
+  
+}
 
 watch(description, (newValue) => {
   newContent = newValue;
@@ -275,7 +278,7 @@ let formSchema = yup.object({
   <div>
     <BackButton />
     <a-row type="flex" justify="center">
-    
+
       <a-col :xs="22" :lg="12">
         <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
           <a-row :gutter="[16, 16]">
@@ -286,14 +289,8 @@ let formSchema = yup.object({
               <h2>Создать тур</h2>
               <Field name="name" v-slot="{ value, handleChange }" v-model="form.name">
                 Название
-                <a-input
-                  placeholder="Название тура"
-                  size="large"
-                  @update:value="handleChange"
-                  :value="value"
-                  :maxlength="35"
-                  show-count
-                ></a-input>
+                <a-input placeholder="Название тура" size="large" @update:value="handleChange" :value="value"
+                  :maxlength="35" show-count></a-input>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="name" class="error-message" />
@@ -302,41 +299,23 @@ let formSchema = yup.object({
             <a-col :xs="24">
               Фотографии
               <div class="d-flex" style="overflow-x: scroll">
-                <img
-                  v-for="(pr, i) in previews"
-                  :key="i"
-                  :src="pr"
-                  alt=""
-                  class="ma-4"
-                  style="max-width: 200px"
-                  @click="
-                    delPhotoDialog = true;
-                    targetIndex = i;
-                  "
-                />
+                <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px" @click="
+                  delPhotoDialog = true;
+                targetIndex = i;
+                                                                                          " />
               </div>
-              <a-button
-                type="dashed"
-                block
-                @click="visibleCropperModal = true"
-                class="ma-8"
-              >
+              <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
                 Добавить фото
               </a-button>
+
             </a-col>
 
             <a-col :span="12">
               <Field name="start" v-slot="{ value, handleChange }" v-model="start">
                 Дата начала
-                <a-date-picker
-                  @update:value="handleChange"
-                  :value="value"
-                  style="width: 100%"
-                  placeholder="Начало"
-                  :locale="ruLocale"
-                  :format="dateFormatList"
-                />
+                <a-date-picker @update:value="handleChange" :value="value" style="width: 100%" placeholder="Начало"
+                  :locale="ruLocale" :format="dateFormatList" />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="start" class="error-message" />
@@ -346,14 +325,8 @@ let formSchema = yup.object({
             <a-col :span="12">
               <Field name="end" v-slot="{ value, handleChange }" v-model="end">
                 Дата конца
-                <a-date-picker
-                  @update:value="handleChange"
-                  :value="value"
-                  style="width: 100%"
-                  placeholder="Конец"
-                  :locale="ruLocale"
-                  :format="dateFormatList"
-                />
+                <a-date-picker @update:value="handleChange" :value="value" style="width: 100%" placeholder="Конец"
+                  :locale="ruLocale" :format="dateFormatList" />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="end" class="error-message" />
@@ -365,19 +338,10 @@ let formSchema = yup.object({
               <p style="line-height: 40px">{{ form.duration }} дн.</p>
             </a-col>
             <a-col :span="12">
-              <Field
-                name="maxPeople"
-                v-slot="{ value, handleChange }"
-                v-model="form.maxPeople"
-              >
+              <Field name="maxPeople" v-slot="{ value, handleChange }" v-model="form.maxPeople">
                 Макс. число людей
-                <a-input-number
-                  @update:value="handleChange"
-                  :value="value"
-                  style="width: 100%"
-                  placeholder="11"
-                  :min="1"
-                />
+                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" placeholder="11"
+                  :min="1" />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="maxPeople" class="error-message" />
@@ -386,23 +350,11 @@ let formSchema = yup.object({
 
             <a-col :span="24">
               Цены
-              <div
-                v-for="item in form.cost"
-                :key="item.type"
-                style="display: flex"
-                align="baseline"
-                class="mb-16"
-              >
+              <div v-for="item in form.cost" :key="item.type" style="display: flex" align="baseline" class="mb-16">
                 <a-input v-model:value="item.first" placeholder="Для кого" />
 
-                <a-input-number
-                  v-model:value="item.price"
-                  style="width: 100%"
-                  placeholder="Цена"
-                  :min="0"
-                  :step="0.01"
-                  class="ml-16 mr-16"
-                />
+                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0" :step="0.01"
+                  class="ml-16 mr-16" />
 
                 <a-button @click="removeCost(item)" shape="circle">
                   <span class="mdi mdi-minus" style="cursor: pointer"></span>
@@ -416,23 +368,12 @@ let formSchema = yup.object({
             </a-col>
 
             <a-col :xs="24" :md="12">
-              <Field
-                name="tripType"
-                v-slot="{ value, handleChange }"
-                v-model="form.tripType"
-              >
+              <Field name="tripType" v-slot="{ value, handleChange }" v-model="form.tripType">
                 Тип тура
                 <div>
-                  <a-select
-                    @update:value="handleChange"
-                    :value="value"
-                    style="width: 100%"
-                  >
-                    <a-select-option
-                      v-for="tripType in appStore.appState[0].tripType"
-                      :value="tripType"
-                      >{{ tripType }}</a-select-option
-                    >
+                  <a-select @update:value="handleChange" :value="value" style="width: 100%">
+                    <a-select-option v-for="tripType in appStore.appState[0].tripType" :value="tripType">{{ tripType
+                    }}</a-select-option>
                   </a-select>
                 </div>
               </Field>
@@ -442,20 +383,10 @@ let formSchema = yup.object({
             </a-col>
 
             <a-col :xs="24" :md="12">
-              <Field
-                name="fromAge"
-                v-slot="{ value, handleChange }"
-                v-model="form.fromAge"
-              >
+              <Field name="fromAge" v-slot="{ value, handleChange }" v-model="form.fromAge">
                 Мин. возраст, лет
-                <a-input-number
-                  @update:value="handleChange"
-                  :value="value"
-                  style="width: 100%"
-                  placeholder="10"
-                  :min="0"
-                  :max="100"
-                />
+                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" placeholder="10" :min="0"
+                  :max="100" />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="fromAge" class="error-message" />
@@ -463,18 +394,9 @@ let formSchema = yup.object({
             </a-col>
 
             <a-col :xs="24" :md="12">
-              <Field
-                name="startLocation"
-                v-slot="{ value, handleChange }"
-                v-model="form.startLocation"
-              >
+              <Field name="startLocation" v-slot="{ value, handleChange }" v-model="form.startLocation">
                 Место старта
-                <a-input
-                  placeholder="Глазов"
-                  size="large"
-                  @update:value="handleChange"
-                  :value="value"
-                ></a-input>
+                <a-input placeholder="Глазов" size="large" @update:value="handleChange" :value="value"></a-input>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="location" class="error-message" />
@@ -482,18 +404,9 @@ let formSchema = yup.object({
             </a-col>
 
             <a-col :xs="24" :md="12">
-              <Field
-                name="location"
-                v-slot="{ value, handleChange }"
-                v-model="form.location"
-              >
+              <Field name="location" v-slot="{ value, handleChange }" v-model="form.location">
                 Направление
-                <a-input
-                  placeholder="Байкал"
-                  size="large"
-                  @update:value="handleChange"
-                  :value="value"
-                ></a-input>
+                <a-input placeholder="Байкал" size="large" @update:value="handleChange" :value="value"></a-input>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="location" class="error-message" />
@@ -503,12 +416,8 @@ let formSchema = yup.object({
             <a-col :span="24">
               <Field name="offer" v-slot="{ value, handleChange }" v-model="form.offer">
                 Реклама
-                <a-textarea
-                  @update:value="handleChange"
-                  :value="value"
-                  placeholder="завлекательное описание"
-                  size="large"
-                >
+                <a-textarea @update:value="handleChange" :value="value" placeholder="завлекательное описание"
+                  size="large">
                 </a-textarea>
               </Field>
               <Transition name="fade">
@@ -517,18 +426,9 @@ let formSchema = yup.object({
             </a-col>
 
             <a-col :span="24">
-              <Field
-                name="tripRoute"
-                v-slot="{ value, handleChange }"
-                v-model="form.tripRoute"
-              >
+              <Field name="tripRoute" v-slot="{ value, handleChange }" v-model="form.tripRoute">
                 Маршрут
-                <a-textarea
-                  @update:value="handleChange"
-                  :value="value"
-                  placeholder="Глазов-Пермь 300км"
-                  size="large"
-                >
+                <a-textarea @update:value="handleChange" :value="value" placeholder="Глазов-Пермь 300км" size="large">
                 </a-textarea>
               </Field>
               <Transition name="fade">
@@ -538,28 +438,26 @@ let formSchema = yup.object({
 
             <a-col :span="24" style="display: flex; flex-direction: column">
               Описание программы
-              <QuillEditor
-                theme="snow"
-                ref="quill"
-                v-model:content="description"
-                contentType="html"
-                :toolbar="[
-                  // [{ header: [2, 3] }],
-                  ['bold', 'italic', 'underline'],
-                  [{ list: 'ordered' }, { list: 'bullet' }],
-                  [{ color: ['#000000', '#ff6600', '#3daff5'] }],
-                  [{ align: [] }],
-                ]"
-              />
+              <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" :toolbar="[
+                // [{ header: [2, 3] }],
+                ['bold', 'italic', 'underline'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                [{ color: ['#000000', '#ff6600', '#3daff5'] }],
+                [{ align: [] }],
+              ]" />
+            </a-col>
+            <a-col :span="24">
+            <a-upload action="" :multiple="true" :file-list="fileList"
+                @change="handleChange">
+                <a-button type="dashed" block>
+                  <span class="mdi mdi-12px mdi-plus"></span>
+                  Загрузить pdf описание
+                </a-button>
+              </a-upload>
             </a-col>
             <a-col :span="24" class="d-flex justify-center">
-              <a-button
-                :disabled="!meta.valid"
-                class="lets_go_btn mt-8"
-                type="primary"
-                size="large"
-                html-type="submit"
-                >Отправить
+              <a-button :disabled="!meta.valid" class="lets_go_btn mt-8" type="primary" size="large"
+                html-type="submit">Отправить
               </a-button>
             </a-col>
           </a-row>
@@ -570,8 +468,7 @@ let formSchema = yup.object({
         <a-modal v-model:visible="delPhotoDialog" :footer="null">
           <h3>Удалить фото?</h3>
           <div class="d-flex justify-center">
-            <a-button class="mt-16" type="primary" size="large" @click="delPhoto"
-              >Да
+            <a-button class="mt-16" type="primary" size="large" @click="delPhoto">Да
             </a-button>
           </div>
         </a-modal>
