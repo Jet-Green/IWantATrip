@@ -55,6 +55,7 @@ let form = reactive({
   maxPeople: null,
   duration: "",
   images: [],
+  pdfs:[],
   tripRoute: "",
   distance: "",
   cost: [],

@@ -30,6 +30,10 @@ export default {
         return $api.post('/trips/upload-images', images)
     },
 
+    async uploadTripPdf(pdf) {
+        return $api.post('/trips/upload-pdf', pdf)
+    },
+
     async bookingTrip(booking) {
         return $api.post('/trips/booking', booking)
     },
