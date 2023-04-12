@@ -37,6 +37,8 @@ const ageString = (age) => {
 <template>
   <div>
     <BackButton />
+     
+
     <a-row class="d-flex justify-center">
       <a-col :xs="22" :lg="16">
         <h2>Ищу попутчика</h2>
