@@ -21,17 +21,29 @@ export const useTrips = defineStore('trips', {
     actions: {
         async fetchTrips() {
             try {
-                const response = await TripService.fetchTrips(this.cursor);
-                this.trips.push(...response.data);
+                // if (this.cursor == 0 && this.trips.length > 0) {
+                //     this.trips = []
+                // }
+                // this.filteredTrips = []
+                if (this.filteredTrips.length == 0) {
+                    const response = await TripService.fetchTrips(this.cursor);
+                    this.trips.push(...response.data);
+                    this.cursor += 7
+                }
             } catch (err) {
                 console.log(err);
             }
         },
         async searchTrips(query, place, when) {
             try {
-                if (!(query, place, when)) {
+                if (!query && !place && !when.start && !when.end) {
+                    // где-то тут проблема
                     this.filteredTrips = []
+                    this.cursor = 0
+                    this.trips = []
+                    this.fetchTrips()
                 } else {
+                    this.trips = []
                     const response = await TripService.searchTrips({ query, place: place, when: when });
                     this.filteredTrips = response.data;
                 }

@@ -38,9 +38,7 @@ function find() {
 }
 
 watch(query, (newQuery) => {
-  if (newQuery == "") {
-    find();
-  }
+  find();
 });
 watch(where, (newPlace) => {
   find();

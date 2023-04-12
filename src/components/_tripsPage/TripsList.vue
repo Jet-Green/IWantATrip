@@ -13,8 +13,7 @@ function setupScrollEvent() {
     const scrollHeight = document.documentElement.scrollHeight;
     const nearBottom = scrollTop + windowHeight >= scrollHeight - 350;
 
-    if (nearBottom && tripStore.filteredTrips.length == 0) {
-      tripStore.cursor += 7
+    if (nearBottom) {
       tripStore.fetchTrips()
     }
   };
