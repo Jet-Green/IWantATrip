@@ -1,6 +1,6 @@
 <script setup>
 import { useRouter } from "vue-router";
-import { ref } from "vue";
+import { ref,watch } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useAuth } from "../stores/auth";
 
@@ -18,11 +18,10 @@ let showCity = ref(null)
 let isTripCreator = ref(false);
 let visibleCreator = ref(false);
 let value = ref("Reg");
+let possibleLocations = ref([])
+function dosmt(){
 
-function getCity(city){
-  showCity.value = city.key
 }
-
 function showDrawer() {
   visibleDrawer.value = !visibleDrawer.value;
   console.log(i)
@@ -39,11 +38,47 @@ let changeVisibleCreator = () => {
 const bot = () => {
   window.location.href = "http://t.me/IWantATripBot";
 };
-// const md = breakpoints.between('sm', 'md')
-// const lg = breakpoints.between('md', 'lg')
-// const xl = breakpoints.between('lg', 'xl')
-// const xxl = breakpoints.between('xl', '2xl')
-// const xxxl = breakpoints['2xl']
+const md = breakpoints.between('sm', 'md')
+const lg = breakpoints.between('md', 'lg')
+const xl = breakpoints.between('lg', 'xl')
+const xxl = breakpoints.between('xl', '2xl')
+const xxxl = breakpoints['2xl']
+watch(showCity, async (newValue, oldValue) => {
+    if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
+        var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
+
+        var options = {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": "Token " + import.meta.env.VITE_DADATA_TOKEN
+            },
+            body: JSON.stringify({
+                query: newValue,
+                count: 5,
+                "from_bound": { "value": "city" },
+                "to_bound": { "value": "settlement" }
+            })
+        }
+
+        let res = await fetch(url, options)
+        try {
+            let suggestions = JSON.parse(await res.text()).suggestions
+            possibleLocations.value = []
+            for (let s of suggestions) {
+                possibleLocations.value.push({
+                        value: s.value,
+                    }
+                  )
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    console.log(showCity,possibleLocations)
+})
 </script>
 
 <template>
@@ -59,24 +94,14 @@ const bot = () => {
               @click="toComponentFromMenu('Landing')"
             />
             <!-- <LogoSvg></LogoSvg> -->
-            <a-dropdown :trigger="['click']">
+            <a-popover placement="topLeft" trigger="click">
               <span class="mdi mdi-24px mdi-map-marker">
                  
                </span>
-              <template #overlay>
-                <a-menu @click="getCity">
-                  <a-menu-item key="Глазов">
-                    Глазов
-                  </a-menu-item>
-                  <a-menu-item key="Пермь">
-                    Пермь
-                  </a-menu-item>
-                  <a-menu-item key="Москва">
-                    Москва
-                  </a-menu-item>
-                </a-menu>
+              <template #content>
+                  <a-auto-complete v-model:value="showCity" :options="possibleLocations"  style="width: 200px" @search="dosmt"></a-auto-complete>
               </template>
-            </a-dropdown>
+            </a-popover>
             <span class="ml-8">{{ showCity }}</span>
           </a-col>
           <a-col v-if="!sm" :span="12" class="top_menu">
