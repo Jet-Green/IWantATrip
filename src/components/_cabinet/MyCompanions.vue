@@ -129,11 +129,12 @@ onMounted(async () => {
       </a-card>
     </a-col>
     <a-modal
-      v-model:visible="visible"
       title="Ваши попутчики"
+      v-model:visible="visible"
       width="100%"
       wrap-class-name="full-modal"
       @ok="handleOk"
+      style="top: 10px"
     >
       <a-col v-for="(request, index) in chosenCompanion" :key="index">
         <a-card class="card">
