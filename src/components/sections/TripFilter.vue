@@ -38,7 +38,10 @@ function find() {
 }
 
 watch(query, (newQuery) => {
-  find();
+  newQuery = newQuery.trim()
+  if (newQuery !== '') {
+    find();
+  }
 });
 watch(where, (newPlace) => {
   find();

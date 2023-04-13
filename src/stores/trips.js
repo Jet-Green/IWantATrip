@@ -37,11 +37,13 @@ export const useTrips = defineStore('trips', {
         async searchTrips(query, place, when) {
             try {
                 if (!query && !place && !when.start && !when.end) {
-                    // где-то тут проблема
-                    this.filteredTrips = []
-                    this.cursor = 0
-                    this.trips = []
-                    this.fetchTrips()
+                    if (!this.trips.length) {
+                        // где-то тут проблема
+                        this.filteredTrips = []
+                        this.cursor = 0
+                        this.trips = []
+                        this.fetchTrips()
+                    }
                 } else {
                     this.trips = []
                     const response = await TripService.searchTrips({ query, place: place, when: when });
