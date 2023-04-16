@@ -8,7 +8,8 @@ export const useTrips = defineStore('trips', {
     state: () => ({
         trips: [],
         filteredTrips: [],
-        cursor: 0
+        cursor: 0,
+        searchCursor: 0
     }),
     getters: {
         getTrips(state) {
@@ -21,11 +22,8 @@ export const useTrips = defineStore('trips', {
     actions: {
         async fetchTrips() {
             try {
-                // if (this.cursor == 0 && this.trips.length > 0) {
-                //     this.trips = []
-                // }
-                // this.filteredTrips = []
                 if (this.filteredTrips.length == 0) {
+                    this.searchCursor = 0
                     const response = await TripService.fetchTrips(this.cursor);
                     this.trips.push(...response.data);
 
@@ -40,7 +38,6 @@ export const useTrips = defineStore('trips', {
             try {
                 if (!query && !place && !when.start && !when.end) {
                     if (!this.trips.length) {
-                        // где-то тут проблема
                         this.filteredTrips = []
                         this.cursor = 0
                         this.trips = []
@@ -48,8 +45,12 @@ export const useTrips = defineStore('trips', {
                     }
                 } else {
                     this.trips = []
-                    const response = await TripService.searchTrips({ query, place: place, when: when });
-                    this.filteredTrips = response.data;
+                    const response = await TripService.searchTrips({ query, place: place, when: when }, this.searchCursor);
+
+                    this.filteredTrips.push(...response.data);
+
+                    if (response.data.length != 0)
+                        this.searchCursor += 7
                 }
             } catch (err) {
                 console.log(err);

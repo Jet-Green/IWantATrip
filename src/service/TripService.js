@@ -7,8 +7,8 @@ export default {
     async fetchTrips(cursor) {
         return $api.get(`/trips/get-all?cursor=${cursor}`)
     },
-    async searchTrips(req) {
-        return $api.post(`/trips/search`, req)
+    async searchTrips(req, cursor) {
+        return $api.post(`/trips/search?cursor=${cursor}`, req)
     },
     async getById(_id) {
         return $api.get(`/trips/get-by-id?_id=${_id}`)
