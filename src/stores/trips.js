@@ -28,7 +28,9 @@ export const useTrips = defineStore('trips', {
                 if (this.filteredTrips.length == 0) {
                     const response = await TripService.fetchTrips(this.cursor);
                     this.trips.push(...response.data);
-                    this.cursor += 7
+
+                    if (response.data.length != 0)
+                        this.cursor += 7
                 }
             } catch (err) {
                 console.log(err);

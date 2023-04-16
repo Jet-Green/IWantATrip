@@ -1,20 +1,23 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 
 import { useTrips } from "../../stores/trips";
 import TripListCard from "../cards/TripListCard.vue";
 
 const tripStore = useTrips();
+let loading = ref(false)
 
 function setupScrollEvent() {
-  const onScroll = () => {
+  const onScroll = async () => {
     const windowHeight = document.documentElement.clientHeight;
     const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
     const scrollHeight = document.documentElement.scrollHeight;
     const nearBottom = scrollTop + windowHeight >= scrollHeight - 350;
 
-    if (nearBottom) {
-      tripStore.fetchTrips()
+    if (nearBottom && !loading.value) {
+      loading.value = true
+      await tripStore.fetchTrips()
+      loading.value = false
     }
   };
 
