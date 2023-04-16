@@ -14,7 +14,6 @@ const _id = route.query._id;
 
 const tripStore = useTrips();
 const userStore = useAuth();
-
 const backRoute = "/trips";
 
 let selectedByUser = ref([]);
@@ -141,6 +140,7 @@ onMounted(() => {
     userInfo.phone = userStore.user.fullinfo.phone;
   }
 });
+console.log(trip)
 </script>
 <template>
   <div style="overflow-x: hidden">
@@ -176,6 +176,7 @@ onMounted(() => {
             </a-carousel>
           </a-col>
           <a-col :xs="24" :md="12" class="pa-8">
+          <p>Автор тура: {{ trip.creatorId }}</p>
             <p>{{ trip.offer }}</p>
             <div>
               Продолжительность: <b>{{ trip.duration }} дн.</b>
@@ -194,6 +195,7 @@ onMounted(() => {
               <div v-for="(item, index) in trip.cost" :key="index" class="cost">
                 {{ item.first }} : <b>{{ item.price }} руб.</b>
               </div>
+
             </div>
             <div class="d-flex justify-center ma-8">
               <a-button
