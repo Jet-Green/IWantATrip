@@ -7,16 +7,48 @@ let props = defineProps({
   search: String,
 });
 
-const tripsStore = useTrips();
+const tripStore = useTrips();
 
 let router = useRouter();
 
 let where = ref("");
 let time = ref(null);
+let query = ref("");
+
+let loading = ref(false)
+
+function setupScrollEvent() {
+  const onScroll = async () => {
+    const windowHeight = document.documentElement.clientHeight;
+    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight;
+    const nearBottom = scrollTop + windowHeight >= scrollHeight - 350;
+
+    if (nearBottom && !loading.value) {
+      loading.value = true
+      if (tripStore.filteredTrips.length == 0) {
+        await tripStore.fetchTrips()
+      } else {
+        await tripStore.searchTrips(query.value, where.value, {
+          start: time.value ? time.value[0].$d.getTime() : "",
+          end: time.value ? time.value[1].$d.getTime() : "",
+        })
+      }
+      loading.value = false
+    }
+  };
+
+  window.addEventListener('scroll', onScroll);
+  return () => {
+    window.removeEventListener('scroll', onScroll);
+  };
+}
+
+
 let locations = computed(() => {
   let result = [];
   // проблема, надо получить направления и посчитать на сервере, мы не будем загружать все на клиента
-  for (let t of tripsStore.trips) {
+  for (let t of tripStore.trips) {
     if (t.location == "") {
       continue;
     }
@@ -28,17 +60,16 @@ let locations = computed(() => {
 
 let visible = ref(false);
 
-let query = ref("");
-
 function find() {
-  tripsStore.searchTrips(query.value, where.value, {
+  tripStore.searchTrips(query.value, where.value, {
     start: time.value ? time.value[0].$d.getTime() : "",
     end: time.value ? time.value[1].$d.getTime() : "",
   });
 }
 
 watch(query, (newQuery) => {
-  if (newQuery == "") {
+  newQuery = newQuery.trim()
+  if (newQuery.length > 2) {
     find();
   }
 });
@@ -47,13 +78,17 @@ watch(where, (newPlace) => {
 });
 
 onMounted(() => {
+  setupScrollEvent()
+
   if (props.search) {
     query.value = props.search;
   }
-  tripsStore.searchTrips(query.value, where.value, {
-    start: time.value ? time.value[0].$d.getTime() : null,
-    end: time.value ? time.value[1].$d.getTime() : null,
-  });
+  if (query.value && where.value && time.value) {
+    tripStore.searchTrips(query.value, where.value, {
+      start: time.value ? time.value[0].$d.getTime() : null,
+      end: time.value ? time.value[1].$d.getTime() : null,
+    });
+  }
 });
 </script>
 <template>
@@ -61,36 +96,18 @@ onMounted(() => {
     <a-col :xs="22" :md="12">
       <a-row class="mb-8" type="flex" justify="center">
         <a-col :xs="24" :md="12" class="d-flex">
-          <a-input-search
-            v-model:value="query"
-            placeholder="поиск"
-            enter-button
-            style="z-index: 0"
-            @search="find()"
-          />
-          <span
-            class="mdi mdi-24px mdi-filter-outline ml-16"
-            :class="{ active_filter: visible, filter: !visible }"
-            @click="visible = !visible"
-          ></span>
+          <a-input-search v-model:value="query" placeholder="поиск" enter-button style="z-index: 0" @search="find()" />
+          <span class="mdi mdi-24px mdi-filter-outline ml-16" :class="{ active_filter: visible, filter: !visible }"
+            @click="visible = !visible"></span>
         </a-col>
       </a-row>
       <Transition name="fade">
         <div v-if="visible">
           <a-row type="flex" justify="center">
             <a-col :xs="24" :md="12">
-              <a-select
-                style="width: 100%"
-                v-model:value="where"
-                :bordered="true"
-                class="selector"
-              >
+              <a-select style="width: 100%" v-model:value="where" :bordered="true" class="selector">
                 <a-select-option value=""> </a-select-option>
-                <a-select-option
-                  v-for="(l, index) of locations"
-                  :value="l"
-                  :key="index"
-                >
+                <a-select-option v-for="(l, index) of locations" :value="l" :key="index">
                   {{ l }}
                 </a-select-option>
               </a-select>
