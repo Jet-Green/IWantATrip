@@ -19,6 +19,9 @@ import dayjs from "dayjs";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 
+let loadedImages = ref([]);
+let imageInput = ref(null)
+
 const tripStore = useTrips();
 const userStore = useAuth();
 const appStore = useAppState();
@@ -186,8 +189,15 @@ function updateUserInfo(info) {
   fullUserInfo = info;
   creatorId = fullUserInfo.fullname;
 }
-function uploadPdf(pdf) {
-  console.log(pdf)
+function loadImage() {
+    loadedImages.value = imageInput.value.files;
+    // console.log(loadedImages.value[0].originFileObj);
+    if (loadedImages.value.length) {
+        let reader = new FileReader();
+        reader.readAsDataURL(loadedImages.value[0]);
+    } else {
+
+    }
 }
 
 watch(description, (newValue) => {
@@ -279,22 +289,14 @@ let formSchema = yup.object({
     <BackButton />
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="12">
-        <Form
-          :validation-schema="formSchema"
-          v-slot="{ meta }"
-          @submit="submit"
-        >
+        <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
           <a-row :gutter="[16, 16]">
             <a-col :span="24">
               <UserFullInfo @fullInfo="updateUserInfo" />
             </a-col>
             <a-col :span="24">
               <h2>Создать тур</h2>
-              <Field
-                name="name"
-                v-slot="{ value, handleChange }"
-                v-model="form.name"
-              >
+              <Field name="name" v-slot="{ value, handleChange }" v-model="form.name">
                 Название
                 <a-input
                   placeholder="Название тура"
@@ -337,11 +339,7 @@ let formSchema = yup.object({
             </a-col>
 
             <a-col :span="12">
-              <Field
-                name="start"
-                v-slot="{ value, handleChange }"
-                v-model="start"
-              >
+              <Field name="start" v-slot="{ value, handleChange }" v-model="start">
                 Дата начала
                 <a-date-picker
                   @update:value="handleChange"
@@ -515,11 +513,7 @@ let formSchema = yup.object({
             </a-col>
 
             <a-col :span="24">
-              <Field
-                name="offer"
-                v-slot="{ value, handleChange }"
-                v-model="form.offer"
-              >
+              <Field name="offer" v-slot="{ value, handleChange }" v-model="form.offer">
                 Реклама
                 <a-textarea
                   @update:value="handleChange"
@@ -571,16 +565,36 @@ let formSchema = yup.object({
               />
             </a-col>
             <a-col :span="24">
-              <a-upload
-                :multiple="true"
-                :file-list="fileList"
-                @change="handleChange"
-              >
-                <a-button type="dashed" block onclick=uploadPdf()>
-                  <span class="mdi mdi-12px mdi-plus"></span>
-                  Загрузить pdf описание
-                </a-button>
-              </a-upload>
+              <div class="pa-4">
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref="imageInput"
+                  id="upload"
+                  @change="loadImage"
+                  style="display: none"
+                />
+                <a-row>
+                  <a-col :span="24" class="pa-0">
+                    <img
+                      v-if="loadedImages.length"
+                      ref="previewImage"
+                      style="width: 50vw; height: 50vh"
+                    />
+                    <div style="width: 50vw"></div>
+                    <label for="upload">
+                      <div
+                        v-if="!loadedImages.length"
+                        class="d-flex justify-center align-center flex-column"
+                        style="height: 50vh; cursor: pointer"
+                      >
+                        <span class="mdi mdi-24px mdi-camera"></span>
+                        <span> выбери фото</span>
+                      </div>
+                    </label>
+                  </a-col>
+                </a-row>
+              </div>
             </a-col>
             <a-col :span="24" class="d-flex justify-center">
               <a-button
@@ -600,11 +614,7 @@ let formSchema = yup.object({
         <a-modal v-model:visible="delPhotoDialog" :footer="null">
           <h3>Удалить фото?</h3>
           <div class="d-flex justify-center">
-            <a-button
-              class="mt-16"
-              type="primary"
-              size="large"
-              @click="delPhoto"
+            <a-button class="mt-16" type="primary" size="large" @click="delPhoto"
               >Да
             </a-button>
           </div>
