@@ -40,8 +40,9 @@ const baseTimeStart = dayjs(1679492631000);
 const baseTimeEnd = dayjs(1679492631000);
 const baseTimePeriod = dayjs(1679492631000);
 const router = useRouter();
-let creatorId = userStore.user.fullinfo.fullname;
-
+let creatorForm = ref([])
+let showCity = ref(null)
+let possibleLocations = ref([])
 // cropper
 let visibleCropperModal = ref(false);
 let previews = ref([]);
@@ -63,7 +64,7 @@ let form = reactive({
   location: "",
   tripType: "",
   fromAge: "",
-  creatorId: "",
+  creatorForm: "",
   startLocation: "",
 });
 let fullUserInfo = null;
@@ -92,7 +93,7 @@ const delPhoto = () => {
 function submit() {
   description.value = description.value.split("<p><br></p>").join("");
   form.description = description.value;
-  form.creatorId = creatorId;
+  form.creatorForm = creatorForm;
 
   let send = {};
   for (let key in form) {
@@ -135,7 +136,7 @@ function submit() {
         location: "",
         tripType: "",
         fromAge: "",
-        creatorId: "",
+        creatorForm: "",
         startLocation: "",
       });
       if (fullUserInfo) {
@@ -184,7 +185,9 @@ function addPreview(blob) {
 }
 function updateUserInfo(info) {
   fullUserInfo = info;
-  creatorId = fullUserInfo.fullname;
+  creatorForm.append(fullUserInfo.fullname);
+  creatorForm.append(fullUserInfo.creatorsType);
+  creatorForm.append(fullUserInfo.fullname);
 }
 
 watch(description, (newValue) => {
@@ -222,6 +225,42 @@ watch(end, () => {
   }
   form.end = Date.parse(end.value.$d.toString());
 });
+watch(showCity, async (newValue, oldValue) => {
+    if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
+        var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
+
+        var options = {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": "Token " + import.meta.env.VITE_DADATA_TOKEN
+            },
+            body: JSON.stringify({
+                query: newValue,
+                count: 5,
+                "from_bound": { "value": "city" },
+                "to_bound": { "value": "settlement" }
+            })
+        }
+
+        let res = await fetch(url, options)
+        try {
+            let suggestions = JSON.parse(await res.text()).suggestions
+            possibleLocations.value = []
+            for (let s of suggestions) {
+                possibleLocations.value.push({
+                        value: s.value,
+                    }
+                  )
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    console.log(showCity,possibleLocations)
+})
 onMounted(() => {
   if (router.currentRoute.value.query._id) {
     tripStore.getById(router.currentRoute.value.query._id).then((response) => {
@@ -245,7 +284,7 @@ onMounted(() => {
       form.fromAge = d.fromAge;
       form.tripRoute = d.tripRoute;
       form.offer = d.offer;
-      form.creatorId = d.creatorId;
+      form.creatorForm = d.creatorId;
       start.value = dayjs(new Date(d.start));
       end.value = dayjs(new Date(d.end));
     });
@@ -469,16 +508,18 @@ let formSchema = yup.object({
                 v-model="form.startLocation"
               >
                 Место старта
-                <a-input
-                  placeholder="Глазов"
+                <a-auto-complete v-model:value="showCity" placeholder="Глазов"
                   size="large"
                   @update:value="handleChange"
-                  :value="value"
-                ></a-input>
+                  :value="value" :options="possibleLocations"  style="width: 100%"></a-auto-complete>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="location" class="error-message" />
               </Transition>
+             
+
+            
+                  
             </a-col>
 
             <a-col :xs="24" :md="12">

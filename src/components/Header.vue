@@ -14,14 +14,9 @@ let sm = breakpoints.smaller("md");
 let router = useRouter();
 let visibleDrawer = ref(false);
 let visibleModal = ref(false);
-let showCity = ref(null)
 let isTripCreator = ref(false);
 let visibleCreator = ref(false);
 let value = ref("Reg");
-let possibleLocations = ref([])
-function dosmt(){
-
-}
 function showDrawer() {
   visibleDrawer.value = !visibleDrawer.value;
   console.log(i)
@@ -43,42 +38,7 @@ const lg = breakpoints.between('md', 'lg')
 const xl = breakpoints.between('lg', 'xl')
 const xxl = breakpoints.between('xl', '2xl')
 const xxxl = breakpoints['2xl']
-watch(showCity, async (newValue, oldValue) => {
-    if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
-        var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
 
-        var options = {
-            method: "POST",
-            mode: "cors",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "Authorization": "Token " + import.meta.env.VITE_DADATA_TOKEN
-            },
-            body: JSON.stringify({
-                query: newValue,
-                count: 5,
-                "from_bound": { "value": "city" },
-                "to_bound": { "value": "settlement" }
-            })
-        }
-
-        let res = await fetch(url, options)
-        try {
-            let suggestions = JSON.parse(await res.text()).suggestions
-            possibleLocations.value = []
-            for (let s of suggestions) {
-                possibleLocations.value.push({
-                        value: s.value,
-                    }
-                  )
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    }
-    console.log(showCity,possibleLocations)
-})
 </script>
 
 <template>
