@@ -42,7 +42,7 @@ const baseTimeStart = dayjs(1679492631000);
 const baseTimeEnd = dayjs(1679492631000);
 const baseTimePeriod = dayjs(1679492631000);
 const router = useRouter();
-let creatorForm = ref([])
+var creatorForm = ref([])
 let showCity = ref(null)
 let possibleLocations = ref([])
 // cropper
@@ -68,7 +68,7 @@ let form = reactive({
   location: "",
   tripType: "",
   fromAge: "",
-  creatorId: "",
+  creatorForm: "",
   startLocation: null,
 });
 let fullUserInfo = null;
@@ -98,7 +98,6 @@ function submit() {
   description.value = description.value.split("<p><br></p>").join("");
   form.description = description.value;
   form.creatorForm = creatorForm;
-
   let send = {};
   for (let key in form) {
     send[key] = form[key];
@@ -189,12 +188,11 @@ function addPreview(blob) {
 }
 function updateUserInfo(info) {
   fullUserInfo = info;
-  creatorId = fullUserInfo.fullname;
+  creatorForm=[fullUserInfo.fullname,fullUserInfo.creatorsType,fullUserInfo.type]
 }
 function uploadPdf() {
 
 }
-let possibleLocations = ref([])
 function selectStartLocation(selected) {
   for (let l of possibleLocations.value) {
     if (l.value == selected) {
@@ -347,7 +345,7 @@ onMounted(() => {
       form.fromAge = d.fromAge;
       form.tripRoute = d.tripRoute;
       form.offer = d.offer;
-      form.creatorForm = d.creatorId;
+      form.creatorForm = d.creatorForm;
       start.value = dayjs(new Date(d.start));
       end.value = dayjs(new Date(d.end));
     });
