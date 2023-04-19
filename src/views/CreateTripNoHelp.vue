@@ -120,10 +120,19 @@ function submit() {
         _id + "_" + i + ".jpg"
       );
     }
+    let pdfFormData = new FormData();
+    for (let i = 0; i < pdf.length; i++) {
+      pdfFormData.append(
+        "trip-pdf",
+        new File([pdf[i]], _id + "_" + i + ".pdf"),
+        _id + "_" + i + ".pdf"
+      );
+    }
+
     function close() {
       router.push("/trips");
     }
-    TripService.uploadTripImages(imagesFormData).then((res) => {
+    TripService.uploadTripImages(imagesFormData).uploadTripPdf(pdfFormData).then((res) => {
       Object.assign(form, {
         name: "",
         start: null,
@@ -152,6 +161,7 @@ function submit() {
           .then((response) => {
             userStore.user = response.data;
             images = [];
+            pdf = [];
             previews.value = [];
             quill.value.setHTML("");
             message.config({ duration: 3, top: "90vh" });
@@ -166,6 +176,7 @@ function submit() {
           .then((response) => {
             userStore.user = response.data;
             images = [];
+            pdf = [];
             previews.value = [];
             quill.value.setHTML("");
             message.config({ duration: 3, top: "90vh" });
@@ -189,9 +200,6 @@ function addPreview(blob) {
 function updateUserInfo(info) {
   fullUserInfo = info;
   creatorId = fullUserInfo.fullname;
-}
-function uploadPdf() {
-
 }
 let possibleLocations = ref([])
 function selectStartLocation(selected) {
