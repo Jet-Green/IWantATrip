@@ -4,11 +4,11 @@ export default {
     async getCustomers(ids) {
         return $api.post('/trips/get-customers', ids)
     },
-    async fetchTrips() {
-        return $api.get('/trips/get-all')
+    async fetchTrips(cursor) {
+        return $api.get(`/trips/get-all?cursor=${cursor}`)
     },
-    async searchTrips(req) {
-        return $api.post(`/trips/search`, req)
+    async searchTrips(req, cursor) {
+        return $api.post(`/trips/search?cursor=${cursor}`, req)
     },
     async getById(_id) {
         return $api.get(`/trips/get-by-id?_id=${_id}`)
@@ -30,6 +30,10 @@ export default {
         return $api.post('/trips/upload-images', images)
     },
 
+    async uploadTripPdf(pdf) {
+        return $api.post('/trips/upload-pdf', pdf)
+    },
+
     async bookingTrip(booking) {
         return $api.post('/trips/booking', booking)
     },
@@ -40,5 +44,5 @@ export default {
     async clearTripsDB() {
         return $api.get('/trips/clear')
     },
-  
+
 }
