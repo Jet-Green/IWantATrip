@@ -19,9 +19,6 @@ import dayjs from "dayjs";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 
-let loadedImages = ref([]);
-let imageInput = ref(null)
-
 const tripStore = useTrips();
 const userStore = useAuth();
 const appStore = useAppState();
@@ -49,6 +46,7 @@ let visibleCropperModal = ref(false);
 let previews = ref([]);
 // отправляем на сервер
 let images = []; // type: blob
+let pdf = [];
 let locationSearchRequest = ref("")
 // необходимо добавить поле количество людей в туре
 let form = reactive({
