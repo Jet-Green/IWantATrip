@@ -201,7 +201,7 @@ const router = createRouter({
     },
   ],
   scrollBehavior(to, from, savedPosition) {
-    if ((to.name == 'TripsPage') || (to.name == 'TripInfoPage') || (to.name == 'CompanionsPage') || (to.name == 'CreateTripNoHelp'))
+    if (!savedPosition || (to.name == 'TripsPage') || (to.name == 'TripInfoPage') || (to.name == 'CompanionsPage') || (to.name == 'CreateTripNoHelp'))
       return { top: 0 }
     else return savedPosition
   }
