@@ -3,7 +3,7 @@ import { useRouter } from "vue-router";
 import { ref,watch } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useAuth } from "../stores/auth";
-
+import LocationService from "../service/LocationService";
 import TripCreatorReg from "./forms/TripCreatorReg.vue";
 import LogoSvg from "../components/_explanation/LogoSvg.vue";
 
@@ -17,9 +17,26 @@ let visibleModal = ref(false);
 let isTripCreator = ref(false);
 let visibleCreator = ref(false);
 let value = ref("Reg");
+var possibleLocations = ref([])
+possibleLocations = new Array()
+
+// function smt(){
+//   LocationService.getLocations().then(async (res) => {
+//     for (i of res.data){
+//       console.log(i)
+//     }
+//   })
+// }
+function smt(){
+  LocationService.getLocations().then(async (res) => {
+    for (let loc in res.data){
+      possibleLocations[loc]= res.data[loc].shortName
+    }
+  })
+}
+
 function showDrawer() {
   visibleDrawer.value = !visibleDrawer.value;
-  console.log(i)
 }
 function toComponentFromMenu(routName) {
   router.isReady().then(() => {
@@ -59,7 +76,7 @@ const xxxl = breakpoints['2xl']
                  
                </span>
               <template #content>
-                  <a-auto-complete v-model:value="showCity" :options="possibleLocations"  style="width: 200px" @search="dosmt"></a-auto-complete>
+                  <a-auto-complete v-model:value="showCity" :options="possibleLocations"  style="width: 200px" @search="smt"></a-auto-complete>
               </template>
             </a-popover>
             <span class="ml-8">{{ showCity }}</span>

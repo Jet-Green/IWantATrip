@@ -43,7 +43,6 @@ const baseTimeEnd = dayjs(1679492631000);
 const baseTimePeriod = dayjs(1679492631000);
 const router = useRouter();
 var creatorForm = ref([])
-let showCity = ref(null)
 let possibleLocations = ref([])
 // cropper
 let visibleCropperModal = ref(false);
@@ -286,42 +285,6 @@ watch(end, () => {
   }
   form.end = Date.parse(end.value.$d.toString());
 });
-watch(showCity, async (newValue, oldValue) => {
-    if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
-        var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
-
-        var options = {
-            method: "POST",
-            mode: "cors",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "Authorization": "Token " + import.meta.env.VITE_DADATA_TOKEN
-            },
-            body: JSON.stringify({
-                query: newValue,
-                count: 5,
-                "from_bound": { "value": "city" },
-                "to_bound": { "value": "settlement" }
-            })
-        }
-
-        let res = await fetch(url, options)
-        try {
-            let suggestions = JSON.parse(await res.text()).suggestions
-            possibleLocations.value = []
-            for (let s of suggestions) {
-                possibleLocations.value.push({
-                        value: s.value,
-                    }
-                  )
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    }
-    console.log(showCity,possibleLocations)
-})
 onMounted(() => {
   if (router.currentRoute.value.query._id) {
     tripStore.getById(router.currentRoute.value.query._id).then((response) => {
