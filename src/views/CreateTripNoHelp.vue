@@ -19,9 +19,6 @@ import dayjs from "dayjs";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 
-let loadedImages = ref([]);
-let imageInput = ref(null)
-
 const tripStore = useTrips();
 const userStore = useAuth();
 const appStore = useAppState();
@@ -49,6 +46,7 @@ let visibleCropperModal = ref(false);
 let previews = ref([]);
 // отправляем на сервер
 let images = []; // type: blob
+let pdf = [];
 let locationSearchRequest = ref("")
 // необходимо добавить поле количество людей в туре
 let form = reactive({
@@ -58,7 +56,7 @@ let form = reactive({
   maxPeople: null,
   duration: "",
   images: [],
-  pdfs: [],
+  pdf: [],
   tripRoute: "",
   distance: "",
   cost: [],
@@ -120,10 +118,19 @@ function submit() {
         _id + "_" + i + ".jpg"
       );
     }
+    let pdfFormData = new FormData();
+    for (let i = 0; i < pdf.length; i++) {
+      pdfFormData.append(
+        "trip-pdf",
+        new File([pdf[i]], _id + "_" + i + ".pdf"),
+        _id + "_" + i + ".pdf"
+      );
+    }
+
     function close() {
       router.push("/trips");
     }
-    TripService.uploadTripImages(imagesFormData).then((res) => {
+    TripService.uploadTripImages(imagesFormData).uploadTripPdf(pdfFormData).then((res) => {
       Object.assign(form, {
         name: "",
         start: null,
@@ -152,6 +159,7 @@ function submit() {
           .then((response) => {
             userStore.user = response.data;
             images = [];
+            pdf = [];
             previews.value = [];
             quill.value.setHTML("");
             message.config({ duration: 3, top: "90vh" });
@@ -166,6 +174,7 @@ function submit() {
           .then((response) => {
             userStore.user = response.data;
             images = [];
+            pdf = [];
             previews.value = [];
             quill.value.setHTML("");
             message.config({ duration: 3, top: "90vh" });
@@ -189,9 +198,6 @@ function addPreview(blob) {
 function updateUserInfo(info) {
   fullUserInfo = info;
   creatorId = fullUserInfo.fullname;
-}
-function uploadPdf() {
-
 }
 let possibleLocations = ref([])
 function selectStartLocation(selected) {
