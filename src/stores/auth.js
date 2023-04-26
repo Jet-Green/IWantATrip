@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import UserService from '../service/UserService'
+import LocationService from '../service/LocationService';
 import { message } from 'ant-design-vue';
 import axios from 'axios'
 
@@ -111,5 +112,8 @@ export const useAuth = defineStore('auth', {
                 console.log(err);
             }
         },
+        async searchLocation(searchReq) {
+            return await LocationService.searchLocation(searchReq)
+        }
     },
 })

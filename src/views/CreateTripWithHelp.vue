@@ -2,7 +2,7 @@
 import BackButton from "../components/BackButton.vue";
 import UserFullInfo from "../components/forms/UserFullInfo.vue";
 import { useRouter } from "vue-router";
-import { reactive, ref, onMounted } from "vue";
+import { reactive, ref, onMounted, watch } from "vue";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import { message } from "ant-design-vue";
 import BookingService from "../service/BookingService";
@@ -17,6 +17,8 @@ let sm = breakpoints.smaller("md");
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
 // const monthFormatList = ["MM.YY"];
 const ruLocale = locale;
+
+let possibleLocations = ref([])
 
 const userStore = useAuth();
 const appStore = useAppState();
@@ -36,6 +38,7 @@ let form = reactive({
 let userInfo = reactive({
   fullname: "",
   phone: "",
+  location: ""
 });
 
 let formState = reactive({
@@ -101,6 +104,59 @@ onMounted(() => {
       : (userInfo.phone = "");
   }
 });
+
+watch(() => userInfo.location, async (newValue, oldValue) => {
+  console.log('im here')
+  if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
+    var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
+
+    var options = {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": "Token " + import.meta.env.VITE_DADATA_TOKEN
+      },
+      body: JSON.stringify({
+        query: newValue,
+        count: 5,
+        "from_bound": { "value": "city" },
+        "to_bound": { "value": "settlement" }
+      })
+    }
+
+    let res = await fetch(url, options)
+    try {
+      let suggestions = JSON.parse(await res.text()).suggestions
+      possibleLocations.value = []
+      for (let s of suggestions) {
+        let location = {
+          value: s.value,
+          geo: {
+            name: s.value,
+            shortName: '',
+            geo_lat: s.data.geo_lat,
+            geo_lon: s.data.geo_lon
+          }
+        }
+
+        if (s.data.settlement) {
+          location.geo.shortName = s.data.settlement
+        }
+        else if (s.data.city) {
+          location.geo.shortName = s.data.city
+        } else {
+          location.geo.shortName = s.value
+        }
+
+        possibleLocations.value.push(location)
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+})
 </script>
 <template>
   <div>
@@ -123,12 +179,19 @@ onMounted(() => {
               Телефон
               <a-input style="width: 100%" v-model:value="userInfo.phone" placeholder="79127528874" />
             </a-col>
+            <a-col :span="24" :md="12">
+              Местоположение
+              <a-select v-model:value="userInfo.location" style="width: 100%" mode="multiple">
+                <a-select-option v-for="(value, index) in possibleLocations" :key="index" :value="value">{{ value.geo.name
+                }}</a-select-option>
+              </a-select>
+            </a-col>
             <a-col :span="24">
               <h2>Заказать тур</h2>
               <div>
                 Тип тура
                 <a-select v-model:value="form.type" style="width: 100%" mode="multiple">
-                  <a-select-option v-for="value in appStore.appState[0].tripType" :value="value">{{ value
+                  <a-select-option v-for="(value, index) in appStore.appState[0].tripType" :key="index" :value="value">{{ value
                   }}</a-select-option>
                 </a-select>
               </div>
