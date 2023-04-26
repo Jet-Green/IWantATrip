@@ -1,5 +1,5 @@
 <script setup>
-import { reactive } from "vue";
+import { reactive,watch,ref } from "vue";
 import { useAuth } from "../stores/auth";
 import { useRouter } from "vue-router";
 import BackButton from "./BackButton.vue";
@@ -9,24 +9,28 @@ import * as yup from 'yup';
 
 import { message } from "ant-design-vue";
 import axios from "axios";
-
 const user = useAuth();
 const router = useRouter();
+let possibleLocations = ref([])
+let locationSearchRequest = ref("")
 let formState = reactive({
   fullname: "",
   email: "",
+  location: "",
   password: "",
 });
 async function sendRegInfo() {
   let result = await user.registration({
     email: formState.email,
     password: formState.password,
+    location: formState.location,
     fullname: formState.fullname,
   });
   if (result.success) {
     try {
       axios.post(`http://localhost:4089/add-companion?name=${res.data.name}`);
-    } catch (error) { }
+      console.log(1)
+    } catch (error) {       console.log(2)}
     // formState.fullname = "";
     // formState.email = "";
     // formState.password = "";
@@ -40,11 +44,65 @@ async function sendRegInfo() {
   }
 }
 
+watch(locationSearchRequest, async (newValue, oldValue) => {
+  if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
+    var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
+
+    var options = {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": "Token " + import.meta.env.VITE_DADATA_TOKEN
+      },
+      body: JSON.stringify({
+        query: newValue,
+        count: 5,
+        "from_bound": { "value": "city" },
+        "to_bound": { "value": "settlement" }
+      })
+    }
+
+    let res = await fetch(url, options)
+    try {
+      let suggestions = JSON.parse(await res.text()).suggestions
+      possibleLocations.value = []
+      for (let s of suggestions) {
+        let location = {
+          value: s.value,
+          geo: {
+            name: s.value,
+            shortName: '',
+            geo_lat: s.data.geo_lat,
+            geo_lon: s.data.geo_lon
+          }
+        }
+
+        if (s.data.settlement) {
+          location.geo.shortName = s.data.settlement
+        }
+        else if (s.data.city) {
+          location.geo.shortName = s.data.city
+        } else {
+          location.geo.shortName = s.value
+        }
+
+        possibleLocations.value.push(location)
+        formState.location = location
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+})
 const formSchema = yup.object({
   email: yup.string("неверный формат").required("заполните поле").email('неверный формат'),
   password: yup.string("неверный формат").required("заполните поле").min(6, 'минимум 6 символов'),
-  fullname: yup.string("неверный формат").required("заполните поле")
+  fullname: yup.string("неверный формат").required("заполните поле"),
+  location: yup.string("неверный формат").required("заполните поле")
 });
+
 </script>
 <template>
   <div>
@@ -79,9 +137,18 @@ const formSchema = yup.object({
                 <ErrorMessage name="password" class="error-message" />
               </Transition>
 
+              <Field name="location" v-slot=" { value, handleChange } " v-model=" locationSearchRequest ">
+                <a-auto-complete :value=" value " @update:value=" handleChange " style="width: 100%"
+                size="large" class="mt-8" :options=" possibleLocations " placeholder="Глазов">
+                </a-auto-complete>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="location" class="error-message" />
+              </Transition>
+
               <div class="d-flex justify-center">
                 <a-button :disabled="!meta.valid" class="ma-16 lets_go_btn" type="primary" size="large"
-                  html-type="submit">Отправить</a-button>
+                  html-type="submit" >Отправить</a-button>
               </div>
             </Form>
           </a-col>

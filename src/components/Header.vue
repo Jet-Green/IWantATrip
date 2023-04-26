@@ -17,13 +17,10 @@ let visibleModal = ref(false);
 let isTripCreator = ref(false);
 let visibleCreator = ref(false);
 let value = ref("Reg");
-var possibleLocations = ref([])
-possibleLocations = new Array()
 
 
 let locationSearchRequest = ref('')
 let possibleLocationsToShow = ref([])
-let possibleLocations = []
 
 function selectUserLocation(s) {
   console.log(s);

@@ -59,7 +59,7 @@ export const useAuth = defineStore('auth', {
         },
         async registration(email, password) {
             try {
-                const response = await UserService.registration(email, password);
+                const response = await UserService.registration(email, password, user);
                 localStorage.setItem('token', response.data.accessToken);
 
                 this.isAuth = true
