@@ -21,7 +21,8 @@ let value = ref("Reg");
 
 
 let locationSearchRequest = ref('')
-let possibleLocations = ref([])
+let possibleLocationsToShow = ref([])
+let possibleLocations = []
 
 function selectUserLocation(s) {
   console.log(s);
@@ -53,10 +54,14 @@ const bot = () => {
 // const xxl = breakpoints.between('xl', '2xl')
 // const xxxl = breakpoints['2xl']
 
-watch(locationSearchRequest, (newLocReq) => {
+watch(locationSearchRequest, async (newLocReq) => {
   if (newLocReq.length > 2) {
-    let result = userStore.searchLocation(newLocReq)
-    console.log(result);
+    let response = await userStore.searchLocation(newLocReq)
+    possibleLocations = response.data
+    possibleLocationsToShow.value = []
+    for (let l of response.data) {
+      possibleLocationsToShow.value.push({ value: l.name })
+    }
   }
 })
 </script>
@@ -80,7 +85,7 @@ watch(locationSearchRequest, (newLocReq) => {
             </span> -->
           </a-col>
           <a-col :xs="20" :md="7">
-            <a-auto-complete style="width: 100%" :options="possibleLocations" placeholder="Ваше местоположение"
+            <a-auto-complete style="width: 100%" :options="possibleLocationsToShow" placeholder="Ваше местоположение"
               v-model:value="locationSearchRequest" @select="selectUserLocation">
             </a-auto-complete>
           </a-col>
