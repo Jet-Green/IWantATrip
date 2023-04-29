@@ -22,6 +22,10 @@ const clearData = (dataString) => {
     .replaceAll("/", ".");
 };
 
+function getPhoneNumber(number) {
+  return `tel:${number}`
+}
+
 const visible = ref(false);
 let chosenCompanion = ref();
 
@@ -68,13 +72,7 @@ onMounted(async () => {
 
 <template>
   <a-row :gutter="[8, 8]" class="mt-8">
-    <a-col
-      v-for="(companion, index) in companions"
-      :key="index"
-      :lg="8"
-      :sm="12"
-      :xs="24"
-    >
+    <a-col v-for="(companion, index) in companions" :key="index" :lg="8" :sm="12" :xs="24">
       <a-card class="card" hoverable>
         <div>
           <span class="mdi mdi-human-male-female"></span>{{ companion?.name }}
@@ -82,31 +80,25 @@ onMounted(async () => {
         </div>
 
         <div><span class="mdi mdi-compass-outline"></span>{{ companion?.direction }}</div>
-        <div
-          :class="[
-            companion?.companionGender == 'Мужчина'
-              ? 'male'
-              : companion?.companionGender == 'Женщина'
+        <div :class="[
+          companion?.companionGender == 'Мужчина'
+            ? 'male'
+            : companion?.companionGender == 'Женщина'
               ? 'female'
               : 'not-matter',
-          ]"
-        >
-          <span
-            :class="
-              companion?.companionGender == 'Женщина'
-                ? 'mdi mdi-gender-female'
-                : companion?.companionGender == 'Мужчина'
+        ]">
+          <span :class="companion?.companionGender == 'Женщина'
+              ? 'mdi mdi-gender-female'
+              : companion?.companionGender == 'Мужчина'
                 ? 'mdi mdi-gender-male'
                 : 'mdi mdi-human-male-female'
-            "
-          ></span
-          >{{
-            companion?.companionGender == "Мужчина"
-              ? "Мужчину"
-              : companion?.companionGender == "Женщина"
-              ? "Женщину"
-              : "Не важно"
-          }}
+            "></span>{{
+    companion?.companionGender == "Мужчина"
+    ? "Мужчину"
+    : companion?.companionGender == "Женщина"
+      ? "Женщину"
+      : "Не важно"
+  }}
         </div>
         <div>
           <span class="mdi mdi-calendar-arrow-right"></span>
@@ -116,52 +108,44 @@ onMounted(async () => {
         </div>
 
         <div><span class="mdi mdi-list-status"></span>{{ companion?.description }}</div>
-        <!-- <a-tooltip placement="bottom">
-                <template #title>
-                  <span>отклик</span>
-                </template>
-              </a-tooltip> -->
-        <div>
-          <a-button @click="showModal(companion.companionRequests)"
-            >Попутчики <DownOutlined
-          /></a-button>
+
+        <div class="d-flex justify-center">
+          <span class="mdi mdi-information-outline" style="cursor: pointer; font-size: 20px;"
+            @click="showModal(companion.companionRequests)"></span>
+
         </div>
       </a-card>
     </a-col>
-    <a-modal
-      title="Ваши попутчики"
-      v-model:visible="visible"
-      width="100%"
-      wrap-class-name="full-modal"
-      @ok="handleOk"
-      style="top: 10px"
-    >
-      <a-col v-for="(request, index) in chosenCompanion" :key="index">
-        <a-card class="card">
-          <span class="mdi mdi-human-cane"></span>{{ ageString(request?.age) }}
-          <div :class="[request.gender == 'Male' ? 'male' : 'female']">
-            <span
-              :class="
-              request.gender == 'Female'
+    <a-modal title="Отклики" v-model:visible="visible" width="100%" :footer="null">
+      <a-row :gutter="[16, 16]">
+        <a-col :xs="24" :sm="12" :xl="6"  v-for="(request, index) in chosenCompanion" :key="index">
+          <a-card class="pa-8" hoverable>
+            <span class="mdi mdi-human-cane"></span>{{ ageString(request?.age) }}
+            <div :class="[request.gender == 'Male' ? 'male' : 'female']">
+              <span :class="request.gender == 'Female'
                   ? 'mdi mdi-gender-female'
-                  :  request.gender == 'Male'
-                  ? 'mdi mdi-gender-male'
-                  : 'mdi mdi-human-male-female'
-              "
-            ></span
-            >{{
-              request.gender == "Male"
-                ? "Мужчина"
-                : request.gender == "Female"
-                ? "Женщина"
-                : "Не важно"
-            }}
-          </div>
-          {{ request.name }}
-          {{ request.surname }}
-          {{ request.phone }}
-        </a-card></a-col
-      >
+                  : request.gender == 'Male'
+                    ? 'mdi mdi-gender-male'
+                    : 'mdi mdi-human-male-female'
+                "></span>{{
+    request.gender == "Male"
+    ? "Мужчина"
+    : request.gender == "Female"
+      ? "Женщина"
+      : "Не важно"
+  }}
+            </div>
+            <div>{{ request.name }} {{ request.surname }}
+            </div>
+
+            <div>
+              <a :href='getPhoneNumber(request.phone)'> <span class="mdi mdi-phone"></span> {{ request.phone }}</a>
+            </div>
+
+
+          </a-card></a-col>
+      </a-row>
+
     </a-modal>
   </a-row>
   <a-divider />
