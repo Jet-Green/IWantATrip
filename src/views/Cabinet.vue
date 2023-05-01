@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted } from "vue";
 import { useAuth } from "../stores/auth";
-import { useRouter } from "vue-router";
+import { useRouter, RouterView } from "vue-router";
 import BackButton from "../components/BackButton.vue";
 import AboutClient from "../components/_cabinet/AboutClient.vue";
 import CreatedTrips from "../components/_cabinet/CreatedTrips.vue";
@@ -35,6 +35,7 @@ onMounted(() => {
     </a-row>
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
+      <RouterView></RouterView>
         <a-tabs>
           <a-tab-pane key="1" tab="О пользователе">
             <AboutClient />

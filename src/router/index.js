@@ -146,9 +146,23 @@ const router = createRouter({
       component: () => import('../components/DevPage.vue')
     },
     {
-      path: '/cabinet',
+      path: '/cabinet/:id',
       name: 'Cabinet',
       component: () => import('../views/Cabinet.vue'),
+      children: [
+        {
+          // UserProfile will be rendered inside User's <router-view>
+          // when /user/:id/profile is matched
+          path: 'companionsPage',
+          component: () => import('../components/_cabinet/CompanionsPage.vue'),
+        },
+        {
+          // UserProfile will be rendered inside User's <router-view>
+          // when /user/:id/profile is matched
+          path: 'responsePage',
+          component: () => import('../components/_cabinet/ResponsePage.vue'),
+        },
+      ],
       beforeEnter: async (to, from) => {
         let userStore = useAuth()
         if (!localStorage.getItem('token') || !userStore.isAuth)
@@ -158,6 +172,7 @@ const router = createRouter({
           return '/auth'
       }
     },
+    
     {
       path: '/reg',
       name: 'RegForm',

@@ -9,7 +9,7 @@ import { message } from "ant-design-vue";
 const userStore = useAuth();
 const companionStore = useCompanions();
 const companionIds = userStore.user?.createdCompanions;
-
+let showCompanion = ref(true)
 let companions = ref();
 
 const clearData = (dataString) => {
@@ -38,6 +38,7 @@ const showModal = (companion) => {
   } else {
     chosenCompanion.value = companion;
     visible.value = true;
+    showCompanion.value = false
   }
 };
 const handleOk = (e) => {
@@ -72,7 +73,13 @@ onMounted(async () => {
 
 <template>
   <a-row :gutter="[8, 8]" class="mt-8">
-    <a-col v-for="(companion, index) in companions" :key="index" :lg="8" :sm="12" :xs="24">
+    <a-col :span="24">
+      <a-breadcrumb>
+      <a-breadcrumb-item @click="showCompanion = true">Попутчики</a-breadcrumb-item>
+      <a-breadcrumb-item @click="showCompanion = false" >Отклики</a-breadcrumb-item>
+      </a-breadcrumb>
+    </a-col>
+    <a-col v-if="showCompanion" v-for="(companion, index) in companions" :key="index" :lg="8" :sm="12" :xs="24">
       <a-card class="card" hoverable>
         <div>
           <span class="mdi mdi-human-male-female"></span>{{ companion?.name }}
@@ -116,8 +123,7 @@ onMounted(async () => {
         </div>
       </a-card>
     </a-col>
-    <a-modal title="Отклики" v-model:visible="visible" width="100%" :footer="null">
-      <a-row :gutter="[16, 16]">
+      <a-row v-else :gutter="[16, 16]">
         <a-col :xs="24" :sm="12" :xl="6"  v-for="(request, index) in chosenCompanion" :key="index">
           <a-card class="pa-8" hoverable>
             <span class="mdi mdi-human-cane"></span>{{ ageString(request?.age) }}
@@ -146,7 +152,7 @@ onMounted(async () => {
           </a-card></a-col>
       </a-row>
 
-    </a-modal>
+
   </a-row>
   <a-divider />
 </template>
