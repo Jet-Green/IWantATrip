@@ -68,7 +68,6 @@ const clearData = (dataString) => {
 
   })
 }
-let customers = ref([])
 onMounted(async () => {
   for (let _id of tripsIds.value) {
     let res = await tripStore.getById(_id);
