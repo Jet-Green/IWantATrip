@@ -59,7 +59,7 @@ const bot = () => {
 // const xxxl = breakpoints['2xl']
 
 watch(locationSearchRequest, async (newLocReq) => {
-  if (!userStore.user.userLocation.name && newLocReq.length > 2) {
+  if (newLocReq.length > 2) {
     let response = await userStore.searchLocation(newLocReq)
     possibleLocations = response.data
     possibleLocationsToShow.value = []
