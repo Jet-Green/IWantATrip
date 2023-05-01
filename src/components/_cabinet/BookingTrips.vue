@@ -40,29 +40,28 @@ onMounted(() => {
       <a-row :gutter="[8, 8]" class="mt-8">
         <a-col :lg="8" :sm="12" :xs="24" v-for="booking in bookings" v-if="bookings.length">
           <a-card class="card " hoverable>
+           
             <div>
-              <b>Тип: </b> {{ booking.type.toString() }}
+              Тур: {{ booking.type.toString().toLowerCase() }}
             </div>
             <div>
-              <b>Начало: </b> {{ clearData(booking.start) }}
+             C {{ clearData(booking.start) }} по {{ clearData(booking.end) }}
+            </div>
+           
+            <div>
+              На {{ booking.duration }} дн.
+            </div>
+            <div v-if="booking.adults ">
+              Взрослых: {{ booking.adults }} чел.
+            </div>
+            <div v-if="booking.children ">
+              Детей: {{ booking.children }} чел. от {{ booking.fromAge }} лет
             </div>
             <div>
-              <b>Конец: </b> {{ clearData(booking.end) }}
+              Пожелания: {{ booking.wishes }}
             </div>
             <div>
-              <b>Продолжительность: </b> {{ booking.duration }} дн.
-            </div>
-            <div>
-              <b>Взрослых: </b> {{ booking.adults }} чел.
-            </div>
-            <div>
-              <b>Детей: </b>{{ booking.children }} чел. от {{ booking.fromAge }} лет
-            </div>
-            <div>
-              <b>Пожелания: </b>{{ booking.wishes }}
-            </div>
-            <div>
-              <b>№ заказа: </b>{{ booking._id }}
+              № заказа: {{ booking._id }}
             </div>
 
           </a-card>

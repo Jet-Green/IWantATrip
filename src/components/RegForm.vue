@@ -11,13 +11,12 @@ import { message } from "ant-design-vue";
 import axios from "axios";
 const user = useAuth();
 const router = useRouter();
-let possibleLocations = ref([])
-let locationSearchRequest = ref("")
 let formState = reactive({
   fullname: "",
   email: "",
   location: "",
   password: "",
+  userLocation: null
 });
 async function sendRegInfo() {
   let result = await user.registration({
@@ -25,6 +24,7 @@ async function sendRegInfo() {
     password: formState.password,
     location: formState.location,
     fullname: formState.fullname,
+    userLocation: formState.userLocation
   });
   if (result.success) {
     try {
@@ -44,6 +44,15 @@ async function sendRegInfo() {
   }
 }
 
+let locationSearchRequest = ref('')
+let possibleLocations = ref([])
+function selectStartLocation(selected) {
+  for (let l of possibleLocations.value) {
+    if (l.value == selected) {
+      formState.userLocation = l.geo
+    }
+  }
+}
 watch(locationSearchRequest, async (newValue, oldValue) => {
   if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
     var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
@@ -89,18 +98,18 @@ watch(locationSearchRequest, async (newValue, oldValue) => {
         }
 
         possibleLocations.value.push(location)
-        formState.location = location
       }
     } catch (error) {
       console.log(error);
     }
   }
 })
+
 const formSchema = yup.object({
   email: yup.string("неверный формат").required("заполните поле").email('неверный формат'),
   password: yup.string("неверный формат").required("заполните поле").min(6, 'минимум 6 символов'),
   fullname: yup.string("неверный формат").required("заполните поле"),
-  location: yup.string("неверный формат").required("заполните поле")
+  startLocation: yup.string("неверный формат").required("заполните поле")
 });
 
 </script>
@@ -137,9 +146,10 @@ const formSchema = yup.object({
                 <ErrorMessage name="password" class="error-message" />
               </Transition>
 
-              <Field name="location" v-slot=" { value, handleChange } " v-model=" locationSearchRequest ">
-                <a-auto-complete :value=" value " @update:value=" handleChange " style="width: 100%"
-                size="large" class="mt-8" :options=" possibleLocations " placeholder="Глазов">
+              <Field name="startLocation" v-slot="{ value, handleChange }" v-model="locationSearchRequest">
+                Где вы находитесь?
+                <a-auto-complete :value="value" @update:value="handleChange" style="width: 100%"
+                  :options="possibleLocations" placeholder="Глазов" @select="selectStartLocation">
                 </a-auto-complete>
               </Field>
               <Transition name="fade">

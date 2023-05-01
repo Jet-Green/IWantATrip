@@ -114,6 +114,9 @@ export const useAuth = defineStore('auth', {
         },
         async searchLocation(searchReq) {
             return await LocationService.searchLocation(searchReq)
+        },
+        async selectUserLocation(location) {
+            return await LocationService.selectUserLocation(location, this.user._id)
         }
     },
 })

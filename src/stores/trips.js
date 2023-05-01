@@ -28,7 +28,7 @@ export const useTrips = defineStore('trips', {
                     this.trips.push(...response.data);
 
                     if (response.data.length != 0)
-                        this.cursor += 7
+                        this.cursor += 20
                 }
             } catch (err) {
                 console.log(err);
@@ -50,7 +50,7 @@ export const useTrips = defineStore('trips', {
                     this.filteredTrips.push(...response.data);
 
                     if (response.data.length != 0)
-                        this.searchCursor += 7
+                        this.searchCursor += 20
                 }
             } catch (err) {
                 console.log(err);
