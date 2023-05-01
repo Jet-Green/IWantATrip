@@ -1,44 +1,29 @@
 <script setup>
 import { useRouter } from "vue-router";
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useAuth } from "../stores/auth";
 
-import TripCreatorReg from "./forms/TripCreatorReg.vue";
-import LogoSvg from "../components/_explanation/LogoSvg.vue";
+// import TripCreatorReg from "./forms/TripCreatorReg.vue";
+// import LogoSvg from "../components/_explanation/LogoSvg.vue";
 
 const userStore = useAuth();
-let i = ref(null)
 let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
 let router = useRouter();
 let visibleDrawer = ref(false);
-let visibleModal = ref(false);
-let showCity = ref(null)
-let isTripCreator = ref(false);
-let visibleCreator = ref(false);
-let value = ref("Reg");
-
+let selectLocationDialog = ref(false)
 
 let locationSearchRequest = ref('')
-let possibleLocationsToShow = ref([])
-let possibleLocations = []
+let possibleLocations = ref([])
 
-async function selectUserLocation(s) {
-  for (let loc of possibleLocations) {
-    if (loc.name == s) {
-      await userStore.selectUserLocation(loc)
-    }
-  }
-}
+async function selectLocation(event) {
+  let index = event.key
 
-function getCity(city) {
-  showCity.value = city.key
-}
+  await userStore.selectUserLocation(possibleLocations.value[index])
+  userStore.user.userLocation = possibleLocations.value[index]
 
-function showDrawer() {
-  visibleDrawer.value = !visibleDrawer.value;
-  console.log(i)
+  selectLocationDialog.value = false
 }
 function toComponentFromMenu(routName) {
   router.isReady().then(() => {
@@ -46,12 +31,6 @@ function toComponentFromMenu(routName) {
   });
   visibleDrawer.value = false;
 }
-let changeVisibleCreator = () => {
-  visibleCreator.value = !visibleCreator.value;
-};
-const bot = () => {
-  window.location.href = "http://t.me/IWantATripBot";
-};
 // const md = breakpoints.between('sm', 'md')
 // const lg = breakpoints.between('md', 'lg')
 // const xl = breakpoints.between('lg', 'xl')
@@ -61,21 +40,9 @@ const bot = () => {
 watch(locationSearchRequest, async (newLocReq) => {
   if (newLocReq.length > 2) {
     let response = await userStore.searchLocation(newLocReq)
-    possibleLocations = response.data
-    possibleLocationsToShow.value = []
-    for (let l of response.data) {
-      possibleLocationsToShow.value.push({ value: l.name })
-    }
-  }
-})
-onMounted(async () => {
-  if (!userStore.user) {
-    await userStore.checkAuth()
-    if (userStore.user.userLocation.name) {
-      locationSearchRequest.value = userStore.user.userLocation.name
-    }
-  } else {
-    locationSearchRequest.value = userStore.user.userLocation.name
+    possibleLocations.value = response.data
+  } else if (newLocReq.length == 0) {
+    possibleLocations.value = []
   }
 })
 </script>
@@ -88,20 +55,33 @@ onMounted(async () => {
           <a-col v-if="!sm">
             <img src="../assets/images/logo.png" style="padding: 4px; margin-right: 32px" alt=""
               @click="toComponentFromMenu('Landing')" />
-            <!-- <LogoSvg></LogoSvg> -->
-            <!-- <a-dropdown :trigger="['click']">
-                                              <template #overlay>
-                
-                                              </template>
-                                            </a-dropdown> -->
-            <!-- <span class="ml-8">{{ showCity }}</span> -->
-            <!-- <span class="mdi mdi-24px mdi-map-marker">
-                                            </span> -->
           </a-col>
           <a-col :xs="20" :md="7">
-            <a-auto-complete style="width: 100%" :options="possibleLocationsToShow" placeholder="Ваше местоположение"
-              v-model:value="locationSearchRequest" @select="selectUserLocation">
-            </a-auto-complete>
+            <div @click="selectLocationDialog = !selectLocationDialog" style="cursor: pointer;">
+              <span class="mdi mdi-map-marker-outline"></span>
+              <span v-if="userStore.user?.userLocation?.shortName">
+                {{ userStore.user?.userLocation?.shortName }}
+              </span>
+              <span v-else-if="userStore.user?.userLocation?.name">
+                {{ userStore.user?.userLocation?.name }}
+              </span>
+              <span v-else>
+                Ваше местоположение
+              </span>
+            </div>
+            <a-modal :mask="false" v-model:visible="selectLocationDialog" title="Местоположение" :footer="null">
+              <a-row>
+                <a-col :span="24">
+                  <a-input v-model:value="locationSearchRequest" allow-clear>
+                  </a-input>
+                  <a-menu @select="selectLocation">
+                    <a-menu-item v-for="(location, index) of possibleLocations" :key="index">
+                      {{ location.name }}
+                    </a-menu-item>
+                  </a-menu>
+                </a-col>
+              </a-row>
+            </a-modal>
           </a-col>
           <a-col v-if="!sm" :span="10" class="top_menu">
             <div @click="toComponentFromMenu('TripsPage')" class="route">найти</div>
@@ -122,12 +102,14 @@ onMounted(async () => {
             </span>
           </a-col>
           <a-col v-else>
-            <span class="mdi mdi-24px mdi-menu" style="color: #245159; cursor: pointer" @click="showDrawer"></span>
+            <span class="mdi mdi-24px mdi-menu" style="color: #245159; cursor: pointer"
+              @click="visibleDrawer = !visibleDrawer"></span>
           </a-col>
         </a-row>
       </a-col>
     </a-row>
-    <a-drawer placement="right" :closable="false" :visible="visibleDrawer" @close="showDrawer" width="200">
+    <a-drawer placement="right" :closable="false" :visible="visibleDrawer" @close="visibleDrawer = !visibleDrawer"
+      width="200">
       <div @click="toComponentFromMenu('TripsPage')" class="route ma-8">найти тур</div>
       <div @click="toComponentFromMenu('CreateTripWithHelp')" class="route ma-8">
         заказать тур
@@ -157,4 +139,23 @@ onMounted(async () => {
   cursor: pointer;
   text-transform: uppercase;
 }
+
+// .full-modal {
+//   .ant-modal {
+//     max-width: 100%;
+//     top: 0;
+//     padding-bottom: 0;
+//     margin: 0;
+//   }
+
+//   .ant-modal-content {
+//     display: flex;
+//     flex-direction: column;
+//     height: calc(100vh);
+//   }
+
+//   .ant-modal-body {
+//     flex: 1;
+//   }
+// }
 </style>
