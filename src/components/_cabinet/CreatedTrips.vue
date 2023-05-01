@@ -132,11 +132,11 @@ onMounted(async () => {
               <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="copyTrip(trip._id)">
                 <span class="mdi mdi-content-copy" style="color: #245159; cursor: pointer"></span>
               </a-popconfirm>
-              <span class="mdi mdi-information-outline" @click="showBills(index)" v-if="trip.billsList.length"></span>
+              <span class="mdi mdi-information-outline" @click="router.push({path:'/customers-trip',params:{trip,index}})" v-if="trip.billsList.length"></span>
             </div>
           </a-card>
 
-          <a-modal v-model:visible="visibleBills[index]" :title="trip.name" :footer="null" width="100%">
+          <!-- <a-modal v-model:visible="visibleBills[index]" :title="trip.name" :footer="null" width="100%">
 
             <a-row :gutter="[16, 16]">
               <a-col :xs="24" :sm="12" :xl="6" v-for="(BILL, bill_index) of trip.billsList">
@@ -183,7 +183,7 @@ onMounted(async () => {
 
               </a-col>
             </a-row>
-          </a-modal>
+          </a-modal> -->
         </a-col>
       </a-row>
 

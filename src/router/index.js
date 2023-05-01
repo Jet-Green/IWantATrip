@@ -187,6 +187,11 @@ const router = createRouter({
       }
     },
     {
+      path: '/customers-trip',
+      name: 'CustomersTrip',
+      component: () => import('../components/_cabinet/CustomersTrip.vue'),
+    },
+    {
       path: '/calc',
       name: 'PriceCalc',
       component: () => import('../components/forms/PriceCalc.vue'),
