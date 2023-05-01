@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref } from "vue";
 import { useRoute } from "vue-router";
 import { useTrips } from "../../stores/trips";
 
@@ -9,6 +9,7 @@ let route = useRoute();
 const _id = route.query.id;
 let trip = ref({});
 
+// localno nado 
 tripStore
     .getById(_id)
     .then((response) => {
@@ -40,12 +41,10 @@ function getPhoneNumber(number) {
                 </div>
                 <div v-for="cartItem of BILL.cart">
                     {{ cartItem.costType }} {{ cartItem.count }} x {{ cartItem.cost }} руб.
-
                 </div>
 
                 <div class="d-flex justify-end"> <span>Итого: </span> {{ BILL.cart.reduce((accumulator, object) => {
-                    return
-                    accumulator + object.cost * object.count;
+                    return accumulator + object.cost * object.count;
                 }, 0) }} руб.
                 </div>
 
