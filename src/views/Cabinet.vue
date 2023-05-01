@@ -9,6 +9,7 @@ import PurchasedTrips from "../components/_cabinet/PurchasedTrips.vue";
 import CreatedObjects from "../components/_cabinet/CreatedObjects.vue";
 import MyCompanions from "../components/_cabinet/MyCompanions.vue";
 import BookingTrips from "../components/_cabinet/BookingTrips.vue";
+import AdminPanel from '../components/_cabinet/AdminPanel.vue'
 
 const userStore = useAuth();
 const router = useRouter();
@@ -53,6 +54,9 @@ onMounted(() => {
           </a-tab-pane>
           <a-tab-pane key="6" tab="Заказ тура">
             <BookingTrips />
+          </a-tab-pane>
+          <a-tab-pane v-if="userStore.user?.roles.includes('admin')" key="7" tab="Админ панель">
+            <AdminPanel />
           </a-tab-pane>
         </a-tabs>
       </a-col>
