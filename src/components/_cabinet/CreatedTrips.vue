@@ -136,8 +136,7 @@ onMounted(async () => {
             </div>
           </a-card>
 
-
-          <!-- <a-modal v-model:visible="visibleBills[index]" :title="trip.name" :footer="null" width="100%">
+          <a-modal v-model:visible="visibleBills[index]" :title="trip.name" :footer="null" width="100%">
 
             <a-row :gutter="[16, 16]">
               <a-col :xs="24" :sm="12" :xl="6" v-for="(BILL, bill_index) of trip.billsList">
@@ -184,7 +183,7 @@ onMounted(async () => {
 
               </a-col>
             </a-row>
-          </a-modal> -->
+          </a-modal>
         </a-col>
       </a-row>
 
