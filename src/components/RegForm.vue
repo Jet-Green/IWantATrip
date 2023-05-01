@@ -1,5 +1,5 @@
 <script setup>
-import { reactive } from "vue";
+import { reactive, watch, ref } from "vue";
 import { useAuth } from "../stores/auth";
 import { useRouter } from "vue-router";
 import BackButton from "./BackButton.vue";
@@ -16,12 +16,14 @@ let formState = reactive({
   fullname: "",
   email: "",
   password: "",
+  userLocation: null
 });
 async function sendRegInfo() {
   let result = await user.registration({
     email: formState.email,
     password: formState.password,
     fullname: formState.fullname,
+    userLocation: formState.userLocation
   });
   if (result.success) {
     try {
@@ -40,10 +42,72 @@ async function sendRegInfo() {
   }
 }
 
+let locationSearchRequest = ref('')
+let possibleLocations = ref([])
+function selectStartLocation(selected) {
+  for (let l of possibleLocations.value) {
+    if (l.value == selected) {
+      formState.userLocation = l.geo
+    }
+  }
+}
+watch(locationSearchRequest, async (newValue, oldValue) => {
+  if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
+    var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
+
+    var options = {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": "Token " + import.meta.env.VITE_DADATA_TOKEN
+      },
+      body: JSON.stringify({
+        query: newValue,
+        count: 5,
+        "from_bound": { "value": "city" },
+        "to_bound": { "value": "settlement" }
+      })
+    }
+
+    let res = await fetch(url, options)
+    try {
+      let suggestions = JSON.parse(await res.text()).suggestions
+      possibleLocations.value = []
+      for (let s of suggestions) {
+        let location = {
+          value: s.value,
+          geo: {
+            name: s.value,
+            shortName: '',
+            geo_lat: s.data.geo_lat,
+            geo_lon: s.data.geo_lon
+          }
+        }
+
+        if (s.data.settlement) {
+          location.geo.shortName = s.data.settlement
+        }
+        else if (s.data.city) {
+          location.geo.shortName = s.data.city
+        } else {
+          location.geo.shortName = s.value
+        }
+
+        possibleLocations.value.push(location)
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+})
+
 const formSchema = yup.object({
   email: yup.string("неверный формат").required("заполните поле").email('неверный формат'),
   password: yup.string("неверный формат").required("заполните поле").min(6, 'минимум 6 символов'),
-  fullname: yup.string("неверный формат").required("заполните поле")
+  fullname: yup.string("неверный формат").required("заполните поле"),
+  startLocation: yup.string("неверный формат").required("заполните поле")
 });
 </script>
 <template>
@@ -77,6 +141,16 @@ const formSchema = yup.object({
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="password" class="error-message" />
+              </Transition>
+
+              <Field name="startLocation" v-slot="{ value, handleChange }" v-model="locationSearchRequest">
+                Где вы находитесь?
+                <a-auto-complete :value="value" @update:value="handleChange" style="width: 100%"
+                  :options="possibleLocations" placeholder="Глазов" @select="selectStartLocation">
+                </a-auto-complete>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="location" class="error-message" />
               </Transition>
 
               <div class="d-flex justify-center">
