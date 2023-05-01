@@ -46,7 +46,7 @@ let visibleCropperModal = ref(false);
 let previews = ref([]);
 // отправляем на сервер
 let images = []; // type: blob
-// let pdf = [];
+let pdf = [];
 let locationSearchRequest = ref("")
 // необходимо добавить поле количество людей в туре
 let form = reactive({
@@ -56,7 +56,7 @@ let form = reactive({
   maxPeople: null,
   duration: "",
   images: [],
-  // pdf: [],
+  pdf: [],
   tripRoute: "",
   distance: "",
   cost: [],
@@ -118,14 +118,14 @@ function submit() {
         _id + "_" + i + ".jpg"
       );
     }
-    // let pdfFormData = new FormData();
-    // for (let i = 0; i < pdf.length; i++) {
-    //   pdfFormData.append(
-    //     "trip-pdf",
-    //     new File([pdf[i]], _id + "_" + i + ".pdf"),
-    //     _id + "_" + i + ".pdf"
-    //   );
-    // }
+    let pdfFormData = new FormData();
+    for (let i = 0; i < pdf.length; i++) {
+      pdfFormData.append(
+        "trip-pdf",
+        new File([pdf[i]], _id + "_" + i + ".pdf"),
+        _id + "_" + i + ".pdf"
+      );
+    }
 
     function close() {
       router.push("/trips");
@@ -159,7 +159,7 @@ function submit() {
           .then((response) => {
             userStore.user = response.data;
             images = [];
-            // pdf = [];
+            pdf = [];
             previews.value = [];
             quill.value.setHTML("");
             message.config({ duration: 3, top: "90vh" });
@@ -174,7 +174,7 @@ function submit() {
           .then((response) => {
             userStore.user = response.data;
             images = [];
-            // pdf = [];
+            pdf = [];
             previews.value = [];
             quill.value.setHTML("");
             message.config({ duration: 3, top: "90vh" });
@@ -514,15 +514,15 @@ let formSchema = yup.object({
                 ]
               " />
             </a-col>
-            <!-- <a-col :span=" 24 "> -->
+            <a-col :span=" 24 ">
               <!-- :file-list="fileList" -->
-              <!-- <a-upload action="" :multiple=" true ">
+              <a-upload action="" :multiple=" true ">
                 <a-button type="dashed" block>
                   <span class="mdi mdi-12px mdi-plus"></span>
                   Загрузить pdf описание
                 </a-button>
               </a-upload>
-            </a-col> -->
+            </a-col>
             <a-col :span=" 24 " class="d-flex justify-center">
               <a-button :disabled=" !meta.valid " class="lets_go_btn mt-8" type="primary" size="large"
                 html-type="submit">Отправить
