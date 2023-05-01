@@ -132,7 +132,7 @@ onMounted(async () => {
               <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="copyTrip(trip._id)">
                 <span class="mdi mdi-content-copy" style="color: #245159; cursor: pointer"></span>
               </a-popconfirm>
-              <span class="mdi mdi-information-outline" @click="router.push({path:'/customers-trip',params:{trip,index}})" v-if="trip.billsList.length"></span>
+              <span class="mdi mdi-information-outline" @click="router.push({path:'/customers-trip',params:{trip, index}})" v-if="trip.billsList.length"></span>
             </div>
           </a-card>
 
