@@ -45,4 +45,12 @@ export default {
         return $api.get('/trips/clear')
     },
 
+
+    findForModeration() {
+        return $api.get('/admin/trips-on-moderation')
+    },
+    moderateTrip(_id) {
+        return $api.get(`/admin/moderate-trip?_id=${_id}`)
+    }
+
 }

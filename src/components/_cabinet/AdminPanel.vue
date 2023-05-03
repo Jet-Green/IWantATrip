@@ -1,5 +1,34 @@
 <script setup>
-let trips = []
+import { onMounted, ref } from 'vue'
+import { useTrips } from '../../stores/trips'
+
+const tripStore = useTrips()
+
+let tripsOnModeration = ref([])
+
+onMounted(async () => {
+  let response = await tripStore.findForModeration()
+
+  tripsOnModeration.value = response.data
+})
+
+
+const clearData = (dataString) => {
+  let date
+  if (dataString.length == 13) {
+    const dataFromString = new Date(Number(dataString));
+    date = dataFromString
+
+  } else {
+    date = new Date(dataString)
+  };
+  return date.toLocaleDateString("ru-Ru", {
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit",
+
+  })
+}
 </script>
 <template>
   <div>
@@ -9,7 +38,8 @@ let trips = []
       </a-col>
     </a-row>
     <a-row>
-      <a-col :lg="8" :sm="12" :xs="24" v-if="trips.length > 0" v-for="(trip, index) of trips" :key="index">
+      <a-col :lg="8" :sm="12" :xs="24" v-if="tripsOnModeration.length > 0" v-for="(trip, index) of tripsOnModeration"
+        :key="index">
         <a-card class="card " hoverable :class="[trip.isHidden ? 'overlay' : '']">
           <div style="text-align:center">
             {{ trip.name }}
@@ -33,12 +63,9 @@ let trips = []
             <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="editTrip(trip._id)">
               <span class="mdi mdi-pen" style="color: #245159; cursor: pointer"></span>
             </a-popconfirm>
-            <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="hideTrip(trip._id)">
-              <span v-if="!trip.isHidden" class="mdi mdi-eye" style="color: #245159; cursor: pointer"></span>
-              <span v-else class="mdi mdi-eye-off" style="color: #245159; cursor: pointer"></span>
-            </a-popconfirm>
-            <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="copyTrip(trip._id)">
-              <span class="mdi mdi-content-copy" style="color: #245159; cursor: pointer"></span>
+            <a-popconfirm title="Всё правильно?" ok-text="Да" cancel-text="Нет"
+              @confirm="tripStore.moderateTrip(trip._id)">
+              <span class="mdi mdi-shield-plus-outline" style="color: #245159; cursor: pointer"></span>
             </a-popconfirm>
           </div>
         </a-card>
@@ -46,4 +73,26 @@ let trips = []
     </a-row>
   </div>
 </template>
-<style lang="scss" scoped></style>
+<style scoped lang="scss">
+.actions {
+  font-size: 20px;
+  position: relative;
+
+  * {
+    margin: 4px;
+    cursor: pointer;
+  }
+}
+
+.overlay {
+
+  opacity: 0.5;
+
+}
+
+.card {
+
+  background: #f6f6f6;
+  padding: 8px;
+}
+</style>
