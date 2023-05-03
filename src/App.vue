@@ -5,7 +5,7 @@ import Header from "./components/Header.vue";
 import Footer from "./components/Footer.vue";
 
 import { useTrips } from './stores/trips'
-import {useCompanions} from './stores/companions'
+import { useCompanions } from './stores/companions'
 import { useAuth } from './stores/auth'
 import { useAppState } from './stores/appState'
 
@@ -13,14 +13,14 @@ const route = useRoute()
 const userStore = useAuth()
 const appStateStore = useAppState()
 
-onMounted(() => {
-  appStateStore.refreshState()
-  useTrips().fetchTrips()
-  useCompanions().fetchCompanions()
-  
+onMounted(async () => {
+  await appStateStore.refreshState()
   if (localStorage.getItem('token')) {
-    userStore.checkAuth()
+    await userStore.checkAuth()
   }
+  await useTrips().fetchTrips()
+  await useCompanions().fetchCompanions()
+
   function notify() {
     let notification = new Notification("Привет", {
       tag: "ache-mail",
@@ -56,6 +56,4 @@ onMounted(() => {
     <Footer></Footer>
   </a-layout>
 </template>
-<style>
-
-</style>
+<style></style>

@@ -39,8 +39,8 @@ const baseTimeStart = dayjs(1679492631000);
 const baseTimeEnd = dayjs(1679492631000);
 const baseTimePeriod = dayjs(1679492631000);
 const router = useRouter();
-let creatorId = userStore.user.fullinfo.fullname;
-
+var creatorForm = ref([])
+let possibleLocations = ref([])
 // cropper
 let visibleCropperModal = ref(false);
 let previews = ref([]);
@@ -65,7 +65,7 @@ let form = reactive({
   location: "",
   tripType: "",
   fromAge: "",
-  creatorId: "",
+  creatorForm: "",
   startLocation: null,
 });
 let fullUserInfo = null;
@@ -94,8 +94,7 @@ const delPhoto = () => {
 function submit() {
   description.value = description.value.split("<p><br></p>").join("");
   form.description = description.value;
-  form.creatorId = creatorId;
-
+  form.creatorForm = creatorForm;
   let send = {};
   for (let key in form) {
     send[key] = form[key];
@@ -146,7 +145,7 @@ function submit() {
         location: "",
         tripType: "",
         fromAge: "",
-        creatorId: "",
+        creatorForm: "",
         startLocation: "",
       });
       if (fullUserInfo) {
@@ -197,9 +196,8 @@ function addPreview(blob) {
 }
 function updateUserInfo(info) {
   fullUserInfo = info;
-  creatorId = fullUserInfo.fullname;
+  creatorForm=[fullUserInfo.fullname,fullUserInfo.creatorsType,fullUserInfo.type]
 }
-let possibleLocations = ref([])
 function selectStartLocation(selected) {
   for (let l of possibleLocations.value) {
     if (l.value == selected) {
@@ -316,7 +314,7 @@ onMounted(() => {
       form.fromAge = d.fromAge;
       form.tripRoute = d.tripRoute;
       form.offer = d.offer;
-      form.creatorId = d.creatorId;
+      form.creatorForm = d.creatorForm;
       start.value = dayjs(new Date(d.start));
       end.value = dayjs(new Date(d.end));
     });
@@ -467,6 +465,10 @@ let formSchema = yup.object({
               <Transition name="fade">
                 <ErrorMessage name="location" class="error-message" />
               </Transition>
+             
+
+            
+                  
             </a-col>
 
             <a-col :xs=" 24 " :md=" 12 ">

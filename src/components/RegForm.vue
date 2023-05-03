@@ -9,7 +9,6 @@ import * as yup from 'yup';
 
 import { message } from "ant-design-vue";
 import axios from "axios";
-
 const user = useAuth();
 const router = useRouter();
 let formState = reactive({
@@ -28,7 +27,8 @@ async function sendRegInfo() {
   if (result.success) {
     try {
       axios.post(`http://localhost:4089/add-companion?name=${res.data.name}`);
-    } catch (error) { }
+      console.log(1)
+    } catch (error) { console.log(2) }
     // formState.fullname = "";
     // formState.email = "";
     // formState.password = "";
@@ -109,6 +109,7 @@ const formSchema = yup.object({
   fullname: yup.string("неверный формат").required("заполните поле"),
   startLocation: yup.string("неверный формат").required("заполните поле")
 });
+
 </script>
 <template>
   <div>
