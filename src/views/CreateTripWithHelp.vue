@@ -1,8 +1,7 @@
 <script setup>
 import BackButton from "../components/BackButton.vue";
-import UserFullInfo from "../components/forms/UserFullInfo.vue";
 import { useRouter } from "vue-router";
-import { reactive, ref, onMounted } from "vue";
+import { reactive, ref, onMounted, watch } from "vue";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import { message } from "ant-design-vue";
 import BookingService from "../service/BookingService";
@@ -36,12 +35,6 @@ let form = reactive({
 let userInfo = reactive({
   fullname: "",
   phone: "",
-});
-
-let formState = reactive({
-  email: "",
-  password: "",
-  username: "",
 });
 function close() {
   router.push("/trips");
@@ -128,7 +121,8 @@ onMounted(() => {
               <div>
                 Тип тура
                 <a-select v-model:value="form.type" style="width: 100%" mode="multiple">
-                  <a-select-option v-for="value in appStore.appState[0].tripType" :value="value">{{ value
+                  <a-select-option v-for="(value, index) in appStore.appState[0].tripType" :key="index" :value="value">{{
+                    value
                   }}</a-select-option>
                 </a-select>
               </div>
@@ -136,13 +130,12 @@ onMounted(() => {
 
             <a-col :span="12">
               Дата начала
-              <a-date-picker v-model:value="form.start" style="width: 100%" placeholder="Начало" 
+              <a-date-picker v-model:value="form.start" style="width: 100%" placeholder="Начало"
                 :format="dateFormatList" />
             </a-col>
             <a-col :span="12">
               Дата конца
-              <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" 
-                :format="dateFormatList" />
+              <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" :format="dateFormatList" />
             </a-col>
 
             <a-col :xs="24" :md="12">Направление
@@ -172,8 +165,6 @@ onMounted(() => {
 
               <a-textarea autoSize v-model:value="form.wishes" />
             </a-col>
-
-
           </a-row>
 
           <a-row type="flex" justify="center">

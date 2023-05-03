@@ -31,6 +31,11 @@ async function tripToDelete(_id) {
     }
   }
 }
+
+function getPhoneNumber(number) {
+  return `tel:${number}`
+}
+
 function editTrip(_id) {
   router.push(`/edit-trip?_id=${_id}`);
 }
@@ -98,9 +103,10 @@ onMounted(async () => {
       <a-row :gutter="[8, 8]" class="mt-8">
         <a-col :lg="8" :sm="12" :xs="24" v-if="trips.length > 0" v-for="(trip, index) of trips" :key="index">
           <a-card class="card " hoverable :class="[trip.isHidden ? 'overlay' : '']">
-            <div>
-              <b>{{ trip.name }}</b>
+            <div style="text-align:center">
+              {{ trip.name }}
             </div>
+            <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
             <div>
               <span class="mdi mdi-compass-outline"></span>{{ trip.location }}
             </div>
@@ -110,7 +116,7 @@ onMounted(async () => {
               <span class="mdi mdi-calendar-arrow-left"></span>
               {{ `по ${clearData(trip.end)}` }}
             </div>
-            <a-divider class="ma-0"></a-divider>
+
             <div class="actions d-flex justify-center">
               <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="tripToDelete(trip._id)"
                 v-if="!trip.billsList.length > 0">
@@ -130,10 +136,9 @@ onMounted(async () => {
             </div>
           </a-card>
 
-          <a-modal v-model:visible="visibleBills[index]" :title="trip.name" :footer="null" wrap-class-name="full-modal"
-            width="80%">
+          <a-modal v-model:visible="visibleBills[index]" :title="trip.name" :footer="null" width="100%">
 
-            <a-row :gutter="[16, 16]" class="justify-center">
+            <a-row :gutter="[16, 16]">
               <a-col :xs="24" :sm="12" :xl="6" v-for="(BILL, bill_index) of trip.billsList">
 
                 <a-card hoverable v-if="trip.customers[bill_index]" class="pa-8" style="width: 100%;">
@@ -143,10 +148,11 @@ onMounted(async () => {
                   </div>
                   <div>
                     <span class="mdi mdi-phone-outline" style=""></span>
-                    <a :href='trip.customers[bill_index].phone'> {{ trip.customers[bill_index].phone }}</a>
+                    <a :href='getPhoneNumber(trip.customers[bill_index].phone)'> {{ trip.customers[bill_index].phone
+                    }}</a>
 
                   </div>
-                  <div v-for="cartItem of BILL.cart" class="d-flex justify-end">
+                  <div v-for="cartItem of BILL.cart">
                     {{ cartItem.costType }} {{ cartItem.count }} x {{ cartItem.cost }} руб.
 
                   </div>
@@ -208,6 +214,6 @@ onMounted(async () => {
 .card {
 
   background: #f6f6f6;
-  padding: 8px 8px 0 8px;
+  padding: 8px;
 }
 </style>
