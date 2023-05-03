@@ -1,5 +1,5 @@
 <script setup>
-import { reactive,watch,ref } from "vue";
+import { reactive, watch, ref } from "vue";
 import { useAuth } from "../stores/auth";
 import { useRouter } from "vue-router";
 import BackButton from "./BackButton.vue";
@@ -14,7 +14,6 @@ const router = useRouter();
 let formState = reactive({
   fullname: "",
   email: "",
-  location: "",
   password: "",
   userLocation: null
 });
@@ -22,7 +21,6 @@ async function sendRegInfo() {
   let result = await user.registration({
     email: formState.email,
     password: formState.password,
-    location: formState.location,
     fullname: formState.fullname,
     userLocation: formState.userLocation
   });
@@ -30,7 +28,7 @@ async function sendRegInfo() {
     try {
       axios.post(`http://localhost:4089/add-companion?name=${res.data.name}`);
       console.log(1)
-    } catch (error) {       console.log(2)}
+    } catch (error) { console.log(2) }
     // formState.fullname = "";
     // formState.email = "";
     // formState.password = "";
@@ -158,7 +156,7 @@ const formSchema = yup.object({
 
               <div class="d-flex justify-center">
                 <a-button :disabled="!meta.valid" class="ma-16 lets_go_btn" type="primary" size="large"
-                  html-type="submit" >Отправить</a-button>
+                  html-type="submit">Отправить</a-button>
               </div>
             </Form>
           </a-col>
