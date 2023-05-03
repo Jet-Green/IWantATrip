@@ -65,6 +65,16 @@ export const useTrips = defineStore('trips', {
         },
         getCustomers(ids) {
             return TripService.getCustomers(ids)
+        },
+        findForModeration() {
+            return TripService.findForModeration()
+        },
+        async moderateTrip(_id) {
+            try {
+                return await TripService.moderateTrip(_id)
+            } catch (error) {
+                console.log(error);
+            }
         }
     },
 })
