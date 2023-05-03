@@ -52,8 +52,8 @@ watch(locationSearchRequest, async (newLocReq) => {
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
         <a-row type="flex" justify="space-between">
-          <a-col v-if="!sm">
-            <img src="../assets/images/logo.png" style="padding: 4px; margin-right: 32px; cursor: pointer" alt=""
+          <a-col v-if="!sm" class="d-flex align-center">
+            <img src="../assets/images/logo.png" style="height: 90%; cursor: pointer" alt=""
               @click="toComponentFromMenu('Landing')" />
           </a-col>
           <a-col :xs="20" :md="7">
