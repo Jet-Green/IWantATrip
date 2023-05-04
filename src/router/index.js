@@ -149,6 +149,19 @@ const router = createRouter({
       path: '/cabinet',
       name: 'Cabinet',
       component: () => import('../views/Cabinet.vue'),
+      children: [
+        {
+          path: 'me',
+          component: () => import('../components/_cabinet/AboutClient.vue'),
+        },
+        {
+          path: 'test',
+          component: () => import('../components/_cabinet/Test.vue'),
+        },
+
+
+      ],
+
       beforeEnter: async (to, from) => {
         let userStore = useAuth()
         if (!localStorage.getItem('token') || !userStore.isAuth)

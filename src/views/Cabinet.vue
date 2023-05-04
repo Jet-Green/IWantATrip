@@ -1,7 +1,7 @@
 <script setup>
-import { onMounted } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useAuth } from "../stores/auth";
-import { useRouter } from "vue-router";
+import { useRouter, RouterView } from "vue-router";
 import BackButton from "../components/BackButton.vue";
 import AboutClient from "../components/_cabinet/AboutClient.vue";
 import CreatedTrips from "../components/_cabinet/CreatedTrips.vue";
@@ -13,12 +13,24 @@ import AdminPanel from '../components/_cabinet/AdminPanel.vue'
 
 const userStore = useAuth();
 const router = useRouter();
+
+let current = ref(['/cabinet/me']);
+
 const logOut = () => {
   userStore.logout();
   router.push("/");
 };
+
+watch(current, (newRout, oldRout) => {
+
+  newRout == '/cabinet/me' ? router.push("/cabinet/me") : router.push("/cabinet/test")
+
+
+})
+
+
 onMounted(() => {
-  // console.log(userStore.user);
+
 });
 </script>
 <template>
@@ -35,6 +47,38 @@ onMounted(() => {
       </a-col>
     </a-row>
     <a-row type="flex" justify="center">
+      <a-col :xs="22" :lg="16">
+        <a-menu v-model:selectedKeys="current" mode="horizontal">
+          <a-menu-item key="/cabinet/me">
+
+            О пользователе
+          </a-menu-item>
+          <a-sub-menu key="sub1">
+            <template #title>Туры</template>
+            <a-menu-item key="setting:1">Созданные</a-menu-item>
+            <a-menu-item key="setting:2">Забронированные</a-menu-item>
+            <a-menu-item key="setting:3">Заказанные</a-menu-item>
+          </a-sub-menu>
+          <a-menu-item key="/tуу">
+            Попутчики
+          </a-menu-item>
+          <a-sub-menu key="sub2">
+            <template #title>Админ</template>
+            <a-menu-item key="setting:6">Модерация</a-menu-item>
+            <a-menu-item key="setting:7">Интерфейс</a-menu-item>
+            <a-menu-item key="setting:8">Управление</a-menu-item>
+          </a-sub-menu>
+
+        </a-menu>
+
+      </a-col>
+      <a-col :xs="22" :lg="16">
+        <router-view />
+
+      </a-col>
+    </a-row>
+
+    <!-- <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
         <a-tabs>
           <a-tab-pane key="1" tab="О пользователе">
@@ -60,7 +104,7 @@ onMounted(() => {
           </a-tab-pane>
         </a-tabs>
       </a-col>
-    </a-row>
+    </a-row> -->
   </div>
 </template>
 

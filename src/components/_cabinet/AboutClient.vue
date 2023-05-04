@@ -45,6 +45,7 @@ function submit() {
 }
 </script>
 <template>
+  О пользователе
   <div v-if="info && user">
     <form
       action="POST"
