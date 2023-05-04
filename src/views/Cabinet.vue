@@ -21,11 +21,12 @@ const logOut = () => {
   router.push("/");
 };
 
+const routeTo = (r) => {
+  router.push(r)
+}
 watch(current, (newRout, oldRout) => {
 
-  newRout == '/cabinet/me' ? router.push("/cabinet/me") : router.push("/cabinet/test")
-
-
+  router.push(newRout[0])
 })
 
 
@@ -55,11 +56,11 @@ onMounted(() => {
           </a-menu-item>
           <a-sub-menu key="sub1">
             <template #title>Туры</template>
-            <a-menu-item key="setting:1">Созданные</a-menu-item>
-            <a-menu-item key="setting:2">Забронированные</a-menu-item>
-            <a-menu-item key="setting:3">Заказанные</a-menu-item>
+            <a-menu-item key="/cabinet/created-trips">Созданные</a-menu-item>
+            <a-menu-item key="/cabinet/purchased-trips">Забронированные</a-menu-item>
+            <a-menu-item key="/cabinet/booking-trips">Заказанные</a-menu-item>
           </a-sub-menu>
-          <a-menu-item key="/tуу">
+          <a-menu-item key="/cabinet/my-companions">
             Попутчики
           </a-menu-item>
           <a-sub-menu key="sub2">
@@ -73,7 +74,7 @@ onMounted(() => {
 
       </a-col>
       <a-col :xs="22" :lg="16">
-        <router-view />
+        <RouterView />
 
       </a-col>
     </a-row>

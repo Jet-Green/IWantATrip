@@ -185,6 +185,9 @@ onMounted(async () => {
             </a-row>
           </a-modal>
         </a-col>
+        <a-col :lg="8" :sm="12" :xs="24" v-else>
+          У вас нет созданных туров
+        </a-col>
       </a-row>
 
     </a-col>

@@ -49,7 +49,7 @@ onMounted(async () => {
     <a-layout-content style="margin-top: 69px">
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
-          <component :is="Component" :key="route.path" />
+          <component :is="Component"  />
         </transition>
       </router-view>
     </a-layout-content>

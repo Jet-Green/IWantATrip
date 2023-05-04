@@ -155,10 +155,25 @@ const router = createRouter({
           component: () => import('../components/_cabinet/AboutClient.vue'),
         },
         {
+          path: 'booking-trips',
+          component: () => import('../components/_cabinet/BookingTrips.vue'),
+        },
+        {
+          path: 'created-trips',
+          component: () => import('../components/_cabinet/CreatedTrips.vue'),
+        },
+        {
+          path: 'purchased-trips',
+          component: () => import('../components/_cabinet/PurchasedTrips.vue'),
+        },
+        {
+          path: 'my-companions',
+          component: () => import('../components/_cabinet/MyCompanions.vue'),
+        },
+        {
           path: 'test',
           component: () => import('../components/_cabinet/Test.vue'),
         },
-
 
       ],
 
