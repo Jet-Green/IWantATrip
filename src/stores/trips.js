@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-import axios from 'axios'
+import { useAuth } from './auth'
 
 import TripService from '../service/TripService.js'
 
@@ -24,7 +24,8 @@ export const useTrips = defineStore('trips', {
             try {
                 if (this.filteredTrips.length == 0) {
                     this.searchCursor = 0
-                    const response = await TripService.fetchTrips(this.cursor);
+                    let userStore = useAuth()
+                    const response = await TripService.fetchTrips(this.cursor, userStore.user?.userLocation?.geo_lat, userStore.user?.userLocation?.geo_lon);
                     this.trips.push(...response.data);
 
                     if (response.data.length != 0)
@@ -64,6 +65,16 @@ export const useTrips = defineStore('trips', {
         },
         getCustomers(ids) {
             return TripService.getCustomers(ids)
+        },
+        findForModeration() {
+            return TripService.findForModeration()
+        },
+        async moderateTrip(_id) {
+            try {
+                return await TripService.moderateTrip(_id)
+            } catch (error) {
+                console.log(error);
+            }
         }
     },
 })

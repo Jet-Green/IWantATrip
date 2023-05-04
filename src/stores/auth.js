@@ -57,9 +57,9 @@ export const useAuth = defineStore('auth', {
                 console.log(error);
             }
         },
-        async registration(email, password) {
+        async registration(data) {
             try {
-                const response = await UserService.registration(email, password);
+                const response = await UserService.registration(data);
                 localStorage.setItem('token', response.data.accessToken);
 
                 this.isAuth = true
@@ -114,6 +114,9 @@ export const useAuth = defineStore('auth', {
         },
         async searchLocation(searchReq) {
             return await LocationService.searchLocation(searchReq)
+        },
+        async selectUserLocation(location) {
+            return await LocationService.selectUserLocation(location, this.user._id)
         }
     },
 })

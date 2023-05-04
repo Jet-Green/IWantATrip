@@ -140,7 +140,7 @@ onMounted(() => {
     userInfo.phone = userStore.user.fullinfo.phone;
   }
 });
-console.log(trip)
+console.table(trip)
 </script>
 <template>
   <div style="overflow-x: hidden">
@@ -176,7 +176,7 @@ console.log(trip)
             </a-carousel>
           </a-col>
           <a-col :xs="24" :md="12" class="pa-8">
-          <p>Автор тура: {{ trip.creatorId }}</p>
+          <p>Автор тура: {{ trip.creatorForm[0] }} {{ trip.creatorForm[1]}} {{ trip.creatorForm[2] }}</p>
             <p>{{ trip.offer }}</p>
             <div>
               Продолжительность: <b>{{ trip.duration }} дн.</b>
