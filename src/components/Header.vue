@@ -97,7 +97,7 @@ watch(locationSearchRequest, async (newLocReq) => {
             <div @click="toComponentFromMenu('CompanionsPage')" class="route">
               попутчики
             </div>
-            <span v-if="userStore.isAuth" class="mdi mdi-24px mdi-home" @click="toComponentFromMenu('Cabinet')"
+            <span v-if="userStore.isAuth" class="mdi mdi-24px mdi-home" @click="toComponentFromMenu('Me')"
               style="cursor: pointer" cancelText="отмена">
             </span>
             <span v-if="!userStore.isAuth" class="mdi mdi-24px mdi-login" @click="toComponentFromMenu('RegForm')"
