@@ -152,6 +152,7 @@ const router = createRouter({
       children: [
         {
           path: 'me',
+          name: "Me",
           component: () => import('../components/_cabinet/AboutClient.vue'),
         },
         {
