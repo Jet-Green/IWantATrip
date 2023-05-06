@@ -3,48 +3,40 @@ import { useRouter } from "vue-router";
 import { ref, watch, } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useAuth } from "../stores/auth";
+import { useLocations } from "../stores/locations";
 
 // import TripCreatorReg from "./forms/TripCreatorReg.vue";
 // import LogoSvg from "../components/_explanation/LogoSvg.vue";
 
 const userStore = useAuth();
+const appLocations = useLocations();
 let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
 let router = useRouter();
 let visibleDrawer = ref(false);
 let selectLocationDialog = ref(false)
 
-let locationSearchRequest = ref('')
+let locationSearchRequest = ref('Не выбрано')
 let possibleLocations = ref([])
 
-async function selectLocation(event) {
-  let index = event.key
 
-  await userStore.selectUserLocation(possibleLocations.value[index])
-  userStore.user.userLocation = possibleLocations.value[index]
-
-  selectLocationDialog.value = false
-}
 function toComponentFromMenu(routName) {
   router.isReady().then(() => {
     router.push({ name: routName });
   });
   visibleDrawer.value = false;
 }
+
+const handleChange = (value) => {
+  console.log(`selected ${value}`);
+};
 // const md = breakpoints.between('sm', 'md')
 // const lg = breakpoints.between('md', 'lg')
 // const xl = breakpoints.between('lg', 'xl')
 // const xxl = breakpoints.between('xl', '2xl')
 // const xxxl = breakpoints['2xl']
 
-watch(locationSearchRequest, async (newLocReq) => {
-  if (newLocReq.length > 2) {
-    let response = await userStore.searchLocation(newLocReq)
-    possibleLocations.value = response.data
-  } else if (newLocReq.length == 0) {
-    possibleLocations.value = []
-  }
-})
+
 </script>
 
 <template>
@@ -52,7 +44,7 @@ watch(locationSearchRequest, async (newLocReq) => {
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
         <a-row type="flex" justify="space-between">
-          <a-col v-if="!sm" class="d-flex align-center" >
+          <a-col v-if="!sm" class="d-flex align-center">
 
             <img src="../assets/images/logo.png" style="height: 60px; cursor: pointer" alt=""
               @click="toComponentFromMenu('Landing')" />
@@ -62,30 +54,22 @@ watch(locationSearchRequest, async (newLocReq) => {
           <a-col :xs="20" :md="7">
             <div @click="selectLocationDialog = !selectLocationDialog" style="cursor: pointer;">
               <span class="mdi mdi-map-marker-outline"></span>
-              <span v-if="userStore.user?.userLocation?.shortName">
-                {{ userStore.user?.userLocation?.shortName }}
+              <span>
+                {{ locationSearchRequest }}
               </span>
-              <span v-else-if="userStore.user?.userLocation?.name">
-                {{ userStore.user?.userLocation?.name }}
-              </span>
-              <span v-else>
-                Ваше местоположение
-              </span>
+
+
             </div>
             <a-modal :mask="false" v-model:visible="selectLocationDialog" title="Местоположение" :footer="null">
-              <a-row>
-                <a-col :span="24">
-                  <a-input v-model:value="locationSearchRequest" allow-clear>
-                  </a-input>
-                  <a-menu @select="selectLocation">
-                    <a-menu-item v-for="(location, index) of possibleLocations" :key="index">
-                      {{ location.name }}
-                    </a-menu-item>
-                  </a-menu>
-                </a-col>
-              </a-row>
+
+              <a-select v-model:value="locationSearchRequest" style="width: 100%" @change="handleChange" show-search>
+                <a-select-option value="Не выбрано">Не выбрано</a-select-option>
+                <a-select-option v-for="(location, index) of appLocations.locations" :key="index"
+                  :value="location.shortName">{{ location.name }}</a-select-option>
+              </a-select>
             </a-modal>
           </a-col>
+
           <a-col v-if="!sm" :span="10" class="top_menu">
             <div @click="toComponentFromMenu('TripsPage')" class="route">найти</div>
             <div @click="toComponentFromMenu('CreateTripWithHelp')" class="route">

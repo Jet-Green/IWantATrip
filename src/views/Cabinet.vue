@@ -48,8 +48,8 @@ onMounted(() => {
       </a-col>
     </a-row>
     <a-row type="flex" justify="center">
-      <a-col :xs="22" :lg="16">
-        <a-menu v-model:selectedKeys="current" mode="horizontal">
+      <a-col :xs="22" :lg="16" class="mb-8">
+        <a-menu v-model:selectedKeys="current" mode="horizontal" >
           <a-menu-item key="/cabinet/me">
 
             О пользователе

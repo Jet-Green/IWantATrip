@@ -6,20 +6,25 @@ import Footer from "./components/Footer.vue";
 
 import { useTrips } from './stores/trips'
 import { useCompanions } from './stores/companions'
+import { useLocations } from './stores/locations'
 import { useAuth } from './stores/auth'
 import { useAppState } from './stores/appState'
 
 const route = useRoute()
 const userStore = useAuth()
 const appStateStore = useAppState()
+const appLocations = useLocations()
+
 
 onMounted(async () => {
   await appStateStore.refreshState()
   if (localStorage.getItem('token')) {
     await userStore.checkAuth()
   }
+  await useLocations().fetchLocations()
   await useTrips().fetchTrips()
   await useCompanions().fetchCompanions()
+ 
 
   function notify() {
     let notification = new Notification("Привет", {
