@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 import { useTrips } from "../../stores/trips";
 
@@ -9,15 +9,23 @@ let route = useRoute();
 const _id = route.query.id;
 let trip = ref({});
 
-// localno nado 
-tripStore
-    .getById(_id)
-    .then((response) => {
-        trip.value = response.data;
-    })
-    .catch((error) => {
-        console.log(error);
-    });
+// localno nado
+onMounted(async () => {
+    for (let t of tripStore.trips) {
+        if (t._id = _id) {
+            trip.value = t;
+            return
+        }
+    }
+    tripStore
+        .getById(_id)
+        .then((response) => {
+            trip.value = response.data;
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+});
 
 function getPhoneNumber(number) {
     return `tel:${number}`
