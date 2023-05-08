@@ -2,6 +2,7 @@
 import BackButton from "../BackButton.vue";
 import ImageCropper from "../ImageCropper.vue";
 
+
 import dayjs from 'dayjs'
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
@@ -37,6 +38,8 @@ const baseTimeStart = dayjs(1679492631000);
 const baseTimeEnd = dayjs(1679492631000);
 const baseTimePeriod = dayjs(1679492631000);
 const router = useRouter();
+let possibleLocations = ref([]);
+let locationSearchRequest = ref("")
 
 // cropper
 let visibleCropperModal = ref(false);
@@ -60,6 +63,7 @@ let form = ref({
     location: "",
     tripType: "",
     fromAge: "",
+    startLocation: null,
 
 });
 
@@ -126,6 +130,64 @@ function addPreview(blob) {
 function updateUserInfo(info) {
   fullUserInfo = info;
 }
+function selectStartLocation(selected) {
+  for (let l of possibleLocations.value) {
+    if (l.value == selected) {
+      form.startLocation = l.geo
+    }
+  }
+}
+watch(locationSearchRequest, async (newValue, oldValue) => {
+  if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
+    var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
+
+    var options = {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": "Token " + import.meta.env.VITE_DADATA_TOKEN
+      },
+      body: JSON.stringify({
+        query: newValue,
+        count: 5,
+        "from_bound": { "value": "city" },
+        "to_bound": { "value": "settlement" }
+      })
+    }
+
+    let res = await fetch(url, options)
+    try {
+      let suggestions = JSON.parse(await res.text()).suggestions
+      possibleLocations.value = []
+      for (let s of suggestions) {
+        let location = {
+          value: s.value,
+          geo: {
+            name: s.value,
+            shortName: '',
+            geo_lat: s.data.geo_lat,
+            geo_lon: s.data.geo_lon
+          }
+        }
+
+        if (s.data.settlement) {
+          location.geo.shortName = s.data.settlement
+        }
+        else if (s.data.city) {
+          location.geo.shortName = s.data.city
+        } else {
+          location.geo.shortName = s.value
+        }
+
+        possibleLocations.value.push(location)
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+})
 
 const clearData = (dataString) => {
   const dataFromString = new Date(Number(dataString));
@@ -135,11 +197,12 @@ const clearData = (dataString) => {
 onMounted(() => {
     tripStore.getById(router.currentRoute.value.query._id)
         .then((response) => {
-            let d = response.data
+            let d = response.data;
             delete d.__v
 
             start.value = dayjs(new Date(d.start))
             end.value = dayjs(new Date(d.end))
+            locationSearchRequest.value = d.startLocation[0].name
 
             form.value = d;
             for (let i of form.value.images)
@@ -322,6 +385,22 @@ let formSchema = yup.object({
                                 <ErrorMessage name="fromAge" class="error-message" />
                             </Transition>
                         </a-col>
+
+                        <a-col :xs=" 24 " :md=" 12 ">
+                            <Field name="startLocation" v-slot=" { value, handleChange } " v-model=" locationSearchRequest ">
+                                Место старта
+                                <a-auto-complete :value=" value " @update:value=" handleChange " style="width: 100%"
+                                :options=" possibleLocations " placeholder="Глазов" @select=" selectStartLocation ">
+                                </a-auto-complete>
+                            </Field>
+                            <Transition name="fade">
+                            <ErrorMessage name="location" class="error-message" />
+                            </Transition>
+             
+
+            
+                  
+            </a-col>
 
                         <a-col :xs="24" :md="12">
                             <Field name="location" v-slot="{ value, handleChange }" v-model="form.location">
