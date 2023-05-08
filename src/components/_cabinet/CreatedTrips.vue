@@ -51,10 +51,6 @@ async function hideTrip(_id) {
     }
   }
 }
-let visibleBills = ref([])
-function showBills(index) {
-  visibleBills.value[index] = !visibleBills.value[index]
-}
 
 const clearData = (dataString) => {
   let date
@@ -72,7 +68,6 @@ const clearData = (dataString) => {
 
   })
 }
-let customers = ref([])
 onMounted(async () => {
   for (let _id of tripsIds.value) {
     let res = await tripStore.getById(_id);
@@ -91,7 +86,6 @@ onMounted(async () => {
       }
 
       trips.value.push(res.data);
-      visibleBills.value.push(false)
     }
   }
 
