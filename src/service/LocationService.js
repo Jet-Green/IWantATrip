@@ -1,6 +1,9 @@
 import $api from "../plugins/axios";
 
 export default {
+    fetchLocations() {
+        return $api.get('/location/get-all')
+    },
     searchLocation(r) {
         return $api.get(`/location/search?name=${r}`)
     },

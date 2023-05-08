@@ -37,8 +37,10 @@ onMounted(() => {
 <template>
   <a-row>
     <a-col :span="24">
+      <h3>Вы заказали</h3>
       <a-row :gutter="[8, 8]" class="mt-8">
         <a-col :lg="8" :sm="12" :xs="24" v-for="booking in bookings" v-if="bookings.length">
+          
           <a-card class="card " hoverable>
            
             <div>
@@ -68,7 +70,7 @@ onMounted(() => {
 
         </a-col>
         <a-col v-else>
-          <h2>У вас нет заказанных туров</h2>
+          <span>У вас нет заказанных туров</span>
         </a-col>
       </a-row>
 

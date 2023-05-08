@@ -100,6 +100,7 @@ onMounted(async () => {
 <template>
   <a-row>
     <a-col :span="24">
+      <h3>Вы создали</h3>
       <a-row :gutter="[8, 8]" class="mt-8">
         <a-col :lg="8" :sm="12" :xs="24" v-if="trips.length > 0" v-for="(trip, index) of trips" :key="index">
           <a-card class="card " hoverable :class="[trip.isHidden ? 'overlay' : '']">
@@ -184,6 +185,9 @@ onMounted(async () => {
               </a-col>
             </a-row>
           </a-modal>
+        </a-col>
+        <a-col :lg="8" :sm="12" :xs="24" v-else>
+          У вас нет созданных туров
         </a-col>
       </a-row>
 
