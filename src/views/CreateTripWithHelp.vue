@@ -99,9 +99,9 @@ onMounted(() => {
   <div>
     <BackButton />
 
-    <img v-if="!sm" src="../assets/images/бокл.png" style="position: fixed; left: 0px; bottom: 0px;  width: 20%;" />
+    <img v-if="!sm" src="../assets/images/booking_left.png" style="position: fixed; left: 0px; bottom: 0px;  width: 20%;" />
 
-    <img v-if="!sm" src="../assets/images/бокп.png" style="position: fixed; right: 0px; bottom: 0px; width: 20% " />
+    <img v-if="!sm" src="../assets/images/booking_right.png" style="position: fixed; right: 0px; bottom: 0px; width: 20% " />
 
     <form action="POST" @submit.prevent="submit" enctype="multipart/form-data">
       <a-row type="flex" justify="center">
