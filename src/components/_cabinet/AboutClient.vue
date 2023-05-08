@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { ref } from "vue";
+import { func } from "vue-types";
 import { useAuth } from "../../stores/auth";
 const userStore = useAuth();
 const user = userStore.user;
@@ -29,7 +30,7 @@ const type = computed(() => {
 const govermentRegNumber = computed(() => {
   return info.govermentRegNumber ? info.govermentRegNumber : "**********";
 });
-console.log(user)
+console.log(user);
 function submit() {
   userStore
     .updateUser({
@@ -43,9 +44,12 @@ function submit() {
       console.log(err);
     });
 }
+function cons(key){
+  console.log(key)
+}
 </script>
 <template>
-  <div v-if="info && user">
+  <div v-if="info && user" @change=" onChange = true">
     <form
       action="POST"
       @submit.prevent="submit"
@@ -61,7 +65,7 @@ function submit() {
         <h3 style="font-size: 28px; font-weight: bold">{{ user.fullname }}</h3>
       </a-row>
 
-      <a-row :xs="22" :md="18" :lg="16" style="padding-left: 12px">
+      <a-row :xs="22" :md="18" :lg="16">
         <a-col :xs="11" :md="8" :lg="5">
           <a-typography-text type="secondary">E-mail</a-typography-text>
           <a-typography-paragraph v-model:content="user.email" />
@@ -77,44 +81,47 @@ function submit() {
           <a-typography-paragraph v-model:content="info.fullname" editable />
         </a-col>
 
-      <a-col :xs="12" :md="8" v-if="info.companyName">
-        <a-typography-text type="secondary">Название фирмы</a-typography-text>
-        <h5 style="font-size: 16px">{{ info.companyName }}</h5>
-      </a-col>
-    </a-row>
+        <a-col :xs="12" :md="8" v-if="info.companyName">
+          <a-typography-text type="secondary">Название фирмы</a-typography-text>
+          <a-typography-paragraph v-model:content="companyName" editable />
+        </a-col>
+      </a-row>
 
-    <a-row>
-      <a-col :xs="11" :md="8" v-if="info.creatorsType">
-        <a-typography-text type="secondary">Статус пользователя</a-typography-text>
-        <h5 style="font-size: 16px">
-          {{
-            info.creatorsType == "author"
-            ? "Автор тура"
-            : info.creatorsType == "operator"
-              ? "Туроператор"
-              : "Турагенство"
-          }}
-        </h5>
-      </a-col>
+      <a-row>
+        <a-col :xs="11" :md="8" v-if="info.creatorsType">
+          <a-typography-text type="secondary">Статус пользователя</a-typography-text>
+          <a-typography-paragraph  v-if="!onChange" v-model:content="type"/>
 
-      <a-col :xs="11" :md="8" v-if="info.type">
-        <a-typography-text type="secondary">Юр. статус</a-typography-text>
-        <h5 style="font-size: 16px">
-          {{
-            info.type == "phys"
-            ? "Физическое лицо"
-            : info.type == "company"
-              ? "Юридическое лицо"
-              : "Индивидуальный предприниматель"
-          }}
-        </h5>
-      </a-col>
+          <a-select v-else :trigger="['click']" v-model:value="info.creatorsType">
+            <a-select-option value="author">Автор тура</a-select-option>
+            <a-select-option value="operator">Туроператор</a-select-option>
+            <a-select-option value="creator">Турагенство</a-select-option>
+          </a-select>
 
-      <a-col :xs="11" :md="8" v-if="info.govermentRegNumber">
-        <a-typography-text type="secondary">ИНН</a-typography-text>
-        <h5 style="font-size: 16px">{{ info.govermentRegNumber }}</h5>
-      </a-col>
-    </a-row>
+
+        </a-col>
+
+        <a-col :xs="11" :md="8" v-if="info.type" >
+          <a-typography-text type="secondary">Юридический статус</a-typography-text>
+          <a-typography-paragraph  v-if="!onChange" v-model:content="type" />
+
+          <a-select v-else :trigger="['click']" v-model:value="info.type">
+            <a-select-option value="phys">Физическое лицо</a-select-option>
+            <a-select-option value="company">Юридическое лицо</a-select-option>
+            <a-select-option value="indpred">Инд. предприниматель</a-select-option>
+          </a-select>
+
+        </a-col>
+
+        <a-col :xs="11" :md="8" v-if="info.govermentRegNumber">
+          <a-typography-text type="secondary">ИНН</a-typography-text>
+          <a-typography-paragraph v-model:content="govermentRegNumber" editable />
+        </a-col>
+      </a-row>
+      <a-button class="mt-16" type="primary" size="large" html-type="submit"
+      v-show="onChange"
+                >Отправить
+              </a-button>
     </form>
   </div>
 </template>

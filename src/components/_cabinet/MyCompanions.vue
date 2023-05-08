@@ -54,7 +54,7 @@ onMounted(async () => {
 <template>
           <a-col :span="24" class="mb-8">
       <a-breadcrumb>
-        <a-breadcrumb-item @click="router.push('my-companions') ">Попутчики</a-breadcrumb-item>
+        <a-breadcrumb-item>Попутчики</a-breadcrumb-item>
       </a-breadcrumb>
     </a-col>
     <a-row :gutter="[16, 16]">
