@@ -128,7 +128,7 @@ onMounted(async () => {
                 <span class="mdi mdi-content-copy" style="color: #245159; cursor: pointer"></span>
               </a-popconfirm>
               <span class="mdi mdi-information-outline"
-                @click="router.push({ path: '/customers-trip', query: { id: trip._id }})" v-if="trip.billsList.length"></span>
+                @click="router.push({ path: 'customers-trip', query: { id: trip._id }})" v-if="trip.billsList.length"></span>
             </div>
           </a-card>
 

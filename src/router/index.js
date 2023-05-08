@@ -164,6 +164,10 @@ const router = createRouter({
           component: () => import('../components/_cabinet/CreatedTrips.vue'),
         },
         {
+          path: 'customers-trip',
+          component: () => import('../components/_cabinet/CustomersTrip.vue'),
+        },
+        {
           path: 'purchased-trips',
           component: () => import('../components/_cabinet/PurchasedTrips.vue'),
         },
@@ -219,11 +223,6 @@ const router = createRouter({
         if (!userStore.isAuth)
           return '/auth'
       }
-    },
-    {
-      path: '/customers-trip',
-      name: 'CustomersTrip',
-      component: () => import('../components/_cabinet/CustomersTrip.vue'),
     },
     {
       path: '/calc',

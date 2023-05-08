@@ -7,28 +7,22 @@ const tripStore = useTrips();
 let route = useRoute();
 
 const _id = route.query.id;
-let trip = ref({});
+let trip = ref([]);
 
 onMounted(async () => {
-    tripStore
-        .getById(_id)
-        .then((response) => {
-            trip.value = response.data;
-        })
-        .catch((error) => {
-            console.log(error);
-        });
+    let { data } = await tripStore.getById(_id)
+    trip.value = data
+
     let customersIds = []
     for (let bill of trip.value.billsList) {
         customersIds.push(bill.userId)
     }
     if (customersIds.length) {
         let { data } = await tripStore.getCustomers(customersIds)
-        res.data.customers = data
-        console.log(data);
+        trip.value.customers = data
+        console.log(trip.value)
     }
-
-    trip.value.push(res.data);
+    
 });
 
 function getPhoneNumber(number) {
@@ -41,13 +35,13 @@ function getPhoneNumber(number) {
     <a-row :gutter="[16, 16]">
         <a-col :xs="24" :sm="12" :xl="6" v-for="(BILL, bill_index) of trip.billsList">
 
-            <a-card hoverable v-if="trip.billsList[bill_index]" class="pa-8" style="width: 100%;">
+            <a-card hoverable v-if="trip.customers[bill_index]" class="pa-8" style="width: 100%;">
                 <div>
-                    <span class="mdi mdi-account-outline" style=""></span> {{ trip.billsList[bill_index].fullname }}
+                    <span class="mdi mdi-account-outline" style=""></span> {{ trip.customers[bill_index].fullname }}
                 </div>
                 <div>
                     <span class="mdi mdi-phone-outline" style=""></span>
-                    <a :href='getPhoneNumber(trip.billsList[bill_index].phone)'> {{ trip.billsList[bill_index].phone
+                    <a :href='getPhoneNumber(trip.customers[bill_index].phone)'> {{ trip.customers[bill_index].phone
                     }}</a>
 
                 </div>
