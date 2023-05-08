@@ -42,6 +42,7 @@ onMounted(() => {
   <div>
     <a-row>
       <a-col :span="24">
+        <h3>Вы забронировали</h3>
         <a-row :gutter="[8, 8]" class="mt-8">
           <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of userStore.user.boughtTrips" :key="index">
             <a-card class="card " hoverable>

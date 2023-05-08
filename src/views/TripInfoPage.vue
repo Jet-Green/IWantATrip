@@ -176,7 +176,7 @@ console.table(trip)
             </a-carousel>
           </a-col>
           <a-col :xs="24" :md="12" class="pa-8">
-          <p>Автор тура: {{ trip.creatorForm[0] }} {{ trip.creatorForm[1]}} {{ trip.creatorForm[2] }}</p>
+          <!-- <p>Автор тура: {{ trip.creatorForm[0] }} {{ trip.creatorForm[1]}} {{ trip.creatorForm[2] }}</p> -->
             <p>{{ trip.offer }}</p>
             <div>
               Продолжительность: <b>{{ trip.duration }} дн.</b>

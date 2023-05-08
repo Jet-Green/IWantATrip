@@ -146,9 +146,42 @@ const router = createRouter({
       component: () => import('../components/DevPage.vue')
     },
     {
-      path: '/cabinet',
+      path: '/cabinet/',
       name: 'Cabinet',
       component: () => import('../views/Cabinet.vue'),
+      children: [
+        {
+          path: 'me',
+          name: "Me",
+          component: () => import('../components/_cabinet/AboutClient.vue'),
+        },
+        {
+          path: 'booking-trips',
+          component: () => import('../components/_cabinet/BookingTrips.vue'),
+        },
+        {
+          path: 'created-trips',
+          component: () => import('../components/_cabinet/CreatedTrips.vue'),
+        },
+        {
+          path: 'purchased-trips',
+          component: () => import('../components/_cabinet/PurchasedTrips.vue'),
+        },
+        {
+          path: 'my-companions/',
+          component: () => import('../components/_cabinet/MyCompanions.vue'),
+        },
+        {
+          path: 'responses/:id',
+          component: () => import('../components/_cabinet/CompResponses.vue'),
+        },
+        
+        {
+          path: 'test',
+          component: () => import('../components/_cabinet/Test.vue'),
+        },
+
+      ],
       beforeEnter: async (to, from) => {
         let userStore = useAuth()
         if (!localStorage.getItem('token') || !userStore.isAuth)
@@ -158,6 +191,7 @@ const router = createRouter({
           return '/auth'
       }
     },
+    
     {
       path: '/reg',
       name: 'RegForm',
@@ -185,6 +219,11 @@ const router = createRouter({
         if (!userStore.isAuth)
           return '/auth'
       }
+    },
+    {
+      path: '/customers-trip',
+      name: 'CustomersTrip',
+      component: () => import('../components/_cabinet/CustomersTrip.vue'),
     },
     {
       path: '/calc',
