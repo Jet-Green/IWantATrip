@@ -5,6 +5,7 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useAuth } from "../stores/auth";
 import { useLocations } from "../stores/locations";
 import { useLocation } from "../stores/location";
+import { useTrips } from '../stores/trips';
 
 // import TripCreatorReg from "./forms/TripCreatorReg.vue";
 // import LogoSvg from "../components/_explanation/LogoSvg.vue";
@@ -12,6 +13,8 @@ import { useLocation } from "../stores/location";
 const userStore = useAuth();
 const appLocations = useLocations();
 const locationStore = useLocation();
+const tripStore = useTrips()
+
 let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
 let router = useRouter();
@@ -28,14 +31,27 @@ function toComponentFromMenu(routName) {
   visibleDrawer.value = false;
 }
 
-const handleChange = (value) => {
+const handleChange = async (value) => {
   if (value == 'Не выбрано') {
     locationStore.location = {}
+    tripStore.searchCursor = 0
+    tripStore.filteredTrips = []
+    tripStore.cursor = 0
+    tripStore.trips = []
+
+    await tripStore.fetchTrips()
   }
   else {
     for (let loc of appLocations.locations) {
       if (loc.shortName == value) {
         locationStore.location = loc
+        // start pagiantion again to update location
+        tripStore.searchCursor = 0
+        tripStore.filteredTrips = []
+        tripStore.cursor = 0
+        tripStore.trips = []
+
+        await tripStore.fetchTrips()
         return
       }
     }
