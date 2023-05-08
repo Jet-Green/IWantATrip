@@ -168,7 +168,7 @@ const router = createRouter({
           component: () => import('../components/_cabinet/PurchasedTrips.vue'),
         },
         {
-          path: 'my-companions/',
+          path: 'my-companions',
           component: () => import('../components/_cabinet/MyCompanions.vue'),
         },
         {
