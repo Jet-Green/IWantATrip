@@ -11,12 +11,6 @@ let trip = ref({});
 
 // localno nado
 onMounted(async () => {
-    for (let t of tripStore.trips) {
-        if (t._id = _id) {
-            trip.value = t;
-            return
-        }
-    }
     tripStore
         .getById(_id)
         .then((response) => {
