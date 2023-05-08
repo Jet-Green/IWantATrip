@@ -9,7 +9,6 @@ let route = useRoute();
 const _id = route.query.id;
 let trip = ref({});
 
-// localno nado
 onMounted(async () => {
     tripStore
         .getById(_id)
@@ -19,6 +18,17 @@ onMounted(async () => {
         .catch((error) => {
             console.log(error);
         });
+    let customersIds = []
+    for (let bill of trip.value.billsList) {
+        customersIds.push(bill.userId)
+    }
+    if (customersIds.length) {
+        let { data } = await tripStore.getCustomers(customersIds)
+        res.data.customers = data
+        console.log(data);
+    }
+
+    trip.value.push(res.data);
 });
 
 function getPhoneNumber(number) {
