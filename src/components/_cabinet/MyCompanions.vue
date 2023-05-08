@@ -148,7 +148,7 @@ onMounted(async () => {
 
     </a-modal>
   </a-row>
-  <a-divider />
+
 </template>
 
 <style lang="scss" scoped>
