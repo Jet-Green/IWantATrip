@@ -5,11 +5,13 @@ import { useCompanions } from "../../stores/companions";
 import dayjs from "dayjs";
 import { DownOutlined } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
+import { useRouter } from "vue-router";
 
 const userStore = useAuth();
+const router = useRouter();
 const companionStore = useCompanions();
 const companionIds = userStore.user?.createdCompanions;
-
+let showCompanion = ref(true)
 let companions = ref();
 
 const clearData = (dataString) => {
@@ -29,16 +31,9 @@ function getPhoneNumber(number) {
 const visible = ref(false);
 let chosenCompanion = ref();
 
-const showModal = (companion) => {
-  if (companion === null) {
-    message.config({ duration: 1.5, top: "70vh" });
-    message.error({
-      content: "This is an error message!",
-    });
-  } else {
-    chosenCompanion.value = companion;
-    visible.value = true;
-  }
+const hardRequest = (index) => {
+  router.push(`responses/${index}`)
+  chosenCompanion.value = index
 };
 const handleOk = (e) => {
   console.log(e);
@@ -65,13 +60,16 @@ onMounted(async () => {
     const response = await companionStore.getById(id);
     createdCompanions.push(response.data);
   }
-  console.log(createdCompanions);
   companions.value = createdCompanions.filter((element) => element !== null);
 });
 </script>
-
 <template>
-  <a-row :gutter="[8, 8]" class="mt-8">
+          <a-col :span="24">
+      <a-breadcrumb>
+        <a-breadcrumb-item @click="router.push('my-companions') ">Попутчики</a-breadcrumb-item>
+      <a-breadcrumb-item @click="router.push(`responses/${chosenCompanion}`) " >Отклики</a-breadcrumb-item>
+      </a-breadcrumb>
+    </a-col>
     <a-col v-for="(companion, index) in companions" :key="index" :lg="8" :sm="12" :xs="24">
       <a-card class="card" hoverable>
         <div>
@@ -111,89 +109,9 @@ onMounted(async () => {
 
         <div class="d-flex justify-center">
           <span class="mdi mdi-information-outline" style="cursor: pointer; font-size: 20px;"
-            @click="showModal(companion.companionRequests)"></span>
+            @click="hardRequest(index)"></span>
 
         </div>
       </a-card>
     </a-col>
-    <a-modal title="Отклики" v-model:visible="visible" width="100%" :footer="null">
-      <a-row :gutter="[16, 16]">
-        <a-col :xs="24" :sm="12" :xl="6"  v-for="(request, index) in chosenCompanion" :key="index">
-          <a-card class="pa-8" hoverable>
-            <span class="mdi mdi-human-cane"></span>{{ ageString(request?.age) }}
-            <div :class="[request.gender == 'Male' ? 'male' : 'female']">
-              <span :class="request.gender == 'Female'
-                  ? 'mdi mdi-gender-female'
-                  : request.gender == 'Male'
-                    ? 'mdi mdi-gender-male'
-                    : 'mdi mdi-human-male-female'
-                "></span>{{
-    request.gender == "Male"
-    ? "Мужчина"
-    : request.gender == "Female"
-      ? "Женщина"
-      : "Не важно"
-  }}
-            </div>
-            <div>{{ request.name }} {{ request.surname }}
-            </div>
-
-            <div>
-              <a :href='getPhoneNumber(request.phone)'> <span class="mdi mdi-phone"></span> {{ request.phone }}</a>
-            </div>
-
-
-          </a-card></a-col>
-      </a-row>
-
-    </a-modal>
-  </a-row>
-
 </template>
-
-<style lang="scss" scoped>
-.women {
-  background: rgba(255, 102, 0, 0.05);
-}
-
-.men {
-  background: rgba(34, 176, 214, 0.05);
-}
-
-.table_header {
-  text-align: center;
-  // background: rgba(34, 176, 214, 0.05) ;
-}
-
-.card {
-  width: 100%;
-  background: #f6f6f6;
-  padding: 8px;
-  position: relative;
-
-  .mdi {
-    margin: 4px;
-  }
-
-  .accept {
-    position: absolute;
-    top: -6px;
-    right: -6px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .male {
-    color: rgba(34, 176, 214);
-  }
-
-  .female {
-    color: rgb(255, 102, 0);
-  }
-
-  .not-matter {
-    color: rgb(111, 133, 43);
-  }
-}
-</style>

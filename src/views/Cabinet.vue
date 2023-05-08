@@ -81,7 +81,7 @@ onMounted(() => {
 
     <!-- <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
-        <a-tabs>
+        <a-tabs activeKey="5">
           <a-tab-pane key="1" tab="О пользователе">
             <AboutClient />
           </a-tab-pane>
