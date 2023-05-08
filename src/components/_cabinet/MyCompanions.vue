@@ -2,16 +2,12 @@
 import { ref, onMounted } from "vue";
 import { useAuth } from "../../stores/auth";
 import { useCompanions } from "../../stores/companions";
-import dayjs from "dayjs";
-import { DownOutlined } from "@ant-design/icons-vue";
-import { message } from "ant-design-vue";
 import { useRouter } from "vue-router";
 
 const userStore = useAuth();
 const router = useRouter();
 const companionStore = useCompanions();
 const companionIds = userStore.user?.createdCompanions;
-let showCompanion = ref(true)
 let companions = ref();
 
 const clearData = (dataString) => {
@@ -24,17 +20,9 @@ const clearData = (dataString) => {
     .replaceAll("/", ".");
 };
 
-function getPhoneNumber(number) {
-  return `tel:${number}`
-}
 
 const visible = ref(false);
-let chosenCompanion = ref();
 
-const hardRequest = (index) => {
-  router.push(`responses/${index}`)
-  chosenCompanion.value = index
-};
 const handleOk = (e) => {
   console.log(e);
   visible.value = false;
@@ -64,12 +52,12 @@ onMounted(async () => {
 });
 </script>
 <template>
-          <a-col :span="24">
+          <a-col :span="24" class="mb-8">
       <a-breadcrumb>
         <a-breadcrumb-item @click="router.push('my-companions') ">Попутчики</a-breadcrumb-item>
-      <a-breadcrumb-item @click="router.push(`responses/${chosenCompanion}`) " >Отклики</a-breadcrumb-item>
       </a-breadcrumb>
     </a-col>
+    <a-row :gutter="[16, 16]">
     <a-col v-for="(companion, index) in companions" :key="index" :lg="8" :sm="12" :xs="24">
       <a-card class="card" hoverable>
         <div>
@@ -109,9 +97,10 @@ onMounted(async () => {
 
         <div class="d-flex justify-center">
           <span class="mdi mdi-information-outline" style="cursor: pointer; font-size: 20px;"
-            @click="hardRequest(index)"></span>
+            @click="router.push(`responses/${index}`)"></span>
 
         </div>
       </a-card>
     </a-col>
+    </a-row>
 </template>
