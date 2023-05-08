@@ -68,39 +68,39 @@ let form = ref({
 });
 
 const removeCost = (item) => {
-  let index = form.value.cost.indexOf(item);
-  if (index !== -1) {
-    form.value.cost.splice(index, 1);
-  }
+    let index = form.value.cost.indexOf(item);
+    if (index !== -1) {
+        form.value.cost.splice(index, 1);
+    }
 };
 
 const addCost = () => {
-  form.value.cost.push({
-    type: "",
-    price: "",
-  });
+    form.value.cost.push({
+        type: "",
+        price: "",
+    });
 };
 const delPhoto = () => {
-  previews.value.splice(targetIndex.value, 1);
-  images.splice(targetIndex.value, 1);
-  form.value.images.splice(targetIndex.value, 1);
-  delPhotoDialog.value = false;
+    previews.value.splice(targetIndex.value, 1);
+    images.splice(targetIndex.value, 1);
+    form.value.images.splice(targetIndex.value, 1);
+    delPhotoDialog.value = false;
 };
 
 function submit() {
-  description.value = description.value.split("<p><br></p>").join("");
-  form.value.description = description.value;
-  // form.value.period = dayjs(dayjs(d.period), monthFormatList)
-  // for (let img of previews.value) {
-  //     let isUnique = true;
-  //     if (img.startsWith('blob')) {
-  //         form.value.images.push(img)
-  //     }
-  // }
-  // важно разобраться с обновлением фото. Пользователь может загрузить свои и они будут храниться в images, УЖЕ ЕСТЬ: обновляем те фото, которые есть на сервере
-  TripService.updateTrip(form.value).then((res) => {
-    const _id = res.data._id;
-    let imagesFormData = new FormData();
+    description.value = description.value.split("<p><br></p>").join("");
+    form.value.description = description.value;
+    // form.value.period = dayjs(dayjs(d.period), monthFormatList)
+    // for (let img of previews.value) {
+    //     let isUnique = true;
+    //     if (img.startsWith('blob')) {
+    //         form.value.images.push(img)
+    //     }
+    // }
+    // важно разобраться с обновлением фото. Пользователь может загрузить свои и они будут храниться в images, УЖЕ ЕСТЬ: обновляем те фото, которые есть на сервере
+    TripService.updateTrip(form.value).then((res) => {
+        const _id = res.data._id;
+        let imagesFormData = new FormData();
 
         for (let i = 0; i < images.length; i++) {
             let index = i + form.value.images.length
@@ -122,76 +122,76 @@ function submit() {
 }
 
 function addPreview(blob) {
-  // imagesFormData.append("image", blob, `product-${previews.value.length}`);
-  visibleCropperModal.value = false;
-  images.push(blob);
-  previews.value.push(URL.createObjectURL(blob));
+    // imagesFormData.append("image", blob, `product-${previews.value.length}`);
+    visibleCropperModal.value = false;
+    images.push(blob);
+    previews.value.push(URL.createObjectURL(blob));
 }
 function updateUserInfo(info) {
-  fullUserInfo = info;
+    fullUserInfo = info;
 }
 function selectStartLocation(selected) {
-  for (let l of possibleLocations.value) {
-    if (l.value == selected) {
-      form.startLocation = l.geo
+    for (let l of possibleLocations.value) {
+        if (l.value == selected) {
+            form.value.startLocation = l.geo
+        }
     }
-  }
 }
 watch(locationSearchRequest, async (newValue, oldValue) => {
-  if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
-    var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
+    if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
+        var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
 
-    var options = {
-      method: "POST",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": "Token " + import.meta.env.VITE_DADATA_TOKEN
-      },
-      body: JSON.stringify({
-        query: newValue,
-        count: 5,
-        "from_bound": { "value": "city" },
-        "to_bound": { "value": "settlement" }
-      })
+        var options = {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": "Token " + import.meta.env.VITE_DADATA_TOKEN
+            },
+            body: JSON.stringify({
+                query: newValue,
+                count: 5,
+                "from_bound": { "value": "city" },
+                "to_bound": { "value": "settlement" }
+            })
+        }
+
+        let res = await fetch(url, options)
+        try {
+            let suggestions = JSON.parse(await res.text()).suggestions
+            possibleLocations.value = []
+            for (let s of suggestions) {
+                let location = {
+                    value: s.value,
+                    geo: {
+                        name: s.value,
+                        shortName: '',
+                        geo_lat: s.data.geo_lat,
+                        geo_lon: s.data.geo_lon
+                    }
+                }
+
+                if (s.data.settlement) {
+                    location.geo.shortName = s.data.settlement
+                }
+                else if (s.data.city) {
+                    location.geo.shortName = s.data.city
+                } else {
+                    location.geo.shortName = s.value
+                }
+
+                possibleLocations.value.push(location)
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
-
-    let res = await fetch(url, options)
-    try {
-      let suggestions = JSON.parse(await res.text()).suggestions
-      possibleLocations.value = []
-      for (let s of suggestions) {
-        let location = {
-          value: s.value,
-          geo: {
-            name: s.value,
-            shortName: '',
-            geo_lat: s.data.geo_lat,
-            geo_lon: s.data.geo_lon
-          }
-        }
-
-        if (s.data.settlement) {
-          location.geo.shortName = s.data.settlement
-        }
-        else if (s.data.city) {
-          location.geo.shortName = s.data.city
-        } else {
-          location.geo.shortName = s.value
-        }
-
-        possibleLocations.value.push(location)
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
 })
 
 const clearData = (dataString) => {
-  const dataFromString = new Date(Number(dataString));
-  return dataFromString;
+    const dataFromString = new Date(Number(dataString));
+    return dataFromString;
 };
 
 onMounted(() => {
@@ -202,7 +202,7 @@ onMounted(() => {
 
             start.value = dayjs(new Date(d.start))
             end.value = dayjs(new Date(d.end))
-            locationSearchRequest.value = d.startLocation[0].name
+            locationSearchRequest.value = d.startLocation.name
 
             form.value = d;
             for (let i of form.value.images)
@@ -216,16 +216,16 @@ onMounted(() => {
 })
 
 watch(description, (newValue) => {
-  newContent = newValue;
-  if (newContent === newValue) return;
-  quill.value.setHTML(newValue);
-  // Workaround https://github.com/vueup/vue-quill/issues/52
-  // move cursor to end
-  nextTick(() => {
-    let q = quill.value.getQuill();
-    q.setSelection(newValue.length, 0, "api");
-    q.focus();
-  });
+    newContent = newValue;
+    if (newContent === newValue) return;
+    quill.value.setHTML(newValue);
+    // Workaround https://github.com/vueup/vue-quill/issues/52
+    // move cursor to end
+    nextTick(() => {
+        let q = quill.value.getQuill();
+        q.setSelection(newValue.length, 0, "api");
+        q.focus();
+    });
 });
 
 watch(start, () => {
@@ -291,81 +291,80 @@ let formSchema = yup.object({
                         <a-col :xs="24">
                             Фотографии
                             <div class="d-flex" style="overflow-x: scroll">
-                                <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="" class="ma-4"
-                                    style="max-width: 200px" @click="
-                                        delPhotoDialog = true;
+                                <img v-for="(pr, i) in      previews     " :key="i" :src="pr" alt="" class="ma-4"
+                                    style="max-width: 200px" @click="delPhotoDialog = true;
                                     targetIndex = i;" />
                             </div>
-                            <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
+                            <a-button type="dashed" block @click=" visibleCropperModal = true " class="ma-8">
                                 <span class="mdi mdi-12px mdi-plus"></span>
                                 Добавить фото
                             </a-button>
                         </a-col>
 
-                        <a-col :span="12">
-                            <Field name="start" v-slot="{ value, handleChange }" v-model="start">
+                        <a-col :span=" 12 ">
+                            <Field name="start" v-slot=" { value, handleChange } " v-model=" start ">
                                 Дата начала
-                                <a-date-picker @update:value="handleChange" :value="value" style="width: 100%"
-                                    placeholder="Начало" :locale="ruLocale" :format="dateFormatList" />
+                                <a-date-picker @update:value=" handleChange " :value=" value " style="width: 100%"
+                                    placeholder="Начало" :locale=" ruLocale " :format=" dateFormatList " />
                             </Field>
                             <Transition name="fade">
                                 <ErrorMessage name="start" class="error-message" />
                             </Transition>
                         </a-col>
 
-                        <a-col :span="12">
-                            <Field name="end" v-slot="{ value, handleChange }" v-model="end">
+                        <a-col :span=" 12 ">
+                            <Field name="end" v-slot=" { value, handleChange } " v-model=" end ">
                                 Дата конца
-                                <a-date-picker @update:value="handleChange" :value="value" style="width: 100%"
-                                    placeholder="Конец" :locale="ruLocale" :format="dateFormatList" />
+                                <a-date-picker @update:value=" handleChange " :value=" value " style="width: 100%"
+                                    placeholder="Конец" :locale=" ruLocale " :format=" dateFormatList " />
                             </Field>
                             <Transition name="fade">
                                 <ErrorMessage name="end" class="error-message" />
                             </Transition>
                         </a-col>
 
-                        <a-col :span="12">
+                        <a-col :span=" 12 ">
                             Продолжительность
                             <p style="line-height: 40px">{{ form.duration }} дн.</p>
                         </a-col>
-                        <a-col :span="12">
-                            <Field name="maxPeople" v-slot="{ value, handleChange }" v-model="form.maxPeople">
+                        <a-col :span=" 12 ">
+                            <Field name="maxPeople" v-slot=" { value, handleChange } " v-model=" form.maxPeople ">
                                 Макс. число людей
-                                <a-input-number @update:value="handleChange" :value="value" style="width: 100%"
-                                    placeholder="11" :min="1" />
+                                <a-input-number @update:value=" handleChange " :value=" value " style="width: 100%"
+                                    placeholder="11" :min=" 1 " />
                             </Field>
                             <Transition name="fade">
                                 <ErrorMessage name="maxPeople" class="error-message" />
                             </Transition>
                         </a-col>
 
-                        <a-col :span="24">
+                        <a-col :span=" 24 ">
                             Цены
-                            <div v-for="item in form.cost" :key="item.type" style="display: flex" align="baseline"
-                                class="mb-16">
-                                <a-input v-model:value="item.first" placeholder="Для кого" />
+                            <div v-for="     item      in      form.cost     " :key=" item.type " style="display: flex"
+                                align="baseline" class="mb-16">
+                                <a-input v-model:value=" item.first " placeholder="Для кого" />
 
-                                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0"
-                                    :step="0.01" class="ml-16 mr-16" />
+                                <a-input-number v-model:value=" item.price " style="width: 100%" placeholder="Цена"
+                                    :min=" 0 " :step=" 0.01 " class="ml-16 mr-16" />
 
-                <a-button @click="removeCost(item)" shape="circle">
-                  <span class="mdi mdi-minus" style="cursor: pointer"></span>
-                </a-button>
-              </div>
+                                <a-button @click=" removeCost(item) " shape="circle">
+                                    <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                                </a-button>
+                            </div>
 
-                            <a-button type="dashed" block @click="addCost" class="ma-8">
+                            <a-button type="dashed" block @click=" addCost " class="ma-8">
                                 <span class="mdi mdi-12px mdi-plus"></span>
                                 Добавить цены
                             </a-button>
                         </a-col>
 
-                        <a-col :xs="24" :md="12">
-                            <Field name="tripType" v-slot="{ value, handleChange }" v-model="form.tripType">
+                        <a-col :xs=" 24 " :md=" 12 ">
+                            <Field name="tripType" v-slot=" { value, handleChange } " v-model=" form.tripType ">
                                 Тип тура
                                 <div>
-                                    <a-select @update:value="handleChange" :value="value" style="width: 100%">
-                                        <a-select-option v-for="tripType in appStore.appState[0].tripType"
-                                            :value="tripType">{{ tripType
+                                    <a-select @update:value=" handleChange " :value=" value " style="width: 100%">
+                                        <a-select-option v-for="     tripType      in      appStore.appState[0].tripType     "
+                                            :value=" tripType ">{{ tripType
                                             }}</a-select-option>
                                     </a-select>
                                 </div>
@@ -375,11 +374,11 @@ let formSchema = yup.object({
                             </Transition>
                         </a-col>
 
-                        <a-col :xs="24" :md="12">
-                            <Field name="fromAge" v-slot="{ value, handleChange }" v-model="form.fromAge">
+                        <a-col :xs=" 24 " :md=" 12 ">
+                            <Field name="fromAge" v-slot=" { value, handleChange } " v-model=" form.fromAge ">
                                 Мин. возраст, лет
-                                <a-input-number @update:value="handleChange" :value="value" style="width: 100%"
-                                    placeholder="10" :min="0" :max="100" />
+                                <a-input-number @update:value=" handleChange " :value=" value " style="width: 100%"
+                                    placeholder="10" :min=" 0 " :max=" 100 " />
                             </Field>
                             <Transition name="fade">
                                 <ErrorMessage name="fromAge" class="error-message" />
@@ -387,26 +386,27 @@ let formSchema = yup.object({
                         </a-col>
 
                         <a-col :xs=" 24 " :md=" 12 ">
-                            <Field name="startLocation" v-slot=" { value, handleChange } " v-model=" locationSearchRequest ">
+                            <Field name="startLocation" v-slot=" { value, handleChange } "
+                                v-model=" locationSearchRequest ">
                                 Место старта
                                 <a-auto-complete :value=" value " @update:value=" handleChange " style="width: 100%"
-                                :options=" possibleLocations " placeholder="Глазов" @select=" selectStartLocation ">
+                                    :options=" possibleLocations " placeholder="Глазов" @select=" selectStartLocation ">
                                 </a-auto-complete>
                             </Field>
                             <Transition name="fade">
-                            <ErrorMessage name="location" class="error-message" />
+                                <ErrorMessage name="location" class="error-message" />
                             </Transition>
-             
 
-            
-                  
-            </a-col>
 
-                        <a-col :xs="24" :md="12">
-                            <Field name="location" v-slot="{ value, handleChange }" v-model="form.location">
+
+
+                        </a-col>
+
+                        <a-col :xs=" 24 " :md=" 12 ">
+                            <Field name="location" v-slot=" { value, handleChange } " v-model=" form.location ">
                                 Направление
-                                <a-input placeholder="Байкал" size="large" @update:value="handleChange"
-                                    :value="value"></a-input>
+                                <a-input placeholder="Байкал" size="large" @update:value=" handleChange "
+                                    :value=" value "></a-input>
                             </Field>
                             <Transition name="fade">
                                 <ErrorMessage name="location" class="error-message" />
@@ -415,10 +415,10 @@ let formSchema = yup.object({
 
 
 
-                        <a-col :span="24">
-                            <Field name="offer" v-slot="{ value, handleChange }" v-model="form.offer">
+                        <a-col :span=" 24 ">
+                            <Field name="offer" v-slot=" { value, handleChange } " v-model=" form.offer ">
                                 Реклама
-                                <a-textarea @update:value="handleChange" :value="value"
+                                <a-textarea @update:value=" handleChange " :value=" value "
                                     placeholder="завлекательное описание" size="large">
                                 </a-textarea>
                             </Field>
@@ -427,10 +427,10 @@ let formSchema = yup.object({
                             </Transition>
                         </a-col>
 
-                        <a-col :span="24">
-                            <Field name="tripRoute" v-slot="{ value, handleChange }" v-model="form.tripRoute">
+                        <a-col :span=" 24 ">
+                            <Field name="tripRoute" v-slot=" { value, handleChange } " v-model=" form.tripRoute ">
                                 Маршрут
-                                <a-textarea @update:value="handleChange" :value="value" placeholder="Глазов-Пермь 300км"
+                                <a-textarea @update:value=" handleChange " :value=" value " placeholder="Глазов-Пермь 300км"
                                     size="large">
                                 </a-textarea>
                             </Field>
@@ -439,30 +439,33 @@ let formSchema = yup.object({
                             </Transition>
                         </a-col>
 
-                        <a-col :span="24" style="display: flex; flex-direction: column">
+                        <a-col :span=" 24 " style="display: flex; flex-direction: column">
                             Описание программы
-                            <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" :toolbar="[
-                                // [{ header: [2, 3] }],
-                                ['bold', 'italic', 'underline'],
-                                [{ list: 'ordered' }, { list: 'bullet' }],
-                                [{ color: ['#000000', '#ff6600', '#3daff5'] }],
-                                [{ align: [] }],
-                            ]" />
+                            <QuillEditor theme="snow" ref="quill" v-model:content=" description " contentType="html"
+                                :toolbar="
+                                    [
+                                        // [{ header: [2, 3] }],
+                                        ['bold', 'italic', 'underline'],
+                                        [{ list: 'ordered' }, { list: 'bullet' }],
+                                        [{ color: ['#000000', '#ff6600', '#3daff5'] }],
+                                        [{ align: [] }],
+                                    ]
+                                " />
                         </a-col>
-                        <a-col :span="24" class="d-flex justify-center">
-                            <a-button :disabled="!meta.valid" class="lets_go_btn mt-8" type="primary" size="large"
+                        <a-col :span=" 24 " class="d-flex justify-center">
+                            <a-button :disabled=" !meta.valid " class="lets_go_btn mt-8" type="primary" size="large"
                                 html-type="submit">Отправить
                             </a-button>
                         </a-col>
                     </a-row>
                 </Form>
-                <a-modal v-model:visible="visibleCropperModal" :footer="null">
-                    <ImageCropper @addImage="addPreview" />
+                <a-modal v-model:visible=" visibleCropperModal " :footer=" null ">
+                    <ImageCropper @addImage=" addPreview " />
                 </a-modal>
-                <a-modal v-model:visible="delPhotoDialog" :footer="null">
+                <a-modal v-model:visible=" delPhotoDialog " :footer=" null ">
                     <h3>Удалить фото?</h3>
                     <div class="d-flex justify-center">
-                        <a-button class="mt-16" type="primary" size="large" @click="delPhoto">Да
+                        <a-button class="mt-16" type="primary" size="large" @click=" delPhoto ">Да
                         </a-button>
                     </div>
                 </a-modal>
