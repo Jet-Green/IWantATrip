@@ -2,9 +2,11 @@
 import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 import { useTrips } from "../../stores/trips";
+import { useRouter } from "vue-router";
 
 const tripStore = useTrips();
 let route = useRoute();
+const router = useRouter();
 
 const _id = route.query.id;
 let trip = ref([]);
@@ -22,7 +24,7 @@ onMounted(async () => {
         trip.value.customers = data
         console.log(trip.value)
     }
-    
+
 });
 
 function getPhoneNumber(number) {
@@ -32,7 +34,11 @@ function getPhoneNumber(number) {
 </script>
 
 <template>
-    <a-row :gutter="[16, 16]">
+    <a-row :gutter="[16, 16]" :span="24" class="mb-8">
+        <a-breadcrumb>
+            <a-breadcrumb-item @click="router.back()">scszcszc</a-breadcrumb-item>
+            <a-breadcrumb-item>Отклики</a-breadcrumb-item>
+        </a-breadcrumb>
         <a-col :xs="24" :sm="12" :xl="6" v-for="(BILL, bill_index) of trip.billsList">
 
             <a-card hoverable v-if="trip.customers[bill_index]" class="pa-8" style="width: 100%;">
