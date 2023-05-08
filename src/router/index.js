@@ -168,34 +168,19 @@ const router = createRouter({
           component: () => import('../components/_cabinet/PurchasedTrips.vue'),
         },
         {
-          path: 'my-companions',
+          path: 'my-companions/',
           component: () => import('../components/_cabinet/MyCompanions.vue'),
         },
+        {
+          path: 'responses/:id',
+          component: () => import('../components/_cabinet/CompResponses.vue'),
+        },
+        
         {
           path: 'test',
           component: () => import('../components/_cabinet/Test.vue'),
         },
 
-      ],
-
-      children: [
-        {
-          // UserProfile will be rendered inside User's <router-view>
-          // when /user/:id/profile is matched
-          path: 'my-companions/',
-          component: () => import('../components/_cabinet/MyCompanions.vue'),
-          children: [
-            {
-              path: 'youcomp',
-              component: () => import('../components/_cabinet/Companions.vue'),
-            },
-            {
-              path: 'responses/:id',
-              component: () => import('../components/_cabinet/Responses.vue'),
-            },
-          ]
-
-        },
       ],
       beforeEnter: async (to, from) => {
         let userStore = useAuth()

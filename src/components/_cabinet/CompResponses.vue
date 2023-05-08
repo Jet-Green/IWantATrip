@@ -55,16 +55,16 @@ onMounted(async () => {
     const response = await companionStore.getById(id);
     createdCompanions.push(response.data);
   }
-  console.log(createdCompanions);
+  console.log(createdCompanions[id].companionRequests);
   companions.value = createdCompanions.filter((element) => element !== null);
-  chosenCompanion.value = createdCompanions[0];
+  chosenCompanion = createdCompanions[id].companionRequests;
 });
 </script>
 <template>
           <a-col :span="24">
       <a-breadcrumb>
-      <a-breadcrumb-item @click="router.push('youcomp') ">Попутчики</a-breadcrumb-item>
-      <a-breadcrumb-item @click="router.push('responses') " >Отклики</a-breadcrumb-item>
+      <a-breadcrumb-item @click="router.back() ">Попутчики</a-breadcrumb-item>
+      <a-breadcrumb-item >Отклики</a-breadcrumb-item>
       </a-breadcrumb>
     </a-col>
 <a-row :gutter="[8, 8]" class="mt-8">
