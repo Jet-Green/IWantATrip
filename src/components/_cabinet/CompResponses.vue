@@ -2,38 +2,24 @@
 import { ref, onMounted } from "vue";
 import { useAuth } from "../../stores/auth";
 import { useCompanions } from "../../stores/companions";
-import dayjs from "dayjs";
-import { DownOutlined } from "@ant-design/icons-vue";
-import { message } from "ant-design-vue";
 import { useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
 const userStore = useAuth();
 const router = useRouter();
 const companionStore = useCompanions();
 const companionIds = userStore.user?.createdCompanions;
+let companionName = ref()
 let companions = ref();
+let chosenCompanion = ref();
 
-const clearData = (dataString) => {
-  return new Date(Number(dataString))
-    .toLocaleDateString("ru-Ru", {
-      year: "2-digit",
-      month: "2-digit",
-      day: "2-digit",
-    })
-    .replaceAll("/", ".");
-};
 
 function getPhoneNumber(number) {
-  return `tel:${number}`
+  return `tel:${number}`;
 }
 
 const visible = ref(false);
-let chosenCompanion = ref();
-
-const handleOk = (e) => {
-  console.log(e);
-  visible.value = false;
-};
 
 const ageString = (age) => {
   if (age >= 10 && age <= 20) {
@@ -55,49 +41,56 @@ onMounted(async () => {
     const response = await companionStore.getById(id);
     createdCompanions.push(response.data);
   }
-  console.log(createdCompanions[id].companionRequests);
   companions.value = createdCompanions.filter((element) => element !== null);
-  chosenCompanion = createdCompanions[id].companionRequests;
+  
+  let responses = [];
+  for (let response of createdCompanions[route.path.split("/")[3]].companionRequests) {
+    responses.push(response);
+  }
+  chosenCompanion.value = responses;
+  companionName.value = createdCompanions[route.path.split("/")[3]].direction;
 });
 </script>
+
 <template>
-          <a-col :span="24">
-      <a-breadcrumb>
-      <a-breadcrumb-item @click="router.back() ">Попутчики</a-breadcrumb-item>
-      <a-breadcrumb-item >Отклики</a-breadcrumb-item>
-      </a-breadcrumb>
-    </a-col>
-<a-row :gutter="[8, 8]" class="mt-8">
-    
-      <a-row :gutter="[16, 16]">
-        <a-col :xs="24" :sm="12" :xl="6"  v-for="(request, index) in chosenCompanion" :key="index">
-          <a-card class="pa-8" hoverable>
-            <span class="mdi mdi-human-cane"></span>{{ ageString(request?.age) }}
-            <div :class="[request.gender == 'Male' ? 'male' : 'female']">
-              <span :class="request.gender == 'Female'
+  <a-col :span="24" class="mb-8">
+    <a-breadcrumb>
+      <a-breadcrumb-item @click="router.back()">{{ companionName }}</a-breadcrumb-item>
+      <a-breadcrumb-item>Отклики</a-breadcrumb-item>
+    </a-breadcrumb>
+  </a-col>
+
+    <a-row :gutter="[16, 16]">
+      <a-col :xs="24" :sm="12" :xl="6" v-for="request in chosenCompanion">
+        <a-card class="pa-8" hoverable>
+          <span class="mdi mdi-human-cane"></span>{{ ageString(request?.age) }}
+          <div :class="[request.gender == 'Male' ? 'male' : 'female']">
+            <span
+              :class="
+                request.gender == 'Female'
                   ? 'mdi mdi-gender-female'
                   : request.gender == 'Male'
-                    ? 'mdi mdi-gender-male'
-                    : 'mdi mdi-human-male-female'
-                "></span>{{
-    request.gender == "Male"
-    ? "Мужчина"
-    : request.gender == "Female"
-      ? "Женщина"
-      : "Не важно"
-  }}
-            </div>
-            <div>{{ request.name }} {{ request.surname }}
-            </div>
+                  ? 'mdi mdi-gender-male'
+                  : 'mdi mdi-human-male-female'
+              "
+            ></span
+            >{{
+              request.gender == "Male"
+                ? "Мужчина"
+                : request.gender == "Female"
+                ? "Женщина"
+                : "Не важно"
+            }}
+          </div>
+          <div>{{ request.name }} {{ request.surname }}</div>
 
-            <div>
-              <a :href='getPhoneNumber(request.phone)'> <span class="mdi mdi-phone"></span> {{ request.phone }}</a>
-            </div>
+          <div>
+            <a :href="getPhoneNumber(request.phone)">
+              <span class="mdi mdi-phone"></span> {{ request.phone }}</a
+            >
+          </div>
+        </a-card>
+      </a-col>
+    </a-row>
 
-
-          </a-card></a-col>
-      </a-row>
-
-
-  </a-row>
 </template>
