@@ -4,12 +4,14 @@ import { ref, watch, } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useAuth } from "../stores/auth";
 import { useLocations } from "../stores/locations";
+import { useLocation } from "../stores/location";
 
 // import TripCreatorReg from "./forms/TripCreatorReg.vue";
 // import LogoSvg from "../components/_explanation/LogoSvg.vue";
 
 const userStore = useAuth();
 const appLocations = useLocations();
+const locationStore = useLocation();
 let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
 let router = useRouter();
@@ -17,7 +19,6 @@ let visibleDrawer = ref(false);
 let selectLocationDialog = ref(false)
 
 let locationSearchRequest = ref('Не выбрано')
-let possibleLocations = ref([])
 
 
 function toComponentFromMenu(routName) {
@@ -28,7 +29,17 @@ function toComponentFromMenu(routName) {
 }
 
 const handleChange = (value) => {
-  console.log(`selected ${value}`);
+  if (value == 'Не выбрано') {
+    locationStore.location = {}
+  }
+  else {
+    for (let loc of appLocations.locations) {
+      if (loc.shortName == value) {
+        locationStore.location = loc
+        return
+      }
+    }
+  }
 };
 // const md = breakpoints.between('sm', 'md')
 // const lg = breakpoints.between('md', 'lg')
@@ -55,10 +66,8 @@ const handleChange = (value) => {
             <div @click="selectLocationDialog = !selectLocationDialog" style="cursor: pointer;">
               <span class="mdi mdi-map-marker-outline"></span>
               <span>
-                {{ locationSearchRequest }}
+                {{ locationStore.location?.shortName || 'Не выбрано' }}
               </span>
-
-
             </div>
             <a-modal :mask="false" v-model:visible="selectLocationDialog" title="Местоположение" :footer="null">
 
