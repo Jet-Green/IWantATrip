@@ -35,6 +35,7 @@ function getPhoneNumber(number) {
 
 <template>
     <a-col :span="24" class="mb-8">
+        <h3>Вы создали</h3>
         <a-breadcrumb>
             <a-breadcrumb-item @click="router.back()">{{ trip.name }}</a-breadcrumb-item>
             <a-breadcrumb-item>Покупатели</a-breadcrumb-item>
