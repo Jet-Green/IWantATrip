@@ -150,6 +150,7 @@ console.table(trip)
     <a-row class="justify-center d-flex">
       <a-col :xs="22" :xl="16">
         <h2 class="ma-0">{{ trip.name }}</h2>
+        <span class="ma-0">Место старта: {{ trip.startLocation.name }}</span>
         <a-spin v-if="!trip._id" size="large"></a-spin>
         <a-row v-if="trip._id" :gutter="[12, 12]" class="text justify-center d-flex">
           <!-- добавить карусель фотографий -->
@@ -176,7 +177,7 @@ console.table(trip)
             </a-carousel>
           </a-col>
           <a-col :xs="24" :md="12" class="pa-8">
-          <!-- <p>Автор тура: {{ trip.creatorForm[0] }} {{ trip.creatorForm[1]}} {{ trip.creatorForm[2] }}</p> -->
+          <p>Автор тура: {{ trip.creatorId }}</p>
             <p>{{ trip.offer }}</p>
             <div>
               Продолжительность: <b>{{ trip.duration }} дн.</b>
