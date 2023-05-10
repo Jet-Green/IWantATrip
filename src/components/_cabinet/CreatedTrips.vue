@@ -51,10 +51,6 @@ async function hideTrip(_id) {
     }
   }
 }
-let visibleBills = ref([])
-function showBills(index) {
-  visibleBills.value[index] = !visibleBills.value[index]
-}
 
 const clearData = (dataString) => {
   let date
@@ -72,7 +68,6 @@ const clearData = (dataString) => {
 
   })
 }
-let customers = ref([])
 onMounted(async () => {
   for (let _id of tripsIds.value) {
     let res = await tripStore.getById(_id);
@@ -91,7 +86,6 @@ onMounted(async () => {
       }
 
       trips.value.push(res.data);
-      visibleBills.value.push(false)
     }
   }
 
@@ -134,7 +128,7 @@ onMounted(async () => {
                 <span class="mdi mdi-content-copy" style="color: #245159; cursor: pointer"></span>
               </a-popconfirm>
               <span class="mdi mdi-information-outline"
-                @click="router.push({ path: '/customers-trip', query: { id: trip._id }})" v-if="trip.billsList.length"></span>
+                @click="router.push({ path: 'customers-trip', query: { id: trip._id }})" v-if="trip.billsList.length"></span>
             </div>
           </a-card>
 

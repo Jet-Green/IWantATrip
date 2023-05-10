@@ -2,6 +2,7 @@
 import { reactive, watch, ref } from "vue";
 import { useAuth } from "../stores/auth";
 import { useRouter } from "vue-router";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import BackButton from "./BackButton.vue";
 
 import { Form, Field, ErrorMessage } from 'vee-validate';
@@ -11,6 +12,8 @@ import { message } from "ant-design-vue";
 import axios from "axios";
 const user = useAuth();
 const router = useRouter();
+let breakpoints = useBreakpoints(breakpointsTailwind);
+let sm = breakpoints.smaller("md");
 let formState = reactive({
   fullname: "",
   email: "",
@@ -114,6 +117,9 @@ const formSchema = yup.object({
 <template>
   <div>
     <BackButton />
+      <img v-if="!sm" src="../assets/images/auth_left.png" style="position: fixed; left: 0px; bottom: 0px;  width: 20%;" />
+
+      <img v-if="!sm" src="../assets/images/auth_right.png" style="position: fixed; right: 0px; bottom: 0px; width: 20% " />  
     <a-row type="flex" justify="center">
       <a-col :span="24" :md="8" class="pa-16">
         <h2>Регистрация</h2>

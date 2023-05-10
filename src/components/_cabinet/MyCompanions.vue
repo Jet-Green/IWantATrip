@@ -24,7 +24,7 @@ const clearData = (dataString) => {
 const visible = ref(false);
 
 const handleOk = (e) => {
-  console.log(e);
+
   visible.value = false;
 };
 
@@ -42,6 +42,10 @@ const ageString = (age) => {
   }
   return `${age} лет`;
 };
+const toCompanionResposes = (companion)=>{
+  companionStore.currentCompanion =companion
+  router.push("/cabinet/responses")
+}
 onMounted(async () => {
   let createdCompanions = [];
   for (let id of companionIds) {
@@ -52,12 +56,13 @@ onMounted(async () => {
 });
 </script>
 <template>
-          <a-col :span="24" class="mb-8">
-      <a-breadcrumb>
-        <a-breadcrumb-item>Попутчики</a-breadcrumb-item>
-      </a-breadcrumb>
-    </a-col>
-    <a-row :gutter="[16, 16]">
+  <a-col :span="24" class="mb-8">
+    <h3>Поиск попутчиков</h3>
+    <!-- <a-breadcrumb>
+      <a-breadcrumb-item @click="router.push('/my-companions')">Попутчики</a-breadcrumb-item>
+    </a-breadcrumb> -->
+  </a-col>
+  <a-row :gutter="[16, 16]">
     <a-col v-for="(companion, index) in companions" :key="index" :lg="8" :sm="12" :xs="24">
       <a-card class="card" hoverable>
         <div>
@@ -74,10 +79,10 @@ onMounted(async () => {
               : 'not-matter',
         ]">
           <span :class="companion?.companionGender == 'Женщина'
-              ? 'mdi mdi-gender-female'
-              : companion?.companionGender == 'Мужчина'
-                ? 'mdi mdi-gender-male'
-                : 'mdi mdi-human-male-female'
+            ? 'mdi mdi-gender-female'
+            : companion?.companionGender == 'Мужчина'
+              ? 'mdi mdi-gender-male'
+              : 'mdi mdi-human-male-female'
             "></span>{{
     companion?.companionGender == "Мужчина"
     ? "Мужчину"
@@ -97,10 +102,10 @@ onMounted(async () => {
 
         <div class="d-flex justify-center">
           <span class="mdi mdi-information-outline" style="cursor: pointer; font-size: 20px;"
-            @click="router.push(`responses/${index}`)"></span>
+            @click="toCompanionResposes(companion)"></span>
 
         </div>
       </a-card>
     </a-col>
-    </a-row>
+  </a-row>
 </template>

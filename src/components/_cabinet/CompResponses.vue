@@ -1,17 +1,13 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { useAuth } from "../../stores/auth";
 import { useCompanions } from "../../stores/companions";
 import { useRouter } from "vue-router";
-import { useRoute } from "vue-router";
 
-const route = useRoute();
-const userStore = useAuth();
+
 const router = useRouter();
 const companionStore = useCompanions();
-const companionIds = userStore.user?.createdCompanions;
-let companionName = ref()
-let companions = ref();
+
+
 let chosenCompanion = ref();
 
 
@@ -19,7 +15,6 @@ function getPhoneNumber(number) {
   return `tel:${number}`;
 }
 
-const visible = ref(false);
 
 const ageString = (age) => {
   if (age >= 10 && age <= 20) {
@@ -36,26 +31,17 @@ const ageString = (age) => {
   return `${age} лет`;
 };
 onMounted(async () => {
-  let createdCompanions = [];
-  for (let id of companionIds) {
-    const response = await companionStore.getById(id);
-    createdCompanions.push(response.data);
-  }
-  companions.value = createdCompanions.filter((element) => element !== null);
+  chosenCompanion.value = companionStore.currentCompanion.companionRequests
   
-  let responses = [];
-  for (let response of createdCompanions[route.path.split("/")[3]].companionRequests) {
-    responses.push(response);
-  }
-  chosenCompanion.value = responses;
-  companionName.value = createdCompanions[route.path.split("/")[3]].direction;
 });
 </script>
 
 <template>
   <a-col :span="24" class="mb-8">
+    <h3>Поиск попутчиков</h3>
     <a-breadcrumb>
-      <a-breadcrumb-item @click="router.back()">{{ companionName }}</a-breadcrumb-item>
+      <!-- <a-breadcrumb-item @click="router.back()">Попутчики</a-breadcrumb-item> -->
+      <a-breadcrumb-item @click="router.back()">{{ companionStore.currentCompanion.direction }}</a-breadcrumb-item>
       <a-breadcrumb-item>Отклики</a-breadcrumb-item>
     </a-breadcrumb>
   </a-col>

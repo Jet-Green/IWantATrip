@@ -4,7 +4,7 @@ import { onMounted, reactive, ref } from "vue";
 import BackButton from "../components/BackButton.vue";
 import CompanionService from "../service/CompanionService";
 import { useAuth } from "../stores/auth";
-// import { message } from "ant-design-vue";
+import { message } from "ant-design-vue";
 
 const userStore = useAuth();
 const router = useRouter();
@@ -21,7 +21,13 @@ const form = reactive({
 function submit() {
   CompanionService.addFeedback(form, router.currentRoute.value.query.companion_id).then((res) => {
     // const _id = res.data._id;
-    console.log(res.data);
+    message.config({ duration: 1.5, top: "70vh" });
+    message.success({
+      content: "Успешно!",
+      onClose: () => {
+        router.push("/companions");
+      },
+    });
 
     // userStore.addFeedback(res.data)
   });
