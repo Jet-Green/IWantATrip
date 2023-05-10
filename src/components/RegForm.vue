@@ -151,9 +151,8 @@ const formSchema = yup.object({
               </Transition>
 
               <Field name="startLocation" v-slot="{ value, handleChange }" v-model="locationSearchRequest">
-                Где вы находитесь?
-                <a-auto-complete :value="value" @update:value="handleChange" style="width: 100%"
-                  :options="possibleLocations" placeholder="Глазов" @select="selectStartLocation">
+                <a-auto-complete :value="value" @update:value="handleChange" size="large" style="width: 100%" class="mt-8"
+                  :options="possibleLocations" placeholder="Ваше местоположение" @select="selectStartLocation">
                 </a-auto-complete>
               </Field>
               <Transition name="fade">
