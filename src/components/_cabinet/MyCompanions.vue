@@ -57,9 +57,10 @@ onMounted(async () => {
 </script>
 <template>
   <a-col :span="24" class="mb-8">
-    <a-breadcrumb>
+    <h3>Поиск попутчиков</h3>
+    <!-- <a-breadcrumb>
       <a-breadcrumb-item @click="router.push('/my-companions')">Попутчики</a-breadcrumb-item>
-    </a-breadcrumb>
+    </a-breadcrumb> -->
   </a-col>
   <a-row :gutter="[16, 16]">
     <a-col v-for="(companion, index) in companions" :key="index" :lg="8" :sm="12" :xs="24">

@@ -38,8 +38,9 @@ onMounted(async () => {
 
 <template>
   <a-col :span="24" class="mb-8">
+    <h3>Поиск попутчиков</h3>
     <a-breadcrumb>
-      <a-breadcrumb-item @click="router.back()">Попутчики</a-breadcrumb-item>
+      <!-- <a-breadcrumb-item @click="router.back()">Попутчики</a-breadcrumb-item> -->
       <a-breadcrumb-item @click="router.back()">{{ companionStore.currentCompanion.direction }}</a-breadcrumb-item>
       <a-breadcrumb-item>Отклики</a-breadcrumb-item>
     </a-breadcrumb>
