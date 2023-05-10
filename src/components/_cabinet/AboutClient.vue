@@ -3,6 +3,7 @@ import { computed } from "vue";
 import { ref } from "vue";
 import { func } from "vue-types";
 import { useAuth } from "../../stores/auth";
+import { EditOutlined} from '@ant-design/icons-vue';
 const userStore = useAuth();
 const user = userStore.user;
 const info = userStore.user.fullinfo;
@@ -43,9 +44,6 @@ function submit() {
     .catch((err) => {
       console.log(err);
     });
-}
-function cons(key){
-  console.log(key)
 }
 </script>
 <template>
@@ -90,7 +88,13 @@ function cons(key){
       <a-row>
         <a-col :xs="11" :md="8" v-if="info.creatorsType">
           <a-typography-text type="secondary">Статус пользователя</a-typography-text>
-          <a-typography-paragraph  v-if="!onChange" v-model:content="type"/>
+          <a-typography-paragraph  v-if="!onChange" v-model:content="creatorsType" editable>
+          
+            <template #editableIcon >
+              <edit-outlined @click="onChange = true"/>
+           </template>
+
+          </a-typography-paragraph>
 
           <a-select v-else :trigger="['click']" v-model:value="info.creatorsType">
             <a-select-option value="author">Автор тура</a-select-option>
@@ -103,7 +107,11 @@ function cons(key){
 
         <a-col :xs="11" :md="8" v-if="info.type" >
           <a-typography-text type="secondary">Юридический статус</a-typography-text>
-          <a-typography-paragraph  v-if="!onChange" v-model:content="type" />
+          <a-typography-paragraph  v-if="!onChange" v-model:content="type" editable>
+            <template #editableIcon >
+              <edit-outlined @click="onChange = true"/>
+           </template>
+          </a-typography-paragraph>
 
           <a-select v-else :trigger="['click']" v-model:value="info.type">
             <a-select-option value="phys">Физическое лицо</a-select-option>
