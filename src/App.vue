@@ -33,6 +33,7 @@ onMounted(async () => {
       icon: "https://glazov-flash.ru/image/cache/catalog/icon/1_1-100x100.png"
     })
   }
+  console.log(JSON.parse(localStorage.getItem('loc')))
 
   // if (Notification.permission == 'granted') {
   //   notify()

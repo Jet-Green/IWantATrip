@@ -50,7 +50,7 @@ const handleChange = async (value) => {
         tripStore.filteredTrips = []
         tripStore.cursor = 0
         tripStore.trips = []
-
+        localStorage.setItem('location', JSON.stringify(loc));
         await tripStore.fetchTrips()
         return
       }
