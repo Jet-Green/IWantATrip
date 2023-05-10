@@ -86,17 +86,16 @@ function submit() {
       </a-row>
 
       <a-row>
-        <a-col :xs="11" :md="8" v-if="info.creatorsType">
+        <a-col :span="24" :md="12" v-if="info.creatorsType">
           <a-typography-text type="secondary">Статус пользователя</a-typography-text>
-          <a-typography-paragraph  v-if="!onChange" v-model:content="creatorsType" editable>
           
+          <a-typography-paragraph  v-if="!onChange" v-model:content="creatorsType" editable>
             <template #editableIcon >
               <edit-outlined @click="onChange = true"/>
            </template>
-
           </a-typography-paragraph>
 
-          <a-select v-else :trigger="['click']" v-model:value="info.creatorsType">
+          <a-select v-else :trigger="['click']" v-model:value="info.creatorsType" :bordered="false">
             <a-select-option value="author">Автор тура</a-select-option>
             <a-select-option value="operator">Туроператор</a-select-option>
             <a-select-option value="creator">Турагенство</a-select-option>
@@ -105,7 +104,7 @@ function submit() {
 
         </a-col>
 
-        <a-col :xs="11" :md="8" v-if="info.type" >
+        <a-col :span="24" :md="12" v-if="info.type" >
           <a-typography-text type="secondary">Юридический статус</a-typography-text>
           <a-typography-paragraph  v-if="!onChange" v-model:content="type" editable>
             <template #editableIcon >
@@ -113,7 +112,7 @@ function submit() {
            </template>
           </a-typography-paragraph>
 
-          <a-select v-else :trigger="['click']" v-model:value="info.type">
+          <a-select v-else :trigger="['click']" v-model:value="info.type" :bordered="false">
             <a-select-option value="phys">Физическое лицо</a-select-option>
             <a-select-option value="company">Юридическое лицо</a-select-option>
             <a-select-option value="indpred">Инд. предприниматель</a-select-option>
@@ -126,10 +125,7 @@ function submit() {
           <a-typography-paragraph v-model:content="govermentRegNumber" editable />
         </a-col>
       </a-row>
-      <a-button class="mt-16" type="primary" size="large" html-type="submit"
-      v-show="onChange"
-                >Отправить
-              </a-button>
+      <a-button class="lets_go_btn mt-8" type="primary" size="large" v-show="onChange" html-type="submit">Отправить</a-button>
     </form>
   </div>
 </template>
