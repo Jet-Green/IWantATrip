@@ -6,6 +6,8 @@ export const useCompanions = defineStore('companions', {
     state: () => ({
         companions: [],
         filteredСompanions: [],
+        currentCompanion: {},
+       
     }),
     getters: {
         getCompanions(state) {

@@ -176,7 +176,7 @@ const router = createRouter({
           component: () => import('../components/_cabinet/MyCompanions.vue'),
         },
         {
-          path: 'responses/:id',
+          path: 'responses',
           component: () => import('../components/_cabinet/CompResponses.vue'),
         },
         

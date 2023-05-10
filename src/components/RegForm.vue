@@ -2,6 +2,7 @@
 import { reactive, watch, ref } from "vue";
 import { useAuth } from "../stores/auth";
 import { useRouter } from "vue-router";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import BackButton from "./BackButton.vue";
 
 import { Form, Field, ErrorMessage } from 'vee-validate';
@@ -11,6 +12,8 @@ import { message } from "ant-design-vue";
 import axios from "axios";
 const user = useAuth();
 const router = useRouter();
+let breakpoints = useBreakpoints(breakpointsTailwind);
+let sm = breakpoints.smaller("md");
 let formState = reactive({
   fullname: "",
   email: "",
