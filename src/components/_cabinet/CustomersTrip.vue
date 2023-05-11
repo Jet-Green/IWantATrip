@@ -7,9 +7,10 @@ import { useRouter } from "vue-router";
 const tripStore = useTrips();
 let route = useRoute();
 const router = useRouter();
+let customers = ref([])
 
 const _id = route.query.id;
-let trip = ref([]);
+let trip = ref({});
 
 onMounted(async () => {
     let { data } = await tripStore.getById(_id)
@@ -21,8 +22,8 @@ onMounted(async () => {
     }
     if (customersIds.length) {
         let { data } = await tripStore.getCustomers(customersIds)
-        trip.value.customers = data
-        console.log(trip.value)
+        customers.value = data
+
     }
 
 });
@@ -35,21 +36,21 @@ function getPhoneNumber(number) {
 
 <template>
     <a-col :span="24" class="mb-8">
-        <h3>Вы создали</h3>
+        <h3>Информация о туре</h3>
         <a-breadcrumb>
-            <a-breadcrumb-item @click="router.back()">{{ trip.name }}</a-breadcrumb-item>
+            <a-breadcrumb-item @click="router.push('/cabinet/created-trips')">{{ trip.name }}</a-breadcrumb-item>
             <a-breadcrumb-item>Покупатели</a-breadcrumb-item>
         </a-breadcrumb>
     </a-col>
-    <a-col :xs="24" :sm="12" :xl="6" v-for="(BILL, bill_index) of trip.billsList">
-
-        <a-card hoverable v-if="trip.customers[bill_index]" class="pa-8">
+    
+    <a-col :xs="24" :sm="12" :xl="6" v-for="(BILL, index) of trip.billsList">
+        <a-card hoverable v-if="customers[index]" class="pa-8">
             <div>
-                <span class="mdi mdi-account-outline" style=""></span> {{ trip.customers[bill_index].fullname }}
+                <span class="mdi mdi-account-outline" style=""></span> {{ customers[index].fullname }}
             </div>
             <div>
                 <span class="mdi mdi-phone-outline" style=""></span>
-                <a :href='getPhoneNumber(trip.customers[bill_index].phone)'> {{ trip.customers[bill_index].phone
+                <a :href='getPhoneNumber(customers[index].phone)'> {{ customers[index].phone
                 }}</a>
 
             </div>
