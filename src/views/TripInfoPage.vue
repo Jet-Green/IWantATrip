@@ -150,7 +150,7 @@ console.table(trip)
     <a-row class="justify-center d-flex">
       <a-col :xs="22" :xl="16">
         <h2 class="ma-0">{{ trip.name }}</h2>
-        <span class="ma-0">Место старта: {{ trip.startLocation.name }}</span>
+        <!-- <span class="ma-0">Место старта: {{ trip.startLocation.name }}</span> -->
         <a-spin v-if="!trip._id" size="large"></a-spin>
         <a-row v-if="trip._id" :gutter="[12, 12]" class="text justify-center d-flex">
           <!-- добавить карусель фотографий -->
