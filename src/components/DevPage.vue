@@ -1,8 +1,9 @@
 <script setup>
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import TripService from "../service/TripService";
 import AppService from '../service/AppService';
 import axios from 'axios'
+import { Field } from 'vee-validate';
 
 let tripType = ref('')
 
@@ -23,7 +24,9 @@ function sendType() {
     AppService.setTripType(tripType.value)
   }
 }
-
+// function getFromLocalStorage(){
+//   console.log(JSON.parse(localStorage.getItem('user1')));
+// }
 
 </script>
 <template>
@@ -41,6 +44,9 @@ function sendType() {
       <a-button type="primary" size="large" class="ma-16 lets_go_btn" @click="dropDatabase">
         drop database
       </a-button>
+      <!-- <a-button type="primary" size="large" class="ma-16 lets_go_btn" @click="getFromLocalStorage">
+        вывести из localStorage
+      </a-button> -->
     </div>
     <a-divider type="vertical" />
 
