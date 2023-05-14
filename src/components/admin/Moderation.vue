@@ -1,10 +1,11 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useTrips } from '../../stores/trips';
+import { useRouter } from 'vue-router'
 
 let tripStore = useTrips()
 let tripsOnMod = ref([])
-
+let router = useRouter()
 
 onMounted(async () => {
     let { data } = await tripStore.findForModeration()
@@ -43,7 +44,7 @@ const clearData = (dataString) => {
 <template>
     <a-row>
         <a-col :span="24">
-            <h3>Вы создали</h3>
+            <h3>На модерации</h3>
             <a-row :gutter="[8, 8]" class="mt-8">
                 <a-col :lg="8" :sm="12" :xs="24" v-if="tripsOnMod.length > 0" v-for="(trip, index) of tripsOnMod"
                     :key="index">
@@ -67,10 +68,8 @@ const clearData = (dataString) => {
                                 @confirm="tripToDelete(trip._id)" v-if="!trip.billsList.length > 0">
                                 <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
                             </a-popconfirm>
-                            <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="editTrip(trip._id)">
-                                <span class="mdi mdi-pen" style="color: #245159; cursor: pointer"></span>
-                            </a-popconfirm>
-                            <span class="mdi mdi-check-decagram-outline" @click="moderateTrip(trip._id)"
+                            <span class="mdi mdi-check-decagram-outline"
+                                @click="router.push(`/trip-moderation?_id=${trip._id}`)"
                                 style="color: #245159; cursor: pointer"></span>
                         </div>
                     </a-card>
