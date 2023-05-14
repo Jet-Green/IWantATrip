@@ -179,11 +179,21 @@ const router = createRouter({
           path: 'responses',
           component: () => import('../components/_cabinet/CompResponses.vue'),
         },
-        
+
         {
           path: 'test',
           component: () => import('../components/_cabinet/Test.vue'),
         },
+        {
+          path: 'moderation',
+          name: 'Moderation',
+          component: () => import('../components/admin/Moderation.vue'),
+        },
+        {
+          path: 'interface',
+          name: 'Interface',
+          component: () => import('../components/admin/Interface.vue'),
+        }
 
       ],
       beforeEnter: async (to, from) => {
@@ -195,7 +205,7 @@ const router = createRouter({
           return '/auth'
       }
     },
-    
+
     {
       path: '/reg',
       name: 'RegForm',
