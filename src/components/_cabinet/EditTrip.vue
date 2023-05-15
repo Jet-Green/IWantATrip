@@ -98,6 +98,7 @@ function submit() {
     //     }
     // }
     // важно разобраться с обновлением фото. Пользователь может загрузить свои и они будут храниться в images, УЖЕ ЕСТЬ: обновляем те фото, которые есть на сервере
+    form.value.isModerated = false
     TripService.updateTrip(form.value).then((res) => {
         const _id = res.data._id;
         let imagesFormData = new FormData();
@@ -107,7 +108,7 @@ function submit() {
             imagesFormData.append('trip-image', images[i], _id + '_' + index + '.img')
         }
         function close() {
-            router.push('/cabinet')
+            router.push('/cabinet/me')
         }
         if (images.length) {
             TripService.uploadTripImages(imagesFormData).then((res) => {
@@ -291,7 +292,7 @@ let formSchema = yup.object({
                         <a-col :xs="24">
                             Фотографии
                             <div class="d-flex" style="overflow-x: scroll">
-                                <img v-for="(pr, i) in      previews     " :key="i" :src="pr" alt="" class="ma-4"
+                                <img v-for="(pr, i) in        previews       " :key="i" :src="pr" alt="" class="ma-4"
                                     style="max-width: 200px" @click="delPhotoDialog = true;
                                     targetIndex = i;" />
                             </div>
@@ -340,7 +341,7 @@ let formSchema = yup.object({
 
                         <a-col :span=" 24 ">
                             Цены
-                            <div v-for="     item      in      form.cost     " :key=" item.type " style="display: flex"
+                            <div v-for="       item        in        form.cost       " :key=" item.type " style="display: flex"
                                 align="baseline" class="mb-16">
                                 <a-input v-model:value=" item.first " placeholder="Для кого" />
 
@@ -363,7 +364,8 @@ let formSchema = yup.object({
                                 Тип тура
                                 <div>
                                     <a-select @update:value=" handleChange " :value=" value " style="width: 100%">
-                                        <a-select-option v-for="     tripType      in      appStore.appState[0].tripType     "
+                                        <a-select-option
+                                            v-for="       tripType        in        appStore.appState[0].tripType       "
                                             :value=" tripType ">{{ tripType
                                             }}</a-select-option>
                                     </a-select>
