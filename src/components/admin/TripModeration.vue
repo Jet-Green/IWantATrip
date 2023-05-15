@@ -7,10 +7,28 @@ import { useRoute } from 'vue-router';
 let route = useRoute()
 let tripStore = useTrips()
 let trip = ref({})
+let isModerated = ref(false)
+let isLoading = ref(false)
+
+async function moderateTrip(_id) {
+    if (!isModerated.value) {
+        isLoading.value = true
+        let res = await tripStore.moderateTrip(_id)
+        if (res.status != 400) {
+            setTimeout(() => {
+                isModerated.value = true
+                isLoading.value = false
+            }, 500)
+        } else {
+            isModerated.value = false
+        }
+    }
+}
 
 onMounted(async () => {
     let { data } = await tripStore.getById(route.query._id)
     trip.value = data
+    isModerated.value = trip.value.isModerated
 })
 
 // service methods
@@ -92,7 +110,10 @@ function getImg(index) {
 
         <a-row class="justify-center d-flex" style="margin-top: 30px;">
             <a-col :xs="22" :xl="16">
-                <a-button block size="large" @click="tripStore.moderateTrip(trip._id)">принять</a-button>
+                <a-button block size="large" :loading="isLoading" :disabled="isModerated" @click="moderateTrip(trip._id)">
+                    <span v-if="!isModerated">принять</span>
+                    <span v-else class="mdi mdi-check-outline"></span>
+                </a-button>
             </a-col>
         </a-row>
         <a-row class="justify-center d-flex" style="margin-top: 30px;">
@@ -100,7 +121,7 @@ function getImg(index) {
                 <a-textarea placeholder="Ваши комментарии" size="large">
                 </a-textarea>
                 <a-row class="justify-center d-flex mt-8">
-                    <a-button size="large">отправить на доработку</a-button>
+                    <a-button :disabled="isModerated" size="large">отправить на доработку</a-button>
                 </a-row>
             </a-col>
         </a-row>
