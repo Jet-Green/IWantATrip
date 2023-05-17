@@ -31,6 +31,7 @@ function toComponentFromMenu(routName) {
   visibleDrawer.value = false;
 }
 
+
 const handleChange = async (value) => {
   if (value == 'Не выбрано') {
     locationStore.location = {}
@@ -62,7 +63,9 @@ const handleChange = async (value) => {
 // const xl = breakpoints.between('lg', 'xl')
 // const xxl = breakpoints.between('xl', '2xl')
 // const xxxl = breakpoints['2xl']
-
+function getLocation(){
+  return(JSON.parse(localStorage.getItem('location')).shortName)
+}
 
 </script>
 
@@ -82,7 +85,7 @@ const handleChange = async (value) => {
             <div @click="selectLocationDialog = !selectLocationDialog" style="cursor: pointer;">
               <span class="mdi mdi-map-marker-outline"></span>
               <span>
-                {{ locationStore.location?.shortName || 'Не выбрано' }}
+                {{ getLocation() || 'Не выбрано' }}
               </span>
             </div>
             <a-modal :mask="false" v-model:visible="selectLocationDialog" title="Местоположение" :footer="null">
