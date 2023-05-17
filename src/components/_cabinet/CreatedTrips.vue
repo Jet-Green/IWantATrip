@@ -99,9 +99,10 @@ onMounted(async () => {
 <template>
   <a-row>
     <a-col :span="24">
-      <h3>Прошли модерацию</h3>
-      <a-row :gutter="[8, 8]" class="mt-8" v-if="trips.length > 0">
-        <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of trips" :key="index">
+      <h3 class="mt-16">На модерации</h3>
+
+      <a-row :gutter="[8, 8]" class="mt-8" v-if="tripsOnModeration.length > 0">
+        <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of tripsOnModeration" :key="index">
           <a-card class="card " hoverable :class="[trip.isHidden ? 'overlay' : '']">
             <div style="text-align:center">
               {{ trip.name }}
@@ -136,6 +137,10 @@ onMounted(async () => {
                 @click="router.push({ path: 'customers-trip', query: { id: trip._id } })"
                 v-if="trip.billsList.length"></span>
             </div>
+            <div>
+
+              Сообщение: {{ trip.moderationMessage }}
+            </div>
           </a-card>
         </a-col>
       </a-row>
@@ -143,10 +148,10 @@ onMounted(async () => {
         Нет туров
       </a-row>
 
-      <h3 class="mt-16">На модерации</h3>
 
-      <a-row :gutter="[8, 8]" class="mt-8" v-if="tripsOnModeration.length > 0">
-        <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of tripsOnModeration" :key="index">
+      <h3>Прошли модерацию</h3>
+      <a-row :gutter="[8, 8]" class="mt-8" v-if="trips.length > 0">
+        <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of trips" :key="index">
           <a-card class="card " hoverable :class="[trip.isHidden ? 'overlay' : '']">
             <div style="text-align:center">
               {{ trip.name }}
