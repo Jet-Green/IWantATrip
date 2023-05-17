@@ -83,6 +83,13 @@ export const useTrips = defineStore('trips', {
             } catch (error) {
                 console.log(error);
             }
+        },
+        async sendModerationMessage(trip_id, msg) {
+            try {
+                return await TripService.sendModerationMessage(trip_id, msg)
+            } catch (error) {
+                console.log(error);
+            }
         }
     },
 })

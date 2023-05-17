@@ -179,11 +179,33 @@ const router = createRouter({
           path: 'responses',
           component: () => import('../components/_cabinet/CompResponses.vue'),
         },
-        
+
         {
           path: 'test',
           component: () => import('../components/_cabinet/Test.vue'),
         },
+        {
+          path: 'moderation',
+          name: 'Moderation',
+          component: () => import('../components/admin/Moderation.vue'),
+          beforeEnter: () => {
+            let userStore = useAuth()
+            if (!userStore.user?.roles.includes('admin')) {
+              return false
+            }
+          }
+        },
+        {
+          path: 'interface',
+          name: 'Interface',
+          component: () => import('../components/admin/Interface.vue'),
+          beforeEnter: () => {
+            let userStore = useAuth()
+            if (!userStore.user?.roles.includes('admin')) {
+              return false
+            }
+          }
+        }
 
       ],
       beforeEnter: async (to, from) => {
@@ -195,7 +217,19 @@ const router = createRouter({
           return '/auth'
       }
     },
-    
+    {
+      path: '/trip-moderation',
+      name: 'TripModeration',
+      component: () => import('../components/admin/TripModeration.vue'),
+      beforeEnter: async () => {
+        let userStore = useAuth()
+        if (!localStorage.getItem('token') || !userStore.isAuth)
+          await userStore.checkAuth()
+        if (!userStore.user?.roles.includes('admin')) {
+          return false
+        }
+      }
+    },
     {
       path: '/reg',
       name: 'RegForm',
