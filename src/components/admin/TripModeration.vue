@@ -3,12 +3,16 @@ import BackButton from "../BackButton.vue";
 import { ref, onMounted } from 'vue'
 import { useTrips } from '../../stores/trips'
 import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router'
 
 let route = useRoute()
 let tripStore = useTrips()
 let trip = ref({})
 let isModerated = ref(false)
 let isLoading = ref(false)
+
+let moderationMessage = ref('')
+let router = useRouter()
 
 async function moderateTrip(_id) {
     if (!isModerated.value) {
@@ -22,6 +26,13 @@ async function moderateTrip(_id) {
         } else {
             isModerated.value = false
         }
+    }
+}
+
+async function sendModerationMessage() {
+    let res = await tripStore.sendModerationMessage(trip.value._id, moderationMessage.value);
+    if (res.status == 200) {
+        router.push('/cabinet/moderation')
     }
 }
 
@@ -118,10 +129,11 @@ function getImg(index) {
         </a-row>
         <a-row class="justify-center d-flex" style="margin-top: 30px;">
             <a-col :xs="22" :xl="16">
-                <a-textarea placeholder="Ваши комментарии" size="large">
+                <a-textarea placeholder="Ваши комментарии" size="large" v-model:value="moderationMessage">
                 </a-textarea>
                 <a-row class="justify-center d-flex mt-8">
-                    <a-button :disabled="isModerated" size="large">отправить на доработку</a-button>
+                    <a-button :disabled="isModerated" size="large" @click="sendModerationMessage">отправить на
+                        доработку</a-button>
                 </a-row>
             </a-col>
         </a-row>
