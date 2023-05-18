@@ -4,6 +4,8 @@ import { ref } from "vue";
 import { func } from "vue-types";
 import { useAuth } from "../../stores/auth";
 import { EditOutlined} from '@ant-design/icons-vue';
+import { message } from "ant-design-vue";
+import { watch } from "vue";
 const userStore = useAuth();
 const user = userStore.user;
 const info = userStore.user.fullinfo;
@@ -40,18 +42,30 @@ function submit() {
     })
     .then((response) => {
       userStore.user = response.data;
+      message.config({ duration: 3, top: "90vh" });
+      message.success({ content: "Данные изменены!"});
+      onChange.value = false
+      console.log(onChange)
     })
     .catch((err) => {
       console.log(err);
     });
+
 }
+// watch(info.phone, () => {
+//   onChange = true
+//   console.log(info.phone)
+// })
+// watch(info,(newInfo,oldInfo) => {
+// 	console.log('x '+newInfo.phone + 'y '+oldInfo.phone)
+// })
 </script>
 <template>
-  <div v-if="info && user" @change=" onChange = true">
+  <div v-if="info && user">
     <form
       action="POST"
       @submit.prevent="submit"
-      @change="onChange = true"
+
       enctype="multipart/form-data"
     >
       <a-row>
@@ -71,34 +85,28 @@ function submit() {
 
         <a-col :xs="11" :md="8" :lg="5">
           <a-typography-text type="secondary">Телефон</a-typography-text>
-          <a-typography-paragraph v-model:content="info.phone" editable />
+          <a-typography-paragraph v-model:content="info.phone" editable @click="onChange = true"/>
         </a-col>
 
         <a-col :xs="11" :md="8" :lg="5">
           <a-typography-text type="secondary">Отображаемое имя</a-typography-text>
-          <a-typography-paragraph v-model:content="info.fullname" editable />
+          <a-typography-paragraph v-model:content="info.fullname" editable @click=" onChange = true"/>
         </a-col>
 
         <a-col :xs="12" :md="8" v-if="info.companyName">
           <a-typography-text type="secondary">Название фирмы</a-typography-text>
-          <a-typography-paragraph v-model:content="companyName" editable />
+          <a-typography-paragraph v-model:content="info.companyName" editable @click=" onChange = true"/>
         </a-col>
       </a-row>
 
       <a-row>
         <a-col :span="24" :md="12" v-if="info.creatorsType">
           <a-typography-text type="secondary">Статус пользователя</a-typography-text>
-          
-          <a-typography-paragraph  v-if="!onChange" v-model:content="creatorsType" editable>
-            <template #editableIcon >
-              <edit-outlined @click="onChange = true"/>
-           </template>
-          </a-typography-paragraph>
 
-          <a-select v-else :trigger="['click']" v-model:value="info.creatorsType" :bordered="false">
+          <a-select @click=" onChange = true" :trigger="['click']" v-model:value="info.creatorsType" :bordered="false">
             <a-select-option value="author">Автор тура</a-select-option>
             <a-select-option value="operator">Туроператор</a-select-option>
-            <a-select-option value="creator">Турагенство</a-select-option>
+            <a-select-option value="agency">Турагенство</a-select-option>
           </a-select>
 
 
@@ -106,13 +114,7 @@ function submit() {
 
         <a-col :span="24" :md="12" v-if="info.type" >
           <a-typography-text type="secondary">Юридический статус</a-typography-text>
-          <a-typography-paragraph  v-if="!onChange" v-model:content="type" editable>
-            <template #editableIcon >
-              <edit-outlined @click="onChange = true"/>
-           </template>
-          </a-typography-paragraph>
-
-          <a-select v-else :trigger="['click']" v-model:value="info.type" :bordered="false">
+          <a-select @click=" onChange = true" :trigger="['click']" v-model:value="info.type" :bordered="false">
             <a-select-option value="phys">Физическое лицо</a-select-option>
             <a-select-option value="company">Юридическое лицо</a-select-option>
             <a-select-option value="indpred">Инд. предприниматель</a-select-option>
@@ -122,7 +124,7 @@ function submit() {
 
         <a-col :xs="11" :md="8" v-if="info.govermentRegNumber">
           <a-typography-text type="secondary">ИНН</a-typography-text>
-          <a-typography-paragraph v-model:content="govermentRegNumber" editable />
+          <a-typography-paragraph @click=" onChange = true" v-model:content="info.govermentRegNumber" editable />
         </a-col>
       </a-row>
       <a-button class="lets_go_btn mt-8" type="primary" size="large" v-show="onChange" html-type="submit">Отправить</a-button>
