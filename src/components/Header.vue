@@ -51,7 +51,7 @@ const handleChange = async (value) => {
         tripStore.filteredTrips = []
         tripStore.cursor = 0
         tripStore.trips = []
-        localStorage.setItem('location', JSON.stringify(loc));
+        // localStorage.setItem('location', JSON.stringify(loc));
         await tripStore.fetchTrips()
         return
       }
@@ -85,7 +85,7 @@ function getLocation(){
             <div @click="selectLocationDialog = !selectLocationDialog" style="cursor: pointer;">
               <span class="mdi mdi-map-marker-outline"></span>
               <span>
-                {{ getLocation() || 'Не выбрано' }}
+                {{ locationStore.location?.shortName || 'Не выбрано' }}
               </span>
             </div>
             <a-modal :mask="false" v-model:visible="selectLocationDialog" title="Местоположение" :footer="null">
