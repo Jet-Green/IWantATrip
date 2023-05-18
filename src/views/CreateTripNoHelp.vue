@@ -121,6 +121,10 @@ function submit() {
       creatorId: "",
       startLocation: "",
     });
+    images = [];
+    // pdf = [];
+    previews.value = [];
+    quill.value.setHTML("");
   }
   function uploadTripImages(_id) {
     let imagesFormData = new FormData();
@@ -148,11 +152,6 @@ function submit() {
         })
         .then((response) => {
           userStore.user = response.data;
-          images = [];
-          // pdf = [];
-          previews.value = [];
-          quill.value.setHTML("");
-
         })
         .catch((err) => {
           console.log(err);
@@ -162,11 +161,6 @@ function submit() {
         .updateUser({ email: userStore.user.email, $push: { trips: _id } })
         .then((response) => {
           userStore.user = response.data;
-          images = [];
-          // pdf = [];
-          previews.value = [];
-          quill.value.setHTML("");
-
         })
         .catch((err) => {
           console.log(err);
@@ -186,7 +180,7 @@ function submit() {
       },
     });
   });
- 
+
 }
 
 function addPreview(blob) {
