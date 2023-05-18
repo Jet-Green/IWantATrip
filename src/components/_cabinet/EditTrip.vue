@@ -60,7 +60,6 @@ let form = ref({
     cost: [],
     offer: "",
     description: description.value,
-    location: "",
     tripType: "",
     fromAge: "",
     startLocation: null,
@@ -263,7 +262,6 @@ let formSchema = yup.object({
     maxPeople: yup.string().required("заполните поле"),
     tripType: yup.string().required("заполните поле"),
     fromAge: yup.string().required("заполните поле"),
-    location: yup.string().required("заполните поле"),
     offer: yup.string().required("заполните поле"),
     tripRoute: yup.string().required("заполните поле"),
     // distance: yup.string().required("заполните поле"),
@@ -387,7 +385,7 @@ let formSchema = yup.object({
                             </Transition>
                         </a-col>
 
-                        <a-col :xs=" 24 " :md=" 12 ">
+                        <a-col :xs=" 24 ">
                             <Field name="startLocation" v-slot=" { value, handleChange } "
                                 v-model=" locationSearchRequest ">
                                 Место старта
@@ -399,23 +397,7 @@ let formSchema = yup.object({
                                 <ErrorMessage name="location" class="error-message" />
                             </Transition>
 
-
-
-
                         </a-col>
-
-                        <a-col :xs=" 24 " :md=" 12 ">
-                            <Field name="location" v-slot=" { value, handleChange } " v-model=" form.location ">
-                                Направление
-                                <a-input placeholder="Байкал" size="large" @update:value=" handleChange "
-                                    :value=" value "></a-input>
-                            </Field>
-                            <Transition name="fade">
-                                <ErrorMessage name="location" class="error-message" />
-                            </Transition>
-                        </a-col>
-
-
 
                         <a-col :span=" 24 ">
                             <Field name="offer" v-slot=" { value, handleChange } " v-model=" form.offer ">

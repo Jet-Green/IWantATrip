@@ -33,7 +33,7 @@ const clearData = (dateNumber) => {
 <template>
   <!-- <span class="mdi mdi-12px mdi-close" style="color: #245159; cursor: pointer; float: right"
               @click="tripToDelete(trip._id)"></span> -->
-  <div @click="goToTripPage" style="height: 100%;" class="card">
+  <div @click="goToTripPage" style="height: 100%;" class="trip-card">
     <div class="title">
      <p>{{ trip.name }}</p> 
     </div>
@@ -63,7 +63,7 @@ const clearData = (dateNumber) => {
   font-weight: 500;
 }
 
-.card {
+.trip-card {
 
   display: flex;
   flex-direction: column;

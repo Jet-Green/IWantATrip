@@ -135,9 +135,6 @@ const ageString = (age) => {
 }
 
 .card {
-  width: 100%;
-  background: #f6f6f6;
-  padding: 8px;
   position: relative;
 
   .mdi {
