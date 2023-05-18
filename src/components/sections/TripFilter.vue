@@ -11,7 +11,7 @@ const tripStore = useTrips();
 
 let router = useRouter();
 
-let where = ref("");
+// let where = ref("");
 let time = ref(null);
 let query = ref("");
 
@@ -29,7 +29,7 @@ function setupScrollEvent() {
       if (tripStore.filteredTrips.length == 0) {
         await tripStore.fetchTrips()
       } else {
-        await tripStore.searchTrips(query.value, where.value, {
+        await tripStore.searchTrips(query.value, {
           start: time.value ? time.value[0].$d.getTime() : "",
           end: time.value ? time.value[1].$d.getTime() : "",
         })
@@ -45,23 +45,23 @@ function setupScrollEvent() {
 }
 
 
-let locations = computed(() => {
-  let result = [];
-  // проблема, надо получить направления и посчитать на сервере, мы не будем загружать все на клиента
-  for (let t of tripStore.trips) {
-    if (t.location == "") {
-      continue;
-    }
-    result.push(t.location.toLowerCase());
-  }
-  // получаем уникальные значения
-  return [...new Set(result)];
-});
+// let locations = computed(() => {
+//   let result = [];
+//   // проблема, надо получить направления и посчитать на сервере, мы не будем загружать все на клиента
+//   for (let t of tripStore.trips) {
+//     if (t.location == "") {
+//       continue;
+//     }
+//     result.push(t.location.toLowerCase());
+//   }
+//   // получаем уникальные значения
+//   return [...new Set(result)];
+// });
 
 let visible = ref(false);
 
 function find() {
-  tripStore.searchTrips(query.value, where.value, {
+  tripStore.searchTrips(query.value,  {
     start: time.value ? time.value[0].$d.getTime() : "",
     end: time.value ? time.value[1].$d.getTime() : "",
   });
@@ -73,9 +73,6 @@ watch(query, (newQuery) => {
     find();
   }
 });
-watch(where, (newPlace) => {
-  find();
-});
 
 onMounted(() => {
   setupScrollEvent()
@@ -83,8 +80,8 @@ onMounted(() => {
   if (props.search) {
     query.value = props.search;
   }
-  if (query.value && where.value && time.value) {
-    tripStore.searchTrips(query.value, where.value, {
+  if (query.value  && time.value) {
+    tripStore.searchTrips(query.value, {
       start: time.value ? time.value[0].$d.getTime() : null,
       end: time.value ? time.value[1].$d.getTime() : null,
     });
@@ -103,7 +100,7 @@ onMounted(() => {
       </a-row>
       <Transition name="fade">
         <div v-if="visible">
-          <a-row type="flex" justify="center">
+          <!-- <a-row type="flex" justify="center">
             <a-col :xs="24" :md="12">
               <a-select style="width: 100%" v-model:value="where" :bordered="true" class="selector">
                 <a-select-option value=""> </a-select-option>
@@ -112,7 +109,7 @@ onMounted(() => {
                 </a-select-option>
               </a-select>
             </a-col>
-          </a-row>
+          </a-row> -->
           <a-row type="flex" justify="center" class="mt-16">
             <a-col :xs="24" :md="12">
               <a-range-picker style="width: 100%" v-model:value="time" />

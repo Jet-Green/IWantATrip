@@ -43,9 +43,9 @@ export const useTrips = defineStore('trips', {
                 console.log(err);
             }
         },
-        async searchTrips(query, place, when) {
+        async searchTrips(query,  when) {
             try {
-                if (!query && !place && !when.start && !when.end) {
+                if (!query  && !when.start && !when.end) {
                     if (!this.trips.length) {
                         this.filteredTrips = []
                         this.cursor = 0
@@ -54,7 +54,7 @@ export const useTrips = defineStore('trips', {
                     }
                 } else {
                     this.trips = []
-                    const response = await TripService.searchTrips({ query, place: place, when: when }, this.searchCursor);
+                    const response = await TripService.searchTrips({ query,  when: when }, this.searchCursor);
 
                     this.filteredTrips.push(...response.data);
 
