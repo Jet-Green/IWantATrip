@@ -46,9 +46,9 @@ onMounted(async () => {
     </a-breadcrumb>
   </a-col>
 
-    <a-row :gutter="[16, 16]">
+    <a-row :gutter="[8, 8]">
       <a-col :xs="24" :sm="12" :xl="6" v-for="request in chosenCompanion">
-        <a-card class="pa-8" hoverable>
+        <a-card class="card" hoverable>
           <span class="mdi mdi-human-cane"></span>{{ ageString(request?.age) }}
           <div :class="[request.gender == 'Male' ? 'male' : 'female']">
             <span

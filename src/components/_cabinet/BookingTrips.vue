@@ -78,9 +78,5 @@ onMounted(() => {
   </a-row>
 </template>
 <style scoped lang="scss">
-.card {
 
-  background: #f6f6f6;
-  padding: 8px 8px 0 8px;
-}
 </style>

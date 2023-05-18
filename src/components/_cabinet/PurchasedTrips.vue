@@ -91,9 +91,5 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-.card {
 
-  background: #f6f6f6;
-  padding: 8px;
-}
 </style>

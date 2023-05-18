@@ -40,6 +40,7 @@ onMounted(async () => {
     let { data } = await tripStore.getById(route.query._id)
     trip.value = data
     isModerated.value = trip.value.isModerated
+    moderationMessage.value = trip.value.moderationMessage
 })
 
 // service methods

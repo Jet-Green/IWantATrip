@@ -14,6 +14,7 @@ let sm = breakpoints.smaller("md");
 
 let tripStore = useTrips();
 let trips = ref([]);
+let showMessage = ref(false);
 let tripsOnModeration = ref([])
 let tripsIds = computed(() => userStore.user.trips);
 
@@ -99,7 +100,7 @@ onMounted(async () => {
 <template>
   <a-row>
     <a-col :span="24">
-      <h3 class="mt-16">На модерации</h3>
+      <h3 class="mt-16" v-if="tripsOnModeration.length" >На модерации</h3>
 
       <a-row :gutter="[8, 8]" class="mt-8" v-if="tripsOnModeration.length > 0">
         <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of tripsOnModeration" :key="index">
@@ -126,30 +127,23 @@ onMounted(async () => {
               <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="editTrip(trip._id)">
                 <span class="mdi mdi-pen" style="color: #245159; cursor: pointer"></span>
               </a-popconfirm>
-              <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="hideTrip(trip._id)">
-                <span v-if="!trip.isHidden" class="mdi mdi-eye" style="color: #245159; cursor: pointer"></span>
-                <span v-else class="mdi mdi-eye-off" style="color: #245159; cursor: pointer"></span>
-              </a-popconfirm>
-              <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="copyTrip(trip._id)">
-                <span class="mdi mdi-content-copy" style="color: #245159; cursor: pointer"></span>
-              </a-popconfirm>
+    
               <span class="mdi mdi-information-outline"
                 @click="router.push({ path: 'customers-trip', query: { id: trip._id } })"
                 v-if="trip.billsList.length"></span>
+              <span class="mdi mdi-email-outline" v-if="trip.moderationMessage" @click="showMessage = !showMessage"
+               ></span>
             </div>
-            <div>
-
-              Сообщение: {{ trip.moderationMessage }}
+            <div v-if="showMessage">
+              Замечания: {{ trip.moderationMessage }}
             </div>
           </a-card>
         </a-col>
       </a-row>
-      <a-row :lg="8" :sm="12" :xs="24" v-else>
-        Нет туров
-      </a-row>
+  
 
 
-      <h3>Прошли модерацию</h3>
+      <h3>Действующие туры</h3>
       <a-row :gutter="[8, 8]" class="mt-8" v-if="trips.length > 0">
         <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of trips" :key="index">
           <a-card class="card " hoverable :class="[trip.isHidden ? 'overlay' : '']">
@@ -212,13 +206,5 @@ onMounted(async () => {
 
   opacity: 0.5;
 
-}
-
-
-
-.card {
-
-  background: #f6f6f6;
-  padding: 8px;
 }
 </style>

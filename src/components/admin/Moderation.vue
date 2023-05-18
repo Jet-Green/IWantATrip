@@ -92,8 +92,4 @@ const clearData = (dataString) => {
     }
 }
 
-.card {
-    background: #f6f6f6;
-    padding: 8px;
-}
 </style>

@@ -62,7 +62,7 @@ onMounted(async () => {
       <a-breadcrumb-item @click="router.push('/my-companions')">Попутчики</a-breadcrumb-item>
     </a-breadcrumb> -->
   </a-col>
-  <a-row :gutter="[16, 16]">
+  <a-row :gutter="[8, 8]">
     <a-col v-for="(companion, index) in companions" :key="index" :lg="8" :sm="12" :xs="24">
       <a-card class="card" hoverable>
         <div>
@@ -109,3 +109,8 @@ onMounted(async () => {
     </a-col>
   </a-row>
 </template>
+
+<style lang="scss" scoped>
+
+
+</style>
