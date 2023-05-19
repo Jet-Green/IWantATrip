@@ -1,10 +1,10 @@
 <script setup>
 import { useRouter } from "vue-router";
-import { ref, watch, } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useAuth } from "../stores/auth";
 import { useLocations } from "../stores/locations";
-import { useLocation } from "../stores/location";
+
 import { useTrips } from '../stores/trips';
 
 // import TripCreatorReg from "./forms/TripCreatorReg.vue";
@@ -12,7 +12,7 @@ import { useTrips } from '../stores/trips';
 
 const userStore = useAuth();
 const appLocations = useLocations();
-const locationStore = useLocation();
+
 const tripStore = useTrips()
 
 let breakpoints = useBreakpoints(breakpointsTailwind);
@@ -34,7 +34,7 @@ function toComponentFromMenu(routName) {
 
 const handleChange = async (value) => {
   if (value == 'Не выбрано') {
-    locationStore.location = {}
+    appLocations.location = {}
     tripStore.searchCursor = 0
     tripStore.filteredTrips = []
     tripStore.cursor = 0
@@ -45,27 +45,21 @@ const handleChange = async (value) => {
   else {
     for (let loc of appLocations.locations) {
       if (loc.shortName == value) {
-        locationStore.location = loc
+        appLocations.location = loc
         // start pagiantion again to update location
         tripStore.searchCursor = 0
         tripStore.filteredTrips = []
         tripStore.cursor = 0
         tripStore.trips = []
-        // localStorage.setItem('location', JSON.stringify(loc));
+        localStorage.setItem('location', JSON.stringify(loc));
         await tripStore.fetchTrips()
         return
       }
     }
   }
 };
-// const md = breakpoints.between('sm', 'md')
-// const lg = breakpoints.between('md', 'lg')
-// const xl = breakpoints.between('lg', 'xl')
-// const xxl = breakpoints.between('xl', '2xl')
-// const xxxl = breakpoints['2xl']
-function getLocation(){
-  return(JSON.parse(localStorage.getItem('location')).shortName)
-}
+
+
 
 </script>
 
@@ -85,7 +79,7 @@ function getLocation(){
             <div @click="selectLocationDialog = !selectLocationDialog" style="cursor: pointer;">
               <span class="mdi mdi-map-marker-outline"></span>
               <span>
-                {{ locationStore.location?.shortName || 'Не выбрано' }}
+                {{ appLocations.location?.shortName || 'Не выбрано' }}
               </span>
             </div>
             <a-modal :mask="false" v-model:visible="selectLocationDialog" title="Местоположение" :footer="null">

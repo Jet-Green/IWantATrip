@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 
 import { useAuth } from './auth'
-import { useLocation } from './location'
+import { useLocations } from './locations'
 
 import TripService from '../service/TripService.js'
 
@@ -26,7 +26,7 @@ export const useTrips = defineStore('trips', {
                 if (this.filteredTrips.length == 0) {
                     this.searchCursor = 0
                     // let userStore = useAuth()
-                    let locationStore = useLocation()
+                    let locationStore = useLocations()
                     let response;
                     if (locationStore.location?.name) {
                         response = await TripService.fetchTrips(this.cursor, locationStore.location.geo_lat, locationStore.location.geo_lon);

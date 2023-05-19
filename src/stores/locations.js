@@ -5,6 +5,8 @@ import LocationService from '../service/LocationService'
 export const useLocations = defineStore('locations', {
     state: () => ({
         locations: [],
+        location:{}
+
        
     }),
     getters: {

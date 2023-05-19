@@ -21,10 +21,15 @@ onMounted(async () => {
   if (localStorage.getItem('token')) {
     await userStore.checkAuth()
   }
+  if (localStorage.getItem('location')) {
+    useLocations().location = JSON.parse(localStorage.getItem('location'))
+  }
+
   await useLocations().fetchLocations()
+
   await useTrips().fetchTrips()
   await useCompanions().fetchCompanions()
- 
+
 
   function notify() {
     let notification = new Notification("Привет", {
@@ -33,7 +38,7 @@ onMounted(async () => {
       icon: "https://glazov-flash.ru/image/cache/catalog/icon/1_1-100x100.png"
     })
   }
-  console.log(JSON.parse(localStorage.getItem('loc')))
+
 
   // if (Notification.permission == 'granted') {
   //   notify()
@@ -55,7 +60,7 @@ onMounted(async () => {
     <a-layout-content style="margin-top: 69px">
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
-          <component :is="Component"  />
+          <component :is="Component" />
         </transition>
       </router-view>
     </a-layout-content>
