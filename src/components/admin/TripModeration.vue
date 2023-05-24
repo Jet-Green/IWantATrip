@@ -18,11 +18,14 @@ async function moderateTrip(_id) {
     if (!isModerated.value) {
         isLoading.value = true
         let res = await tripStore.moderateTrip(_id)
+        
         if (res.status != 400) {
             setTimeout(() => {
                 isModerated.value = true
                 isLoading.value = false
+                router.push('/cabinet/moderation')
             }, 500)
+            
         } else {
             isModerated.value = false
         }
