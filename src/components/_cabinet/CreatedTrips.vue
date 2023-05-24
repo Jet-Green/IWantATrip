@@ -80,8 +80,7 @@ let activeKey = ref(2)
             Нет туров
           </a-row>
         </a-collapse-panel>
-
-
+        
         <a-collapse-panel key="3" header="Архивные туры">
           <a-row :gutter="[8, 8]" class="mt-8" v-if="archiveTrips.length > 0">
             <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of archiveTrips" :key="index">
