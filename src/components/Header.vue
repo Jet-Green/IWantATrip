@@ -31,7 +31,6 @@ function toComponentFromMenu(routName) {
   visibleDrawer.value = false;
 }
 
-
 const handleChange = async (value) => {
   if (value == 'Не выбрано') {
     appLocations.location = {}
