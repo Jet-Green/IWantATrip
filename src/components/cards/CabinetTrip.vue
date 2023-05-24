@@ -90,7 +90,7 @@ let showMessage = ref(false);
             </a-popconfirm>
             <span class="mdi mdi-information-outline"
                 @click="router.push({ path: 'customers-trip', query: { id: trip._id } })"
-                v-if="trip.billsList.length && actions.includes('info')"></span>
+                v-if="actions.includes('info')"></span>
             <span class="mdi mdi-email-outline" v-if="trip.moderationMessage && actions.includes('msg')"
                 @click="showMessage = !showMessage"></span>
         </div>
