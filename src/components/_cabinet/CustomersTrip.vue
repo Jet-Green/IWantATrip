@@ -47,13 +47,6 @@ function getPhoneNumber(number) {
         <a-col :lg="8" :sm="12" :xs="24">
         <a-card style="height: 100%;">
             карточка для статистики
-            <div class="actions d-flex justify-center">
-            <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="addBuyer(trip._id)">
-            
-                <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
-            </a-popconfirm>
-        
-        </div>
         </a-card>
         </a-col>
         <a-col :lg="8" :sm="12" :xs="24" v-for="(BILL, index) of trip.billsList">
