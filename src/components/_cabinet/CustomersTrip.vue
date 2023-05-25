@@ -8,7 +8,8 @@ const tripStore = useTrips();
 let route = useRoute();
 const router = useRouter();
 let customers = ref([])
-
+const allBooks = ref([])
+const payedBooks = ref({})
 const _id = route.query.id;
 let trip = ref({});
 
@@ -25,13 +26,21 @@ onMounted(async () => {
         customers.value = data
 
     }
-
+    console.log(trip.value.billsList)
+    for (let book of trip.value.billsList){
+        if (book.isBoughtNow==true){
+            if ( payedBooks[book.cart[0].costType]==Object.keys(payedBooks))
+            payedBooks[book.cart[0].costType] = book.cart[0].count
+            
+        }
+        allBooks.value = allBooks.value + book.cart[0].count
+        console.log(allBooks)
+    }
 });
 
 function getPhoneNumber(number) {
     return `tel:${number}`
 }
-
 </script>
 
 <template>
@@ -46,7 +55,10 @@ function getPhoneNumber(number) {
     <a-row :gutter="[8, 8]">
         <a-col :lg="8" :sm="12" :xs="24">
         <a-card style="height: 100%;">
-            карточка для статистики
+            <div>Максимум: {{ trip.maxPeople }} чел.</div>
+            <div>Забронировало: {{ allBooks}} чел.</div>
+            <div>Оплатило: {{ payedBooks }} чел.</div>
+            <div v-for="price in priceList">{{ price }} купило {{ x }}</div>
         </a-card>
         </a-col>
         <a-col :lg="8" :sm="12" :xs="24" v-for="(BILL, index) of trip.billsList">
