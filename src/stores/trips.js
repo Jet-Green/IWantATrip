@@ -9,8 +9,8 @@ export const useTrips = defineStore('trips', {
     state: () => ({
         trips: [],
         filteredTrips: [],
-        cursor: 0,
-        searchCursor: 0
+        cursor: 1,
+        searchCursor: 1
     }),
     getters: {
         getTrips(state) {
@@ -24,8 +24,7 @@ export const useTrips = defineStore('trips', {
         async fetchTrips() {
             try {
                 if (this.filteredTrips.length == 0) {
-                    this.searchCursor = 0
-                    // let userStore = useAuth()
+                
                     let locationStore = useLocations()
                     let response;
                     if (locationStore.location?.name) {
@@ -33,11 +32,11 @@ export const useTrips = defineStore('trips', {
                     } else {
                         response = await TripService.fetchTrips(this.cursor, '', '');
                     }
-
+                    
                     this.trips.push(...response.data);
 
                     if (response.data.length != 0)
-                        this.cursor += 20
+                        this.cursor += 1
                 }
             } catch (err) {
                 console.log(err);
@@ -59,7 +58,7 @@ export const useTrips = defineStore('trips', {
                     this.filteredTrips.push(...response.data);
 
                     if (response.data.length != 0)
-                        this.searchCursor += 20
+                        this.searchCursor += 2
                 }
             } catch (err) {
                 console.log(err);

@@ -1,13 +1,11 @@
 <script setup>
 import { ref, onMounted, watch, computed } from "vue";
 import { useRouter } from "vue-router";
-import { useTrips } from "../../stores/trips";
+
 
 let props = defineProps({
   search: String,
 });
-
-const tripStore = useTrips();
 
 let router = useRouter();
 
@@ -17,32 +15,7 @@ let query = ref("");
 
 let loading = ref(false)
 
-function setupScrollEvent() {
-  const onScroll = async () => {
-    const windowHeight = document.documentElement.clientHeight;
-    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-    const scrollHeight = document.documentElement.scrollHeight;
-    const nearBottom = scrollTop + windowHeight >= scrollHeight - 350;
 
-    if (nearBottom && !loading.value) {
-      loading.value = true
-      if (tripStore.filteredTrips.length == 0) {
-        await tripStore.fetchTrips()
-      } else {
-        await tripStore.searchTrips(query.value, {
-          start: time.value ? time.value[0].$d.getTime() : "",
-          end: time.value ? time.value[1].$d.getTime() : "",
-        })
-      }
-      loading.value = false
-    }
-  };
-
-  window.addEventListener('scroll', onScroll);
-  return () => {
-    window.removeEventListener('scroll', onScroll);
-  };
-}
 
 
 // let locations = computed(() => {
@@ -75,7 +48,7 @@ watch(query, (newQuery) => {
 });
 
 onMounted(() => {
-  setupScrollEvent()
+
 
   if (props.search) {
     query.value = props.search;

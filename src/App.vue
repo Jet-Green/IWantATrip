@@ -54,7 +54,7 @@ onMounted(async () => {
 })
 </script>
 <template>
-  <a-layout style="min-height: 100vh">
+  <a-layout >
     <Header></Header>
     <!-- в документации с margin'ом, чтобы предотвратить перекрывание контента хедром -->
     <a-layout-content style="margin-top: 69px">

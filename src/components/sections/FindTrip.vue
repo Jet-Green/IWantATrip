@@ -37,9 +37,11 @@ const postsCount = computed(() => {
 watch(carousel_container, () => {
   onResize();
 });
-onMounted(() => {
+onMounted(async () => {
+
   onResize();
   window.addEventListener("resize", onResize);
+  
 });
 </script>
 <template>
