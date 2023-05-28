@@ -54,6 +54,9 @@ export default {
     },
     sendModerationMessage(trip_id, msg) {
         return $api.post(`/admin/send-moderation-message?tripId=${trip_id}`, { msg })
+    },
+    getCreatedTripsInfoByUserId(_id) {
+        return $api.get(`/trips/created-trips-info?_id=${_id}`)
     }
 
 }

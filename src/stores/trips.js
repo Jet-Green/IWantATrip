@@ -89,6 +89,13 @@ export const useTrips = defineStore('trips', {
             } catch (error) {
                 console.log(error);
             }
+        },
+        async getCreatedTripsInfoByUserId(_id) {
+            try {
+                return await TripService.getCreatedTripsInfoByUserId(_id)
+            } catch (error) {
+                console.log(error);
+            }
         }
     },
 })

@@ -25,6 +25,11 @@ function getPhoneNumber(number) {
 }
 
 onMounted(async () => {
+  let userId = userStore.user._id
+  let created = await tripStore.getCreatedTripsInfoByUserId(userId)
+  console.log(created)
+
+  
   for (let _id of tripsIds.value) {
     let res = await tripStore.getById(_id);
 
