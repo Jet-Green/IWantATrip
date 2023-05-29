@@ -19,15 +19,17 @@ let tripsOnModeration = ref([])
 let archiveTrips = ref([])
 
 let tripsIds = computed(() => userStore.user.trips);
-
 function getPhoneNumber(number) {
   return `tel:${number}`
 }
 
+let loading = ref(true)
 onMounted(async () => {
+  loading.value = true
   let userId = userStore.user._id
   let response = await tripStore.getCreatedTripsInfoByUserId(userId)
   let created = response.data
+  loading.value = false
 
   for (let trip of created) {
     // { start: { $gt: Date.now() } }
@@ -46,7 +48,10 @@ let activeKey = ref(2)
 </script>
 <template>
   <a-row>
-    <a-col :span="24">
+    <a-col :span="24" v-if="loading" class="d-flex justify-center">
+      <a-spin size="large" />
+    </a-col>
+    <a-col :span="24" v-else>
       <a-collapse v-model:activeKey="activeKey" ghost>
         <a-collapse-panel v-if="tripsOnModeration.length" key="1" header="На модерации">
           <a-row :gutter="[8, 8]" class="mt-8" v-if="tripsOnModeration.length > 0">
