@@ -44,6 +44,9 @@ export default {
     async clearTripsDB() {
         return $api.get('/trips/clear')
     },
+    getUserTrips(ids) {
+        return $api.post(`/trips/get-user-trips`, ids)
+    },
 
 
     findForModeration() {

@@ -25,35 +25,35 @@ function getPhoneNumber(number) {
 }
 
 onMounted(async () => {
-  for (let _id of tripsIds.value) {
-    let res = await tripStore.getById(_id);
+  let ids = tripsIds.value;
 
-    if (res.data) {
-      let billsListFromDB = res.data.billsList
+  let res = await tripStore.getUserTrips(ids)
+  console.log(res.data);
 
-      let customersIds = []
-      for (let bill of billsListFromDB) {
-        customersIds.push(bill.userId)
-      }
+  for (let trip of res.data) {
+    let billsListFromDB = trip.billsList
 
-      if (customersIds.length) {
-        let { data } = await tripStore.getCustomers(customersIds)
-        res.data.customers = data
-      }
+    let customersIds = []
+    for (let bill of billsListFromDB) {
+      customersIds.push(bill.userId)
+    }
 
-      // { start: { $gt: Date.now() } }
-      if (res.data.start < Date.now()) {
-        archiveTrips.value.push(res.data)
-        continue
-      }
-      if (res.data.isModerated) {
-        trips.value.push(res.data);
-      } else {
-        tripsOnModeration.value.push(res.data)
-      }
+    if (customersIds.length) {
+      let { data } = await tripStore.getCustomers(customersIds)
+      trip.customers = data
+    }
+
+    // { start: { $gt: Date.now() } }
+    if (trip.start < Date.now()) {
+      archiveTrips.value.push(trips)
+      continue
+    }
+    if (trip.isModerated) {
+      trips.value.push(trip);
+    } else {
+      tripsOnModeration.value.push(trip)
     }
   }
-
 });
 let activeKey = ref(2)
 </script>

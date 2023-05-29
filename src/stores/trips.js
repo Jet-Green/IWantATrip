@@ -24,7 +24,7 @@ export const useTrips = defineStore('trips', {
         async fetchTrips() {
             try {
                 if (this.filteredTrips.length == 0) {
-                
+
                     let locationStore = useLocations()
                     let response;
                     if (locationStore.location?.name) {
@@ -32,7 +32,7 @@ export const useTrips = defineStore('trips', {
                     } else {
                         response = await TripService.fetchTrips(this.cursor, '', '');
                     }
-                    
+
                     this.trips.push(...response.data);
 
                     if (response.data.length != 0)
@@ -42,9 +42,9 @@ export const useTrips = defineStore('trips', {
                 console.log(err);
             }
         },
-        async searchTrips(query,  when) {
+        async searchTrips(query, when) {
             try {
-                if (!query  && !when.start && !when.end) {
+                if (!query && !when.start && !when.end) {
                     if (!this.trips.length) {
                         this.filteredTrips = []
                         this.cursor = 0
@@ -53,7 +53,7 @@ export const useTrips = defineStore('trips', {
                     }
                 } else {
                     this.trips = []
-                    const response = await TripService.searchTrips({ query,  when: when }, this.searchCursor);
+                    const response = await TripService.searchTrips({ query, when: when }, this.searchCursor);
 
                     this.filteredTrips.push(...response.data);
 
@@ -86,6 +86,13 @@ export const useTrips = defineStore('trips', {
         async sendModerationMessage(trip_id, msg) {
             try {
                 return await TripService.sendModerationMessage(trip_id, msg)
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async getUserTrips(ids) {
+            try {
+                return TripService.getUserTrips(ids)
             } catch (error) {
                 console.log(error);
             }
