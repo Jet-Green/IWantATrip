@@ -32,7 +32,7 @@ onMounted(async () => {
   for (let trip of created) {
     // { start: { $gt: Date.now() } }
     if (trip.start < Date.now()) {
-      archiveTrips.value.push(trips)
+      archiveTrips.value.push(trip)
       continue
     }
     if (trip.isModerated) {

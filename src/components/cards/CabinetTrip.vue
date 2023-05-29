@@ -72,7 +72,7 @@ let showMessage = ref(false);
 
         <div class="actions d-flex justify-center">
             <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="tripToDelete(trip._id)"
-                v-if="(!trip.billsList.length > 0) && actions.includes('delete')">
+                v-if="(!trip.billsList?.length > 0) && actions.includes('delete')">
                 <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
             </a-popconfirm>
             <a-popconfirm v-if="actions.includes('edit')" title="Вы уверены?" ok-text="Да" cancel-text="Нет"
