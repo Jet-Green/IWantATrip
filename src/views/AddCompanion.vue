@@ -4,12 +4,16 @@ import { useRouter } from "vue-router";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import BackButton from "../components/BackButton.vue";
 import CompanionService from "../service/CompanionService";
-
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useAuth } from "../stores/auth";
 import { message } from "ant-design-vue";
 
+
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
+
+let breakpoints = useBreakpoints(breakpointsTailwind);
+let sm = breakpoints.smaller("md");
 
 let router = useRouter();
 const userStore = useAuth();

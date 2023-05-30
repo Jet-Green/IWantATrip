@@ -33,7 +33,6 @@ const type = computed(() => {
 const govermentRegNumber = computed(() => {
   return info.govermentRegNumber ? info.govermentRegNumber : "**********";
 });
-console.log(user);
 function submit() {
   userStore
     .updateUser({

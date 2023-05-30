@@ -4,12 +4,14 @@ import { useAuth } from "../stores/auth";
 import { useRouter } from "vue-router";
 import BackButton from "../components/BackButton.vue";
 import { message } from "ant-design-vue";
-
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 
 const user = useAuth();
 const router = useRouter();
+let breakpoints = useBreakpoints(breakpointsTailwind);
+let sm = breakpoints.smaller("md");
 
 let formState = reactive({
   email: "",
@@ -21,7 +23,7 @@ async function logIn() {
   if (result.success) {
     // formState.email = ''
     // formState.password = ''
-    message.config({ duration: 1.5, top: "70vh" });
+    message.config({ duration: 0.5, top: "70vh" });
     message.success({
       content: "Успешно!",
       onClose: () => {

@@ -1,29 +1,29 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import CabinetTrip from "../cards/CabinetTrip.vue";
-import TripService from "../../service/TripService";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { useAuth } from "../../stores/auth.js";
 import { useTrips } from "../../stores/trips.js";
 
 let userStore = useAuth();
+let tripStore = useTrips();
 let router = useRouter();
 
 let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
 
-let tripStore = useTrips();
 let trips = ref([]);
 let tripsOnModeration = ref([])
 let archiveTrips = ref([])
+let loading = ref(true)
 
-let tripsIds = computed(() => userStore.user.trips);
+// let tripsIds = computed(() => userStore.user.trips);
 function getPhoneNumber(number) {
   return `tel:${number}`
 }
 
-let loading = ref(true)
+
 onMounted(async () => {
   loading.value = true
   let userId = userStore.user._id

@@ -30,11 +30,10 @@ onMounted(async () => {
     for (let book of trip.value.billsList){
         if (book.isBoughtNow==true){
             if ( payedBooks[book.cart[0].costType]==Object.keys(payedBooks))
-            payedBooks[book.cart[0].costType] = book.cart[0].count
-            
+            payedBooks[book.cart[0].costType] = book.cart[0].count     
         }
         allBooks.value = allBooks.value + book.cart[0].count
-        console.log(allBooks)
+    
     }
 });
 
