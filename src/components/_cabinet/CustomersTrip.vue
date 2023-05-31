@@ -4,36 +4,42 @@ import { useRoute } from "vue-router";
 import { useTrips } from "../../stores/trips";
 import { useRouter } from "vue-router";
 
-const tripStore = useTrips();
-let route = useRoute();
 const router = useRouter();
-let customers = ref([])
-const allBooks = ref([])
-const payedBooks = ref({})
-const _id = route.query.id;
+const route = useRoute();
+
+const tripStore = useTrips();
+
+const priceList = ref([])
+const allBooks = ref(0)
+const payedBooks = ref(0)
+
 let trip = ref({});
 
 onMounted(async () => {
-    let { data } = await tripStore.getById(_id)
+    // get trip
+    let { data } = await tripStore.getFullTripById(route.query._id)
     trip.value = data
 
-    let customersIds = []
-    for (let bill of trip.value.billsList) {
-        customersIds.push(bill.userId)
+    for (let price of trip.value.cost) {
+        priceList.value.push({
+            price: Number(price.price),
+            count: 0
+        })
     }
-    if (customersIds.length) {
-        let { data } = await tripStore.getCustomers(customersIds)
-        customers.value = data
 
-    }
-    console.log(trip.value.billsList)
-    for (let book of trip.value.billsList){
-        if (book.isBoughtNow==true){
-            if ( payedBooks[book.cart[0].costType]==Object.keys(payedBooks))
-            payedBooks[book.cart[0].costType] = book.cart[0].count     
+    // extract data
+    for (let bill of trip.value.billsList) {
+        // make priceList
+        for (let cartItem of bill.cart) {
+            for (let price of priceList.value) {
+                price.count += cartItem.count
+            }
+            // payedBooks.value
+            if (bill.isBoughtNow) {
+                payedBooks.value += cartItem.count
+            }
+            allBooks.value += cartItem.count
         }
-        allBooks.value = allBooks.value + book.cart[0].count
-    
     }
 });
 
@@ -53,25 +59,24 @@ function getPhoneNumber(number) {
 
     <a-row :gutter="[8, 8]">
         <a-col :lg="8" :sm="12" :xs="24">
-        <a-card style="height: 100%;">
-            <div>Максимум: {{ trip.maxPeople }} чел.</div>
-            <div>Забронировало: {{ allBooks}} чел.</div>
-            <div>Оплатило: {{ payedBooks }} чел.</div>
-            <div v-for="price in priceList">{{ price }} купило {{ x }}</div>
-        </a-card>
+            <a-card style="height: 100%;">
+                <div>Максимум: {{ trip.maxPeople }} чел.</div>
+                <div>Забронировало: {{ allBooks }} чел.</div>
+                <div>Оплатило: {{ payedBooks }} чел.</div>
+                <div v-for="price in priceList">{{ price.price }} руб. купило {{ price.count }}</div>
+            </a-card>
         </a-col>
         <a-col :lg="8" :sm="12" :xs="24" v-for="(BILL, index) of trip.billsList">
 
             <div>
-                <a-card hoverable v-if="customers[index]" class="card">
+                <a-card hoverable v-if="BILL.userInfo" class="card">
                     <div>
-                        <span class="mdi mdi-account-outline" style=""></span> {{ customers[index].fullname }}
+                        <span class="mdi mdi-account-outline"></span> {{ BILL.userInfo.fullinfo?.fullname }}
                     </div>
                     <div>
-                        <span class="mdi mdi-phone-outline" style=""></span>
-                        <a :href='getPhoneNumber(customers[index].phone)'> {{ customers[index].phone
+                        <span class="mdi mdi-phone-outline"></span>
+                        <a :href='getPhoneNumber(BILL.userInfo.fullinfo?.phone)'> {{ BILL.userInfo.fullinfo?.phone
                         }}</a>
-
                     </div>
                     <div v-for="cartItem of BILL.cart">
                         {{ cartItem.costType }} {{ cartItem.count }} x {{ cartItem.cost }} руб.

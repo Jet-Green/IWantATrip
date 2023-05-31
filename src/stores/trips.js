@@ -90,9 +90,19 @@ export const useTrips = defineStore('trips', {
                 console.log(error);
             }
         },
+        // когда открываем Созданные туры
+        // Получает все туры, созданные пользователем
         async getCreatedTripsInfoByUserId(_id) {
             try {
                 return await TripService.getCreatedTripsInfoByUserId(_id)
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        // когда переходим на страницу с покупателями туры
+        async getFullTripById(_id) {
+            try {
+                return await TripService.getFullTripById(_id)
             } catch (error) {
                 console.log(error);
             }

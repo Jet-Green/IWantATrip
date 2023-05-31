@@ -60,6 +60,8 @@ export default {
     },
     getCreatedTripsInfoByUserId(_id) {
         return $api.get(`/trips/created-trips-info?_id=${_id}`)
+    },
+    getFullTripById(_id) {
+        return $api.get(`/trips/get-full-trip?_id=${_id}`)
     }
-
 }
