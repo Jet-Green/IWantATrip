@@ -28,10 +28,9 @@ onMounted(async () => {
         let { data } = await tripStore.getCustomers(customersIds);
         customers.value = data;
     }
-    // console.table(trip.value.billsList);
+
     for (let book of trip.value.billsList) {
         // if (book.isBoughtNow == true)
-        console.log(trip)
         for (let cart of book.cart) {
             let obj = {};
             if (!pricesSet.has(cart.costType)) {
@@ -48,22 +47,22 @@ onMounted(async () => {
             }
         }
     }
-    for (let Iter of pricesSet) {
+    for (let pr of pricesSet) {
 
         let x =
-            payedBooks.value[Iter].reduce(
+            payedBooks.value[pr].reduce(
                 (a, c) => a + c,
                 0
             )
             ;
-        payedBooks.value[Iter] = x
+        payedBooks.value[pr] = x
         let y =
-            allBooks.value[Iter].reduce(
+            allBooks.value[pr].reduce(
                 (a, c) => a + c,
                 0
             )
             ;
-        allBooks.value[Iter] = y
+        allBooks.value[pr] = y
     }
 
 });
