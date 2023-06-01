@@ -50,7 +50,7 @@ let possibleLocations = ref([])
 function selectStartLocation(selected) {
   for (let l of possibleLocations.value) {
     if (l.value == selected) {
-      formState.userLocation = l.geo
+      formState.userLocation = l.location
     }
   }
 }
@@ -81,21 +81,24 @@ watch(locationSearchRequest, async (newValue, oldValue) => {
       for (let s of suggestions) {
         let location = {
           value: s.value,
-          geo: {
+          location: {
             name: s.value,
             shortName: '',
-            geo_lat: s.data.geo_lat,
-            geo_lon: s.data.geo_lon
+            type: 'Point',
+            coordinates: [
+              s.data.geo_lon,
+              s.data.geo_lat
+            ]
           }
         }
 
         if (s.data.settlement) {
-          location.geo.shortName = s.data.settlement
+          location.location.shortName = s.data.settlement
         }
         else if (s.data.city) {
-          location.geo.shortName = s.data.city
+          location.location.shortName = s.data.city
         } else {
-          location.geo.shortName = s.value
+          location.location.shortName = s.value
         }
 
         possibleLocations.value.push(location)
@@ -117,9 +120,9 @@ const formSchema = yup.object({
 <template>
   <div>
     <BackButton />
-      <img v-if="!sm" src="../assets/images/auth_left.png" style="position: fixed; left: 0px; bottom: 0px;  width: 20%;" />
+    <img v-if="!sm" src="../assets/images/auth_left.png" style="position: fixed; left: 0px; bottom: 0px;  width: 20%;" />
 
-      <img v-if="!sm" src="../assets/images/auth_right.png" style="position: fixed; right: 0px; bottom: 0px; width: 20% " />  
+    <img v-if="!sm" src="../assets/images/auth_right.png" style="position: fixed; right: 0px; bottom: 0px; width: 20% " />
     <a-row type="flex" justify="center">
       <a-col :span="24" :md="8" class="pa-16">
         <h2>Регистрация</h2>
