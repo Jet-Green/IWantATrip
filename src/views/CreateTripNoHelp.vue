@@ -196,8 +196,9 @@ function updateUserInfo(info) {
 }
 function selectStartLocation(selected) {
   for (let l of possibleLocations.value) {
+    // l.value - name
     if (l.value == selected) {
-      form.startLocation = l.geo
+      form.startLocation = l.location
     }
   }
 }
@@ -228,21 +229,24 @@ watch(locationSearchRequest, async (newValue, oldValue) => {
       for (let s of suggestions) {
         let location = {
           value: s.value,
-          geo: {
+          location: {
             name: s.value,
             shortName: '',
-            geo_lat: s.data.geo_lat,
-            geo_lon: s.data.geo_lon
+            type: 'Point',
+            coordinates: [
+              s.data.geo_lon,
+              s.data.geo_lat
+            ]
           }
         }
 
         if (s.data.settlement) {
-          location.geo.shortName = s.data.settlement
+          location.location.shortName = s.data.settlement
         }
         else if (s.data.city) {
-          location.geo.shortName = s.data.city
+          location.location.shortName = s.data.city
         } else {
-          location.geo.shortName = s.value
+          location.location.shortName = s.value
         }
 
         possibleLocations.value.push(location)
@@ -364,7 +368,7 @@ let formSchema = yup.object({
                 <img v-for="(pr, i) in  previews " :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px" @click="delPhotoDialog = true;
                 targetIndex = i;" />
               </div>
-              <a-button type="dashed" block @click=" visibleCropperModal = true" class="ma-8">
+              <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
                 Добавить фото
               </a-button>
@@ -415,7 +419,7 @@ let formSchema = yup.object({
                 <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0" :step="0.01"
                   class="ml-16 mr-16" />
 
-                <a-button @click=" removeCost(item)" shape="circle">
+                <a-button @click="removeCost(item)" shape="circle">
                   <span class="mdi mdi-minus" style="cursor: pointer"></span>
                 </a-button>
               </div>
@@ -498,17 +502,17 @@ let formSchema = yup.object({
                 [{ color: ['#000000', '#ff6600', '#3daff5'] }],
                 [{ align: [] }],
               ]
-                " />
+              " />
             </a-col>
             <!-- <a-col :span=" 24 ">
-              :file-list="fileList"
-              <a-upload action="" :multiple=" true ">
-                <a-button type="dashed" block>
-                  <span class="mdi mdi-12px mdi-plus"></span>
-                  Загрузить pdf описание
-                </a-button>
-              </a-upload>
-            </a-col> -->
+                                      :file-list="fileList"
+                                      <a-upload action="" :multiple=" true ">
+                                        <a-button type="dashed" block>
+                                          <span class="mdi mdi-12px mdi-plus"></span>
+                                          Загрузить pdf описание
+                                        </a-button>
+                                      </a-upload>
+                                    </a-col> -->
             <a-col :span="24" class="d-flex justify-center">
               <a-button :disabled="!meta.valid" class="lets_go_btn mt-8" type="primary" size="large"
                 html-type="submit">Отправить
