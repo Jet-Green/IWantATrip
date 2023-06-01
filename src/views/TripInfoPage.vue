@@ -142,13 +142,6 @@ async function buyTrip(isBoughtNow) {
   //тут обновить полную информацию о юзере
 }
 
-onMounted(() => {
-  if (userStore.user) {
-    userInfo.fullname = userStore.user.fullinfo.fullname;
-    userInfo.phone = userStore.user.fullinfo.phone;
-  }
-});
-
 </script>
 <template>
   <div style="overflow-x: hidden">
