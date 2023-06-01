@@ -9,8 +9,7 @@ const route = useRoute();
 import { assert } from "@vueuse/core";
 
 const tripStore = useTrips();
-let route = useRoute();
-const router = useRouter();
+
 let customers = ref([]);
 const allBooks = ref({});
 const payedBooks = ref({});
