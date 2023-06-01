@@ -33,6 +33,7 @@ const ageString = (age) => {
   }
   return `${age} лет`;
 }; // это гениально
+
 </script>
 <template>
   <div>
@@ -63,6 +64,10 @@ const ageString = (age) => {
               <div>
                 <span class="mdi mdi-human-male-female"></span>{{ companion.name }} <span
                   class="mdi mdi-human-cane"></span>{{ ageString(companion.age) }}
+              </div>
+
+              <div>
+                <span class="mdi mdi-map-marker-outline"></span>{{ companion.startLocation.shortName}}
               </div>
 
               <div>

@@ -20,6 +20,8 @@ const userStore = useAuth();
 const ruLocale = locale;
 const backRoute = "/companions";
 let date = ref(null)
+let locationSearchRequest = ref("")
+let possibleLocations = ref([])
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YYYY"];
 const form = reactive({
   name: "",
@@ -34,6 +36,7 @@ const form = reactive({
   type: "Любой",
   direction: "",
   description: "",
+  startLocation: null,
 });
 
 
@@ -65,7 +68,7 @@ function submit() {
             // type: "Любой",
             direction: "",
             description: "",
-
+            startLocation: "",
           });
           date.value = null
 
@@ -85,7 +88,68 @@ watch(date, () => {
   }
 
 });
+watch(locationSearchRequest, async (newValue, oldValue) => {
+  if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
+    var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
 
+    var options = {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": "Token " + import.meta.env.VITE_DADATA_TOKEN
+      },
+      body: JSON.stringify({
+        query: newValue,
+        count: 5,
+        "from_bound": { "value": "city" },
+        "to_bound": { "value": "settlement" }
+      })
+    }
+
+    let res = await fetch(url, options)
+    try {
+      let suggestions = JSON.parse(await res.text()).suggestions
+      possibleLocations.value = []
+      for (let s of suggestions) {
+        let location = {
+          value: s.value,
+          location: {
+            name: s.value,
+            shortName: '',
+            type: 'Point',
+            coordinates: [
+              s.data.geo_lon,
+              s.data.geo_lat
+            ]
+          }
+        }
+
+        if (s.data.settlement) {
+          location.location.shortName = s.data.settlement
+        }
+        else if (s.data.city) {
+          location.location.shortName = s.data.city
+        } else {
+          location.location.shortName = s.value
+        }
+
+        possibleLocations.value.push(location)
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+})
+function selectStartLocation(selected) {
+  for (let l of possibleLocations.value) {
+    // l.value - name
+    if (l.value == selected) {
+      form.startLocation = l.location
+    }
+  }
+}
 
 const formSchema = yup.object({
   age: yup.string().required("заполните поле"),
@@ -100,6 +164,7 @@ const formSchema = yup.object({
   // type: yup.string().required("заполните поле"),
   direction: yup.string().required("заполните поле"),
   description: yup.string().required("заполните поле"),
+  startLocation: yup.string().required("заполните поле"),
 })
 </script>
 <template>
@@ -201,6 +266,18 @@ const formSchema = yup.object({
                                                                               :format="dateFormatList" /> 
                                                                       -->
             </a-col>
+            <a-col :xs="24">
+              <Field name="startLocation" v-slot="{ value, handleChange }" v-model="locationSearchRequest">
+                Место старта
+                <a-auto-complete :value="value" @update:value="handleChange" style="width: 100%"
+                  :options="possibleLocations" placeholder="Глазов" @select="selectStartLocation">
+                </a-auto-complete>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="startLocation" class="error-message" />
+              </Transition>
+            </a-col>
+
             <a-col :xs="24">
               <!-- Тип отдыха <a-select v-model:value="form.type" style="width: 100%" :options="typeOfTrip" mode="multiple"></a-select> -->
               <Field name="direction" v-slot="{ value, handleChange }" v-model="form.direction">

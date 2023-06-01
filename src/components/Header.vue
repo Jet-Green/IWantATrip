@@ -46,6 +46,7 @@ const handleChange = async (value) => {
     for (let loc of appLocations.locations) {
       if (loc.shortName == value) {
         appLocations.location = loc
+        console.log(appLocations.location)
         // start pagiantion again to update location
         tripStore.searchCursor = 0
         tripStore.filteredTrips = []
