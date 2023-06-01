@@ -18,7 +18,7 @@ const _id = route.query.id;
 let trip = ref({});
 
 onMounted(async () => {
-  let { data } = await tripStore.getById(_id);
+  let { data } = await tripStore.getFullTripById(route.query._id)
   trip.value = data;
 
   let customersIds = [];
@@ -32,7 +32,7 @@ onMounted(async () => {
   // console.table(trip.value.billsList);
   for (let book of trip.value.billsList) {
     // if (book.isBoughtNow == true)
-    
+    console.log(trip)
     for (let cart of book.cart) {
       let obj = {};
       if (!pricesSet.has(cart.costType)) {
