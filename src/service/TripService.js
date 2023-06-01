@@ -44,6 +44,9 @@ export default {
     async clearTripsDB() {
         return $api.get('/trips/clear')
     },
+    getUserTrips(ids) {
+        return $api.post(`/trips/get-user-trips`, ids)
+    },
 
 
     findForModeration() {
@@ -54,6 +57,11 @@ export default {
     },
     sendModerationMessage(trip_id, msg) {
         return $api.post(`/admin/send-moderation-message?tripId=${trip_id}`, { msg })
+    },
+    getCreatedTripsInfoByUserId(_id) {
+        return $api.get(`/trips/created-trips-info?_id=${_id}`)
+    },
+    getFullTripById(_id) {
+        return $api.get(`/trips/get-full-trip?_id=${_id}`)
     }
-
 }

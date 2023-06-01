@@ -140,7 +140,7 @@ onMounted(() => {
     userInfo.phone = userStore.user.fullinfo.phone;
   }
 });
-console.table(trip)
+
 </script>
 <template>
   <div style="overflow-x: hidden">

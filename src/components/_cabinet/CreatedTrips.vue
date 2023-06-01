@@ -1,65 +1,57 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import CabinetTrip from "../cards/CabinetTrip.vue";
-import TripService from "../../service/TripService";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { useAuth } from "../../stores/auth.js";
 import { useTrips } from "../../stores/trips.js";
 
 let userStore = useAuth();
+let tripStore = useTrips();
 let router = useRouter();
 
 let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
 
-let tripStore = useTrips();
 let trips = ref([]);
 let tripsOnModeration = ref([])
 let archiveTrips = ref([])
+let loading = ref(true)
 
-let tripsIds = computed(() => userStore.user.trips);
-
+// let tripsIds = computed(() => userStore.user.trips);
 function getPhoneNumber(number) {
   return `tel:${number}`
 }
 
+
 onMounted(async () => {
-  for (let _id of tripsIds.value) {
-    let res = await tripStore.getById(_id);
+  loading.value = true
+  let userId = userStore.user._id
+  let response = await tripStore.getCreatedTripsInfoByUserId(userId)
+  let created = response.data
+  loading.value = false
 
-    if (res.data) {
-      let billsListFromDB = res.data.billsList
-
-      let customersIds = []
-      for (let bill of billsListFromDB) {
-        customersIds.push(bill.userId)
-      }
-
-      if (customersIds.length) {
-        let { data } = await tripStore.getCustomers(customersIds)
-        res.data.customers = data
-      }
-
-      // { start: { $gt: Date.now() } }
-      if (res.data.start < Date.now()) {
-        archiveTrips.value.push(res.data)
-        continue
-      }
-      if (res.data.isModerated) {
-        trips.value.push(res.data);
-      } else {
-        tripsOnModeration.value.push(res.data)
-      }
+  for (let trip of created) {
+    // { start: { $gt: Date.now() } }
+    if (trip.start < Date.now()) {
+      archiveTrips.value.push(trip)
+      continue
+    }
+    if (trip.isModerated) {
+      trips.value.push(trip);
+    } else {
+      tripsOnModeration.value.push(trip)
     }
   }
-
 });
 let activeKey = ref(2)
 </script>
 <template>
   <a-row>
-    <a-col :span="24">
+    <a-col :span="24" v-if="loading" class="d-flex justify-center">
+      <a-spin size="large" />
+    </a-col>
+    <a-col :span="24" v-else>
       <a-collapse v-model:activeKey="activeKey" ghost>
         <a-collapse-panel v-if="tripsOnModeration.length" key="1" header="На модерации">
           <a-row :gutter="[8, 8]" class="mt-8" v-if="tripsOnModeration.length > 0">

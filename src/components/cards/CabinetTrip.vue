@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from "vue-router";
+import TripService from "../../service/TripService";
 
 let props = defineProps(['trip', 'actions'])
 let { actions, trip } = props
@@ -30,12 +31,8 @@ function copyTrip(_id) {
     router.push(`/create-no-help?_id=${_id}`);
 }
 async function hideTrip(_id) {
-    for (let t of trips.value) {
-        if (t._id == _id) {
-            t.isHidden = !t.isHidden;
-            TripService.hideTrip(_id, t.isHidden);
-        }
-    }
+    trip.isHidden = !trip.isHidden;
+    TripService.hideTrip(_id, trip.isHidden);
 }
 function goToTripPage(_id) {
     router.push(`/trip?_id=${_id}`);
@@ -45,17 +42,13 @@ async function tripToDelete(_id) {
     let { status } = response
 
     if (status != "400") {
-        for (let i = 0; i < trips.value.length; i++) {
-            if (trips.value[i]._id == _id) {
-                trips.value.splice(i, 1);
-            }
-        }
+        trip = {}
     }
 }
 let showMessage = ref(false);
 </script>
 <template>
-    <a-card class="card " hoverable :class="[trip.isHidden ? 'overlay' : '']">
+    <a-card class="card " hoverable :class="[trip.isHidden ? 'overlay' : '']" v-if="trip._id">
         <div style="text-align:center">
             {{ trip.name }}
         </div>
@@ -72,7 +65,7 @@ let showMessage = ref(false);
 
         <div class="actions d-flex justify-center">
             <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="tripToDelete(trip._id)"
-                v-if="(!trip.billsList.length > 0) && actions.includes('delete')">
+                v-if="(!trip.billsList?.length > 0) && actions.includes('delete')">
                 <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
             </a-popconfirm>
             <a-popconfirm v-if="actions.includes('edit')" title="Вы уверены?" ok-text="Да" cancel-text="Нет"
@@ -89,7 +82,7 @@ let showMessage = ref(false);
                 <span class="mdi mdi-content-copy" style="color: #245159; cursor: pointer"></span>
             </a-popconfirm>
             <span class="mdi mdi-information-outline"
-                @click="router.push({ path: 'customers-trip', query: { id: trip._id } })"
+                @click="router.push({ path: 'customers-trip', query: { _id: trip._id } })"
                 v-if="actions.includes('info')"></span>
             <span class="mdi mdi-email-outline" v-if="trip.moderationMessage && actions.includes('msg')"
                 @click="showMessage = !showMessage"></span>

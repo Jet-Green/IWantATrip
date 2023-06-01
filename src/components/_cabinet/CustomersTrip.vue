@@ -3,6 +3,9 @@ import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 import { useTrips } from "../../stores/trips";
 import { useRouter } from "vue-router";
+
+const router = useRouter();
+const route = useRoute();
 import { assert } from "@vueuse/core";
 
 const tripStore = useTrips();
