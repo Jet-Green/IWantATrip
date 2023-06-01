@@ -27,8 +27,9 @@ export const useTrips = defineStore('trips', {
 
                     let locationStore = useLocations()
                     let response;
+
                     if (locationStore.location?.name) {
-                        response = await TripService.fetchTrips(this.cursor, locationStore.location.geo_lat, locationStore.location.geo_lon);
+                        response = await TripService.fetchTrips(this.cursor, ...locationStore.location.coordinates);
                     } else {
                         response = await TripService.fetchTrips(this.cursor, '', '');
                     }
