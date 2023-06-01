@@ -10,6 +10,7 @@ import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 // import typeOfTrip from "../fakeDB/tripType";
 import { message } from "ant-design-vue";
 import { useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { useAuth } from "../stores/auth";
 import { useTrips } from "../stores/trips";
 import { useAppState } from "../stores/appState";
@@ -39,6 +40,7 @@ const baseTimeStart = dayjs(1679492631000);
 const baseTimeEnd = dayjs(1679492631000);
 const baseTimePeriod = dayjs(1679492631000);
 const router = useRouter();
+const route = useRoute();
 var creatorId = ref()
 let possibleLocations = ref([])
 // cropper
@@ -182,6 +184,13 @@ function submit() {
   });
 
 }
+onMounted(async () => {
+   tripId = route.query.id
+   if (tripId !== 0){
+      let trip = tripStore.getById(tripId)
+      console.log(trip)
+   }
+});
 
 function addPreview(blob) {
   // imagesFormData.append("image", blob, `product-${previews.value.length}`);
