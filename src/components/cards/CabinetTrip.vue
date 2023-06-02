@@ -30,7 +30,7 @@ function editTrip(_id) {
 }
 
 function copyTrip(_id) {
-    router.push(`/create-no-help?_id=${_id}`);
+    router.push({name:`CreateTripNoHelp`, query: { id: _id }});
 }
 async function hideTrip(_id) {
     trip.isHidden = !trip.isHidden;
