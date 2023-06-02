@@ -40,6 +40,8 @@ const baseTimeStart = dayjs(1679492631000);
 const baseTimeEnd = dayjs(1679492631000);
 const baseTimePeriod = dayjs(1679492631000);
 const router = useRouter();
+const route = useRoute();
+
 var creatorForm = ref()
 let possibleLocations = ref([])
 // cropper
@@ -291,10 +293,25 @@ watch(end, () => {
   }
   form.end = Date.parse(end.value.$d.toString());
 });
+const clearData = (dataString) => {
+  let date
+  if (dataString.length == 13) {
+    const dataFromString = new Date(Number(dataString));
+    date = dataFromString
+
+  } else {
+    date = new Date(dataString)
+  };
+  return date.toLocaleDateString("ru-Ru", {
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit",
+
+  })
+}
 onMounted(() => {
-  console.log(router.currentRoute.value.query._id);
-  if (router.currentRoute.value.query._id) {
-    tripStore.getById(router.currentRoute.value.query._id).then((response) => {
+  if (route.query.id) {
+    tripStore.getById(route.query.id).then((response) => {
       let d = response.data;
 
       delete d.__v;
