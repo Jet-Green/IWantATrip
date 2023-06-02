@@ -40,7 +40,7 @@ const baseTimeStart = dayjs(1679492631000);
 const baseTimeEnd = dayjs(1679492631000);
 const baseTimePeriod = dayjs(1679492631000);
 const router = useRouter();
-
+var creatorForm = ref()
 let possibleLocations = ref([])
 // cropper
 let visibleCropperModal = ref(false);
@@ -292,6 +292,7 @@ watch(end, () => {
   form.end = Date.parse(end.value.$d.toString());
 });
 onMounted(() => {
+  console.log(router.currentRoute.value.query._id);
   if (router.currentRoute.value.query._id) {
     tripStore.getById(router.currentRoute.value.query._id).then((response) => {
       let d = response.data;
