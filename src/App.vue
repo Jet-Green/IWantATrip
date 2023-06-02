@@ -27,7 +27,7 @@ onMounted(async () => {
   await locationStore.fetchLocations()
 
   await useTrips().fetchTrips()
-  // await useCompanions().fetchCompanions()
+  await useCompanions().fetchCompanions()
 
 
   function notify() {
