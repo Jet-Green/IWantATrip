@@ -35,10 +35,10 @@ function toComponentFromMenu(routName) {
 const handleChange = async (value) => {
   if (value == 'Не выбрано') {
     await locationStore.resetLocation()
-    // tripStore.searchCursor = 0
-    // tripStore.filteredTrips = []
-    // tripStore.cursor = 0
-    // tripStore.trips = []
+    tripStore.searchCursor = 1
+    tripStore.filteredTrips = []
+    tripStore.cursor = 1
+    tripStore.trips = []
 
     await tripStore.fetchTrips()
   }
@@ -46,10 +46,10 @@ const handleChange = async (value) => {
     for (let loc of locationStore.locations) {
       if (loc.shortName == value) {
         // start pagiantion again to update location
-        // tripStore.searchCursor = 0
-        // tripStore.filteredTrips = []
-        // tripStore.cursor = 0
-        // tripStore.trips = []
+        tripStore.searchCursor = 1
+        tripStore.filteredTrips = []
+        tripStore.cursor = 1
+        tripStore.trips = []
 
         await locationStore.setLocation(loc)
         await tripStore.fetchTrips()
