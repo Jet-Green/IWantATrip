@@ -21,7 +21,7 @@ let router = useRouter();
 let visibleDrawer = ref(false);
 let selectLocationDialog = ref(false)
 
-let locationSearchRequest = ref('Не выбрано')
+let locationSearchRequest = ref()
 
 
 function toComponentFromMenu(routName) {
@@ -35,24 +35,26 @@ function toComponentFromMenu(routName) {
 const handleChange = async (value) => {
   if (value == 'Не выбрано') {
     await locationStore.resetLocation()
-    // tripStore.searchCursor = 0
-    // tripStore.filteredTrips = []
-    // tripStore.cursor = 0
-    // tripStore.trips = []
+    tripStore.searchCursor = 1
+    tripStore.filteredTrips = []
+    tripStore.cursor = 1
+    tripStore.trips = []
 
     await tripStore.fetchTrips()
+    selectLocationDialog.value = false
   }
   else {
     for (let loc of locationStore.locations) {
       if (loc.shortName == value) {
         // start pagiantion again to update location
-        // tripStore.searchCursor = 0
-        // tripStore.filteredTrips = []
-        // tripStore.cursor = 0
-        // tripStore.trips = []
+        tripStore.searchCursor = 1
+        tripStore.filteredTrips = []
+        tripStore.cursor = 1
+        tripStore.trips = []
 
         await locationStore.setLocation(loc)
         await tripStore.fetchTrips()
+        selectLocationDialog.value = false
         break
       }
     }
