@@ -16,6 +16,14 @@ const tripStore = useTrips();
 const userStore = useAuth();
 const backRoute = "/trips";
 
+const creatorsType = computed(() => {
+  return trip.value.creatorForm[1] == "author"
+    ? "автор тура"
+    : trip.value.creatorForm[1] == "operator"
+    ? "туроператор"
+    : "турагенство";
+});
+
 let selectedByUser = ref([]);
 let trip = ref({});
 let userInfo = reactive({
@@ -134,13 +142,6 @@ async function buyTrip(isBoughtNow) {
   //тут обновить полную информацию о юзере
 }
 
-onMounted(() => {
-  if (userStore.user) {
-    userInfo.fullname = userStore.user.fullinfo.fullname;
-    userInfo.phone = userStore.user.fullinfo.phone;
-  }
-});
-
 </script>
 <template>
   <div style="overflow-x: hidden">
@@ -177,7 +178,7 @@ onMounted(() => {
             </a-carousel>
           </a-col>
           <a-col :xs="24" :md="12" class="pa-8">
-          <p>Автор тура: {{ trip.creatorId }}</p>
+          <p>Автор тура: {{ trip.creatorForm[0] }} ({{ creatorsType }})</p>
             <p>{{ trip.offer }}</p>
             <div>
               Продолжительность: <b>{{ trip.duration }} дн.</b>

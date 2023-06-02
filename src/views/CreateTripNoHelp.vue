@@ -66,7 +66,7 @@ let form = reactive({
   description: description.value,
   tripType: "",
   fromAge: "",
-  creatorId: "",
+  creatorForm: [],
   startLocation: null,
 });
 let fullUserInfo = null;
@@ -95,7 +95,7 @@ const delPhoto = () => {
 function submit() {
   description.value = description.value.split("<p><br></p>").join("");
   form.description = description.value;
-  form.creatorId = creatorId;
+  form.creatorForm = creatorForm;
   let send = {};
   for (let key in form) {
     send[key] = form[key];
@@ -120,7 +120,7 @@ function submit() {
       description: description.value,
       tripType: "",
       fromAge: "",
-      creatorId: "",
+      creatorForm: [],
       startLocation: "",
     });
     images = [];
@@ -200,7 +200,8 @@ function addPreview(blob) {
 }
 function updateUserInfo(info) {
   fullUserInfo = info;
-  creatorId = fullUserInfo.fullname
+  creatorForm=[fullUserInfo.fullname,fullUserInfo.creatorsType,fullUserInfo.type]
+  console.log(creatorForm)
 }
 function selectStartLocation(selected) {
   for (let l of possibleLocations.value) {
@@ -322,7 +323,7 @@ onMounted(() => {
       form.fromAge = d.fromAge;
       form.tripRoute = d.tripRoute;
       form.offer = d.offer;
-      form.creatorId = d.creatorId;
+      form.creatorForm = d.creatorForm;
       start.value = dayjs(new Date(d.start));
       end.value = dayjs(new Date(d.end));
       form.startLocation = d.startLocation;
@@ -474,10 +475,6 @@ let formSchema = yup.object({
               <Transition name="fade">
                 <ErrorMessage name="startLocation" class="error-message" />
               </Transition>
-
-
-
-
             </a-col>
 
 

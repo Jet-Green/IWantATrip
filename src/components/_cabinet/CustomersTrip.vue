@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useTrips } from "../../stores/trips";
 import { useRouter } from "vue-router";
@@ -9,42 +9,66 @@ const route = useRoute();
 
 const tripStore = useTrips();
 
-const priceList = ref([])
-const allBooks = ref(0)
-const payedBooks = ref(0)
-
+let customers = ref([]);
+const allBooks = ref({});
+const payedBooks = ref({});
+const pricesSet = new Set();
+const _id = route.query.id;
 let trip = ref({});
 
 onMounted(async () => {
-    // get trip
     let { data } = await tripStore.getFullTripById(route.query._id)
-    trip.value = data
+    trip.value = data;
 
-    for (let price of trip.value.cost) {
-        priceList.value.push({
-            price: Number(price.price),
-            count: 0
-        })
+    let customersIds = [];
+    for (let bill of trip.value.billsList) {
+        customersIds.push(bill.userId);
+    }
+    if (customersIds.length) {
+        let { data } = await tripStore.getCustomers(customersIds);
+        customers.value = data;
     }
 
-    // extract data
-    for (let bill of trip.value.billsList) {
-        // make priceList
-        for (let cartItem of bill.cart) {
-            for (let price of priceList.value) {
-                price.count += cartItem.count
+    for (let book of trip.value.billsList) {
+        // if (book.isBoughtNow == true)
+        for (let cart of book.cart) {
+            let obj = {};
+            if (!pricesSet.has(cart.costType)) {
+                allBooks.value[cart.costType] = []
+                payedBooks.value[cart.costType] = []
+                pricesSet.add(cart.costType);
             }
-            // payedBooks.value
-            if (bill.isBoughtNow) {
-                payedBooks.value += cartItem.count
+            obj = cart.count;
+            if (book.isBoughtNow == true) {
+                allBooks.value[cart.costType].push(obj);
+                payedBooks.value[cart.costType].push(obj);
+            } else {
+                allBooks.value[cart.costType].push(obj);;
             }
-            allBooks.value += cartItem.count
         }
     }
+    for (let pr of pricesSet) {
+
+        let x =
+            payedBooks.value[pr].reduce(
+                (a, c) => a + c,
+                0
+            )
+            ;
+        payedBooks.value[pr] = x
+        let y =
+            allBooks.value[pr].reduce(
+                (a, c) => a + c,
+                0
+            )
+            ;
+        allBooks.value[pr] = y
+    }
+
 });
 
 function getPhoneNumber(number) {
-    return `tel:${number}`
+    return `tel:${number}`;
 }
 </script>
 
@@ -52,49 +76,57 @@ function getPhoneNumber(number) {
     <a-col :span="24" class="mb-8">
         <h3>Информация о туре</h3>
         <a-breadcrumb>
-            <a-breadcrumb-item @click="router.push('/cabinet/created-trips')">{{ trip.name }}</a-breadcrumb-item>
+            <a-breadcrumb-item @click="router.push('/cabinet/created-trips')">{{
+                trip.name
+            }}</a-breadcrumb-item>
             <a-breadcrumb-item>Покупатели</a-breadcrumb-item>
         </a-breadcrumb>
     </a-col>
 
     <a-row :gutter="[8, 8]">
         <a-col :lg="8" :sm="12" :xs="24">
-            <a-card style="height: 100%;">
+            <a-card style="height: 100%">
                 <div>Максимум: {{ trip.maxPeople }} чел.</div>
-                <div>Забронировало: {{ allBooks }} чел.</div>
-                <div>Оплатило: {{ payedBooks }} чел.</div>
-                <div v-for="price in priceList">{{ price.price }} руб. купило {{ price.count }}</div>
+                <div>Забронировало:</div>
+                <div v-for="(value, key) in allBooks">По цене {{ key }} - {{ value }} чел.</div>
+                <div>Оплатило:</div>
+                <div v-for="(value, key) in payedBooks">По цене {{ key }} - {{ value }} чел.</div>
             </a-card>
         </a-col>
         <a-col :lg="8" :sm="12" :xs="24" v-for="(BILL, index) of trip.billsList">
-
             <div>
-                <a-card hoverable v-if="BILL.userInfo" class="card">
+                <a-card hoverable v-if="customers[index]" class="card">
                     <div>
-                        <span class="mdi mdi-account-outline"></span> {{ BILL.userInfo.fullinfo?.fullname }}
+                        <span class="mdi mdi-account-outline" style=""></span>
+                        {{ customers[index].fullname }}
                     </div>
                     <div>
-                        <span class="mdi mdi-phone-outline"></span>
-                        <a :href='getPhoneNumber(BILL.userInfo.fullinfo?.phone)'> {{ BILL.userInfo.fullinfo?.phone
-                        }}</a>
+                        <span class="mdi mdi-phone-outline" style=""></span>
+                        <a :href="getPhoneNumber(customers[index].phone)">
+                            {{ customers[index].phone }}</a>
                     </div>
                     <div v-for="cartItem of BILL.cart">
                         {{ cartItem.costType }} {{ cartItem.count }} x {{ cartItem.cost }} руб.
                     </div>
 
-                    <div class="d-flex justify-end"> <span>Итого: </span> {{ BILL.cart.reduce((accumulator, object) => {
-                        return accumulator + object.cost * object.count;
-                    }, 0) }} руб.
+                    <div class="d-flex justify-end">
+                        <span>Итого: </span>
+                        {{
+                            BILL.cart.reduce((accumulator, object) => {
+                                return accumulator + object.cost * object.count;
+                            }, 0)
+                        }}
+                        руб.
                     </div>
 
                     <div class="d-flex justify-end">
                         <b>
-                            <span v-if="BILL.isBoughtNow" style="color: #BCC662">
-                                <span class="mdi mdi-check-all" style="font-size: 20px;"></span>
+                            <span v-if="BILL.isBoughtNow" style="color: #bcc662">
+                                <span class="mdi mdi-check-all" style="font-size: 20px"></span>
                                 оплачен
                             </span>
-                            <span v-else style="display: flex; align-items: center;">
-                                <span class="mdi mdi-close" style="font-size: 20px;"></span>
+                            <span v-else style="display: flex; align-items: center">
+                                <span class="mdi mdi-close" style="font-size: 20px"></span>
                                 не оплачен
                             </span>
                         </b>

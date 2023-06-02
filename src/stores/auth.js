@@ -64,12 +64,9 @@ export const useAuth = defineStore('auth', {
 
                 this.isAuth = true
                 this.user = response.data.user
-                return { success: true };
+                return response
             } catch (err) {
-                return {
-                    success: false,
-                    message: err.response?.data?.message
-                }
+                return err
             }
         },
         async login(email, password) {
@@ -115,7 +112,14 @@ export const useAuth = defineStore('auth', {
         async searchLocation(searchReq) {
             return await LocationService.searchLocation(searchReq)
         },
+        /*  location:
+            _id
+            name
+            shortName 
+            coordinates
+        */
         async selectUserLocation(location) {
+            this.user.userLocation = location
             return await LocationService.selectUserLocation(location, this.user._id)
         }
     },
