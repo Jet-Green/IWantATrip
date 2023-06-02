@@ -21,7 +21,7 @@ export const useTrips = defineStore('trips', {
         },
     },
     actions: {
-        async fetchTrips() {
+        async fetchTrips(query, start, end) {
             try {
                 if (this.filteredTrips.length == 0) {
 
@@ -29,9 +29,9 @@ export const useTrips = defineStore('trips', {
                     let response;
 
                     if (locationStore.location?.name) {
-                        response = await TripService.fetchTrips(this.cursor, ...locationStore.location.coordinates);
+                        response = await TripService.fetchTrips(this.cursor, ...locationStore.location.coordinates, query, start, end);
                     } else {
-                        response = await TripService.fetchTrips(this.cursor, '', '');
+                        response = await TripService.fetchTrips(this.cursor, '', '', query, start, end);
                     }
 
                     this.trips.push(...response.data);
