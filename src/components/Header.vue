@@ -11,7 +11,7 @@ import { useTrips } from '../stores/trips';
 // import LogoSvg from "../components/_explanation/LogoSvg.vue";
 
 const userStore = useAuth();
-const appLocations = useLocations();
+const locationStore = useLocations();
 
 const tripStore = useTrips()
 
@@ -34,33 +34,30 @@ function toComponentFromMenu(routName) {
 
 const handleChange = async (value) => {
   if (value == 'Не выбрано') {
-    appLocations.location = {}
-    tripStore.searchCursor = 0
-    tripStore.filteredTrips = []
-    tripStore.cursor = 0
-    tripStore.trips = []
+    await locationStore.resetLocation()
+    // tripStore.searchCursor = 0
+    // tripStore.filteredTrips = []
+    // tripStore.cursor = 0
+    // tripStore.trips = []
 
     await tripStore.fetchTrips()
   }
   else {
-    for (let loc of appLocations.locations) {
+    for (let loc of locationStore.locations) {
       if (loc.shortName == value) {
-        appLocations.location = loc
         // start pagiantion again to update location
-        tripStore.searchCursor = 0
-        tripStore.filteredTrips = []
-        tripStore.cursor = 0
-        tripStore.trips = []
-        localStorage.setItem('location', JSON.stringify(loc));
+        // tripStore.searchCursor = 0
+        // tripStore.filteredTrips = []
+        // tripStore.cursor = 0
+        // tripStore.trips = []
+
+        await locationStore.setLocation(loc)
         await tripStore.fetchTrips()
-        return
+        break
       }
     }
   }
 };
-
-
-
 </script>
 
 <template>
@@ -79,14 +76,14 @@ const handleChange = async (value) => {
             <div @click="selectLocationDialog = !selectLocationDialog" style="cursor: pointer;">
               <span class="mdi mdi-map-marker-outline"></span>
               <span>
-                {{ appLocations.location?.shortName || 'Не выбрано' }}
+                {{ locationStore.location?.shortName || 'Не выбрано' }}
               </span>
             </div>
             <a-modal :mask="false" v-model:visible="selectLocationDialog" title="Местоположение" :footer="null">
 
               <a-select v-model:value="locationSearchRequest" style="width: 100%" @change="handleChange" show-search>
                 <a-select-option value="Не выбрано">Не выбрано</a-select-option>
-                <a-select-option v-for="(location, index) of appLocations.locations" :key="index"
+                <a-select-option v-for="(location, index) of locationStore.locations" :key="index"
                   :value="location.shortName">{{ location.name }}</a-select-option>
               </a-select>
             </a-modal>
