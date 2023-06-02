@@ -40,8 +40,7 @@ const baseTimeStart = dayjs(1679492631000);
 const baseTimeEnd = dayjs(1679492631000);
 const baseTimePeriod = dayjs(1679492631000);
 const router = useRouter();
-const route = useRoute();
-var creatorId = ref()
+
 let possibleLocations = ref([])
 // cropper
 let visibleCropperModal = ref(false);
@@ -184,13 +183,6 @@ function submit() {
   });
 
 }
-onMounted(async () => {
-  if (route.query?.id) {
-    let trip = tripStore.getById(route.query?.id)
-    console.log(trip)
-  }
-});
-
 function addPreview(blob) {
   // imagesFormData.append("image", blob, `product-${previews.value.length}`);
   visibleCropperModal.value = false;
