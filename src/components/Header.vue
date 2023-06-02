@@ -21,7 +21,7 @@ let router = useRouter();
 let visibleDrawer = ref(false);
 let selectLocationDialog = ref(false)
 
-let locationSearchRequest = ref('Не выбрано')
+let locationSearchRequest = ref()
 
 
 function toComponentFromMenu(routName) {
@@ -41,6 +41,7 @@ const handleChange = async (value) => {
     tripStore.trips = []
 
     await tripStore.fetchTrips()
+    selectLocationDialog.value = false
   }
   else {
     for (let loc of locationStore.locations) {
@@ -53,6 +54,7 @@ const handleChange = async (value) => {
 
         await locationStore.setLocation(loc)
         await tripStore.fetchTrips()
+        selectLocationDialog.value = false
         break
       }
     }
