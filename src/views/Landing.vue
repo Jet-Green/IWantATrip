@@ -14,16 +14,14 @@ import Hello from '../components/sections/Hello.vue';
   <div>
     <!-- <MainPageMessage /> -->
     <Explanation />
-    <ButtonsRow/>
+    <ButtonsRow />
     <!-- <Information /> -->
 
     <!-- <CreateTrip /> -->
     <ToTrips />
     <FindTrip />
     <Companions />
-    <CityGuide id="guide" />
+    <!-- <CityGuide id="guide" /> -->
   </div>
 </template>
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>
