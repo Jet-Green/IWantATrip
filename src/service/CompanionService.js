@@ -1,8 +1,8 @@
 import $api from "../plugins/axios";
 
 export default {
-    fetchCompanions() {
-        return $api.get('/companion/get-all')
+    fetchCompanions(lon = '', lat = '') {
+        return $api.get(`/companion/get-all?lon=${lon}&lat=${lat}`)
     },
     searchCompanions(query) {
         return $api.post(`/companion/search`, query)

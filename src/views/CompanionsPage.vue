@@ -37,7 +37,7 @@ const ageString = (age) => {
 <template>
   <div>
     <BackButton />
-     
+
 
     <a-row class="d-flex justify-center">
       <a-col :xs="22" :lg="16">
@@ -58,7 +58,7 @@ const ageString = (age) => {
           </a-col>
         </a-row>
         <a-row :gutter="[8, 8]" class="mt-8">
-          <a-col :lg="8" :sm="12" :xs="24" v-for="(companion, i) in companionStore.filteredСompanions" :key="i">
+          <a-col :lg="8" :sm="12" :xs="24" v-for="(companion, i) in companionStore.companions" :key="i">
             <a-card class="card" hoverable>
               <div>
                 <span class="mdi mdi-human-male-female"></span>{{ companion.name }} <span

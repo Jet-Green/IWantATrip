@@ -6,13 +6,14 @@ import { useAuth } from "../stores/auth";
 import { useLocations } from "../stores/locations";
 
 import { useTrips } from '../stores/trips';
+import { useCompanions } from "../stores/companions";
 
 // import TripCreatorReg from "./forms/TripCreatorReg.vue";
 // import LogoSvg from "../components/_explanation/LogoSvg.vue";
 
 const userStore = useAuth();
 const locationStore = useLocations();
-
+const comanionStore = useCompanions()
 const tripStore = useTrips()
 
 let breakpoints = useBreakpoints(breakpointsTailwind);
@@ -41,6 +42,8 @@ const handleChange = async (value) => {
     tripStore.trips = []
 
     await tripStore.fetchTrips()
+    await comanionStore.fetchCompanions()
+
     selectLocationDialog.value = false
   }
   else {
@@ -54,6 +57,7 @@ const handleChange = async (value) => {
 
         await locationStore.setLocation(loc)
         await tripStore.fetchTrips()
+        await comanionStore.fetchCompanions()
         selectLocationDialog.value = false
         break
       }

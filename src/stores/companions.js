@@ -1,13 +1,14 @@
 import { defineStore } from 'pinia'
 
 import CompanionsService from '../service/CompanionService'
+import { useLocations } from './locations'
 
 export const useCompanions = defineStore('companions', {
     state: () => ({
         companions: [],
         filteredСompanions: [],
         currentCompanion: {},
-       
+
     }),
     getters: {
         getCompanions(state) {
@@ -17,7 +18,14 @@ export const useCompanions = defineStore('companions', {
     actions: {
         async fetchCompanions() {
             try {
-                const response = await CompanionsService.fetchCompanions();
+                let locationStore = useLocations()
+                let response
+                if (locationStore.location?.name) {
+                    response = await CompanionsService.fetchCompanions(...locationStore.location.coordinates);
+                } else {
+                    response = await CompanionsService.fetchCompanions();
+                }
+
                 this.companions = response.data;
             } catch (err) {
                 console.log(err);
