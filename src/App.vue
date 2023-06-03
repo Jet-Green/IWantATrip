@@ -17,6 +17,19 @@ const locationStore = useLocations()
 
 
 onMounted(async () => {
+  await appStateStore.refreshState()
+  if (localStorage.getItem('token')) {
+    await userStore.checkAuth()
+  }
+  // вся логика локации тут
+  await locationStore.setLocation()
+
+  await locationStore.fetchLocations()
+
+  await useTrips().fetchTrips()
+  await useCompanions().fetchCompanions()
+
+
   function notify() {
     let notification = new Notification("Привет", {
       tag: "ache-mail",

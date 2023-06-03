@@ -2,10 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Landing from '../views/Landing.vue'
 import TripsPage from '../views/TripsPage.vue'
 import { useAuth } from '../stores/auth'
-import { useCompanions } from '../stores/companions'
-import { useLocations } from '../stores/locations'
-import { useAppState } from '../stores/appState'
-import { useTrips } from '../stores/trips'
+
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,24 +11,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'Landing',
-      component: Landing,
-      beforeEnter: async (to, from) => {
-        const appStateStore = useAppState()
-        const locationStore = useLocations()
-        const userStore = useAuth()
-
-        await appStateStore.refreshState()
-        if (localStorage.getItem('token')) {
-          await userStore.checkAuth()
-        }
-        // вся логика локации тут
-        await locationStore.setLocation()
-
-        await locationStore.fetchLocations()
-
-        await useTrips().fetchTrips()
-        await useCompanions().fetchCompanions()
-      }
+      component: Landing
     },
     {
       path: '/trips',
