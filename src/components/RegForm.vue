@@ -1,6 +1,7 @@
 <script setup>
 import { reactive, watch, ref } from "vue";
 import { useAuth } from "../stores/auth";
+import { useLocations } from "../stores/locations"
 import { useRouter } from "vue-router";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import BackButton from "./BackButton.vue";
@@ -21,20 +22,16 @@ let formState = reactive({
   userLocation: null
 });
 async function sendRegInfo() {
-  let result = await user.registration({
+  let response = await user.registration({
     email: formState.email,
     password: formState.password,
     fullname: formState.fullname,
     userLocation: formState.userLocation
   });
-  if (result.success) {
-    try {
-      axios.post(`http://localhost:4089/add-companion?name=${res.data.name}`);
-      console.log(1)
-    } catch (error) { console.log(2) }
-    // formState.fullname = "";
-    // formState.email = "";
-    // formState.password = "";
+  if (response.status == 200) {
+    // update location from user loc
+    useLocations().setLocation()
+
     message.config({ duration: 1.5, top: "70vh" });
     message.success({
       content: "Успешно!",

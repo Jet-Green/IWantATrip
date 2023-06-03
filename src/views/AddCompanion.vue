@@ -15,6 +15,9 @@ import * as yup from 'yup';
 let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
 
+let possibleLocations = ref([])
+let locationSearchRequest = ref("")
+
 let router = useRouter();
 const userStore = useAuth();
 const ruLocale = locale;
@@ -36,7 +39,7 @@ const form = reactive({
   type: "Любой",
   direction: "",
   description: "",
-  startLocation: null,
+  startLocation: {}
 });
 
 
@@ -51,7 +54,7 @@ function submit() {
       })
       .then((response) => {
         userStore.user = response.data;
-        message.config({ top: "90vh",duration: 2 });
+        message.config({ top: "90vh", duration: 2 });
 
         message.success({ content: "Попутчик добавлен!" }).then(() => {
           router.push('/companions')
@@ -78,16 +81,21 @@ function submit() {
         console.log(err);
       });
   });
-
-
 }
 watch(date, () => {
   if (date.value) {
     form.start = date ? Number(Date.parse(date.value[0].$d.toString())) : ""
     form.end = date ? Number(Date.parse(date.value[1].$d.toString())) : ""
   }
-
 });
+function selectStartLocation(selected) {
+  for (let l of possibleLocations.value) {
+    // l.value - name
+    if (l.value == selected) {
+      form.startLocation = l.location
+    }
+  }
+}
 watch(locationSearchRequest, async (newValue, oldValue) => {
   if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
     var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
@@ -142,14 +150,6 @@ watch(locationSearchRequest, async (newValue, oldValue) => {
     }
   }
 })
-function selectStartLocation(selected) {
-  for (let l of possibleLocations.value) {
-    // l.value - name
-    if (l.value == selected) {
-      form.startLocation = l.location
-    }
-  }
-}
 
 const formSchema = yup.object({
   age: yup.string().required("заполните поле"),
@@ -158,21 +158,20 @@ const formSchema = yup.object({
   email: yup.string().required("заполните поле").email('неверный формат'),
   phone: yup.string().required("заполните поле"),
   date: yup.array().required("заполните поле"),
-  // start: yup.string().required("заполните поле"),
-  // end: yup.string().required("заполните поле"),
-  // companionGender: yup.string().required("заполните поле"),
-  // type: yup.string().required("заполните поле"),
   direction: yup.string().required("заполните поле"),
   description: yup.string().required("заполните поле"),
+
   startLocation: yup.string().required("заполните поле"),
 })
 </script>
 <template>
   <div>
     <BackButton :backRoute="backRoute" />
-      <img v-if="!sm" src="../assets/images/companion_left.png" style="position: fixed; left: 0px; bottom: 0px;  width: 20%;" />
+    <img v-if="!sm" src="../assets/images/companion_left.png"
+      style="position: fixed; left: 0px; bottom: 0px;  width: 20%;" />
 
-      <img v-if="!sm" src="../assets/images/companion_right.png" style="position: fixed; right: 0px; bottom: 0px; width: 20% " />  
+    <img v-if="!sm" src="../assets/images/companion_right.png"
+      style="position: fixed; right: 0px; bottom: 0px; width: 20% " />
     <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
       <a-row type="flex" justify="center">
         <a-col :xs="22" :lg="12">
@@ -259,12 +258,12 @@ const formSchema = yup.object({
               </Transition>
 
               <!-- <a-date-picker v-model:value="form.start" style="width: 100%" placeholder="Начало" :locale="ruLocale":format="dateFormatList" />
-                                                                          </a-col>
-                                                                          <a-col :span="12">
-                                                                            Дата конца
-                                                                            <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
-                                                                              :format="dateFormatList" /> 
-                                                                      -->
+                                                                                                  </a-col>
+                                                                                                  <a-col :span="12">
+                                                                                                    Дата конца
+                                                                                                    <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
+                                                                                                      :format="dateFormatList" /> 
+                                                                                              -->
             </a-col>
             <a-col :xs="24">
               <Field name="startLocation" v-slot="{ value, handleChange }" v-model="locationSearchRequest">
@@ -288,6 +287,20 @@ const formSchema = yup.object({
                 <ErrorMessage name="direction" class="error-message" />
               </Transition>
             </a-col>
+
+            <a-col :xs="24">
+              <Field name="startLocation" v-slot="{ value, handleChange }" v-model="locationSearchRequest">
+                Место старта
+                <a-auto-complete :value="value" @update:value="handleChange" style="width: 100%"
+                  :options="possibleLocations" placeholder="Глазов" @select="selectStartLocation">
+                </a-auto-complete>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="startLocation" class="error-message" />
+              </Transition>
+            </a-col>
+
+
             <a-col :xs="24">
               <Field name="description" v-slot="{ value, handleChange }" v-model="form.description">
                 Пожелания

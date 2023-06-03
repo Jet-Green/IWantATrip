@@ -114,9 +114,11 @@ let formSchema = yup.object({
   <div>
     <BackButton />
 
-    <img v-if="!sm" src="../assets/images/booking_left.png" style="position: fixed; left: 0px; bottom: 0px;  width: 20%;" />
+    <img v-if="!sm" src="../assets/images/booking_left.png"
+      style="position: fixed; left: 0px; bottom: 0px;  width: 20%;" />
 
-    <img v-if="!sm" src="../assets/images/booking_right.png" style="position: fixed; right: 0px; bottom: 0px; width: 20% " />
+    <img v-if="!sm" src="../assets/images/booking_right.png"
+      style="position: fixed; right: 0px; bottom: 0px; width: 20% " />
 
     <Form :validation-schema="formSchema" v-slot="{ meta }" @submit.prevent="submit">
       <a-row type="flex" justify="center">
@@ -127,7 +129,8 @@ let formSchema = yup.object({
               <Field name="fullname" v-slot="{ value, handleChange }" v-model="userInfo.fullname">
                 Фaмилия Имя
 
-                  <a-input style="width: 100%" @update:value="handleChange" :value="value" placeholder="Иванов Иван Иванович" />
+                <a-input style="width: 100%" @update:value="handleChange" :value="value"
+                  placeholder="Иванов Иван Иванович" />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="fullname" class="error-message" />
@@ -137,7 +140,7 @@ let formSchema = yup.object({
               <Field name="phone" v-slot="{ value, handleChange }" v-model="userInfo.phone">
                 Телефон
 
-                  <a-input style="width: 100%" @update:value="handleChange" :value="value" placeholder="79127528874" />
+                <a-input style="width: 100%" @update:value="handleChange" :value="value" placeholder="79127528874" />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="phone" class="error-message" />
@@ -147,16 +150,16 @@ let formSchema = yup.object({
               <h2>Заказать тур</h2>
               <div>
                 <Field name="type" v-slot="{ value, handleChange }" v-model="form.type">
-                Tип тура
+                  Tип тура
 
-                <a-select @update:value="handleChange" :value="value" style="width: 100%">
+                  <a-select @update:value="handleChange" :value="value" style="width: 100%">
                     <a-select-option v-for=" tripType  in  appStore.appState[0].tripType " :value="tripType">{{ tripType
                     }}</a-select-option>
                   </a-select>
-              </Field>
-              <Transition name="fade">
-                <ErrorMessage name="tripType" class="error-message" />
-              </Transition>
+                </Field>
+                <Transition name="fade">
+                  <ErrorMessage name="tripType" class="error-message" />
+                </Transition>
               </div>
             </a-col>
 
@@ -186,7 +189,8 @@ let formSchema = yup.object({
               <Field name="location" v-slot="{ value, handleChange }" v-model:value="form.location">
                 Направление
 
-                  <a-input style="width: 100%" @update:value="handleChange" :value="value" placeholder="Байкал" size="large" />
+                <a-input style="width: 100%" @update:value="handleChange" :value="value" placeholder="Байкал"
+                  size="large" />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="location" class="error-message" />
@@ -197,8 +201,8 @@ let formSchema = yup.object({
               <Field name="duration" v-slot="{ value, handleChange }" v-model:value="form.duration">
                 Продолжительность, дн.
 
-                  <a-input-number  id="inputNumber" style="width: 100%" @update:value="handleChange" :value="value" placeholder="5"
-                :min="1" size="large" />
+                <a-input-number id="inputNumber" style="width: 100%" @update:value="handleChange" :value="value"
+                  placeholder="5" :min="1" size="large" />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="duration" class="error-message" />
@@ -208,51 +212,40 @@ let formSchema = yup.object({
 
 
             <a-col :xs="24" :md="8">
-              <a-col :span="12">
-              <Field name="adults" v-slot="{ value, handleChange }" v-model="form.adults">
-                Взрослые
-                <a-input-number :min="0" @update:value="handleChange" :value="value"  placeholder="2"
-                  />
-              </Field>
-              <Transition name="fade">
-                <ErrorMessage name="adults" class="error-message" />
-              </Transition>
+                <Field name="adults" v-slot="{ value, handleChange }" v-model="form.adults">
+                  Взрослые
+                  <a-input-number :min="0" style="width: 100%" @update:value="handleChange" :value="value" placeholder="2" />
+                </Field>
+                <Transition name="fade">
+                  <ErrorMessage name="adults" class="error-message" />
+                </Transition>
             </a-col>
-              
 
-            </a-col>
             <a-col :xs="24" :md="8">
-              <a-col :span="12">
               <Field name="children" v-slot="{ value, handleChange }" v-model="form.children">
                 Дети
-                <a-input-number @update:value="handleChange" :value="value"  placeholder="1"
-                  :min="0" />
+                <a-input-number style="width: 100%" @update:value="handleChange" :value="value" placeholder="1" :min="0" />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="children" class="error-message" />
               </Transition>
             </a-col>
-              
 
-            </a-col>
             <a-col :xs="24" :md="8">
-              <a-col :span="12">
-              <Field name="fromAge" v-slot="{ value, handleChange }" v-model="form.fromAge">
-                Мин.возраст,лет
-                <a-input-number id="inputNumber" @update:value="handleChange" :value="value"  placeholder="10"
-                  :min="0" :max="100"/>
-              </Field>
-              <Transition name="fade">
-                <ErrorMessage name="fromAge" class="error-message" />
-              </Transition>
-            </a-col>
+                <Field name="fromAge" v-slot="{ value, handleChange }" v-model="form.fromAge">
+                  Мин.возраст,лет
+                  <a-input-number style="width: 100%" id="inputNumber" @update:value="handleChange" :value="value" placeholder="10" :min="0"
+                    :max="100" />
+                </Field>
+                <Transition name="fade">
+                  <ErrorMessage name="fromAge" class="error-message" />
+                </Transition>
             </a-col>
 
             <a-col :xs="24">
               <Field name="wishes" v-slot="{ value, handleChange }" v-model="form.wishes">
                 Пожелания
-                <a-textarea  @update:value="handleChange" :value="value" autoSize
-                  />
+                <a-textarea @update:value="handleChange" :value="value" autoSize />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="wishes" class="error-message" />
@@ -263,7 +256,8 @@ let formSchema = yup.object({
 
           <a-row type="flex" justify="center">
             <a-col :xs="24" :md="16" :lg="10" class="d-flex justify-center">
-              <a-button type="primary" :disabled="!meta.valid" html-type="submit" class="lets_go_btn mt-8" size="large">Отправить</a-button>
+              <a-button type="primary" :disabled="!meta.valid" html-type="submit" class="lets_go_btn mt-8"
+                size="large">Отправить</a-button>
             </a-col>
           </a-row>
         </a-col>

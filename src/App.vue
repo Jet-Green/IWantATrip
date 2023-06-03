@@ -13,7 +13,7 @@ import { useAppState } from './stores/appState'
 const route = useRoute()
 const userStore = useAuth()
 const appStateStore = useAppState()
-const appLocations = useLocations()
+const locationStore = useLocations()
 
 
 onMounted(async () => {
@@ -21,15 +21,9 @@ onMounted(async () => {
   if (localStorage.getItem('token')) {
     await userStore.checkAuth()
   }
-  if (localStorage.getItem('location')) {
-    useLocations().location = JSON.parse(localStorage.getItem('location'))
-  }
-
-  await useLocations().fetchLocations()
-
-  await useTrips().fetchTrips()
-  // await useCompanions().fetchCompanions()
-
+  // вся логика локации тут
+  await locationStore.setLocation()
+  await locationStore.fetchLocations()
 
   function notify() {
     let notification = new Notification("Привет", {
@@ -54,7 +48,7 @@ onMounted(async () => {
 })
 </script>
 <template>
-  <a-layout >
+  <a-layout>
     <Header></Header>
     <!-- в документации с margin'ом, чтобы предотвратить перекрывание контента хедром -->
     <a-layout-content style="margin-top: 69px">

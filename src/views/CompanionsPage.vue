@@ -34,12 +34,15 @@ const ageString = (age) => {
   return `${age} лет`;
 }; // это гениально
 
+onMounted(async () => {
+  if (companionStore.companions.length == 0) {
+    await companionStore.fetchCompanions()
+  }
+})
 </script>
 <template>
   <div>
     <BackButton />
-     
-
     <a-row class="d-flex justify-center">
       <a-col :xs="22" :lg="16">
         <h2>Ищу попутчика</h2>
@@ -59,7 +62,7 @@ const ageString = (age) => {
           </a-col>
         </a-row>
         <a-row :gutter="[8, 8]" class="mt-8">
-          <a-col :lg="8" :sm="12" :xs="24" v-for="(companion, i) in companionStore.filteredСompanions" :key="i">
+          <a-col :lg="8" :sm="12" :xs="24" v-for="(companion, i) in companionStore.companions" :key="i">
             <a-card class="card" hoverable>
               <div>
                 <span class="mdi mdi-human-male-female"></span>{{ companion.name }} <span
@@ -86,13 +89,10 @@ const ageString = (age) => {
                     : companion.companionGender == 'Мужчина'
                       ? 'mdi mdi-gender-male'
                       : 'mdi mdi-human-male-female'
-                "></span>{{
-  companion.companionGender == "Мужчина"
-  ? "Мужчину"
-  : companion.companionGender == "Женщина"
-    ? "Женщину"
-    : "Не важно"
-}}
+                "></span>
+                {{ companion.companionGender == "Мужчина" ? "Мужчину" : companion.companionGender ==
+                  "Женщина" ? "Женщину" : "Не важно"
+                }}
               </div>
               <div>
                 <span class="mdi mdi-calendar-arrow-right"></span>
