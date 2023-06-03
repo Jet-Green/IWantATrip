@@ -8,7 +8,7 @@ let router = useRouter();
 let visible = ref(false);
 let date = ref(null)
 let query = reactive({
-  find: "",
+  strQuery: "",
   gender: "",
   age: {
     start: "",
@@ -21,11 +21,14 @@ let query = reactive({
 
 
 function find() {
-  companionStore.searchCompanions(query);
+  query.strQuery = query.strQuery.trim()
+  if (query.strQuery.length == 0 || query.strQuery.length > 2) {
+    companionStore.fetchCompanions(query);
+  }
 }
 
 watch(query, () => {
-  if (query.find == "" || query.gender == "" || query.age.start || query.age.end || query.start || query.end) {
+  if (query.strQuery == "" || query.gender == "" || query.age.start || query.age.end || query.start || query.end) {
     find();
   }
 });
@@ -44,7 +47,7 @@ onMounted(() => {
     <a-col :xs="24">
       <a-row type="flex" justify="center">
         <a-col :xs="24" class="d-flex">
-          <a-input-search v-model:value="query.find" placeholder="поиск" enter-button style="z-index: 0"
+          <a-input-search v-model:value="query.strQuery" placeholder="поиск" enter-button style="z-index: 0"
             @search="find()" />
           <span class="mdi mdi-24px mdi-filter-outline ml-16" :class="{ active_filter: visible, filter: !visible }"
             @click="visible = !visible"></span>
@@ -78,8 +81,8 @@ onMounted(() => {
               <a-range-picker name="date" style="width:100%" v-model:value="date" />
             </a-col>
             <!-- <a-col :xs="24" class="d-flex justify-center">
-                                            <a-button @click="find" class="lets_go_btn" type="primary">поиск</a-button>
-                                          </a-col> -->
+                                                            <a-button @click="find" class="lets_go_btn" type="primary">поиск</a-button>
+                                                          </a-col> -->
 
           </a-row>
         </div>
