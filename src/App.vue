@@ -23,12 +23,7 @@ onMounted(async () => {
   }
   // вся логика локации тут
   await locationStore.setLocation()
-
   await locationStore.fetchLocations()
-
-  await useTrips().fetchTrips()
-  await useCompanions().fetchCompanions()
-
 
   function notify() {
     let notification = new Notification("Привет", {

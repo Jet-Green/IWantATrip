@@ -38,10 +38,10 @@ watch(carousel_container, () => {
   onResize();
 });
 onMounted(async () => {
-
+  await useTrips().fetchTrips()
   onResize();
   window.addEventListener("resize", onResize);
-  
+
 });
 </script>
 <template>
