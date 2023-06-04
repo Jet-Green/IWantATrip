@@ -20,6 +20,7 @@ const clearData = (dateNumber) => {
   return ''
 }
 const ageString = (age) => {
+  age = age.toString()
   if (age >= 10 && age <= 20) {
     return `${age} лет`;
   }
