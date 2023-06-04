@@ -284,6 +284,7 @@ watch(start, () => {
     let startDate = new Date(start.value.$d);
     startDate.setHours(0)
     startDate.setMinutes(0)
+    endDate.setSeconds(0)
     startDate.setMilliseconds(0)
 
     form.start = Number(Date.parse(startDate.toString()));
@@ -304,6 +305,7 @@ watch(end, () => {
     let endDate = new Date(end.value.$d);
     endDate.setHours(23)
     endDate.setMinutes(59)
+    endDate.setSeconds(59)
     endDate.setMilliseconds(999)
 
     form.end = Date.parse(endDate);
@@ -543,14 +545,14 @@ let formSchema = yup.object({
               " />
             </a-col>
             <!-- <a-col :span=" 24 ">
-                                                                                                                          :file-list="fileList"
-                                                                                                                          <a-upload action="" :multiple=" true ">
-                                                                                                                            <a-button type="dashed" block>
-                                                                                                                              <span class="mdi mdi-12px mdi-plus"></span>
-                                                                                                                              Загрузить pdf описание
-                                                                                                                            </a-button>
-                                                                                                                          </a-upload>
-                                                                                                                        </a-col> -->
+                                                                                                                              :file-list="fileList"
+                                                                                                                              <a-upload action="" :multiple=" true ">
+                                                                                                                                <a-button type="dashed" block>
+                                                                                                                                  <span class="mdi mdi-12px mdi-plus"></span>
+                                                                                                                                  Загрузить pdf описание
+                                                                                                                                </a-button>
+                                                                                                                              </a-upload>
+                                                                                                                            </a-col> -->
             <a-col :span="24" class="d-flex justify-center">
               <a-button :disabled="!meta.valid" class="lets_go_btn mt-8" type="primary" size="large"
                 html-type="submit">Отправить
