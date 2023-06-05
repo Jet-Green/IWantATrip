@@ -1,24 +1,21 @@
 <script setup>
-import { onMounted } from "vue";
+import { ref, watch } from "vue";
 import { useAuth } from "../stores/auth";
-import { useRouter } from "vue-router";
+import { useRouter, RouterView } from "vue-router";
 import BackButton from "../components/BackButton.vue";
-import AboutClient from "../components/_cabinet/AboutClient.vue";
-import CreatedTrips from "../components/_cabinet/CreatedTrips.vue";
-import PurchasedTrips from "../components/_cabinet/PurchasedTrips.vue";
-import CreatedObjects from "../components/_cabinet/CreatedObjects.vue";
-import MyCompanions from "../components/_cabinet/MyCompanions.vue";
-import BookingTrips from "../components/_cabinet/BookingTrips.vue";
 
 const userStore = useAuth();
 const router = useRouter();
+// чтобы не сбрасывалось при обновлении
+let current = ref([router.currentRoute.value.path]);
+
 const logOut = () => {
   userStore.logout();
   router.push("/");
 };
-onMounted(() => {
-  // console.log(userStore.user);
-});
+watch(current, (newRout, oldRout) => {
+  router.push(newRout[0])
+})
 </script>
 <template>
   <div>
@@ -34,8 +31,37 @@ onMounted(() => {
       </a-col>
     </a-row>
     <a-row type="flex" justify="center">
+      <a-col :xs="22" :lg="16" class="mb-8">
+        <a-menu v-model:selectedKeys="current" mode="horizontal">
+          <a-menu-item key="/cabinet/me">
+            О пользователе
+          </a-menu-item>
+          <a-sub-menu key="sub1">
+            <template #title>Туры</template>
+            <a-menu-item key="/cabinet/created-trips">Созданные</a-menu-item>
+            <a-menu-item key="/cabinet/purchased-trips">Забронированные</a-menu-item>
+            <a-menu-item key="/cabinet/booking-trips">Заказанные</a-menu-item>
+          </a-sub-menu>
+          <a-menu-item key="/cabinet/my-companions">
+            Попутчики
+          </a-menu-item>
+          <a-sub-menu key="sub2">
+            <template #title>Админ</template>
+            <a-menu-item key="/cabinet/moderation">Модерация</a-menu-item>
+            <a-menu-item key="/cabinet/interface">Интерфейс</a-menu-item>
+          </a-sub-menu>
+        </a-menu>
+
+      </a-col>
       <a-col :xs="22" :lg="16">
-        <a-tabs>
+        <RouterView />
+
+      </a-col>
+    </a-row>
+
+    <!-- <a-row type="flex" justify="center">
+      <a-col :xs="22" :lg="16">
+        <a-tabs activeKey="5">
           <a-tab-pane key="1" tab="О пользователе">
             <AboutClient />
           </a-tab-pane>
@@ -54,9 +80,12 @@ onMounted(() => {
           <a-tab-pane key="6" tab="Заказ тура">
             <BookingTrips />
           </a-tab-pane>
+          <a-tab-pane v-if="userStore.user?.roles.includes('admin')" key="7" tab="Админ панель">
+            <AdminPanel />
+          </a-tab-pane>
         </a-tabs>
       </a-col>
-    </a-row>
+    </a-row> -->
   </div>
 </template>
 

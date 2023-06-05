@@ -10,15 +10,15 @@ import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 // import typeOfTrip from "../fakeDB/tripType";
 import { message } from "ant-design-vue";
 import { useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { useAuth } from "../stores/auth";
 import { useTrips } from "../stores/trips";
 import { useAppState } from "../stores/appState";
 import TripService from "../service/TripService";
 
-import dayjs from 'dayjs'
-import { Form, Field, ErrorMessage } from 'vee-validate';
-import * as yup from 'yup';
-
+import dayjs from "dayjs";
+import { Form, Field, ErrorMessage } from "vee-validate";
+import * as yup from "yup";
 
 const tripStore = useTrips();
 const userStore = useAuth();
@@ -40,13 +40,17 @@ const baseTimeStart = dayjs(1679492631000);
 const baseTimeEnd = dayjs(1679492631000);
 const baseTimePeriod = dayjs(1679492631000);
 const router = useRouter();
-let creatorId = userStore.user.fullinfo.fullname;
+const route = useRoute();
 
+var creatorForm = ref()
+let possibleLocations = ref([])
 // cropper
 let visibleCropperModal = ref(false);
 let previews = ref([]);
 // отправляем на сервер
 let images = []; // type: blob
+//let pdf = [];
+let locationSearchRequest = ref("")
 // необходимо добавить поле количество людей в туре
 let form = reactive({
   name: "",
@@ -55,17 +59,16 @@ let form = reactive({
   maxPeople: null,
   duration: "",
   images: [],
-  pdfs:[],
+  //pdf: [],
   tripRoute: "",
   distance: "",
   cost: [],
   offer: "",
   description: description.value,
-  location: "",
   tripType: "",
   fromAge: "",
-  creatorId: "",
-  startLocation: "",
+  creatorForm: [],
+  startLocation: null,
 });
 let fullUserInfo = null;
 
@@ -93,22 +96,40 @@ const delPhoto = () => {
 function submit() {
   description.value = description.value.split("<p><br></p>").join("");
   form.description = description.value;
-  form.creatorId = creatorId;
-
+  form.creatorForm = creatorForm;
   let send = {};
   for (let key in form) {
     send[key] = form[key];
   }
 
-  TripService.createTrip(form, userStore.user.email).then(async (res) => {
-    const _id = res.data._id;
-    // try {
-    //   // что тут происходит?
-    //   await axios.post(`http://localhost:4089/create-trip?_id=${_id}`)
-    // } catch (error) {
-    //   console.log(error);
-    // }
-
+  function close() {
+    router.push("/trips");
+    clearForm()
+  }
+  function clearForm() {
+    Object.assign(form, {
+      name: "",
+      start: null,
+      end: null,
+      maxPeople: null,
+      duration: "",
+      images: [],
+      tripRoute: "",
+      distance: "",
+      cost: [],
+      offer: "",
+      description: description.value,
+      tripType: "",
+      fromAge: "",
+      creatorForm: [],
+      startLocation: "",
+    });
+    images = [];
+    // pdf = [];
+    previews.value = [];
+    quill.value.setHTML("");
+  }
+  function uploadTripImages(_id) {
     let imagesFormData = new FormData();
     for (let i = 0; i < images.length; i++) {
       imagesFormData.append(
@@ -117,66 +138,53 @@ function submit() {
         _id + "_" + i + ".jpg"
       );
     }
-    function close() {
-      router.push("/trips");
+    TripService.uploadTripImages(imagesFormData).then(() => {
+      console.log('фотографии загружены')
+
+    })
+
+  }
+
+  function updateUser(_id) {
+    if (fullUserInfo) {
+      userStore
+        .updateUser({
+          email: userStore.user.email,
+          fullinfo: fullUserInfo,
+          $push: { trips: _id },
+        })
+        .then((response) => {
+          userStore.user = response.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      userStore
+        .updateUser({ email: userStore.user.email, $push: { trips: _id } })
+        .then((response) => {
+          userStore.user = response.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
-    TripService.uploadTripImages(imagesFormData).then((res) => {
-      Object.assign(form, {
-        name: "",
-        start: null,
-        end: null,
-        maxPeople: null,
-        duration: "",
-        images: [],
-        tripRoute: "",
-        distance: "",
-        cost: [],
-        offer: "",
-        description: description.value,
-        location: "",
-        tripType: "",
-        fromAge: "",
-        creatorId: "",
-        startLocation: "",
-      });
-      if (fullUserInfo) {
-        userStore
-          .updateUser({
-            email: userStore.user.email,
-            fullinfo: fullUserInfo,
-            $push: { trips: _id },
-          })
-          .then((response) => {
-            userStore.user = response.data;
-            images = [];
-            previews.value = [];
-            quill.value.setHTML("");
-            message.config({ duration: 3, top: "90vh" });
-            message.success({ content: "Тур создан!", onClose: close });
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      } else {
-        userStore
-          .updateUser({ email: userStore.user.email, $push: { trips: _id } })
-          .then((response) => {
-            userStore.user = response.data;
-            images = [];
-            previews.value = [];
-            quill.value.setHTML("");
-            message.config({ duration: 3, top: "90vh" });
-            message.success({ content: "Тур создан!", onClose: close });
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
+  }
+
+
+  TripService.createTrip(form, userStore.user.email).then(async (res) => {
+    const _id = res.data._id;
+    await uploadTripImages(_id)
+    await updateUser(_id)
+    message.config({ duration: 1.5, top: "70vh" });
+    message.success({
+      content: "Тур создан!", onClose: () => {
+        close()
+      },
     });
   });
-  // необходимо отчистить форму и сделать редирект на tripList, вывести уведомление снизу об успехе
-}
 
+}
 function addPreview(blob) {
   // imagesFormData.append("image", blob, `product-${previews.value.length}`);
   visibleCropperModal.value = false;
@@ -185,12 +193,71 @@ function addPreview(blob) {
 }
 function updateUserInfo(info) {
   fullUserInfo = info;
-  creatorId = fullUserInfo.fullname;
+  creatorForm = [fullUserInfo.fullname, fullUserInfo.creatorsType, fullUserInfo.type]
+  console.log(creatorForm)
 }
-function uploadPdf(){
-  
+function selectStartLocation(selected) {
+  for (let l of possibleLocations.value) {
+    // l.value - name
+    if (l.value == selected) {
+      form.startLocation = l.location
+    }
+  }
 }
+watch(locationSearchRequest, async (newValue, oldValue) => {
+  if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
+    var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
 
+    var options = {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": "Token " + import.meta.env.VITE_DADATA_TOKEN
+      },
+      body: JSON.stringify({
+        query: newValue,
+        count: 5,
+        "from_bound": { "value": "city" },
+        "to_bound": { "value": "settlement" }
+      })
+    }
+
+    let res = await fetch(url, options)
+    try {
+      let suggestions = JSON.parse(await res.text()).suggestions
+      possibleLocations.value = []
+      for (let s of suggestions) {
+        let location = {
+          value: s.value,
+          location: {
+            name: s.value,
+            shortName: '',
+            type: 'Point',
+            coordinates: [
+              s.data.geo_lon,
+              s.data.geo_lat
+            ]
+          }
+        }
+
+        if (s.data.settlement) {
+          location.location.shortName = s.data.settlement
+        }
+        else if (s.data.city) {
+          location.location.shortName = s.data.city
+        } else {
+          location.location.shortName = s.value
+        }
+
+        possibleLocations.value.push(location)
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+})
 watch(description, (newValue) => {
   newContent = newValue;
   if (newContent === newValue) return;
@@ -212,7 +279,16 @@ watch(start, () => {
   } else {
     form.duration = "";
   }
-  if (start.value) form.start = Number(Date.parse(start.value.$d.toString()));
+  // округлить, чтобы при поиске мы точно попадали
+  if (start.value) {
+    let startDate = new Date(start.value.$d);
+    startDate.setHours(0)
+    startDate.setMinutes(0)
+    endDate.setSeconds(0)
+    startDate.setMilliseconds(0)
+
+    form.start = Number(Date.parse(startDate.toString()));
+  }
 });
 watch(end, () => {
   let result =
@@ -224,12 +300,38 @@ watch(end, () => {
   } else {
     form.duration = "";
   }
-  form.end = Date.parse(end.value.$d.toString());
+  // округлить, чтобы при поиске мы точно попадали
+  if (end.value) {
+    let endDate = new Date(end.value.$d);
+    endDate.setHours(23)
+    endDate.setMinutes(59)
+    endDate.setSeconds(59)
+    endDate.setMilliseconds(999)
+
+    form.end = Date.parse(endDate);
+  }
 });
+const clearData = (dataString) => {
+  let date
+  if (dataString.length == 13) {
+    const dataFromString = new Date(Number(dataString));
+    date = dataFromString
+
+  } else {
+    date = new Date(dataString)
+  };
+  return date.toLocaleDateString("ru-Ru", {
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit",
+
+  })
+}
 onMounted(() => {
-  if (router.currentRoute.value.query._id) {
-    tripStore.getById(router.currentRoute.value.query._id).then((response) => {
+  if (route.query.id) {
+    tripStore.getById(route.query.id).then((response) => {
       let d = response.data;
+
       delete d.__v;
       form.name = d.name;
       // console.log(d.period);
@@ -245,13 +347,14 @@ onMounted(() => {
       form.distance = d.distance;
       form.cost = d.cost;
       quill.value.setHTML(d.description);
-      form.location = d.location;
       form.fromAge = d.fromAge;
       form.tripRoute = d.tripRoute;
       form.offer = d.offer;
-      form.creatorId = d.creatorId;
+      form.creatorForm = d.creatorForm;
       start.value = dayjs(new Date(d.start));
       end.value = dayjs(new Date(d.end));
+      form.startLocation = d.startLocation;
+      locationSearchRequest.value = d.startLocation[0].name;
     });
     // .catch((error) => {
     //     console.log(error);
@@ -266,10 +369,9 @@ let formSchema = yup.object({
   maxPeople: yup.string().required("заполните поле"),
   tripType: yup.string().required("заполните поле"),
   fromAge: yup.string().required("заполните поле"),
-  startLocation: yup.string().required("заполните поле"),
-  location: yup.string().required("заполните поле"),
   offer: yup.string().required("заполните поле"),
   tripRoute: yup.string().required("заполните поле"),
+  startLocation: yup.string().required("заполните поле"),
   // distance: yup.string().required("заполните поле"),
   // cost: yup.string().required("заполните поле"),
   // https://vee-validate.logaretm.com/v4/examples/array-fields/
@@ -279,7 +381,6 @@ let formSchema = yup.object({
   <div>
     <BackButton />
     <a-row type="flex" justify="center">
-
       <a-col :xs="22" :lg="12">
         <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
           <a-row :gutter="[16, 16]">
@@ -300,16 +401,14 @@ let formSchema = yup.object({
             <a-col :xs="24">
               Фотографии
               <div class="d-flex" style="overflow-x: scroll">
-                <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px" @click="
-                  delPhotoDialog = true;
-                targetIndex = i;
-                                                                                          " />
+                <img v-for="(pr, i) in   previews  " :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px"
+                  @click="delPhotoDialog = true;
+                  targetIndex = i;" />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
                 Добавить фото
               </a-button>
-
             </a-col>
 
             <a-col :span="12">
@@ -351,7 +450,8 @@ let formSchema = yup.object({
 
             <a-col :span="24">
               Цены
-              <div v-for="item in form.cost" :key="item.type" style="display: flex" align="baseline" class="mb-16">
+              <div v-for="  item   in   form.cost  " :key="item.type" style="display: flex" align="baseline"
+                class="mb-16">
                 <a-input v-model:value="item.first" placeholder="Для кого" />
 
                 <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0" :step="0.01"
@@ -373,7 +473,8 @@ let formSchema = yup.object({
                 Тип тура
                 <div>
                   <a-select @update:value="handleChange" :value="value" style="width: 100%">
-                    <a-select-option v-for="tripType in appStore.appState[0].tripType" :value="tripType">{{ tripType
+                    <a-select-option v-for="  tripType   in   appStore.appState[0].tripType  " :value="tripType">{{
+                      tripType
                     }}</a-select-option>
                   </a-select>
                 </div>
@@ -394,25 +495,19 @@ let formSchema = yup.object({
               </Transition>
             </a-col>
 
-            <a-col :xs="24" :md="12">
-              <Field name="startLocation" v-slot="{ value, handleChange }" v-model="form.startLocation">
+            <a-col :xs="24">
+              <Field name="startLocation" v-slot="{ value, handleChange }" v-model="locationSearchRequest">
                 Место старта
-                <a-input placeholder="Глазов" size="large" @update:value="handleChange" :value="value"></a-input>
+                <a-auto-complete :value="value" @update:value="handleChange" style="width: 100%"
+                  :options="possibleLocations" placeholder="Глазов" @select="selectStartLocation">
+                </a-auto-complete>
               </Field>
               <Transition name="fade">
-                <ErrorMessage name="location" class="error-message" />
+                <ErrorMessage name="startLocation" class="error-message" />
               </Transition>
             </a-col>
 
-            <a-col :xs="24" :md="12">
-              <Field name="location" v-slot="{ value, handleChange }" v-model="form.location">
-                Направление
-                <a-input placeholder="Байкал" size="large" @update:value="handleChange" :value="value"></a-input>
-              </Field>
-              <Transition name="fade">
-                <ErrorMessage name="location" class="error-message" />
-              </Transition>
-            </a-col>
+
 
             <a-col :span="24">
               <Field name="offer" v-slot="{ value, handleChange }" v-model="form.offer">
@@ -439,23 +534,25 @@ let formSchema = yup.object({
 
             <a-col :span="24" style="display: flex; flex-direction: column">
               Описание программы
-              <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" :toolbar="[
-                // [{ header: [2, 3] }],
-                ['bold', 'italic', 'underline'],
-                [{ list: 'ordered' }, { list: 'bullet' }],
-                [{ color: ['#000000', '#ff6600', '#3daff5'] }],
-                [{ align: [] }],
-              ]" />
+              <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" :toolbar="
+                [
+                  // [{ header: [2, 3] }],
+                  ['bold', 'italic', 'underline'],
+                  [{ list: 'ordered' }, { list: 'bullet' }],
+                  [{ color: ['#000000', '#ff6600', '#3daff5'] }],
+                  [{ align: [] }],
+                ]
+              " />
             </a-col>
-            <a-col :span="24">
-            <a-upload action="" :multiple="true" :file-list="fileList"
-                @change="handleChange">
-                <a-button type="dashed" block>
-                  <span class="mdi mdi-12px mdi-plus"></span>
-                  Загрузить pdf описание
-                </a-button>
-              </a-upload>
-            </a-col>
+            <!-- <a-col :span=" 24 ">
+                                                                                                                              :file-list="fileList"
+                                                                                                                              <a-upload action="" :multiple=" true ">
+                                                                                                                                <a-button type="dashed" block>
+                                                                                                                                  <span class="mdi mdi-12px mdi-plus"></span>
+                                                                                                                                  Загрузить pdf описание
+                                                                                                                                </a-button>
+                                                                                                                              </a-upload>
+                                                                                                                            </a-col> -->
             <a-col :span="24" class="d-flex justify-center">
               <a-button :disabled="!meta.valid" class="lets_go_btn mt-8" type="primary" size="large"
                 html-type="submit">Отправить

@@ -146,9 +146,68 @@ const router = createRouter({
       component: () => import('../components/DevPage.vue')
     },
     {
-      path: '/cabinet',
+      path: '/cabinet/',
       name: 'Cabinet',
       component: () => import('../views/Cabinet.vue'),
+      children: [
+        {
+          path: 'me',
+          name: "Me",
+          component: () => import('../components/_cabinet/AboutClient.vue'),
+        },
+        {
+          path: 'booking-trips',
+          component: () => import('../components/_cabinet/BookingTrips.vue'),
+        },
+        {
+          path: 'created-trips',
+          component: () => import('../components/_cabinet/CreatedTrips.vue'),
+        },
+        {
+          path: 'customers-trip',
+          component: () => import('../components/_cabinet/CustomersTrip.vue'),
+        },
+        {
+          path: 'purchased-trips',
+          component: () => import('../components/_cabinet/PurchasedTrips.vue'),
+        },
+        {
+          path: 'my-companions',
+          component: () => import('../components/_cabinet/MyCompanions.vue'),
+        },
+        {
+          path: 'responses',
+          component: () => import('../components/_cabinet/CompResponses.vue'),
+        },
+
+        {
+          path: 'test',
+          component: () => import('../components/_cabinet/Test.vue'),
+        },
+        {
+          path: 'moderation',
+          name: 'Moderation',
+          component: () => import('../components/admin/Moderation.vue'),
+          beforeEnter: () => {
+            let userStore = useAuth()
+            if (!userStore.user?.roles.includes('admin')) {
+              return false
+            }
+          }
+        },
+        {
+          path: 'interface',
+          name: 'Interface',
+          component: () => import('../components/admin/Interface.vue'),
+          beforeEnter: () => {
+            let userStore = useAuth()
+            if (!userStore.user?.roles.includes('admin')) {
+              return false
+            }
+          }
+        }
+
+      ],
       beforeEnter: async (to, from) => {
         let userStore = useAuth()
         if (!localStorage.getItem('token') || !userStore.isAuth)
@@ -156,6 +215,19 @@ const router = createRouter({
 
         if (!userStore.isAuth)
           return '/auth'
+      }
+    },
+    {
+      path: '/trip-moderation',
+      name: 'TripModeration',
+      component: () => import('../components/admin/TripModeration.vue'),
+      beforeEnter: async () => {
+        let userStore = useAuth()
+        if (!localStorage.getItem('token') || !userStore.isAuth)
+          await userStore.checkAuth()
+        if (!userStore.user?.roles.includes('admin')) {
+          return false
+        }
       }
     },
     {
@@ -201,7 +273,7 @@ const router = createRouter({
     },
   ],
   scrollBehavior(to, from, savedPosition) {
-    if ((to.name == 'TripsPage') || (to.name == 'TripInfoPage') || (to.name == 'CompanionsPage') || (to.name == 'CreateTripNoHelp'))
+    if (!savedPosition || (to.name == 'TripsPage') || (to.name == 'TripInfoPage') || (to.name == 'CompanionsPage') || (to.name == 'CreateTripNoHelp'))
       return { top: 0 }
     else return savedPosition
   }

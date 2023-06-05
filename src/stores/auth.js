@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import UserService from '../service/UserService'
+import LocationService from '../service/LocationService';
 import { message } from 'ant-design-vue';
 import axios from 'axios'
 
@@ -56,19 +57,16 @@ export const useAuth = defineStore('auth', {
                 console.log(error);
             }
         },
-        async registration(email, password) {
+        async registration(data) {
             try {
-                const response = await UserService.registration(email, password);
+                const response = await UserService.registration(data);
                 localStorage.setItem('token', response.data.accessToken);
 
                 this.isAuth = true
                 this.user = response.data.user
-                return { success: true };
+                return response
             } catch (err) {
-                return {
-                    success: false,
-                    message: err.response?.data?.message
-                }
+                return err
             }
         },
         async login(email, password) {
@@ -111,5 +109,18 @@ export const useAuth = defineStore('auth', {
                 console.log(err);
             }
         },
+        async searchLocation(searchReq) {
+            return await LocationService.searchLocation(searchReq)
+        },
+        /*  location:
+            _id
+            name
+            shortName 
+            coordinates
+        */
+        async selectUserLocation(location) {
+            this.user.userLocation = location
+            return await LocationService.selectUserLocation(location, this.user._id)
+        }
     },
 })

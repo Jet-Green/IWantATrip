@@ -10,8 +10,8 @@ export default {
     async buyTrip(tripId, bill) {
         return $api.post(`/trips/buy-trip?_id=${tripId}`, bill)
     },
-    async registration(user) {
-        return $api.post('/auth/registration', user)
+    async registration(data) {
+        return $api.post('/auth/registration', data)
     },
     async login(email, password) {
         return $api.post('/auth/login', { email, password })

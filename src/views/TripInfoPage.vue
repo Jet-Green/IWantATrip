@@ -16,6 +16,14 @@ const tripStore = useTrips();
 const userStore = useAuth();
 const backRoute = "/trips";
 
+const creatorsType = computed(() => {
+  return trip.value.creatorForm[1] == "author"
+    ? "автор тура"
+    : trip.value.creatorForm[1] == "operator"
+      ? "туроператор"
+      : "турагенство";
+});
+
 let selectedByUser = ref([]);
 let trip = ref({});
 let userInfo = reactive({
@@ -32,22 +40,6 @@ let tripsCount = computed(() => {
   }
   return sum;
 });
-
-tripStore
-  .getById(_id)
-  .then((response) => {
-    trip.value = response.data;
-    for (let cost of response.data.cost) {
-      selectedByUser.value.push({
-        cost: cost.price,
-        count: 0,
-        costType: cost.first,
-      });
-    }
-  })
-  .catch((error) => {
-    console.log(error);
-  });
 
 const clearData = (dateNumber) => {
   let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
@@ -135,12 +127,38 @@ async function buyTrip(isBoughtNow) {
 }
 
 onMounted(() => {
-  if (userStore.user) {
-    userInfo.fullname = userStore.user.fullinfo.fullname;
-    userInfo.phone = userStore.user.fullinfo.phone;
+  let found = false
+  for (let t of tripStore.trips) {
+    if (t._id == _id) {
+      trip.value = t;
+      for (let cost of t.cost) {
+        selectedByUser.value.push({
+          cost: cost.price,
+          count: 0,
+          costType: cost.first,
+        });
+      }
+      found = true
+    }
   }
-});
-console.log(trip)
+  if (!found) {
+    tripStore
+      .getById(_id)
+      .then((response) => {
+        trip.value = response.data;
+        for (let cost of response.data.cost) {
+          selectedByUser.value.push({
+            cost: cost.price,
+            count: 0,
+            costType: cost.first,
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+})
 </script>
 <template>
   <div style="overflow-x: hidden">
@@ -150,6 +168,7 @@ console.log(trip)
     <a-row class="justify-center d-flex">
       <a-col :xs="22" :xl="16">
         <h2 class="ma-0">{{ trip.name }}</h2>
+        <!-- <span class="ma-0">Место старта: {{ trip.startLocation.name }}</span> -->
         <a-spin v-if="!trip._id" size="large"></a-spin>
         <a-row v-if="trip._id" :gutter="[12, 12]" class="text justify-center d-flex">
           <!-- добавить карусель фотографий -->
@@ -176,7 +195,7 @@ console.log(trip)
             </a-carousel>
           </a-col>
           <a-col :xs="24" :md="12" class="pa-8">
-          <p>Автор тура: {{ trip.creatorId }}</p>
+            <p>Автор тура: {{ trip.creatorForm[0] }} ({{ creatorsType }})</p>
             <p>{{ trip.offer }}</p>
             <div>
               Продолжительность: <b>{{ trip.duration }} дн.</b>
@@ -186,8 +205,7 @@ console.log(trip)
             </div>
             <div>Количество человек:</div>
             <div style="width: 50%">
-              <a-progress
-                :percent="(tripsCount / trip.maxPeople) * 100" :format="() => `${trip.maxPeople} чел`">
+              <a-progress :percent="(tripsCount / trip.maxPeople) * 100" :format="() => `${trip.maxPeople} чел`">
               </a-progress>
             </div>
             <div>
@@ -198,14 +216,13 @@ console.log(trip)
 
             </div>
             <div class="d-flex justify-center ma-8">
-              <a-button
-                v-if="tripsCount != trip.maxPeople" type="primary" class="lets_go_btn" size="large" style="display: flex; justify-content: center" @click="buyTripDialog()"
-              >
+              <a-button v-if="tripsCount != trip.maxPeople" type="primary" class="lets_go_btn" size="large"
+                style="display: flex; justify-content: center" @click="buyTripDialog()">
                 Купить
               </a-button>
             </div>
             <div>
-              <b v-if="(tripsCount == trip.maxPeople)" >
+              <b v-if="(tripsCount == trip.maxPeople)">
                 мест больше нет
               </b>
             </div>
@@ -222,37 +239,21 @@ console.log(trip)
       <a-row :gutter="[4, 4]">
         <a-col :span="24" :md="12">
           Фaмилия Имя
-          <a-input
-            style="width: 100%"
-            v-model:value="userInfo.fullname"
-            placeholder="Иванов Иван Иванович"
-          />
+          <a-input style="width: 100%" v-model:value="userInfo.fullname" placeholder="Иванов Иван Иванович" />
         </a-col>
         <a-col :span="24" :md="12">
           Телефон
-          <a-input
-            style="width: 100%"
-            v-model:value="userInfo.phone"
-            placeholder="79127528874"
-          />
+          <a-input style="width: 100%" v-model:value="userInfo.phone" placeholder="79127528874" />
         </a-col>
 
         <a-col :span="24">
           <div>Цена</div>
-          <div
-            class="d-flex space-around align-center"
-            v-for="(cost, index) of trip.cost"
-            :key="index"
-          >
+          <div class="d-flex space-around align-center" v-for="(cost, index) of trip.cost" :key="index">
             {{ cost.first }}<span>{{ cost.price }} руб. </span>
             <div class="d-flex direction-column">
               <span style="font-size: 8px">кол-во</span>
-              <a-input-number
-                v-model:value="selectedByUser[index].count"
-                :min="0"
-                :max="trip.maxPeople - tripsCount"
-                placeholder="чел"
-              ></a-input-number>
+              <a-input-number v-model:value="selectedByUser[index].count" :min="0" :max="trip.maxPeople - tripsCount"
+                placeholder="чел"></a-input-number>
             </div>
           </div>
         </a-col>

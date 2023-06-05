@@ -1,15 +1,18 @@
 <script setup>
 import { reactive } from "vue"
 import { useAuth } from "../stores/auth";
+import { useLocations } from "../stores/locations"
 import { useRouter } from "vue-router";
 import BackButton from "../components/BackButton.vue";
 import { message } from "ant-design-vue";
-
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 
 const user = useAuth();
 const router = useRouter();
+let breakpoints = useBreakpoints(breakpointsTailwind);
+let sm = breakpoints.smaller("md");
 
 let formState = reactive({
   email: "",
@@ -19,9 +22,9 @@ let formState = reactive({
 async function logIn() {
   let result = await user.login(formState.email, formState.password);
   if (result.success) {
-    // formState.email = ''
-    // formState.password = ''
-    message.config({ duration: 1.5, top: "70vh" });
+    // update location from user loc
+    useLocations().setLocation()
+    message.config({ duration: 0.5, top: "70vh" });
     message.success({
       content: "Успешно!",
       onClose: () => {
@@ -40,6 +43,9 @@ const formSchema = yup.object({
 <template>
   <div>
     <BackButton />
+    <img v-if="!sm" src="../assets/images/auth_left.png" style="position: fixed; left: 0px; bottom: 0px;  width: 20%;" />
+
+    <img v-if="!sm" src="../assets/images/auth_right.png" style="position: fixed; right: 0px; bottom: 0px; width: 20% " />
     <a-row type="flex" justify="center">
       <a-col :span="24" :md="8" class="pa-16">
         <a-row>

@@ -5,22 +5,26 @@ import Header from "./components/Header.vue";
 import Footer from "./components/Footer.vue";
 
 import { useTrips } from './stores/trips'
-import {useCompanions} from './stores/companions'
+import { useCompanions } from './stores/companions'
+import { useLocations } from './stores/locations'
 import { useAuth } from './stores/auth'
 import { useAppState } from './stores/appState'
 
 const route = useRoute()
 const userStore = useAuth()
 const appStateStore = useAppState()
+const locationStore = useLocations()
 
-onMounted(() => {
-  appStateStore.refreshState()
-  useTrips().fetchTrips()
-  useCompanions().fetchCompanions()
-  
+
+onMounted(async () => {
+  await appStateStore.refreshState()
   if (localStorage.getItem('token')) {
-    userStore.checkAuth()
+    await userStore.checkAuth()
   }
+  // вся логика локации тут
+  await locationStore.setLocation()
+  await locationStore.fetchLocations()
+
   function notify() {
     let notification = new Notification("Привет", {
       tag: "ache-mail",
@@ -28,6 +32,7 @@ onMounted(() => {
       icon: "https://glazov-flash.ru/image/cache/catalog/icon/1_1-100x100.png"
     })
   }
+
 
   // if (Notification.permission == 'granted') {
   //   notify()
@@ -43,19 +48,17 @@ onMounted(() => {
 })
 </script>
 <template>
-  <a-layout style="min-height: 100vh">
+  <a-layout>
     <Header></Header>
     <!-- в документации с margin'ом, чтобы предотвратить перекрывание контента хедром -->
     <a-layout-content style="margin-top: 69px">
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
-          <component :is="Component" :key="route.path" />
+          <component :is="Component" />
         </transition>
       </router-view>
     </a-layout-content>
     <Footer></Footer>
   </a-layout>
 </template>
-<style>
-
-</style>
+<style></style>

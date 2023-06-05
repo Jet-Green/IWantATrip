@@ -4,8 +4,8 @@ export default {
     async getCustomers(ids) {
         return $api.post('/trips/get-customers', ids)
     },
-    async fetchTrips(cursor) {
-        return $api.get(`/trips/get-all?cursor=${cursor}`)
+    async fetchTrips(cursor, lon, lat, query = '', start = '', end = '') {
+        return $api.get(`/trips/get-all?cursor=${cursor}&lon=${lon}&lat=${lat}&query=${query}&start=${start}&end=${end}`)
     },
     async searchTrips(req, cursor) {
         return $api.post(`/trips/search?cursor=${cursor}`, req)
@@ -44,5 +44,24 @@ export default {
     async clearTripsDB() {
         return $api.get('/trips/clear')
     },
+    getUserTrips(ids) {
+        return $api.post(`/trips/get-user-trips`, ids)
+    },
 
+
+    findForModeration() {
+        return $api.get('/admin/trips-on-moderation')
+    },
+    moderateTrip(_id) {
+        return $api.get(`/admin/moderate-trip?_id=${_id}`)
+    },
+    sendModerationMessage(trip_id, msg) {
+        return $api.post(`/admin/send-moderation-message?tripId=${trip_id}`, { msg })
+    },
+    getCreatedTripsInfoByUserId(_id) {
+        return $api.get(`/trips/created-trips-info?_id=${_id}`)
+    },
+    getFullTripById(_id) {
+        return $api.get(`/trips/get-full-trip?_id=${_id}`)
+    }
 }

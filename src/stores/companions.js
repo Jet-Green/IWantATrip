@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia'
 
 import CompanionsService from '../service/CompanionService'
+import { useLocations } from './locations'
 
 export const useCompanions = defineStore('companions', {
     state: () => ({
         companions: [],
-        filteredСompanions: [],
+        currentCompanion: {},
     }),
     getters: {
         getCompanions(state) {
@@ -13,22 +14,29 @@ export const useCompanions = defineStore('companions', {
         },
     },
     actions: {
-        async fetchCompanions() {
+        async fetchCompanions(query) {
             try {
-                const response = await CompanionsService.fetchCompanions();
+                let locationStore = useLocations()
+                let response
+                if (locationStore.location?.name) {
+                    response = await CompanionsService.fetchCompanions(...locationStore.location.coordinates, query);
+                } else {
+                    response = await CompanionsService.fetchCompanions('', '', query);
+                }
+
                 this.companions = response.data;
             } catch (err) {
                 console.log(err);
             }
         },
-        async searchCompanions(query) {
-            try {
-                const response = await CompanionsService.searchCompanions({ query });
-                this.filteredСompanions = response.data;
-            } catch (err) {
-                console.log(err);
-            }
-        },
+        // async searchCompanions(query) {
+        //     try {
+        //         const response = await CompanionsService.searchCompanions({ query });
+        //         this.filteredСompanions = response.data;
+        //     } catch (err) {
+        //         console.log(err);
+        //     }
+        // },
         async getById(_id) {
             try {
                 return CompanionsService.getById(_id);
