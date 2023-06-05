@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted} from "vue";
 import { useRoute } from 'vue-router'
 
 import { message } from 'ant-design-vue';
@@ -13,6 +13,15 @@ import { useRouter } from 'vue-router'
 
 import { useGuide } from "../stores/guide"
 import axios from "axios";
+
+import PosterService from "../../service/PosterService.js";
+
+onMounted(async() => {
+  await PosterService.getPosters()
+
+});
+
+
 
 const useGuideStore = useGuide()
 const route = useRoute()
