@@ -279,7 +279,16 @@ watch(start, () => {
   } else {
     form.duration = "";
   }
-  if (start.value) form.start = Number(Date.parse(start.value.$d.toString()));
+  // округлить, чтобы при поиске мы точно попадали
+  if (start.value) {
+    let startDate = new Date(start.value.$d);
+    startDate.setHours(0)
+    startDate.setMinutes(0)
+    endDate.setSeconds(0)
+    startDate.setMilliseconds(0)
+
+    form.start = Number(Date.parse(startDate.toString()));
+  }
 });
 watch(end, () => {
   let result =
@@ -291,7 +300,16 @@ watch(end, () => {
   } else {
     form.duration = "";
   }
-  form.end = Date.parse(end.value.$d.toString());
+  // округлить, чтобы при поиске мы точно попадали
+  if (end.value) {
+    let endDate = new Date(end.value.$d);
+    endDate.setHours(23)
+    endDate.setMinutes(59)
+    endDate.setSeconds(59)
+    endDate.setMilliseconds(999)
+
+    form.end = Date.parse(endDate);
+  }
 });
 const clearData = (dataString) => {
   let date
@@ -436,8 +454,12 @@ let formSchema = yup.object({
                 class="mb-16">
                 <a-input v-model:value="item.first" placeholder="Для кого" />
 
-                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0"
+                <<<<<<< HEAD <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0"
                   :step="0.01" class="ml-16 mr-16" />
+                =======
+                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0" :step="0.01"
+                  class="ml-16 mr-16" />
+                >>>>>>> master
 
                 <a-button @click="removeCost(item)" shape="circle">
                   <span class="mdi mdi-minus" style="cursor: pointer"></span>
@@ -469,8 +491,8 @@ let formSchema = yup.object({
             <a-col :xs="24" :md="12">
               <Field name="fromAge" v-slot="{ value, handleChange }" v-model="form.fromAge">
                 Мин. возраст, лет
-                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" placeholder="10"
-                  :min="0" :max="100" />
+                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" placeholder="10" :min="0"
+                  :max="100" />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="fromAge" class="error-message" />
@@ -526,7 +548,15 @@ let formSchema = yup.object({
                 ]
               " />
             </a-col>
-
+            <!-- <a-col :span=" 24 ">
+                                                                                                                                :file-list="fileList"
+                                                                                                                                <a-upload action="" :multiple=" true ">
+                                                                                                                                  <a-button type="dashed" block>
+                                                                                                                                    <span class="mdi mdi-12px mdi-plus"></span>
+                                                                                                                                    Загрузить pdf описание
+                                                                                                                                  </a-button>
+                                                                                                                                </a-upload>
+                                                                                                                              </a-col> -->
             <a-col :span="24" class="d-flex justify-center">
               <a-button :disabled="!meta.valid" class="lets_go_btn mt-8" type="primary" size="large"
                 html-type="submit">Отправить
@@ -546,4 +576,5 @@ let formSchema = yup.object({
         </a-modal>
       </a-col>
     </a-row>
-  </div></template>
+  </div>
+</template>

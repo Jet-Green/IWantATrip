@@ -82,8 +82,20 @@ function submit() {
 }
 watch(date, () => {
   if (date.value) {
-    form.start = date ? Number(Date.parse(date.value[0].$d.toString())) : ""
-    form.end = date ? Number(Date.parse(date.value[1].$d.toString())) : ""
+    let startDate = new Date(date.value[0]);
+    startDate.setHours(0);
+    startDate.setMinutes(0);
+    startDate.setSeconds(0);
+    startDate.setMilliseconds(0);
+
+    let endDate = new Date(date.value[1]);
+    endDate.setHours(23);
+    endDate.setMinutes(59);
+    endDate.setSeconds(59);
+    endDate.setMilliseconds(999);
+
+    form.start = date ? Number(Date.parse(startDate.toString())) : ""
+    form.end = date ? Number(Date.parse(endDate.toString())) : ""
   }
 });
 function selectStartLocation(selected) {
@@ -256,12 +268,12 @@ const formSchema = yup.object({
               </Transition>
 
               <!-- <a-date-picker v-model:value="form.start" style="width: 100%" placeholder="Начало" :locale="ruLocale":format="dateFormatList" />
-                                                                                                  </a-col>
-                                                                                                  <a-col :span="12">
-                                                                                                    Дата конца
-                                                                                                    <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
-                                                                                                      :format="dateFormatList" /> 
-                                                                                              -->
+                                                                                                                              </a-col>
+                                                                                                                              <a-col :span="12">
+                                                                                                                                Дата конца
+                                                                                                                                <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
+                                                                                                                                  :format="dateFormatList" /> 
+                                                                                                                          -->
             </a-col>
             <a-col :xs="24">
               <!-- Тип отдыха <a-select v-model:value="form.type" style="width: 100%" :options="typeOfTrip" mode="multiple"></a-select> -->

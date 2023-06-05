@@ -20,6 +20,7 @@ const clearData = (dateNumber) => {
   return ''
 }
 const ageString = (age) => {
+  age = age.toString()
   if (age >= 10 && age <= 20) {
     return `${age} лет`;
   }
@@ -33,12 +34,16 @@ const ageString = (age) => {
   }
   return `${age} лет`;
 }; // это гениально
+
+onMounted(async () => {
+  if (companionStore.companions.length == 0) {
+    await companionStore.fetchCompanions()
+  }
+})
 </script>
 <template>
   <div>
     <BackButton />
-
-
     <a-row class="d-flex justify-center">
       <a-col :xs="22" :lg="16">
         <h2>Ищу попутчика</h2>
@@ -81,13 +86,10 @@ const ageString = (age) => {
                     : companion.companionGender == 'Мужчина'
                       ? 'mdi mdi-gender-male'
                       : 'mdi mdi-human-male-female'
-                "></span>{{
-  companion.companionGender == "Мужчина"
-  ? "Мужчину"
-  : companion.companionGender == "Женщина"
-    ? "Женщину"
-    : "Не важно"
-}}
+                "></span>
+                {{ companion.companionGender == "Мужчина" ? "Мужчину" : companion.companionGender ==
+                  "Женщина" ? "Женщину" : "Не важно"
+                }}
               </div>
               <div>
                 <span class="mdi mdi-calendar-arrow-right"></span>
