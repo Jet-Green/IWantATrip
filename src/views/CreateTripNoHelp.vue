@@ -454,12 +454,8 @@ let formSchema = yup.object({
                 class="mb-16">
                 <a-input v-model:value="item.first" placeholder="Для кого" />
 
-                <<<<<<< HEAD <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0"
-                  :step="0.01" class="ml-16 mr-16" />
-                =======
                 <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0" :step="0.01"
                   class="ml-16 mr-16" />
-                >>>>>>> master
 
                 <a-button @click="removeCost(item)" shape="circle">
                   <span class="mdi mdi-minus" style="cursor: pointer"></span>
@@ -549,14 +545,14 @@ let formSchema = yup.object({
               " />
             </a-col>
             <!-- <a-col :span=" 24 ">
-                                                                                                                                :file-list="fileList"
-                                                                                                                                <a-upload action="" :multiple=" true ">
-                                                                                                                                  <a-button type="dashed" block>
-                                                                                                                                    <span class="mdi mdi-12px mdi-plus"></span>
-                                                                                                                                    Загрузить pdf описание
-                                                                                                                                  </a-button>
-                                                                                                                                </a-upload>
-                                                                                                                              </a-col> -->
+                                                                                                                                        :file-list="fileList"
+                                                                                                                                        <a-upload action="" :multiple=" true ">
+                                                                                                                                          <a-button type="dashed" block>
+                                                                                                                                            <span class="mdi mdi-12px mdi-plus"></span>
+                                                                                                                                            Загрузить pdf описание
+                                                                                                                                          </a-button>
+                                                                                                                                        </a-upload>
+                                                                                                                                      </a-col> -->
             <a-col :span="24" class="d-flex justify-center">
               <a-button :disabled="!meta.valid" class="lets_go_btn mt-8" type="primary" size="large"
                 html-type="submit">Отправить
