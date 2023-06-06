@@ -27,6 +27,7 @@ async function tripToDelete(_id) {
 }
 const clearData = (dataString) => {
     let date
+    dataString = String(dataString)
     if (dataString.length == 13) {
         const dataFromString = new Date(Number(dataString));
         date = dataFromString
@@ -91,5 +92,4 @@ const clearData = (dataString) => {
         cursor: pointer;
     }
 }
-
 </style>
