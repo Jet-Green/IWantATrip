@@ -294,7 +294,7 @@ let formSchema = yup.object({
                                     style="max-width: 200px" @click="delPhotoDialog = true;
                                     targetIndex = i;" />
                             </div>
-                            <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
+                            <a-button type="dashed" block @click=" visibleCropperModal = true" class="ma-8">
                                 <span class="mdi mdi-12px mdi-plus"></span>
                                 Добавить фото
                             </a-button>
@@ -343,10 +343,10 @@ let formSchema = yup.object({
                                 style="display: flex" align="baseline" class="mb-16">
                                 <a-input v-model:value="item.first" placeholder="Для кого" />
 
-                                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена"
-                                    :min="0" :step="0.01" class="ml-16 mr-16" />
+                                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0"
+                                    :step="0.01" class="ml-16 mr-16" />
 
-                                <a-button @click="removeCost(item)" shape="circle">
+                                <a-button @click=" removeCost(item)" shape="circle">
                                     <span class="mdi mdi-minus" style="cursor: pointer"></span>
                                 </a-button>
                             </div>
@@ -386,8 +386,7 @@ let formSchema = yup.object({
                         </a-col>
 
                         <a-col :xs="24">
-                            <Field name="startLocation" v-slot="{ value, handleChange }"
-                                v-model="locationSearchRequest">
+                            <Field name="startLocation" v-slot="{ value, handleChange }" v-model="locationSearchRequest">
                                 Место старта
                                 <a-auto-complete :value="value" @update:value="handleChange" style="width: 100%"
                                     :options="possibleLocations" placeholder="Глазов" @select="selectStartLocation">
@@ -426,15 +425,14 @@ let formSchema = yup.object({
                         <a-col :span="24" style="display: flex; flex-direction: column">
                             Описание программы
                             <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html"
-                                :toolbar="
-                                    [
+                                :toolbar="[
                                         // [{ header: [2, 3] }],
                                         ['bold', 'italic', 'underline'],
                                         [{ list: 'ordered' }, { list: 'bullet' }],
                                         [{ color: ['#000000', '#ff6600', '#3daff5'] }],
                                         [{ align: [] }],
                                     ]
-                                " />
+                                    " />
                         </a-col>
                         <a-col :span="24" class="d-flex justify-center">
                             <a-button :disabled="!meta.valid" class="lets_go_btn mt-8" type="primary" size="large"
