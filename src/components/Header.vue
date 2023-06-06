@@ -71,14 +71,14 @@ const handleChange = async (value) => {
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
         <a-row type="flex" justify="space-between">
-          <a-col v-if="!sm" class="d-flex align-center">
+          <a-col class="d-flex align-center">
 
             <img src="../assets/images/logo.png" style="height: 60px; cursor: pointer" alt=""
               @click="toComponentFromMenu('Landing')" />
 
 
           </a-col>
-          <a-col :xs="20" :md="7">
+          <a-col>
             <div @click="selectLocationDialog = !selectLocationDialog" style="cursor: pointer;">
               <span class="mdi mdi-map-marker-outline"></span>
               <span>
@@ -122,6 +122,7 @@ const handleChange = async (value) => {
     </a-row>
     <a-drawer placement="right" :closable="false" :visible="visibleDrawer" @close="visibleDrawer = !visibleDrawer"
       width="200">
+      <div @click="toComponentFromMenu('Landing')" class="route ma-8">главная</div>
       <div @click="toComponentFromMenu('TripsPage')" class="route ma-8">найти тур</div>
       <div @click="toComponentFromMenu('CreateTripWithHelp')" class="route ma-8">
         заказать тур

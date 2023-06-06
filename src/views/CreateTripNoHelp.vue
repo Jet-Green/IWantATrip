@@ -194,7 +194,7 @@ function addPreview(blob) {
 function updateUserInfo(info) {
   fullUserInfo = info;
   creatorForm = [fullUserInfo.fullname, fullUserInfo.creatorsType, fullUserInfo.type]
-  console.log(creatorForm)
+
 }
 function selectStartLocation(selected) {
   for (let l of possibleLocations.value) {
@@ -284,10 +284,11 @@ watch(start, () => {
     let startDate = new Date(start.value.$d);
     startDate.setHours(0)
     startDate.setMinutes(0)
-    endDate.setSeconds(0)
+    startDate.setSeconds(0)
     startDate.setMilliseconds(0)
 
     form.start = Number(Date.parse(startDate.toString()));
+   
   }
 });
 watch(end, () => {
