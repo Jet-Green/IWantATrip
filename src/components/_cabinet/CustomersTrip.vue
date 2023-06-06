@@ -155,29 +155,31 @@ function getPhoneNumber(number) {
 </script>
 
 <template>
-    <a-col :span="24" class="mb-8">
+    
         <h3>Информация о туре</h3>
+     <a-col :span="24" class="mb-8 d-flex space-between">   
         <a-breadcrumb>
             <a-breadcrumb-item @click="router.push('/cabinet/created-trips')">{{
                 trip.name
             }}</a-breadcrumb-item>
             <a-breadcrumb-item>Покупатели</a-breadcrumb-item>
         </a-breadcrumb>
+        <a-button size="large" class="lets_go_btn" @click="addCustomerDialog = true">
+            + Покупатель
+            </a-button>
     </a-col>
-    <a-row class="mb-8">
-        <a-col :span="24">
-            <a-button size="large" class="lets_go_btn" @click="addCustomerDialog = true">добавить покупателя</a-button>
-        </a-col>
-    </a-row>
+  
 
     <a-row :gutter="[8, 8]">
         <a-col :lg="8" :sm="12" :xs="24">
-            <a-card style="height: 100%">
+            <a-card style="height: 100%; border: 1px solid #245159; padding:4px">
+                Статистика тура
                 <div>Максимум: {{ trip.maxPeople }} чел.</div>
-                <div>Забронировало:</div>
-                <div v-for="(value, key) in allBooks">По цене {{ key }} - {{ value }} чел.</div>
-                <div>Оплатило:</div>
-                <div v-for="(value, key) in payedBooks">По цене {{ key }} - {{ value }} чел.</div>
+                <div>Забронировало: {{ allBooks }} чел.</div>
+                <div>Оплатило: {{ allBooks }} чел.</div>
+                <div>Сумма: {{ allBooks }} руб.</div>
+          
+                
             </a-card>
         </a-col>
         <a-col :lg="8" :sm="12" :xs="24" v-for="(BILL, index) of trip.billsList">
@@ -209,7 +211,7 @@ function getPhoneNumber(number) {
                         <div style="font-size: 20px">
                             <a-popconfirm v-if="!trip.isBoughtNow" title="Поставить оплату?" ok-text="Да" cancel-text="Нет"
                                 @confirm="setPayment(BILL)">
-                                <span class="mdi mdi-cash" style="cursor: pointer"></span>
+                                <span class="mdi mdi-cart-plus" style="color: #245159; cursor: pointer; margin-right:8px"></span>
                             </a-popconfirm>
                             <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deletePayment(BILL)">
                                 <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
