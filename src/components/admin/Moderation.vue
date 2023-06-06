@@ -54,7 +54,7 @@ const clearData = (dataString) => {
                         </div>
                         <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
                         <div>
-                            <span class="mdi mdi-compass-outline"></span>{{ trip.location }}
+                            <span class="mdi mdi-compass-outline"></span> {{ trip.startLocation.name }}
                         </div>
                         <div>
                             <span class="mdi mdi-calendar-arrow-right"></span>
