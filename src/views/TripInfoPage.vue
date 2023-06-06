@@ -195,7 +195,8 @@ onMounted(() => {
             </a-carousel>
           </a-col>
           <a-col :xs="24" :md="12" class="pa-8">
-            <p>Автор тура: {{ trip.creatorForm[0] }} ({{ creatorsType }})</p>
+            <div>{{ creatorsType }}: <b>{{ trip.creatorForm[0] }}</b> </div>
+            <div>Старт: <b>{{ trip.startLocation.name }}</b> </div>
             <p>{{ trip.offer }}</p>
             <div>
               Продолжительность: <b>{{ trip.duration }} дн.</b>
@@ -264,8 +265,8 @@ onMounted(() => {
         <a-col :span="24">
           <div>Оплатить</div>
           <div class="d-flex space-around">
-            <a-button type="primary" @click="buyTrip(true)"> сейчас </a-button>
-            <a-button @click="buyTrip(false)"> потом </a-button>
+            <!-- <a-button type="primary" @click="buyTrip(true)"> сейчас </a-button> -->
+            <a-button @click="buyTrip(false)"> Заказать </a-button>
           </div>
         </a-col>
       </a-row>
