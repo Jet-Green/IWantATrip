@@ -26,8 +26,15 @@ async function setPayment(bill) {
         }
     }
 }
-function deletePayment(bill) {
-    console.log(bill);
+async function deletePayment(bill) {
+    let res = await tripStore.deletePayment(bill._id)
+    if (res.status == 200) {
+        for (let i = 0; i < trip.value.billsList.length; i++) {
+            if (trip.value.billsList[i]._id == bill._id) {
+                trip.value.billsList.splice(i, 1);
+            }
+        }
+    }
 }
 onMounted(async () => {
     let { data } = await tripStore.getFullTripById(route.query._id)
@@ -124,7 +131,7 @@ function getPhoneNumber(number) {
                     </div>
                     <div style="display: flex; justify-content: space-between;">
                         <div style="font-size: 20px">
-                            <a-popconfirm title="Поставить оплату?" ok-text="Да" cancel-text="Нет"
+                            <a-popconfirm v-if="!trip.isBoughtNow" title="Поставить оплату?" ok-text="Да" cancel-text="Нет"
                                 @confirm="setPayment(BILL)">
                                 <span class="mdi mdi-cash" style="cursor: pointer"></span>
                             </a-popconfirm>
