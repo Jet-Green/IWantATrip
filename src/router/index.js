@@ -179,6 +179,10 @@ const router = createRouter({
           path: 'responses',
           component: () => import('../components/_cabinet/CompResponses.vue'),
         },
+        {
+          path: 'orders',
+          component: () => import('../components/_cabinet/Orders.vue'),
+        },
 
         {
           path: 'test',

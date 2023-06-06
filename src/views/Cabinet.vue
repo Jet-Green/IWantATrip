@@ -48,6 +48,7 @@ watch(current, (newRout, oldRout) => {
           <a-sub-menu key="sub2">
             <template #title>Админ</template>
             <a-menu-item key="/cabinet/moderation">Модерация</a-menu-item>
+            <a-menu-item key="/cabinet/orders">Заказы</a-menu-item>
             <a-menu-item key="/cabinet/interface">Интерфейс</a-menu-item>
           </a-sub-menu>
         </a-menu>
