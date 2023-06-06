@@ -172,11 +172,12 @@ function getPhoneNumber(number) {
 
     <a-row :gutter="[8, 8]">
         <a-col :lg="8" :sm="12" :xs="24">
-            <a-card style="height: 100%" primary>
+            <a-card style="height: 100%">
                 <div>Максимум: {{ trip.maxPeople }} чел.</div>
-                <div>Забронировало:  {{ trip.billsList.length||'' }} чел.</div>
-                
-               
+                <div>Забронировало:</div>
+                <div v-for="(value, key) in allBooks">По цене {{ key }} - {{ value }} чел.</div>
+                <div>Оплатило:</div>
+                <div v-for="(value, key) in payedBooks">По цене {{ key }} - {{ value }} чел.</div>
             </a-card>
         </a-col>
         <a-col :lg="8" :sm="12" :xs="24" v-for="(BILL, index) of trip.billsList">
