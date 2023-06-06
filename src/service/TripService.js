@@ -63,5 +63,9 @@ export default {
     },
     getFullTripById(_id) {
         return $api.get(`/trips/get-full-trip?_id=${_id}`)
+    },
+
+    setPayment(_id) {
+        return $api.get(`/trips/set-payment?_id=${_id}`)
     }
 }

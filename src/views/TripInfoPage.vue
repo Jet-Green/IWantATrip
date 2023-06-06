@@ -34,8 +34,10 @@ let userInfo = reactive({
 let tripsCount = computed(() => {
   let sum = 0;
   for (let i = 0; i < trip.value.billsList.length; i++) {
-    for (let j = 0; j < trip.value.billsList[i].cart.length; j++) {
-      sum += trip.value.billsList[i].cart[j].count;
+    if (trip.value.billsList[i]) {
+      for (let j = 0; j < trip.value.billsList[i].cart?.length; j++) {
+        sum += trip.value.billsList[i].cart[j].count;
+      }
     }
   }
   return sum;
@@ -127,37 +129,21 @@ async function buyTrip(isBoughtNow) {
 }
 
 onMounted(() => {
-  let found = false
-  for (let t of tripStore.trips) {
-    if (t._id == _id) {
-      trip.value = t;
-      for (let cost of t.cost) {
+  tripStore
+    .getFullTripById(_id)
+    .then((response) => {
+      trip.value = response.data;
+      for (let cost of response.data.cost) {
         selectedByUser.value.push({
           cost: cost.price,
           count: 0,
           costType: cost.first,
         });
       }
-      found = true
-    }
-  }
-  if (!found) {
-    tripStore
-      .getById(_id)
-      .then((response) => {
-        trip.value = response.data;
-        for (let cost of response.data.cost) {
-          selectedByUser.value.push({
-            cost: cost.price,
-            count: 0,
-            costType: cost.first,
-          });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 })
 </script>
 <template>

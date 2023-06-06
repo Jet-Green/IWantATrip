@@ -100,6 +100,13 @@ export const useTrips = defineStore('trips', {
             } catch (error) {
                 console.log(error);
             }
+        },
+        async setPayment(_id) {
+            try {
+                return await TripService.setPayment(_id)
+            } catch (error) {
+                console.log(error);
+            }
         }
     },
 })

@@ -16,6 +16,19 @@ const pricesSet = new Set();
 const _id = route.query.id;
 let trip = ref({});
 
+async function setPayment(bill) {
+    let res = await tripStore.setPayment(bill._id)
+    if (res.status == 200) {
+        for (let b of trip.value.billsList) {
+            if (b._id == bill._id) {
+                b.isBoughtNow = true;
+            }
+        }
+    }
+}
+function deletePayment(bill) {
+    console.log(bill);
+}
 onMounted(async () => {
     let { data } = await tripStore.getFullTripById(route.query._id)
     trip.value = data;
@@ -95,15 +108,15 @@ function getPhoneNumber(number) {
         </a-col>
         <a-col :lg="8" :sm="12" :xs="24" v-for="(BILL, index) of trip.billsList">
             <div>
-                <a-card hoverable v-if="customers[index]" class="card">
+                <a-card hoverable class="card">
                     <div>
                         <span class="mdi mdi-account-outline" style=""></span>
-                        {{ customers[index].fullname }}
+                        {{ BILL.userInfo.fullinfo.fullname }}
                     </div>
                     <div>
                         <span class="mdi mdi-phone-outline" style=""></span>
-                        <a :href="getPhoneNumber(customers[index].phone)">
-                            {{ customers[index].phone }}</a>
+                        <a :href="getPhoneNumber(BILL.userInfo.fullinfo.phone)">
+                            {{ BILL.userInfo.fullinfo.phone }}</a>
                     </div>
                     <div v-for="cartItem of BILL.cart">
                         {{ cartItem.costType }} {{ cartItem.count }} x {{ cartItem.cost }} руб.
@@ -118,8 +131,17 @@ function getPhoneNumber(number) {
                         }}
                         руб.
                     </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <div style="font-size: 20px">
+                            <a-popconfirm title="Поставить оплату?" ok-text="Да" cancel-text="Нет"
+                                @confirm="setPayment(BILL)">
+                                <span class="mdi mdi-cash" style="cursor: pointer"></span>
+                            </a-popconfirm>
+                            <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deletePayment(BILL)">
+                                <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+                            </a-popconfirm>
+                        </div>
 
-                    <div class="d-flex justify-end">
                         <b>
                             <span v-if="BILL.isBoughtNow" style="color: #bcc662">
                                 <span class="mdi mdi-check-all" style="font-size: 20px"></span>
@@ -131,6 +153,7 @@ function getPhoneNumber(number) {
                             </span>
                         </b>
                     </div>
+
                 </a-card>
             </div>
         </a-col>
