@@ -59,33 +59,6 @@ watch(current, (newRout, oldRout) => {
       </a-col>
     </a-row>
 
-    <!-- <a-row type="flex" justify="center">
-      <a-col :xs="22" :lg="16">
-        <a-tabs activeKey="5">
-          <a-tab-pane key="1" tab="О пользователе">
-            <AboutClient />
-          </a-tab-pane>
-          <a-tab-pane v-if="userStore.user?.trips?.length" key="2" tab="Созданные туры">
-            <CreatedTrips />
-          </a-tab-pane>
-          <a-tab-pane key="3" tab="Забронированные">
-            <PurchasedTrips />
-          </a-tab-pane>
-          <a-tab-pane v-if="userStore.user?.guideElements?.length" key="4" tab="Созданные объекты">
-            <CreatedObjects />
-          </a-tab-pane>
-          <a-tab-pane v-if="userStore.user?.createdCompanions?.length" key="5" tab="Попутчики">
-            <MyCompanions />
-          </a-tab-pane>
-          <a-tab-pane key="6" tab="Заказ тура">
-            <BookingTrips />
-          </a-tab-pane>
-          <a-tab-pane v-if="userStore.user?.roles.includes('admin')" key="7" tab="Админ панель">
-            <AdminPanel />
-          </a-tab-pane>
-        </a-tabs>
-      </a-col>
-    </a-row> -->
   </div>
 </template>
 
