@@ -86,7 +86,12 @@ async function buyTrip(isBoughtNow) {
     let bill = {
       isBoughtNow,
       cart: [...selectedByUser.value],
-      userId: userStore.user._id,
+      tripId: trip.value._id,
+      userInfo: {
+        _id: userStore.user._id,
+        fullname: userInfo.fullname,
+        phone: userInfo.phone,
+      }
     };
 
     for (let i = 0; i < bill.cart.length; i++) {
@@ -105,27 +110,10 @@ async function buyTrip(isBoughtNow) {
       .catch((err) => {
         console.log(err);
       });
-
-    userStore.user.fullinfo.fullname = userInfo.fullname;
-    userStore.user.fullinfo.phone = userInfo.phone;
-
-    await userStore
-      .updateUser({
-        email: userStore.user.email,
-        fullinfo: userStore.user.fullinfo,
-      })
-      .then((response) => {
-        userStore.user = response.data;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   } else {
     message.config({ duration: 3, top: "90vh" });
     message.success({ content: "Нужен телефон" });
   }
-
-  //тут обновить полную информацию о юзере
 }
 
 onMounted(() => {

@@ -33,15 +33,6 @@ onMounted(async () => {
     let { data } = await tripStore.getFullTripById(route.query._id)
     trip.value = data;
 
-    let customersIds = [];
-    for (let bill of trip.value.billsList) {
-        customersIds.push(bill.userId);
-    }
-    if (customersIds.length) {
-        let { data } = await tripStore.getCustomers(customersIds);
-        customers.value = data;
-    }
-
     for (let book of trip.value.billsList) {
         // if (book.isBoughtNow == true)
         for (let cart of book.cart) {
@@ -111,12 +102,12 @@ function getPhoneNumber(number) {
                 <a-card hoverable class="card">
                     <div>
                         <span class="mdi mdi-account-outline" style=""></span>
-                        {{ BILL.userInfo.fullinfo.fullname }}
+                        {{ BILL.userInfo.fullname }}
                     </div>
                     <div>
                         <span class="mdi mdi-phone-outline" style=""></span>
-                        <a :href="getPhoneNumber(BILL.userInfo.fullinfo.phone)">
-                            {{ BILL.userInfo.fullinfo.phone }}</a>
+                        <a :href="getPhoneNumber(BILL.userInfo.phone)">
+                            {{ BILL.userInfo.phone }}</a>
                     </div>
                     <div v-for="cartItem of BILL.cart">
                         {{ cartItem.costType }} {{ cartItem.count }} x {{ cartItem.cost }} руб.
