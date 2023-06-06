@@ -14,15 +14,6 @@ import { useRouter } from 'vue-router'
 import { useGuide } from "../stores/guide"
 import axios from "axios";
 
-import PosterService from "../../service/PosterService.js";
-
-onMounted(async() => {
-  await PosterService.getPosters()
-
-});
-
-
-
 const useGuideStore = useGuide()
 const route = useRoute()
 const router = useRouter()
