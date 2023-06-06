@@ -13,7 +13,7 @@ import { useCompanions } from "../stores/companions";
 
 const userStore = useAuth();
 const locationStore = useLocations();
-const comanionStore = useCompanions()
+const companionStore = useCompanions()
 const tripStore = useTrips()
 
 let breakpoints = useBreakpoints(breakpointsTailwind);
@@ -22,7 +22,7 @@ let router = useRouter();
 let visibleDrawer = ref(false);
 let selectLocationDialog = ref(false)
 
-let locationSearchRequest = ref()
+let locationSearchRequest = ref('Не выбрано')
 
 
 function toComponentFromMenu(routName) {
@@ -33,37 +33,43 @@ function toComponentFromMenu(routName) {
 }
 
 
-const handleChange = async (value) => {
-  if (value == 'Не выбрано') {
-    await locationStore.resetLocation()
+const handleChange = async () => {
+
+  if (locationSearchRequest.value == 'Не выбрано') {
+    locationStore.resetLocation()
     tripStore.searchCursor = 1
     tripStore.filteredTrips = []
     tripStore.cursor = 1
     tripStore.trips = []
-
-    await tripStore.fetchTrips()
-    await comanionStore.fetchCompanions()
-
     selectLocationDialog.value = false
+    await tripStore.fetchTrips()
+    await companionStore.fetchCompanions()
+
+
   }
   else {
     for (let loc of locationStore.locations) {
-      if (loc.shortName == value) {
+      if (loc.shortName == locationSearchRequest.value) {
         // start pagiantion again to update location
         tripStore.searchCursor = 1
         tripStore.filteredTrips = []
         tripStore.cursor = 1
         tripStore.trips = []
 
-        await locationStore.setLocation(loc)
-        await tripStore.fetchTrips()
-        await comanionStore.fetchCompanions()
+        locationStore.setLocation(loc)
         selectLocationDialog.value = false
+        await tripStore.fetchTrips()
+        await companionStore.fetchCompanions()
+
         break
       }
     }
   }
 };
+onMounted(() => {
+  locationSearchRequest.value = JSON.parse(localStorage.getItem("location")).shortName 
+})
+
 </script>
 
 <template>
@@ -78,11 +84,12 @@ const handleChange = async (value) => {
 
 
           </a-col>
+
           <a-col>
             <div @click="selectLocationDialog = !selectLocationDialog" style="cursor: pointer;">
               <span class="mdi mdi-map-marker-outline"></span>
               <span>
-                {{ locationStore.location?.shortName || 'Не выбрано' }}
+                {{ locationSearchRequest }}
               </span>
             </div>
             <a-modal :mask="false" v-model:visible="selectLocationDialog" title="Местоположение" :footer="null">
