@@ -4,10 +4,13 @@ import BackButton from "../BackButton.vue";
 import { useRouter } from 'vue-router';
 import { useGuide } from "../../stores/guide";
 
-const router = useRouter()
-const useGuideStore = useGuide();
+import PosterService from "../../service/PosterService"
+import { onMounted } from "vue";
 
-useGuideStore.fetchElementsByQuery('watch');
+onMounted(async () => {
+  let response = await PosterService.getPosters()
+  console.log(response)
+})
 </script>
 <template>
   <div>

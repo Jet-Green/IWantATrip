@@ -34,8 +34,10 @@ let userInfo = reactive({
 let tripsCount = computed(() => {
   let sum = 0;
   for (let i = 0; i < trip.value.billsList.length; i++) {
-    for (let j = 0; j < trip.value.billsList[i].cart.length; j++) {
-      sum += trip.value.billsList[i].cart[j].count;
+    if (trip.value.billsList[i]) {
+      for (let j = 0; j < trip.value.billsList[i].cart?.length; j++) {
+        sum += trip.value.billsList[i].cart[j].count;
+      }
     }
   }
   return sum;
@@ -84,7 +86,12 @@ async function buyTrip(isBoughtNow) {
     let bill = {
       isBoughtNow,
       cart: [...selectedByUser.value],
-      userId: userStore.user._id,
+      tripId: trip.value._id,
+      userInfo: {
+        _id: userStore.user._id,
+        fullname: userInfo.fullname,
+        phone: userInfo.phone,
+      }
     };
 
     for (let i = 0; i < bill.cart.length; i++) {
@@ -103,61 +110,28 @@ async function buyTrip(isBoughtNow) {
       .catch((err) => {
         console.log(err);
       });
-
-    userStore.user.fullinfo.fullname = userInfo.fullname;
-    userStore.user.fullinfo.phone = userInfo.phone;
-
-    await userStore
-      .updateUser({
-        email: userStore.user.email,
-        fullinfo: userStore.user.fullinfo,
-      })
-      .then((response) => {
-        userStore.user = response.data;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   } else {
     message.config({ duration: 3, top: "90vh" });
     message.success({ content: "Нужен телефон" });
   }
-
-  //тут обновить полную информацию о юзере
 }
 
 onMounted(() => {
-  let found = false
-  for (let t of tripStore.trips) {
-    if (t._id == _id) {
-      trip.value = t;
-      for (let cost of t.cost) {
+  tripStore
+    .getFullTripById(_id)
+    .then((response) => {
+      trip.value = response.data;
+      for (let cost of response.data.cost) {
         selectedByUser.value.push({
           cost: cost.price,
           count: 0,
           costType: cost.first,
         });
       }
-      found = true
-    }
-  }
-  if (!found) {
-    tripStore
-      .getById(_id)
-      .then((response) => {
-        trip.value = response.data;
-        for (let cost of response.data.cost) {
-          selectedByUser.value.push({
-            cost: cost.price,
-            count: 0,
-            costType: cost.first,
-          });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 })
 </script>
 <template>

@@ -92,7 +92,7 @@ function submit() {
         <a-col :span="24" :md="12">
           <a-typography-text type="secondary">Статус пользователя</a-typography-text>
 
-          <a-select @click="onChange = true" :trigger="['click']" v-model:value="info.creatorsType" :bordered="false">
+          <a-select @click="onChange = true" :trigger="['click']" v-model:value="info.creatorsType" :bordered="false" style="min-width:200px">
             <a-select-option value="author">Автор тура</a-select-option>
             <a-select-option value="operator">Туроператор</a-select-option>
             <a-select-option value="agency">Турагенство</a-select-option>
@@ -103,7 +103,7 @@ function submit() {
 
         <a-col :span="24" :md="12">
           <a-typography-text type="secondary">Юридический статус</a-typography-text>
-          <a-select @click="onChange = true" :trigger="['click']" v-model:value="info.type" :bordered="false">
+          <a-select @click="onChange = true" :trigger="['click']" v-model:value="info.type" :bordered="false" style="width:200px">
             <a-select-option value="phys">Физическое лицо</a-select-option>
             <a-select-option value="company">Юридическое лицо</a-select-option>
             <a-select-option value="indpred">Инд. предприниматель</a-select-option>
