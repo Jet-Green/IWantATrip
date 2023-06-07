@@ -23,7 +23,7 @@ async function logIn() {
   let result = await user.login(formState.email, formState.password);
   if (result.success) {
     // update location from user loc
-    useLocations().setLocation()
+    // useLocations().setLocation()
     message.config({ duration: 0.5, top: "70vh" });
     message.success({
       content: "Успешно!",
