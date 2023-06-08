@@ -6,7 +6,7 @@ import UserFullInfo from "../components/forms/UserFullInfo.vue";
 import { watch, nextTick, ref, reactive, onMounted } from "vue";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
-import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
+
 // import typeOfTrip from "../fakeDB/tripType";
 import { message } from "ant-design-vue";
 import { useRouter } from "vue-router";
@@ -17,6 +17,9 @@ import { useAppState } from "../stores/appState";
 import TripService from "../service/TripService";
 
 import dayjs from "dayjs";
+import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
+import 'dayjs/locale/ru';
+dayjs.locale('ru');
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 
