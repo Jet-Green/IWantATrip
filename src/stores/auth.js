@@ -52,7 +52,7 @@ export const useAuth = defineStore('auth', {
             try {
                 let { data } = await UserService.buyTrip(tripId, bill)
                 this.user.boughtTrips.push(data)
-                return
+                return data
             } catch (error) {
                 console.log(error);
             }

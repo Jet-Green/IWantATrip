@@ -100,6 +100,20 @@ export const useTrips = defineStore('trips', {
             } catch (error) {
                 console.log(error);
             }
+        },
+        async setPayment(_id) {
+            try {
+                return await TripService.setPayment(_id)
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async deletePayment(bill_id) {
+            try {
+                return await TripService.deletePayment(bill_id)
+            } catch (error) {
+                console.log(error);
+            }
         }
     },
 })

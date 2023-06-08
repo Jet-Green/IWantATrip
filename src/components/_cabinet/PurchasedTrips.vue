@@ -49,7 +49,7 @@ onMounted(() => {
               <div style="text-align:center">{{ boughtTrips[index] ? boughtTrips[index].name : "" }} </div>
               <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
               <div>
-                <span class="mdi mdi-compass-outline"></span> {{ boughtTrips[index] ? boughtTrips[index].location : "" }}
+                <span class="mdi mdi-compass-outline"></span> {{ boughtTrips[index] ? boughtTrips[index].startLocation.name : "" }}
               </div>
               <div>
                 <span class="mdi mdi-calendar-arrow-right"></span>
