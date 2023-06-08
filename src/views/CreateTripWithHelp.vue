@@ -105,6 +105,9 @@ let formSchema = yup.object({
 
 watch(start, () => {
     form.start = Number(Date.parse(new Date(start.value.$d)));
+    if (!end.value) {
+      end.value = start.value
+    }
 });
 watch(end, () => {
     form.end = Number(Date.parse(new Date(end.value.$d))) 

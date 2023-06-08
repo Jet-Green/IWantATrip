@@ -176,6 +176,9 @@ onMounted(() => {
               Продолжительность: <b>{{ trip.duration }} дн.</b>
             </div>
             <div>
+              Маршрут: <b>{{ trip.tripRoute }}</b>
+            </div>
+            <div>
               Ближайший выезд: <b>{{ clearData(trip.start) }}</b>
             </div>
             <div>Количество человек:</div>
