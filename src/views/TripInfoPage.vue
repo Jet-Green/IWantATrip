@@ -185,8 +185,8 @@ onMounted(() => {
             </div>
             <div>Количество человек:</div>
             <div style="width: 50%">
-              <a-progress :percent="(tripsCount / trip.maxPeople) * 100" :format="() => `${trip.maxPeople} чел`">
-              </a-progress>
+             <b> <a-progress :percent="(tripsCount / trip.maxPeople) * 100" :format="() => `${tripsCount}/${trip.maxPeople} чел`">
+              </a-progress></b>
             </div>
             <div>
               Цена
