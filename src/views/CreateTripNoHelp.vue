@@ -529,8 +529,8 @@ let formSchema = yup.object({
 
             <a-col :span=" 24 ">
               <Field name="tripRoute" v-slot=" { value, handleChange } " v-model=" form.tripRoute ">
-                Маршрут
-                <a-textarea @update:value=" handleChange " :value=" value " placeholder="Глазов-Пермь 300км" size="large">
+                Ключевые точки:
+                <a-textarea @update:value=" handleChange " :value=" value " placeholder="Глазов-Пермь-Кама" size="large">
                 </a-textarea>
               </Field>
               <Transition name="fade">
