@@ -3,6 +3,13 @@ import { ref, onMounted, watch, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { useCompanions } from "../stores/companions";
 
+import dayjs from "dayjs";
+import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
+import 'dayjs/locale/ru';
+dayjs.locale('ru');
+
+const ruLocale = locale;
+
 const companionStore = useCompanions();
 let router = useRouter();
 let visible = ref(false);
@@ -78,7 +85,7 @@ onMounted(() => {
 
             <a-col :xs="24">
               <label for="date">дата</label>
-              <a-range-picker name="date" style="width:100%" v-model:value="date" />
+              <a-range-picker name="date" style="width:100%" v-model:value="date" :locale="ruLocale"/>
             </a-col>
             <!-- <a-col :xs="24" class="d-flex justify-center">
                                                             <a-button @click="find" class="lets_go_btn" type="primary">поиск</a-button>
