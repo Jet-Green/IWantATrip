@@ -9,5 +9,8 @@ export default {
     },
     getBookingTrips(status) {
         return $api.get(`/booking/get-by-status?status=${status}`)
+    },
+    changeBookStatus(_id, status) {
+        return $api.get(`/booking/change-status?_id=${_id}&status=${status}`)
     }
 }
