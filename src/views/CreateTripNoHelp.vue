@@ -517,8 +517,8 @@ let formSchema = yup.object({
 
             <a-col :span=" 24 ">
               <Field name="offer" v-slot=" { value, handleChange } " v-model=" form.offer ">
-                Реклама
-                <a-textarea @update:value=" handleChange " :value=" value " placeholder="завлекательное описание"
+                Краткое описание
+                <a-textarea @update:value=" handleChange " :value=" value " placeholder="Едем в Татарстан за новыми эмоциями!"
                   size="large">
                 </a-textarea>
               </Field>
