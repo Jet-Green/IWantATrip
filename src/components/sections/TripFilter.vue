@@ -3,6 +3,13 @@ import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useTrips } from '../../stores/trips.js'
 
+import dayjs from "dayjs";
+import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
+import 'dayjs/locale/ru';
+dayjs.locale('ru');
+
+const ruLocale = locale;
+
 let props = defineProps({
   search: String,
 });
@@ -60,7 +67,7 @@ onMounted(() => {
         <div v-if="visible">
           <a-row type="flex" justify="center" class="mt-16">
             <a-col :xs="24" :md="12">
-              <a-range-picker style="width: 100%" v-model:value="time" />
+              <a-range-picker style="width: 100%" v-model:value="time" :locale="ruLocale" />
             </a-col>
           </a-row>
           <a-row type="flex" justify="center" class="mt-8">

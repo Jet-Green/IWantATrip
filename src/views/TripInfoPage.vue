@@ -169,11 +169,16 @@ onMounted(() => {
             </a-carousel>
           </a-col>
           <a-col :xs="24" :md="12" class="pa-8">
-            <div>{{ creatorsType }}: <b>{{ trip.creatorForm[0] }}</b> </div>
+            <i>  {{ trip.offer }}</i>
+            <a-divider style="border-color: #245159" dashed />
+            <!-- <div>{{ creatorsType }}: <b>{{ trip.creatorForm[0] }}</b> </div> -->
             <div>Старт: <b>{{ trip.startLocation.name }}</b> </div>
-            <p>{{ trip.offer }}</p>
+            
             <div>
               Продолжительность: <b>{{ trip.duration }} дн.</b>
+            </div>
+            <div>
+              Ключевые точки: <b>{{ trip.tripRoute }}</b>
             </div>
             <div>
               Ближайший выезд: <b>{{ clearData(trip.start) }}</b>

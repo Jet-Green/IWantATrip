@@ -5,11 +5,14 @@ import { useRouter } from 'vue-router';
 import { useGuide } from "../../stores/guide";
 
 import PosterService from "../../service/PosterService"
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
+
+let posters = ref()
 
 onMounted(async () => {
   let response = await PosterService.getPosters()
-  console.log(response)
+  posters.value = response.data
+  console.log(posters.value)
 })
 </script>
 <template>
@@ -19,11 +22,14 @@ onMounted(async () => {
       <a-col :xs="22" :lg="16">
         <p>Афиша</p>
       </a-col>
-      <a-col :xs="22" :lg="16">
-        <a-button type="primary" class="lets_go_btn" size="large"
-          @click="router.push(`/add-guide-element?type=${router.currentRoute.value.path.slice(1)}`)">Добавить
-        </a-button>
-      </a-col>
+        <a-col v-for="poster in posters">
+          <a-col>
+          <a-card>
+            <a-card-grid style="width: 50%; text-align: center">{{ poster.image }}</a-card-grid>
+            <a-card-grid style="width: 50%; text-align: center" :hoverable="false">{{ poster.title }}</a-card-grid>
+          </a-card>
+        </a-col>
+        </a-col>
     </a-row>
   </div>
 </template>
