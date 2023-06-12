@@ -15,12 +15,15 @@ let sm = breakpoints.smaller("md");
 
 
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
-// const monthFormatList = ["MM.YY"];
 const ruLocale = locale;
 
 const userStore = useAuth();
 const appStore = useAppState();
 const router = useRouter();
+
+const start = ref(null);
+const end = ref(null);
+
 let form = reactive({
   type: [],
   start: null,
@@ -39,6 +42,7 @@ let userInfo = reactive({
 });
 function close() {
   router.push("/trips");
+  clearForm()
 }
 function clearForm() {
   form.type = []
@@ -54,11 +58,14 @@ function clearForm() {
 }
 
 async function submit() {
+
   let toSend = Object.assign(form);
+
   toSend.start = new Date(form.start).getTime();
   toSend.end = new Date(form.end).getTime();
   toSend.creatorId = userStore.user._id
 
+  console.log(toSend)
   await userStore
     .updateUser({
       email: userStore.user.email,
@@ -77,13 +84,35 @@ async function submit() {
       content: "Успешно!",
       onClose: () => {
         close()
-        clearForm()
       },
     });
   });
 
   // очистить форму, сделать редирект на главную, вывести уведомление снизу об успехе
 }
+
+let formSchema = yup.object({
+  start: yup.object().required("заполните поле"),
+  end: yup.object().required("заполните поле"),
+  type: yup.string().required("заполните поле"),
+  location: yup.string().required("заполните поле"),
+  duration: yup.string().required("заполните поле"),
+  adults: yup.string().required("заполните поле"),
+  children: yup.string().required("заполните поле"),
+  fromAge: yup.string().required("заполните поле"),
+  wishes: yup.string().required("заполните поле"),
+});
+
+watch(start, () => {
+    form.start = Number(Date.parse(new Date(start.value.$d)));
+    if (!end.value) {
+      end.value = start.value
+    }
+});
+watch(end, () => {
+    form.end = Number(Date.parse(new Date(end.value.$d))) 
+});
+
 
 onMounted(() => {
   if (userStore.user.fullinfo) {
@@ -94,20 +123,6 @@ onMounted(() => {
       ? (userInfo.phone = userStore.user.fullinfo.phone)
       : (userInfo.phone = "");
   }
-});
-
-let formSchema = yup.object({
-  start: yup.object().required("заполните поле"),
-  end: yup.object().required("заполните поле"),
-  type: yup.string().required("заполните поле"),
-  location: yup.string().required("заполните поле"),
-  adults: yup.string().required("заполните поле"),
-  children: yup.string().required("заполните поле"),
-  fromAge: yup.string().required("заполните поле"),
-  wishes: yup.string().required("заполните поле"),
-  // distance: yup.string().required("заполните поле"),
-  // cost: yup.string().required("заполните поле"),
-  // https://vee-validate.logaretm.com/v4/examples/array-fields/
 });
 </script>
 <template>
@@ -120,7 +135,7 @@ let formSchema = yup.object({
     <img v-if="!sm" src="../assets/images/booking_right.png"
       style="position: fixed; right: 0px; bottom: 0px; width: 20% " />
 
-    <Form :validation-schema="formSchema" v-slot="{ meta }" @submit.prevent="submit">
+    <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
       <a-row type="flex" justify="center">
         <a-col :xs="22" :lg="12">
           <h2>О вас</h2>
@@ -164,7 +179,7 @@ let formSchema = yup.object({
             </a-col>
 
             <a-col :span="12">
-              <Field name="start" v-slot="{ value, handleChange }" v-model="form.start">
+              <Field name="start" v-slot="{ value, handleChange }" v-model="start">
                 Дата начала
                 <a-date-picker @update:value="handleChange" :value="value" style="width: 100%" placeholder="Начало"
                   :locale="ruLocale" :format="dateFormatList" />
@@ -175,7 +190,7 @@ let formSchema = yup.object({
             </a-col>
 
             <a-col :span="12">
-              <Field name="end" v-slot="{ value, handleChange }" v-model="form.end">
+              <Field name="end" v-slot="{ value, handleChange }" v-model="end">
                 Дата конца
                 <a-date-picker @update:value="handleChange" :value="value" style="width: 100%" placeholder="Конец"
                   :locale="ruLocale" :format="dateFormatList" />
@@ -186,10 +201,10 @@ let formSchema = yup.object({
             </a-col>
 
             <a-col :xs="24" :md="12">
-              <Field name="location" v-slot="{ value, handleChange }" v-model:value="form.location">
+              <Field name="location" v-slot="{ value, handleChange }" v-model="form.location">
                 Направление
 
-                <a-input style="width: 100%" @update:value="handleChange" :value="value" placeholder="Байкал"
+                <a-input style="width: 100%" @update:value="handleChange"  placeholder="Байкал"
                   size="large" />
               </Field>
               <Transition name="fade">
@@ -198,7 +213,7 @@ let formSchema = yup.object({
             </a-col>
 
             <a-col :xs="24" :md="12">
-              <Field name="duration" v-slot="{ value, handleChange }" v-model:value="form.duration">
+              <Field name="duration" v-slot="{ value, handleChange }" v-model="form.duration">
                 Продолжительность, дн.
 
                 <a-input-number id="inputNumber" style="width: 100%" @update:value="handleChange" :value="value"

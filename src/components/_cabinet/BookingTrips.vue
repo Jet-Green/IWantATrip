@@ -25,7 +25,9 @@ const clearData = (dateNumber) => {
   return ''
 }
 
-
+function changeStatus(_id, status) {
+  tripStore.changeBookStatus(_id, status)
+}
 
 
 
@@ -40,23 +42,23 @@ onMounted(() => {
       <h3>Вы заказали</h3>
       <a-row :gutter="[8, 8]" class="mt-8">
         <a-col :lg="8" :sm="12" :xs="24" v-for="booking in bookings" v-if="bookings.length">
-          
+
           <a-card class="card " hoverable>
-           
+
             <div>
               Тур: {{ booking.type.toString().toLowerCase() }}
             </div>
             <div>
-             C {{ clearData(booking.start) }} по {{ clearData(booking.end) }}
+              C {{ clearData(booking.start) }} по {{ clearData(booking.end) }}
             </div>
-           
+
             <div>
               На {{ booking.duration }} дн.
             </div>
-            <div v-if="booking.adults ">
+            <div v-if="booking.adults">
               Взрослых: {{ booking.adults }} чел.
             </div>
-            <div v-if="booking.children ">
+            <div v-if="booking.children">
               Детей: {{ booking.children }} чел. от {{ booking.fromAge }} лет
             </div>
             <div>
@@ -77,6 +79,4 @@ onMounted(() => {
     </a-col>
   </a-row>
 </template>
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

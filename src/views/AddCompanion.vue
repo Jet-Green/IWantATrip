@@ -1,7 +1,6 @@
 <script setup>
 import { reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import BackButton from "../components/BackButton.vue";
 import CompanionService from "../service/CompanionService";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
@@ -11,6 +10,12 @@ import { message } from "ant-design-vue";
 
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
+
+import dayjs from "dayjs";
+import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
+import 'dayjs/locale/ru';
+dayjs.locale('ru');
+
 
 let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
@@ -84,8 +89,20 @@ function submit() {
 }
 watch(date, () => {
   if (date.value) {
-    form.start = date ? Number(Date.parse(date.value[0].$d.toString())) : ""
-    form.end = date ? Number(Date.parse(date.value[1].$d.toString())) : ""
+    let startDate = new Date(date.value[0]);
+    startDate.setHours(0);
+    startDate.setMinutes(0);
+    startDate.setSeconds(0);
+    startDate.setMilliseconds(0);
+
+    let endDate = new Date(date.value[1]);
+    endDate.setHours(23);
+    endDate.setMinutes(59);
+    endDate.setSeconds(59);
+    endDate.setMilliseconds(999);
+
+    form.start = date ? Number(Date.parse(startDate.toString())) : ""
+    form.end = date ? Number(Date.parse(endDate.toString())) : ""
   }
 });
 function selectStartLocation(selected) {
@@ -251,19 +268,19 @@ const formSchema = yup.object({
             <a-col :xs="24" :md="12">
               <Field name="date" v-slot="{ value, handleChange }" v-model="date">
                 Период
-                <a-range-picker @update:value="handleChange" :value="value" style="width: 100%" />
+                <a-range-picker @update:value="handleChange" :value="value" style="width: 100%" :locale="ruLocale" />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="date" class="error-message" />
               </Transition>
 
               <!-- <a-date-picker v-model:value="form.start" style="width: 100%" placeholder="Начало" :locale="ruLocale":format="dateFormatList" />
-                                                                                                  </a-col>
-                                                                                                  <a-col :span="12">
-                                                                                                    Дата конца
-                                                                                                    <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
-                                                                                                      :format="dateFormatList" /> 
-                                                                                              -->
+                                                                                                                              </a-col>
+                                                                                                                              <a-col :span="12">
+                                                                                                                                Дата конца
+                                                                                                                                <a-date-picker v-model:value="form.end" style="width: 100%" placeholder="Конец" :locale="ruLocale"
+                                                                                                                                  :format="dateFormatList" /> 
+                                                                                                                          -->
             </a-col>
             <a-col :xs="24">
               <Field name="startLocation" v-slot="{ value, handleChange }" v-model="locationSearchRequest">

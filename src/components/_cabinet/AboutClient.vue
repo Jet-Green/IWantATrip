@@ -1,15 +1,13 @@
 <script setup>
-import { computed } from "vue";
-import { ref } from "vue";
-import { func } from "vue-types";
+import { computed, ref } from "vue";
 import { useAuth } from "../../stores/auth";
-import { EditOutlined} from '@ant-design/icons-vue';
 import { message } from "ant-design-vue";
-import { watch } from "vue";
+
 const userStore = useAuth();
 const user = userStore.user;
-const info = userStore.user.fullinfo;
+let info = userStore.user.fullinfo;
 let onChange = ref(false);
+
 const companyName = computed(() => {
   return info.companyName ? info.companyName : "**********";
 });
@@ -18,16 +16,16 @@ const creatorsType = computed(() => {
   return info.creatorsType == "author"
     ? "Автор тура"
     : info.creatorsType == "operator"
-    ? "Туроператор"
-    : "Турагенство";
+      ? "Туроператор"
+      : "Турагенство";
 });
 
 const type = computed(() => {
   return info.type == "phys"
     ? "Физическое лицо"
     : info.type == "company"
-    ? "Юридическое лицо"
-    : "Индивидуальный предприниматель";
+      ? "Юридическое лицо"
+      : "Индивидуальный предприниматель";
 });
 
 const govermentRegNumber = computed(() => {
@@ -42,7 +40,7 @@ function submit() {
     .then((response) => {
       userStore.user = response.data;
       message.config({ duration: 3, top: "90vh" });
-      message.success({ content: "Данные изменены!"});
+      message.success({ content: "Данные изменены!" });
       onChange.value = false
       console.log(onChange)
     })
@@ -60,74 +58,69 @@ function submit() {
 // })
 </script>
 <template>
-  <div v-if="info && user">
-    <form
-      action="POST"
-      @submit.prevent="submit"
-
-      enctype="multipart/form-data"
-    >
+  <div v-if="user">
+    <form action="POST" @submit.prevent="submit" enctype="multipart/form-data">
       <a-row>
-        <a-avatar
-          style="margin-right: 8px; font-size: large; font-weight: bold"
-          size="large"
-          >{{ user.fullname[0] }}</a-avatar
-        >
+        <a-avatar style="margin-right: 8px; font-size: large; font-weight: bold" size="large">{{ user.fullname[0]
+        }}</a-avatar>
         <h3 style="font-size: 28px; font-weight: bold">{{ user.fullname }}</h3>
       </a-row>
 
-      <a-row :xs="22" :md="18" :lg="16">
-        <a-col :xs="11" :md="8" :lg="5">
-          <a-typography-text type="secondary">E-mail</a-typography-text>
-          <a-typography-paragraph v-model:content="user.email" />
+      <a-row :xs="22" :md="18" :lg="16" class="cols-container">
+        <a-col :xs="24" :md="8">
+          <a-typography-text type="secondary" class="w-100">E-mail</a-typography-text>
+          <a-typography-paragraph class="w-100" v-model:content="user.email" />
         </a-col>
 
-        <a-col :xs="11" :md="8" :lg="5">
-          <a-typography-text type="secondary">Телефон</a-typography-text>
-          <a-typography-paragraph v-model:content="info.phone" editable @click="onChange = true"/>
+        <a-col :xs="24" :md="8">
+          <a-typography-text type="secondary" class="w-100">Телефон</a-typography-text>
+          <a-typography-paragraph v-model:content="info.phone" editable @click="onChange = true" class="w-100" />
         </a-col>
 
-        <a-col :xs="11" :md="8" :lg="5">
-          <a-typography-text type="secondary">Отображаемое имя</a-typography-text>
-          <a-typography-paragraph v-model:content="info.fullname" editable @click=" onChange = true"/>
-        </a-col>
-
-        <a-col :xs="12" :md="8" v-if="info.companyName">
-          <a-typography-text type="secondary">Название фирмы</a-typography-text>
-          <a-typography-paragraph v-model:content="info.companyName" editable @click=" onChange = true"/>
-        </a-col>
-      </a-row>
-
-      <a-row>
-        <a-col :span="24" :md="12" v-if="info.creatorsType">
-          <a-typography-text type="secondary">Статус пользователя</a-typography-text>
-
-          <a-select @click=" onChange = true" :trigger="['click']" v-model:value="info.creatorsType" :bordered="false">
-            <a-select-option value="author">Автор тура</a-select-option>
-            <a-select-option value="operator">Туроператор</a-select-option>
-            <a-select-option value="agency">Турагенство</a-select-option>
-          </a-select>
-
-
-        </a-col>
-
-        <a-col :span="24" :md="12" v-if="info.type" >
-          <a-typography-text type="secondary">Юридический статус</a-typography-text>
-          <a-select @click=" onChange = true" :trigger="['click']" v-model:value="info.type" :bordered="false">
+        <a-col :xs="24" :md="8">
+          <a-typography-text type="secondary" class="w-100">Юридический статус</a-typography-text>
+          <a-select @click="onChange = true" :trigger="['click']" v-model:value="info.type" 
+            class="w-100 pa-4">
             <a-select-option value="phys">Физическое лицо</a-select-option>
-            <a-select-option value="company">Юридическое лицо</a-select-option>
             <a-select-option value="indpred">Инд. предприниматель</a-select-option>
+            <a-select-option value="company">Юридическое лицо</a-select-option>
           </a-select>
-
         </a-col>
 
-        <a-col :xs="11" :md="8" v-if="info.govermentRegNumber">
-          <a-typography-text type="secondary">ИНН</a-typography-text>
-          <a-typography-paragraph @click=" onChange = true" v-model:content="info.govermentRegNumber" editable />
+        <a-col :xs="24" :md="8" v-if="info.type != 'phys'">
+          <a-typography-text type="secondary" class="w-100">ИНН</a-typography-text>
+          <a-typography-paragraph class="w-100" @click="onChange = true" v-model:content="info.govermentRegNumber"
+            editable />
+        </a-col>
+
+        <a-col :xs="24" :md="8" v-if="info.type == 'company'">
+          <a-typography-text type="secondary" class="w-100">Название фирмы</a-typography-text>
+          <a-typography-paragraph v-model:content="info.companyName" editable @click="onChange = true" class="w-100" />
+        </a-col>
+        <a-col :xs="24" :md="8" v-else>
+          <a-typography-text type="secondary" class="w-100">Фамилия Имя</a-typography-text>
+          <a-typography-paragraph v-model:content="info.fullname" editable @click="onChange = true" class="w-100" />
+        </a-col>
+
+       
+        <a-col :xs="24" :md="8">
+          <a-typography-text type="secondary" class="w-100">Статус пользователя</a-typography-text>
+          <a-select @click="onChange = true" :trigger="['click']" v-model:value="info.creatorsType" 
+            class="w-100 pa-4" >
+            <a-select-option value="author">Автор тура</a-select-option>
+            <a-select-option value="operator" v-if="info.type != 'phys'">Туроператор</a-select-option>
+            <a-select-option value="agency"
+              v-if="info.type != 'phys' && info.type != 'entrepreneur'">Турагенство</a-select-option>
+          </a-select>
         </a-col>
       </a-row>
-      <a-button class="lets_go_btn mt-8" type="primary" size="large" v-show="onChange" html-type="submit">Отправить</a-button>
+      <a-button class="lets_go_btn mt-8" type="primary" size="large" v-show="onChange"
+        html-type="submit">Отправить</a-button>
     </form>
   </div>
 </template>
-<style></style>
+<style lang="scss" scoped>
+.w-100 {
+  width: 100%;
+}
+</style>

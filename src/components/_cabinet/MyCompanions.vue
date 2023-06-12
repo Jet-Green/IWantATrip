@@ -32,6 +32,7 @@ const ageString = (age) => {
   if (age >= 10 && age <= 20) {
     return `${age} лет`;
   }
+  age = String(age)
   let arr = age.split("");
   let lastNumber = arr[arr.length - 1];
   if (lastNumber == 1) {
@@ -42,8 +43,8 @@ const ageString = (age) => {
   }
   return `${age} лет`;
 };
-const toCompanionResposes = (companion)=>{
-  companionStore.currentCompanion =companion
+const toCompanionResposes = (companion) => {
+  companionStore.currentCompanion = companion
   router.push("/cabinet/responses")
 }
 onMounted(async () => {
@@ -59,8 +60,8 @@ onMounted(async () => {
   <a-col :span="24" class="mb-8">
     <h3>Поиск попутчиков</h3>
     <!-- <a-breadcrumb>
-      <a-breadcrumb-item @click="router.push('/my-companions')">Попутчики</a-breadcrumb-item>
-    </a-breadcrumb> -->
+        <a-breadcrumb-item @click="router.push('/my-companions')">Попутчики</a-breadcrumb-item>
+      </a-breadcrumb> -->
   </a-col>
   <a-row :gutter="[8, 8]">
     <a-col v-for="(companion, index) in companions" :key="index" :lg="8" :sm="12" :xs="24">
@@ -83,13 +84,13 @@ onMounted(async () => {
             : companion?.companionGender == 'Мужчина'
               ? 'mdi mdi-gender-male'
               : 'mdi mdi-human-male-female'
-            "></span>{{
-    companion?.companionGender == "Мужчина"
-    ? "Мужчину"
-    : companion?.companionGender == "Женщина"
-      ? "Женщину"
-      : "Не важно"
-  }}
+          "></span>{{
+  companion?.companionGender == "Мужчина"
+  ? "Мужчину"
+  : companion?.companionGender == "Женщина"
+    ? "Женщину"
+    : "Не важно"
+}}
         </div>
         <div>
           <span class="mdi mdi-calendar-arrow-right"></span>
@@ -110,7 +111,4 @@ onMounted(async () => {
   </a-row>
 </template>
 
-<style lang="scss" scoped>
-
-
-</style>
+<style lang="scss" scoped></style>

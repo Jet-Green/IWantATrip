@@ -22,8 +22,10 @@ onMounted(async () => {
     await userStore.checkAuth()
   }
   // вся логика локации тут
-  await locationStore.setLocation()
+
   await locationStore.fetchLocations()
+  locationStore.location?locationStore.location = JSON.parse(localStorage.getItem("location")):console.log("нет локации")
+ 
 
   function notify() {
     let notification = new Notification("Привет", {

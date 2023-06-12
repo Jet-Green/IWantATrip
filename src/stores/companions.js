@@ -21,7 +21,7 @@ export const useCompanions = defineStore('companions', {
                 if (locationStore.location?.name) {
                     response = await CompanionsService.fetchCompanions(...locationStore.location.coordinates, query);
                 } else {
-                    response = await CompanionsService.fetchCompanions();
+                    response = await CompanionsService.fetchCompanions('', '', query);
                 }
 
                 this.companions = response.data;

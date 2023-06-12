@@ -30,8 +30,8 @@ async function crop() {
         await cropper
             .getCroppedCanvas({
                 fillColor: "#fff",
-                width: 300,
-                height: 300,
+                width: 500,
+                height: 500,
                 // imageSmoothingEnabled: false,
                 // imageSmoothingQuality: 'low',
             })

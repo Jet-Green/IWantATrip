@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import { useAuth } from './auth'
 import { useLocations } from './locations'
 
+import BookingService from '../service/BookingService'
 import TripService from '../service/TripService.js'
 
 export const useTrips = defineStore('trips', {
@@ -97,6 +98,35 @@ export const useTrips = defineStore('trips', {
         async getFullTripById(_id) {
             try {
                 return await TripService.getFullTripById(_id)
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async setPayment(_id) {
+            try {
+                return await TripService.setPayment(_id)
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async deletePayment(bill_id) {
+            try {
+                return await TripService.deletePayment(bill_id)
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async getBookingTrips(status) {
+            try {
+                let res = await BookingService.getBookingTrips(status)
+                return res.data
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async changeBookStatus(_id, status) {
+            try {
+                let res = await BookingService.changeBookStatus(_id, status)
             } catch (error) {
                 console.log(error);
             }
