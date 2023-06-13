@@ -52,10 +52,10 @@ async function crop() {
 watch(preview, () => {
     cropper = new Cropper(previewImage.value, {
         aspectRatio: 270 / 175,
-        maxContainerWidth: 500,
-        maxContainerHeight: 500,
-        minContainerWidth: 500,
-        minContainerHeight: 500,
+        maxContainerWidth: 300,
+        maxContainerHeight: 300,
+        minContainerWidth: 300,
+        minContainerHeight: 300,
         // minCanvasWidth: 500,
         // maxCanvasWidth: 500,
         // minCanvasHeight: 500,
