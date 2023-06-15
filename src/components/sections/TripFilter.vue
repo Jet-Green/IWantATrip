@@ -80,9 +80,9 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-.section_bg {
-  background: rgba(67, 65, 79);
-}
+// .section_bg {
+//   background: rgba(67, 65, 79);
+// }
 
 .active_filter {
   color: #ff6600;
@@ -90,7 +90,7 @@ onMounted(() => {
 }
 
 .filter {
-  color: white;
+  color: #227597;
   cursor: pointer;
 }
 </style>

@@ -1,4 +1,4 @@
-<script setup>
+<!-- <script setup>
 import { ref, onMounted } from "vue";
 import TripFilter from "../components/sections/TripFilter.vue";
 import TripsList from "../components/_tripsPage/TripsList.vue";
@@ -23,4 +23,4 @@ const route = useRoute();
     
     <TripsList />
   </div>
-</template>
+</template> -->

@@ -178,6 +178,7 @@ function submit() {
     const _id = res.data._id;
     await uploadTripImages(_id)
     await updateUser(_id)
+    localStorage.clear('CreatingTrip')
     message.config({ duration: 1.5, top: "70vh" });
     message.success({
       content: "Тур создан!", onClose: () => {
@@ -273,14 +274,14 @@ watch(description, (newValue) => {
   });
 });
 watch(start, () => {
-  let result =
-    Date.parse(JSON.parse(JSON.stringify(end.value))) -
-    Date.parse(JSON.parse(JSON.stringify(start.value)));
-  if (result >= 0) {
-    form.duration = Math.round(result / 86400000);
-  } else {
-    form.duration = "";
-  }
+  // let result =
+  //   Date.parse(JSON.parse(JSON.stringify(end.value))) -
+  //   Date.parse(JSON.parse(JSON.stringify(start.value)));
+  // if (result >= 0) {
+  //   form.duration = Math.round(result / 86400000);
+  // } else {
+  //   form.duration = "";
+  // }
   // округлить, чтобы при поиске мы точно попадали
   if (start.value) {
     let startDate = new Date(start.value.$d);
@@ -293,19 +294,23 @@ watch(start, () => {
     if (!end.value) {
       end.value = start.value
     }
-
   }
 });
+watch(form,()=>{
+  
+  localStorage.clear('CreatingTrip')
+  localStorage.setItem('CreatingTrip', JSON.stringify(form))
+})
 watch(end, () => {
-  let result =
-    Date.parse(JSON.parse(JSON.stringify(end.value))) -
-    Date.parse(JSON.parse(JSON.stringify(start.value)));
-  form.duration = Math.round(result / 86400000);
-  if (result >= 0) {
-    form.duration = Math.round(result / 86400000);
-  } else {
-    form.duration = "";
-  }
+  // let result =
+  //   Date.parse(JSON.parse(JSON.stringify(end.value))) -
+  //   Date.parse(JSON.parse(JSON.stringify(start.value)));
+  // form.duration = Math.round(result / 86400000);
+  // if (result >= 0) {
+  //   form.duration = Math.round(result / 86400000);
+  // } else {
+  //   form.duration = "";
+  // }
   // округлить, чтобы при поиске мы точно попадали
   if (end.value) {
     let endDate = new Date(end.value.$d);
@@ -334,6 +339,11 @@ const clearData = (dataString) => {
   })
 }
 onMounted(() => {
+  if(localStorage.getItem('CreatingTrip')){
+    console.log(JSON.parse(localStorage.getItem('CreatingTrip')))
+    Object.assign(form,JSON.parse(localStorage.getItem('CreatingTrip')))
+  
+  }
   if (route.query.id) {
     tripStore.getById(route.query.id).then((response) => {
       let d = response.data;
@@ -372,6 +382,7 @@ let formSchema = yup.object({
   name: yup.string().required("заполните поле"),
   start: yup.object().required("заполните поле"),
   end: yup.object().required("заполните поле"),
+  duration:yup.string().required("заполните поле"),
   maxPeople: yup.string().required("заполните поле"),
   tripType: yup.string().required("заполните поле"),
   fromAge: yup.string().required("заполните поле"),
@@ -397,7 +408,7 @@ let formSchema = yup.object({
               <h2>Создать тур</h2>
               <Field name="name" v-slot="{ value, handleChange }" v-model="form.name">
                 Название
-                <a-input placeholder="Название тура" size="large" @update:value="handleChange" :value="value"
+                <a-input placeholder="Название тура" @update:value="handleChange" :value="value"
                   :maxlength="35" show-count></a-input>
               </Field>
               <Transition name="fade">
@@ -440,8 +451,15 @@ let formSchema = yup.object({
             </a-col>
 
             <a-col :span="12">
-              Продолжительность
-              <p style="line-height: 40px">{{ form.duration }} дн.</p>
+            
+              <Field name="duration" v-slot="{ value, handleChange }" v-model="form.duration">
+                Продолжительность
+                <a-input placeholder="6 дней/ 7 ночей"  @update:value="handleChange" :value="value"
+                  :maxlength="20" show-count></a-input>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="duration" class="error-message" />
+              </Transition>
             </a-col>
             <a-col :span="12">
               <Field name="maxPeople" v-slot="{ value, handleChange }" v-model="form.maxPeople">
@@ -559,7 +577,7 @@ let formSchema = yup.object({
                                                                                                                                       </a-upload>
                                                                                                                                     </a-col> -->
             <a-col :span="24" class="d-flex justify-center">
-              <a-button :disabled="!meta.valid" class="lets_go_btn mt-8" type="primary" size="large"
+              <a-button  class="lets_go_btn mt-8" type="primary" size="large"
                 html-type="submit">Отправить
               </a-button>
             </a-col>

@@ -2,13 +2,20 @@
 import { ref, onMounted } from "vue";
 import { useTrips } from "../../stores/trips";
 import TripListCard from "../cards/TripListCard.vue";
+import BackButton from "../BackButton.vue";
+import TripFilter from "../sections/TripFilter.vue";
+import { useRoute } from "vue-router";
+
+
+
+const route = useRoute();
 let tripStore = useTrips()
 
 let handleScroll = async () => {
 
   let triggerHeight =
     wrapper.value.scrollTop + wrapper.value.offsetHeight
-  console.log(wrapper.value.scrollHeight, triggerHeight)
+  // console.log(wrapper.value.scrollHeight, triggerHeight)
   if (triggerHeight >= wrapper.value.scrollHeight) {
     await tripStore.fetchTrips()
   }
@@ -21,7 +28,15 @@ onMounted(() => {
 });
 </script>
 <template>
+  <div>
+    <BackButton />
   <div class="wrapper" ref="wrapper">
+    <a-row type="flex" justify="center">
+      <a-col :xs="22" :lg="16">
+        <h2>Туры</h2>
+      </a-col>
+    </a-row>
+    <TripFilter :search="route.query.search" />
     <a-row class="d-flex justify-center">
       <a-col :xs="22" :lg="16">
         <a-row :gutter="[16, 16]" class="d-flex justify-center mt-8 ">
@@ -33,6 +48,7 @@ onMounted(() => {
       </a-col>
     </a-row>
   </div>
+</div>
 </template>
 <style lang="scss" scoped>
 .wrapper {
