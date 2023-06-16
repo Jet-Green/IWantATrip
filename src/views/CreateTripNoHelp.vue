@@ -19,13 +19,15 @@ import TripService from "../service/TripService";
 import dayjs from "dayjs";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import 'dayjs/locale/ru';
-dayjs.locale('ru');
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
+dayjs.locale('ru');
 
 const tripStore = useTrips();
 const userStore = useAuth();
 const appStore = useAppState();
+
+let formFromLocalStorage = JSON.parse(localStorage.getItem("CreatingTrip"));
 
 const dateFormatList = ["DD.MM.YY", "DD.MM.YY"];
 const monthFormatList = ["MM.YY"];
@@ -34,8 +36,8 @@ const quill = ref(null);
 let newContent = "";
 const formRef = ref(null);
 const description = ref(null);
-const start = ref(null);
-const end = ref(null);
+const start = ref(formFromLocalStorage?.start == null ? null : dayjs(formFromLocalStorage?.start));
+const end = ref(formFromLocalStorage?.end == null ? null : dayjs(formFromLocalStorage?.end));
 const period = ref(null);
 const delPhotoDialog = ref(false);
 const targetIndex = ref(null);
@@ -263,6 +265,7 @@ watch(locationSearchRequest, async (newValue, oldValue) => {
 })
 watch(description, (newValue) => {
   newContent = newValue;
+  form.description = description.value;
   if (newContent === newValue) return;
   quill.value.setHTML(newValue);
   // Workaround https://github.com/vueup/vue-quill/issues/52
@@ -274,14 +277,6 @@ watch(description, (newValue) => {
   });
 });
 watch(start, () => {
-  // let result =
-  //   Date.parse(JSON.parse(JSON.stringify(end.value))) -
-  //   Date.parse(JSON.parse(JSON.stringify(start.value)));
-  // if (result >= 0) {
-  //   form.duration = Math.round(result / 86400000);
-  // } else {
-  //   form.duration = "";
-  // }
   // округлить, чтобы при поиске мы точно попадали
   if (start.value) {
     let startDate = new Date(start.value.$d);
@@ -296,21 +291,11 @@ watch(start, () => {
     }
   }
 });
-watch(form,()=>{
-  
+watch(form, () => {
   localStorage.clear('CreatingTrip')
   localStorage.setItem('CreatingTrip', JSON.stringify(form))
 })
 watch(end, () => {
-  // let result =
-  //   Date.parse(JSON.parse(JSON.stringify(end.value))) -
-  //   Date.parse(JSON.parse(JSON.stringify(start.value)));
-  // form.duration = Math.round(result / 86400000);
-  // if (result >= 0) {
-  //   form.duration = Math.round(result / 86400000);
-  // } else {
-  //   form.duration = "";
-  // }
   // округлить, чтобы при поиске мы точно попадали
   if (end.value) {
     let endDate = new Date(end.value.$d);
@@ -339,10 +324,13 @@ const clearData = (dataString) => {
   })
 }
 onMounted(() => {
-  if(localStorage.getItem('CreatingTrip')){
-    console.log(JSON.parse(localStorage.getItem('CreatingTrip')))
-    Object.assign(form,JSON.parse(localStorage.getItem('CreatingTrip')))
-  
+  if (localStorage.getItem('CreatingTrip')) {
+    let f = JSON.parse(localStorage.getItem('CreatingTrip'))
+    quill.value.setHTML(f.description);
+    Object.assign(form, f)
+    if (f.startLocation) {
+      locationSearchRequest.value = f.startLocation.name
+    }
   }
   if (route.query.id) {
     tripStore.getById(route.query.id).then((response) => {
@@ -382,7 +370,7 @@ let formSchema = yup.object({
   name: yup.string().required("заполните поле"),
   start: yup.object().required("заполните поле"),
   end: yup.object().required("заполните поле"),
-  duration:yup.string().required("заполните поле"),
+  duration: yup.string().required("заполните поле"),
   maxPeople: yup.string().required("заполните поле"),
   tripType: yup.string().required("заполните поле"),
   fromAge: yup.string().required("заполните поле"),
@@ -408,8 +396,8 @@ let formSchema = yup.object({
               <h2>Создать тур</h2>
               <Field name="name" v-slot="{ value, handleChange }" v-model="form.name">
                 Название
-                <a-input placeholder="Название тура" @update:value="handleChange" :value="value"
-                  :maxlength="35" show-count></a-input>
+                <a-input placeholder="Название тура" @update:value="handleChange" :value="value" :maxlength="35"
+                  show-count></a-input>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="name" class="error-message" />
@@ -422,7 +410,7 @@ let formSchema = yup.object({
                   @click="delPhotoDialog = true;
                   targetIndex = i;" />
               </div>
-              <a-button type="dashed" block @click=" visibleCropperModal = true" class="ma-8">
+              <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
                 Добавить фото
               </a-button>
@@ -451,11 +439,11 @@ let formSchema = yup.object({
             </a-col>
 
             <a-col :span="12">
-            
+
               <Field name="duration" v-slot="{ value, handleChange }" v-model="form.duration">
                 Продолжительность
-                <a-input placeholder="6 дней/ 7 ночей"  @update:value="handleChange" :value="value"
-                  :maxlength="20" show-count></a-input>
+                <a-input placeholder="6 дней/ 7 ночей" @update:value="handleChange" :value="value" :maxlength="20"
+                  show-count></a-input>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="duration" class="error-message" />
@@ -478,10 +466,10 @@ let formSchema = yup.object({
                 class="mb-16">
                 <a-input v-model:value="item.first" placeholder="Для кого" />
 
-                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0"
-                  :step="0.01" class="ml-16 mr-16" />
+                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0" :step="0.01"
+                  class="ml-16 mr-16" />
 
-                <a-button @click=" removeCost(item)" shape="circle">
+                <a-button @click="removeCost(item)" shape="circle">
                   <span class="mdi mdi-minus" style="cursor: pointer"></span>
                 </a-button>
               </div>
@@ -511,8 +499,8 @@ let formSchema = yup.object({
             <a-col :xs="24" :md="12">
               <Field name="fromAge" v-slot="{ value, handleChange }" v-model="form.fromAge">
                 Мин. возраст, лет
-                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" placeholder="10"
-                  :min="0" :max="100" />
+                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" placeholder="10" :min="0"
+                  :max="100" />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="fromAge" class="error-message" />
@@ -536,8 +524,8 @@ let formSchema = yup.object({
             <a-col :span="24">
               <Field name="offer" v-slot="{ value, handleChange }" v-model="form.offer">
                 Краткое описание
-                <a-textarea @update:value="handleChange" :value="value"
-                  placeholder="Едем в Татарстан за новыми эмоциями!" size="large">
+                <a-textarea @update:value="handleChange" :value="value" placeholder="Едем в Татарстан за новыми эмоциями!"
+                  size="large">
                 </a-textarea>
               </Field>
               <Transition name="fade">
@@ -559,26 +547,25 @@ let formSchema = yup.object({
             <a-col :span="24" style="display: flex; flex-direction: column">
               Описание программы
               <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" :toolbar="[
-                  // [{ header: [2, 3] }],
-                  ['bold', 'italic', 'underline'],
-                  [{ list: 'ordered' }, { list: 'bullet' }],
-                  [{ color: ['#000000', '#ff6600', '#3daff5'] }],
-                  [{ align: [] }],
-                ]
-                " />
+                // [{ header: [2, 3] }],
+                ['bold', 'italic', 'underline'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                [{ color: ['#000000', '#ff6600', '#3daff5'] }],
+                [{ align: [] }],
+              ]
+              " />
             </a-col>
             <!-- <a-col :span=" 24 ">
-                                                                                                                                      :file-list="fileList"
-                                                                                                                                      <a-upload action="" :multiple=" true ">
-                                                                                                                                        <a-button type="dashed" block>
-                                                                                                                                          <span class="mdi mdi-12px mdi-plus"></span>
-                                                                                                                                          Загрузить pdf описание
-                                                                                                                                        </a-button>
-                                                                                                                                      </a-upload>
-                                                                                                                                    </a-col> -->
+                                                                                                                                                                                                                                                              :file-list="fileList"
+                                                                                                                                                                                                                                                              <a-upload action="" :multiple=" true ">
+                                                                                                                                                                                                                                                                <a-button type="dashed" block>
+                                                                                                                                                                                                                                                                  <span class="mdi mdi-12px mdi-plus"></span>
+                                                                                                                                                                                                                                                                  Загрузить pdf описание
+                                                                                                                                                                                                                                                                </a-button>
+                                                                                                                                                                                                                                                              </a-upload>
+                                                                                                                                                                                                                                                            </a-col> -->
             <a-col :span="24" class="d-flex justify-center">
-              <a-button  class="lets_go_btn mt-8" type="primary" size="large"
-                html-type="submit">Отправить
+              <a-button class="lets_go_btn mt-8" type="primary" size="large" html-type="submit">Отправить
               </a-button>
             </a-col>
           </a-row>
