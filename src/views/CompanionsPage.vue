@@ -52,13 +52,13 @@ onMounted(async () => {
 
     <a-row class="d-flex justify-center">
       <a-col :lg="16" :xs="22">
-        <a-row class="d-flex space-between align-center" :gutter="[8, 8]">
-          <!-- <a-col :md="8" :xs="24" :sm="12"> -->
-          <!-- <CompanionFilter /> -->
-          <!-- </a-col> -->
+        <a-row class="d-flex align-center direction-column" :gutter="[8, 8]">
+          <a-col :md="8" :xs="24" :sm="12">
+            <CompanionFilter />
+          </a-col>
 
-          <a-col :md="8" :xs="24" :sm="12" class="d-flex">
-            <a-button class="lets_go_btn" type="primary" size="large" @click="router.push('/add-companion')">Добавить
+          <a-col :md="8" :xs="24" :sm="12" class="d-flex justify-center">
+            <a-button type="primary" @click="router.push('/add-companion')">Добавить
               себя</a-button>
           </a-col>
         </a-row>
