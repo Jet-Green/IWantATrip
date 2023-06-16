@@ -2,7 +2,7 @@
 import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import Header from "./components/Header.vue";
-import Footer from "./components/Footer.vue";
+// import Footer from "./components/Footer.vue";
 
 import { useTrips } from './stores/trips'
 import { useCompanions } from './stores/companions'
@@ -60,7 +60,7 @@ onMounted(async () => {
         </transition>
       </router-view>
     </a-layout-content>
-    <Footer></Footer>
+    <!-- <Footer></Footer> -->
   </a-layout>
 </template>
 <style></style>

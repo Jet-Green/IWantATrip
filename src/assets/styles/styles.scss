@@ -151,7 +151,7 @@ body {
 }
 
 // PB
-@for $i from 1 through 4 {
+@for $i from 1 through 8 {
   .pb-#{$i*4} {
     padding-bottom: #{$i * 4}px;
   }

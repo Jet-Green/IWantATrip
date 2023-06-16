@@ -9,6 +9,7 @@ import Explanation from "../components/sections/Explanation.vue";
 import Information from "../components/sections/Information.vue";
 import ToTrips from "../components/sections/ToTrips.vue";
 import Hello from '../components/sections/Hello.vue';
+import Footer from '../components/Footer.vue'
 </script>
 <template>
   <div>
@@ -22,6 +23,7 @@ import Hello from '../components/sections/Hello.vue';
     <FindTrip />
     <Companions />
     <!-- <CityGuide id="guide" /> -->
+    <Footer/>
   </div>
 </template>
 <style lang="scss" scoped></style>

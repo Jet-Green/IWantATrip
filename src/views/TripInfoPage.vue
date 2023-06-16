@@ -175,7 +175,7 @@ onMounted(() => {
             <div>Старт: <b>{{ trip.startLocation.name }}</b> </div>
             
             <div>
-              Продолжительность: <b>{{ trip.duration }} дн.</b>
+              Продолжительность: <b>{{ trip.duration }}</b>
             </div>
             <div>
               Ключевые точки: <b>{{ trip.tripRoute }}</b>
@@ -228,8 +228,10 @@ onMounted(() => {
 
         <a-col :span="24">
           <div>Цена</div>
-          <div class="d-flex space-around align-center" v-for="(cost, index) of trip.cost" :key="index">
-            {{ cost.first }}<span>{{ cost.price }} руб. </span>
+          <div class="d-flex space-between align-center" v-for="(cost, index) of trip.cost" :key="index">
+            <div>{{ cost.first }}</div>
+            <div> {{ cost.price }}  руб.</div>
+              
             <div class="d-flex direction-column">
               <span style="font-size: 8px">кол-во</span>
               <a-input-number v-model:value="selectedByUser[index].count" :min="0" :max="trip.maxPeople - tripsCount"
@@ -237,12 +239,12 @@ onMounted(() => {
             </div>
           </div>
         </a-col>
-        <a-col :span="24">
+        <a-col :span="24"  class="d-flex justify-end" >
           <b>Итого: {{ finalCost }} руб.</b>
         </a-col>
 
         <a-col :span="24">
-          <div>Оплатить</div>
+     
           <div class="d-flex space-around">
             <!-- <a-button type="primary" @click="buyTrip(true)"> сейчас </a-button> -->
             <a-button @click="buyTrip(false)"> Заказать </a-button>

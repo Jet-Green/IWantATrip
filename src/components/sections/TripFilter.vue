@@ -54,7 +54,7 @@ onMounted(() => {
 });
 </script>
 <template>
-  <a-row type="flex" justify="center" align="middle" class="section_bg pa-16">
+  <a-row type="flex" justify="center" align="middle" class="section_bg ">
     <a-col :xs="22" :md="12">
       <a-row class="mb-8" type="flex" justify="center">
         <a-col :xs="24" :md="12" class="d-flex">
