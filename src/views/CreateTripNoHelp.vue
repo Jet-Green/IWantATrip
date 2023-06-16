@@ -558,42 +558,31 @@ let formSchema = yup.object({
               " />
             </a-col>
             <!-- <a-col :span=" 24 ">
-  <<<<<<< HEAD
-                                                                                                                                                                                                                                                                :file-list="fileList"
-                                                                                                                                                                                                                                                                <a-upload action="" :multiple=" true ">
-                                                                                                                                                                                                                                                                  <a-button type="dashed" block>
-                                                                                                                                                                                                                                                                    <span class="mdi mdi-12px mdi-plus"></span>
-                                                                                                                                                                                                                                                                    Загрузить pdf описание
-                                                                                                                                                                                                                                                                  </a-button>
-                                                                                                                                                                                                                                                                </a-upload>
-                                                                                                                                                                                                                                                              </a-col> -->
-            =======
-            :file-list="fileList"
-            <a-upload action="" :multiple="true">
-              <a-button type="dashed" block>
-                <span class="mdi mdi-12px mdi-plus"></span>
-                Загрузить pdf описание
+                                                                                                                                                                                                                                                                                        :file-list="fileList"
+                                                                                                                                                                                                                                                                                        <a-upload action="" :multiple=" true ">
+                                                                                                                                                                                                                                                                                          <a-button type="dashed" block>
+                                                                                                                                                                                                                                                                                            <span class="mdi mdi-12px mdi-plus"></span>
+                                                                                                                                                                                                                                                                                            Загрузить pdf описание
+                                                                                                                                                                                                                                                                                          </a-button>
+                                                                                                                                                                                                                                                                                        </a-upload>
+                                                                                                                                                                                                                                                                                      </a-col> -->
+            <a-col :span="24" class="d-flex justify-center">
+              <a-button class="lets_go_btn mt-8" type="primary" size="large" html-type="submit">Отправить
               </a-button>
-            </a-upload>
-      </a-col> -->
-      >>>>>>> master
-      <a-col :span="24" class="d-flex justify-center">
-        <a-button class="lets_go_btn mt-8" type="primary" size="large" html-type="submit">Отправить
-        </a-button>
+            </a-col>
+          </a-row>
+        </Form>
+        <a-modal v-model:visible="visibleCropperModal" :footer="null">
+          <ImageCropper @addImage="addPreview" />
+        </a-modal>
+        <a-modal v-model:visible="delPhotoDialog" :footer="null">
+          <h3>Удалить фото?</h3>
+          <div class="d-flex justify-center">
+            <a-button class="mt-16" type="primary" size="large" @click="delPhoto">Да
+            </a-button>
+          </div>
+        </a-modal>
       </a-col>
-    </a-row>
-    </Form>
-    <a-modal v-model:visible="visibleCropperModal" :footer="null">
-      <ImageCropper @addImage="addPreview" />
-    </a-modal>
-    <a-modal v-model:visible="delPhotoDialog" :footer="null">
-      <h3>Удалить фото?</h3>
-      <div class="d-flex justify-center">
-        <a-button class="mt-16" type="primary" size="large" @click="delPhoto">Да
-        </a-button>
-      </div>
-    </a-modal>
-    </a-col>
     </a-row>
   </div>
 </template>
