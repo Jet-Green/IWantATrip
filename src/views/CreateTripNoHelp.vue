@@ -178,11 +178,11 @@ function submit() {
 
   TripService.createTrip(form, userStore.user.email).then(async (res) => {
     if (res.status == 200) {
-      localStorage.clear('CreatingTrip')
       const _id = res.data._id;
       await uploadTripImages(_id)
       await updateUser(_id)
-      localStorage.clear('CreatingTrip')
+
+      localStorage.setItem('CreatingTrip', {})
       message.config({ duration: 1.5, top: "70vh" });
       message.success({
         content: "Тур создан!", onClose: () => {
@@ -295,7 +295,6 @@ watch(start, () => {
   }
 });
 watch(form, () => {
-  localStorage.clear('CreatingTrip')
   localStorage.setItem('CreatingTrip', JSON.stringify(form))
 })
 watch(end, () => {
@@ -559,14 +558,14 @@ let formSchema = yup.object({
               " />
             </a-col>
             <!-- <a-col :span=" 24 ">
-                                                                                                                                                                                                                                                                    :file-list="fileList"
-                                                                                                                                                                                                                                                                    <a-upload action="" :multiple=" true ">
-                                                                                                                                                                                                                                                                      <a-button type="dashed" block>
-                                                                                                                                                                                                                                                                        <span class="mdi mdi-12px mdi-plus"></span>
-                                                                                                                                                                                                                                                                        Загрузить pdf описание
-                                                                                                                                                                                                                                                                      </a-button>
-                                                                                                                                                                                                                                                                    </a-upload>
-                                                                                                                                                                                                                                                                  </a-col> -->
+                                                                                                                                                                                                                                                                                      :file-list="fileList"
+                                                                                                                                                                                                                                                                                      <a-upload action="" :multiple=" true ">
+                                                                                                                                                                                                                                                                                        <a-button type="dashed" block>
+                                                                                                                                                                                                                                                                                          <span class="mdi mdi-12px mdi-plus"></span>
+                                                                                                                                                                                                                                                                                          Загрузить pdf описание
+                                                                                                                                                                                                                                                                                        </a-button>
+                                                                                                                                                                                                                                                                                      </a-upload>
+                                                                                                                                                                                                                                                                                    </a-col> -->
             <a-col :span="24" class="d-flex justify-center">
               <a-button class="lets_go_btn mt-8" type="primary" size="large" html-type="submit">Отправить
               </a-button>
