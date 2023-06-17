@@ -7,6 +7,7 @@ const userStore = useAuth();
 const user = userStore.user;
 let info = userStore.user.fullinfo;
 let onChange = ref(false);
+const isEdit = ref(false)
 
 const companyName = computed(() => {
   return info.companyName ? info.companyName : "**********";
@@ -17,7 +18,7 @@ const creatorsType = computed(() => {
     ? "Автор тура"
     : info.creatorsType == "operator"
       ? "Туроператор"
-      : "Турагенство";
+      : "Турагентство";
 });
 
 const type = computed(() => {
@@ -41,8 +42,7 @@ function submit() {
       userStore.user = response.data;
       message.config({ duration: 3, top: "90vh" });
       message.success({ content: "Данные изменены!" });
-      onChange.value = false
-      console.log(onChange)
+      isEdit.value = false
     })
     .catch((err) => {
       console.log(err);
@@ -66,7 +66,7 @@ function submit() {
         <h3 style="font-size: 28px; font-weight: bold">{{ user.fullname }}</h3>
       </a-row>
 
-      <a-row :xs="22" :md="18" :lg="16" class="cols-container">
+      <a-row class="cols-container">
         <a-col :xs="24" :md="8">
           <a-typography-text type="secondary" class="w-100">E-mail</a-typography-text>
           <a-typography-paragraph class="w-100" v-model:content="user.email" />
@@ -74,48 +74,54 @@ function submit() {
 
         <a-col :xs="24" :md="8">
           <a-typography-text type="secondary" class="w-100">Телефон</a-typography-text>
-          <a-typography-paragraph v-model:content="info.phone" editable @click="onChange = true" class="w-100" />
-        </a-col>
-
-        <a-col :xs="24" :md="8">
-          <a-typography-text type="secondary" class="w-100">Юридический статус</a-typography-text>
-          <a-select @click="onChange = true" :trigger="['click']" v-model:value="info.type" 
-            class="w-100 pa-4">
-            <a-select-option value="phys">Физическое лицо</a-select-option>
-            <a-select-option value="indpred">Инд. предприниматель</a-select-option>
-            <a-select-option value="company">Юридическое лицо</a-select-option>
-          </a-select>
-        </a-col>
-
-        <a-col :xs="24" :md="8" v-if="info.type != 'phys'">
-          <a-typography-text type="secondary" class="w-100">ИНН</a-typography-text>
-          <a-typography-paragraph class="w-100" @click="onChange = true" v-model:content="info.govermentRegNumber"
-            editable />
-        </a-col>
-
-        <a-col :xs="24" :md="8" v-if="info.type == 'company'">
-          <a-typography-text type="secondary" class="w-100">Название фирмы</a-typography-text>
-          <a-typography-paragraph v-model:content="info.companyName" editable @click="onChange = true" class="w-100" />
-        </a-col>
-        <a-col :xs="24" :md="8" v-else>
-          <a-typography-text type="secondary" class="w-100">Фамилия Имя</a-typography-text>
-          <a-typography-paragraph v-model:content="info.fullname" editable @click="onChange = true" class="w-100" />
-        </a-col>
-
-       
-        <a-col :xs="24" :md="8">
-          <a-typography-text type="secondary" class="w-100">Статус пользователя</a-typography-text>
-          <a-select @click="onChange = true" :trigger="['click']" v-model:value="info.creatorsType" 
-            class="w-100 pa-4" >
-            <a-select-option value="author">Автор тура</a-select-option>
-            <a-select-option value="operator" v-if="info.type != 'phys'">Туроператор</a-select-option>
-            <a-select-option value="agency"
-              v-if="info.type != 'phys' && info.type != 'entrepreneur'">Турагенство</a-select-option>
-          </a-select>
+          <a-typography-paragraph v-model:content="info.phone" :editable="isEdit" class="w-100" />
         </a-col>
       </a-row>
-      <a-button class="lets_go_btn mt-8" type="primary" v-show="onChange"
-        html-type="submit">Отправить</a-button>
+      <div v-if="user.trips.length">
+        <h3>О создателе тура</h3>
+
+        <a-row>
+          <a-col :xs="24" :md="8">
+            <a-typography-text type="secondary" class="w-100">Юр. статус</a-typography-text>
+            <a-select v-if="isEdit" :trigger="['click']" v-model:value="info.type" class="w-100 pa-4">
+              <a-select-option value="phys">Физическое лицо</a-select-option>
+              <a-select-option value="indpred">Инд. предприниматель</a-select-option>
+              <a-select-option value="company">Юридическое лицо</a-select-option>
+            </a-select>
+            <p v-else> {{ type }}</p>
+          </a-col>
+          <a-col :xs="24" :md="8">
+            <a-typography-text type="secondary" class="w-100">Тип создателя</a-typography-text>
+            <a-select v-if="isEdit" :trigger="['click']" v-model:value="info.creatorsType" class="w-100 pa-4">
+              <a-select-option value="author">Автор тура</a-select-option>
+              <a-select-option value="operator" v-if="info.type != 'phys'">Туроператор</a-select-option>
+              <a-select-option value="agency"
+                v-if="info.type != 'phys' && info.type != 'indpred'">Турагенство</a-select-option>
+            </a-select>
+            <p v-else>{{ creatorsType }}</p>
+          </a-col>
+
+        </a-row>
+        <a-row>
+          <a-col :xs="24" :md="8" v-if="info.type == 'company'">
+            <a-typography-text type="secondary" class="w-100">Название фирмы</a-typography-text>
+            <a-typography-paragraph v-model:content="info.companyName" :editable="isEdit" class="w-100" />
+          </a-col>
+          <a-col :xs="24" :md="8" v-else>
+            <a-typography-text type="secondary" class="w-100">Фамилия Имя</a-typography-text>
+            <a-typography-paragraph v-model:content="info.fullname" :editable="isEdit" class="w-100" />
+          </a-col>
+
+          <a-col :xs="24" :md="8" v-if="info.type != 'phys'">
+            <a-typography-text type="secondary" class="w-100">ИНН</a-typography-text>
+            <a-typography-paragraph class="w-100" :editable="isEdit" v-model:content="info.govermentRegNumber" />
+          </a-col>
+
+
+        </a-row>
+      </div>
+      <a-button v-if="isEdit" class="lets_go_btn mt-8" type="primary" html-type="submit">Отправить</a-button>
+      <a-button v-else class="lets_go_btn mt-8" type="primary" @click="isEdit = true">Изменить</a-button>
     </form>
   </div>
 </template>
