@@ -74,7 +74,7 @@ function handleChangeOnWhere() {}
         </a-col>
         <a-button
           type="primary"
-          size="large"
+        
           @click="
             router.push({ name: 'TripsPage', params: { withTripInfo: false } })
           "

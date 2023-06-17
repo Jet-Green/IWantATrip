@@ -17,7 +17,7 @@ useGuideStore.fetchElementsByQuery('watch');
         <p>Сувениры</p>
       </a-col>
       <a-col :xs="22" :lg="16">
-        <a-button type="primary" class="lets_go_btn" size="large"
+        <a-button type="primary" class="lets_go_btn"
           @click="router.push(`/add-guide-element?type=${router.currentRoute.value.path.slice(1)}`)">Добавить
         </a-button>
       </a-col>

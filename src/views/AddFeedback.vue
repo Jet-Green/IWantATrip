@@ -72,7 +72,7 @@ function submit() {
             </a-col>
 
             <div class="d-flex justify-center" style="width: 100%">
-              <a-button type="primary" class="lets_go_btn" size="large" html-type="submit">Отправить
+              <a-button type="primary" class="lets_go_btn" html-type="submit">Отправить
               </a-button>
             </div>
           </a-row>

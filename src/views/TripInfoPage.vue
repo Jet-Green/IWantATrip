@@ -196,7 +196,7 @@ onMounted(() => {
 
             </div>
             <div class="d-flex justify-center ma-8">
-              <a-button v-if="tripsCount != trip.maxPeople" type="primary" class="lets_go_btn" size="large"
+              <a-button v-if="tripsCount != trip.maxPeople" type="primary" class="lets_go_btn" 
                 style="display: flex; justify-content: center" @click="buyTripDialog()">
                 Купить
               </a-button>

@@ -58,7 +58,7 @@ onMounted(async () => {
           </a-col>
 
           <a-col :md="8" :xs="24" :sm="12" class="d-flex justify-center">
-            <a-button type="primary" @click="router.push('/add-companion')">Добавить
+            <a-button type="primary" @click="router.push('/add-companion')" class="lets_go_btn" >Добавить
               себя</a-button>
           </a-col>
         </a-row>

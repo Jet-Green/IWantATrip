@@ -35,7 +35,7 @@ onMounted(async () => {
         </div>
       </div>
 
-      <a-button type="primary" size="large" class="ma-16 lets_go_btn" @click="router.push('/companions')">
+      <a-button type="primary" class="ma-16 lets_go_btn" @click="router.push('/companions')">
         найти
       </a-button>
     </a-col>

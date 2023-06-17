@@ -435,7 +435,7 @@ let formSchema = yup.object({
                                     " />
                         </a-col>
                         <a-col :span="24" class="d-flex justify-center">
-                            <a-button :disabled="!meta.valid" class="lets_go_btn mt-8" type="primary" size="large"
+                            <a-button :disabled="!meta.valid" class="lets_go_btn mt-8" type="primary" 
                                 html-type="submit">Отправить
                             </a-button>
                         </a-col>
@@ -447,7 +447,7 @@ let formSchema = yup.object({
                 <a-modal v-model:visible="delPhotoDialog" :footer="null">
                     <h3>Удалить фото?</h3>
                     <div class="d-flex justify-center">
-                        <a-button class="mt-16" type="primary" size="large" @click="delPhoto">Да
+                        <a-button class="mt-16" type="primary"  @click="delPhoto">Да
                         </a-button>
                     </div>
                 </a-modal>

@@ -114,7 +114,7 @@ function submit() {
           </a-select>
         </a-col>
       </a-row>
-      <a-button class="lets_go_btn mt-8" type="primary" size="large" v-show="onChange"
+      <a-button class="lets_go_btn mt-8" type="primary" v-show="onChange"
         html-type="submit">Отправить</a-button>
     </form>
   </div>

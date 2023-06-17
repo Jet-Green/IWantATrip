@@ -44,7 +44,7 @@ function find() {
           <a-button
             class="lets_go_btn ma-16"
             type="primary"
-            size="large"
+         
             @click="find()"
           >
             Найти

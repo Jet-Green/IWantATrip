@@ -164,7 +164,7 @@ function getPhoneNumber(number) {
             }}</a-breadcrumb-item>
             <a-breadcrumb-item>Покупатели</a-breadcrumb-item>
         </a-breadcrumb>
-        <a-button size="large" class="lets_go_btn" @click="addCustomerDialog = true">
+        <a-button  class="lets_go_btn" @click="addCustomerDialog = true">
             + Покупатель
             </a-button>
     </a-col>

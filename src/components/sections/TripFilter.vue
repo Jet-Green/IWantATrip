@@ -71,7 +71,7 @@ onMounted(() => {
             </a-col>
           </a-row>
           <a-row type="flex" justify="center" class="mt-8">
-            <a-button @click="find" type="primary">поиск</a-button>
+            <a-button @click="find" type="primary" class="lets_go_btn" >поиск</a-button>
           </a-row>
         </div>
       </Transition>

@@ -115,7 +115,7 @@ watch(end, () => {
 
 
 onMounted(() => {
-  if (userStore.user.fullinfo) {
+  if (userStore.user) {
     userStore.user.fullinfo.fullname
       ? (userInfo.fullname = userStore.user.fullinfo.fullname)
       : (userInfo.fullname = "");
@@ -271,8 +271,8 @@ onMounted(() => {
 
           <a-row type="flex" justify="center">
             <a-col :xs="24" :md="16" :lg="10" class="d-flex justify-center">
-              <a-button type="primary" :disabled="!meta.valid" html-type="submit" class="lets_go_btn mt-8"
-                size="large">Отправить</a-button>
+              <a-button type="primary"  html-type="submit" class="lets_go_btn mt-8"
+                >Отправить</a-button>
             </a-col>
           </a-row>
         </a-col>

@@ -105,7 +105,7 @@ watch(y, (newY) => {
             <a-button
               type="primary"
               class="lets_go_btn ma-16"
-              size="large"
+             
               @click="routeTo(buttonRoute)"
             >
               {{ buttonText }}

@@ -51,7 +51,7 @@ async function resetPassword() {
             <a-button
               class="ma-16 lets_go_btn"
               type="primary"
-              size="large"
+          
               @click="forgotPassword"
               >Отправить</a-button
             >
@@ -71,7 +71,7 @@ async function resetPassword() {
             <a-button
               class="ma-16 lets_go_btn"
               type="primary"
-              size="large"
+           
               @click="resetPassword"
               >Отправить</a-button
             >

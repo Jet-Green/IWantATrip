@@ -314,7 +314,7 @@ const formSchema = yup.object({
               </Transition>
             </a-col>
             <div class="d-flex justify-center" style="width: 100%">
-              <a-button :disabled="!meta.valid" type="primary" class="lets_go_btn" size="large"
+              <a-button :disabled="!meta.valid" type="primary" class="lets_go_btn" 
                 html-type="submit">Отправить
               </a-button>
             </div>
