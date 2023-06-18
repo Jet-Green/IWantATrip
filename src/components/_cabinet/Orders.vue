@@ -20,7 +20,10 @@ const clearData = (dateNumber) => {
     return ''
 }
 function getPhoneNumber(number) {
-  return `tel:${number}`;
+    return `tel:${number}`;
+}
+function getOrderNumber(str) {
+    return str.substring(str.length - 5)
 }
 onMounted(async () => {
     open.value = await tripStore.getBookingTrips('open')
@@ -34,10 +37,11 @@ onMounted(async () => {
         <a-col :lg="8" :sm="12" :xs="24" v-for="booking in open" v-if="open.length">
             <a-card class="card " hoverable>
                 <div>
-                   Имя:  <b> {{ booking.creatorId.fullinfo.fullname }}</b>
+                    Имя: <b> {{ booking.creatorId.fullinfo.fullname }}</b>
                 </div>
                 <div>
-                     Телефон: <b> <a :href="getPhoneNumber(booking.creatorId.fullinfo.phone )"> {{ booking.creatorId.fullinfo.phone }}</a> </b>
+                    Телефон: <b> <a :href="getPhoneNumber(booking.creatorId.fullinfo.phone)"> {{
+                        booking.creatorId.fullinfo.phone }}</a> </b>
 
                 </div>
                 <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
@@ -61,7 +65,7 @@ onMounted(async () => {
                     Пожелания: {{ booking.wishes }}
                 </div>
                 <div>
-                    № заказа: {{ booking._id }}
+                    № заказа: {{ getOrderNumber(booking._id) }}
                 </div>
 
             </a-card>

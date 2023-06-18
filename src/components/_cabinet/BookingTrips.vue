@@ -29,6 +29,9 @@ function changeStatus(_id, status) {
   tripStore.changeBookStatus(_id, status)
 }
 
+function getOrderNumber(str) {
+  return str.substring(str.length - 5)
+}
 
 
 onMounted(() => {
@@ -65,7 +68,7 @@ onMounted(() => {
               Пожелания: {{ booking.wishes }}
             </div>
             <div>
-              № заказа: {{ booking._id }}
+              № заказа: {{ getOrderNumber(booking._id) }}
             </div>
 
           </a-card>
