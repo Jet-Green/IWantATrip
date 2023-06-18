@@ -76,7 +76,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <a-layout-header :style="{ position: 'fixed', zIndex: 1, width: '100%' }">
+  <a-layout-header :style="{ position: 'fixed', zIndex: 999, width: '100%' }">
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
         <a-row type="flex" justify="space-between">

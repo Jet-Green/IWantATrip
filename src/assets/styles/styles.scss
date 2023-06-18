@@ -102,7 +102,7 @@ body {
 }
 
 // MA
-@for $i from 0 through 8 {
+@for $i from 0 through 10 {
   .ma-#{$i*4} {
     margin: #{$i * 4}px;
   }

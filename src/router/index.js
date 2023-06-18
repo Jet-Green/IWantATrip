@@ -210,8 +210,18 @@ const router = createRouter({
               return false
             }
           }
+        },
+        {
+          path: 'management',
+          name: 'Management',
+          component: () => import('../components/admin/Management.vue'),
+          beforeEnter: () => {
+            let userStore = useAuth()
+            if (!userStore.user?.roles.includes('admin')) {
+              return false
+            }
+          }
         }
-
       ],
       beforeEnter: async (to, from) => {
         let userStore = useAuth()

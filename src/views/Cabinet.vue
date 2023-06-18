@@ -58,7 +58,7 @@ watch(current, (newRout, oldRout) => {
             <span v-else class="mdi mdi-24px mdi-human-capacity-decrease" style="color: #245159; cursor: pointer"></span>
 
           </a-menu-item>
-          <a-sub-menu key="sub2">
+          <a-sub-menu key="sub2" v-if="userStore.user.roles.includes('admin')||userStore.user.roles.includes('manager')">
             <template #title>
               <span v-if=!sm>Админ</span>
               <span v-else class="mdi mdi-24px mdi-cog-outline" style="color: #245159; cursor: pointer"></span>
@@ -67,6 +67,7 @@ watch(current, (newRout, oldRout) => {
             <a-menu-item key="/cabinet/moderation">Модерация</a-menu-item>
             <a-menu-item key="/cabinet/orders">Заказы</a-menu-item>
             <a-menu-item key="/cabinet/interface">Интерфейс</a-menu-item>
+            <a-menu-item key="/cabinet/management">Управление</a-menu-item>
           </a-sub-menu>
         </a-menu>
 

@@ -25,6 +25,7 @@ let loading = ref(false)
 let visible = ref(false);
 
 function find() {
+  console.log("find")
   tripStore.searchCursor = 1
   tripStore.filteredTrips = []
   tripStore.cursor = 1
@@ -41,7 +42,7 @@ watch(query, (newQuery) => {
   if (newQuery.length == 0) {
     find()
   }
-  else if (newQuery.length > 2) {
+  if (newQuery.length > 2) {
     find();
   }
 });
@@ -50,7 +51,7 @@ onMounted(() => {
   if (props.search) {
     query.value = props.search;
   }
-  find()
+ 
 });
 </script>
 <template>

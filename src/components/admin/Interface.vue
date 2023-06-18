@@ -21,7 +21,7 @@ async function addTripType() {
                 </a-col>
                 <a-col :span="24" class="d-flex">
                     <a-input placeholder="Пляжный" size="large" v-model:value="tripType"></a-input>
-                    <a-button size="large" type="primary" class="ml-12" @click="addTripType">добавить</a-button>
+                    <a-button type="primary" class="ml-12 lets_go_btn" @click="addTripType">добавить</a-button>
                 </a-col>
                 <a-col v-for="t of appStateStore.appState[0].tripType" class="ma-8" style="cursor: pointer">
                     <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"

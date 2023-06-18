@@ -271,7 +271,7 @@ onMounted(() => {
 
           <a-row type="flex" justify="center">
             <a-col :xs="24" :md="16" :lg="10" class="d-flex justify-center">
-              <a-button type="primary"  html-type="submit" class="lets_go_btn mt-8"
+              <a-button type="primary"  html-type="submit" class="lets_go_btn ma-36"
                 >Отправить</a-button>
             </a-col>
           </a-row>

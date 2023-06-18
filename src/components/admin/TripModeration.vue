@@ -72,73 +72,97 @@ function getImg(index) {
         <BackButton :backRoute="'/cabinet/moderation'" />
 
         <a-row class="justify-center d-flex">
-            <a-col :xs="22" :xl="16">
-                <h2 class="ma-0">{{ trip.name }}</h2>
-                <a-spin v-if="!trip._id" size="large"></a-spin>
-                <a-row v-if="trip._id" :gutter="[12, 12]" class="text justify-center d-flex">
-                    <a-col :xs="24" :md="12">
-                        <a-carousel arrows dots-class="slick-dots slick-thumb">
-                            <template #customPaging="props">
-                                <a>
-                                    <img :src="getImg(props.i)" />
-                                </a>
-                            </template>
-                            <div v-for="(item, i) in trip.images" :key="i">
-                                <img :src="item" alt="" srcset="" />
-                            </div>
-                            <template #prevArrow>
-                                <div class="custom-slick-arrow" style="left: 10px; z-index: 1">
-                                    <span class="mdi mdi-48px mdi-chevron-left"></span>
-                                </div>
-                            </template>
-                            <template #nextArrow>
-                                <div class="custom-slick-arrow" style="right: 10px">
-                                    <span class="mdi mdi-48px mdi-chevron-right"></span>
-                                </div>
-                            </template>
-                        </a-carousel>
-                    </a-col>
-                    <a-col :xs="24" :md="12" class="pa-8">
-                        <p>Автор тура: {{ trip.creatorId }}</p>
-                        <p>{{ trip.offer }}</p>
-                        <div>
-                            Продолжительность: <b>{{ trip.duration }} дн.</b>
-                        </div>
-                        <div>
-                            Ближайший выезд: <b>{{ clearData(trip.start) }}</b>
-                        </div>
-                        <div>
-                            Цена
-                            <div v-for="(item, index) in trip.cost" :key="index" class="cost">
-                                {{ item.first }} : <b>{{ item.price }} руб.</b>
-                            </div>
+      <a-col :xs="22" :xl="16">
+        <h2 class="ma-0">{{ trip.name }}</h2>
+        <!-- <span class="ma-0">Место старта: {{ trip.startLocation.name }}</span> -->
+        <a-spin v-if="!trip._id" size="large"></a-spin>
+        <a-row v-if="trip._id" :gutter="[12, 12]" class="text justify-center d-flex">
+          <!-- добавить карусель фотографий -->
+          <a-col :xs="24" :md="12">
+            <a-carousel arrows dots-class="slick-dots slick-thumb">
+              <template #customPaging="props">
+                <a>
+                  <img :src="getImg(props.i)" />
+                </a>
+              </template>
+              <div v-for="(item, i) in trip.images" :key="i">
+                <img :src="item" alt="" srcset="" />
+              </div>
+              <template #prevArrow>
+                <div class="custom-slick-arrow" style="left: 10px; z-index: 1">
+                  <span class="mdi mdi-48px mdi-chevron-left"></span>
+                </div>
+              </template>
+              <template #nextArrow>
+                <div class="custom-slick-arrow" style="right: 10px">
+                  <span class="mdi mdi-48px mdi-chevron-right"></span>
+                </div>
+              </template>
+            </a-carousel>
+          </a-col>
+          <a-col :xs="24" :md="12" class="pa-8">
+            <i>  {{ trip.offer }}</i>
+            <a-divider style="border-color: #245159" dashed />
+            <!-- <div>{{ creatorsType }}: <b>{{ trip.creatorForm[0] }}</b> </div> -->
+            <div>Старт: <b>{{ trip.startLocation.name }}</b> </div>
+            
+            <div>
+              Продолжительность: <b>{{ trip.duration }}</b>
+            </div>
+            <div>
+              Ключевые точки: <b>{{ trip.tripRoute }}</b>
+            </div>
+            <div>
+              Ближайший выезд: <b>{{ clearData(trip.start) }}</b>
+            </div>
+            <div>Количество человек:</div>
+            <div style="width: 50%">
+             <b> <a-progress :percent="(tripsCount / trip.maxPeople) * 100" :format="() => `${trip.maxPeople} чел`">
+              </a-progress></b>
+            </div>
+            <div>
+              Цена
+              <div v-for="(item, index) in trip.cost" :key="index" class="cost">
+                {{ item.first }} : <b>{{ item.price }} руб.</b>
+              </div>
 
-                        </div>
-                    </a-col>
+            </div>
+            <div class="d-flex justify-center ma-8">
+              <a-button v-if="tripsCount != trip.maxPeople" type="primary" class="lets_go_btn" 
+                style="display: flex; justify-content: center" >
+                Купить
+              </a-button>
+            </div>
+            <div>
+              <b v-if="(tripsCount == trip.maxPeople)">
+                мест больше нет
+              </b>
+            </div>
+          </a-col>
 
-                    <a-col :xs="24">
-                        <span v-html="trip.description"></span>
-                    </a-col>
-                </a-row>
-            </a-col>
+          <a-col :xs="24">
+            <span v-html="trip.description"></span>
+          </a-col>
         </a-row>
+      </a-col>
+    </a-row>
 
-        <a-row class="justify-center d-flex" style="margin-top: 30px;">
-            <a-col :xs="22" :xl="16">
-                <a-button block size="large" :loading="isLoading" :disabled="isModerated" @click="moderateTrip(trip._id)">
+        <a-row class="justify-center d-flex" >
+            <a-col :xs="22" :xl="16" class="justify-center d-flex">
+                <a-button  :loading="isLoading" :disabled="isModerated" @click="moderateTrip(trip._id)" class="lets_go_btn ma-36"  type="primary">
                     <span v-if="!isModerated">принять</span>
                     <span v-else class="mdi mdi-check-outline"></span>
                 </a-button>
             </a-col>
         </a-row>
-        <a-row class="justify-center d-flex" style="margin-top: 30px;">
+        <a-row class="justify-center d-flex" >
             <a-col :xs="22" :xl="16">
-                <a-textarea placeholder="Ваши комментарии" size="large" v-model:value="moderationMessage">
+                <a-textarea placeholder="Комментарии"  v-model:value="moderationMessage">
                 </a-textarea>
-                <a-row class="justify-center d-flex mt-8">
-                    <a-button :disabled="isModerated" size="large" @click="sendModerationMessage">отправить на
+                <div class="justify-center d-flex">
+                    <a-button :disabled="isModerated" @click="sendModerationMessage" class="btn_light ma-36" >отправить на
                         доработку</a-button>
-                </a-row>
+                </div>
             </a-col>
         </a-row>
     </div>

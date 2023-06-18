@@ -567,7 +567,7 @@ let formSchema = yup.object({
                                                                                                                                                                                                                                                                                         </a-upload>
                                                                                                                                                                                                                                                                                       </a-col> -->
             <a-col :span="24" class="d-flex justify-center">
-              <a-button class="lets_go_btn ma-24" type="primary"  html-type="submit">Отправить
+              <a-button class="lets_go_btn ma-36" type="primary"  html-type="submit">Отправить
               </a-button>
             </a-col>
           </a-row>

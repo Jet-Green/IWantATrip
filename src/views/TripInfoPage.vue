@@ -247,7 +247,7 @@ onMounted(() => {
      
           <div class="d-flex space-around">
             <!-- <a-button type="primary" @click="buyTrip(true)"> сейчас </a-button> -->
-            <a-button @click="buyTrip(false)"> Заказать </a-button>
+            <a-button @click="buyTrip(false)"  type="primary" class="lets_go_btn"> Заказать </a-button>
           </div>
         </a-col>
       </a-row>
