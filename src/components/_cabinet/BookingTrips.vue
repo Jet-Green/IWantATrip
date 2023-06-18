@@ -32,6 +32,19 @@ function changeStatus(_id, status) {
 function getOrderNumber(str) {
   return str.substring(str.length - 5)
 }
+function getOrderStatus(str) {
+  switch (str) {
+    case "open":
+      return "открыт"
+    case "inWork":
+      return "в работе"
+    case "closed":
+      return "закрыт"
+    default:
+      break;
+  }
+  return str.substring(str.length - 5)
+}
 
 
 onMounted(() => {
@@ -52,6 +65,9 @@ onMounted(() => {
               Тур: {{ booking.type.toString().toLowerCase() }}
             </div>
             <div>
+              Направление: {{ booking.location.toString().toLowerCase() }}
+            </div>
+            <div>
               C {{ clearData(booking.start) }} по {{ clearData(booking.end) }}
             </div>
 
@@ -68,7 +84,7 @@ onMounted(() => {
               Пожелания: {{ booking.wishes }}
             </div>
             <div>
-              № заказа: {{ getOrderNumber(booking._id) }}
+              Заказ № {{ getOrderNumber(booking._id) }} <b>{{ getOrderStatus(booking.status) }}</b>
             </div>
 
           </a-card>
