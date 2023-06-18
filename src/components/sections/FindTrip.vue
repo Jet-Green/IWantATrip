@@ -55,7 +55,7 @@ onMounted(async () => {
       <a-row v-if="trips.length">
         <a-col :span="24">
           <div ref="carousel_container"></div>
-          <Carousel :itemsToShow="postsCount" :autoplay="25000" snapAlign="center" :wrapAround="true"
+          <Carousel :itemsToShow="postsCount" :autoplay="25000"  :wrapAround="true"
             class="unselectable">
             <Slide v-for="trip in trips" :key="trip.index" class="unselectable ma-8">
               <div class="carousel__item ma-8" style="width: 100%">
@@ -81,7 +81,7 @@ onMounted(async () => {
   background: linear-gradient(270deg, #24b0d6, #27728b);
 }
 
-.carousel__slide {
-  align-items: end;
-}
+/* .carousel__slide {
+  align-items: center;
+} */
 </style>

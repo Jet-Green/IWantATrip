@@ -35,7 +35,7 @@ const clearData = (dateNumber) => {
               @click="tripToDelete(trip._id)"></span> -->
   <div @click="goToTripPage" style="height: 100%;" class="trip-card">
     <div class="title">
-     <p>{{ trip.name }}</p> 
+      <p>{{ trip.name }}</p>
     </div>
 
     <a-badge-ribbon :text="`${trip.cost.length ? trip.cost[0].price : 0} руб`" color="ff6600">
@@ -43,9 +43,14 @@ const clearData = (dateNumber) => {
         <div>
           <img :src="trip.images[0]" style="object-fit: cover; width: 100%; height: 175px" />
         </div>
-        <div style="text-align: center;">
+
+        <div style="text-align: center;" v-if="clearData(trip.start) == clearData(trip.end)">
+          <strong>{{ clearData(trip.start) }}</strong>
+        </div>
+        <div v-else style="text-align: center;">
           c <strong>{{ clearData(trip.start) }}</strong> по
           <strong>{{ clearData(trip.end) }}</strong>
+
         </div>
       </a-card>
     </a-badge-ribbon>

@@ -400,7 +400,7 @@ let formSchema = yup.object({
 
                         <a-col :span="24">
                             <Field name="offer" v-slot="{ value, handleChange }" v-model="form.offer">
-                                Реклама
+                                Краткое описание
                                 <a-textarea @update:value="handleChange" :value="value"
                                     placeholder="завлекательное описание" size="large">
                                 </a-textarea>
@@ -412,7 +412,7 @@ let formSchema = yup.object({
 
                         <a-col :span="24">
                             <Field name="tripRoute" v-slot="{ value, handleChange }" v-model="form.tripRoute">
-                                Маршрут
+                                Ключевые точки
                                 <a-textarea @update:value="handleChange" :value="value" placeholder="Глазов-Пермь 300км"
                                     size="large">
                                 </a-textarea>
@@ -435,7 +435,7 @@ let formSchema = yup.object({
                                     " />
                         </a-col>
                         <a-col :span="24" class="d-flex justify-center">
-                            <a-button :disabled="!meta.valid" class="lets_go_btn mt-8" type="primary" 
+                            <a-button :disabled="!meta.valid" class="lets_go_btn ma-36" type="primary" 
                                 html-type="submit">Отправить
                             </a-button>
                         </a-col>
