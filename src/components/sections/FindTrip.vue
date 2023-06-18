@@ -31,7 +31,12 @@ let onResize = () => {
 };
 
 const postsCount = computed(() => {
-  return carouselWidth.value / 270;
+  if (carouselWidth.value < 600) {
+    return 1
+  } else {
+    return  carouselWidth.value / 270;
+  }
+
 });
 
 watch(carousel_container, () => {
@@ -55,8 +60,7 @@ onMounted(async () => {
       <a-row v-if="trips.length">
         <a-col :span="24">
           <div ref="carousel_container"></div>
-          <Carousel :itemsToShow="postsCount" :autoplay="25000"  :wrapAround="true"
-            class="unselectable">
+          <Carousel :itemsToShow="postsCount" :autoplay="25000" snapAlign="center"  class="unselectable">
             <Slide v-for="trip in trips" :key="trip.index" class="unselectable ma-8">
               <div class="carousel__item ma-8" style="width: 100%">
                 <TripCard :trip="trip" :isPreview="true" />
@@ -81,7 +85,7 @@ onMounted(async () => {
   background: linear-gradient(270deg, #24b0d6, #27728b);
 }
 
-/* .carousel__slide {
-  align-items: center;
-} */
+.carousel__slide {
+  align-items: end;
+}
 </style>
