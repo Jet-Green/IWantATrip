@@ -29,7 +29,7 @@ onMounted(async () => {
 })
 </script>
 <template>
-    <h1>Новые</h1>
+    <h3>Новые</h3>
     <a-row :gutter="[8, 8]" class="mt-8">
         <a-col :lg="8" :sm="12" :xs="24" v-for="booking in open" v-if="open.length">
             <a-card class="card " hoverable>
@@ -73,10 +73,10 @@ onMounted(async () => {
     </a-row>
 
 
-    <h1>В работе</h1>
+    <h3>В работе</h3>
     {{ inWork }}
 
-    <h1>Завершены</h1>
+    <h3>Завершены</h3>
     {{ closed }}
 </template>
 <style lang="scss" scoped></style>
