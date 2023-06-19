@@ -46,7 +46,7 @@ watch([query, userRole], async ([newQuery, newUserRole]) => {
         </a-col>
     </a-row>
     <a-row>
-        <a-col v-for="user of adminStore.users">
+        <a-col v-for="user of adminStore.users" :span="24" :md="12">
             <UserCard :user="user" />
         </a-col>
     </a-row>
