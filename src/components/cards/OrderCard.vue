@@ -104,8 +104,7 @@ function getOrderNumber(str) {
                 cancel-text="Нет">
                 <span class="mdi mdi-arrow-up"></span>
             </a-popconfirm>
-            <a-popconfirm v-if="booking.comment" title="Изменить сообщение?" @confirm="editComment" ok-text="Да"
-                cancel-text="Нет">
+            <a-popconfirm title="Изменить сообщение?" @confirm="editComment" ok-text="Да" cancel-text="Нет">
                 <span class="mdi mdi-comment-edit-outline"></span>
             </a-popconfirm>
         </div>
