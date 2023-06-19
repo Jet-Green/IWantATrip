@@ -34,7 +34,7 @@ watch([query, userRole], async ([newQuery, newUserRole]) => {
     </a-row>
     <a-row :gutter="[16, 16]">
         <a-col :span="12">
-            <a-input v-model:value="query" placeholder="поиск" />
+            <a-input v-model:value="query" placeholder="Имя или email" />
         </a-col>
         <a-col :span="12">
             <a-select v-model:value="userRole" style="width: 100%">
