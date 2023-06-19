@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { useAdmin } from '../../stores/admin'
+import UserCard from "./UserCard.vue"
 
 
 let adminStore = useAdmin()
@@ -39,12 +40,14 @@ watch([query, userRole], async ([newQuery, newUserRole]) => {
         <a-col :span="12">
             <a-select v-model:value="userRole" style="width: 100%">
                 <a-select-option
-                    v-for="role in [{ value: 'user', name: 'Обычный пользователь' }, { value: 'manager', name: 'Менеджер' }, { value: 'admin', name: 'Админ' }]"
+                    v-for="role in [{ value: 'user', name: 'Любой' }, { value: 'manager', name: 'Менеджер' }, { value: 'admin', name: 'Админ' }]"
                     :value="role.value">{{ role.name }}</a-select-option>
             </a-select>
         </a-col>
     </a-row>
     <a-row>
-        {{ adminStore.users }}
+        <a-col v-for="user of adminStore.users">
+            <UserCard :user="user" />
+        </a-col>
     </a-row>
 </template>
