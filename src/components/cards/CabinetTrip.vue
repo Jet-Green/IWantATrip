@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 import TripService from "../../service/TripService";
 import { useTrips } from '../../stores/trips';
 
+
 let props = defineProps(['trip', 'actions'])
 let { actions, trip } = props
 let router = useRouter()
