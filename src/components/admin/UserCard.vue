@@ -29,7 +29,7 @@ watch(clickCount, (newClickCount) => {
 })
 </script>
 <template>
-    <div class="d-flex ma-4">
+    <div class="d-flex">
         <a-tooltip placement="top">
             <template #title>
                 <span>Изменить роль</span>
