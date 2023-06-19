@@ -127,6 +127,15 @@ export const useTrips = defineStore('trips', {
         async changeBookStatus(_id, status) {
             try {
                 let res = await BookingService.changeBookStatus(_id, status)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async updateBooking(booking) {
+            try {
+                let res = await BookingService.updateBooking(booking)
+                return res
             } catch (error) {
                 console.log(error);
             }

@@ -12,5 +12,8 @@ export default {
     },
     changeBookStatus(_id, status) {
         return $api.get(`/booking/change-status?_id=${_id}&status=${status}`)
+    },
+    updateBooking(booking) {
+        return $api.post('/booking/update-booking', booking)
     }
 }
