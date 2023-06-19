@@ -195,7 +195,7 @@ const router = createRouter({
           component: () => import('../components/admin/Moderation.vue'),
           beforeEnter: () => {
             let userStore = useAuth()
-            if (!userStore.user?.roles.includes('admin')) {
+            if (!userStore.user?.roles.includes('manager')) {
               return false
             }
           }
