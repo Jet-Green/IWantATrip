@@ -66,8 +66,8 @@ watch(current, (newRout, oldRout) => {
             </template>
             <a-menu-item key="/cabinet/moderation">Модерация</a-menu-item>
             <a-menu-item key="/cabinet/orders">Заказы</a-menu-item>
-            <a-menu-item v-if="!userStore.user?.roles.includes('admin')" key="/cabinet/interface">Интерфейс</a-menu-item>
-            <a-menu-item v-if="!userStore.user?.roles.includes('admin')"
+            <a-menu-item v-if="userStore.user.roles.includes('admin')" key="/cabinet/interface">Интерфейс</a-menu-item>
+            <a-menu-item v-if="userStore.user.roles.includes('admin')"
               key="/cabinet/management">Управление</a-menu-item>
           </a-sub-menu>
         </a-menu>
