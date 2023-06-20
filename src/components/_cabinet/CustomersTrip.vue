@@ -18,6 +18,7 @@ const tripStore = useTrips();
 
 let customers = ref([]);
 const allBooks = ref({});
+const bookingBooks = ref({});
 const payedBooks = ref({});
 const pricesSet = new Set();
 const _id = route.query.id;
@@ -112,13 +113,14 @@ async function buyTrip(isBoughtNow) {
 onMounted(async () => {
     let { data } = await tripStore.getFullTripById(route.query._id)
     trip.value = data;
-
+    console.log(bookingBooks);
     for (let book of trip.value.billsList) {
         for (let cart of book.cart) {
             let obj = {};
             if (!pricesSet.has(cart.costType)) {
                 allBooks.value[cart.costType] = []
                 payedBooks.value[cart.costType] = []
+                bookingBooks.value[cart.costType] = []
                 pricesSet.add(cart.costType);
             }
             obj = cart.count;
@@ -127,6 +129,7 @@ onMounted(async () => {
                 payedBooks.value[cart.costType].push(obj);
             } else {
                 allBooks.value[cart.costType].push(obj);
+                bookingBooks.value[cart.costType].push(obj);
             }
         }
     }
@@ -181,8 +184,8 @@ function getPhoneNumber(number) {
             <a-card style="height: 100%; border: 1px solid #245159; padding:4px">
                 Статистика тура
                 <div>Максимум: {{ trip.maxPeople }} чел.</div>
-                <div>Забронировало: {{ allBooks }} чел.</div>
-                <div>Оплатило: {{ allBooks }} чел.</div>
+                <div>Забронировало: {{ bookingBooks }} чел.</div>
+                <div>Оплатило: {{ payedBooks }} чел.</div>
                 <div>Сумма: {{ allBooks }} руб.</div>
 
 
@@ -281,7 +284,7 @@ function getPhoneNumber(number) {
     </div>
     <div class="d-flex justify-center">
         <a-button @click="print()" type="primary" class="lets_go_btn ma-8">
-            <span class="mdi mdi-printer-outline mr-4"></span>  Печать
+            <span class="mdi mdi-printer-outline mr-4"></span> Печать
         </a-button>
     </div>
 </template>
