@@ -64,11 +64,16 @@ watch(current, (newRout, oldRout) => {
               <span v-else class="mdi mdi-24px mdi-cog-outline" style="color: #245159; cursor: pointer"></span>
 
             </template>
-            <a-menu-item key="/cabinet/moderation">Модерация</a-menu-item>
+            <a-sub-menu key="sub01">
+              <template #title>
+                Модерация
+              </template>
+              <a-menu-item key="/cabinet/moderation-trips">Туры</a-menu-item>
+              <a-menu-item key="/cabinet/moderation-companions">Попутчики</a-menu-item>
+            </a-sub-menu>
             <a-menu-item key="/cabinet/orders">Заказы</a-menu-item>
             <a-menu-item v-if="userStore.user.roles.includes('admin')" key="/cabinet/interface">Интерфейс</a-menu-item>
-            <a-menu-item v-if="userStore.user.roles.includes('admin')"
-              key="/cabinet/management">Управление</a-menu-item>
+            <a-menu-item v-if="userStore.user.roles.includes('admin')" key="/cabinet/management">Управление</a-menu-item>
           </a-sub-menu>
         </a-menu>
 

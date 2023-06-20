@@ -29,6 +29,13 @@ export const useCompanions = defineStore('companions', {
                 console.log(err);
             }
         },
+        async getCompanionsOnModeration() {
+            try {
+                return await CompanionsService.getCompanionsOnModeration()
+            } catch (error) {
+                console.log(error);
+            }
+        },
         // async searchCompanions(query) {
         //     try {
         //         const response = await CompanionsService.searchCompanions({ query });
@@ -44,5 +51,19 @@ export const useCompanions = defineStore('companions', {
                 console.log(err);
             }
         },
+        async acceptCompanion(companionId) {
+            try {
+                return CompanionsService.acceptCompanion(companionId);
+            } catch (err) {
+                console.log(err);
+            }
+        },
+        async deleteCompanion(_id) {
+            try {
+                return await CompanionsService.deleteCompanion(_id)
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 })

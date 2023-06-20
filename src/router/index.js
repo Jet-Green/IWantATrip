@@ -190,12 +190,23 @@ const router = createRouter({
           component: () => import('../components/_cabinet/Test.vue'),
         },
         {
-          path: 'moderation',
-          name: 'Moderation',
-          component: () => import('../components/admin/Moderation.vue'),
+          path: 'moderation-trips',
+          name: 'TripsOnModeration',
+          component: () => import('../components/admin/TripsOnModeration.vue'),
           beforeEnter: () => {
             let userStore = useAuth()
-            if (!userStore.user?.roles.includes('manager')) {
+            if (!userStore.user?.roles.includes('admin')) {
+              return false
+            }
+          }
+        },
+        {
+          path: 'moderation-companions',
+          name: 'CompanionsOnModeration',
+          component: () => import('../components/admin/CompanionsOnModeration.vue'),
+          beforeEnter: () => {
+            let userStore = useAuth()
+            if (!userStore.user?.roles.includes('admin')) {
               return false
             }
           }
