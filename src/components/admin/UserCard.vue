@@ -1,31 +1,39 @@
 <script setup>
-import { ref, watch } from 'vue'
-import { useAuth } from '../../stores/auth'
+import { ref, watch, computed, toRefs } from 'vue'
+import { useAdmin } from '../../stores/admin'
 
-let { user } = defineProps(['user'])
-let userStore = useAuth()
+let props = defineProps({ userFromDb: {} })
+let { userFromDb } = toRefs(props)
 
-let modified = ref(false)
+let adminStore = useAdmin()
 
-function detectUserRole(roles) {
-    if (roles.includes('admin')) return 'admin';
-    if (roles.includes('manager')) return 'manager';
+let detectedUserRole = computed(() => {
+    if (userFromDb.value.roles.includes('admin')) return 'admin';
+    if (userFromDb.value.roles.includes('manager')) return 'manager';
     return 'user'
-}
+})
 
-let roles = ['manager', 'admin']
-let clickCount = ref(roles.indexOf(detectUserRole(user.roles)) + 1)
+let roles = ["user", 'manager', 'admin']
+let clickCount = ref(roles.indexOf(detectedUserRole.value))
 
 async function changeUserRole() {
-    let res = await userStore.updateUser(user)
+    let res = await adminStore.changeUserRoles(userFromDb.value.email, userFromDb.value.roles)
+
     if (res.status == 200) {
-        modified.value = false
+        userFromDb.value.modified = false
     }
 }
-
 watch(clickCount, (newClickCount) => {
-    modified.value = true
-    user.roles = ['user', ...roles.slice(0, newClickCount % 3)]
+    // не влияет на юзера никак, мы не сохраняем в базу. Нужно для рекативности
+    userFromDb.value.modified = true
+
+    if (newClickCount % 3 == 0) {
+        userFromDb.value.roles = ['user']
+    } else if (newClickCount % 3 == 1) {
+        userFromDb.value.roles = ['user', 'manager']
+    } else {
+        userFromDb.value.roles = ['user', 'manager', 'admin']
+    }
 })
 </script>
 <template>
@@ -34,24 +42,24 @@ watch(clickCount, (newClickCount) => {
             <template #title>
                 <span>Изменить роль</span>
             </template>
-            <a-avatar :class="detectUserRole(user.roles)"
+            <a-avatar :class="detectedUserRole"
                 style="margin-right: 8px; user-select: none; font-size: large; font-weight: bold; cursor: pointer"
-                size="large" @click="clickCount++">
-                {{ detectUserRole(user.roles) }}
+                size="large" @click="clickCount += 1">
+                {{ detectedUserRole }}
             </a-avatar>
         </a-tooltip>
         <a-row>
             <a-col :span="24" style="font-weight: 700">
-                <span>{{ user.fullname }}</span>
+                <span>{{ userFromDb.fullname }}</span>
             </a-col>
             <a-col :span="24">
                 <span style="font-weight: 400; font-size: 12px;">
-                    {{ user.email }}
+                    {{ userFromDb.email }}
                 </span>
             </a-col>
         </a-row>
         <a-row>
-            <a-col class="d-flex justify-center align-center" v-if="modified">
+            <a-col class="d-flex justify-center align-center" v-if="userFromDb.modified">
                 <a-button size="small" shape="round" @click="changeUserRole">
                     <span class="mdi mdi-check"></span>
                 </a-button>

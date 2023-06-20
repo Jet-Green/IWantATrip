@@ -35,9 +35,9 @@ export const useAuth = defineStore('auth', {
                 console.log(error);
             }
         },
-        updateUser(user) {
+        updateUser(userToUpdate) {
             try {
-                return UserService.updateUser(user)
+                return UserService.updateUser(userToUpdate)
             } catch (err) {
                 return {
                     success: false,

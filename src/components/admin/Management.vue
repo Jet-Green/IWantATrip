@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useAdmin } from '../../stores/admin'
 import UserCard from "./UserCard.vue"
 
@@ -9,22 +9,21 @@ let adminStore = useAdmin()
 let query = ref('')
 let userRole = ref('user')
 
-function find() {
-    console.log(query.value);
-}
+let users = ref([])
+
 watch([query, userRole], async ([newQuery, newUserRole]) => {
     let queryToDb = {}
 
     queryToDb.role = newUserRole
-
-    newQuery = newQuery.trim()
-    if (newQuery.length > 2) {
-        queryToDb.query = newQuery
-    } else {
-        queryToDb.query = ''
-    }
+    queryToDb.query = newQuery.trim()
 
     let res = await adminStore.fetchUsers(queryToDb)
+    users.value = res.data
+})
+onMounted(async () => {
+    let res = await adminStore.fetchUsers()
+
+    users.value = res.data
 })
 </script>
 <template>
@@ -40,14 +39,14 @@ watch([query, userRole], async ([newQuery, newUserRole]) => {
         <a-col :span="24" :md="12" :xl="6">
             <a-select v-model:value="userRole" style="width: 100%">
                 <a-select-option
-                    v-for="role in [{ value: 'user', name: 'Любой' }, { value: 'manager', name: 'Менеджер' }, { value: 'admin', name: 'Админ' }]"
+                    v-for="role in [{ value: 'user', name: 'Все' }, { value: 'manager', name: 'Менеджер' }, { value: 'admin', name: 'Админ' }]"
                     :value="role.value">{{ role.name }}</a-select-option>
             </a-select>
         </a-col>
     </a-row>
     <a-row class="mt-16" :gutter="[16, 16]">
-        <a-col v-for="user of adminStore.users" :span="24" :md="12">
-            <UserCard :user="user" />
+        <a-col v-for="userFromDb of users" :span="24" :md="12">
+            <UserCard :userFromDb="userFromDb" />
         </a-col>
     </a-row>
 </template>

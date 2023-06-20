@@ -3,7 +3,6 @@ import AdminService from '../service/AdminService';
 
 export const useAdmin = defineStore('admin', {
     state: () => ({
-        users: [],
     }),
     getters: {
     },
@@ -15,8 +14,14 @@ export const useAdmin = defineStore('admin', {
         async fetchUsers(filters = { query: '', role: 'user' }) {
             try {
                 let res = await AdminService.fetchUsers(filters)
-                this.users = res.data
                 return res
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async changeUserRoles(email, roles) {
+            try {
+                return await AdminService.changeUserRoles(email, roles)
             } catch (error) {
                 console.log(error);
             }
