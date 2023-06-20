@@ -34,10 +34,10 @@ watch([query, userRole], async ([newQuery, newUserRole]) => {
         </a-col>
     </a-row>
     <a-row :gutter="[16, 16]">
-        <a-col :span="12">
+        <a-col :span="24" :md="12" :xl="18">
             <a-input v-model:value="query" placeholder="Имя или email" />
         </a-col>
-        <a-col :span="12">
+        <a-col :span="24" :md="12" :xl="6">
             <a-select v-model:value="userRole" style="width: 100%">
                 <a-select-option
                     v-for="role in [{ value: 'user', name: 'Любой' }, { value: 'manager', name: 'Менеджер' }, { value: 'admin', name: 'Админ' }]"
@@ -45,8 +45,8 @@ watch([query, userRole], async ([newQuery, newUserRole]) => {
             </a-select>
         </a-col>
     </a-row>
-    <a-row>
-        <a-col v-for="user of adminStore.users">
+    <a-row class="mt-16" :gutter="[16, 16]">
+        <a-col v-for="user of adminStore.users" :span="24" :md="12">
             <UserCard :user="user" />
         </a-col>
     </a-row>
