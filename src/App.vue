@@ -27,6 +27,7 @@ onMounted(async () => {
   try {
     locationStore.location ? locationStore.location = JSON.parse(localStorage.getItem("location")) : console.log("нет локации")
   } catch (error) {
+    localStorage.removeItem('location')
     console.log(error);
   }
 
