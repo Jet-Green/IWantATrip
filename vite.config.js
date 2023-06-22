@@ -32,6 +32,7 @@ export default defineConfig(
             description: 'Description of your app',
             theme_color: '#ffffff',
             background_color: "#ffffff",
+            display: "standalone",
             icons: [
               {
                 src: 'android-chrome-192x192.png',
