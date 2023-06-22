@@ -6,9 +6,6 @@ import { useLocations } from './locations'
 import BookingService from '../service/BookingService'
 import TripService from '../service/TripService.js'
 
-import { render } from 'vue-email';
-import CreateTrip from '../email-templates/CreateTrip.vue';
-
 export const useTrips = defineStore('trips', {
     state: () => ({
         trips: [],
@@ -21,11 +18,6 @@ export const useTrips = defineStore('trips', {
         },
     },
     actions: {
-        async createTrip(form, email) {
-            const emailHtml = await render(CreateTrip, form);
-
-            return TripService.createTrip(form, email, emailHtml)
-        },
         async fetchTrips(query, start, end) {
             try {
                 let locationStore = useLocations()
