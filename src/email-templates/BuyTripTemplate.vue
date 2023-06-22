@@ -21,7 +21,6 @@ defineProps({
 
         <e-section>
             <h1>Куплена поездка</h1>
-            {{ bill }}
         </e-section>
     </e-html>
 </template>

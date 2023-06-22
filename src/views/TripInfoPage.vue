@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, reactive } from "vue";
+
 import { useRoute } from "vue-router";
 import BackButton from "../components/BackButton.vue";
 import { useTrips } from "../stores/trips";
@@ -26,10 +27,6 @@ const creatorsType = computed(() => {
 
 let selectedByUser = ref([]);
 let trip = ref({});
-let userInfo = reactive({
-  fullname: "",
-  phone: "",
-});
 
 let tripsCount = computed(() => {
   let sum = 0;
@@ -82,15 +79,15 @@ let buyTripDialog = () => {
 };
 
 async function buyTrip(isBoughtNow) {
-  if (userInfo.phone) {
+  if (userStore.user.fullinfo.phone) {
     let bill = {
       isBoughtNow,
       cart: [...selectedByUser.value],
       tripId: trip.value._id,
       userInfo: {
         _id: userStore.user._id,
-        fullname: userInfo.fullname,
-        phone: userInfo.phone,
+        fullname: userStore.user.fullinfo.fullname,
+        phone: userStore.user.fullinfo.phone,
       }
     };
 
@@ -169,11 +166,11 @@ onMounted(() => {
             </a-carousel>
           </a-col>
           <a-col :xs="24" :md="12" class="pa-8">
-            <i>  {{ trip.offer }}</i>
+            <i> {{ trip.offer }}</i>
             <a-divider style="border-color: #245159" dashed />
             <!-- <div>{{ creatorsType }}: <b>{{ trip.creatorForm[0] }}</b> </div> -->
             <div>Старт: <b>{{ trip.startLocation.name }}</b> </div>
-            
+
             <div>
               Продолжительность: <b>{{ trip.duration }}</b>
             </div>
@@ -185,8 +182,9 @@ onMounted(() => {
             </div>
             <div>Количество человек:</div>
             <div style="width: 50%">
-             <b> <a-progress :percent="(tripsCount / trip.maxPeople) * 100" :format="() => `${tripsCount}/${trip.maxPeople} чел`">
-              </a-progress></b>
+              <b> <a-progress :percent="(tripsCount / trip.maxPeople) * 100"
+                  :format="() => `${tripsCount}/${trip.maxPeople} чел`">
+                </a-progress></b>
             </div>
             <div>
               Цена
@@ -196,7 +194,7 @@ onMounted(() => {
 
             </div>
             <div class="d-flex justify-center ma-8">
-              <a-button v-if="tripsCount != trip.maxPeople" type="primary" class="lets_go_btn" 
+              <a-button v-if="tripsCount != trip.maxPeople" type="primary" class="lets_go_btn"
                 style="display: flex; justify-content: center" @click="buyTripDialog()">
                 Купить
               </a-button>
@@ -219,19 +217,20 @@ onMounted(() => {
       <a-row :gutter="[4, 4]">
         <a-col :span="24" :md="12">
           Фaмилия Имя
-          <a-input style="width: 100%" v-model:value="userInfo.fullname" placeholder="Иванов Иван Иванович" />
+          <a-input style="width: 100%" v-model:value="userStore.user.fullinfo.fullname"
+            placeholder="Иванов Иван Иванович" />
         </a-col>
         <a-col :span="24" :md="12">
           Телефон
-          <a-input style="width: 100%" v-model:value="userInfo.phone" placeholder="79127528874" />
+          <a-input style="width: 100%" v-model:value="userStore.user.fullinfo.phone" placeholder="79127528874" />
         </a-col>
 
         <a-col :span="24">
           <div>Цена</div>
           <div class="d-flex space-between align-center" v-for="(cost, index) of trip.cost" :key="index">
             <div>{{ cost.first }}</div>
-            <div> {{ cost.price }}  руб.</div>
-              
+            <div> {{ cost.price }} руб.</div>
+
             <div class="d-flex direction-column">
               <span style="font-size: 8px">кол-во</span>
               <a-input-number v-model:value="selectedByUser[index].count" :min="0" :max="trip.maxPeople - tripsCount"
@@ -239,15 +238,15 @@ onMounted(() => {
             </div>
           </div>
         </a-col>
-        <a-col :span="24"  class="d-flex justify-end" >
+        <a-col :span="24" class="d-flex justify-end">
           <b>Итого: {{ finalCost }} руб.</b>
         </a-col>
 
         <a-col :span="24">
-     
+
           <div class="d-flex space-around">
             <!-- <a-button type="primary" @click="buyTrip(true)"> сейчас </a-button> -->
-            <a-button @click="buyTrip(false)"  type="primary" class="lets_go_btn"> Заказать </a-button>
+            <a-button @click="buyTrip(false)" type="primary" class="lets_go_btn"> Заказать </a-button>
           </div>
         </a-col>
       </a-row>
