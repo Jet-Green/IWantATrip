@@ -176,7 +176,7 @@ function submit() {
     }
   }
 
-  TripService.createTrip(form, userStore.user.email).then(async (res) => {
+  tripStore.createTrip(form, userStore.user.email).then(async (res) => {
     if (res.status == 200) {
       const _id = res.data._id;
       await uploadTripImages(_id)
@@ -555,7 +555,7 @@ let formSchema = yup.object({
                 [{ color: ['#000000', '#ff6600', '#3daff5'] }],
                 [{ align: [] }],
               ]
-              " />
+                " />
             </a-col>
             <!-- <a-col :span=" 24 ">
                                                                                                                                                                                                                                                                                         :file-list="fileList"
@@ -567,7 +567,7 @@ let formSchema = yup.object({
                                                                                                                                                                                                                                                                                         </a-upload>
                                                                                                                                                                                                                                                                                       </a-col> -->
             <a-col :span="24" class="d-flex justify-center">
-              <a-button class="lets_go_btn ma-36" type="primary"  html-type="submit">Отправить
+              <a-button class="lets_go_btn ma-36" type="primary" html-type="submit">Отправить
               </a-button>
             </a-col>
           </a-row>

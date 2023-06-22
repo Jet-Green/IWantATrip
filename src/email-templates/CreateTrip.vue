@@ -1,0 +1,127 @@
+<script setup>
+import { EHtml, EHead, ESection } from 'vue-email';
+
+defineProps({
+    name: { type: String },
+    start: { type: Number },
+    end: { type: Number },
+    maxPeople: { type: Number },
+    duration: { type: String },
+    images: { type: Array },
+    pdfs: { type: Array },
+    tripRoute: { type: String },
+    distance: { type: String },
+    cost: { type: Array },
+    offer: { type: String },
+    description: { type: String },
+    startLocation: { type: Object },
+    tripType: { type: String },
+    fromAge: { type: String },
+})
+</script>
+<template>
+    <e-html lang="en">
+        <e-head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Создан тур</title>
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link
+                href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+                rel="stylesheet">
+            <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.6.96/css/materialdesignicons.min.css" rel="stylesheet" />
+        </e-head>
+
+        <e-section>
+            <div class="outer">
+                <div class="row">
+                    <h1>{{ name }}</h1>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <span class="mdi mdi-24px mdi-map-marker-distance"></span> {{ tripRoute }}
+                    </div>
+                    <div class="col">
+                        <span class="mdi mdi-24px mdi-map-marker"></span> {{ location }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        {{ offer }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <span class="mdi mdi-24px mdi-information-outline"></span> Описание:
+                        <span v-html="description">
+                        </span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <span class="mdi mdi-24px mdi-calendar-arrow-right"></span> с {{ start }} <span
+                            class="mdi mdi-24px mdi-calendar-arrow-right"></span> по {{ end }}
+
+                        <span class="mdi mdi-24px mdi-calendar-multiselect"></span>
+                        <b>
+                            {{ duration }} д.
+                        </b>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <span class="mdi mdi-24px mdi-train-car"></span> Тип тура: {{ tripType }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <span class="mdi mdi-24px mdi-account-group"> С {{ fromAge }} лет</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        Цены: <br />
+                        <div class="cost-item" v-for="c of cost">
+                            <span class="mdi mdi-24px mdi-account"></span> {{ c.first }} <span class="mdi mdi-24px mdi-cash"
+                                style="margin-left: 12px;"></span> {{ c.price }} руб.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </e-section>
+    </e-html>
+</template>
+<style>
+body {
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    justify-content: center;
+}
+
+.outer {
+    font-size: 16px;
+    max-width: 90%;
+}
+
+.row {
+    margin: 16px 0 16px 0;
+}
+
+/* .col {
+} */
+.cost-item {
+    display: flex;
+    align-items: center;
+    margin-top: 4px;
+}
+
+p {
+    margin: 0 6px 0;
+}
+</style>
