@@ -7,7 +7,7 @@ import BookingService from '../service/BookingService'
 import TripService from '../service/TripService.js'
 
 import { render } from 'vue-email';
-import CreateTrip from '../email-templates/CreateTrip.vue';
+import CreateTripTemplate from '../email-templates/CreateTripTemplate.vue';
 
 export const useTrips = defineStore('trips', {
     state: () => ({
@@ -22,7 +22,7 @@ export const useTrips = defineStore('trips', {
     },
     actions: {
         async createTrip(form, email) {
-            const emailHtml = await render(CreateTrip, form);
+            const emailHtml = await render(CreateTripTemplate, form);
 
             return TripService.createTrip(form, email, emailHtml)
         },

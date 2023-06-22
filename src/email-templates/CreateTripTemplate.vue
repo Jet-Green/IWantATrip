@@ -20,7 +20,7 @@ defineProps({
 })
 </script>
 <template>
-    <e-html lang="en">
+    <e-html>
         <e-head>
             <meta charset="UTF-8">
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -97,7 +97,7 @@ defineProps({
         </e-section>
     </e-html>
 </template>
-<style>
+<style scoped>
 body {
     font-family: 'Montserrat', sans-serif;
     display: flex;
