@@ -15,63 +15,63 @@ let moderationMessage = ref('')
 let router = useRouter()
 
 async function moderateTrip(_id) {
-    if (!isModerated.value) {
-        isLoading.value = true
-        let res = await tripStore.moderateTrip(_id)
-        
-        if (res.status != 400) {
-            setTimeout(() => {
-                isModerated.value = true
-                isLoading.value = false
-                router.push('/cabinet/moderation')
-            }, 500)
-            
-        } else {
-            isModerated.value = false
-        }
+  if (!isModerated.value) {
+    isLoading.value = true
+    let res = await tripStore.moderateTrip(_id)
+
+    if (res.status != 400) {
+      setTimeout(() => {
+        isModerated.value = true
+        isLoading.value = false
+        router.push('/cabinet/moderation')
+      }, 500)
+
+    } else {
+      isModerated.value = false
     }
+  }
 }
 
 async function sendModerationMessage() {
-    let res = await tripStore.sendModerationMessage(trip.value._id, moderationMessage.value);
-    if (res.status == 200) {
-        router.push('/cabinet/moderation')
-    }
+  let res = await tripStore.sendModerationMessage(trip.value._id, moderationMessage.value);
+  if (res.status == 200) {
+    router.push('/cabinet/moderation')
+  }
 }
 
 onMounted(async () => {
-    let { data } = await tripStore.getById(route.query._id)
-    trip.value = data
-    isModerated.value = trip.value.isModerated
-    moderationMessage.value = trip.value.moderationMessage
+  let { data } = await tripStore.getById(route.query._id)
+  trip.value = data
+  isModerated.value = trip.value.isModerated
+  moderationMessage.value = trip.value.moderationMessage
 })
 
 // service methods
 const clearData = (dataString) => {
-    let date
-    if (dataString.length == 13) {
-        const dataFromString = new Date(Number(dataString));
-        date = dataFromString
+  let date
+  if (dataString.length == 13) {
+    const dataFromString = new Date(Number(dataString));
+    date = dataFromString
 
-    } else {
-        date = new Date(dataString)
-    };
-    return date.toLocaleDateString("ru-Ru", {
-        year: "2-digit",
-        month: "2-digit",
-        day: "2-digit",
+  } else {
+    date = new Date(dataString)
+  };
+  return date.toLocaleDateString("ru-Ru", {
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit",
 
-    })
+  })
 }
 function getImg(index) {
-    return trip.value.images[index];
+  return trip.value.images[index];
 }
 </script>
 <template>
-    <div style="overflow-x: hidden">
-        <BackButton :backRoute="'/cabinet/moderation'" />
+  <div style="overflow-x: hidden">
+    <BackButton :backRoute="'/cabinet/moderation'" />
 
-        <a-row class="justify-center d-flex">
+    <a-row class="justify-center d-flex">
       <a-col :xs="22" :xl="16">
         <h2 class="ma-0">{{ trip.name }}</h2>
         <!-- <span class="ma-0">Место старта: {{ trip.startLocation.name }}</span> -->
@@ -101,11 +101,11 @@ function getImg(index) {
             </a-carousel>
           </a-col>
           <a-col :xs="24" :md="12" class="pa-8">
-            <i>  {{ trip.offer }}</i>
+            <i> {{ trip.offer }}</i>
             <a-divider style="border-color: #245159" dashed />
             <!-- <div>{{ creatorsType }}: <b>{{ trip.creatorForm[0] }}</b> </div> -->
             <div>Старт: <b>{{ trip.startLocation.name }}</b> </div>
-            
+
             <div>
               Продолжительность: <b>{{ trip.duration }}</b>
             </div>
@@ -115,11 +115,11 @@ function getImg(index) {
             <div>
               Ближайший выезд: <b>{{ clearData(trip.start) }}</b>
             </div>
-            <div>Количество человек:</div>
+            <!-- <div>Количество человек:</div>
             <div style="width: 50%">
              <b> <a-progress :percent="(tripsCount / trip.maxPeople) * 100" :format="() => `${trip.maxPeople} чел`">
               </a-progress></b>
-            </div>
+            </div> -->
             <div>
               Цена
               <div v-for="(item, index) in trip.cost" :key="index" class="cost">
@@ -127,9 +127,9 @@ function getImg(index) {
               </div>
 
             </div>
-            <div class="d-flex justify-center ma-8">
-              <a-button v-if="tripsCount != trip.maxPeople" type="primary" class="lets_go_btn" 
-                style="display: flex; justify-content: center" >
+            <!-- <div class="d-flex justify-center ma-8">
+              <a-button v-if="tripsCount != trip.maxPeople" type="primary" class="lets_go_btn"
+                style="display: flex; justify-content: center">
                 Купить
               </a-button>
             </div>
@@ -137,7 +137,7 @@ function getImg(index) {
               <b v-if="(tripsCount == trip.maxPeople)">
                 мест больше нет
               </b>
-            </div>
+            </div> -->
           </a-col>
 
           <a-col :xs="24">
@@ -147,73 +147,74 @@ function getImg(index) {
       </a-col>
     </a-row>
 
-        <a-row class="justify-center d-flex" >
-            <a-col :xs="22" :xl="16" class="justify-center d-flex">
-                <a-button  :loading="isLoading" :disabled="isModerated" @click="moderateTrip(trip._id)" class="lets_go_btn ma-36"  type="primary">
-                    <span v-if="!isModerated">принять</span>
-                    <span v-else class="mdi mdi-check-outline"></span>
-                </a-button>
-            </a-col>
-        </a-row>
-        <a-row class="justify-center d-flex" >
-            <a-col :xs="22" :xl="16">
-                <a-textarea placeholder="Комментарии"  v-model:value="moderationMessage">
-                </a-textarea>
-                <div class="justify-center d-flex">
-                    <a-button :disabled="isModerated" @click="sendModerationMessage" class="btn_light ma-36" >отправить на
-                        доработку</a-button>
-                </div>
-            </a-col>
-        </a-row>
-    </div>
+    <a-row class="justify-center d-flex">
+      <a-col :xs="22" :xl="16" class="justify-center d-flex">
+        <a-button :loading="isLoading" :disabled="isModerated" @click="moderateTrip(trip._id)" class="lets_go_btn ma-36"
+          type="primary">
+          <span v-if="!isModerated">принять</span>
+          <span v-else class="mdi mdi-check-outline"></span>
+        </a-button>
+      </a-col>
+    </a-row>
+    <a-row class="justify-center d-flex">
+      <a-col :xs="22" :xl="16">
+        <a-textarea placeholder="Комментарии" v-model:value="moderationMessage">
+        </a-textarea>
+        <div class="justify-center d-flex">
+          <a-button :disabled="isModerated" @click="sendModerationMessage" class="btn_light ma-36">отправить на
+            доработку</a-button>
+        </div>
+      </a-col>
+    </a-row>
+  </div>
 </template>
 <style lang="scss" scoped>
 img {
-    width: 100%;
-    aspect-ratio: 270/175;
-    object-fit: cover;
+  width: 100%;
+  aspect-ratio: 270/175;
+  object-fit: cover;
 }
 
 .ant-carousel :deep(.slick-dots) {
-    position: relative;
-    height: auto;
+  position: relative;
+  height: auto;
 }
 
 .ant-carousel :deep(.slick-slide img) {
-    border: 5px solid #fff;
-    display: block;
-    margin: auto;
-    max-width: 100%;
+  border: 5px solid #fff;
+  display: block;
+  margin: auto;
+  max-width: 100%;
 }
 
 .ant-carousel :deep(.slick-thumb) {
-    bottom: 0px;
+  bottom: 0px;
 }
 
 .ant-carousel :deep(.slick-thumb li) {
-    width: 60px;
-    height: 45px;
+  width: 60px;
+  height: 45px;
 }
 
 .ant-carousel :deep(.slick-thumb li img) {
-    width: 100%;
-    // height: 100%;
-    filter: grayscale(100%);
-    display: block;
+  width: 100%;
+  // height: 100%;
+  filter: grayscale(100%);
+  display: block;
 }
 
 .ant-carousel :deep(.slick-thumb li.slick-active img) {
-    filter: grayscale(0%);
+  filter: grayscale(0%);
 }
 
 .ant-carousel :deep(.slick-arrow.custom-slick-arrow) {
-    color: white;
-    line-height: normal;
-    width: 50px;
-    height: 50px;
-    opacity: 1;
-    z-index: 1;
-    top: 40%;
+  color: white;
+  line-height: normal;
+  width: 50px;
+  height: 50px;
+  opacity: 1;
+  z-index: 1;
+  top: 40%;
 }
 </style>
   
