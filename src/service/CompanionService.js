@@ -7,8 +7,8 @@ export default {
     getById(_id) {
         return $api.get(`/companion/get-by-id?_id=${_id}`)
     },
-    createCompanion(companion) {
-        return $api.post('/companion/create', companion)
+    createCompanion(companion, emailHtml) {
+        return $api.post('/companion/create', { companion, emailHtml })
     },
     addFeedback(feedback, com_id) {
         return $api.post(`/companion/add-feedback?companion_id=${com_id}`, feedback)

@@ -3,6 +3,9 @@ import { defineStore } from 'pinia'
 import CompanionsService from '../service/CompanionService'
 import { useLocations } from './locations'
 
+import CreateCompanionTemplate from '../email-templates/CreateCompanionTemplate.vue'
+import { render } from 'vue-email';
+
 export const useCompanions = defineStore('companions', {
     state: () => ({
         companions: [],
@@ -14,6 +17,11 @@ export const useCompanions = defineStore('companions', {
         },
     },
     actions: {
+        async createCompanion(form) {
+            const emailHtml = await render(CreateCompanionTemplate, form);
+
+            return CompanionsService.createCompanion(form, emailHtml)
+        },
         async fetchCompanions(query) {
             try {
                 let locationStore = useLocations()
