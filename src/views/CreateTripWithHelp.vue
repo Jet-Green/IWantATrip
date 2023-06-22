@@ -4,7 +4,7 @@ import { useRouter } from "vue-router";
 import { reactive, ref, onMounted, watch } from "vue";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import { message } from "ant-design-vue";
-import BookingService from "../service/BookingService";
+import { useBooking } from '../stores/booking'
 import { useAuth } from "../stores/auth";
 import { useAppState } from "../stores/appState";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
@@ -17,6 +17,7 @@ let sm = breakpoints.smaller("md");
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
 const ruLocale = locale;
 
+const bookingStore = useBooking()
 const userStore = useAuth();
 const appStore = useAppState();
 const router = useRouter();
@@ -78,14 +79,16 @@ async function submit() {
       console.log(err);
     });
 
-  BookingService.bookingTrip(toSend).then(() => {
-    message.config({ duration: 1.5, top: "70vh" });
-    message.success({
-      content: "Успешно!",
-      onClose: () => {
-        close()
-      },
-    });
+  bookingStore.bookingTrip(toSend).then((res) => {
+    if (res.status == 200) {
+      message.config({ duration: 1.5, top: "70vh" });
+      message.success({
+        content: "Успешно!",
+        onClose: () => {
+          close()
+        },
+      });
+    }
   });
 
   // очистить форму, сделать редирект на главную, вывести уведомление снизу об успехе
@@ -104,13 +107,13 @@ let formSchema = yup.object({
 });
 
 watch(start, () => {
-    form.start = Number(Date.parse(new Date(start.value.$d)));
-    if (!end.value) {
-      end.value = start.value
-    }
+  form.start = Number(Date.parse(new Date(start.value.$d)));
+  if (!end.value) {
+    end.value = start.value
+  }
 });
 watch(end, () => {
-    form.end = Number(Date.parse(new Date(end.value.$d))) 
+  form.end = Number(Date.parse(new Date(end.value.$d)))
 });
 
 
@@ -204,8 +207,7 @@ onMounted(() => {
               <Field name="location" v-slot="{ value, handleChange }" v-model="form.location">
                 Направление
 
-                <a-input style="width: 100%" @update:value="handleChange"  placeholder="Байкал"
-                  size="large" />
+                <a-input style="width: 100%" @update:value="handleChange" placeholder="Байкал" size="large" />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="location" class="error-message" />
@@ -227,19 +229,21 @@ onMounted(() => {
 
 
             <a-col :xs="24" :md="8">
-                <Field name="adults" v-slot="{ value, handleChange }" v-model="form.adults">
-                  Взрослые
-                  <a-input-number :min="0" style="width: 100%" @update:value="handleChange" :value="value" placeholder="2" />
-                </Field>
-                <Transition name="fade">
-                  <ErrorMessage name="adults" class="error-message" />
-                </Transition>
+              <Field name="adults" v-slot="{ value, handleChange }" v-model="form.adults">
+                Взрослые
+                <a-input-number :min="0" style="width: 100%" @update:value="handleChange" :value="value"
+                  placeholder="2" />
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="adults" class="error-message" />
+              </Transition>
             </a-col>
 
             <a-col :xs="24" :md="8">
               <Field name="children" v-slot="{ value, handleChange }" v-model="form.children">
                 Дети
-                <a-input-number style="width: 100%" @update:value="handleChange" :value="value" placeholder="1" :min="0" />
+                <a-input-number style="width: 100%" @update:value="handleChange" :value="value" placeholder="1"
+                  :min="0" />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="children" class="error-message" />
@@ -247,14 +251,14 @@ onMounted(() => {
             </a-col>
 
             <a-col :xs="24" :md="8">
-                <Field name="fromAge" v-slot="{ value, handleChange }" v-model="form.fromAge">
-                  Мин.возраст,лет
-                  <a-input-number style="width: 100%" id="inputNumber" @update:value="handleChange" :value="value" placeholder="10" :min="0"
-                    :max="100" />
-                </Field>
-                <Transition name="fade">
-                  <ErrorMessage name="fromAge" class="error-message" />
-                </Transition>
+              <Field name="fromAge" v-slot="{ value, handleChange }" v-model="form.fromAge">
+                Мин.возраст,лет
+                <a-input-number style="width: 100%" id="inputNumber" @update:value="handleChange" :value="value"
+                  placeholder="10" :min="0" :max="100" />
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="fromAge" class="error-message" />
+              </Transition>
             </a-col>
 
             <a-col :xs="24">
@@ -271,8 +275,7 @@ onMounted(() => {
 
           <a-row type="flex" justify="center">
             <a-col :xs="24" :md="16" :lg="10" class="d-flex justify-center">
-              <a-button type="primary"  html-type="submit" class="lets_go_btn ma-36"
-                >Отправить</a-button>
+              <a-button type="primary" html-type="submit" class="lets_go_btn ma-36">Отправить</a-button>
             </a-col>
           </a-row>
         </a-col>
