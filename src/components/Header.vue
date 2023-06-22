@@ -68,7 +68,11 @@ const handleChange = async () => {
 };
 onMounted(() => {
   if (localStorage.getItem("location")) {
-    locationSearchRequest.value = JSON.parse(localStorage.getItem("location")).shortName
+    try {
+      locationSearchRequest.value = JSON.parse(localStorage.getItem("location")).shortName
+    } catch (error) {
+      console.log(error);
+    }
   }
 
 })

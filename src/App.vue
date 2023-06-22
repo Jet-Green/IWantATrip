@@ -24,8 +24,12 @@ onMounted(async () => {
   // вся логика локации тут
 
   await locationStore.fetchLocations()
-  locationStore.location?locationStore.location = JSON.parse(localStorage.getItem("location")):console.log("нет локации")
- 
+  try {
+    locationStore.location ? locationStore.location = JSON.parse(localStorage.getItem("location")) : console.log("нет локации")
+  } catch (error) {
+    console.log(error);
+  }
+
 
   function notify() {
     let notification = new Notification("Привет", {
