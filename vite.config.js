@@ -25,12 +25,13 @@ export default defineConfig(
         vue(),
         VitePWA({
           registerType: 'autoUpdate',
-          includeAssets: ['favicon.svg', 'favicon.ico', 'robots.txt', 'images/apple-touch-icon.png'],  
+          includeAssets: ['favicon.svg', 'favicon.ico', 'robots.txt', 'images/apple-touch-icon.png'],
           manifest: {
-            name: 'Хочу в поездку',
-            short_name: 'Хочу в поездку',
+            name: 'Города и веси',
+            short_name: 'Города и веси',
             description: 'Description of your app',
             theme_color: '#ffffff',
+            background_color: "#ffffff",
             icons: [
               {
                 src: 'android-chrome-192x192.png',
@@ -47,13 +48,7 @@ export default defineConfig(
                 sizes: '180x180',
                 type: 'image/png',
               },
-         
-              {
-                src: 'mstile-150x150.png',
-                sizes: '150x150',
-                type: 'image/png',
-              },
-           
+
               {
                 src: 'pwa-512x512.png',
                 sizes: '512x512',
