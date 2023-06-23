@@ -16,10 +16,10 @@ const route = useRoute();
 const userStore = useAuth()
 const tripStore = useTrips();
 
-let customers = ref([]);
 const allBooks = ref({});
 const bookingBooks = ref({});
 const payedBooks = ref({});
+const sumBook = ref();
 const pricesSet = new Set();
 const _id = route.query.id;
 let trip = ref({});
@@ -113,7 +113,8 @@ async function buyTrip(isBoughtNow) {
 onMounted(async () => {
     let { data } = await tripStore.getFullTripById(route.query._id)
     trip.value = data;
-    console.log(bookingBooks);
+    let sum = 0;
+    console.log(trip.value.billsList);
     for (let book of trip.value.billsList) {
         for (let cart of book.cart) {
             let obj = {};
@@ -133,6 +134,13 @@ onMounted(async () => {
             }
         }
     }
+    for (let book in allBooks.value) {
+        console.log(allBooks.value[book]);
+        for (let count in allBooks.value[book]){
+            console.log(count)
+        }
+    }
+    // console.log(sum);
     for (let pr of pricesSet) {
 
         let x =
@@ -149,6 +157,13 @@ onMounted(async () => {
             )
             ;
         allBooks.value[pr] = y
+        let z =
+            bookingBooks.value[pr].reduce(
+                (a, c) => a + c,
+                0
+            )
+            ;
+        bookingBooks.value[pr] = z
     }
     for (let cost of trip.value.cost) {
         selectedByUser.value.push({
