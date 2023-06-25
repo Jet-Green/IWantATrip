@@ -142,7 +142,7 @@ onMounted(async () => {
                 @click="addEmail('CreateTrip', emailCreateTrip)">добавить</a-button>
 
         </a-col>
-        <a-col v-if="createTripEmails.length != 0" v-for="email of createTripEmails" class="ma-8" style="cursor: pointer">
+        <a-col v-if="createTripEmails.length != 0" v-for="email of createTripEmails" class="ma-4" style="cursor: pointer; font-size: 12px;">
             <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deleteEmail('CreateTrip', email)">
                 {{ email }}
             </a-popconfirm>
@@ -160,7 +160,7 @@ onMounted(async () => {
             <a-button type="primary" class="ml-12 lets_go_btn"
                 @click="addEmail('BookingTrip', emailBookingTrip)">добавить</a-button>
         </a-col>
-        <a-col v-if="bookingTripEmails.length != 0" v-for="email of bookingTripEmails" class="ma-8" style="cursor: pointer">
+        <a-col v-if="bookingTripEmails.length != 0" v-for="email of bookingTripEmails" class="ma-4" style="cursor: pointer; font-size: 12px;">
             <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deleteEmail('BookingTrip', email)">
                 {{ email }}
             </a-popconfirm>
@@ -178,8 +178,8 @@ onMounted(async () => {
             <a-button type="primary" class="ml-12 lets_go_btn"
                 @click="addEmail('CreateCompanion', emailCreateCompanion)">добавить</a-button>
         </a-col>
-        <a-col v-if="createCompanionEmails.length != 0" v-for="email of createCompanionEmails" class="ma-8"
-            style="cursor: pointer">
+        <a-col v-if="createCompanionEmails.length != 0" v-for="email of createCompanionEmails" class="ma-4"
+            style="cursor: pointer; font-size: 12px;">
             <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deleteEmail('CreateCompanion', email)">
                 {{ email }}
             </a-popconfirm>
