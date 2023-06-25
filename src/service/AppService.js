@@ -10,11 +10,5 @@ export default {
     },
     deleteTripType(name) {
         return $api.post('/app-state/delete-trip-type', { name })
-    },
-    addEmail(email, events) {
-        return $api.post('/app-state/add-email', { email, events })
-    },
-    updateEmails(updateQuery) {
-        return $api.post('/app-state/update-emails', updateQuery)
     }
 }

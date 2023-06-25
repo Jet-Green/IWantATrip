@@ -9,20 +9,6 @@ export const useAppState = defineStore('app-state', {
     getters: {
     },
     actions: {
-        async updateEmails(updateQuery) {
-            try {
-                return AppService.updateEmails(updateQuery)
-            } catch (error) {
-                console.log(error);
-            }
-        },
-        async addEmail(email, events) {
-            try {
-                return AppService.addEmail(email, events)
-            } catch (error) {
-                console.log(error);
-            }
-        },
         async refreshState() {
             try {
                 let { data } = await AppService.getAppState()
