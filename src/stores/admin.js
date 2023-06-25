@@ -25,6 +25,27 @@ export const useAdmin = defineStore('admin', {
             } catch (error) {
                 console.log(error);
             }
+        },
+        addEmail(event, email) {
+            try {
+                return AdminService.addEmail(event, email)
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        getEmails(event) {
+            try {
+                return AdminService.getEmails(event)
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        deleteEmail(event, email) {
+            try {
+                return AdminService.deleteEmail(event, email)
+            } catch (error) {
+                console.log(error);
+            }
         }
     }
 });

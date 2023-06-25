@@ -9,7 +9,79 @@ let adminStore = useAdmin()
 let query = ref('')
 let userRole = ref('user')
 
+let emailCreateTrip = ref('')
+let emailBookingTrip = ref('')
+let emailCreateCompanion = ref('')
+
+let createTripEmails = ref([])
+let bookingTripEmails = ref([])
+let createCompanionEmails = ref([])
+
 let users = ref([])
+
+async function addEmail(event, email) {
+    let res = await adminStore.addEmail(event, email)
+    // console.log(res.data);
+    // if (res.status == 200) {
+    //     switch (event) {
+    //         case 'CreateTrip':
+    //             createTripEmails.value.push(res.data)
+    //             break
+    //         case 'BookingTrip':
+    //             bookingTripEmails.value = emails
+    //             break
+    //         case 'CreateCompanion':
+    //             createCompanionEmails.value = emails
+    //             break
+    //     }
+    // }
+}
+async function getEmails(event) {
+    let res = await adminStore.getEmails(event)
+    let emails = res.data.sendMailsTo[0].emails
+
+    switch (event) {
+        case 'CreateTrip':
+            createTripEmails.value = emails
+            break
+        case 'BookingTrip':
+            bookingTripEmails.value = emails
+            break
+        case 'CreateCompanion':
+            createCompanionEmails.value = emails
+            break
+    }
+}
+
+async function deleteEmail(event, email) {
+    let res = await adminStore.deleteEmail(event, email)
+
+    if (res.status == 200) {
+        switch (event) {
+            case 'CreateTrip':
+                for (let i = 0; i < createTripEmails.value.length; i++) {
+                    if (createTripEmails.value[i] == email) {
+                        createTripEmails.value.splice(i, 1)
+                    }
+                }
+                break
+            case 'BookingTrip':
+                for (let i = 0; i < bookingTripEmails.value.length; i++) {
+                    if (bookingTripEmails.value[i] == email) {
+                        bookingTripEmails.value.splice(i, 1)
+                    }
+                }
+                break
+            case 'CreateCompanion':
+                for (let i = 0; i < createCompanionEmails.value.length; i++) {
+                    if (createCompanionEmails.value[i] == email) {
+                        createCompanionEmails.value.splice(i, 1)
+                    }
+                }
+                break
+        }
+    }
+}
 
 watch([query, userRole], async ([newQuery, newUserRole]) => {
     let queryToDb = {}
@@ -47,6 +119,70 @@ onMounted(async () => {
     <a-row class="mt-16" :gutter="[16, 16]">
         <a-col v-for="userFromDb of users" :span="24" :md="12">
             <UserCard :userFromDb="userFromDb" />
+        </a-col>
+    </a-row>
+    <a-row class="mt-16">
+        <a-col :span="24">
+            <h3>Email-уведомления</h3>
+        </a-col>
+    </a-row>
+    <a-row :gutter="[16, 0]">
+        <a-col :span="24">
+            Создание тура
+        </a-col>
+        <a-col :span="24" class="d-flex align-center">
+            <a-input v-model:value="emailCreateTrip" placeholder="email" />
+            <a-button type="primary" class="ml-12 lets_go_btn"
+                @click="addEmail('CreateTrip', emailCreateTrip)">добавить</a-button>
+            <a-button type="primary" class="ml-12 lets_go_btn" @click="getEmails('CreateTrip')">показать
+                все</a-button>
+        </a-col>
+        <a-col v-if="createTripEmails.length != 0" v-for="email of createTripEmails" class="ma-8" style="cursor: pointer">
+            <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deleteEmail('CreateTrip', email)">
+                {{ email }}
+            </a-popconfirm>
+        </a-col>
+        <a-col v-else>
+            пусто
+        </a-col>
+    </a-row>
+    <a-row :gutter="[16, 0]" class="mt-16">
+        <a-col :span="24">
+            Заказ тура
+        </a-col>
+        <a-col :span="24" class="d-flex align-center">
+            <a-input v-model:value="emailBookingTrip" placeholder="email" />
+            <a-button type="primary" class="ml-12 lets_go_btn"
+                @click="addEmail('BookingTrip', emailBookingTrip)">добавить</a-button>
+            <a-button type="primary" class="ml-12 lets_go_btn" @click="getEmails('BookingTrip')">показать все</a-button>
+        </a-col>
+        <a-col v-if="bookingTripEmails.length != 0" v-for="email of bookingTripEmails" class="ma-8" style="cursor: pointer">
+            <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deleteEmail('BookingTrip', email)">
+                {{ email }}
+            </a-popconfirm>
+        </a-col>
+        <a-col v-else>
+            пусто
+        </a-col>
+    </a-row>
+    <a-row :gutter="[16, 0]" class="mt-16">
+        <a-col :span="24">
+            Создание попутчика
+        </a-col>
+        <a-col :span="24" class="d-flex align-center">
+            <a-input v-model:value="emailCreateCompanion" placeholder="email" />
+            <a-button type="primary" class="ml-12 lets_go_btn"
+                @click="addEmail('CreateCompanion', emailCreateCompanion)">добавить</a-button>
+            <a-button type="primary" class="ml-12 lets_go_btn" @click="getEmails('CreateCompanion')">показать все</a-button>
+        </a-col>
+        <a-col v-if="createCompanionEmails.length != 0" v-for="email of createCompanionEmails" class="ma-8"
+            style="cursor: pointer">
+            <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deleteEmail('CreateCompanion', email)">
+                {{ email }}
+            </a-popconfirm>
+        </a-col>
+        <a-col v-else>
+            пусто
         </a-col>
     </a-row>
 </template>
