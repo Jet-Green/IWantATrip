@@ -20,21 +20,24 @@ let createCompanionEmails = ref([])
 let users = ref([])
 
 async function addEmail(event, email) {
-    let res = await adminStore.addEmail(event, email)
-    // console.log(res.data);
-    // if (res.status == 200) {
-    //     switch (event) {
-    //         case 'CreateTrip':
-    //             createTripEmails.value.push(res.data)
-    //             break
-    //         case 'BookingTrip':
-    //             bookingTripEmails.value = emails
-    //             break
-    //         case 'CreateCompanion':
-    //             createCompanionEmails.value = emails
-    //             break
-    //     }
-    // }
+    email = email.trim()
+    if (email.length > 2) {
+        let res = await adminStore.addEmail(event, email)
+
+        if (res.status == 200) {
+            switch (event) {
+                case 'CreateTrip':
+                    createTripEmails.value.push(email)
+                    break
+                case 'BookingTrip':
+                    bookingTripEmails.value.push(email)
+                    break
+                case 'CreateCompanion':
+                    createCompanionEmails.value.push(email)
+                    break
+            }
+        }
+    }
 }
 async function getEmails(event) {
     let res = await adminStore.getEmails(event)
@@ -94,8 +97,11 @@ watch([query, userRole], async ([newQuery, newUserRole]) => {
 })
 onMounted(async () => {
     let res = await adminStore.fetchUsers()
-
     users.value = res.data
+
+    await getEmails('CreateTrip')
+    await getEmails('BookingTrip')
+    await getEmails('CreateCompanion')
 })
 </script>
 <template>
@@ -134,8 +140,7 @@ onMounted(async () => {
             <a-input v-model:value="emailCreateTrip" placeholder="email" />
             <a-button type="primary" class="ml-12 lets_go_btn"
                 @click="addEmail('CreateTrip', emailCreateTrip)">добавить</a-button>
-            <a-button type="primary" class="ml-12 lets_go_btn" @click="getEmails('CreateTrip')">показать
-                все</a-button>
+
         </a-col>
         <a-col v-if="createTripEmails.length != 0" v-for="email of createTripEmails" class="ma-8" style="cursor: pointer">
             <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deleteEmail('CreateTrip', email)">
@@ -154,7 +159,6 @@ onMounted(async () => {
             <a-input v-model:value="emailBookingTrip" placeholder="email" />
             <a-button type="primary" class="ml-12 lets_go_btn"
                 @click="addEmail('BookingTrip', emailBookingTrip)">добавить</a-button>
-            <a-button type="primary" class="ml-12 lets_go_btn" @click="getEmails('BookingTrip')">показать все</a-button>
         </a-col>
         <a-col v-if="bookingTripEmails.length != 0" v-for="email of bookingTripEmails" class="ma-8" style="cursor: pointer">
             <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deleteEmail('BookingTrip', email)">
@@ -173,7 +177,6 @@ onMounted(async () => {
             <a-input v-model:value="emailCreateCompanion" placeholder="email" />
             <a-button type="primary" class="ml-12 lets_go_btn"
                 @click="addEmail('CreateCompanion', emailCreateCompanion)">добавить</a-button>
-            <a-button type="primary" class="ml-12 lets_go_btn" @click="getEmails('CreateCompanion')">показать все</a-button>
         </a-col>
         <a-col v-if="createCompanionEmails.length != 0" v-for="email of createCompanionEmails" class="ma-8"
             style="cursor: pointer">
