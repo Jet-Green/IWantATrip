@@ -18,8 +18,11 @@ const tripStore = useTrips();
 
 const allBooks = ref({});
 const bookingBooks = ref({});
+const bookingCount = ref();
+const payedCount = ref();
+const allCount = ref();
+const totalCost = ref();
 const payedBooks = ref({});
-const sumBook = ref();
 const pricesSet = new Set();
 const _id = route.query.id;
 let trip = ref({});
@@ -113,10 +116,10 @@ async function buyTrip(isBoughtNow) {
 onMounted(async () => {
     let { data } = await tripStore.getFullTripById(route.query._id)
     trip.value = data;
-    let sum = 0;
-    console.log(trip.value.billsList);
+    let cartSum = 0;
     for (let book of trip.value.billsList) {
         for (let cart of book.cart) {
+            cartSum += cart.count * cart.cost
             let obj = {};
             if (!pricesSet.has(cart.costType)) {
                 allBooks.value[cart.costType] = []
@@ -134,13 +137,26 @@ onMounted(async () => {
             }
         }
     }
-    for (let book in allBooks.value) {
-        console.log(allBooks.value[book]);
-        for (let count in allBooks.value[book]){
-            console.log(count)
+    totalCost.value = cartSum
+
+    let sum = 0;
+    for (let book in bookingBooks.value) {
+        for (let count in bookingBooks.value[book]) {
+            sum += bookingBooks.value[book][count]
         }
     }
-    // console.log(sum);
+    bookingCount.value = sum
+
+    let sum1 = 0;
+    for (let book in payedBooks.value) {
+        for (let count in payedBooks.value[book]) {
+            sum1 += payedBooks.value[book][count]
+        }
+    }
+    payedCount.value = sum1
+
+    allCount.value = payedCount.value + bookingCount.value
+
     for (let pr of pricesSet) {
 
         let x =
@@ -199,10 +215,9 @@ function getPhoneNumber(number) {
             <a-card style="height: 100%; border: 1px solid #245159; padding:4px">
                 Статистика тура
                 <div>Максимум: {{ trip.maxPeople }} чел.</div>
-                <div>Забронировало: {{ bookingBooks }} чел.</div>
-                <div>Оплатило: {{ payedBooks }} чел.</div>
-                <div>Сумма: {{ allBooks }} руб.</div>
-
+                <div>Забронировало: {{ bookingCount }} чел.</div>
+                <div>Оплатило: {{ payedCount }} чел.</div>
+                <div>Сумма: {{ totalCost }} руб.</div>
 
             </a-card>
         </a-col>
