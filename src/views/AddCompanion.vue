@@ -282,17 +282,6 @@ const formSchema = yup.object({
                                                                                                                                   :format="dateFormatList" /> 
                                                                                                                           -->
             </a-col>
-            <a-col :xs="24">
-              <Field name="startLocation" v-slot="{ value, handleChange }" v-model="locationSearchRequest">
-                Место старта
-                <a-auto-complete :value="value" @update:value="handleChange" style="width: 100%"
-                  :options="possibleLocations" placeholder="Глазов" @select="selectStartLocation">
-                </a-auto-complete>
-              </Field>
-              <Transition name="fade">
-                <ErrorMessage name="startLocation" class="error-message" />
-              </Transition>
-            </a-col>
 
             <a-col :xs="24">
               <!-- Тип отдыха <a-select v-model:value="form.type" style="width: 100%" :options="typeOfTrip" mode="multiple"></a-select> -->
