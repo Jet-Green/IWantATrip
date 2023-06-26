@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia'
 import UserService from '../service/UserService'
 import LocationService from '../service/LocationService';
-import { message } from 'ant-design-vue';
 import axios from 'axios'
+
+import { render } from 'vue-email';
+import BuyTripTemplate from '../email-templates/BuyTripTemplate.vue';
 
 export const useAuth = defineStore('auth', {
     state: () => ({
@@ -35,9 +37,9 @@ export const useAuth = defineStore('auth', {
                 console.log(error);
             }
         },
-        updateUser(user) {
+        updateUser(userToUpdate) {
             try {
-                return UserService.updateUser(user)
+                return UserService.updateUser(userToUpdate)
             } catch (err) {
                 return {
                     success: false,
@@ -50,7 +52,9 @@ export const useAuth = defineStore('auth', {
         },
         async buyTrip(tripId, bill) {
             try {
-                let { data } = await UserService.buyTrip(tripId, bill)
+                const emailHtml = await render(BuyTripTemplate, bill);
+
+                let { data } = await UserService.buyTrip(tripId, bill, emailHtml)
                 this.user.boughtTrips.push(data)
                 return data
             } catch (error) {

@@ -32,7 +32,10 @@ const clearData = (dateNumber) => {
         <div>
           <img :src="trip.images[0]" style="object-fit: cover; width: 100%; height: 175px" />
         </div>
-        <span>
+        <span style="text-align: center;" v-if="clearData(trip.start) == clearData(trip.end)">
+          <strong>{{ clearData(trip.start) }}</strong>
+        </span>
+        <span v-else>
           c <strong>{{ clearData(trip.start) }}</strong> по <strong>{{ clearData(trip.end) }}</strong>
         </span>
       </a-card>

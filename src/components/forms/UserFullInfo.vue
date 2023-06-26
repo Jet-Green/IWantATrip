@@ -54,7 +54,7 @@ onMounted(() => {
       Тип организатора
       <div>
         <a-radio-group v-model:value="fullInfo.creatorsType">
-          <a-radio-button value="author">Автор тура</a-radio-button>
+          <a-radio-button value="author" >Автор тура</a-radio-button>
           <a-radio-button v-if="fullInfo.type != 'phys'" value="operator">Туроператор</a-radio-button>
           <a-radio-button v-if="fullInfo.type != 'phys' && fullInfo.type == 'company'" value="agency">Турагентство
           </a-radio-button>

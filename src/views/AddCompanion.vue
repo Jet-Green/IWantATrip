@@ -6,6 +6,7 @@ import CompanionService from "../service/CompanionService";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useAuth } from "../stores/auth";
 import { message } from "ant-design-vue";
+import { useCompanions } from "../stores/companions";
 
 
 import { Form, Field, ErrorMessage } from 'vee-validate';
@@ -23,6 +24,7 @@ let sm = breakpoints.smaller("md");
 let possibleLocations = ref([])
 let locationSearchRequest = ref("")
 
+const companionStore = useCompanions()
 let router = useRouter();
 const userStore = useAuth();
 const ruLocale = locale;
@@ -49,7 +51,7 @@ const form = reactive({
 
 
 function submit() {
-  CompanionService.createCompanion(form).then((res) => {
+  companionStore.createCompanion(form).then((res) => {
     const _id = res.data._id;
     // axios.post(`http://localhost:4089/add-companion?name=${form.name}`)
     userStore
@@ -328,8 +330,7 @@ const formSchema = yup.object({
               </Transition>
             </a-col>
             <div class="d-flex justify-center" style="width: 100%">
-              <a-button :disabled="!meta.valid" type="primary" class="lets_go_btn" size="large"
-                html-type="submit">Отправить
+              <a-button type="primary" class="lets_go_btn ma-36" html-type="submit">Отправить
               </a-button>
             </div>
           </a-row>

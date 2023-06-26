@@ -2,7 +2,7 @@
 import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import Header from "./components/Header.vue";
-import Footer from "./components/Footer.vue";
+// import Footer from "./components/Footer.vue";
 
 import { useTrips } from './stores/trips'
 import { useCompanions } from './stores/companions'
@@ -24,8 +24,13 @@ onMounted(async () => {
   // вся логика локации тут
 
   await locationStore.fetchLocations()
-  locationStore.location?locationStore.location = JSON.parse(localStorage.getItem("location")):console.log("нет локации")
- 
+  try {
+    locationStore.location ? locationStore.location = JSON.parse(localStorage.getItem("location")) : console.log("нет локации")
+  } catch (error) {
+    localStorage.removeItem('location')
+    console.log(error);
+  }
+
 
   function notify() {
     let notification = new Notification("Привет", {
@@ -60,7 +65,7 @@ onMounted(async () => {
         </transition>
       </router-view>
     </a-layout-content>
-    <Footer></Footer>
+    <!-- <Footer></Footer> -->
   </a-layout>
 </template>
 <style></style>

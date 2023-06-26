@@ -1,8 +1,8 @@
 import $api from "../plugins/axios";
 
 export default {
-    bookingTrip(booking) {
-        return $api.post('/booking/create', booking)
+    bookingTrip(booking, emailHtml) {
+        return $api.post('/booking/create', { booking, emailHtml })
     },
     findByUserId(id) {
         return $api.post('/booking/findByUserId', { _id: id })
@@ -12,5 +12,8 @@ export default {
     },
     changeBookStatus(_id, status) {
         return $api.get(`/booking/change-status?_id=${_id}&status=${status}`)
+    },
+    updateBooking(booking) {
+        return $api.post('/booking/update-booking', booking)
     }
 }

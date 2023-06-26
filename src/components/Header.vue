@@ -68,7 +68,12 @@ const handleChange = async () => {
 };
 onMounted(() => {
   if (localStorage.getItem("location")) {
-    locationSearchRequest.value = JSON.parse(localStorage.getItem("location")).shortName
+    try {
+      locationSearchRequest.value = JSON.parse(localStorage.getItem("location")).shortName
+    } catch (error) {
+      localStorage.removeItem('location')
+      console.log(error);
+    }
   }
 
 })
@@ -76,7 +81,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <a-layout-header :style="{ position: 'fixed', zIndex: 1, width: '100%' }">
+  <a-layout-header :style="{ position: 'fixed', zIndex: 999, width: '100%' }">
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
         <a-row type="flex" justify="space-between">

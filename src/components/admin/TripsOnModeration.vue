@@ -45,7 +45,7 @@ const clearData = (dataString) => {
 <template>
     <a-row>
         <a-col :span="24">
-            <h3>На модерации</h3>
+            <h3>Туры на модерации</h3>
             <a-row :gutter="[8, 8]" class="mt-8">
                 <a-col :lg="8" :sm="12" :xs="24" v-if="tripsOnMod.length > 0" v-for="(trip, index) of tripsOnMod"
                     :key="index">

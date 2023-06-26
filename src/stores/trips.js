@@ -6,6 +6,9 @@ import { useLocations } from './locations'
 import BookingService from '../service/BookingService'
 import TripService from '../service/TripService.js'
 
+import { render } from 'vue-email';
+import CreateTripTemplate from '../email-templates/CreateTripTemplate.vue';
+
 export const useTrips = defineStore('trips', {
     state: () => ({
         trips: [],
@@ -18,6 +21,11 @@ export const useTrips = defineStore('trips', {
         },
     },
     actions: {
+        async createTrip(form, email) {
+            const emailHtml = await render(CreateTripTemplate, form);
+
+            return TripService.createTrip(form, email, emailHtml)
+        },
         async fetchTrips(query, start, end) {
             try {
                 let locationStore = useLocations()
@@ -127,6 +135,15 @@ export const useTrips = defineStore('trips', {
         async changeBookStatus(_id, status) {
             try {
                 let res = await BookingService.changeBookStatus(_id, status)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async updateBooking(booking) {
+            try {
+                let res = await BookingService.updateBooking(booking)
+                return res
             } catch (error) {
                 console.log(error);
             }

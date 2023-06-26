@@ -1,17 +1,21 @@
 import { defineStore } from 'pinia'
 import BookingService from '../service/BookingService';
+import BookingTripTemplate from '../email-templates/BookingTripTemplate.vue';
 
-export const useGuide = defineStore('guide', {
+import { render } from 'vue-email';
+
+export const useBooking = defineStore('booking', {
     state: () => ({
-        booking: []
     }),
     getters: {
 
     },
     actions: {
-        async createBookingElement(element) {
+        async bookingTrip(booking) {
             try {
-                return BookingService.createBookingElement(element)
+                const emailHtml = await render(BookingTripTemplate, booking);
+
+                return BookingService.bookingTrip(booking, emailHtml)
             } catch (err) {
                 console.log(err);
             }

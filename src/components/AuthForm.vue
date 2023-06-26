@@ -68,7 +68,7 @@ const formSchema = yup.object({
               </Transition>
 
               <div class="d-flex justify-center">
-                <a-button :disabled="!meta.valid" class="ma-16 lets_go_btn" type="primary" size="large"
+                <a-button  class="ma-16 lets_go_btn" type="primary"
                   html-type="submit">Войти</a-button>
               </div>
             </Form>

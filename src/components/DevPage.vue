@@ -56,7 +56,7 @@ function sendType() {
         <a-col :span="12">
           <a-input style="width: 100%" placeholder="Пляжный" v-model:value="tripType" />
           <div>
-            <a-button type="primary" size="large" class="ma-16 lets_go_btn" @click="sendType()">
+            <a-button type="primary"  class="ma-16 lets_go_btn" @click="sendType()">
               Отправить тип тура
             </a-button>
           </div>

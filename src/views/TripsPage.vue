@@ -20,7 +20,7 @@ const route = useRoute();
       </a-col>
     </a-row>
     <TripFilter :search="route.query.search" />
-    
+
     <TripsList />
   </div>
 </template>

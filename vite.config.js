@@ -20,17 +20,34 @@ export default defineConfig(
     process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
 
     return {
+      optimizeDeps: { // 👈 optimizedeps
+        esbuildOptions: {
+          target: "esnext",
+          // Node.js global to browser globalThis
+          define: {
+            global: 'globalThis'
+          },
+          supported: {
+            bigint: true
+          },
+        }
+      },
+      build: {
+        target: ["esnext"], // 👈 build.target
+      },
       // base: baseUrl,
       plugins: [
         vue(),
         VitePWA({
           registerType: 'autoUpdate',
-          includeAssets: ['favicon.svg', 'favicon.ico', 'robots.txt', 'images/apple-touch-icon.png'],  
+          includeAssets: ['favicon.svg', 'favicon.ico', 'robots.txt', 'images/apple-touch-icon.png'],
           manifest: {
-            name: 'Хочу в поездку',
-            short_name: 'Хочу в поездку',
+            name: 'Города и веси',
+            short_name: 'Города и веси',
             description: 'Description of your app',
             theme_color: '#ffffff',
+            background_color: "#ffffff",
+            display: "standalone",
             icons: [
               {
                 src: 'android-chrome-192x192.png',
@@ -47,13 +64,7 @@ export default defineConfig(
                 sizes: '180x180',
                 type: 'image/png',
               },
-         
-              {
-                src: 'mstile-150x150.png',
-                sizes: '150x150',
-                type: 'image/png',
-              },
-           
+
               {
                 src: 'pwa-512x512.png',
                 sizes: '512x512',

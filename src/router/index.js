@@ -16,7 +16,8 @@ const router = createRouter({
     {
       path: '/trips',
       name: 'TripsPage',
-      component: TripsPage,
+      component: () => import('../components/_tripsPage/TripsList.vue'),
+      // component: TripsPage,
     },
     {
       path: '/company-info-page',
@@ -189,9 +190,20 @@ const router = createRouter({
           component: () => import('../components/_cabinet/Test.vue'),
         },
         {
-          path: 'moderation',
-          name: 'Moderation',
-          component: () => import('../components/admin/Moderation.vue'),
+          path: 'moderation-trips',
+          name: 'TripsOnModeration',
+          component: () => import('../components/admin/TripsOnModeration.vue'),
+          beforeEnter: () => {
+            let userStore = useAuth()
+            if (!userStore.user?.roles.includes('admin')) {
+              return false
+            }
+          }
+        },
+        {
+          path: 'moderation-companions',
+          name: 'CompanionsOnModeration',
+          component: () => import('../components/admin/CompanionsOnModeration.vue'),
           beforeEnter: () => {
             let userStore = useAuth()
             if (!userStore.user?.roles.includes('admin')) {
@@ -209,8 +221,18 @@ const router = createRouter({
               return false
             }
           }
+        },
+        {
+          path: 'management',
+          name: 'Management',
+          component: () => import('../components/admin/Management.vue'),
+          beforeEnter: () => {
+            let userStore = useAuth()
+            if (!userStore.user?.roles.includes('admin')) {
+              return false
+            }
+          }
         }
-
       ],
       beforeEnter: async (to, from) => {
         let userStore = useAuth()

@@ -110,7 +110,7 @@ const formSchema = yup.object({
   email: yup.string("неверный формат").required("заполните поле").email('неверный формат'),
   password: yup.string("неверный формат").required("заполните поле").min(6, 'минимум 6 символов'),
   fullname: yup.string("неверный формат").required("заполните поле"),
-  startLocation: yup.string("неверный формат").required("заполните поле")
+  // startLocation: yup.string("неверный формат").required("заполните поле")
 });
 
 </script>
@@ -152,7 +152,7 @@ const formSchema = yup.object({
 
               <Field name="startLocation" v-slot="{ value, handleChange }" v-model="locationSearchRequest">
                 <a-auto-complete :value="value" @update:value="handleChange" size="large" style="width: 100%" class="mt-8"
-                  :options="possibleLocations" placeholder="Ваше местоположение" @select="selectStartLocation">
+                  :options="possibleLocations" placeholder="Город /поселок" @select="selectStartLocation">
                 </a-auto-complete>
               </Field>
               <Transition name="fade">
@@ -160,7 +160,7 @@ const formSchema = yup.object({
               </Transition>
 
               <div class="d-flex justify-center">
-                <a-button :disabled="!meta.valid" class="ma-16 lets_go_btn" type="primary" size="large"
+                <a-button  class="ma-16 lets_go_btn" type="primary" 
                   html-type="submit">Отправить</a-button>
               </div>
             </Form>

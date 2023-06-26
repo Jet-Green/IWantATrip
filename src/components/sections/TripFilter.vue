@@ -25,6 +25,7 @@ let loading = ref(false)
 let visible = ref(false);
 
 function find() {
+  console.log("find")
   tripStore.searchCursor = 1
   tripStore.filteredTrips = []
   tripStore.cursor = 1
@@ -41,7 +42,7 @@ watch(query, (newQuery) => {
   if (newQuery.length == 0) {
     find()
   }
-  else if (newQuery.length > 2) {
+  if (newQuery.length > 2) {
     find();
   }
 });
@@ -50,11 +51,11 @@ onMounted(() => {
   if (props.search) {
     query.value = props.search;
   }
-  find()
+ 
 });
 </script>
 <template>
-  <a-row type="flex" justify="center" align="middle" class="section_bg pa-16">
+  <a-row type="flex" justify="center" align="middle" class="section_bg ">
     <a-col :xs="22" :md="12">
       <a-row class="mb-8" type="flex" justify="center">
         <a-col :xs="24" :md="12" class="d-flex">
@@ -71,7 +72,7 @@ onMounted(() => {
             </a-col>
           </a-row>
           <a-row type="flex" justify="center" class="mt-8">
-            <a-button @click="find" type="primary">поиск</a-button>
+            <a-button @click="find" type="primary" class="lets_go_btn" >поиск</a-button>
           </a-row>
         </div>
       </Transition>
@@ -80,9 +81,9 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-.section_bg {
-  background: rgba(67, 65, 79);
-}
+// .section_bg {
+//   background: rgba(67, 65, 79);
+// }
 
 .active_filter {
   color: #ff6600;
@@ -90,7 +91,7 @@ onMounted(() => {
 }
 
 .filter {
-  color: white;
+  color: #227597;
   cursor: pointer;
 }
 </style>
