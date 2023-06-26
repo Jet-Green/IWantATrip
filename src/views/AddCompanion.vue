@@ -30,8 +30,6 @@ const userStore = useAuth();
 const ruLocale = locale;
 const backRoute = "/companions";
 let date = ref(null)
-let locationSearchRequest = ref("")
-let possibleLocations = ref([])
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YYYY"];
 const form = reactive({
   name: "",
@@ -186,10 +184,10 @@ const formSchema = yup.object({
 <template>
   <div>
     <BackButton :backRoute="backRoute" />
-    <img v-if="!sm" src="../assets/images/companion_left.png"
+    <img v-if="!sm" src="../assets/images/companion_left.webp"
       style="position: fixed; left: 0px; bottom: 0px;  width: 20%;" />
 
-    <img v-if="!sm" src="../assets/images/companion_right.png"
+    <img v-if="!sm" src="../assets/images/companion_right.webp"
       style="position: fixed; right: 0px; bottom: 0px; width: 20% " />
     <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
       <a-row type="flex" justify="center">
