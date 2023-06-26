@@ -1,9 +1,10 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useAppState } from '../../stores/appState';
 
 let appStateStore = useAppState()
 let tripType = ref('')
+
 
 async function addTripType() {
     let res = await appStateStore.addTripType(tripType.value)
@@ -11,6 +12,12 @@ async function addTripType() {
         appStateStore.appState[0].tripType.push(tripType.value)
     }
 }
+
+onMounted(async () => {
+    if (!appStateStore.appState) {
+        await appStateStore.refreshState();
+    }
+})
 </script>
 <template>
     <a-row>
@@ -19,7 +26,7 @@ async function addTripType() {
                 <a-col :span="24">
                     <h3>Тип тура</h3>
                 </a-col>
-                <a-col :span="24" class="d-flex">
+                <a-col :span="24" class="d-flex align-center">
                     <a-input placeholder="Пляжный" size="large" v-model:value="tripType"></a-input>
                     <a-button type="primary" class="ml-12 lets_go_btn" @click="addTripType">добавить</a-button>
                 </a-col>
@@ -28,7 +35,6 @@ async function addTripType() {
                         @confirm="() => { appStateStore.deleteTripType(t) }">
                         {{ t }}
                     </a-popconfirm>
-
                 </a-col>
             </a-row>
         </a-col>

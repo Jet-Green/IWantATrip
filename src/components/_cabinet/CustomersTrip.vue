@@ -295,7 +295,7 @@ function getPhoneNumber(number) {
         </a-row>
     </a-modal>
     <div id="printMe" style="display: none">
-        <PrintCustomers :customers="trip.billsList" :tripName="trip.name" />
+        <PrintCustomers :customers="trip.billsList" :trip="trip" />
     </div>
     <div class="d-flex justify-center">
         <a-button @click="print()" type="primary" class="lets_go_btn ma-8">
