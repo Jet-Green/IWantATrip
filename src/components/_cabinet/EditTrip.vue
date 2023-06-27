@@ -89,14 +89,6 @@ const delPhoto = () => {
 function submit() {
     description.value = description.value.split("<p><br></p>").join("");
     form.value.description = description.value;
-    // form.value.period = dayjs(dayjs(d.period), monthFormatList)
-    // for (let img of previews.value) {
-    //     let isUnique = true;
-    //     if (img.startsWith('blob')) {
-    //         form.value.images.push(img)
-    //     }
-    // }
-    // важно разобраться с обновлением фото. Пользователь может загрузить свои и они будут храниться в images, УЖЕ ЕСТЬ: обновляем те фото, которые есть на сервере
     form.value.isModerated = false
     TripService.updateTrip(form.value).then((res) => {
         const _id = res.data._id;
@@ -209,9 +201,9 @@ onMounted(() => {
                 previews.value.push(i)
             quill.value.setHTML(d.description)
         })
-    // .catch((error) => {
-    //     console.log(error);
-    // });
+        .catch((error) => {
+            console.log(error);
+        });
 
 })
 
@@ -229,29 +221,11 @@ watch(description, (newValue) => {
 });
 
 watch(start, () => {
-    // let result =
-    //     Number(JSON.parse(JSON.stringify(end.value))) -
-    //     Number(JSON.parse(JSON.stringify(start.value)));
-    // if (result >= 0) {
-    //     form.value.duration = Math.round(result / 86400000);
-    // } else {
-    //     form.value.duration = "";
-    // }
     if (start.value)
         form.value.start = Number(Date.parse(start.value.$d.toString()));
 
 });
 watch(end, () => {
-    // let result =
-    //     Date.parse(JSON.parse(JSON.stringify(end.value))) -
-    //     Date.parse(JSON.parse(JSON.stringify(start.value)));
-    // form.value.duration = Math.round(result / 86400000);
-    // if (result >= 0) {
-    //     form.value.duration = Math.round(result / 86400000);
-
-    // } else {
-    //     form.value.duration = "";
-    // }
     if (end.value)
         form.value.end = Number(Date.parse(end.value.$d.toString()));
 });
@@ -265,9 +239,6 @@ let formSchema = yup.object({
     offer: yup.string().required("заполните поле"),
     tripRoute: yup.string().required("заполните поле"),
     duration: yup.string().required("заполните поле"),
-    // distance: yup.string().required("заполните поле"),
-    // cost: yup.string().required("заполните поле"),
-    // https://vee-validate.logaretm.com/v4/examples/array-fields/
 })
 </script>
 <template>

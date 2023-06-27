@@ -49,13 +49,6 @@ function submit() {
     });
 
 }
-// watch(info.phone, () => {
-//   onChange = true
-//   console.log(info.phone)
-// })
-// watch(info,(newInfo,oldInfo) => {
-// 	console.log('x '+newInfo.phone + 'y '+oldInfo.phone)
-// })
 </script>
 <template>
   <div v-if="user">

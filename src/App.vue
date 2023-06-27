@@ -2,10 +2,7 @@
 import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import Header from "./components/Header.vue";
-// import Footer from "./components/Footer.vue";
 
-import { useTrips } from './stores/trips'
-import { useCompanions } from './stores/companions'
 import { useLocations } from './stores/locations'
 import { useAuth } from './stores/auth'
 import { useAppState } from './stores/appState'
@@ -32,26 +29,26 @@ onMounted(async () => {
   }
 
 
-  function notify() {
-    let notification = new Notification("Привет", {
-      tag: "ache-mail",
-      body: "Хочу в поездку - крутой проект. Это уведомление будет показано только один раз",
-      icon: "https://glazov-flash.ru/image/cache/catalog/icon/1_1-100x100.png"
-    })
-  }
+  // function notify() {
+  //   let notification = new Notification("Привет", {
+  //     tag: "ache-mail",
+  //     body: "Хочу в поездку - крутой проект. Это уведомление будет показано только один раз",
+  //     icon: "https://glazov-flash.ru/image/cache/catalog/icon/1_1-100x100.png"
+  //   })
+  // }
 
 
   // if (Notification.permission == 'granted') {
   //   notify()
   // } else
-  if (Notification.permission != 'denied' & Notification.permission != 'granted') {
-    Notification.requestPermission(function (permission) {
-      if (!('permission' in Notification))
-        Notification.permission = permission
-      if (permission == 'granted')
-        notify()
-    })
-  }
+  // if (Notification.permission != 'denied' & Notification.permission != 'granted') {
+  //   Notification.requestPermission(function (permission) {
+  //     if (!('permission' in Notification))
+  //       Notification.permission = permission
+  //     if (permission == 'granted')
+  //       notify()
+  //   })
+  // }
 })
 </script>
 <template>
@@ -65,7 +62,6 @@ onMounted(async () => {
         </transition>
       </router-view>
     </a-layout-content>
-    <!-- <Footer></Footer> -->
   </a-layout>
 </template>
 <style></style>

@@ -72,10 +72,6 @@ watch(clickCount, (newClickCount) => {
     background: #ff6600;
 }
 
-// .user {
-
-// }
-
 .manager {
     background: #3daff5;
 }
