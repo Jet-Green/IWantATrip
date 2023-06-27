@@ -56,28 +56,10 @@ onMounted(async () => {
         </a-col>
       </a-row>
       <a-row v-if="trips.length">
-        <!-- <a-col :span="24">
-          <div ref="carousel_container"></div>
-          <Carousel
-            :itemsToShow="postsCount"
-            :autoplay="25000"
-            snapAlign="center"
-            class="unselectable"
-          >
-            <Slide v-for="trip in trips" :key="trip.index" class="unselectable ma-8">
-              <div class="carousel__item ma-8" style="width: 100%">
-                <TripCard :trip="trip" :isPreview="true" />
-              </div>
-            </Slide>
-            <template #addons>
-              <Navigation />
-            </template>
-          </Carousel>
-        </a-col> -->
         <a-col :span="24">
-          <div class="container">
-            <Slide v-for="trip in trips" :key="trip.index" class="unselectable ma-8">
-              <div class="child" style="width: 100%">
+          <div class="section">
+            <Slide v-for="trip in trips" :key="trip.index" class="unselectable ma-8 section__item">
+              <div class="d-flex justify-center" style="width: 100%">
                 <TripCard :trip="trip" :isPreview="true" />
               </div>
             </Slide>
@@ -101,18 +83,22 @@ onMounted(async () => {
   align-items: end;
 }
 
-.container {
-    overflow-x: scroll;
-    scroll-snap-type: x mandatory;
-    display: flex;
-    align-items: center;
+.section {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 5px;
+  gap: 1rem;
+  -webkit-overflow-scrolling: touch; 
 }
 
-.child {
-    scroll-snap-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+.section__item {
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 0 0 20%;
 }
 </style>
