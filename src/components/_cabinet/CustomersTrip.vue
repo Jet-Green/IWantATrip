@@ -16,9 +16,12 @@ const route = useRoute();
 const userStore = useAuth()
 const tripStore = useTrips();
 
-let customers = ref([]);
 const allBooks = ref({});
 const bookingBooks = ref({});
+const bookingCount = ref();
+const payedCount = ref();
+const allCount = ref();
+const totalCost = ref();
 const payedBooks = ref({});
 const pricesSet = new Set();
 const _id = route.query.id;
@@ -116,9 +119,10 @@ async function buyTrip(isBoughtNow) {
 onMounted(async () => {
     let { data } = await tripStore.getFullTripById(route.query._id)
     trip.value = data;
-    console.log(bookingBooks);
+    let cartSum = 0;
     for (let book of trip.value.billsList) {
         for (let cart of book.cart) {
+            cartSum += cart.count * cart.cost
             let obj = {};
             if (!pricesSet.has(cart.costType)) {
                 allBooks.value[cart.costType] = []
@@ -127,7 +131,10 @@ onMounted(async () => {
                 pricesSet.add(cart.costType);
             }
             obj = cart.count;
-            if (book.isBoughtNow == true) {
+            if (book.cart.reduce((accumulator, object) => {
+                return accumulator + object.cost *
+                    object.count;
+            }, 0) == book.payment.amount) {
                 allBooks.value[cart.costType].push(obj);
                 payedBooks.value[cart.costType].push(obj);
             } else {
@@ -136,6 +143,26 @@ onMounted(async () => {
             }
         }
     }
+    totalCost.value = cartSum
+
+    let sum = 0;
+    for (let book in bookingBooks.value) {
+        for (let count in bookingBooks.value[book]) {
+            sum += bookingBooks.value[book][count]
+        }
+    }
+    bookingCount.value = sum
+
+    let sum1 = 0;
+    for (let book in payedBooks.value) {
+        for (let count in payedBooks.value[book]) {
+            sum1 += payedBooks.value[book][count]
+        }
+    }
+    payedCount.value = sum1
+
+    allCount.value = payedCount.value + bookingCount.value
+
     for (let pr of pricesSet) {
 
         let x =
@@ -152,6 +179,13 @@ onMounted(async () => {
             )
             ;
         allBooks.value[pr] = y
+        let z =
+            bookingBooks.value[pr].reduce(
+                (a, c) => a + c,
+                0
+            )
+            ;
+        bookingBooks.value[pr] = z
     }
     for (let cost of trip.value.cost) {
         selectedByUser.value.push({
@@ -187,9 +221,10 @@ function getPhoneNumber(number) {
             <a-card style="height: 100%; border: 1px solid #245159; padding:4px">
                 Статистика тура
                 <div>Максимум: {{ trip.maxPeople }} чел.</div>
-                <div>Забронировало: {{ bookingBooks }} чел.</div>
-                <div>Оплатило: {{ payedBooks }} чел.</div>
-                <div>Сумма: {{ allBooks }} руб.</div>
+                <div>Забронировало: {{ bookingCount }} чел.</div>
+                <div>Оплатило: {{ payedCount }} чел.</div>
+                <div>Сумма: {{ totalCost }} руб.</div>
+
             </a-card>
         </a-col>
         <a-col :lg="8" :sm="12" :xs="24" v-for="(BILL, index) of trip.billsList">
