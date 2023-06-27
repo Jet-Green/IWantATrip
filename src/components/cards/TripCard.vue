@@ -28,11 +28,11 @@ const clearData = (dateNumber) => {
   <div @click="goToTripPage" style="width: 270px">
     <span class="title"> {{ trip.name }} {{ props.color }} </span>
     <a-badge-ribbon :text="`${trip.cost.length ? trip.cost[0].price : 0} руб`">
-      <a-card hoverable>
+      <a-card hoverable style="text-align: center;">
         <div>
           <img :src="trip.images[0]" style="object-fit: cover; width: 100%; height: 175px" />
         </div>
-        <span style="text-align: center;" v-if="clearData(trip.start) == clearData(trip.end)">
+        <span v-if="clearData(trip.start) == clearData(trip.end)">
           <strong>{{ clearData(trip.start) }}</strong>
         </span>
         <span v-else>
