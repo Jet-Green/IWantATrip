@@ -74,10 +74,8 @@ function getImg(index) {
     <a-row class="justify-center d-flex">
       <a-col :xs="22" :xl="16">
         <h2 class="ma-0">{{ trip.name }}</h2>
-        <!-- <span class="ma-0">Место старта: {{ trip.startLocation.name }}</span> -->
         <a-spin v-if="!trip._id" size="large"></a-spin>
         <a-row v-if="trip._id" :gutter="[12, 12]" class="text justify-center d-flex">
-          <!-- добавить карусель фотографий -->
           <a-col :xs="24" :md="12">
             <a-carousel arrows dots-class="slick-dots slick-thumb">
               <template #customPaging="props">
@@ -103,7 +101,6 @@ function getImg(index) {
           <a-col :xs="24" :md="12" class="pa-8">
             <i> {{ trip.offer }}</i>
             <a-divider style="border-color: #245159" dashed />
-            <!-- <div>{{ creatorsType }}: <b>{{ trip.creatorForm[0] }}</b> </div> -->
             <div>Старт: <b>{{ trip.startLocation.name }}</b> </div>
 
             <div>
@@ -115,29 +112,12 @@ function getImg(index) {
             <div>
               Ближайший выезд: <b>{{ clearData(trip.start) }}</b>
             </div>
-            <!-- <div>Количество человек:</div>
-            <div style="width: 50%">
-             <b> <a-progress :percent="(tripsCount / trip.maxPeople) * 100" :format="() => `${trip.maxPeople} чел`">
-              </a-progress></b>
-            </div> -->
             <div>
               Цена
               <div v-for="(item, index) in trip.cost" :key="index" class="cost">
                 {{ item.first }} : <b>{{ item.price }} руб.</b>
               </div>
-
             </div>
-            <!-- <div class="d-flex justify-center ma-8">
-              <a-button v-if="tripsCount != trip.maxPeople" type="primary" class="lets_go_btn"
-                style="display: flex; justify-content: center">
-                Купить
-              </a-button>
-            </div>
-            <div>
-              <b v-if="(tripsCount == trip.maxPeople)">
-                мест больше нет
-              </b>
-            </div> -->
           </a-col>
 
           <a-col :xs="24">

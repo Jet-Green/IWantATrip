@@ -1,13 +1,10 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import BookingService from "../../service/BookingService";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { useRouter } from "vue-router";
 import { useAuth } from "../../stores/auth.js";
 
-
 let userStore = useAuth();
-let router = useRouter();
 
 let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");

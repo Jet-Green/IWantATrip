@@ -1,18 +1,11 @@
 <script setup>
 import { useRouter } from "vue-router";
-import { useTrips } from "../../stores/trips"
 
 let props = defineProps({
   trip: Object,
 });
-const tripStore = useTrips()
-let router = useRouter();
-// 'Привет ' + name + ' ' + 'Приятно познакомиться' то же самое, что и:
-//  `Привет ${name} Приятно Познакомиться`
 
-async function tripToDelete() {
-  await tripStore.deleteById({ _id: props.trip._id })
-}
+let router = useRouter();
 
 function goToTripPage() {
   router.push(`/trip?_id=${props.trip._id}`);
@@ -31,8 +24,6 @@ const clearData = (dateNumber) => {
 
 </script>
 <template>
-  <!-- <span class="mdi mdi-12px mdi-close" style="color: #245159; cursor: pointer; float: right"
-              @click="tripToDelete(trip._id)"></span> -->
   <div @click="goToTripPage" style="height: 100%;" class="trip-card">
     <div class="title">
       <p>{{ trip.name }}</p>

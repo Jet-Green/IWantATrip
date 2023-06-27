@@ -6,16 +6,12 @@ import BackButton from "../BackButton.vue";
 import TripFilter from "../sections/TripFilter.vue";
 import { useRoute } from "vue-router";
 
-
-
 const route = useRoute();
 let tripStore = useTrips()
 
 let handleScroll = async () => {
-
   let triggerHeight =
     wrapper.value.scrollTop + wrapper.value.offsetHeight
-  // console.log(wrapper.value.scrollHeight, triggerHeight)
   if (triggerHeight >= wrapper.value.scrollHeight) {
     await tripStore.fetchTrips()
   }

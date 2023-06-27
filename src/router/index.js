@@ -142,11 +142,6 @@ const router = createRouter({
       component: () => import('../components/_guide/Souvenirs.vue')
     },
     {
-      path: '/dev',
-      name: 'Dev',
-      component: () => import('../components/DevPage.vue')
-    },
-    {
       path: '/cabinet/',
       name: 'Cabinet',
       component: () => import('../views/Cabinet.vue'),
@@ -183,11 +178,6 @@ const router = createRouter({
         {
           path: 'orders',
           component: () => import('../components/_cabinet/Orders.vue'),
-        },
-
-        {
-          path: 'test',
-          component: () => import('../components/_cabinet/Test.vue'),
         },
         {
           path: 'moderation-trips',
