@@ -65,8 +65,8 @@ export default {
         return $api.get(`/trips/get-full-trip?_id=${_id}`)
     },
 
-    setPayment(_id) {
-        return $api.get(`/trips/set-payment?_id=${_id}`)
+    setPayment(bill) {
+        return $api.post(`/trips/set-payment`, bill)
     },
     deletePayment(bill_id) {
         return $api.get(`/trips/delete-payment?_id=${bill_id}`)

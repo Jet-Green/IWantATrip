@@ -31,9 +31,10 @@ let selectedByUser = ref([])
 
 let addCustomerDialog = ref(false)
 
+let setPaymentDialog = ref(false)
+
 const print = async () => {
     await htmlToPaper('printMe');
-
 };
 
 let tripsCount = computed(() => {
@@ -57,13 +58,9 @@ let finalCost = computed(() => {
     return sum;
 });
 async function setPayment(bill) {
-    let res = await tripStore.setPayment(bill._id)
+    let res = await tripStore.setPayment(bill)
     if (res.status == 200) {
-        for (let b of trip.value.billsList) {
-            if (b._id == bill._id) {
-                b.isBoughtNow = true;
-            }
-        }
+        setPaymentDialog.value = false
     }
 }
 async function deletePayment(bill) {
@@ -78,9 +75,15 @@ async function deletePayment(bill) {
 }
 async function buyTrip(isBoughtNow) {
     if (userInfo.value.phone) {
+        let cart = [...selectedByUser.value]
         let bill = {
-            isBoughtNow,
-            cart: [...selectedByUser.value],
+            payment: {
+                amount: isBoughtNow ? cart.reduce((accumulator, object) => {
+                    return accumulator + object.cost *
+                        object.count;
+                }, 0) : 0
+            },
+            cart,
             tripId: trip.value._id,
             userInfo: {
                 _id: null,
@@ -187,12 +190,25 @@ function getPhoneNumber(number) {
                 <div>Забронировало: {{ bookingBooks }} чел.</div>
                 <div>Оплатило: {{ payedBooks }} чел.</div>
                 <div>Сумма: {{ allBooks }} руб.</div>
-
-
             </a-card>
         </a-col>
         <a-col :lg="8" :sm="12" :xs="24" v-for="(BILL, index) of trip.billsList">
             <div>
+                <a-modal v-model:visible="setPaymentDialog" :footer="null" title="Поставить оплату">
+                    <a-row :gutter="[16, 16]">
+                        <a-col :span="24">
+                            Уже оплачено, руб <a-input-number style="width: 100%" v-model:value="BILL.payment.amount"
+                                placeholder="8900" :max="BILL.cart.reduce((accumulator, object) => {
+                                    return accumulator + object.cost *
+                                        object.count;
+                                }, 0)" />
+                        </a-col>
+                        <a-col :span="24">
+                            <a-button @click="setPayment(BILL)" type="primary" class="lets_go_btn">оплатить</a-button>
+                        </a-col>
+                    </a-row>
+                </a-modal>
+
                 <a-card hoverable class="card">
                     <div>
                         <span class="mdi mdi-account-outline" style=""></span>
@@ -216,20 +232,30 @@ function getPhoneNumber(number) {
                         }}
                         руб.
                     </div>
+                    <div class="d-flex justify-end">
+                        <span>Оплачено: </span>
+                        {{
+                            BILL.payment.amount
+                        }}
+                        руб.
+                    </div>
                     <div style="display: flex; justify-content: space-between;">
                         <div style="font-size: 20px">
-                            <a-popconfirm v-if="!trip.isBoughtNow" title="Поставить оплату?" ok-text="Да" cancel-text="Нет"
-                                @confirm="setPayment(BILL)">
-                                <span class="mdi mdi-cart-plus"
-                                    style="color: #245159; cursor: pointer; margin-right:8px"></span>
-                            </a-popconfirm>
+                            <span @click="setPaymentDialog = true" v-if="BILL.cart.reduce((accumulator, object) => {
+                                        return accumulator + object.cost *
+                                            object.count;
+                                    }, 0) > BILL.payment.amount" class="mdi mdi-cart-plus"
+                                style="color: #245159; cursor: pointer; margin-right:8px"></span>
                             <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deletePayment(BILL)">
                                 <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
                             </a-popconfirm>
                         </div>
 
                         <b>
-                            <span v-if="BILL.isBoughtNow" style="color: #bcc662">
+                            <span v-if="BILL.cart.reduce((accumulator, object) => {
+                                return accumulator + object.cost *
+                                    object.count;
+                            }, 0) == BILL.payment.amount" style="color: #bcc662">
                                 <span class="mdi mdi-check-all" style="font-size: 20px"></span>
                                 оплачен
                             </span>
