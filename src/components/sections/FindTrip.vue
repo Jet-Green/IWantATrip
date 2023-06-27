@@ -32,21 +32,19 @@ let onResize = () => {
 
 const postsCount = computed(() => {
   if (carouselWidth.value < 600) {
-    return 1
+    return 1;
   } else {
-    return  carouselWidth.value / 270;
+    return carouselWidth.value / 270;
   }
-
 });
 
 watch(carousel_container, () => {
   onResize();
 });
 onMounted(async () => {
-  await useTrips().fetchTrips()
+  await useTrips().fetchTrips();
   onResize();
   window.addEventListener("resize", onResize);
-
 });
 </script>
 <template>
@@ -58,9 +56,14 @@ onMounted(async () => {
         </a-col>
       </a-row>
       <a-row v-if="trips.length">
-        <a-col :span="24">
+        <!-- <a-col :span="24">
           <div ref="carousel_container"></div>
-          <Carousel :itemsToShow="postsCount" :autoplay="25000" snapAlign="center"  class="unselectable">
+          <Carousel
+            :itemsToShow="postsCount"
+            :autoplay="25000"
+            snapAlign="center"
+            class="unselectable"
+          >
             <Slide v-for="trip in trips" :key="trip.index" class="unselectable ma-8">
               <div class="carousel__item ma-8" style="width: 100%">
                 <TripCard :trip="trip" :isPreview="true" />
@@ -70,6 +73,15 @@ onMounted(async () => {
               <Navigation />
             </template>
           </Carousel>
+        </a-col> -->
+        <a-col :span="24">
+          <div class="container">
+            <Slide v-for="trip in trips" :key="trip.index" class="unselectable ma-8">
+              <div class="child" style="width: 100%">
+                <TripCard :trip="trip" :isPreview="true" />
+              </div>
+            </Slide>
+          </div>
         </a-col>
       </a-row>
       <a-row v-else>
@@ -87,5 +99,20 @@ onMounted(async () => {
 
 .carousel__slide {
   align-items: end;
+}
+
+.container {
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    display: flex;
+    align-items: center;
+}
+
+.child {
+    scroll-snap-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 </style>
