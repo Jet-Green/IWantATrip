@@ -23,7 +23,7 @@ async function moderateTrip(_id) {
       setTimeout(() => {
         isModerated.value = true
         isLoading.value = false
-        router.push('/cabinet/moderation')
+        router.push('/cabinet/moderation-trips')
       }, 500)
 
     } else {
@@ -35,7 +35,7 @@ async function moderateTrip(_id) {
 async function sendModerationMessage() {
   let res = await tripStore.sendModerationMessage(trip.value._id, moderationMessage.value);
   if (res.status == 200) {
-    router.push('/cabinet/moderation')
+    router.push('/cabinet/moderation-trips')
   }
 }
 
