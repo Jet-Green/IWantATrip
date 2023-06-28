@@ -1,8 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
-import { Carousel, Navigation, Slide } from "vue3-carousel";
 import { useTrips } from "../../stores/trips";
-import "vue3-carousel/dist/carousel.css";
+
 
 import TripCard from "../cards/TripCard.vue";
 
@@ -58,11 +57,9 @@ onMounted(async () => {
       <a-row v-if="trips.length">
         <a-col :span="24">
           <div class="section">
-            <Slide v-for="trip in trips" :key="trip.index" class="unselectable ma-8 section__item">
-              <div class="d-flex justify-center" style="width: 100%">
+            <div v-for="trip in trips" :key="trip.index" class="ma-8 section__item">      
                 <TripCard :trip="trip" :isPreview="true" />
-              </div>
-            </Slide>
+            </div>
           </div>
         </a-col>
       </a-row>
@@ -85,20 +82,16 @@ onMounted(async () => {
 
 .section {
   display: flex;
-  align-items: center;
+  align-items: end;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  padding-bottom: 5px;
+  padding:0 1rem 1rem 1rem;
   gap: 1rem;
-  -webkit-overflow-scrolling: touch; 
 }
 
 .section__item {
   scroll-snap-align: center;
   scroll-snap-stop: always;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex: 0 0 20%;
+
 }
 </style>
