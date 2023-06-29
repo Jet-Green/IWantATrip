@@ -9,7 +9,7 @@
             <a-col :xs="8" class="d-flex align-center direction-column">
               <div>
                 <a
-                  href="https://trip-docs.website.yandexcloud.net"
+                  href="https://doc.gorodaivesi.ru"
                   target="_blank"
                   ><b>Условия</b>
                 </a>
@@ -24,7 +24,7 @@
             <a-col :xs="8" class="d-flex align-center direction-column">
               <div>
                 <a
-                  href="https://trip-docs.website.yandexcloud.net"
+                href="https://doc.gorodaivesi.ru"
                   target="_blank"
                   ><b>О проекте</b>
                 </a>
@@ -39,7 +39,7 @@
             <a-col :xs="8" class="d-flex align-center direction-column">
               <div>
                 <a
-                  href="https://trip-docs.website.yandexcloud.net"
+                href="https://doc.gorodaivesi.ru"
                   target="_blank"
                   ><b>Обучение</b></a
                 >
