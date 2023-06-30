@@ -463,7 +463,15 @@ let formSchema = yup.object({
             </a-col>
 
             <a-col :span="24">
-              Цены
+              <div class="d-flex space-between ">Цены
+                <a-tooltip>
+                  <template #title>калькулятор</template>
+                  <span class="mdi mdi-calculator" @click="goToPriceCalc()"
+                    style="cursor: pointer; font-size: 24px; color:#ff6600"></span>
+                </a-tooltip>
+              </div>
+
+
               <div v-for="   item    in    form.cost   " :key="item.type" style="display: flex" align="baseline"
                 class="mb-16">
                 <a-input v-model:value="item.first" placeholder="Для кого" />
@@ -555,19 +563,19 @@ let formSchema = yup.object({
                 [{ color: ['#000000', '#ff6600', '#3daff5'] }],
                 [{ align: [] }],
               ]
-              " />
+                " />
             </a-col>
-            <!-- <a-col :span=" 24 ">
-                                                                                                                                                                                                                                                                                        :file-list="fileList"
-                                                                                                                                                                                                                                                                                        <a-upload action="" :multiple=" true ">
-                                                                                                                                                                                                                                                                                          <a-button type="dashed" block>
-                                                                                                                                                                                                                                                                                            <span class="mdi mdi-12px mdi-plus"></span>
-                                                                                                                                                                                                                                                                                            Загрузить pdf описание
-                                                                                                                                                                                                                                                                                          </a-button>
-                                                                                                                                                                                                                                                                                        </a-upload>
-                                                                                                                                                                                                                                                                                      </a-col> -->
+            <!-- <a-col :span="24">
+              :file-list="fileList"
+              <a-upload action="" :multiple="true">
+                <a-button type="dashed" block>
+                  <span class="mdi mdi-12px mdi-plus"></span>
+                  Загрузить pdf описание
+                </a-button>
+              </a-upload>
+            </a-col> -->
             <a-col :span="24" class="d-flex justify-center">
-              <a-button class="lets_go_btn ma-36" type="primary"  html-type="submit">Отправить
+              <a-button class="lets_go_btn ma-36" type="primary" html-type="submit">Отправить
               </a-button>
             </a-col>
           </a-row>
