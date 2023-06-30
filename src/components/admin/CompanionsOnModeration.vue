@@ -139,7 +139,6 @@ onMounted(async () => {
 
 .table_header {
     text-align: center;
-    // background: rgba(34, 176, 214, 0.05) ;
 }
 
 .card {

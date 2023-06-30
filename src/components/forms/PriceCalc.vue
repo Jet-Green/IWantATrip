@@ -94,7 +94,7 @@ const findFinalPrice = () => {
   var group = costParser2(form.groupCost);
   var vehicle = costParser3(form.transport);
   var finalPrice = individual + (group + vehicle) / form.people;
-  console.log(individual,group,vehicle,finalPrice);
+  console.log(individual, group, vehicle, finalPrice);
   return finalPrice;
 };
 const transportRange = () => {
@@ -127,23 +127,11 @@ const formatter = (value) => (value = findFinalPrice());
           <h1>Индивидуальные расходы</h1>
         </a-col>
         <a-col :span="12" class="centrify">
-          <div
-            v-for="item in form.indCost"
-            :key="item.type"
-            style="display: flex"
-            align="baseline"
-            class="ma-16"
-          >
+          <div v-for="item in form.indCost" :key="item.type" style="display: flex" align="baseline" class="ma-16">
             <a-input v-model:value="item.first" placeholder="Для кого" />
 
-            <a-input-number
-              v-model:value="item.price"
-              style="width: 100%"
-              placeholder="Цена"
-              :min="0"
-              :step="0.01"
-              class="ml-16 mr-16"
-            />
+            <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0" :step="0.01"
+              class="ml-16 mr-16" />
 
             <a-button @click="indRemoveCost(item)" shape="circle">
               <span class="mdi mdi-minus" style="cursor: pointer"></span>
@@ -159,23 +147,11 @@ const formatter = (value) => (value = findFinalPrice());
           <h1>Групповые расходы</h1>
         </a-col>
         <a-col :span="12" class="centrify">
-          <div
-            v-for="item in form.groupCost"
-            :key="item.type"
-            style="display: flex"
-            align="baseline"
-            class="ma-16"
-          >
+          <div v-for="item in form.groupCost" :key="item.type" style="display: flex" align="baseline" class="ma-16">
             <a-input v-model:value="item.first" placeholder="Для кого" />
 
-            <a-input-number
-              v-model:value="item.price"
-              style="width: 100%"
-              placeholder="Цена"
-              :min="0"
-              :step="0.01"
-              class="ml-16 mr-16"
-            />
+            <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0" :step="0.01"
+              class="ml-16 mr-16" />
 
             <a-button @click="groupRemoveCost(item)" shape="circle">
               <span class="mdi mdi-minus" style="cursor: pointer"></span>
@@ -192,49 +168,19 @@ const formatter = (value) => (value = findFinalPrice());
         <a-col :span="12" class="centrify">
           <a-row v-for="item in form.transport" style="display: flex" class="ma-16">
             <a-col :span="24">
-              <a-input
-                v-model:value="item.type"
-                style="width: 49%"
-                placeholder="Вид транспорта"
-              />
+              <a-input v-model:value="item.type" style="width: 49%" placeholder="Вид транспорта" />
 
-              <a-input-number
-                v-model:value="item.price"
-                style="width: 49%"
-                placeholder="Цена"
-                :min="0"
-                :step="0.01"
-              />
+              <a-input-number v-model:value="item.price" style="width: 49%" placeholder="Цена" :min="0" :step="0.01" />
             </a-col>
             <a-col :span="24" class="tprice">
               <span>До</span>
-              <a-input-number
-                :controls="false"
-                v-model:value.lazy="item.peopleRange"
-                style="width: 25%"
-                placeholder="1"
-                :min="0"
-                @change="transportRange(value)"
-              />
-              <!-- <span>человек до</span>
-              <a-input-number
-                :controls="false"
-                v-model:value="item.peopleRange"
-                style="width: 25%"
-                placeholder="8"
-                :min="0"
-              /> -->
+              <a-input-number :controls="false" v-model:value.lazy="item.peopleRange" style="width: 25%" placeholder="1"
+                :min="0" @change="transportRange(value)" />
               <span>человек</span>
               <span>Мин. кол-во человек</span>
-              <a-input-number
-                :controls="false"
-                v-model:value.lazy="item.minPeople"
-                style="width: 25%"
-                placeholder="1"
-                :min="0"
-                @change="transportRange(value)"
-              />
-              
+              <a-input-number :controls="false" v-model:value.lazy="item.minPeople" style="width: 25%" placeholder="1"
+                :min="0" @change="transportRange(value)" />
+
               <a-button @click="tRemoveCost(item)" shape="circle">
                 <span class="mdi mdi-minus" style="cursor: pointer"></span>
               </a-button>
@@ -244,30 +190,14 @@ const formatter = (value) => (value = findFinalPrice());
             <span class="mdi mdi-12px mdi-plus"></span>
             Добавить виды транспорта
           </a-button>
-          <h1>Итого: {{findFinalPrice()}}</h1>
+          <h1>Итого: {{ findFinalPrice() }}</h1>
         </a-col>
 
         <a-col :span="24">
           <div class="slidecontainer">
-            <a-slider
-              v-model="form.people"
-              :min="1"
-              :max="form.maxPeople"
-              class="slider"
-              :tooltipVisible="true"
-              :marks="marks"
-              @afterChange="onAfterChange"
-              :included="false"
-              :tipFormatter="formatter"
-            >
+            <a-slider v-model="form.people" :min="1" :max="form.maxPeople" class="slider" :tooltipVisible="true"
+              :marks="marks" @afterChange="onAfterChange" :included="false" :tipFormatter="formatter">
             </a-slider>
-            
-            <!-- <datalist id="tickmarks">
-              <option v-for="num in form.maxPeople" :value="num">{{num}}</option>
-              list="tickmarks"
-                            id="count"
-              @click="count++"
-            </datalist>               -->
           </div>
         </a-col>
       </a-row>
@@ -280,19 +210,24 @@ const formatter = (value) => (value = findFinalPrice());
   align-items: center;
   flex-wrap: wrap;
 }
+
 .slidecontainer {
-  width: 100%; /* Width of the outside container */
+  width: 100%;
+  /* Width of the outside container */
 }
 
 /* The slider itself */
 .slider {
-  width: 100%; /* Full-width */
+  width: 100%;
+  /* Full-width */
 }
+
 datalist {
   display: flex;
   justify-content: space-between;
 }
-.tprice > * {
+
+.tprice>* {
   margin-left: 8px;
 }
 </style>
