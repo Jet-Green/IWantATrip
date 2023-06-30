@@ -1,14 +1,12 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import CabinetTrip from "../cards/CabinetTrip.vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { useRouter } from "vue-router";
 import { useAuth } from "../../stores/auth.js";
 import { useTrips } from "../../stores/trips.js";
 
 let userStore = useAuth();
 let tripStore = useTrips();
-let router = useRouter();
 
 let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
@@ -18,7 +16,6 @@ let tripsOnModeration = ref([])
 let archiveTrips = ref([])
 let loading = ref(true)
 
-// let tripsIds = computed(() => userStore.user.trips);
 function getPhoneNumber(number) {
   return `tel:${number}`
 }
@@ -32,7 +29,6 @@ onMounted(async () => {
   loading.value = false
 
   for (let trip of created) {
-    // { start: { $gt: Date.now() } }
     if (trip.start < Date.now()) {
       archiveTrips.value.push(trip)
       continue

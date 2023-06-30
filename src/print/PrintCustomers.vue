@@ -1,11 +1,24 @@
 <script setup>
 defineProps({
     customers: Object,
-    tripName: String
+    trip: Object
 })
+
+const clearData = (dateNumber) => {
+  let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  if (date !== "Invalid Date" && date) {
+    return date;
+  }
+  return "";
+};
 </script>
 <template>
-    <h3 style="text-align:center">{{ tripName }}</h3>
+    <h3 style="text-align:center">{{ trip.name }}</h3>
+    <h4 style="text-align:center">с {{ clearData(trip.start)}} по {{ clearData(trip.end)}} </h4>
     <h2 style="text-align:center">Список туристов</h2>
     <table style="width:100%">
         <tr style="text-align:left">

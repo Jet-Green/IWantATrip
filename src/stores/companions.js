@@ -3,6 +3,9 @@ import { defineStore } from 'pinia'
 import CompanionsService from '../service/CompanionService'
 import { useLocations } from './locations'
 
+import CreateCompanionTemplate from '../email-templates/CreateCompanionTemplate.vue'
+import { render } from 'vue-email';
+
 export const useCompanions = defineStore('companions', {
     state: () => ({
         companions: [],
@@ -14,6 +17,11 @@ export const useCompanions = defineStore('companions', {
         },
     },
     actions: {
+        async createCompanion(form) {
+            const emailHtml = await render(CreateCompanionTemplate, form);
+
+            return CompanionsService.createCompanion(form, emailHtml)
+        },
         async fetchCompanions(query) {
             try {
                 let locationStore = useLocations()
@@ -27,6 +35,13 @@ export const useCompanions = defineStore('companions', {
                 this.companions = response.data;
             } catch (err) {
                 console.log(err);
+            }
+        },
+        async getCompanionsOnModeration() {
+            try {
+                return await CompanionsService.getCompanionsOnModeration()
+            } catch (error) {
+                console.log(error);
             }
         },
         // async searchCompanions(query) {
@@ -44,5 +59,19 @@ export const useCompanions = defineStore('companions', {
                 console.log(err);
             }
         },
+        async acceptCompanion(companionId) {
+            try {
+                return CompanionsService.acceptCompanion(companionId);
+            } catch (err) {
+                console.log(err);
+            }
+        },
+        async deleteCompanion(_id) {
+            try {
+                return await CompanionsService.deleteCompanion(_id)
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 })

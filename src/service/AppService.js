@@ -10,5 +10,5 @@ export default {
     },
     deleteTripType(name) {
         return $api.post('/app-state/delete-trip-type', { name })
-    }
+    },
 }

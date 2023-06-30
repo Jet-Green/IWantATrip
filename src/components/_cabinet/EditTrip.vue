@@ -89,14 +89,6 @@ const delPhoto = () => {
 function submit() {
     description.value = description.value.split("<p><br></p>").join("");
     form.value.description = description.value;
-    // form.value.period = dayjs(dayjs(d.period), monthFormatList)
-    // for (let img of previews.value) {
-    //     let isUnique = true;
-    //     if (img.startsWith('blob')) {
-    //         form.value.images.push(img)
-    //     }
-    // }
-    // важно разобраться с обновлением фото. Пользователь может загрузить свои и они будут храниться в images, УЖЕ ЕСТЬ: обновляем те фото, которые есть на сервере
     form.value.isModerated = false
     TripService.updateTrip(form.value).then((res) => {
         const _id = res.data._id;
@@ -209,9 +201,9 @@ onMounted(() => {
                 previews.value.push(i)
             quill.value.setHTML(d.description)
         })
-    // .catch((error) => {
-    //     console.log(error);
-    // });
+        .catch((error) => {
+            console.log(error);
+        });
 
 })
 
@@ -229,29 +221,11 @@ watch(description, (newValue) => {
 });
 
 watch(start, () => {
-    let result =
-        Number(JSON.parse(JSON.stringify(end.value))) -
-        Number(JSON.parse(JSON.stringify(start.value)));
-    if (result >= 0) {
-        form.value.duration = Math.round(result / 86400000);
-    } else {
-        form.value.duration = "";
-    }
     if (start.value)
         form.value.start = Number(Date.parse(start.value.$d.toString()));
 
 });
 watch(end, () => {
-    let result =
-        Date.parse(JSON.parse(JSON.stringify(end.value))) -
-        Date.parse(JSON.parse(JSON.stringify(start.value)));
-    form.value.duration = Math.round(result / 86400000);
-    if (result >= 0) {
-        form.value.duration = Math.round(result / 86400000);
-
-    } else {
-        form.value.duration = "";
-    }
     if (end.value)
         form.value.end = Number(Date.parse(end.value.$d.toString()));
 });
@@ -264,9 +238,7 @@ let formSchema = yup.object({
     fromAge: yup.string().required("заполните поле"),
     offer: yup.string().required("заполните поле"),
     tripRoute: yup.string().required("заполните поле"),
-    // distance: yup.string().required("заполните поле"),
-    // cost: yup.string().required("заполните поле"),
-    // https://vee-validate.logaretm.com/v4/examples/array-fields/
+    duration: yup.string().required("заполните поле"),
 })
 </script>
 <template>
@@ -323,8 +295,14 @@ let formSchema = yup.object({
                         </a-col>
 
                         <a-col :span="12">
-                            Продолжительность
-                            <p style="line-height: 40px">{{ form.duration }} дн.</p>
+                            <Field name="duration" v-slot="{ value, handleChange }" v-model="form.duration">
+                                Продолжительность
+                                <a-input placeholder="6 дней/ 7 ночей" @update:value="handleChange" :value="value"
+                                    :maxlength="20" show-count></a-input>
+                            </Field>
+                            <Transition name="fade">
+                                <ErrorMessage name="duration" class="error-message" />
+                            </Transition>
                         </a-col>
                         <a-col :span="12">
                             <Field name="maxPeople" v-slot="{ value, handleChange }" v-model="form.maxPeople">
@@ -424,18 +402,17 @@ let formSchema = yup.object({
 
                         <a-col :span="24" style="display: flex; flex-direction: column">
                             Описание программы
-                            <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html"
-                                :toolbar="[
-                                        // [{ header: [2, 3] }],
-                                        ['bold', 'italic', 'underline'],
-                                        [{ list: 'ordered' }, { list: 'bullet' }],
-                                        [{ color: ['#000000', '#ff6600', '#3daff5'] }],
-                                        [{ align: [] }],
-                                    ]
-                                    " />
+                            <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" :toolbar="[
+                                // [{ header: [2, 3] }],
+                                ['bold', 'italic', 'underline'],
+                                [{ list: 'ordered' }, { list: 'bullet' }],
+                                [{ color: ['#000000', '#ff6600', '#3daff5'] }],
+                                [{ align: [] }],
+                            ]
+                                " />
                         </a-col>
                         <a-col :span="24" class="d-flex justify-center">
-                            <a-button :disabled="!meta.valid" class="lets_go_btn ma-36" type="primary" 
+                            <a-button :disabled="!meta.valid" class="lets_go_btn ma-36" type="primary"
                                 html-type="submit">Отправить
                             </a-button>
                         </a-col>
@@ -447,7 +424,7 @@ let formSchema = yup.object({
                 <a-modal v-model:visible="delPhotoDialog" :footer="null">
                     <h3>Удалить фото?</h3>
                     <div class="d-flex justify-center">
-                        <a-button class="mt-16" type="primary"  @click="delPhoto">Да
+                        <a-button class="mt-16" type="primary" @click="delPhoto">Да
                         </a-button>
                     </div>
                 </a-modal>
