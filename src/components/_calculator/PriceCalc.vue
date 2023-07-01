@@ -354,10 +354,10 @@ onMounted(async () => {
     <BackButton />
   <div class="main">
     <a-row class="d-flex justify-center">
-      <a-col :xs="22" :md="12">
+      <a-col :xs="22" :lg="12">
         <h2 class="title">Калькулятор тура</h2>
         <a-row class="justify-center">
-          <a-col :xs="20" :md="12">
+          <a-col :xs="22" :lg="12">
             <a-input v-model:value="form.name" :bordered="false" placeholder="название"
               style="text-align: center; font-size: 18px" />
           </a-col>
@@ -484,7 +484,7 @@ onMounted(async () => {
         <a-divider class="ma-2" style="background-color: black"></a-divider>
 
         <a-row v-if="result(form.tourists).cost">
-          <a-col :xs="24" :sm="12">
+          <a-col :xs="22" :lg="12">
             <a-row class="mb-4 align-center" :gutter="[4, 4]">
               <a-col :xs="12"> Туристы, чел. </a-col>
               <a-col :xs="12" class="d-flex justify-end">
@@ -510,7 +510,7 @@ onMounted(async () => {
 
             </a-row>
           </a-col>
-          <a-col :xs="24" :sm="12" class="d-flex align-end justify-end direction-column">
+          <a-col :xs="22" :lg="12" class="d-flex align-end justify-end direction-column">
             <div strong class="ma-0">
               Себестоимость:
               {{ result(form.tourists).cost }} руб.
