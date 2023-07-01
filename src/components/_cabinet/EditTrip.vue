@@ -63,7 +63,7 @@ let form = ref({
     tripType: "",
     fromAge: "",
     startLocation: null,
-
+    bonuses:[]
 });
 
 const removeCost = (item) => {
@@ -79,6 +79,22 @@ const addCost = () => {
         price: "",
     });
 };
+
+const removeBonuses = (item) => {
+    let index = form.value.bonuses.indexOf(item);
+    if (index !== -1) {
+        form.value.bonuses.splice(index, 1);
+    }
+};
+
+const addBonuses = () => {
+    form.value.bonuses.push({
+        type1: "",
+        bonus: "",
+    });
+};
+
+
 const delPhoto = () => {
     previews.value.splice(targetIndex.value, 1);
     images.splice(targetIndex.value, 1);
@@ -332,6 +348,25 @@ let formSchema = yup.object({
                             <a-button type="dashed" block @click="addCost" class="ma-8">
                                 <span class="mdi mdi-12px mdi-plus"></span>
                                 Добавить цены
+                            </a-button>
+                        </a-col>
+
+                        <a-col :span="24">
+                            Бонусы и скидки
+                            <div v-for="       item        in        form.bonuses       " :key="item.type1"
+                                style="display: flex" align="baseline" class="mb-16">
+                                <a-input v-model:value="item.first" placeholder="Количество человек" />
+
+                                <a-input v-model:value="item.bonus" style="width: 100%" placeholder="Бонусы или скидки"  class="ml-16 mr-16" />
+
+                                <a-button @click=" removeBonuses(item)" shape="circle">
+                                    <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                                </a-button>
+                            </div>
+
+                            <a-button type="dashed" block @click="addBonuses" class="ma-8">
+                                <span class="mdi mdi-12px mdi-plus"></span>
+                                Добавить бонусы и скидки
                             </a-button>
                         </a-col>
 
