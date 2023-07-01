@@ -74,6 +74,7 @@ let form = reactive({
   fromAge: "",
   creatorForm: [],
   startLocation: null,
+  bonuses: []
 });
 let fullUserInfo = null;
 
@@ -90,6 +91,21 @@ const addCost = () => {
     price: "",
   });
 };
+
+const removeBonuses = (item) => {
+  let index = form.bonuses.indexOf(item);
+  if (index !== -1) {
+    form.bonuses.splice(index, 1);
+  }
+};
+
+const addBonuses = () => {
+  form.bonuses.push({
+    type: "",
+    price: "",
+  });
+};
+
 function goToPriceCalc() {
   router.push("/calc");
 }
@@ -128,6 +144,7 @@ function submit() {
       fromAge: "",
       creatorForm: [],
       startLocation: "",
+      bonuses: [],
     });
     images = [];
     // pdf = [];
@@ -352,6 +369,7 @@ onMounted(() => {
       form.tripType = d.tripType;
       form.distance = d.distance;
       form.cost = d.cost;
+      form.bonuses = d.bonuses;
       quill.value.setHTML(d.description);
       form.fromAge = d.fromAge;
       form.tripRoute = d.tripRoute;
@@ -487,6 +505,26 @@ let formSchema = yup.object({
               <a-button type="dashed" block @click="addCost" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
                 Добавить цены
+              </a-button>
+            </a-col>
+
+            <a-col :span="24">
+
+              <div v-for="   item    in    form.bonuses   " :key="item.type" style="display: flex" align="baseline"
+                class="mb-16">
+                <a-input v-model:value="item.first" placeholder="Количество человек" />
+
+                <a-input v-model:value="item.price" style="width: 100%" placeholder="Бонусы или скидки"
+                  class="ml-16 mr-16" />
+
+                <a-button @click="removeBonuses(item)" shape="circle">
+                  <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                </a-button>
+              </div>
+
+              <a-button type="dashed" block @click="addBonuses" class="ma-8">
+                <span class="mdi mdi-12px mdi-plus"></span>
+                Добавить бонусы и скидки
               </a-button>
             </a-col>
 
