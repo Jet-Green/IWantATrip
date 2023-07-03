@@ -197,7 +197,6 @@ function submit() {
             await uploadTripImages(_id)
             await updateUser(_id)
 
-            localStorage.setItem('CreatingTrip', {})
             message.config({ duration: 1.5, top: "70vh" });
             message.success({
                 content: "Тур создан!", onClose: () => {
