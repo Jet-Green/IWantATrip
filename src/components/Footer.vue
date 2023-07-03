@@ -44,7 +44,7 @@
 
       <a-row type="flex" justify="center" class="mt-16">
         <a-col>
-          <a href="https://qbit-club.com/">
+          <a href="https://qbit-club.com/" target="_blank">
             <b> Сделано в Кубит </b>
           </a>
         </a-col>
