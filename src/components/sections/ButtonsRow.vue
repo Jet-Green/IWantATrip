@@ -24,7 +24,7 @@ function routeTo(buttonRoute) {
             мы поможем c выбором
           </div>
         </a-col>
-        <a-col :xs="4" class="img"><img src="../../assets/images/ship.png" alt="" style="height: 30%" /></a-col>
+        <a-col :xs="4" class="img"><img src="../../assets/images/ship.webp" alt="" style="height: 30%" /></a-col>
         <a-col :xs="10" class="big-button find" @click="routeTo('/trips')">
           <div>Найти</div>
           <div class="help-text">
@@ -32,7 +32,7 @@ function routeTo(buttonRoute) {
             выберите что нравится
           </div>
         </a-col>
-        <a-col :xs="7" class="img"><img src="../../assets/images/house.png" alt="" style="height: 30%" /></a-col>
+        <a-col :xs="7" class="img"><img src="../../assets/images/house.webp" alt="" style="height: 30%" /></a-col>
         <a-col :xs="10" class="big-button create" @click="routeTo('/create-no-help')">
           <div>Создать</div>
           <div class="help-text">
@@ -40,7 +40,7 @@ function routeTo(buttonRoute) {
             привлеките туристов
           </div>
         </a-col>
-        <a-col :xs="7" class="img"><img src="../../assets/images/mountain.png" alt="" style="width: 30%" /></a-col>
+        <a-col :xs="7" class="img"><img src="../../assets/images/mountain.webp" alt="" style="width: 30%" /></a-col>
         <a-col :xs="10" class="big-button companions" @click="routeTo('/companions')">
           <div>Попутчики</div>
           <div class="help-text">
@@ -48,7 +48,7 @@ function routeTo(buttonRoute) {
             присоединитесь к другим
           </div>
         </a-col>
-        <a-col :xs="4" class="img"><img src="../../assets/images/trees.png" alt="" style="height: 30%" /></a-col>
+        <a-col :xs="4" class="img"><img src="../../assets/images/trees.webp" alt="" style="height: 30%" /></a-col>
 
         <a-col :xs="10" class="big-button city-guide">
           <a href="#guide" style="width: 100%; height: 100%">

@@ -47,7 +47,7 @@ const baseTimePeriod = dayjs(1679492631000);
 const router = useRouter();
 const route = useRoute();
 
-var creatorForm = ref()
+var author = ref()
 let possibleLocations = ref([])
 // cropper
 let visibleCropperModal = ref(false);
@@ -72,7 +72,7 @@ let form = reactive({
   description: description.value,
   tripType: "",
   fromAge: "",
-  creatorForm: [],
+  author: "",
   startLocation: null,
   bonuses: []
 });
@@ -117,7 +117,7 @@ const delPhoto = () => {
 function submit() {
   description.value = description.value.split("<p><br></p>").join("");
   form.description = description.value;
-  form.creatorForm = creatorForm;
+  form.author = author;
   let send = {};
   for (let key in form) {
     send[key] = form[key];
@@ -142,7 +142,7 @@ function submit() {
       description: description.value,
       tripType: "",
       fromAge: "",
-      creatorForm: [],
+      author: "",
       startLocation: "",
       bonuses: [],
     });
@@ -193,6 +193,8 @@ function submit() {
     }
   }
 
+  form.author = userStore.user._id
+
   TripService.createTrip(form, userStore.user.email).then(async (res) => {
     if (res.status == 200) {
       const _id = res.data._id;
@@ -218,7 +220,8 @@ function addPreview(blob) {
 }
 function updateUserInfo(info) {
   fullUserInfo = info;
-  creatorForm = [fullUserInfo.fullname, fullUserInfo.creatorsType, fullUserInfo.type]
+  console.log(fullUserInfo)
+  author = fullUserInfo._id
 
 }
 function selectStartLocation(selected) {
@@ -374,7 +377,7 @@ onMounted(() => {
       form.fromAge = d.fromAge;
       form.tripRoute = d.tripRoute;
       form.offer = d.offer;
-      form.creatorForm = d.creatorForm;
+      form.author = d.author;
       start.value = dayjs(new Date(d.start));
       end.value = dayjs(new Date(d.end));
       form.startLocation = d.startLocation;

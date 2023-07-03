@@ -87,7 +87,7 @@ onMounted(() => {
         <a-row type="flex" justify="space-between">
           <a-col class="d-flex align-center">
 
-            <img src="../assets/images/logo.png" style="height: 60px; cursor: pointer" alt=""
+            <img src="../assets/images/logo.webp" style="height: 60px; cursor: pointer" alt=""
               @click="toComponentFromMenu('Landing')" />
 
 

@@ -71,6 +71,10 @@ onMounted(async () => {
               </div>
 
               <div>
+                <span class="mdi mdi-map-marker-outline"></span>{{ companion.startLocation.shortName}}
+              </div>
+
+              <div>
                 <span class="mdi mdi-compass-outline"></span>{{ companion.direction }}
               </div>
               <div :class="[

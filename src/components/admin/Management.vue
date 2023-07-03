@@ -12,10 +12,12 @@ let userRole = ref('user')
 let emailCreateTrip = ref('')
 let emailBookingTrip = ref('')
 let emailCreateCompanion = ref('')
+let emailBuyTrip = ref('')
 
 let createTripEmails = ref([])
 let bookingTripEmails = ref([])
 let createCompanionEmails = ref([])
+let buyTripEmails = ref([])
 
 let users = ref([])
 
@@ -35,6 +37,9 @@ async function addEmail(event, email) {
                 case 'CreateCompanion':
                     createCompanionEmails.value.push(email)
                     break
+                case 'BuyTrip':
+                    buyTripEmails.value.push(email)
+                    break
             }
         }
     }
@@ -52,6 +57,9 @@ async function getEmails(event) {
             break
         case 'CreateCompanion':
             createCompanionEmails.value = emails
+            break
+        case 'BuyTrip':
+            buyTripEmails.value = emails
             break
     }
 }
@@ -82,6 +90,13 @@ async function deleteEmail(event, email) {
                     }
                 }
                 break
+            case 'BuyTrip':
+                for (let i = 0; i < buyTripEmails.value.length; i++) {
+                    if (buyTripEmails.value[i] == email) {
+                        buyTripEmails.value.splice(i, 1)
+                    }
+                }
+                break
         }
     }
 }
@@ -102,6 +117,7 @@ onMounted(async () => {
     await getEmails('CreateTrip')
     await getEmails('BookingTrip')
     await getEmails('CreateCompanion')
+    await getEmails('BuyTrip')
 })
 </script>
 <template>
@@ -181,6 +197,24 @@ onMounted(async () => {
         <a-col v-if="createCompanionEmails.length != 0" v-for="email of createCompanionEmails" class="ma-4"
             style="cursor: pointer; font-size: 12px;">
             <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deleteEmail('CreateCompanion', email)">
+                {{ email }}
+            </a-popconfirm>
+        </a-col>
+        <a-col v-else>
+            пусто
+        </a-col>
+    </a-row>
+    <a-row :gutter="[16, 0]" class="mt-16">
+        <a-col :span="24">
+            Покупка тура
+        </a-col>
+        <a-col :span="24" class="d-flex align-center">
+            <a-input v-model:value="emailBuyTrip" placeholder="email" />
+            <a-button type="primary" class="ml-12 lets_go_btn"
+                @click="addEmail('BuyTrip', emailBuyTrip)">добавить</a-button>
+        </a-col>
+        <a-col v-if="buyTripEmails.length != 0" v-for="email of buyTripEmails" class="ma-4" style="cursor: pointer; font-size: 12px;">
+            <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deleteEmail('BuyTrip', email)">
                 {{ email }}
             </a-popconfirm>
         </a-col>
