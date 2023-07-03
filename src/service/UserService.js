@@ -23,7 +23,13 @@ export default {
         return $api.post('/auth/update', user)
     },
     async addFeedback(feedbackAndEmail) {
+        // должно быть /auth/add-feedback
         return $api.post('/add-feedback', feedbackAndEmail)
+    },
+    addTripCalc(userId, tripCalc) {
+        return $api.post('/auth/add-trip-calc', { userId, tripCalc })
+    },
+    deleteTripType(userId, tripCalcId) {
+        return $api.post('/auth/delete-trip-calc', { userId, tripCalcId })
     }
-
 }
