@@ -148,7 +148,7 @@ onMounted(() => {
       <div @click="toComponentFromMenu('CompanionsPage')" class="route ma-8">
         попутчики
       </div>
-      <div @click="toComponentFromMenu('Cabinet')" class="route ma-8">кабинет</div>
+      <div @click="toComponentFromMenu('Me')" class="route ma-8">кабинет</div>
     </a-drawer>
   </a-layout-header>
 </template>
