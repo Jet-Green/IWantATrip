@@ -49,6 +49,19 @@ const router = createRouter({
       }
     },
     {
+      path: '/copy-trip',
+      name: 'CopyTrip',
+      component: () => import('../views/CopyTrip.vue'),
+      beforeEnter: async (to, from) => {
+        let userStore = useAuth()
+        if (!localStorage.getItem('token') || !userStore.isAuth)
+          await userStore.checkAuth()
+
+        if (!userStore.isAuth)
+          return '/auth'
+      }
+    },
+    {
       path: '/companions',
       name: 'CompanionsPage',
       component: () => import('../views/CompanionsPage.vue'),

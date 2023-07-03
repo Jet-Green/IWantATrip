@@ -342,7 +342,6 @@ const clearData = (dataString) => {
     year: "2-digit",
     month: "2-digit",
     day: "2-digit",
-
   })
 }
 onMounted(() => {
@@ -353,39 +352,6 @@ onMounted(() => {
     if (f.startLocation) {
       locationSearchRequest.value = f.startLocation.name
     }
-  }
-  if (route.query.id) {
-    tripStore.getById(route.query.id).then((response) => {
-      let d = response.data;
-
-      delete d.__v;
-      form.name = d.name;
-      // console.log(d.period);
-      start.value = baseTimeStart;
-      end.value = baseTimeEnd;
-      period.value = baseTimePeriod;
-      start.value.$d = clearData(d.start);
-      end.value.$d = clearData(d.end);
-      period.value.$d = clearData(Date.parse(d.period));
-      form.maxPeople = d.maxPeople;
-      form.duration = d.duration;
-      form.tripType = d.tripType;
-      form.distance = d.distance;
-      form.cost = d.cost;
-      form.bonuses = d.bonuses;
-      quill.value.setHTML(d.description);
-      form.fromAge = d.fromAge;
-      form.tripRoute = d.tripRoute;
-      form.offer = d.offer;
-      form.author = d.author;
-      start.value = dayjs(new Date(d.start));
-      end.value = dayjs(new Date(d.end));
-      form.startLocation = d.startLocation;
-      locationSearchRequest.value = d.startLocation[0].name;
-    });
-    // .catch((error) => {
-    //     console.log(error);
-    // });
   }
 });
 
