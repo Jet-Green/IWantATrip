@@ -76,7 +76,7 @@ function submit() {
             // type: "Любой",
             direction: "",
             description: "",
-
+            startLocation: "",
           });
           date.value = null
 
@@ -184,10 +184,10 @@ const formSchema = yup.object({
 <template>
   <div>
     <BackButton :backRoute="backRoute" />
-    <img v-if="!sm" src="../assets/images/companion_left.png"
+    <img v-if="!sm" src="../assets/images/companion_left.webp"
       style="position: fixed; left: 0px; bottom: 0px;  width: 20%;" />
 
-    <img v-if="!sm" src="../assets/images/companion_right.png"
+    <img v-if="!sm" src="../assets/images/companion_right.webp"
       style="position: fixed; right: 0px; bottom: 0px; width: 20% " />
     <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
       <a-row type="flex" justify="center">
@@ -282,6 +282,7 @@ const formSchema = yup.object({
                                                                                                                                   :format="dateFormatList" /> 
                                                                                                                           -->
             </a-col>
+
             <a-col :xs="24">
               <!-- Тип отдыха <a-select v-model:value="form.type" style="width: 100%" :options="typeOfTrip" mode="multiple"></a-select> -->
               <Field name="direction" v-slot="{ value, handleChange }" v-model="form.direction">

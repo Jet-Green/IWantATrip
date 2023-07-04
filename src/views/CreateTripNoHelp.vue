@@ -47,7 +47,7 @@ const baseTimePeriod = dayjs(1679492631000);
 const router = useRouter();
 const route = useRoute();
 
-var creatorForm = ref()
+var author = ref()
 let possibleLocations = ref([])
 // cropper
 let visibleCropperModal = ref(false);
@@ -72,8 +72,9 @@ let form = reactive({
   description: description.value,
   tripType: "",
   fromAge: "",
-  creatorForm: [],
+  author: "",
   startLocation: null,
+  bonuses: []
 });
 let fullUserInfo = null;
 
@@ -90,6 +91,21 @@ const addCost = () => {
     price: "",
   });
 };
+
+const removeBonuses = (item) => {
+  let index = form.bonuses.indexOf(item);
+  if (index !== -1) {
+    form.bonuses.splice(index, 1);
+  }
+};
+
+const addBonuses = () => {
+  form.bonuses.push({
+    type1: "",
+    bonus: "",
+  });
+};
+
 function goToPriceCalc() {
   router.push("/calc");
 }
@@ -101,7 +117,7 @@ const delPhoto = () => {
 function submit() {
   description.value = description.value.split("<p><br></p>").join("");
   form.description = description.value;
-  form.creatorForm = creatorForm;
+  form.author = author;
   let send = {};
   for (let key in form) {
     send[key] = form[key];
@@ -126,8 +142,9 @@ function submit() {
       description: description.value,
       tripType: "",
       fromAge: "",
-      creatorForm: [],
+      author: "",
       startLocation: "",
+      bonuses: [],
     });
     images = [];
     // pdf = [];
@@ -176,6 +193,8 @@ function submit() {
     }
   }
 
+  form.author = userStore.user._id
+
   TripService.createTrip(form, userStore.user.email).then(async (res) => {
     if (res.status == 200) {
       const _id = res.data._id;
@@ -201,7 +220,8 @@ function addPreview(blob) {
 }
 function updateUserInfo(info) {
   fullUserInfo = info;
-  creatorForm = [fullUserInfo.fullname, fullUserInfo.creatorsType, fullUserInfo.type]
+  console.log(fullUserInfo)
+  author = fullUserInfo._id
 
 }
 function selectStartLocation(selected) {
@@ -322,7 +342,6 @@ const clearData = (dataString) => {
     year: "2-digit",
     month: "2-digit",
     day: "2-digit",
-
   })
 }
 onMounted(() => {
@@ -333,38 +352,6 @@ onMounted(() => {
     if (f.startLocation) {
       locationSearchRequest.value = f.startLocation.name
     }
-  }
-  if (route.query.id) {
-    tripStore.getById(route.query.id).then((response) => {
-      let d = response.data;
-
-      delete d.__v;
-      form.name = d.name;
-      // console.log(d.period);
-      start.value = baseTimeStart;
-      end.value = baseTimeEnd;
-      period.value = baseTimePeriod;
-      start.value.$d = clearData(d.start);
-      end.value.$d = clearData(d.end);
-      period.value.$d = clearData(Date.parse(d.period));
-      form.maxPeople = d.maxPeople;
-      form.duration = d.duration;
-      form.tripType = d.tripType;
-      form.distance = d.distance;
-      form.cost = d.cost;
-      quill.value.setHTML(d.description);
-      form.fromAge = d.fromAge;
-      form.tripRoute = d.tripRoute;
-      form.offer = d.offer;
-      form.creatorForm = d.creatorForm;
-      start.value = dayjs(new Date(d.start));
-      end.value = dayjs(new Date(d.end));
-      form.startLocation = d.startLocation;
-      locationSearchRequest.value = d.startLocation[0].name;
-    });
-    // .catch((error) => {
-    //     console.log(error);
-    // });
   }
 });
 
@@ -463,7 +450,15 @@ let formSchema = yup.object({
             </a-col>
 
             <a-col :span="24">
-              Цены
+              <div class="d-flex space-between ">Цены
+                <a-tooltip>
+                  <template #title>калькулятор</template>
+                  <span class="mdi mdi-calculator" @click="goToPriceCalc()"
+                    style="cursor: pointer; font-size: 24px; color:#ff6600"></span>
+                </a-tooltip>
+              </div>
+
+
               <div v-for="   item    in    form.cost   " :key="item.type" style="display: flex" align="baseline"
                 class="mb-16">
                 <a-input v-model:value="item.first" placeholder="Для кого" />
@@ -479,6 +474,26 @@ let formSchema = yup.object({
               <a-button type="dashed" block @click="addCost" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
                 Добавить цены
+              </a-button>
+            </a-col>
+
+            <a-col :span="24">
+
+              <div v-for="   item    in    form.bonuses   " :key="item.type1" style="display: flex" align="baseline"
+                class="mb-16">
+                <a-input v-model:value="item.first" placeholder="Количество человек" />
+
+                <a-input v-model:value="item.bonus" style="width: 100%" placeholder="Бонусы или скидки"
+                  class="ml-16 mr-16" />
+
+                <a-button @click="removeBonuses(item)" shape="circle">
+                  <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                </a-button>
+              </div>
+
+              <a-button type="dashed" block @click="addBonuses" class="ma-8">
+                <span class="mdi mdi-12px mdi-plus"></span>
+                Добавить бонусы и скидки
               </a-button>
             </a-col>
 
@@ -555,19 +570,19 @@ let formSchema = yup.object({
                 [{ color: ['#000000', '#ff6600', '#3daff5'] }],
                 [{ align: [] }],
               ]
-              " />
+                " />
             </a-col>
-            <!-- <a-col :span=" 24 ">
-                                                                                                                                                                                                                                                                                        :file-list="fileList"
-                                                                                                                                                                                                                                                                                        <a-upload action="" :multiple=" true ">
-                                                                                                                                                                                                                                                                                          <a-button type="dashed" block>
-                                                                                                                                                                                                                                                                                            <span class="mdi mdi-12px mdi-plus"></span>
-                                                                                                                                                                                                                                                                                            Загрузить pdf описание
-                                                                                                                                                                                                                                                                                          </a-button>
-                                                                                                                                                                                                                                                                                        </a-upload>
-                                                                                                                                                                                                                                                                                      </a-col> -->
+            <!-- <a-col :span="24">
+              :file-list="fileList"
+              <a-upload action="" :multiple="true">
+                <a-button type="dashed" block>
+                  <span class="mdi mdi-12px mdi-plus"></span>
+                  Загрузить pdf описание
+                </a-button>
+              </a-upload>
+            </a-col> -->
             <a-col :span="24" class="d-flex justify-center">
-              <a-button class="lets_go_btn ma-36" type="primary"  html-type="submit">Отправить
+              <a-button class="lets_go_btn ma-36" type="primary" html-type="submit">Отправить
               </a-button>
             </a-col>
           </a-row>

@@ -87,7 +87,7 @@ onMounted(() => {
         <a-row type="flex" justify="space-between">
           <a-col class="d-flex align-center">
 
-            <img src="../assets/images/logo.png" style="height: 60px; cursor: pointer" alt=""
+            <img src="../assets/images/logo.webp" style="height: 60px; cursor: pointer" alt=""
               @click="toComponentFromMenu('Landing')" />
 
 
@@ -148,7 +148,7 @@ onMounted(() => {
       <div @click="toComponentFromMenu('CompanionsPage')" class="route ma-8">
         попутчики
       </div>
-      <div @click="toComponentFromMenu('Cabinet')" class="route ma-8">кабинет</div>
+      <div @click="toComponentFromMenu('Me')" class="route ma-8">кабинет</div>
     </a-drawer>
   </a-layout-header>
 </template>

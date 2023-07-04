@@ -1,36 +1,41 @@
 <script setup>
-import BackButton from "../BackButton.vue";
-import ImageCropper from "../ImageCropper.vue";
+import BackButton from "../components/BackButton.vue";
+import ImageCropper from "../components/ImageCropper.vue";
+import UserFullInfo from "../components/forms/UserFullInfo.vue";
 
-
-import dayjs from 'dayjs'
-import { Form, Field, ErrorMessage } from 'vee-validate';
-import * as yup from 'yup';
-
+import { watch, nextTick, ref, reactive, onMounted } from "vue";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
-import { watch, nextTick, ref, reactive, onMounted } from "vue";
+
+// import typeOfTrip from "../fakeDB/tripType";
+import { message } from "ant-design-vue";
+import { useRouter } from "vue-router";
+import { useRoute } from "vue-router";
+import { useAuth } from "../stores/auth";
+import { useTrips } from "../stores/trips";
+import { useAppState } from "../stores/appState";
+import TripService from "../service/TripService";
+
+import dayjs from "dayjs";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
-import { message } from 'ant-design-vue';
-import { useRouter } from 'vue-router'
-import { useAuth } from '../../stores/auth'
-import { useTrips } from "../../stores/trips.js";
-import { useAppState } from "../../stores/appState";
+import 'dayjs/locale/ru';
+import { Form, Field, ErrorMessage } from "vee-validate";
+import * as yup from "yup";
+dayjs.locale('ru');
 
-import TripService from "../../service/TripService";
-
-const userStore = useAuth()
-const tripStore = useTrips()
+const tripStore = useTrips();
+const userStore = useAuth();
 const appStore = useAppState();
 
-const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
+const dateFormatList = ["DD.MM.YY", "DD.MM.YY"];
 const monthFormatList = ["MM.YY"];
 const ruLocale = locale;
 const quill = ref(null);
 let newContent = "";
+const formRef = ref(null);
 const description = ref(null);
-const start = ref(null);
-const end = ref(null);
+const start = ref();
+const end = ref();
 const period = ref(null);
 const delPhotoDialog = ref(false);
 const targetIndex = ref(null);
@@ -38,23 +43,26 @@ const baseTimeStart = dayjs(1679492631000);
 const baseTimeEnd = dayjs(1679492631000);
 const baseTimePeriod = dayjs(1679492631000);
 const router = useRouter();
-let possibleLocations = ref([]);
-let locationSearchRequest = ref("")
+const route = useRoute();
 
+var author = ref()
+let possibleLocations = ref([])
 // cropper
 let visibleCropperModal = ref(false);
 let previews = ref([]);
 // отправляем на сервер
 let images = []; // type: blob
-
+//let pdf = [];
+let locationSearchRequest = ref("")
 // необходимо добавить поле количество людей в туре
-let form = ref({
+let form = reactive({
     name: "",
     start: null,
     end: null,
     maxPeople: null,
     duration: "",
     images: [],
+    //pdf: [],
     tripRoute: "",
     distance: "",
     cost: [],
@@ -62,73 +70,143 @@ let form = ref({
     description: description.value,
     tripType: "",
     fromAge: "",
+    author: "",
     startLocation: null,
-    bonuses:[]
+    bonuses: []
 });
+let fullUserInfo = null;
 
 const removeCost = (item) => {
-    let index = form.value.cost.indexOf(item);
+    let index = form.cost.indexOf(item);
     if (index !== -1) {
-        form.value.cost.splice(index, 1);
+        form.cost.splice(index, 1);
     }
 };
 
 const addCost = () => {
-    form.value.cost.push({
+    form.cost.push({
         type: "",
         price: "",
     });
 };
 
 const removeBonuses = (item) => {
-    let index = form.value.bonuses.indexOf(item);
+    let index = form.bonuses.indexOf(item);
     if (index !== -1) {
-        form.value.bonuses.splice(index, 1);
+        form.bonuses.splice(index, 1);
     }
 };
 
 const addBonuses = () => {
-    form.value.bonuses.push({
+    form.bonuses.push({
         type1: "",
         bonus: "",
     });
 };
 
-
+function goToPriceCalc() {
+    router.push("/calc");
+}
 const delPhoto = () => {
     previews.value.splice(targetIndex.value, 1);
     images.splice(targetIndex.value, 1);
-    form.value.images.splice(targetIndex.value, 1);
     delPhotoDialog.value = false;
 };
-
 function submit() {
     description.value = description.value.split("<p><br></p>").join("");
-    form.value.description = description.value;
-    form.value.isModerated = false
-    TripService.updateTrip(form.value).then((res) => {
-        const _id = res.data._id;
+    form.description = description.value;
+    form.author = author;
+    let send = {};
+    for (let key in form) {
+        send[key] = form[key];
+    }
+
+    function close() {
+        router.push("/trips");
+        clearForm()
+    }
+    function clearForm() {
+        Object.assign(form, {
+            name: "",
+            start: null,
+            end: null,
+            maxPeople: null,
+            duration: "",
+            images: [],
+            tripRoute: "",
+            distance: "",
+            cost: [],
+            offer: "",
+            description: description.value,
+            tripType: "",
+            fromAge: "",
+            author: "",
+            startLocation: "",
+            bonuses: [],
+        });
+        images = [];
+        // pdf = [];
+        previews.value = [];
+        quill.value.setHTML("");
+    }
+    function uploadTripImages(_id) {
         let imagesFormData = new FormData();
-
         for (let i = 0; i < images.length; i++) {
-            let index = i + form.value.images.length
-            imagesFormData.append('trip-image', images[i], _id + '_' + index + '.img')
+            imagesFormData.append(
+                "trip-image",
+                new File([images[i]], _id + "_" + i + ".jpg"),
+                _id + "_" + i + ".jpg"
+            );
         }
-        function close() {
-            router.push('/cabinet/me')
-        }
-        if (images.length) {
-            TripService.uploadTripImages(imagesFormData).then((res) => {
-                message.config({ duration: 3, top: '90vh' })
-                message.success({ content: 'Тур обновлён!', onClose: close })
-            })
-        } else {
-            message.config({ duration: 3, top: '90vh' })
-            message.success({ content: 'Тур обновлён!', onClose: close })
-        }
-    })
-}
+        TripService.uploadTripImages(imagesFormData).then(() => {
+            console.log('фотографии загружены')
+        })
+    }
 
+    function updateUser(_id) {
+        if (fullUserInfo) {
+            userStore
+                .updateUser({
+                    email: userStore.user.email,
+                    fullinfo: fullUserInfo,
+                    $push: { trips: _id },
+                })
+                .then((response) => {
+                    userStore.user = response.data;
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        } else {
+            userStore
+                .updateUser({ email: userStore.user.email, $push: { trips: _id } })
+                .then((response) => {
+                    userStore.user = response.data;
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
+    }
+
+    form.author = userStore.user._id
+
+    TripService.createTrip(form, userStore.user.email).then(async (res) => {
+        if (res.status == 200) {
+            const _id = res.data._id;
+            await uploadTripImages(_id)
+            await updateUser(_id)
+
+            message.config({ duration: 1.5, top: "70vh" });
+            message.success({
+                content: "Тур создан!", onClose: () => {
+                    close()
+                },
+            });
+        }
+    });
+
+}
 function addPreview(blob) {
     // imagesFormData.append("image", blob, `product-${previews.value.length}`);
     visibleCropperModal.value = false;
@@ -137,11 +215,14 @@ function addPreview(blob) {
 }
 function updateUserInfo(info) {
     fullUserInfo = info;
+    author = fullUserInfo._id
+
 }
 function selectStartLocation(selected) {
     for (let l of possibleLocations.value) {
+        // l.value - name
         if (l.value == selected) {
-            form.value.startLocation = l.geo
+            form.startLocation = l.location
         }
     }
 }
@@ -172,21 +253,24 @@ watch(locationSearchRequest, async (newValue, oldValue) => {
             for (let s of suggestions) {
                 let location = {
                     value: s.value,
-                    geo: {
+                    location: {
                         name: s.value,
                         shortName: '',
-                        geo_lat: s.data.geo_lat,
-                        geo_lon: s.data.geo_lon
+                        type: 'Point',
+                        coordinates: [
+                            s.data.geo_lon,
+                            s.data.geo_lat
+                        ]
                     }
                 }
 
                 if (s.data.settlement) {
-                    location.geo.shortName = s.data.settlement
+                    location.location.shortName = s.data.settlement
                 }
                 else if (s.data.city) {
-                    location.geo.shortName = s.data.city
+                    location.location.shortName = s.data.city
                 } else {
-                    location.geo.shortName = s.value
+                    location.location.shortName = s.value
                 }
 
                 possibleLocations.value.push(location)
@@ -196,35 +280,9 @@ watch(locationSearchRequest, async (newValue, oldValue) => {
         }
     }
 })
-
-const clearData = (dataString) => {
-    const dataFromString = new Date(Number(dataString));
-    return dataFromString;
-};
-
-onMounted(() => {
-    tripStore.getById(router.currentRoute.value.query._id)
-        .then((response) => {
-            let d = response.data;
-            delete d.__v
-
-            start.value = dayjs(new Date(d.start))
-            end.value = dayjs(new Date(d.end))
-            locationSearchRequest.value = d.startLocation.name
-
-            form.value = d;
-            for (let i of form.value.images)
-                previews.value.push(i)
-            quill.value.setHTML(d.description)
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-
-})
-
 watch(description, (newValue) => {
     newContent = newValue;
+    form.description = description.value;
     if (newContent === newValue) return;
     quill.value.setHTML(newValue);
     // Workaround https://github.com/vueup/vue-quill/issues/52
@@ -235,27 +293,96 @@ watch(description, (newValue) => {
         q.focus();
     });
 });
-
 watch(start, () => {
-    if (start.value)
-        form.value.start = Number(Date.parse(start.value.$d.toString()));
+    // округлить, чтобы при поиске мы точно попадали
+    if (start.value) {
+        let startDate = new Date(start.value.$d);
+        startDate.setHours(0)
+        startDate.setMinutes(0)
+        startDate.setSeconds(0)
+        startDate.setMilliseconds(0)
 
+        form.start = Number(Date.parse(startDate.toString()));
+        if (!end.value) {
+            end.value = start.value
+        }
+    }
 });
 watch(end, () => {
-    if (end.value)
-        form.value.end = Number(Date.parse(end.value.$d.toString()));
+    // округлить, чтобы при поиске мы точно попадали
+    if (end.value) {
+        let endDate = new Date(end.value.$d);
+        endDate.setHours(23)
+        endDate.setMinutes(59)
+        endDate.setSeconds(59)
+        endDate.setMilliseconds(999)
+
+        form.end = Date.parse(endDate);
+    }
 });
+const clearData = (dataString) => {
+    let date
+    if (dataString.length == 13) {
+        const dataFromString = new Date(Number(dataString));
+        date = dataFromString
+
+    } else {
+        date = new Date(dataString)
+    };
+    return date.toLocaleDateString("ru-Ru", {
+        year: "2-digit",
+        month: "2-digit",
+        day: "2-digit",
+
+    })
+}
+onMounted(() => {
+    if (route.query._id) {
+        tripStore.getById(route.query._id).then((response) => {
+            let d = response.data;
+
+            delete d.__v;
+            form.name = d.name;
+            start.value = baseTimeStart;
+            end.value = baseTimeEnd;
+            period.value = baseTimePeriod;
+            start.value.$d = clearData(d.start);
+            end.value.$d = clearData(d.end);
+            period.value.$d = clearData(Date.parse(d.period));
+            form.maxPeople = d.maxPeople;
+            form.duration = d.duration;
+            form.tripType = d.tripType;
+            form.distance = d.distance;
+            form.cost = d.cost;
+            form.bonuses = d.bonuses;
+            quill.value.setHTML(d.description);
+            form.fromAge = d.fromAge;
+            form.tripRoute = d.tripRoute;
+            form.offer = d.offer;
+            form.author = d.author;
+            start.value = dayjs(new Date(d.start));
+            end.value = dayjs(new Date(d.end));
+            form.startLocation = d.startLocation;
+            locationSearchRequest.value = d.startLocation.name;
+        });
+    }
+});
+
 let formSchema = yup.object({
     name: yup.string().required("заполните поле"),
     start: yup.object().required("заполните поле"),
     end: yup.object().required("заполните поле"),
+    duration: yup.string().required("заполните поле"),
     maxPeople: yup.string().required("заполните поле"),
     tripType: yup.string().required("заполните поле"),
     fromAge: yup.string().required("заполните поле"),
     offer: yup.string().required("заполните поле"),
     tripRoute: yup.string().required("заполните поле"),
-    duration: yup.string().required("заполните поле"),
-})
+    startLocation: yup.string().required("заполните поле"),
+    // distance: yup.string().required("заполните поле"),
+    // cost: yup.string().required("заполните поле"),
+    // https://vee-validate.logaretm.com/v4/examples/array-fields/
+});
 </script>
 <template>
     <div>
@@ -265,11 +392,14 @@ let formSchema = yup.object({
                 <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
                     <a-row :gutter="[16, 16]">
                         <a-col :span="24">
+                            <UserFullInfo @fullInfo="updateUserInfo" />
+                        </a-col>
+                        <a-col :span="24">
                             <h2>Создать тур</h2>
                             <Field name="name" v-slot="{ value, handleChange }" v-model="form.name">
                                 Название
-                                <a-input placeholder="Название тура" size="large" @update:value="handleChange"
-                                    :value="value"></a-input>
+                                <a-input placeholder="Название тура" @update:value="handleChange" :value="value"
+                                    :maxlength="35" show-count></a-input>
                             </Field>
                             <Transition name="fade">
                                 <ErrorMessage name="name" class="error-message" />
@@ -278,11 +408,11 @@ let formSchema = yup.object({
                         <a-col :xs="24">
                             Фотографии
                             <div class="d-flex" style="overflow-x: scroll">
-                                <img v-for="(pr, i) in        previews       " :key="i" :src="pr" alt="" class="ma-4"
+                                <img v-for="(pr, i) in    previews   " :key="i" :src="pr" alt="" class="ma-4"
                                     style="max-width: 200px" @click="delPhotoDialog = true;
                                     targetIndex = i;" />
                             </div>
-                            <a-button type="dashed" block @click=" visibleCropperModal = true" class="ma-8">
+                            <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                                 <span class="mdi mdi-12px mdi-plus"></span>
                                 Добавить фото
                             </a-button>
@@ -311,6 +441,7 @@ let formSchema = yup.object({
                         </a-col>
 
                         <a-col :span="12">
+
                             <Field name="duration" v-slot="{ value, handleChange }" v-model="form.duration">
                                 Продолжительность
                                 <a-input placeholder="6 дней/ 7 ночей" @update:value="handleChange" :value="value"
@@ -332,15 +463,23 @@ let formSchema = yup.object({
                         </a-col>
 
                         <a-col :span="24">
-                            Цены
-                            <div v-for="       item        in        form.cost       " :key="item.type"
-                                style="display: flex" align="baseline" class="mb-16">
+                            <div class="d-flex space-between ">Цены
+                                <a-tooltip>
+                                    <template #title>калькулятор</template>
+                                    <span class="mdi mdi-calculator" @click="goToPriceCalc()"
+                                        style="cursor: pointer; font-size: 24px; color:#ff6600"></span>
+                                </a-tooltip>
+                            </div>
+
+
+                            <div v-for="   item    in    form.cost   " :key="item.type" style="display: flex"
+                                align="baseline" class="mb-16">
                                 <a-input v-model:value="item.first" placeholder="Для кого" />
 
                                 <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0"
                                     :step="0.01" class="ml-16 mr-16" />
 
-                                <a-button @click=" removeCost(item)" shape="circle">
+                                <a-button @click="removeCost(item)" shape="circle">
                                     <span class="mdi mdi-minus" style="cursor: pointer"></span>
                                 </a-button>
                             </div>
@@ -352,14 +491,15 @@ let formSchema = yup.object({
                         </a-col>
 
                         <a-col :span="24">
-                            Бонусы и скидки
-                            <div v-for="       item        in        form.bonuses       " :key="item.type1"
-                                style="display: flex" align="baseline" class="mb-16">
+
+                            <div v-for="   item    in    form.bonuses   " :key="item.type1" style="display: flex"
+                                align="baseline" class="mb-16">
                                 <a-input v-model:value="item.first" placeholder="Количество человек" />
 
-                                <a-input v-model:value="item.bonus" style="width: 100%" placeholder="Бонусы или скидки"  class="ml-16 mr-16" />
+                                <a-input v-model:value="item.bonus" style="width: 100%" placeholder="Бонусы или скидки"
+                                    class="ml-16 mr-16" />
 
-                                <a-button @click=" removeBonuses(item)" shape="circle">
+                                <a-button @click="removeBonuses(item)" shape="circle">
                                     <span class="mdi mdi-minus" style="cursor: pointer"></span>
                                 </a-button>
                             </div>
@@ -375,9 +515,9 @@ let formSchema = yup.object({
                                 Тип тура
                                 <div>
                                     <a-select @update:value="handleChange" :value="value" style="width: 100%">
-                                        <a-select-option
-                                            v-for="       tripType        in        appStore.appState[0].tripType       "
-                                            :value="tripType">{{ tripType
+                                        <a-select-option v-for="   tripType    in    appStore.appState[0].tripType   "
+                                            :value="tripType">{{
+                                                tripType
                                             }}</a-select-option>
                                     </a-select>
                                 </div>
@@ -406,16 +546,17 @@ let formSchema = yup.object({
                                 </a-auto-complete>
                             </Field>
                             <Transition name="fade">
-                                <ErrorMessage name="location" class="error-message" />
+                                <ErrorMessage name="startLocation" class="error-message" />
                             </Transition>
-
                         </a-col>
+
+
 
                         <a-col :span="24">
                             <Field name="offer" v-slot="{ value, handleChange }" v-model="form.offer">
                                 Краткое описание
                                 <a-textarea @update:value="handleChange" :value="value"
-                                    placeholder="завлекательное описание" size="large">
+                                    placeholder="Едем в Татарстан за новыми эмоциями!" size="large">
                                 </a-textarea>
                             </Field>
                             <Transition name="fade">
@@ -425,8 +566,8 @@ let formSchema = yup.object({
 
                         <a-col :span="24">
                             <Field name="tripRoute" v-slot="{ value, handleChange }" v-model="form.tripRoute">
-                                Ключевые точки
-                                <a-textarea @update:value="handleChange" :value="value" placeholder="Глазов-Пермь 300км"
+                                Ключевые точки:
+                                <a-textarea @update:value="handleChange" :value="value" placeholder="Глазов-Пермь-Кама"
                                     size="large">
                                 </a-textarea>
                             </Field>
@@ -446,9 +587,17 @@ let formSchema = yup.object({
                             ]
                                 " />
                         </a-col>
+                        <!-- <a-col :span="24">
+              :file-list="fileList"
+              <a-upload action="" :multiple="true">
+                <a-button type="dashed" block>
+                  <span class="mdi mdi-12px mdi-plus"></span>
+                  Загрузить pdf описание
+                </a-button>
+              </a-upload>
+            </a-col> -->
                         <a-col :span="24" class="d-flex justify-center">
-                            <a-button :disabled="!meta.valid" class="lets_go_btn ma-36" type="primary"
-                                html-type="submit">Отправить
+                            <a-button class="lets_go_btn ma-36" type="primary" html-type="submit">Отправить
                             </a-button>
                         </a-col>
                     </a-row>
@@ -459,7 +608,7 @@ let formSchema = yup.object({
                 <a-modal v-model:visible="delPhotoDialog" :footer="null">
                     <h3>Удалить фото?</h3>
                     <div class="d-flex justify-center">
-                        <a-button class="mt-16" type="primary" @click="delPhoto">Да
+                        <a-button class="mt-16" type="primary" size="large" @click="delPhoto">Да
                         </a-button>
                     </div>
                 </a-modal>

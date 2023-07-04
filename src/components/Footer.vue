@@ -8,9 +8,7 @@
           <a-row class="bottom_menu d-flex">
             <a-col :xs="8" class="d-flex align-center direction-column">
               <div>
-                <a href="https://doc.gorodaivesi.ru/privacy/main.html" target="_blank"
-                  ><b>Условия</b>
-                </a>
+                <a href="https://doc.gorodaivesi.ru" target="_blank"><b>Условия</b> </a>
               </div>
               <div>
                 <div><a href="https://doc.gorodaivesi.ru/privacy/oferta.html"
@@ -27,9 +25,7 @@
             </a-col>
             <a-col :xs="8" class="d-flex align-center direction-column">
               <div>
-                <a href="https://doc.gorodaivesi.ru/about/main.html" target="_blank"
-                  ><b>О проекте</b>
-                </a>
+                <a href="https://doc.gorodaivesi.ru" target="_blank"><b>О проекте</b> </a>
               </div>
 
               <div>
@@ -46,9 +42,7 @@
             </a-col>
             <a-col :xs="8" class="d-flex align-center direction-column">
               <div>
-                <a href="https://doc.gorodaivesi.ru/education/main.html" target="_blank"
-                  ><b>Обучение</b></a
-                >
+                <a href="https://doc.gorodaivesi.ru" target="_blank"><b>Обучение</b></a>
               </div>
 
               <div>
@@ -69,7 +63,11 @@
       </a-row>
 
       <a-row type="flex" justify="center" class="mt-16">
-        <a-col> <b>Сделано в Кубит</b> </a-col>
+        <a-col>
+          <a href="https://qbit-club.com/" target="_blank">
+            <b> Сделано в Кубит </b>
+          </a>
+        </a-col>
       </a-row>
     </a-layout-footer>
   </a-affix>
