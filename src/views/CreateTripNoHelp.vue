@@ -10,9 +10,7 @@ import "@vueup/vue-quill/dist/vue-quill.snow.css";
 // import typeOfTrip from "../fakeDB/tripType";
 import { message } from "ant-design-vue";
 import { useRouter } from "vue-router";
-import { useRoute } from "vue-router";
 import { useAuth } from "../stores/auth";
-import { useTrips } from "../stores/trips";
 import { useAppState } from "../stores/appState";
 import TripService from "../service/TripService";
 
@@ -21,39 +19,32 @@ import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import 'dayjs/locale/ru';
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
+
 dayjs.locale('ru');
 
-const tripStore = useTrips();
 const userStore = useAuth();
 const appStore = useAppState();
 
 let formFromLocalStorage = JSON.parse(localStorage.getItem("CreatingTrip"));
 
 const dateFormatList = ["DD.MM.YY", "DD.MM.YY"];
-const monthFormatList = ["MM.YY"];
 const ruLocale = locale;
 const quill = ref(null);
 let newContent = "";
-const formRef = ref(null);
 const description = ref(null);
 const start = ref(formFromLocalStorage?.start == null ? null : dayjs(formFromLocalStorage?.start));
 const end = ref(formFromLocalStorage?.end == null ? null : dayjs(formFromLocalStorage?.end));
-const period = ref(null);
 const delPhotoDialog = ref(false);
 const targetIndex = ref(null);
-const baseTimeStart = dayjs(1679492631000);
-const baseTimeEnd = dayjs(1679492631000);
-const baseTimePeriod = dayjs(1679492631000);
 const router = useRouter();
-const route = useRoute();
 
 var author = ref()
 let possibleLocations = ref([])
 // cropper
 let visibleCropperModal = ref(false);
-let previews = ref([]);
+let previews = ref(localStorage.getItem('createTripImages') ? JSON.parse(localStorage.getItem('createTripImages')) : []);
 // отправляем на сервер
-let images = []; // type: blob
+let images = localStorage.getItem('createTripImages') ? JSON.parse(localStorage.getItem('createTripImages')) : []; // type: blob
 //let pdf = [];
 let locationSearchRequest = ref("")
 // необходимо добавить поле количество людей в туре
@@ -101,7 +92,7 @@ const removeBonuses = (item) => {
 
 const addBonuses = () => {
   form.bonuses.push({
-    type1: "",
+    type: "",
     bonus: "",
   });
 };
@@ -109,11 +100,6 @@ const addBonuses = () => {
 function goToPriceCalc() {
   router.push("/calc");
 }
-const delPhoto = () => {
-  previews.value.splice(targetIndex.value, 1);
-  images.splice(targetIndex.value, 1);
-  delPhotoDialog.value = false;
-};
 function submit() {
   description.value = description.value.split("<p><br></p>").join("");
   form.description = description.value;
@@ -162,7 +148,7 @@ function submit() {
     }
     TripService.uploadTripImages(imagesFormData).then(() => {
       console.log('фотографии загружены')
-
+      localStorage.removeItem('createTripImages')
     })
 
   }
@@ -217,12 +203,17 @@ function addPreview(blob) {
   visibleCropperModal.value = false;
   images.push(blob);
   previews.value.push(URL.createObjectURL(blob));
+  localStorage.setItem('createTripImages', JSON.stringify(previews.value))
 }
+const delPhoto = () => {
+  previews.value.splice(targetIndex.value, 1);
+  images.splice(targetIndex.value, 1);
+  delPhotoDialog.value = false;
+  localStorage.setItem('createTripImages', JSON.stringify(previews.value))
+};
 function updateUserInfo(info) {
   fullUserInfo = info;
-  console.log(fullUserInfo)
   author = fullUserInfo._id
-
 }
 function selectStartLocation(selected) {
   for (let l of possibleLocations.value) {
@@ -329,21 +320,6 @@ watch(end, () => {
     form.end = Date.parse(endDate);
   }
 });
-const clearData = (dataString) => {
-  let date
-  if (dataString.length == 13) {
-    const dataFromString = new Date(Number(dataString));
-    date = dataFromString
-
-  } else {
-    date = new Date(dataString)
-  };
-  return date.toLocaleDateString("ru-Ru", {
-    year: "2-digit",
-    month: "2-digit",
-    day: "2-digit",
-  })
-}
 onMounted(() => {
   if (localStorage.getItem('CreatingTrip')) {
     let f = JSON.parse(localStorage.getItem('CreatingTrip'))
@@ -366,8 +342,6 @@ let formSchema = yup.object({
   offer: yup.string().required("заполните поле"),
   tripRoute: yup.string().required("заполните поле"),
   startLocation: yup.string().required("заполните поле"),
-  // distance: yup.string().required("заполните поле"),
-  // cost: yup.string().required("заполните поле"),
   // https://vee-validate.logaretm.com/v4/examples/array-fields/
 });
 </script>
@@ -479,9 +453,8 @@ let formSchema = yup.object({
 
             <a-col :span="24">
 
-              <div v-for="   item    in    form.bonuses   " :key="item.type1" style="display: flex" align="baseline"
-                class="mb-16">
-                <a-input v-model:value="item.first" placeholder="Количество человек" />
+              <div v-for="   item    in    form.bonuses   " style="display: flex" align="baseline" class="mb-16">
+                <a-input v-model:value="item.type" placeholder="Количество человек" />
 
                 <a-input v-model:value="item.bonus" style="width: 100%" placeholder="Бонусы или скидки"
                   class="ml-16 mr-16" />
