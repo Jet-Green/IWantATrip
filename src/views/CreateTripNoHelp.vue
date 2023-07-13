@@ -330,6 +330,11 @@ onMounted(() => {
     }
   }
 });
+function handleImgError(i) {
+  previews.value.splice(i, 1)
+  images.splice(i, 1)
+  localStorage.setItem('createTripImages', JSON.stringify(previews.value))
+}
 
 let formSchema = yup.object({
   name: yup.string().required("заполните поле"),
@@ -371,7 +376,7 @@ let formSchema = yup.object({
               <div class="d-flex" style="overflow-x: scroll">
                 <img v-for="(pr, i) in    previews   " :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px"
                   @click="delPhotoDialog = true;
-                  targetIndex = i;" />
+                  targetIndex = i;" @error="handleImgError(i)" />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
