@@ -560,7 +560,7 @@ let formSchema = yup.object({
             </a-col>
           </a-row>
         </Form>
-        <a-modal v-model:visible="visibleCropperModal" :footer="null">
+        <a-modal v-model:visible="visibleCropperModal" :footer="null" :destroyOnClose="true">
           <ImageCropper @addImage="addPreview" />
         </a-modal>
         <a-modal v-model:visible="delPhotoDialog" :footer="null">
