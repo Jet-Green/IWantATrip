@@ -63,6 +63,7 @@ const clearData = (dataString) => {
                             <span class="mdi mdi-calendar-arrow-left"></span>
                             {{ `по ${clearData(trip.end)}` }}
                         </div>
+                        <div class="mt-8">Автор: {{ trip.author.fullinfo.fullname }}</div>
 
                         <div class="actions d-flex justify-center">
                             <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет"

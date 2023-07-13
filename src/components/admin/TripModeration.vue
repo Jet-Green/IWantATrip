@@ -74,6 +74,9 @@ function getImg(index) {
     <a-row class="justify-center d-flex">
       <a-col :xs="22" :xl="16">
         <h2 class="ma-0">{{ trip.name }}</h2>
+        <p>Автор: {{ trip.author?.fullinfo?.fullname }} <br> Телефон: <a :href="'tel:' + trip.author?.fullinfo?.phone">{{
+          trip.author?.fullinfo?.phone }}</a>
+        </p>
         <a-spin v-if="!trip._id" size="large"></a-spin>
         <a-row v-if="trip._id" :gutter="[12, 12]" class="text justify-center d-flex">
           <a-col :xs="24" :md="12">
