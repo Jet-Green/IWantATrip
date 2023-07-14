@@ -5,6 +5,9 @@ import TripService from "../../service/TripService";
 import { useTrips } from '../../stores/trips';
 import { useAuth } from '../../stores/auth';
 
+import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
+const dateFormatList = ["DD.MM.YY", "DD.MM.YY"];
+const ruLocale = locale;
 
 let props = defineProps(['trip', 'actions'])
 let { actions, trip } = props
@@ -12,7 +15,7 @@ let router = useRouter()
 let tripStore = useTrips()
 let userStore = useAuth()
 
-let dates = ref([])
+let dates = ref([{ start: null, end: null }])
 
 let addDateDialog = ref(false)
 
@@ -68,12 +71,41 @@ function updateUser(_id) {
         });
 }
 async function submit() {
-    dates.value = [{ start: Date.now(), end: Date.now() + 1000 * 60 * 60 * 24 }];
+    let datesToSend = []
 
-    let res = await tripStore.createManyByDates(dates.value, trip._id)
+    for (let d of dates.value) {
+        let toPush = { start: null, end: null }
+        if (d.start && d.end) {
+            let startDate = new Date(d.start.$d);
+            startDate.setHours(0)
+            startDate.setMinutes(0)
+            startDate.setSeconds(0)
+            startDate.setMilliseconds(0)
+
+            toPush.start = Number(Date.parse(startDate.toString()));
+
+            let endDate = new Date(d.end.$d);
+            endDate.setHours(23)
+            endDate.setMinutes(59)
+            endDate.setSeconds(59)
+            endDate.setMilliseconds(999)
+
+            toPush.end = Date.parse(endDate);
+        }
+
+        if (toPush.start && toPush.end) {
+            datesToSend.push(toPush)
+        }
+    }
+
+    let res = await tripStore.createManyByDates(datesToSend, trip._id)
 
     for (let _id of res.data) {
         updateUser(_id)
+    }
+
+    if (res.status == 200) {
+        addDateDialog.value = false
     }
 }
 
@@ -161,7 +193,25 @@ let showMessage = ref(false);
             </div>
         </a-card>
         <a-modal v-model:visible="addDateDialog" title="Добавить даты" okText="Отправить" cancelText="Отмена" @ok="submit">
+            <a-row :gutter="[16, 16]" v-for="date of dates">
+                <a-col :span="12">
+                    Дата начала
+                    <a-date-picker style="width: 100%" v-model:value="date.start" placeholder="Начало" :locale="ruLocale"
+                        :format="dateFormatList" />
+                </a-col>
 
+                <a-col :span="12">
+                    Дата конца
+                    <a-date-picker style="width: 100%" v-model:value="date.end" placeholder="Конец" :locale="ruLocale"
+                        :format="dateFormatList" />
+                </a-col>
+            </a-row>
+            <a-button type="dashed" block @click="dates.push({ start: null, end: null })" class="mt-8 mb-8">
+                добавить даты
+            </a-button>
+            <a-button type="dashed" block @click="dates.pop()" class="mt-8 mb-8" style="color: red">
+                удалить даты
+            </a-button>
         </a-modal>
     </div>
 </template>
