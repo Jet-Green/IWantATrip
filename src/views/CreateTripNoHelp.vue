@@ -37,6 +37,7 @@ const end = ref(formFromLocalStorage?.end == null ? null : dayjs(formFromLocalSt
 const delPhotoDialog = ref(false);
 const targetIndex = ref(null);
 const router = useRouter();
+const duration = ref(null);
 
 var author = ref()
 let possibleLocations = ref([])
@@ -97,9 +98,7 @@ const addBonuses = () => {
   });
 };
 
-function goToPriceCalc() {
-  router.push("/calc");
-}
+
 function submit() {
   description.value = description.value.split("<p><br></p>").join("");
   form.description = description.value;
@@ -303,6 +302,7 @@ watch(start, () => {
     if (!end.value) {
       end.value = start.value
     }
+    duration.value = ((form.end - form.start)/86400000).toFixed(0)
   }
 });
 watch(form, () => {
@@ -319,6 +319,7 @@ watch(end, () => {
 
     form.end = Date.parse(endDate);
   }
+  duration.value = ((form.end - form.start)/86400000).toFixed(0)
 });
 onMounted(() => {
   if (localStorage.getItem('CreatingTrip')) {
@@ -410,7 +411,7 @@ let formSchema = yup.object({
 
               <Field name="duration" v-slot="{ value, handleChange }" v-model="form.duration">
                 Продолжительность
-                <a-input placeholder="6 дней/ 7 ночей" @update:value="handleChange" :value="value" :maxlength="20"
+                <a-input :placeholder="duration?duration:'5 дней'" @update:value="handleChange" :value="value" :maxlength="20"
                   show-count></a-input>
               </Field>
               <Transition name="fade">
@@ -420,7 +421,7 @@ let formSchema = yup.object({
             <a-col :span="12">
               <Field name="maxPeople" v-slot="{ value, handleChange }" v-model="form.maxPeople">
                 Макс. число людей
-                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" placeholder="11"
+                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" type="number" placeholder="11"
                   :min="1" />
               </Field>
               <Transition name="fade">
@@ -432,8 +433,9 @@ let formSchema = yup.object({
               <div class="d-flex space-between ">Цены
                 <a-tooltip>
                   <template #title>калькулятор</template>
-                  <span class="mdi mdi-calculator" @click="goToPriceCalc()"
-                    style="cursor: pointer; font-size: 24px; color:#ff6600"></span>
+                  <router-link :to="{ name: 'PriceCalc' }" target="_blank">
+                    <span class="mdi mdi-calculator" style="cursor: pointer; font-size: 24px; color:#ff6600"></span>
+                  </router-link>
                 </a-tooltip>
               </div>
 
@@ -442,7 +444,7 @@ let formSchema = yup.object({
                 class="mb-16">
                 <a-input v-model:value="item.first" placeholder="Для кого" />
 
-                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0" :step="0.01"
+                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" type="number" :min="0" :step="1"
                   class="ml-16 mr-16" />
 
                 <a-button @click="removeCost(item)" shape="circle">
@@ -471,7 +473,7 @@ let formSchema = yup.object({
 
               <a-button type="dashed" block @click="addBonuses" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
-                Добавить бонусы и скидки
+                бонусы и скидки
               </a-button>
             </a-col>
 
@@ -494,7 +496,7 @@ let formSchema = yup.object({
             <a-col :xs="24" :md="12">
               <Field name="fromAge" v-slot="{ value, handleChange }" v-model="form.fromAge">
                 Мин. возраст, лет
-                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" placeholder="10" :min="0"
+                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" type="number" placeholder="10" :min="0"
                   :max="100" />
               </Field>
               <Transition name="fade">

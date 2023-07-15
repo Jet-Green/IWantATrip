@@ -237,7 +237,7 @@ const formSchema = yup.object({
             <a-col :xs="24" :md="12">
               <Field name="phone" v-slot="{ value, handleChange }" v-model="form.phone">
                 <label>Телефон</label>
-                <a-input @update:value="handleChange" :value="value" />
+                <a-input-number @update:value="handleChange" style="width: 100%" :value="value" placeholder="79127528874" :controls="false" maxlength="11"/>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="phone" class="error-message" />

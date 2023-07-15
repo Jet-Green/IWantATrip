@@ -52,7 +52,7 @@ onMounted(async () => {
 <style lang="scss" scoped>
 .wrapper {
 
-  height: 90vh;
+  height: 85vh;
   overflow: auto;
 
   &::-webkit-scrollbar {
