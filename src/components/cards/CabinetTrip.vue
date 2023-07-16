@@ -142,7 +142,7 @@ let showMessage = ref(false);
                     <span v-if="!trip.isHidden" class="mdi mdi-eye" style="color: #245159; cursor: pointer"></span>
                     <span v-else class="mdi mdi-eye-off" style="color: #245159; cursor: pointer"></span>
                 </a-popconfirm>
-                <span class="mdi mdi-plus-circle-outline" style="color: #245159; cursor: pointer"
+                <span v-if="!trip.parent" class="mdi mdi-plus-circle-outline" style="color: #245159; cursor: pointer"
                     @click="addDateDialog = true"></span>
                 <a-popconfirm v-if="actions.includes('copy') && !trip.parent" title="Вы уверены?" ok-text="Да"
                     cancel-text="Нет" @confirm="copyTrip(trip._id)">
@@ -151,8 +151,7 @@ let showMessage = ref(false);
                 <span class="mdi mdi-information-outline"
                     @click="router.push({ path: 'customers-trip', query: { _id: trip._id } })"
                     v-if="actions.includes('info')"></span>
-                <span class="mdi mdi-email-outline"
-                    v-if="trip.moderationMessage && actions.includes('msg') && !trip.parent"
+                <span class="mdi mdi-email-outline" v-if="trip.moderationMessage && actions.includes('msg') && !trip.parent"
                     @click="showMessage = !showMessage"></span>
             </div>
             <div v-if="showMessage">
