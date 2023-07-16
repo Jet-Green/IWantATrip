@@ -29,19 +29,6 @@ onMounted(async () => {
   loading.value = false
 
   for (let trip of created) {
-    if (trip.parent) {
-      if (trip.parent.start < Date.now()) {
-        archiveTrips.value.push(trip)
-        continue
-      }
-      if (trip.parent.isModerated) {
-        trips.value.push(trip);
-      } else {
-        tripsOnModeration.value.push(trip)
-      }
-      continue
-    }
-
     if (trip.start < Date.now()) {
       archiveTrips.value.push(trip)
       continue

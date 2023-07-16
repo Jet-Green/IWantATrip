@@ -113,7 +113,7 @@ let showMessage = ref(false);
 </script>
 <template>
     <div v-if="trip._id">
-        <a-card class="card" hoverable :class="[trip.isHidden ? 'overlay' : '']" v-if="!trip.parent">
+        <a-card class="card" hoverable :class="[trip.isHidden ? 'overlay' : '']">
             <div style="text-align:center">
                 {{ trip.name }}
             </div>
@@ -133,59 +133,26 @@ let showMessage = ref(false);
                     v-if="(!trip.billsList?.length > 0) && actions.includes('delete')">
                     <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
                 </a-popconfirm>
-                <a-popconfirm v-if="actions.includes('edit')" title="Вы уверены?" ok-text="Да" cancel-text="Нет"
-                    @confirm="editTrip(trip._id)">
+                <a-popconfirm v-if="actions.includes('edit') && !trip.parent" title="Вы уверены?" ok-text="Да"
+                    cancel-text="Нет" @confirm="editTrip(trip._id)">
                     <span class="mdi mdi-pen" style="color: #245159; cursor: pointer"></span>
                 </a-popconfirm>
-                <a-popconfirm v-if="actions.includes('hide')" title="Вы уверены?" ok-text="Да" cancel-text="Нет"
-                    @confirm="hideTrip(trip._id)">
+                <a-popconfirm v-if="actions.includes('hide') && !trip.parent" title="Вы уверены?" ok-text="Да"
+                    cancel-text="Нет" @confirm="hideTrip(trip._id)">
                     <span v-if="!trip.isHidden" class="mdi mdi-eye" style="color: #245159; cursor: pointer"></span>
                     <span v-else class="mdi mdi-eye-off" style="color: #245159; cursor: pointer"></span>
                 </a-popconfirm>
                 <span class="mdi mdi-plus-circle-outline" style="color: #245159; cursor: pointer"
                     @click="addDateDialog = true"></span>
-                <a-popconfirm v-if="actions.includes('copy')" title="Вы уверены?" ok-text="Да" cancel-text="Нет"
-                    @confirm="copyTrip(trip._id)">
+                <a-popconfirm v-if="actions.includes('copy') && !trip.parent" title="Вы уверены?" ok-text="Да"
+                    cancel-text="Нет" @confirm="copyTrip(trip._id)">
                     <span class="mdi mdi-content-copy" style="color: #245159; cursor: pointer"></span>
                 </a-popconfirm>
                 <span class="mdi mdi-information-outline"
                     @click="router.push({ path: 'customers-trip', query: { _id: trip._id } })"
                     v-if="actions.includes('info')"></span>
-                <span class="mdi mdi-email-outline" v-if="trip.moderationMessage && actions.includes('msg')"
-                    @click="showMessage = !showMessage"></span>
-            </div>
-            <div v-if="showMessage">
-                Замечания: {{ trip.moderationMessage }}
-            </div>
-        </a-card>
-        <a-card class="card" hoverable v-else>
-            <div style="text-align:center">
-                {{ trip.parent.name }}
-            </div>
-            <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
-            <div>
-                <span class="mdi mdi-compass-outline"></span>{{ trip.parent.startLocation.name }}
-            </div>
-            <div>
-                <span class="mdi mdi-calendar-arrow-right"></span>
-                {{ `c ${clearData(trip.start)}` }}
-                <span class="mdi mdi-calendar-arrow-left"></span>
-                {{ `по ${clearData(trip.end)}` }}
-            </div>
-
-            <div class="actions d-flex justify-center">
-                <!-- <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="tripToDelete(trip._id)"
-                    v-if="(!trip.parent.billsList?.length > 0) && actions.includes('delete')">
-                    <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
-                </a-popconfirm> -->
-                <!-- <a-popconfirm v-if="actions.includes('edit')" title="Вы уверены?" ok-text="Да" cancel-text="Нет"
-                    @confirm="editTrip(trip._id)">
-                    <span class="mdi mdi-pen" style="color: #245159; cursor: pointer"></span>
-                </a-popconfirm> -->
-                <span class="mdi mdi-information-outline"
-                    @click="router.push({ path: 'customers-trip', query: { _id: trip._id } })"
-                    v-if="actions.includes('info')"></span>
-                <span class="mdi mdi-email-outline" v-if="trip.parent.moderationMessage && actions.includes('msg')"
+                <span class="mdi mdi-email-outline"
+                    v-if="trip.moderationMessage && actions.includes('msg') && !trip.parent"
                     @click="showMessage = !showMessage"></span>
             </div>
             <div v-if="showMessage">
