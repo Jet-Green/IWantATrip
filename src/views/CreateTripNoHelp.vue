@@ -130,6 +130,7 @@ function submit() {
       author: "",
       startLocation: "",
       bonuses: [],
+      isModerated: false
     });
     images = [];
     // pdf = [];

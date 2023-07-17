@@ -31,5 +31,8 @@ export default {
     },
     deleteTripType(userId, tripCalcId) {
         return $api.post('/auth/delete-trip-calc', { userId, tripCalcId })
+    },
+    getBoughtTrips(userId) {
+        return $api.get(`/auth/get-bought-trips?user_id=${userId}`)
     }
 }

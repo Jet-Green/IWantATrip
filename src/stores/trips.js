@@ -21,6 +21,9 @@ export const useTrips = defineStore('trips', {
         },
     },
     actions: {
+        async createManyByDates(dates, parentId) {
+            return TripService.createManyByDates(dates, parentId)
+        },
         async createTrip(form, email) {
             const emailHtml = await render(CreateTripTemplate, form);
 

@@ -1,6 +1,9 @@
 import $api from "../plugins/axios";
 
 export default {
+    async createManyByDates(dates, parentId) {
+        return $api.post('/trips/create-many-by-dates', { dates, parentId })
+    },
     async getCustomers(ids) {
         return $api.post('/trips/get-customers', ids)
     },

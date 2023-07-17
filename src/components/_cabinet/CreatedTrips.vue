@@ -39,6 +39,7 @@ onMounted(async () => {
       tripsOnModeration.value.push(trip)
     }
   }
+
 });
 let activeKey = ref(2)
 </script>
