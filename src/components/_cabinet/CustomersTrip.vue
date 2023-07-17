@@ -195,7 +195,17 @@ onMounted(async () => {
         });
     }
 });
-
+const clearData = (dateNumber) => {
+    let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
+        year: "2-digit",
+        month: "2-digit",
+        day: "2-digit",
+    });
+    if (date !== "Invalid Date" && date) {
+        return date;
+    }
+    return "";
+};
 function getPhoneNumber(number) {
     return `tel:${number}`;
 }
@@ -218,13 +228,15 @@ function getPhoneNumber(number) {
 
     <a-row :gutter="[8, 8]">
         <a-col :lg="8" :sm="12" :xs="24">
+            <div class="mb-8">
+                {{ clearData(trip.start) }} - {{ clearData(trip.end) }}
+            </div>
             <a-card style="height: 100%; border: 1px solid #245159; padding:4px">
                 Статистика тура
                 <div>Максимум: {{ trip.maxPeople }} чел.</div>
                 <div>Забронировало: {{ bookingCount }} чел.</div>
                 <div>Оплатило: {{ payedCount }} чел.</div>
                 <div>Сумма: {{ totalCost }} руб.</div>
-
             </a-card>
         </a-col>
         <a-col :lg="8" :sm="12" :xs="24" v-for="(BILL, index) of trip.billsList">

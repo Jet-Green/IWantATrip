@@ -200,11 +200,13 @@ onMounted(() => {
                                 {{
                                     clearData(date.end) }}</a-checkable-tag>
                         </div>
-                        <div>Количество человек:</div>
-                        <div style="width: 50%">
-                            <b> <a-progress :percent="(tripsCount / trip.maxPeople) * 100"
-                                    :format="() => `${tripsCount}/${trip.maxPeople} чел`">
-                                </a-progress></b>
+                        <div v-if="tripDates.length < 2">
+                            <div>Количество человек:</div>
+                            <div style="width: 50%">
+                                <b> <a-progress :percent="(tripsCount / trip.maxPeople) * 100"
+                                        :format="() => `${tripsCount}/${trip.maxPeople} чел`">
+                                    </a-progress></b>
+                            </div>
                         </div>
                         <div>
                             Цена
