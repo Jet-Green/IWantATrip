@@ -12,10 +12,12 @@ let userRole = ref('user')
 let emailCreateTrip = ref('')
 let emailBookingTrip = ref('')
 let emailCreateCompanion = ref('')
+let emailBuyTrip = ref('')
 
 let createTripEmails = ref([])
 let bookingTripEmails = ref([])
 let createCompanionEmails = ref([])
+let buyTripEmails = ref([])
 
 let users = ref([])
 
@@ -35,6 +37,9 @@ async function addEmail(event, email) {
                 case 'CreateCompanion':
                     createCompanionEmails.value.push(email)
                     break
+                case 'BuyTrip':
+                    buyTripEmails.value.push(email)
+                    break
             }
         }
     }
@@ -52,6 +57,9 @@ async function getEmails(event) {
             break
         case 'CreateCompanion':
             createCompanionEmails.value = emails
+            break
+        case 'BuyTrip':
+            buyTripEmails.value = emails
             break
     }
 }
@@ -82,6 +90,13 @@ async function deleteEmail(event, email) {
                     }
                 }
                 break
+            case 'BuyTrip':
+                for (let i = 0; i < buyTripEmails.value.length; i++) {
+                    if (buyTripEmails.value[i] == email) {
+                        buyTripEmails.value.splice(i, 1)
+                    }
+                }
+                break
         }
     }
 }
@@ -102,31 +117,10 @@ onMounted(async () => {
     await getEmails('CreateTrip')
     await getEmails('BookingTrip')
     await getEmails('CreateCompanion')
+    await getEmails('BuyTrip')
 })
 </script>
 <template>
-    <a-row>
-        <a-col :span="24">
-            <h3>Изменить права доступа</h3>
-        </a-col>
-    </a-row>
-    <a-row :gutter="[16, 16]">
-        <a-col :span="24" :md="12" :xl="18">
-            <a-input v-model:value="query" placeholder="Имя или email" />
-        </a-col>
-        <a-col :span="24" :md="12" :xl="6">
-            <a-select v-model:value="userRole" style="width: 100%">
-                <a-select-option
-                    v-for="role in [{ value: 'user', name: 'Все' }, { value: 'manager', name: 'Менеджер' }, { value: 'admin', name: 'Админ' }]"
-                    :value="role.value">{{ role.name }}</a-select-option>
-            </a-select>
-        </a-col>
-    </a-row>
-    <a-row class="mt-16" :gutter="[16, 16]">
-        <a-col v-for="userFromDb of users" :span="24" :md="12">
-            <UserCard :userFromDb="userFromDb" />
-        </a-col>
-    </a-row>
     <a-row class="mt-16">
         <a-col :span="24">
             <h3>Email-уведомления</h3>
@@ -142,7 +136,8 @@ onMounted(async () => {
                 @click="addEmail('CreateTrip', emailCreateTrip)">добавить</a-button>
 
         </a-col>
-        <a-col v-if="createTripEmails.length != 0" v-for="email of createTripEmails" class="ma-4" style="cursor: pointer; font-size: 12px;">
+        <a-col v-if="createTripEmails.length != 0" v-for="email of createTripEmails" class="ma-4"
+            style="cursor: pointer; font-size: 12px;">
             <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deleteEmail('CreateTrip', email)">
                 {{ email }}
             </a-popconfirm>
@@ -160,7 +155,8 @@ onMounted(async () => {
             <a-button type="primary" class="ml-12 lets_go_btn"
                 @click="addEmail('BookingTrip', emailBookingTrip)">добавить</a-button>
         </a-col>
-        <a-col v-if="bookingTripEmails.length != 0" v-for="email of bookingTripEmails" class="ma-4" style="cursor: pointer; font-size: 12px;">
+        <a-col v-if="bookingTripEmails.length != 0" v-for="email of bookingTripEmails" class="ma-4"
+            style="cursor: pointer; font-size: 12px;">
             <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deleteEmail('BookingTrip', email)">
                 {{ email }}
             </a-popconfirm>
@@ -186,6 +182,47 @@ onMounted(async () => {
         </a-col>
         <a-col v-else>
             пусто
+        </a-col>
+    </a-row>
+    <a-row :gutter="[16, 0]" class="mt-16">
+        <a-col :span="24">
+            Покупка тура
+        </a-col>
+        <a-col :span="24" class="d-flex align-center">
+            <a-input v-model:value="emailBuyTrip" placeholder="email" />
+            <a-button type="primary" class="ml-12 lets_go_btn"
+                @click="addEmail('BuyTrip', emailBuyTrip)">добавить</a-button>
+        </a-col>
+        <a-col v-if="buyTripEmails.length != 0" v-for="email of buyTripEmails" class="ma-4"
+            style="cursor: pointer; font-size: 12px;">
+            <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deleteEmail('BuyTrip', email)">
+                {{ email }}
+            </a-popconfirm>
+        </a-col>
+        <a-col v-else>
+            пусто
+        </a-col>
+    </a-row>
+    <a-row>
+        <a-col :span="24">
+            <h3>Изменить права доступа</h3>
+        </a-col>
+    </a-row>
+    <a-row :gutter="[16, 16]">
+        <a-col :span="24" :md="12" :xl="18">
+            <a-input v-model:value="query" placeholder="Имя или email" />
+        </a-col>
+        <a-col :span="24" :md="12" :xl="6">
+            <a-select v-model:value="userRole" style="width: 100%">
+                <a-select-option
+                    v-for="role in [{ value: 'user', name: 'Все' }, { value: 'manager', name: 'Менеджер' }, { value: 'admin', name: 'Админ' }]"
+                    :value="role.value">{{ role.name }}</a-select-option>
+            </a-select>
+        </a-col>
+    </a-row>
+    <a-row class="mt-16 mb-16" :gutter="[16, 16]" style="max-height: 300px; overflow-y: scroll;">
+        <a-col v-for="userFromDb of users" :span="24" :md="12">
+            <UserCard :userFromDb="userFromDb" />
         </a-col>
     </a-row>
 </template>

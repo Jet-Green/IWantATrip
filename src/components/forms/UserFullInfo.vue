@@ -72,9 +72,8 @@ onMounted(() => {
     </a-col>
     <a-col :span="12">
       Телефон
-      <a-input v-model:value="fullInfo.phone" style="width: 100%" placeholder="79127528874" />
+      <a-input-number v-model:value="fullInfo.phone" style="width: 100%" placeholder="79127528874" :controls="false" maxlength="11"/>
     </a-col>
-
 
 
     <a-col v-if="fullInfo.type == 'company' || fullInfo.type == 'entrepreneur'" :span="12">

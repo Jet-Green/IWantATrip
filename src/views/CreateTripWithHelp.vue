@@ -2,7 +2,6 @@
 import BackButton from "../components/BackButton.vue";
 import { useRouter } from "vue-router";
 import { reactive, ref, onMounted, watch } from "vue";
-import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import { message } from "ant-design-vue";
 import { useBooking } from '../stores/booking'
 import { useAuth } from "../stores/auth";
@@ -12,6 +11,11 @@ import * as yup from "yup";
 import { Form, Field, ErrorMessage } from "vee-validate";
 let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
+
+import dayjs from "dayjs";
+import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
+import 'dayjs/locale/ru';
+dayjs.locale('ru');
 
 
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
@@ -132,10 +136,10 @@ onMounted(() => {
   <div>
     <BackButton />
 
-    <img v-if="!sm" src="../assets/images/booking_left.png"
+    <img v-if="!sm" src="../assets/images/booking_left.webp"
       style="position: fixed; left: 0px; bottom: 0px;  width: 20%;" />
 
-    <img v-if="!sm" src="../assets/images/booking_right.png"
+    <img v-if="!sm" src="../assets/images/booking_right.webp"
       style="position: fixed; right: 0px; bottom: 0px; width: 20% " />
 
     <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">

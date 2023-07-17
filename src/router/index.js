@@ -1,6 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Landing from '../views/Landing.vue'
-import TripsPage from '../views/TripsPage.vue'
 import { useAuth } from '../stores/auth'
 
 
@@ -11,7 +9,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'Landing',
-      component: Landing
+      component: () => import('../views/Landing.vue'),
     },
     {
       path: '/trips',
@@ -41,6 +39,19 @@ const router = createRouter({
       path: '/create-no-help',
       name: 'CreateTripNoHelp',
       component: () => import('../views/CreateTripNoHelp.vue'),
+      beforeEnter: async (to, from) => {
+        let userStore = useAuth()
+        if (!localStorage.getItem('token') || !userStore.isAuth)
+          await userStore.checkAuth()
+
+        if (!userStore.isAuth)
+          return '/auth'
+      }
+    },
+    {
+      path: '/copy-trip',
+      name: 'CopyTrip',
+      component: () => import('../views/CopyTrip.vue'),
       beforeEnter: async (to, from) => {
         let userStore = useAuth()
         if (!localStorage.getItem('token') || !userStore.isAuth)
@@ -277,15 +288,7 @@ const router = createRouter({
     {
       path: '/calc',
       name: 'PriceCalc',
-      component: () => import('../components/forms/PriceCalc.vue'),
-      beforeEnter: async (to, from) => {
-        let userStore = useAuth()
-        if (!localStorage.getItem('token') || !userStore.isAuth)
-          await userStore.checkAuth()
-
-        if (!userStore.isAuth)
-          return '/auth'
-      }
+      component: () => import('../components/_calculator/PriceCalc.vue'),
     },
   ],
   scrollBehavior(to, from, savedPosition) {

@@ -10,7 +10,9 @@ export const useAuth = defineStore('auth', {
     state: () => ({
         isAuth: false,
         userStatus: 'user',
-        user: null
+        user: {
+            tripCalc: []
+        }
     }),
     getters: {
         getUserStatus(state) {
@@ -125,6 +127,33 @@ export const useAuth = defineStore('auth', {
         async selectUserLocation(location) {
             this.user.userLocation = location
             return await LocationService.selectUserLocation(location, this.user._id)
+        },
+        async addTripCalc(tripCalc) {
+            delete tripCalc._id
+            delete tripCalc.__v
+            let res = await UserService.addTripCalc(this.user._id, tripCalc)
+            this.user.tripCalc = res.data.tripCalc
+            return
+        },
+        async deleteTripType(_id) {
+            let res = await UserService.deleteTripType(this.user._id, _id)
+
+            if (res.status == 200) {
+                for (let i = 0; i < this.user.tripCalc.length; i++) {
+                    if (this.user.tripCalc[i]._id == _id) {
+                        this.user.tripCalc.splice(i, 1)
+                    }
+                }
+            }
+            return
+        },
+        async getBoughtTrips() {
+            try {
+                let res = await UserService.getBoughtTrips(this.user?._id)
+                this.user.boughtTrips = res.data
+            } catch (error) {
+                console.log(error);
+            }
         }
     },
 })

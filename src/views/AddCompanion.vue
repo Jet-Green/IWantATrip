@@ -76,7 +76,7 @@ function submit() {
             // type: "Любой",
             direction: "",
             description: "",
-
+            startLocation: "",
           });
           date.value = null
 
@@ -184,10 +184,10 @@ const formSchema = yup.object({
 <template>
   <div>
     <BackButton :backRoute="backRoute" />
-    <img v-if="!sm" src="../assets/images/companion_left.png"
+    <img v-if="!sm" src="../assets/images/companion_left.webp"
       style="position: fixed; left: 0px; bottom: 0px;  width: 20%;" />
 
-    <img v-if="!sm" src="../assets/images/companion_right.png"
+    <img v-if="!sm" src="../assets/images/companion_right.webp"
       style="position: fixed; right: 0px; bottom: 0px; width: 20% " />
     <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
       <a-row type="flex" justify="center">
@@ -237,7 +237,7 @@ const formSchema = yup.object({
             <a-col :xs="24" :md="12">
               <Field name="phone" v-slot="{ value, handleChange }" v-model="form.phone">
                 <label>Телефон</label>
-                <a-input @update:value="handleChange" :value="value" />
+                <a-input-number @update:value="handleChange" style="width: 100%" :value="value" placeholder="79127528874" :controls="false" maxlength="11"/>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="phone" class="error-message" />
@@ -282,6 +282,7 @@ const formSchema = yup.object({
                                                                                                                                   :format="dateFormatList" /> 
                                                                                                                           -->
             </a-col>
+
             <a-col :xs="24">
               <!-- Тип отдыха <a-select v-model:value="form.type" style="width: 100%" :options="typeOfTrip" mode="multiple"></a-select> -->
               <Field name="direction" v-slot="{ value, handleChange }" v-model="form.direction">

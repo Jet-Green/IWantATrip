@@ -1,8 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
-import { Carousel, Navigation, Slide } from "vue3-carousel";
 import { useTrips } from "../../stores/trips";
-import "vue3-carousel/dist/carousel.css";
+
 
 import TripCard from "../cards/TripCard.vue";
 
@@ -32,21 +31,19 @@ let onResize = () => {
 
 const postsCount = computed(() => {
   if (carouselWidth.value < 600) {
-    return 1
+    return 1;
   } else {
-    return  carouselWidth.value / 270;
+    return carouselWidth.value / 270;
   }
-
 });
 
 watch(carousel_container, () => {
   onResize();
 });
 onMounted(async () => {
-  await useTrips().fetchTrips()
+  await useTrips().fetchTrips();
   onResize();
   window.addEventListener("resize", onResize);
-
 });
 </script>
 <template>
@@ -59,17 +56,11 @@ onMounted(async () => {
       </a-row>
       <a-row v-if="trips.length">
         <a-col :span="24">
-          <div ref="carousel_container"></div>
-          <Carousel :itemsToShow="postsCount" :autoplay="25000" snapAlign="center"  class="unselectable">
-            <Slide v-for="trip in trips" :key="trip.index" class="unselectable ma-8">
-              <div class="carousel__item ma-8" style="width: 100%">
+          <div class="section">
+            <div v-for="trip in trips" :key="trip.index" class="ma-8 section__item">      
                 <TripCard :trip="trip" :isPreview="true" />
-              </div>
-            </Slide>
-            <template #addons>
-              <Navigation />
-            </template>
-          </Carousel>
+            </div>
+          </div>
         </a-col>
       </a-row>
       <a-row v-else>
@@ -87,5 +78,20 @@ onMounted(async () => {
 
 .carousel__slide {
   align-items: end;
+}
+
+.section {
+  display: flex;
+  align-items: end;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding:0 1rem 1rem 1rem;
+  gap: 1rem;
+}
+
+.section__item {
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+
 }
 </style>

@@ -10,9 +10,7 @@ import "@vueup/vue-quill/dist/vue-quill.snow.css";
 // import typeOfTrip from "../fakeDB/tripType";
 import { message } from "ant-design-vue";
 import { useRouter } from "vue-router";
-import { useRoute } from "vue-router";
 import { useAuth } from "../stores/auth";
-import { useTrips } from "../stores/trips";
 import { useAppState } from "../stores/appState";
 import TripService from "../service/TripService";
 
@@ -21,39 +19,33 @@ import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import 'dayjs/locale/ru';
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
+
 dayjs.locale('ru');
 
-const tripStore = useTrips();
 const userStore = useAuth();
 const appStore = useAppState();
 
 let formFromLocalStorage = JSON.parse(localStorage.getItem("CreatingTrip"));
 
 const dateFormatList = ["DD.MM.YY", "DD.MM.YY"];
-const monthFormatList = ["MM.YY"];
 const ruLocale = locale;
 const quill = ref(null);
 let newContent = "";
-const formRef = ref(null);
 const description = ref(null);
 const start = ref(formFromLocalStorage?.start == null ? null : dayjs(formFromLocalStorage?.start));
 const end = ref(formFromLocalStorage?.end == null ? null : dayjs(formFromLocalStorage?.end));
-const period = ref(null);
 const delPhotoDialog = ref(false);
 const targetIndex = ref(null);
-const baseTimeStart = dayjs(1679492631000);
-const baseTimeEnd = dayjs(1679492631000);
-const baseTimePeriod = dayjs(1679492631000);
 const router = useRouter();
-const route = useRoute();
+const duration = ref(null);
 
-var creatorForm = ref()
+var author = ref()
 let possibleLocations = ref([])
 // cropper
 let visibleCropperModal = ref(false);
-let previews = ref([]);
+let previews = ref(localStorage.getItem('createTripImages') ? JSON.parse(localStorage.getItem('createTripImages')) : []);
 // отправляем на сервер
-let images = []; // type: blob
+let images = localStorage.getItem('createTripImages') ? JSON.parse(localStorage.getItem('createTripImages')) : []; // type: blob
 //let pdf = [];
 let locationSearchRequest = ref("")
 // необходимо добавить поле количество людей в туре
@@ -72,8 +64,9 @@ let form = reactive({
   description: description.value,
   tripType: "",
   fromAge: "",
-  creatorForm: [],
+  author: "",
   startLocation: null,
+  bonuses: []
 });
 let fullUserInfo = null;
 
@@ -90,18 +83,26 @@ const addCost = () => {
     price: "",
   });
 };
-function goToPriceCalc() {
-  router.push("/calc");
-}
-const delPhoto = () => {
-  previews.value.splice(targetIndex.value, 1);
-  images.splice(targetIndex.value, 1);
-  delPhotoDialog.value = false;
+
+const removeBonuses = (item) => {
+  let index = form.bonuses.indexOf(item);
+  if (index !== -1) {
+    form.bonuses.splice(index, 1);
+  }
 };
+
+const addBonuses = () => {
+  form.bonuses.push({
+    type: "",
+    bonus: "",
+  });
+};
+
+
 function submit() {
   description.value = description.value.split("<p><br></p>").join("");
   form.description = description.value;
-  form.creatorForm = creatorForm;
+  form.author = author;
   let send = {};
   for (let key in form) {
     send[key] = form[key];
@@ -126,8 +127,10 @@ function submit() {
       description: description.value,
       tripType: "",
       fromAge: "",
-      creatorForm: [],
+      author: "",
       startLocation: "",
+      bonuses: [],
+      isModerated: false
     });
     images = [];
     // pdf = [];
@@ -145,7 +148,7 @@ function submit() {
     }
     TripService.uploadTripImages(imagesFormData).then(() => {
       console.log('фотографии загружены')
-
+      localStorage.removeItem('createTripImages')
     })
 
   }
@@ -176,6 +179,8 @@ function submit() {
     }
   }
 
+  form.author = userStore.user._id
+
   TripService.createTrip(form, userStore.user.email).then(async (res) => {
     if (res.status == 200) {
       const _id = res.data._id;
@@ -198,11 +203,17 @@ function addPreview(blob) {
   visibleCropperModal.value = false;
   images.push(blob);
   previews.value.push(URL.createObjectURL(blob));
+  localStorage.setItem('createTripImages', JSON.stringify(previews.value))
 }
+const delPhoto = () => {
+  previews.value.splice(targetIndex.value, 1);
+  images.splice(targetIndex.value, 1);
+  delPhotoDialog.value = false;
+  localStorage.setItem('createTripImages', JSON.stringify(previews.value))
+};
 function updateUserInfo(info) {
   fullUserInfo = info;
-  creatorForm = [fullUserInfo.fullname, fullUserInfo.creatorsType, fullUserInfo.type]
-
+  author = fullUserInfo._id
 }
 function selectStartLocation(selected) {
   for (let l of possibleLocations.value) {
@@ -292,6 +303,7 @@ watch(start, () => {
     if (!end.value) {
       end.value = start.value
     }
+    duration.value = ((form.end - form.start)/86400000).toFixed(0)
   }
 });
 watch(form, () => {
@@ -308,23 +320,8 @@ watch(end, () => {
 
     form.end = Date.parse(endDate);
   }
+  duration.value = ((form.end - form.start)/86400000).toFixed(0)
 });
-const clearData = (dataString) => {
-  let date
-  if (dataString.length == 13) {
-    const dataFromString = new Date(Number(dataString));
-    date = dataFromString
-
-  } else {
-    date = new Date(dataString)
-  };
-  return date.toLocaleDateString("ru-Ru", {
-    year: "2-digit",
-    month: "2-digit",
-    day: "2-digit",
-
-  })
-}
 onMounted(() => {
   if (localStorage.getItem('CreatingTrip')) {
     let f = JSON.parse(localStorage.getItem('CreatingTrip'))
@@ -334,39 +331,12 @@ onMounted(() => {
       locationSearchRequest.value = f.startLocation.name
     }
   }
-  if (route.query.id) {
-    tripStore.getById(route.query.id).then((response) => {
-      let d = response.data;
-
-      delete d.__v;
-      form.name = d.name;
-      // console.log(d.period);
-      start.value = baseTimeStart;
-      end.value = baseTimeEnd;
-      period.value = baseTimePeriod;
-      start.value.$d = clearData(d.start);
-      end.value.$d = clearData(d.end);
-      period.value.$d = clearData(Date.parse(d.period));
-      form.maxPeople = d.maxPeople;
-      form.duration = d.duration;
-      form.tripType = d.tripType;
-      form.distance = d.distance;
-      form.cost = d.cost;
-      quill.value.setHTML(d.description);
-      form.fromAge = d.fromAge;
-      form.tripRoute = d.tripRoute;
-      form.offer = d.offer;
-      form.creatorForm = d.creatorForm;
-      start.value = dayjs(new Date(d.start));
-      end.value = dayjs(new Date(d.end));
-      form.startLocation = d.startLocation;
-      locationSearchRequest.value = d.startLocation[0].name;
-    });
-    // .catch((error) => {
-    //     console.log(error);
-    // });
-  }
 });
+function handleImgError(i) {
+  previews.value.splice(i, 1)
+  images.splice(i, 1)
+  localStorage.setItem('createTripImages', JSON.stringify(previews.value))
+}
 
 let formSchema = yup.object({
   name: yup.string().required("заполните поле"),
@@ -379,8 +349,6 @@ let formSchema = yup.object({
   offer: yup.string().required("заполните поле"),
   tripRoute: yup.string().required("заполните поле"),
   startLocation: yup.string().required("заполните поле"),
-  // distance: yup.string().required("заполните поле"),
-  // cost: yup.string().required("заполните поле"),
   // https://vee-validate.logaretm.com/v4/examples/array-fields/
 });
 </script>
@@ -410,7 +378,7 @@ let formSchema = yup.object({
               <div class="d-flex" style="overflow-x: scroll">
                 <img v-for="(pr, i) in    previews   " :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px"
                   @click="delPhotoDialog = true;
-                  targetIndex = i;" />
+                  targetIndex = i;" @error="handleImgError(i)" />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
@@ -444,7 +412,7 @@ let formSchema = yup.object({
 
               <Field name="duration" v-slot="{ value, handleChange }" v-model="form.duration">
                 Продолжительность
-                <a-input placeholder="6 дней/ 7 ночей" @update:value="handleChange" :value="value" :maxlength="20"
+                <a-input :placeholder="duration?duration:'5 дней'" @update:value="handleChange" :value="value" :maxlength="20"
                   show-count></a-input>
               </Field>
               <Transition name="fade">
@@ -454,7 +422,7 @@ let formSchema = yup.object({
             <a-col :span="12">
               <Field name="maxPeople" v-slot="{ value, handleChange }" v-model="form.maxPeople">
                 Макс. число людей
-                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" placeholder="11"
+                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" type="number" placeholder="11"
                   :min="1" />
               </Field>
               <Transition name="fade">
@@ -463,12 +431,21 @@ let formSchema = yup.object({
             </a-col>
 
             <a-col :span="24">
-              Цены
+              <div class="d-flex space-between ">Цены
+                <a-tooltip>
+                  <template #title>калькулятор</template>
+                  <router-link :to="{ name: 'PriceCalc' }" target="_blank">
+                    <span class="mdi mdi-calculator" style="cursor: pointer; font-size: 24px; color:#ff6600"></span>
+                  </router-link>
+                </a-tooltip>
+              </div>
+
+
               <div v-for="   item    in    form.cost   " :key="item.type" style="display: flex" align="baseline"
                 class="mb-16">
                 <a-input v-model:value="item.first" placeholder="Для кого" />
 
-                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0" :step="0.01"
+                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" type="number" :min="0" :step="1"
                   class="ml-16 mr-16" />
 
                 <a-button @click="removeCost(item)" shape="circle">
@@ -479,6 +456,25 @@ let formSchema = yup.object({
               <a-button type="dashed" block @click="addCost" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
                 Добавить цены
+              </a-button>
+            </a-col>
+
+            <a-col :span="24">
+
+              <div v-for="   item    in    form.bonuses   " style="display: flex" align="baseline" class="mb-16">
+                <a-input v-model:value="item.type" placeholder="Количество человек" />
+
+                <a-input v-model:value="item.bonus" style="width: 100%" placeholder="Бонусы или скидки"
+                  class="ml-16 mr-16" />
+
+                <a-button @click="removeBonuses(item)" shape="circle">
+                  <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                </a-button>
+              </div>
+
+              <a-button type="dashed" block @click="addBonuses" class="ma-8">
+                <span class="mdi mdi-12px mdi-plus"></span>
+                бонусы и скидки
               </a-button>
             </a-col>
 
@@ -501,7 +497,7 @@ let formSchema = yup.object({
             <a-col :xs="24" :md="12">
               <Field name="fromAge" v-slot="{ value, handleChange }" v-model="form.fromAge">
                 Мин. возраст, лет
-                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" placeholder="10" :min="0"
+                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" type="number" placeholder="10" :min="0"
                   :max="100" />
               </Field>
               <Transition name="fade">
@@ -555,24 +551,24 @@ let formSchema = yup.object({
                 [{ color: ['#000000', '#ff6600', '#3daff5'] }],
                 [{ align: [] }],
               ]
-              " />
+                " />
             </a-col>
-            <!-- <a-col :span=" 24 ">
-                                                                                                                                                                                                                                                                                        :file-list="fileList"
-                                                                                                                                                                                                                                                                                        <a-upload action="" :multiple=" true ">
-                                                                                                                                                                                                                                                                                          <a-button type="dashed" block>
-                                                                                                                                                                                                                                                                                            <span class="mdi mdi-12px mdi-plus"></span>
-                                                                                                                                                                                                                                                                                            Загрузить pdf описание
-                                                                                                                                                                                                                                                                                          </a-button>
-                                                                                                                                                                                                                                                                                        </a-upload>
-                                                                                                                                                                                                                                                                                      </a-col> -->
+            <!-- <a-col :span="24">
+              :file-list="fileList"
+              <a-upload action="" :multiple="true">
+                <a-button type="dashed" block>
+                  <span class="mdi mdi-12px mdi-plus"></span>
+                  Загрузить pdf описание
+                </a-button>
+              </a-upload>
+            </a-col> -->
             <a-col :span="24" class="d-flex justify-center">
-              <a-button class="lets_go_btn ma-36" type="primary"  html-type="submit">Отправить
+              <a-button class="lets_go_btn ma-36" type="primary" html-type="submit">Отправить
               </a-button>
             </a-col>
           </a-row>
         </Form>
-        <a-modal v-model:visible="visibleCropperModal" :footer="null">
+        <a-modal v-model:visible="visibleCropperModal" :footer="null" :destroyOnClose="true">
           <ImageCropper @addImage="addPreview" />
         </a-modal>
         <a-modal v-model:visible="delPhotoDialog" :footer="null">

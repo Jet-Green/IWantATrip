@@ -21,6 +21,9 @@ export const useTrips = defineStore('trips', {
         },
     },
     actions: {
+        async createManyByDates(dates, parentId) {
+            return TripService.createManyByDates(dates, parentId)
+        },
         async createTrip(form, email) {
             const emailHtml = await render(CreateTripTemplate, form);
 
@@ -110,9 +113,9 @@ export const useTrips = defineStore('trips', {
                 console.log(error);
             }
         },
-        async setPayment(_id) {
+        async setPayment(bill) {
             try {
-                return await TripService.setPayment(_id)
+                return await TripService.setPayment(bill)
             } catch (error) {
                 console.log(error);
             }

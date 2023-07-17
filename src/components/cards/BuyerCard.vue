@@ -1,17 +1,22 @@
 <script setup>
-
 defineProps({
     customer: Object,
     BILL: Object
 });
+
+
 function getPhoneNumber(number) {
-  return `tel:${number}`
+    return `tel:${number}`
 }
+
+let totalAmount = BILL.cart.reduce((accumulator, object) => {
+    return accumulator + object.cost *
+        object.count;
+}, 0)
+
 </script>
 <template>
- 
-
-    <a-card hoverable  class="pa-8" style="width: 100%;">
+    <a-card hoverable class="pa-8" style="width: 100%;">
         <div>
             <span class="mdi mdi-account-outline" style=""></span>
             {{ customer.fullname }}
@@ -29,16 +34,13 @@ function getPhoneNumber(number) {
 
         <div class="d-flex justify-end"> <span>Итого: </span>
             {{
-                BILL.cart.reduce((accumulator, object) => {
-                    return accumulator + object.cost *
-                        object.count;
-                }, 0)
+                totalAmount
             }} руб.
         </div>
 
         <div class="d-flex justify-end">
             <b>
-                <span v-if="BILL.isBoughtNow" style="color: #BCC662">
+                <span v-if="totalAmount == BILL.payment.amount" style="color: #BCC662">
                     <span class="mdi mdi-check-all" style="font-size: 20px;"></span>
                     оплачен
                 </span>

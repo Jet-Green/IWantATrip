@@ -58,16 +58,21 @@ onMounted(async () => {
           </a-col>
 
           <a-col :md="8" :xs="24" :sm="12" class="d-flex justify-center">
-            <a-button type="primary" @click="router.push('/add-companion')" class="lets_go_btn" >Добавить
+            <a-button type="primary" @click="router.push('/add-companion')" class="lets_go_btn">Добавить
               себя</a-button>
           </a-col>
         </a-row>
         <a-row :gutter="[8, 8]" class="mt-8">
-          <a-col :lg="8" :sm="12" :xs="24" v-for="(companion, i) in companionStore.companions" :key="i">
+          <a-col v-if="companionStore.companions.length != 0" :lg="8" :sm="12" :xs="24"
+            v-for="(companion, i) in companionStore.companions" :key="i">
             <a-card class="card" hoverable>
               <div>
                 <span class="mdi mdi-human-male-female"></span>{{ companion.name }} <span
                   class="mdi mdi-human-cane"></span>{{ ageString(companion.age) }}
+              </div>
+
+              <div>
+                <span class="mdi mdi-map-marker-outline"></span>{{ companion.startLocation.shortName }}
               </div>
 
               <div>
@@ -80,13 +85,12 @@ onMounted(async () => {
                     ? 'female'
                     : 'not-matter',
               ]">
-                <span :class="
-                  companion.companionGender == 'Женщина'
-                    ? 'mdi mdi-gender-female'
-                    : companion.companionGender == 'Мужчина'
-                      ? 'mdi mdi-gender-male'
-                      : 'mdi mdi-human-male-female'
-                "></span>
+                <span :class="companion.companionGender == 'Женщина'
+                  ? 'mdi mdi-gender-female'
+                  : companion.companionGender == 'Мужчина'
+                    ? 'mdi mdi-gender-male'
+                    : 'mdi mdi-human-male-female'
+                  "></span>
                 {{ companion.companionGender == "Мужчина" ? "Мужчину" : companion.companionGender ==
                   "Женщина" ? "Женщину" : "Не важно"
                 }}
@@ -110,11 +114,14 @@ onMounted(async () => {
                     path: '/add-feedback',
                     query: { companion_id: companion._id },
                   })
-                ">
+                  ">
                   <span class="mdi mdi-thumb-up-outline"></span>
                 </a-button>
               </a-tooltip>
             </a-card>
+          </a-col>
+          <a-col v-else style="text-align: center" :span="24">
+            Нет попутчиков
           </a-col>
         </a-row>
       </a-col>
