@@ -146,6 +146,14 @@ export const useAuth = defineStore('auth', {
                 }
             }
             return
+        },
+        async getBoughtTrips() {
+            try {
+                let res = await UserService.getBoughtTrips(this.user?._id)
+                this.user.boughtTrips = res.data
+            } catch (error) {
+                console.log(error);
+            }
         }
     },
 })

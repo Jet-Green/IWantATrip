@@ -96,7 +96,7 @@ async function buyTrip(isBoughtNow) {
             }
             if (bill.cart.length != 0) {
                 await userStore
-                    .buyTrip(trip.value._id, bill)
+                    .buyTrip(date._id, bill)
                     .then(() => {
                         message.config({ duration: 3, top: "90vh" });
                         message.success({ content: "Тур заказан!" });

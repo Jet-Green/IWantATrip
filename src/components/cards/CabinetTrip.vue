@@ -74,7 +74,7 @@ async function submit() {
     let datesToSend = []
 
     for (let d of dates.value) {
-        let toPush = { start: null, end: null }
+        let toPush = { start: null, end: null, author: userStore.user._id }
         if (d.start && d.end) {
             let startDate = new Date(d.start.$d);
             startDate.setHours(0)
