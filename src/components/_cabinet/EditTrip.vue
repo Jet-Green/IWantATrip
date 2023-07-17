@@ -89,7 +89,7 @@ const removeBonuses = (item) => {
 
 const addBonuses = () => {
     form.value.bonuses.push({
-        type1: "",
+        type: "",
         bonus: "",
     });
 };
@@ -353,9 +353,9 @@ let formSchema = yup.object({
 
                         <a-col :span="24">
                             Бонусы и скидки
-                            <div v-for="       item        in        form.bonuses       " :key="item.type1"
+                            <div v-for="       item        in        form.bonuses       " :key="item"
                                 style="display: flex" align="baseline" class="mb-16">
-                                <a-input v-model:value="item.first" placeholder="Количество человек" />
+                                <a-input v-model:value="item.type" placeholder="Количество человек" />
 
                                 <a-input v-model:value="item.bonus" style="width: 100%" placeholder="Бонусы или скидки"  class="ml-16 mr-16" />
 
