@@ -290,6 +290,11 @@ const router = createRouter({
       name: 'PriceCalc',
       component: () => import('../components/_calculator/PriceCalc.vue'),
     },
+    {
+      path: '/contacts',
+      name: 'Contacts',
+      component: () => import('../views/Contacts.vue')
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     if (!savedPosition || (to.name == 'TripsPage') || (to.name == 'TripInfoPage') || (to.name == 'CompanionsPage') || (to.name == 'CreateTripNoHelp'))

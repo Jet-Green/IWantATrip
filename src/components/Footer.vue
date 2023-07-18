@@ -11,16 +11,16 @@
                 <a href="https://doc.gorodaivesi.ru" target="_blank"><b>Условия</b> </a>
               </div>
               <div>
-                <div><a href="https://doc.gorodaivesi.ru/privacy/oferta.html"
-                    >Оферта</a
-                  ></div>
+                <div>
+                  <a href="https://doc.gorodaivesi.ru/privacy/oferta.html">Оферта</a>
+                </div>
 
-                <div><a href="https://doc.gorodaivesi.ru/privacy/agentDocs.html"
-                    >Правила</a
-                  ></div>
-                <div><a href="https://doc.gorodaivesi.ru/privacy/agreement.html"
-                    >Оплата</a
-                  ></div>
+                <div>
+                  <a href="https://doc.gorodaivesi.ru/privacy/agentDocs.html">Правила</a>
+                </div>
+                <div>
+                  <a href="https://doc.gorodaivesi.ru/privacy/agreement.html">Оплата</a>
+                </div>
               </div>
             </a-col>
             <a-col :xs="8" class="d-flex align-center direction-column">
@@ -29,15 +29,18 @@
               </div>
 
               <div>
-                <div><a href="https://doc.gorodaivesi.ru/about/questions.html"
-                    >Вопросы</a
-                  ></div>
-                <div><a href="https://doc.gorodaivesi.ru/about/support.html"
-                    >Поддержка</a
-                  ></div>
-                <div><a href="https://doc.gorodaivesi.ru/about/contacts.html"
-                    >Контакты</a
-                  ></div>
+                <div>
+                  <a href="https://doc.gorodaivesi.ru/about/questions.html">Вопросы</a>
+                </div>
+                <div>
+                  <a href="https://doc.gorodaivesi.ru/about/support.html">Поддержка</a>
+                </div>
+                <!-- ! -->
+                <router-link to="/contacts">
+                  <div> Контакты </div>
+                </router-link>
+                
+                <!-- ! -->
               </div>
             </a-col>
             <a-col :xs="8" class="d-flex align-center direction-column">
@@ -52,9 +55,7 @@
                   >
                 </div>
                 <div>
-                  <a href="https://doc.gorodaivesi.ru/education/reg.html"
-                    >Регистрация</a
-                  >
+                  <a href="https://doc.gorodaivesi.ru/education/reg.html">Регистрация</a>
                 </div>
               </div>
             </a-col>

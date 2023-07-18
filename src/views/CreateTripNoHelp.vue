@@ -303,7 +303,7 @@ watch(start, () => {
     if (!end.value) {
       end.value = start.value
     }
-    duration.value = ((form.end - form.start)/86400000).toFixed(0)
+    duration.value = ((form.end - form.start) / 86400000).toFixed(0)
   }
 });
 watch(form, () => {
@@ -319,8 +319,11 @@ watch(end, () => {
     endDate.setMilliseconds(999)
 
     form.end = Date.parse(endDate);
+    if (form.start > form.end) {
+      end.value = dayjs(form.start)
+    }
   }
-  duration.value = ((form.end - form.start)/86400000).toFixed(0)
+  duration.value = ((form.end - form.start) / 86400000).toFixed(0)
 });
 onMounted(() => {
   if (localStorage.getItem('CreatingTrip')) {
@@ -412,8 +415,8 @@ let formSchema = yup.object({
 
               <Field name="duration" v-slot="{ value, handleChange }" v-model="form.duration">
                 Продолжительность
-                <a-input :placeholder="duration?duration:'5 дней'" @update:value="handleChange" :value="value" :maxlength="20"
-                  show-count></a-input>
+                <a-input :placeholder="duration ? duration : '5 дней'" @update:value="handleChange" :value="value"
+                  :maxlength="20" show-count></a-input>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="duration" class="error-message" />
@@ -422,8 +425,8 @@ let formSchema = yup.object({
             <a-col :span="12">
               <Field name="maxPeople" v-slot="{ value, handleChange }" v-model="form.maxPeople">
                 Макс. число людей
-                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" type="number" placeholder="11"
-                  :min="1" />
+                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" type="number"
+                  placeholder="11" :min="1" />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="maxPeople" class="error-message" />
@@ -445,8 +448,8 @@ let formSchema = yup.object({
                 class="mb-16">
                 <a-input v-model:value="item.first" placeholder="Для кого" />
 
-                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" type="number" :min="0" :step="1"
-                  class="ml-16 mr-16" />
+                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" type="number" :min="0"
+                  :step="1" class="ml-16 mr-16" />
 
                 <a-button @click="removeCost(item)" shape="circle">
                   <span class="mdi mdi-minus" style="cursor: pointer"></span>
@@ -497,8 +500,8 @@ let formSchema = yup.object({
             <a-col :xs="24" :md="12">
               <Field name="fromAge" v-slot="{ value, handleChange }" v-model="form.fromAge">
                 Мин. возраст, лет
-                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" type="number" placeholder="10" :min="0"
-                  :max="100" />
+                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" type="number"
+                  placeholder="10" :min="0" :max="100" />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="fromAge" class="error-message" />
