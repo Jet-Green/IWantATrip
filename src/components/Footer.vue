@@ -36,7 +36,10 @@
                   <a href="https://doc.gorodaivesi.ru/about/support.html">Поддержка</a>
                 </div>
                 <!-- ! -->
-                <div><a href="http://localhost:5173/contacts"> Контакты </a></div>
+                <router-link to="/contacts">
+                  <div> Контакты </div>
+                </router-link>
+                
                 <!-- ! -->
               </div>
             </a-col>
