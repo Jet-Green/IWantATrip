@@ -72,6 +72,7 @@ function getImg(index) {
 let buyTripDialog = () => {
     if (userStore.user) {
         if (!selectedDate.value.selected) {
+            tripDates.value[0].selected = true
             selectedDate.value = tripDates.value[0]
         }
         buyDialog.value = true;
