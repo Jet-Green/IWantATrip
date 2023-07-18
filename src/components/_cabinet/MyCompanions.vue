@@ -20,11 +20,9 @@ const clearData = (dataString) => {
     .replaceAll("/", ".");
 };
 
-
 const visible = ref(false);
 
 const handleOk = (e) => {
-
   visible.value = false;
 };
 
@@ -32,7 +30,7 @@ const ageString = (age) => {
   if (age >= 10 && age <= 20) {
     return `${age} лет`;
   }
-  age = String(age)
+  age = String(age);
   let arr = age.split("");
   let lastNumber = arr[arr.length - 1];
   if (lastNumber == 1) {
@@ -44,8 +42,11 @@ const ageString = (age) => {
   return `${age} лет`;
 };
 const toCompanionResposes = (companion) => {
-  companionStore.currentCompanion = companion
-  router.push("/cabinet/responses")
+  companionStore.currentCompanion = companion;
+  router.push("/cabinet/responses");
+};
+function deleteCompanion(_id) {
+  companionStore.deleteCompanion(_id);
 }
 onMounted(async () => {
   let createdCompanions = [];
@@ -61,7 +62,13 @@ onMounted(async () => {
     <h3>Поиск попутчиков</h3>
   </a-col>
   <a-row :gutter="[8, 8]">
-    <a-col v-for="(companion, index) in companions" :key="index" :lg="8" :sm="12" :xs="24">
+    <a-col
+      v-for="(companion, index) in companions"
+      :key="index"
+      :lg="8"
+      :sm="12"
+      :xs="24"
+    >
       <a-card class="card" hoverable>
         <div>
           <span class="mdi mdi-human-male-female"></span>{{ companion?.name }}
@@ -69,25 +76,31 @@ onMounted(async () => {
         </div>
 
         <div><span class="mdi mdi-compass-outline"></span>{{ companion?.direction }}</div>
-        <div :class="[
-          companion?.companionGender == 'Мужчина'
-            ? 'male'
-            : companion?.companionGender == 'Женщина'
+        <div
+          :class="[
+            companion?.companionGender == 'Мужчина'
+              ? 'male'
+              : companion?.companionGender == 'Женщина'
               ? 'female'
               : 'not-matter',
-        ]">
-          <span :class="companion?.companionGender == 'Женщина'
-            ? 'mdi mdi-gender-female'
-            : companion?.companionGender == 'Мужчина'
-              ? 'mdi mdi-gender-male'
-              : 'mdi mdi-human-male-female'
-            "></span>{{
-    companion?.companionGender == "Мужчина"
-    ? "Мужчину"
-    : companion?.companionGender == "Женщина"
-      ? "Женщину"
-      : "Не важно"
-  }}
+          ]"
+        >
+          <span
+            :class="
+              companion?.companionGender == 'Женщина'
+                ? 'mdi mdi-gender-female'
+                : companion?.companionGender == 'Мужчина'
+                ? 'mdi mdi-gender-male'
+                : 'mdi mdi-human-male-female'
+            "
+          ></span
+          >{{
+            companion?.companionGender == "Мужчина"
+              ? "Мужчину"
+              : companion?.companionGender == "Женщина"
+              ? "Женщину"
+              : "Не важно"
+          }}
         </div>
         <div>
           <span class="mdi mdi-calendar-arrow-right"></span>
@@ -99,9 +112,16 @@ onMounted(async () => {
         <div><span class="mdi mdi-list-status"></span>{{ companion?.description }}</div>
 
         <div class="d-flex justify-center">
-          <span class="mdi mdi-information-outline" style="cursor: pointer; font-size: 20px;"
-            @click="toCompanionResposes(companion)"></span>
-
+          <span
+            class="mdi mdi-information-outline"
+            style="cursor: pointer; font-size: 20px"
+            @click="toCompanionResposes(companion)"
+          ></span>
+          <span
+            class="mdi mdi-delete-outline"
+            style="cursor: pointer; font-size: 20px"
+            @click="deleteCompanion(companion._id)"
+          ></span>
         </div>
       </a-card>
     </a-col>
