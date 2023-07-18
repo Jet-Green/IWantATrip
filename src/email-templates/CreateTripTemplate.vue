@@ -17,6 +17,8 @@ defineProps({
     startLocation: { type: Object },
     tripType: { type: String },
     fromAge: { type: String },
+    bonuses: { type: Array },
+
 })
 </script>
 <template>
@@ -39,7 +41,7 @@ defineProps({
                 <div class="row">
                     <h1>{{ name }}</h1>
                 </div>
-
+<!-- 
                 <div class="row">
                     <div class="col">
                         <span class="mdi mdi-24px mdi-map-marker-distance"></span> {{ tripRoute }}
@@ -92,7 +94,7 @@ defineProps({
                                 style="margin-left: 12px;"></span> {{ c.price }} руб.
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </e-section>
     </e-html>
