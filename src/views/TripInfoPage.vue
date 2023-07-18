@@ -192,13 +192,15 @@ onMounted(() => {
                         <div>
                             Ключевые точки: <b>{{ trip.tripRoute }}</b>
                         </div>
-                        Даты
                         <div>
-                            <a-checkable-tag class="pretty-tag" v-for="(date, index) of tripDates" :checked="date.selected"
-                                @change="selectDate(index)">{{
-                                    clearData(date.start) }} -
-                                {{
-                                    clearData(date.end) }}</a-checkable-tag>
+                            Даты:
+                            <div>
+                                <a-checkable-tag class="pretty-tag" v-for="(date, index) of tripDates"
+                                    :checked="date.selected" @change="selectDate(index)">{{
+                                        clearData(date.start) }} -
+                                    {{
+                                        clearData(date.end) }}</a-checkable-tag>
+                            </div>
                         </div>
                         <div v-if="tripDates.length < 2">
                             <div>Количество человек:</div>
@@ -209,11 +211,16 @@ onMounted(() => {
                             </div>
                         </div>
                         <div>
-                            Цена
+                            Цена:
                             <div v-for="(item, index) in trip.cost" :key="index" class="cost">
                                 {{ item.first }} : <b>{{ item.price }} руб.</b>
                             </div>
-
+                        </div>
+                        <div>
+                            Бонусы:
+                            <div v-for="(item, index) in trip.bonuses" :key="index">
+                              <i>{{ item.type }} : {{ item.bonus }}</i> 
+                            </div>
                         </div>
                         <div class="d-flex justify-center ma-8">
                             <a-button v-if="tripsCount != trip.maxPeople" type="primary" class="lets_go_btn"
@@ -283,6 +290,7 @@ onMounted(() => {
 </template>
 <style lang="scss" scoped>
 .pretty-tag {
+    font-weight: 700;
     border-radius: 12px;
     font-size: 14px;
     padding: 4px 6px 4px 6px;

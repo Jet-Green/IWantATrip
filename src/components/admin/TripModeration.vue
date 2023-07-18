@@ -121,6 +121,12 @@ function getImg(index) {
                 {{ item.first }} : <b>{{ item.price }} руб.</b>
               </div>
             </div>
+            <div>
+              Бонусы:
+              <div v-for="(item, index) in trip.bonuses" :key="index">
+               <i>{{ item.type }} : {{ item.bonus }}</i> 
+              </div>
+            </div>
           </a-col>
 
           <a-col :xs="24">
