@@ -1,5 +1,5 @@
 <script setup>
-import { EHtml, EHead, ESection } from 'vue-email';
+import { EContainer, EHead, EHr, EHtml, EPreview, ESection, EText} from 'vue-email';
 
 defineProps({
     name: { type: String },
@@ -22,7 +22,7 @@ defineProps({
 })
 </script>
 <template>
-    <e-html>
+    <e-html lang="ru">
         <e-head>
             <meta charset="UTF-8">
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -36,12 +36,22 @@ defineProps({
             <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.6.96/css/materialdesignicons.min.css" rel="stylesheet" />
         </e-head>
 
+        <e-preview preview="Welcome to vue-email" />
         <e-section>
-            <div class="outer">
+            <e-container>
+                <e-text>{{ name }}, welcome to vue-email</e-text>
+                <e-text>A Vue component library for building responsive emails</e-text>
+                <e-text>Happy coding!</e-text>
+                <e-hr/>
+                <e-text>David Arenas</e-text>
+            </e-container>
+        </e-section>
+
+        <!-- <div class="outer">
                 <div class="row">
                     <h1>{{ name }}</h1>
-                </div>
-<!-- 
+                </div> -->
+        <!-- 
                 <div class="row">
                     <div class="col">
                         <span class="mdi mdi-24px mdi-map-marker-distance"></span> {{ tripRoute }}
@@ -95,8 +105,7 @@ defineProps({
                         </div>
                     </div>
                 </div> -->
-            </div>
-        </e-section>
+        <!-- </div> -->
     </e-html>
 </template>
 <style scoped>

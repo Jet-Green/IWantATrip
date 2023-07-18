@@ -26,8 +26,9 @@ export const useTrips = defineStore('trips', {
         },
         async createTrip(form, email) {
             const emailHtml = await render(CreateTripTemplate, form);
+            console.log(emailHtml)
 
-            return TripService.createTrip(form, email, emailHtml)
+            return TripService.createTrip(emailHtml, form, email)
         },
         async fetchTrips(query, start, end) {
             try {
