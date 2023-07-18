@@ -132,7 +132,7 @@ onMounted(() => {
         .getFullTripById(_id)
         .then((response) => {
             trip.value = response.data;
-            tripDates.value.push({ _id: trip.value._id, start: trip.value.start, end: trip.value.end, selected: false, selectedCosts: [] })
+            tripDates.value.push({ _id: trip.value._id, start: trip.value.start, end: trip.value.end, selected: true, selectedCosts: [] })
             for (let cost of response.data.cost) {
                 tripDates.value[0].selectedCosts.push({
                     cost: cost.price,
