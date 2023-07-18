@@ -219,7 +219,7 @@ onMounted(() => {
                         <div>
                             Бонусы:
                             <div v-for="(item, index) in trip.bonuses" :key="index">
-                              <i>Группа больше {{ item.type }} чел.: + {{ item.bonus }}</i> 
+                              <i>{{ item.type }}: {{ item.bonus }}</i> 
                             </div>
                         </div>
                         <div class="d-flex justify-center ma-8">
