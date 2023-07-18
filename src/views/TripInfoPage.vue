@@ -78,33 +78,35 @@ let buyTripDialog = () => {
 async function buyTrip(isBoughtNow) {
     if (userStore.user.fullinfo.phone) {
         for (let date of tripDates.value) {
-            let bill = {
-                isBoughtNow,
-                cart: date.selectedCosts,
-                tripId: date._id,
-                userInfo: {
-                    _id: userStore.user._id,
-                    fullname: userStore.user.fullinfo.fullname,
-                    phone: userStore.user.fullinfo.phone,
-                }
-            };
+            if (date.selected) {
+                let bill = {
+                    isBoughtNow,
+                    cart: date.selectedCosts,
+                    tripId: date._id,
+                    userInfo: {
+                        _id: userStore.user._id,
+                        fullname: userStore.user.fullinfo.fullname,
+                        phone: userStore.user.fullinfo.phone,
+                    }
+                };
 
-            for (let i = 0; i < bill.cart.length; i++) {
-                if (bill.cart[i].count == 0) {
-                    bill.cart.splice(i, 1);
+                for (let i = 0; i < bill.cart.length; i++) {
+                    if (bill.cart[i].count == 0) {
+                        bill.cart.splice(i, 1);
+                    }
                 }
-            }
-            if (bill.cart.length != 0) {
-                await userStore
-                    .buyTrip(date._id, bill)
-                    .then(() => {
-                        message.config({ duration: 3, top: "90vh" });
-                        message.success({ content: "Тур заказан!" });
-                        buyDialog.value = false;
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    });
+                if (bill.cart.length != 0) {
+                    await userStore
+                        .buyTrip(date._id, bill)
+                        .then(() => {
+                            message.config({ duration: 3, top: "90vh" });
+                            message.success({ content: "Тур заказан!" });
+                            buyDialog.value = false;
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                        });
+                }
             }
         }
     } else {
@@ -219,7 +221,7 @@ onMounted(() => {
                         <div>
                             Бонусы:
                             <div v-for="(item, index) in trip.bonuses" :key="index">
-                              <i>{{ item.type }}: {{ item.bonus }}</i> 
+                                <i>{{ item.type }}: {{ item.bonus }}</i>
                             </div>
                         </div>
                         <div class="d-flex justify-center ma-8">
