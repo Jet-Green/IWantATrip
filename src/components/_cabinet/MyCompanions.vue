@@ -115,13 +115,11 @@ onMounted(async () => {
           <span
             class="mdi mdi-information-outline"
             style="cursor: pointer; font-size: 20px"
-            @click="toCompanionResposes(companion)"
-          ></span>
+            @click="toCompanionResposes(companion)"></span>
           <span
             class="mdi mdi-delete-outline"
             style="cursor: pointer; font-size: 20px"
-            @click="deleteCompanion(companion._id)"
-          ></span>
+            @click="deleteCompanion(companion._id)"></span>
         </div>
       </a-card>
     </a-col>
