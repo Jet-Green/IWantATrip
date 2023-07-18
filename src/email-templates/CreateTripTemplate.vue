@@ -1,5 +1,5 @@
 <script setup>
-import { EContainer, EHead, EHr, EHtml, EPreview, ESection, EText} from 'vue-email';
+import { EContainer, EHeading, EHead, EHtml, EPreview, ESection, EText } from 'vue-email';
 
 defineProps({
     name: { type: String },
@@ -18,7 +18,7 @@ defineProps({
     tripType: { type: String },
     fromAge: { type: String },
     bonuses: { type: Array },
-
+    email: { type: String }
 })
 </script>
 <template>
@@ -39,73 +39,10 @@ defineProps({
         <e-preview preview="Welcome to vue-email" />
         <e-section>
             <e-container>
-                <e-text>{{ name }}, welcome to vue-email</e-text>
-                <e-text>A Vue component library for building responsive emails</e-text>
-                <e-text>Happy coding!</e-text>
-                <e-hr/>
-                <e-text>David Arenas</e-text>
+                <e-heading as="h2">Создан Тур: {{ name }}</e-heading>
+                <e-text>{{ email }}</e-text>
             </e-container>
         </e-section>
-
-        <!-- <div class="outer">
-                <div class="row">
-                    <h1>{{ name }}</h1>
-                </div> -->
-        <!-- 
-                <div class="row">
-                    <div class="col">
-                        <span class="mdi mdi-24px mdi-map-marker-distance"></span> {{ tripRoute }}
-                    </div>
-                    <div class="col">
-                        <span class="mdi mdi-24px mdi-map-marker"></span> {{ location }}
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col">
-                        {{ offer }}
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col">
-                        <span class="mdi mdi-24px mdi-information-outline"></span> Описание:
-                        <span v-html="description">
-                        </span>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col">
-                        <span class="mdi mdi-24px mdi-calendar-arrow-right"></span> с {{ start }} <span
-                            class="mdi mdi-24px mdi-calendar-arrow-right"></span> по {{ end }}
-
-                        <span class="mdi mdi-24px mdi-calendar-multiselect"></span>
-                        <b>
-                            {{ duration }} д.
-                        </b>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <span class="mdi mdi-24px mdi-train-car"></span> Тип тура: {{ tripType }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <span class="mdi mdi-24px mdi-account-group"> С {{ fromAge }} лет</span>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        Цены: <br />
-                        <div class="cost-item" v-for="c of cost">
-                            <span class="mdi mdi-24px mdi-account"></span> {{ c.first }} <span class="mdi mdi-24px mdi-cash"
-                                style="margin-left: 12px;"></span> {{ c.price }} руб.
-                        </div>
-                    </div>
-                </div> -->
-        <!-- </div> -->
     </e-html>
 </template>
 <style scoped>
