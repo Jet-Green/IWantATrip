@@ -1,9 +1,11 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useRouter } from "vue-router";
 import TripService from "../../service/TripService";
 import { useTrips } from '../../stores/trips';
 import { useAuth } from '../../stores/auth';
+
+import dayjs from 'dayjs'
 
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 const dateFormatList = ["DD.MM.YY", "DD.MM.YY"];
@@ -108,8 +110,20 @@ async function submit() {
         addDateDialog.value = false
     }
 }
-
+let tripDuration = computed(() => {
+    return trip.end - trip.start
+})
 let showMessage = ref(false);
+
+watch(dates, () => {
+    for (let i = 0; i < dates.value.length; i++) {
+        let date = dates.value[i]
+        if (date.start && !date.end) {
+            let s = Date.parse(dayjs(date.start).$d)
+            date.end = dayjs(s + tripDuration.value)
+        }
+    }
+}, { deep: true })
 </script>
 <template>
     <div v-if="trip._id">

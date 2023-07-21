@@ -29,6 +29,8 @@ let tripDates = ref([])
 let trip = ref({});
 let buyDialog = ref(false);
 
+let selectedDate = ref({})
+
 let tripsCount = computed(() => {
     let sum = 0;
     for (let i = 0; i < trip.value.billsList.length; i++) {
@@ -69,6 +71,10 @@ function getImg(index) {
 
 let buyTripDialog = () => {
     if (userStore.user) {
+        if (!selectedDate.value.selected) {
+            tripDates.value[0].selected = true
+            selectedDate.value = tripDates.value[0]
+        }
         buyDialog.value = true;
     } else {
         router.push("/reg");
@@ -77,11 +83,11 @@ let buyTripDialog = () => {
 
 async function buyTrip(isBoughtNow) {
     if (userStore.user.fullinfo.phone) {
-        for (let date of tripDates.value) {
+        if (selectedDate.value.selected) {
             let bill = {
                 isBoughtNow,
-                cart: date.selectedCosts,
-                tripId: date._id,
+                cart: selectedDate.value.selectedCosts,
+                tripId: selectedDate.value._id,
                 userInfo: {
                     _id: userStore.user._id,
                     fullname: userStore.user.fullinfo.fullname,
@@ -96,7 +102,7 @@ async function buyTrip(isBoughtNow) {
             }
             if (bill.cart.length != 0) {
                 await userStore
-                    .buyTrip(date._id, bill)
+                    .buyTrip(selectedDate.value._id, bill)
                     .then(() => {
                         message.config({ duration: 3, top: "90vh" });
                         message.success({ content: "Тур заказан!" });
@@ -114,16 +120,19 @@ async function buyTrip(isBoughtNow) {
 }
 
 function selectDate(index) {
+    for (let date of tripDates.value) {
+        date.selected = false
+    }
     tripDates.value[index].selected = !tripDates.value[index].selected
+    selectedDate.value = tripDates.value[index]
 }
 
-let activeKey = ref()
 onMounted(() => {
     tripStore
         .getFullTripById(_id)
         .then((response) => {
             trip.value = response.data;
-            tripDates.value.push({ _id: trip.value._id, start: trip.value.start, end: trip.value.end, selected: false, selectedCosts: [] })
+            tripDates.value.push({ _id: trip.value._id, start: trip.value.start, end: trip.value.end, selected: true, selectedCosts: [] })
             for (let cost of response.data.cost) {
                 tripDates.value[0].selectedCosts.push({
                     cost: cost.price,
@@ -219,7 +228,7 @@ onMounted(() => {
                         <div>
                             Бонусы:
                             <div v-for="(item, index) in trip.bonuses" :key="index">
-                              <i>{{ item.type }}: {{ item.bonus }}</i> 
+                                <i>{{ item.type }}: {{ item.bonus }}</i>
                             </div>
                         </div>
                         <div class="d-flex justify-center ma-8">
@@ -256,22 +265,20 @@ onMounted(() => {
 
                 <a-col :span="24">
                     <div>Цены</div>
-                    <a-collapse v-model:activeKey="activeKey" ghost :forceRender="true">
-                        <a-collapse-panel v-for="(date, index) of tripDates" :key="index"
-                            :header="clearData(date.start) + ' - ' + clearData(date.end)"
-                            :collapsible="date.selected ? 'header' : 'disabled'">
-                            <div class="d-flex space-between align-center" v-for="cost of date.selectedCosts">
-                                <div>{{ cost.costType }}</div>
-                                <div> {{ cost.cost }} руб.</div>
+                    <b>
+                        {{ clearData(selectedDate.start) + ' - ' + clearData(selectedDate.end) }}
+                    </b>
 
-                                <div class="d-flex direction-column">
-                                    <span style="font-size: 8px">кол-во</span>
-                                    <a-input-number v-model:value="cost.count" :min="0" :max="trip.maxPeople - tripsCount"
-                                        placeholder="чел"></a-input-number>
-                                </div>
-                            </div>
-                        </a-collapse-panel>
-                    </a-collapse>
+                    <div class="d-flex space-between align-center" v-for="cost of selectedDate.selectedCosts">
+                        <div>{{ cost.costType }}</div>
+                        <div> {{ cost.cost }} руб.</div>
+
+                        <div class="d-flex direction-column">
+                            <span style="font-size: 8px">кол-во</span>
+                            <a-input-number v-model:value="cost.count" :min="0" :max="trip.maxPeople - tripsCount"
+                                placeholder="чел"></a-input-number>
+                        </div>
+                    </div>
                 </a-col>
                 <a-col :span="24" class="d-flex justify-end">
                     <b>Итого: {{ finalCost }} руб.</b>
