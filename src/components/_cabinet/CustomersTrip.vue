@@ -346,7 +346,9 @@ function getPhoneNumber(number) {
                 </a-row>
             </a-col>
             <a-col :span="24">
-                <a-button type="dashed" block @click="currentBill.touristsList.push({ fullname: '', phone: '' })">+
+                <a-button type="dashed" block @click="currentBill.touristsList.push({ fullname: '', phone: '' })" :disabled="currentBill.cart.reduce((accumulator, object) => {
+                    return accumulator + object.count;
+                }, 0) == currentBill.touristsList.length">+
                     добавить</a-button>
             </a-col>
             <a-col :span="24">
