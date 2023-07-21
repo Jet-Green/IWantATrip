@@ -18,7 +18,7 @@ defineProps({
     tripType: { type: String },
     fromAge: { type: String },
     bonuses: { type: Array },
-    email: { type: String }
+    email: { type: String },
 })
 </script>
 <template>
