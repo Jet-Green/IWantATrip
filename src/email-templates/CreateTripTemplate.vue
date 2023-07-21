@@ -19,6 +19,7 @@ defineProps({
     fromAge: { type: String },
     bonuses: { type: Array },
     email: { type: String },
+    fullinfo: { type: Object }
 })
 </script>
 <template>
@@ -40,7 +41,10 @@ defineProps({
         <e-section>
             <e-container>
                 <e-heading as="h2">Создан Тур: {{ name }}</e-heading>
-                <e-text>{{ email }}</e-text>
+                <span class="mdi mdi-account"></span>
+                <span class="mdi mdi-email-box"></span>
+                <span class="mdi mdi-phone"></span>
+                <span class="mdi mdi-domain"></span>
             </e-container>
         </e-section>
     </e-html>
