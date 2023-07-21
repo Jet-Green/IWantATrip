@@ -135,7 +135,9 @@ async function updateTourists(bill) {
     }
 
     let res = await tripStore.updateTourists(bill)
-    console.log(res.status);
+    if (res.status == 200) {
+        addTouristsDialog.value = false
+    }
 }
 
 onMounted(async () => {
@@ -339,7 +341,7 @@ function getPhoneNumber(number) {
                         <a-input style="width: 100%" v-model:value="tourist.fullname" placeholder="Иванов Иван Иванович" />
                     </a-col>
                     <a-col :span="12">
-                        <a-input style="width: 100%" v-model:value="tourist.phone" placeholder="Иванов Иван Иванович" />
+                        <a-input style="width: 100%" v-model:value="tourist.phone" placeholder="89127528877" />
                     </a-col>
                 </a-row>
             </a-col>
