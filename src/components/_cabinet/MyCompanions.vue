@@ -46,7 +46,9 @@ const toCompanionResposes = (companion) => {
   router.push("/cabinet/responses");
 };
 function deleteCompanion(_id) {
-  companionStore.deleteCompanion(_id);
+  const email = userStore.user.email
+  companionStore.deleteCompanion(_id, email);
+
 }
 onMounted(async () => {
   let createdCompanions = [];
@@ -115,11 +117,15 @@ onMounted(async () => {
           <span
             class="mdi mdi-information-outline"
             style="cursor: pointer; font-size: 20px"
-            @click="toCompanionResposes(companion)"></span>
-          <span
-            class="mdi mdi-delete-outline"
-            style="cursor: pointer; font-size: 20px"
-            @click="deleteCompanion(companion._id)"></span>
+            @click="toCompanionResposes(companion)"
+          ></span>
+          <a-popconfirm
+            title="Вы уверены?"
+            ok-text="Да"
+            cancel-text="Нет"
+            @confirm="deleteCompanion(companion._id)">
+            <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer; font-size: 20px"></span>
+          </a-popconfirm>
         </div>
       </a-card>
     </a-col>
