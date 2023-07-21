@@ -7,5 +7,7 @@ async function addFullInfoToBill() {
 }
 </script>
 <template>
-    <a-button @click="addFullInfoToBill">добавить fullinfo в каждый объект bill</a-button>
+    <a-popconfirm @confirm="addFullInfoToBill" title="Вы уверены?">
+        <a-button>добавить fullinfo в каждый объект bill</a-button>
+    </a-popconfirm>
 </template>
