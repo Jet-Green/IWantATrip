@@ -41,10 +41,10 @@ defineProps({
         <e-section>
             <e-container>
                 <e-heading as="h2">Создан Тур: {{ name }}</e-heading>
-                <span class="mdi mdi-account"></span>
-                <span class="mdi mdi-email-box"></span>
-                <span class="mdi mdi-phone"></span>
-                <span class="mdi mdi-domain"></span>
+                <e-text>{{ fullinfo.fullname }}</e-text>
+                <e-text>{{ email }}</e-text>
+                <e-text>{{ fullinfo.phone }}</e-text>
+                <e-text>{{ fullinfo.companyName }}</e-text>
             </e-container>
         </e-section>
     </e-html>
