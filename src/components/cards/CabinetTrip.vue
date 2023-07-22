@@ -111,7 +111,7 @@ async function submit() {
     }
 }
 let tripDuration = computed(() => {
-    return trip.end - trip.start
+    return Math.ceil((trip.end - trip.start) / (1000 * 60 * 60 * 24))
 })
 let showMessage = ref(false);
 
@@ -119,8 +119,10 @@ watch(dates, () => {
     for (let i = 0; i < dates.value.length; i++) {
         let date = dates.value[i]
         if (date.start && !date.end) {
-            let s = Date.parse(dayjs(date.start).$d)
-            date.end = dayjs(s + tripDuration.value)
+            let s = new Date(dayjs(date.start).$d)
+            s.setDate(s.getDate() + tripDuration.value - 1)
+
+            date.end = dayjs(s)
         }
     }
 }, { deep: true })

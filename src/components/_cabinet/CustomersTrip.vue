@@ -36,6 +36,10 @@ let addCustomerDialog = ref(false)
 
 let setPaymentDialog = ref(false)
 
+let addTouristsDialog = ref(false)
+
+let currentBill = ref(null)
+
 const print = async () => {
     await htmlToPaper('printMe');
 };
@@ -51,6 +55,7 @@ let tripsCount = computed(() => {
     }
     return sum;
 });
+
 let finalCost = computed(() => {
     let sum = 0;
     if (selectedByUser.value.length) {
@@ -64,6 +69,7 @@ async function setPayment(bill) {
     let res = await tripStore.setPayment(bill)
     if (res.status == 200) {
         setPaymentDialog.value = false
+        currentBill.value = null
     }
 }
 async function deletePayment(bill) {
@@ -116,6 +122,25 @@ async function buyTrip(isBoughtNow) {
         message.error({ content: "Нужен телефон" });
     }
 }
+
+async function updateTourists(bill) {
+    for (let i = 0; i < bill.touristsList.length; i++) {
+        let t = bill.touristsList[i]
+
+        t.fullname = t.fullname.trim()
+        t.phone = t.phone.trim()
+
+        if (!t.fullname || !t.phone) {
+            bill.touristsList.splice(i, 1)
+        }
+    }
+
+    let res = await tripStore.updateTourists(bill)
+    if (res.status == 200) {
+        addTouristsDialog.value = false
+    }
+}
+
 onMounted(async () => {
     let { data } = await tripStore.getFullTripById(route.query._id)
     trip.value = data;
@@ -160,11 +185,8 @@ onMounted(async () => {
         }
     }
     payedCount.value = sum1
-
     allCount.value = payedCount.value + bookingCount.value
-
     for (let pr of pricesSet) {
-
         let x =
             payedBooks.value[pr].reduce(
                 (a, c) => a + c,
@@ -229,10 +251,11 @@ function getPhoneNumber(number) {
     <a-row :gutter="[8, 8]">
         <a-col :lg="8" :sm="12" :xs="24">
             <div class="mb-8">
-                {{ clearData(trip.start) }} - {{ clearData(trip.end) }}
+            
             </div>
             <a-card style="height: 100%; border: 1px solid #245159; padding:4px">
-                Статистика тура
+                Статистика тура   
+                <div>c {{ clearData(trip.start) }} по {{ clearData(trip.end) }}</div> 
                 <div>Максимум: {{ trip.maxPeople }} чел.</div>
                 <div>Забронировало: {{ bookingCount }} чел.</div>
                 <div>Оплатило: {{ payedCount }} чел.</div>
@@ -241,21 +264,6 @@ function getPhoneNumber(number) {
         </a-col>
         <a-col :lg="8" :sm="12" :xs="24" v-for="(BILL, index) of trip.billsList">
             <div>
-                <a-modal v-model:visible="setPaymentDialog" :footer="null" title="Поставить оплату">
-                    <a-row :gutter="[16, 16]">
-                        <a-col :span="24">
-                            Уже оплачено, руб <a-input-number style="width: 100%" v-model:value="BILL.payment.amount"
-                                placeholder="8900" :max="BILL.cart.reduce((accumulator, object) => {
-                                    return accumulator + object.cost *
-                                        object.count;
-                                }, 0)" />
-                        </a-col>
-                        <a-col :span="24">
-                            <a-button @click="setPayment(BILL)" type="primary" class="lets_go_btn">оплатить</a-button>
-                        </a-col>
-                    </a-row>
-                </a-modal>
-
                 <a-card hoverable class="card">
                     <div>
                         <span class="mdi mdi-account-outline" style=""></span>
@@ -288,7 +296,7 @@ function getPhoneNumber(number) {
                     </div>
                     <div style="display: flex; justify-content: space-between;">
                         <div style="font-size: 20px">
-                            <span @click="setPaymentDialog = true" v-if="BILL.cart.reduce((accumulator, object) => {
+                            <span @click="() => { setPaymentDialog = true; currentBill = BILL }" v-if="BILL.cart.reduce((accumulator, object) => {
                                         return accumulator + object.cost *
                                             object.count;
                                     }, 0) > BILL.payment.amount" class="mdi mdi-cart-plus"
@@ -296,6 +304,8 @@ function getPhoneNumber(number) {
                             <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deletePayment(BILL)">
                                 <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
                             </a-popconfirm>
+                            <span class="mdi mdi-account-plus-outline ml-4"
+                                @click="() => { addTouristsDialog = true; currentBill = BILL }"></span>
                         </div>
 
                         <b>
@@ -312,12 +322,59 @@ function getPhoneNumber(number) {
                             </span>
                         </b>
                     </div>
-
                 </a-card>
             </div>
         </a-col>
     </a-row>
-    <a-modal v-model:visible="addCustomerDialog" :footer="null">
+    <a-modal v-model:visible="addTouristsDialog" :footer="null" title="Добавить туристов">
+        <a-row :gutter="[0, 8]">
+            <a-col :span="12">
+                Имя
+            </a-col>
+            <a-col :span="12">
+                Телефон
+            </a-col>
+            <a-col :span="24" v-for="tourist of currentBill.touristsList">
+                <a-row :gutter="[8, 8]">
+                    <a-col :span="12">
+                        <a-input style="width: 100%" v-model:value="tourist.fullname" placeholder="Иванов Иван Иванович" />
+                    </a-col>
+                    <a-col :span="12">
+                        <a-input style="width: 100%" v-model:value="tourist.phone" placeholder="89127528877" />
+                    </a-col>
+                </a-row>
+            </a-col>
+            <a-col :span="24">
+                <a-button type="dashed" block @click="currentBill.touristsList.push({ fullname: '', phone: '' })" :disabled="currentBill.cart.reduce((accumulator, object) => {
+                    return accumulator + object.count;
+                }, 0) == currentBill.touristsList.length">+
+                    добавить</a-button>
+            </a-col>
+            <a-col :span="24">
+                <a-button type="dashed" style="color: red" block @click="currentBill.touristsList.pop()">
+                    удалить</a-button>
+            </a-col>
+            <a-col :span="24" class="d-flex justify-center mt-8">
+                <a-button @click="addTouristsDialog = false">отмена</a-button>
+                <a-button type="primary" class="lets_go_btn ml-8" @click="updateTourists(currentBill)">отправить</a-button>
+            </a-col>
+        </a-row>
+    </a-modal>
+    <a-modal v-model:visible="setPaymentDialog" :footer="null" title="Поставить оплату">
+        <a-row :gutter="[16, 16]">
+            <a-col :span="24">
+                Уже оплачено, руб <a-input-number style="width: 100%" v-model:value="currentBill.payment.amount"
+                    placeholder="8900" :max="currentBill.cart.reduce((accumulator, object) => {
+                        return accumulator + object.cost *
+                            object.count;
+                    }, 0)" />
+            </a-col>
+            <a-col :span="24">
+                <a-button @click="setPayment(currentBill)" type="primary" class="lets_go_btn">оплатить</a-button>
+            </a-col>
+        </a-row>
+    </a-modal>
+    <a-modal v-model:visible="addCustomerDialog" :footer="null" title="Добавить покупателя">
         <a-row :gutter="[4, 4]">
             <a-col :span="24" :md="12">
                 Фaмилия Имя
