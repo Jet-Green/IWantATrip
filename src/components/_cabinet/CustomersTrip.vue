@@ -16,15 +16,7 @@ const route = useRoute();
 const userStore = useAuth()
 const tripStore = useTrips();
 
-const allBooks = ref({});
-const bookingBooks = ref({});
-const bookingCount = ref();
-const payedCount = ref();
-const allCount = ref();
-const totalCost = ref();
-const payedBooks = ref({});
-const pricesSet = new Set();
-const _id = route.query.id;
+
 let trip = ref({});
 let userInfo = ref({
     fullname: '',
@@ -40,21 +32,32 @@ let addTouristsDialog = ref(false)
 
 let currentBill = ref(null)
 
+let sumOfPay = ref(0)
 const print = async () => {
     await htmlToPaper('printMe');
 };
 
-let tripsCount = computed(() => {
-    let sum = 0;
-    for (let i = 0; i < trip.value.billsList.length; i++) {
-        if (trip.value.billsList[i]) {
-            for (let j = 0; j < trip.value.billsList[i].cart?.length; j++) {
-                sum += trip.value.billsList[i].cart[j].count;
-            }
-        }
+
+
+
+let tripStat = computed(() => {
+    let statistic = {
+        received: 0,
+        amount: 0,
+        totalCost: 0,
     }
-    return sum;
-});
+    if (trip.value.billsList) {
+        trip.value.billsList.forEach(element => {
+            statistic.received = statistic.received + element.payment.amount
+            element.cart.forEach(cart => {
+                statistic.amount = statistic.amount + cart.count
+                statistic.totalCost = statistic.totalCost + cart.count * cart.cost
+            })
+
+        });
+        return statistic
+    }
+})
 
 let finalCost = computed(() => {
     let sum = 0;
@@ -65,11 +68,22 @@ let finalCost = computed(() => {
     }
     return sum;
 });
-async function setPayment(bill) {
-    let res = await tripStore.setPayment(bill)
+
+let billTotal = (bill) => {
+    let result = bill.cart.reduce((accumulator, object) => {
+        return accumulator + object.cost * object.count;
+    }, 0)
+    return result
+}
+
+async function setPayment() {
+    currentBill.value.payment.amount = sumOfPay.value
+    let res = await tripStore.setPayment(currentBill.value)
+
     if (res.status == 200) {
         setPaymentDialog.value = false
-        currentBill.value = null
+        await updateTripInfo()
+        sumOfPay.value = 0
     }
 }
 async function deletePayment(bill) {
@@ -110,6 +124,7 @@ async function buyTrip(isBoughtNow) {
         await userStore
             .buyTrip(trip.value._id, bill)
             .then(() => {
+                updateTripInfo()
                 message.config({ duration: 3, top: "90vh" });
                 message.success({ content: "Тур заказан!" });
                 addCustomerDialog.value = false;
@@ -141,82 +156,14 @@ async function updateTourists(bill) {
     }
 }
 
-onMounted(async () => {
-    let { data } = await tripStore.getFullTripById(route.query._id)
-    trip.value = data;
-    let cartSum = 0;
-    for (let book of trip.value.billsList) {
-        for (let cart of book.cart) {
-            cartSum += cart.count * cart.cost
-            let obj = {};
-            if (!pricesSet.has(cart.costType)) {
-                allBooks.value[cart.costType] = []
-                payedBooks.value[cart.costType] = []
-                bookingBooks.value[cart.costType] = []
-                pricesSet.add(cart.costType);
-            }
-            obj = cart.count;
-            if (book.cart.reduce((accumulator, object) => {
-                return accumulator + object.cost *
-                    object.count;
-            }, 0) == book.payment.amount) {
-                allBooks.value[cart.costType].push(obj);
-                payedBooks.value[cart.costType].push(obj);
-            } else {
-                allBooks.value[cart.costType].push(obj);
-                bookingBooks.value[cart.costType].push(obj);
-            }
-        }
-    }
-    totalCost.value = cartSum
+let showAddTouristsDialog = (bill) => {
+    currentBill.value = bill
+    !currentBill.value.touristsList.length ?
+        currentBill.value.touristsList.push(currentBill.value.userInfo)
+        : null
+    addTouristsDialog.value = true;
+}
 
-    let sum = 0;
-    for (let book in bookingBooks.value) {
-        for (let count in bookingBooks.value[book]) {
-            sum += bookingBooks.value[book][count]
-        }
-    }
-    bookingCount.value = sum
-
-    let sum1 = 0;
-    for (let book in payedBooks.value) {
-        for (let count in payedBooks.value[book]) {
-            sum1 += payedBooks.value[book][count]
-        }
-    }
-    payedCount.value = sum1
-    allCount.value = payedCount.value + bookingCount.value
-    for (let pr of pricesSet) {
-        let x =
-            payedBooks.value[pr].reduce(
-                (a, c) => a + c,
-                0
-            )
-            ;
-        payedBooks.value[pr] = x
-        let y =
-            allBooks.value[pr].reduce(
-                (a, c) => a + c,
-                0
-            )
-            ;
-        allBooks.value[pr] = y
-        let z =
-            bookingBooks.value[pr].reduce(
-                (a, c) => a + c,
-                0
-            )
-            ;
-        bookingBooks.value[pr] = z
-    }
-    for (let cost of trip.value.cost) {
-        selectedByUser.value.push({
-            cost: cost.price,
-            count: 0,
-            costType: cost.first,
-        });
-    }
-});
 const clearData = (dateNumber) => {
     let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
         year: "2-digit",
@@ -231,6 +178,22 @@ const clearData = (dateNumber) => {
 function getPhoneNumber(number) {
     return `tel:${number}`;
 }
+
+async function updateTripInfo() {
+    let { data } = await tripStore.getFullTripById(route.query._id)
+    trip.value = data;
+}
+onMounted(async () => {
+    await updateTripInfo()
+    for (let cost of trip.value.cost) {
+        selectedByUser.value.push({
+            cost: cost.price,
+            count: 0,
+            costType: cost.first,
+        });
+    }
+
+});
 </script>
 
 <template>
@@ -251,15 +214,15 @@ function getPhoneNumber(number) {
     <a-row :gutter="[8, 8]">
         <a-col :lg="8" :sm="12" :xs="24">
             <div class="mb-8">
-            
+
             </div>
-            <a-card style="height: 100%; border: 1px solid #245159; padding:4px">
-                Статистика тура   
-                <div>c {{ clearData(trip.start) }} по {{ clearData(trip.end) }}</div> 
+            <a-card style=" border: 1px solid #245159; padding:4px">
+                Статистика тура
+                <div>c {{ clearData(trip.start) }} по {{ clearData(trip.end) }}</div>
                 <div>Максимум: {{ trip.maxPeople }} чел.</div>
-                <div>Забронировало: {{ bookingCount }} чел.</div>
-                <div>Оплатило: {{ payedCount }} чел.</div>
-                <div>Сумма: {{ totalCost }} руб.</div>
+                <div>Забронировало: {{ tripStat ? tripStat.amount : '' }} чел.</div>
+                <div>Сумма полученая: {{ tripStat ? tripStat.received : '' }} руб.</div>
+                <div>Сумма полная: {{ tripStat ? tripStat.totalCost : '' }} руб.</div>
             </a-card>
         </a-col>
         <a-col :lg="8" :sm="12" :xs="24" v-for="(BILL, index) of trip.billsList">
@@ -281,11 +244,10 @@ function getPhoneNumber(number) {
                     <div class="d-flex justify-end">
                         <span>Итого: </span>
                         {{
-                            BILL.cart.reduce((accumulator, object) => {
-                                return accumulator + object.cost * object.count;
-                            }, 0)
+                            billTotal(BILL)
                         }}
                         руб.
+
                     </div>
                     <div class="d-flex justify-end">
                         <span>Оплачено: </span>
@@ -296,16 +258,13 @@ function getPhoneNumber(number) {
                     </div>
                     <div style="display: flex; justify-content: space-between;">
                         <div style="font-size: 20px">
-                            <span @click="() => { setPaymentDialog = true; currentBill = BILL }" v-if="BILL.cart.reduce((accumulator, object) => {
-                                        return accumulator + object.cost *
-                                            object.count;
-                                    }, 0) > BILL.payment.amount" class="mdi mdi-cart-plus"
+                            <span @click="() => { setPaymentDialog = true; currentBill = BILL }"
+                                v-if="billTotal(BILL) > BILL.payment.amount" class="mdi mdi-cart-plus"
                                 style="color: #245159; cursor: pointer; margin-right:8px"></span>
                             <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deletePayment(BILL)">
                                 <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
                             </a-popconfirm>
-                            <span class="mdi mdi-account-plus-outline ml-4"
-                                @click="() => { addTouristsDialog = true; currentBill = BILL }"></span>
+                            <span class="mdi mdi-account-plus-outline ml-4" @click="showAddTouristsDialog(BILL)"></span>
                         </div>
 
                         <b>
@@ -363,14 +322,14 @@ function getPhoneNumber(number) {
     <a-modal v-model:visible="setPaymentDialog" :footer="null" title="Поставить оплату">
         <a-row :gutter="[16, 16]">
             <a-col :span="24">
-                Уже оплачено, руб <a-input-number style="width: 100%" v-model:value="currentBill.payment.amount"
-                    placeholder="8900" :max="currentBill.cart.reduce((accumulator, object) => {
-                        return accumulator + object.cost *
-                            object.count;
-                    }, 0)" />
+                <div>К отплате: {{ billTotal(currentBill) }} руб.</div>
+                <div>Оплачено: {{ currentBill.payment.amount }} руб.</div>
+                <div>Оплатить: {{ billTotal(currentBill) - currentBill.payment.amount }} руб.</div>
+                <a-input-number style="width: 100%" placeholder="8900" v-model:value="sumOfPay"
+                    :max="billTotal(currentBill) - currentBill.payment.amount" />
             </a-col>
             <a-col :span="24">
-                <a-button @click="setPayment(currentBill)" type="primary" class="lets_go_btn">оплатить</a-button>
+                <a-button @click="setPayment()" type="primary" class="lets_go_btn">оплатить</a-button>
             </a-col>
         </a-row>
     </a-modal>
@@ -391,8 +350,9 @@ function getPhoneNumber(number) {
                     {{ cost.first }}<span>{{ cost.price }} руб. </span>
                     <div class="d-flex direction-column">
                         <span style="font-size: 8px">кол-во</span>
+
                         <a-input-number v-model:value="selectedByUser[index].count" :min="0"
-                            :max="trip.maxPeople - tripsCount" placeholder="чел"></a-input-number>
+                            :max="trip.maxPeople - tripStat.amount" placeholder="чел"></a-input-number>
                     </div>
                 </div>
             </a-col>
