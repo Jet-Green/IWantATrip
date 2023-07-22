@@ -55,6 +55,7 @@ let tripsCount = computed(() => {
     }
     return sum;
 });
+
 let finalCost = computed(() => {
     let sum = 0;
     if (selectedByUser.value.length) {
@@ -184,11 +185,8 @@ onMounted(async () => {
         }
     }
     payedCount.value = sum1
-
     allCount.value = payedCount.value + bookingCount.value
-
     for (let pr of pricesSet) {
-
         let x =
             payedBooks.value[pr].reduce(
                 (a, c) => a + c,
@@ -253,10 +251,11 @@ function getPhoneNumber(number) {
     <a-row :gutter="[8, 8]">
         <a-col :lg="8" :sm="12" :xs="24">
             <div class="mb-8">
-                {{ clearData(trip.start) }} - {{ clearData(trip.end) }}
+            
             </div>
             <a-card style="height: 100%; border: 1px solid #245159; padding:4px">
-                Статистика тура
+                Статистика тура   
+                <div>c {{ clearData(trip.start) }} по {{ clearData(trip.end) }}</div> 
                 <div>Максимум: {{ trip.maxPeople }} чел.</div>
                 <div>Забронировало: {{ bookingCount }} чел.</div>
                 <div>Оплатило: {{ payedCount }} чел.</div>
