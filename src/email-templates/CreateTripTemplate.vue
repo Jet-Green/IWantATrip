@@ -18,7 +18,8 @@ defineProps({
     tripType: { type: String },
     fromAge: { type: String },
     bonuses: { type: Array },
-    email: { type: String }
+    email: { type: String },
+    fullinfo: { type: Object }
 })
 </script>
 <template>
@@ -40,7 +41,10 @@ defineProps({
         <e-section>
             <e-container>
                 <e-heading as="h2">Создан Тур: {{ name }}</e-heading>
+                <e-text>{{ fullinfo.fullname }}</e-text>
                 <e-text>{{ email }}</e-text>
+                <e-text>{{ fullinfo.phone }}</e-text>
+                <e-text>{{ fullinfo.companyName }}</e-text>
             </e-container>
         </e-section>
     </e-html>

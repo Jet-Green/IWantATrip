@@ -183,7 +183,7 @@ function submit() {
 
   form.author = userStore.user._id
 
-  TripStore.createTrip(form, userStore.user.email).then(async (res) => {
+  TripStore.createTrip(form, userStore.user).then(async (res) => {
     if (res.status == 200) {
       const _id = res.data._id;
       await uploadTripImages(_id)
