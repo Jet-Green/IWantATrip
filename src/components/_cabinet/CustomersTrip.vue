@@ -221,7 +221,7 @@ onMounted(async () => {
                 <div>c {{ clearData(trip.start) }} по {{ clearData(trip.end) }}</div>
                 <div>Максимум: {{ trip.maxPeople }} чел.</div>
                 <div>Забронировало: {{ tripStat ? tripStat.amount : '' }} чел.</div>
-                <div>Сумма полученая: {{ tripStat ? tripStat.received : '' }} руб.</div>
+                <div>Сумма полученная: {{ tripStat ? tripStat.received : '' }} руб.</div>
                 <div>Сумма полная: {{ tripStat ? tripStat.totalCost : '' }} руб.</div>
             </a-card>
         </a-col>
