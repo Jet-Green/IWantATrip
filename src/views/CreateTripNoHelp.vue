@@ -362,7 +362,7 @@ let formSchema = yup.object({
     <BackButton />
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="12">
-        <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
+        <Form :validation-schema="formSchema" v-slot="{ meta }" >
           <a-row :gutter="[16, 16]">
             <a-col :span="24">
               <UserFullInfo @fullInfo="updateUserInfo" />
@@ -568,7 +568,7 @@ let formSchema = yup.object({
               </a-upload>
             </a-col> -->
             <a-col :span="24" class="d-flex justify-center">
-              <a-button class="lets_go_btn ma-36" type="primary" html-type="submit">Отправить
+              <a-button class="lets_go_btn ma-36" type="primary" @click.once="submit()">Отправить
               </a-button>
             </a-col>
           </a-row>

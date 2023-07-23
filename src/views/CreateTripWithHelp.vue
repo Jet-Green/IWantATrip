@@ -63,9 +63,10 @@ function clearForm() {
 }
 
 async function submit() {
+  
 
   let toSend = Object.assign(form);
-
+  toSend.dateOfBooking = new Date().getTime()
   toSend.start = new Date(form.start).getTime();
   toSend.end = new Date(form.end).getTime();
   toSend.creatorId = userStore.user._id

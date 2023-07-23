@@ -149,6 +149,9 @@ onMounted(() => {
         попутчики
       </div>
       <div @click="toComponentFromMenu('Me')" class="route ma-8">кабинет</div>
+      <a href="https://doc.gorodaivesi.ru/" target="_blank">
+        <div class="route ma-8">о проекте</div>
+      </a>
     </a-drawer>
   </a-layout-header>
 </template>

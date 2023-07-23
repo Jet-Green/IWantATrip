@@ -75,8 +75,8 @@ watch(current, (newRout, oldRout) => {
             <a-menu-item key="/cabinet/orders">Заказы</a-menu-item>
             <a-menu-item v-if="userStore.user.roles.includes('admin')" key="/cabinet/interface">Интерфейс</a-menu-item>
             <a-menu-item v-if="userStore.user.roles.includes('admin')" key="/cabinet/management">Управление</a-menu-item>
-            <a-menu-item v-if="userStore.user.roles.includes('admin')" key="/cabinet/scripts"
-              style="color: red">Scripts</a-menu-item>
+            <!-- <a-menu-item v-if="userStore.user.roles.includes('admin')" key="/cabinet/scripts"
+              style="color: red">Scripts</a-menu-item> -->
           </a-sub-menu>
         </a-menu>
 
