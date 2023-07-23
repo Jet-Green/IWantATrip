@@ -8,18 +8,18 @@
           <a-row class="bottom_menu d-flex">
             <a-col :xs="8" class="d-flex align-center direction-column">
               <div>
-                <a href="https://doc.gorodaivesi.ru" target="_blank"><b>Условия</b> </a>
+                <a href="https://doc.gorodaivesi.ru/privacy/main.html" target="_blank"><b>Документы</b> </a>
               </div>
               <div>
                 <div>
-                  <a href="https://doc.gorodaivesi.ru/privacy/oferta.html">Оферта</a>
+                  <a href="https://doc.gorodaivesi.ru/privacy/oferta.html" target="_blank">Оферта</a>
                 </div>
 
                 <div>
-                  <a href="https://doc.gorodaivesi.ru/privacy/agentDocs.html">Правила</a>
+                  <a href="https://doc.gorodaivesi.ru/privacy/agentDocs.html" target="_blank">Агентский договор</a>
                 </div>
                 <div>
-                  <a href="https://doc.gorodaivesi.ru/privacy/agreement.html">Оплата</a>
+                  <a href="https://doc.gorodaivesi.ru/privacy/agreement.html" target="_blank">Согласие на обработку персональных данных</a>
                 </div>
               </div>
             </a-col>
@@ -30,10 +30,10 @@
 
               <div>
                 <div>
-                  <a href="https://doc.gorodaivesi.ru/about/questions.html">Вопросы</a>
+                  <a href="https://doc.gorodaivesi.ru/questions.html" target="_blank">Вопросы</a>
                 </div>
                 <div>
-                  <a href="https://doc.gorodaivesi.ru/about/support.html">Поддержка</a>
+                  <a href="https://doc.gorodaivesi.ru/support.html" target="_blank">Поддержка</a>
                 </div>
                 <!-- ! -->
                 <router-link to="/contacts">
@@ -45,17 +45,17 @@
             </a-col>
             <a-col :xs="8" class="d-flex align-center direction-column">
               <div>
-                <a href="https://doc.gorodaivesi.ru" target="_blank"><b>Обучение</b></a>
+                <a href="https://doc.gorodaivesi.ru/education/main.html" target="_blank"><b>Обучение</b></a>
               </div>
 
               <div>
                 <div>
-                  <a href="https://doc.gorodaivesi.ru/education/create-trip.html"
+                  <a href="https://doc.gorodaivesi.ru/education/create-trip.html" target="_blank"
                     >Создать поездку</a
                   >
                 </div>
                 <div>
-                  <a href="https://doc.gorodaivesi.ru/education/reg.html">Регистрация</a>
+                  <a href="https://doc.gorodaivesi.ru/education/reg.html" target="_blank">Регистрация</a>
                 </div>
               </div>
             </a-col>
