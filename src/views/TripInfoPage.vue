@@ -127,12 +127,22 @@ function selectDate(index) {
     selectedDate.value = tripDates.value[index]
 }
 
+function getCustomersCount(billsList) {
+    let res = 0;
+    for (let bill of billsList) {
+        for (let cartItem of bill.cart) {
+            res += cartItem.count
+        }
+    }
+    return res
+}
+
 onMounted(() => {
     tripStore
         .getFullTripById(_id)
         .then((response) => {
             trip.value = response.data;
-            tripDates.value.push({ _id: trip.value._id, start: trip.value.start, end: trip.value.end, selected: true, selectedCosts: [] })
+            tripDates.value.push({ _id: trip.value._id, start: trip.value.start, end: trip.value.end, selected: true, selectedCosts: [], billsList: trip.value.billsList })
             for (let cost of response.data.cost) {
                 tripDates.value[0].selectedCosts.push({
                     cost: cost.price,
@@ -143,7 +153,6 @@ onMounted(() => {
 
             for (let child of trip.value.children) {
                 let toPush = { ...child, selectedCosts: [], selected: false }
-
                 for (let cost of response.data.cost) {
                     toPush.selectedCosts.push({
                         cost: cost.price,
@@ -207,8 +216,9 @@ onMounted(() => {
                                 <a-checkable-tag class="pretty-tag" v-for="(date, index) of tripDates"
                                     :checked="date.selected" @change="selectDate(index)">{{
                                         clearData(date.start) }} -
-                                    {{
-                                        clearData(date.end) }}</a-checkable-tag>
+                                    {{ clearData(date.end) }}
+                                    {{ getCustomersCount(date.billsList) + '/' + trip.maxPeople }}
+                                </a-checkable-tag>
                             </div>
                         </div>
                         <div v-if="tripDates.length < 2">
@@ -269,13 +279,20 @@ onMounted(() => {
                         {{ clearData(selectedDate.start) + ' - ' + clearData(selectedDate.end) }}
                     </b>
 
+                    <div
+                        :style="(trip.maxPeople - getCustomersCount(selectedDate.billsList) - selectedDate.selectedCosts.reduce((acc, cost) => { return acc + cost.count }, 0)) < 0 ? 'color: red' : ''">
+                        {{ (getCustomersCount(selectedDate.billsList) + selectedDate.selectedCosts.reduce((acc,
+                            cost) => { return acc + cost.count }, 0)) + '/' + trip.maxPeople }} чел.
+                    </div>
+
                     <div class="d-flex space-between align-center" v-for="cost of selectedDate.selectedCosts">
                         <div>{{ cost.costType }}</div>
                         <div> {{ cost.cost }} руб.</div>
 
                         <div class="d-flex direction-column">
                             <span style="font-size: 8px">кол-во</span>
-                            <a-input-number v-model:value="cost.count" :min="0" :max="trip.maxPeople - tripsCount"
+                            <a-input-number v-model:value="cost.count" :min="0"
+                                :max="trip.maxPeople - getCustomersCount(selectedDate.billsList)"
                                 placeholder="чел"></a-input-number>
                         </div>
                     </div>
@@ -285,10 +302,11 @@ onMounted(() => {
                 </a-col>
 
                 <a-col :span="24">
-
                     <div class="d-flex space-around">
                         <!-- <a-button type="primary" @click="buyTrip(true)"> сейчас </a-button> -->
-                        <a-button @click="buyTrip(false)" type="primary" class="lets_go_btn"> Заказать </a-button>
+                        <a-button @click="buyTrip(false)" type="primary" class="lets_go_btn"
+                            :disabled="(trip.maxPeople - getCustomersCount(selectedDate.billsList) - selectedDate.selectedCosts.reduce((acc, cost) => { return acc + cost.count }, 0)) < 0">
+                            Заказать </a-button>
                     </div>
                 </a-col>
             </a-row>
