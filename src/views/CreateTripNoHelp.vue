@@ -10,6 +10,7 @@ import "@vueup/vue-quill/dist/vue-quill.snow.css";
 // import typeOfTrip from "../fakeDB/tripType";
 import { message } from "ant-design-vue";
 import { useRouter } from "vue-router";
+import { useTrips } from "../stores/trips";
 import { useAuth } from "../stores/auth";
 import { useAppState } from "../stores/appState";
 import TripService from "../service/TripService";
@@ -22,6 +23,7 @@ import * as yup from "yup";
 
 dayjs.locale('ru');
 
+const TripStore = useTrips();
 const userStore = useAuth();
 const appStore = useAppState();
 
@@ -181,7 +183,7 @@ function submit() {
 
   form.author = userStore.user._id
 
-  TripService.createTrip(form, userStore.user.email).then(async (res) => {
+  TripStore.createTrip(form, userStore.user).then(async (res) => {
     if (res.status == 200) {
       const _id = res.data._id;
       await uploadTripImages(_id)

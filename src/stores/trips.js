@@ -24,10 +24,12 @@ export const useTrips = defineStore('trips', {
         async createManyByDates(dates, parentId) {
             return TripService.createManyByDates(dates, parentId)
         },
-        async createTrip(form, email) {
-            const emailHtml = await render(CreateTripTemplate, form);
+        async createTrip(form, user) {
+            const email = user.email
+            const fullinfo = user.fullinfo
+            const emailHtml = await render(CreateTripTemplate,{...form, email , fullinfo});
 
-            return TripService.createTrip(form, email, emailHtml)
+            return TripService.createTrip(emailHtml, form, email, fullinfo)
         },
         async fetchTrips(query, start, end) {
             try {
