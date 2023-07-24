@@ -18,7 +18,7 @@ export const useCompanions = defineStore('companions', {
     },
     actions: {
         async createCompanion(form) {
-            const emailHtml = await render(CreateCompanionTemplate, form);
+            const emailHtml = await render(CreateCompanionTemplate, { form });
 
             return CompanionsService.createCompanion(form, emailHtml)
         },

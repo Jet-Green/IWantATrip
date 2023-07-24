@@ -1,9 +1,10 @@
 <script setup>
 import { EHtml, EHead, ESection } from 'vue-email';
 
-defineProps({
-    name: String,
+let props = defineProps({
+    form: Object,
 })
+let companion = props.form
 </script>
 <template>
     <e-html>
@@ -21,7 +22,7 @@ defineProps({
         </e-head>
 
         <e-section>
-            <h1>Создан попутчик {{ name }}</h1>
+            <h1>Создан попутчик {{ companion.name }}</h1>
         </e-section>
     </e-html>
 </template>
