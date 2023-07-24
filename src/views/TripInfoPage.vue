@@ -176,13 +176,6 @@ onMounted(() => {
         });
 })
 
-function clearForm() {
-    selectedDate.value = tripDates.value[0]
-
-    console.log(tripDates.value);
-    selectDate(0)
-}
-
 let isNoPlaces = computed(() => {
     if (selectedDate.value.billsList) {
         return (trip.value.maxPeople - getCustomersCount(selectedDate.value.billsList) - selectedDate.value.selectedCosts.reduce((acc, cost) => { return acc + cost.count }, 0)) < 0
