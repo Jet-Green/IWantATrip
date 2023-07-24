@@ -19,7 +19,7 @@ export default {
     acceptCompanion(_id) {
         return $api.get(`/companion/accept-companion?_id=${_id}`)
     },
-    deleteCompanion(_id) {
-        return $api.get(`/companion/delete-by-id?_id=${_id}`)
+    deleteCompanion(_id, email) {
+        return $api.get(`/companion/delete-by-id?_id=${_id}`, email)
     }
 }

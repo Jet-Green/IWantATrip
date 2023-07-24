@@ -21,6 +21,9 @@
                 <div>
                   <a href="https://doc.gorodaivesi.ru/privacy/agreement.html" target="_blank">Согласие на обработку персональных данных</a>
                 </div>
+                <div>
+                  <a href="https://doc.gorodaivesi.ru/privacy/agentDocs.html">Агентский договор</a>
+                </div>
               </div>
             </a-col>
             <a-col :xs="8" class="d-flex align-center direction-column">
