@@ -20,7 +20,6 @@ export default {
         return $api.get(`/companion/accept-companion?_id=${_id}`)
     },
     deleteCompanion(_id, userId) {
-        console.log(userId,'idid');
         return $api.post(`/companion/delete-by-id?_id=${_id}`, {userId : userId})
     }
 }

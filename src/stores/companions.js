@@ -72,7 +72,6 @@ export const useCompanions = defineStore('companions', {
         },
         async deleteCompanion(_id, userId) {
             try {
-                console.log(userId);
                 return await CompanionsService.deleteCompanion(_id, userId)
             } catch (error) {
                 console.log(error);
