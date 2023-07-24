@@ -35,9 +35,7 @@ async function find() {
 }
 
 watch(query, () => {
-  if (query.strQuery == "" || query.gender == "" || query.age.start || query.age.end || query.start || query.end) {
-    find();
-  }
+  find();
 }, { deep: true });
 watch(date, (newDate) => {
   if (newDate) {

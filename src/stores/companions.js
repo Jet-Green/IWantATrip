@@ -25,8 +25,12 @@ export const useCompanions = defineStore('companions', {
         async fetchCompanions(query) {
             try {
                 let locationStore = useLocations()
+                let l = JSON.parse(localStorage.getItem("location"))
+                if (l?.coordinates) {
+                    locationStore.location = l
+                }
                 let response
-                if (locationStore.location?.name) {
+                if (locationStore.location?.coordinates) {
                     response = await CompanionsService.fetchCompanions(...locationStore.location.coordinates, query);
                 } else {
                     response = await CompanionsService.fetchCompanions('', '', query);

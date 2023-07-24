@@ -22,7 +22,10 @@ onMounted(async () => {
 
   await locationStore.fetchLocations()
   try {
-    locationStore.location ? locationStore.location = JSON.parse(localStorage.getItem("location")) : console.log("нет локации")
+    let l = JSON.parse(localStorage.getItem("location"))
+    if (l?.coordinates) {
+      locationStore.location = l
+    }
   } catch (error) {
     localStorage.setItem('location', {})
     console.log(error);
