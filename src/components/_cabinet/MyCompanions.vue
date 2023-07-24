@@ -8,6 +8,7 @@ const userStore = useAuth();
 const router = useRouter();
 const companionStore = useCompanions();
 const companionIds = userStore.user?.createdCompanions;
+
 let companions = ref();
 
 const clearData = (dataString) => {
@@ -46,9 +47,7 @@ const toCompanionResposes = (companion) => {
   router.push("/cabinet/responses");
 };
 function deleteCompanion(_id) {
-  const email = userStore.user.email
-  companionStore.deleteCompanion(_id, email);
-
+  companionStore.deleteCompanion(_id, userStore.user._id);
 }
 onMounted(async () => {
   let createdCompanions = [];

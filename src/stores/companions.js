@@ -70,9 +70,10 @@ export const useCompanions = defineStore('companions', {
                 console.log(err);
             }
         },
-        async deleteCompanion(_id, email) {
+        async deleteCompanion(_id, userId) {
             try {
-                return await CompanionsService.deleteCompanion(_id, email)
+                console.log(userId);
+                return await CompanionsService.deleteCompanion(_id, userId)
             } catch (error) {
                 console.log(error);
             }
