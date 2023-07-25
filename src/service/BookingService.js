@@ -1,8 +1,8 @@
 import $api from "../plugins/axios";
 
 export default {
-    bookingTrip(booking, emailHtml) {
-        return $api.post('/booking/create', { booking, emailHtml })
+    async bookingTrip(emailHtml, booking) {
+        return $api.post('/booking/create', { emailHtml, booking})
     },
     findByUserId(id) {
         return $api.post('/booking/findByUserId', { _id: id })

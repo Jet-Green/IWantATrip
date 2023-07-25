@@ -1,5 +1,5 @@
 <script setup>
-import { EContainer, EHeading, EHead, EHtml, EPreview, ESection, EText } from 'vue-email';
+import { EContainer, EHeading, EHead, EHtml, ESection, EText } from 'vue-email';
 
 defineProps({
     name: { type: String },
@@ -50,7 +50,6 @@ const clearData = (dateNumber) => {
             <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.6.96/css/materialdesignicons.min.css" rel="stylesheet" />
         </e-head>
 
-        <e-preview preview="Welcome to vue-email" />
         <e-section>
             <e-container>
                 <e-heading as="h3">Создан Тур</e-heading>

@@ -71,7 +71,6 @@ async function submit() {
   toSend.end = new Date(form.end).getTime();
   toSend.creatorId = userStore.user._id
 
-  console.log(toSend)
   await userStore
     .updateUser({
       email: userStore.user.email,
@@ -83,8 +82,7 @@ async function submit() {
     .catch((err) => {
       console.log(err);
     });
-
-  bookingStore.bookingTrip(toSend).then((res) => {
+  bookingStore.bookingTrip(toSend).then(async (res) => {
     if (res.status == 200) {
       message.config({ duration: 1.5, top: "70vh" });
       message.success({

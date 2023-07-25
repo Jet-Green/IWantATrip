@@ -14,8 +14,7 @@ export const useBooking = defineStore('booking', {
         async bookingTrip(booking) {
             try {
                 const emailHtml = await render(BookingTripTemplate, booking);
-
-                return BookingService.bookingTrip(booking, emailHtml)
+                return BookingService.bookingTrip(emailHtml, booking)
             } catch (err) {
                 console.log(err);
             }
