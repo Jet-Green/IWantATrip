@@ -12,7 +12,9 @@ const dateFormatList = ["DD.MM.YY", "DD.MM.YY"];
 const ruLocale = locale;
 
 let props = defineProps(['trip', 'actions'])
-let { actions, trip } = props
+let emit = defineEmits(['deleteTrip'])
+let { actions } = props
+let trip = ref(props.trip)
 let router = useRouter()
 let tripStore = useTrips()
 let userStore = useAuth()
@@ -45,18 +47,16 @@ function copyTrip(_id) {
     router.push({ name: `CopyTrip`, query: { _id } });
 }
 async function hideTrip(_id) {
-    trip.isHidden = !trip.isHidden;
-    TripService.hideTrip(_id, trip.isHidden);
+    trip.value.isHidden = !trip.value.isHidden;
+    TripService.hideTrip(_id, trip.value.isHidden);
 }
 function goToTripPage(_id) {
     router.push(`/trip?_id=${_id}`);
 }
 async function tripToDelete(_id) {
-    let { response } = await tripStore.deleteById(_id);
-    let { status } = response
-
-    if (status != "400") {
-        trip = {}
+    let response = await tripStore.deleteById(_id);
+    if (response.status == 200) {
+        emit('deleteTrip')
     }
 }
 function updateUser(_id) {
@@ -100,7 +100,7 @@ async function submit() {
         }
     }
 
-    let res = await tripStore.createManyByDates(datesToSend, trip._id)
+    let res = await tripStore.createManyByDates(datesToSend, trip.value._id)
 
     for (let _id of res.data) {
         updateUser(_id)
@@ -111,7 +111,7 @@ async function submit() {
     }
 }
 let tripDuration = computed(() => {
-    return Math.ceil((trip.end - trip.start) / (1000 * 60 * 60 * 24))
+    return Math.ceil((trip.value.end - trip.value.start) / (1000 * 60 * 60 * 24))
 })
 let showMessage = ref(false);
 
