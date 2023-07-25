@@ -21,6 +21,19 @@ defineProps({
     email: { type: String },
     fullinfo: { type: Object }
 })
+
+const clearData = (dateNumber) => {
+  let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit",
+  })
+  if (date !== 'Invalid Date' && date) {
+    return date
+  }
+  return ''
+}
+
 </script>
 <template>
     <e-html lang="ru">
@@ -40,11 +53,13 @@ defineProps({
         <e-preview preview="Welcome to vue-email" />
         <e-section>
             <e-container>
-                <e-heading as="h2">Создан Тур: {{ name }}</e-heading>
-                <e-text>{{ fullinfo.fullname }}</e-text>
-                <e-text>{{ email }}</e-text>
-                <e-text>{{ fullinfo.phone }}</e-text>
-                <e-text>{{ fullinfo.companyName }}</e-text>
+                <e-heading as="h3">Создан Тур</e-heading>
+                <e-text> Наименование: <b>{{ name}}</b> </e-text>
+                <e-text> Дата: <b>{{clearData(start)  }}-{{ clearData(end)  }}</b> </e-text>
+                <e-text> Создатель: <b>{{ fullinfo.fullname }}</b> </e-text>
+                <e-text> Почта: <b>{{ email }}</b></e-text>
+                <e-text> Телефон: <a href="tel:fullinfo.phone"> <b>{{ fullinfo.phone }}</b> </a></e-text>
+                <e-text>Компания: <b>{{ fullinfo.companyName }}</b></e-text>
             </e-container>
         </e-section>
     </e-html>
@@ -52,28 +67,6 @@ defineProps({
 <style scoped>
 body {
     font-family: 'Montserrat', sans-serif;
-    display: flex;
-    justify-content: center;
-}
 
-.outer {
-    font-size: 16px;
-    max-width: 90%;
-}
-
-.row {
-    margin: 16px 0 16px 0;
-}
-
-/* .col {
-} */
-.cost-item {
-    display: flex;
-    align-items: center;
-    margin-top: 4px;
-}
-
-p {
-    margin: 0 6px 0;
 }
 </style>
