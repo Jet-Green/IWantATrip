@@ -190,8 +190,7 @@ function submit() {
     }
 
     form.author = userStore.user._id
-
-    TripService.createTrip(form, userStore.user.email).then(async (res) => {
+    tripStore.createTrip(form, userStore.user).then(async (res) => {
         if (res.status == 200) {
             const _id = res.data._id;
             await uploadTripImages(_id)
@@ -492,8 +491,8 @@ let formSchema = yup.object({
 
                         <a-col :span="24">
 
-                            <div v-for="item in form.bonuses" :key="item" style="display: flex"
-align="baseline" class="mb-16">
+                            <div v-for="item in form.bonuses" :key="item" style="display: flex" align="baseline"
+                                class="mb-16">
                                 <a-input v-model:value="item.type" placeholder="Количество человек" />
 
                                 <a-input v-model:value="item.bonus" style="width: 100%" placeholder="Бонусы или скидки"
