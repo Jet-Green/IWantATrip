@@ -20,8 +20,15 @@ function getPhoneNumber(number) {
   return `tel:${number}`
 }
 
+async function deleteTrip() {
+  await getAllTrips()
+}
 
-onMounted(async () => {
+async function getAllTrips() {
+  trips.value = []
+  tripsOnModeration.value = []
+  archiveTrips.value = []
+
   loading.value = true
   let userId = userStore.user._id
   let response = await tripStore.getCreatedTripsInfoByUserId(userId)
@@ -39,7 +46,10 @@ onMounted(async () => {
       tripsOnModeration.value.push(trip)
     }
   }
+}
 
+onMounted(async () => {
+  await getAllTrips()
 });
 let activeKey = ref(2)
 </script>
@@ -53,8 +63,7 @@ let activeKey = ref(2)
         <a-collapse-panel v-if="tripsOnModeration.length" key="1" header="На модерации">
           <a-row :gutter="[8, 8]" class="mt-8" v-if="tripsOnModeration.length > 0">
             <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of tripsOnModeration" :key="index">
-              <CabinetTrip :trip="trip" :actions="['delete', 'info', 'edit', 'msg']"
-                @deleteTrip="tripsOnModeration.splice(index, 1)" />
+              <CabinetTrip :trip="trip" :actions="['delete', 'info', 'edit', 'msg']" @deleteTrip="deleteTrip" />
             </a-col>
           </a-row>
         </a-collapse-panel>
@@ -63,8 +72,7 @@ let activeKey = ref(2)
         <a-collapse-panel key="2" header="Действующие туры">
           <a-row :gutter="[8, 8]" class="mt-8" v-if="trips.length > 0">
             <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of trips" :key="index">
-              <CabinetTrip :trip="trip" :actions="['delete', 'info', 'copy', 'hide', 'edit']"
-                @deleteTrip="trips.splice(index, 1)" />
+              <CabinetTrip :trip="trip" :actions="['delete', 'info', 'copy', 'hide', 'edit']" @deleteTrip="deleteTrip" />
             </a-col>
           </a-row>
           <a-row :lg="8" :sm="12" :xs="24" v-else>
@@ -76,8 +84,7 @@ let activeKey = ref(2)
         <a-collapse-panel key="3" header="Архивные туры">
           <a-row :gutter="[8, 8]" class="mt-8" v-if="archiveTrips.length > 0">
             <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of archiveTrips" :key="index">
-              <CabinetTrip :trip="trip" :actions="['delete', 'info', 'copy', 'edit']"
-                @deleteTrip="archiveTrips.splice(index, 1)" />
+              <CabinetTrip :trip="trip" :actions="['delete', 'info', 'copy', 'edit']" @deleteTrip="deleteTrip" />
             </a-col>
           </a-row>
           <a-row :lg="8" :sm="12" :xs="24" v-else>
