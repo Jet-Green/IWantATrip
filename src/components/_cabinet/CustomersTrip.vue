@@ -346,7 +346,7 @@ onMounted(async () => {
 
             <a-col :span="24">
                 <div>Цена</div>
-                <div class="d-flex space-around align-center" v-for="(cost, index) of trip.cost" :key="index">
+                <div class="d-flex space-between align-center" v-for="(cost, index) of trip.cost" :key="index">
                     {{ cost.first }}<span>{{ cost.price }} руб. </span>
                     <div class="d-flex direction-column">
                         <span style="font-size: 8px">кол-во</span>
