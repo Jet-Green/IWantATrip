@@ -9,7 +9,7 @@ const router = useRouter();
 const companionStore = useCompanions();
 const companionIds = userStore.user?.createdCompanions;
 
-let companions = ref();
+let companions = ref([]);
 
 const clearData = (dataString) => {
   return new Date(Number(dataString))
@@ -46,30 +46,32 @@ const toCompanionResposes = (companion) => {
   companionStore.currentCompanion = companion;
   router.push("/cabinet/responses");
 };
-function deleteCompanion(_id) {
-  companionStore.deleteCompanion(_id, userStore.user._id);
+async function deleteCompanion(_id) {
+  let res = await companionStore.deleteCompanion(_id, userStore.user._id);
+
+  if (res.status == 200)
+    await updateCompanions()
 }
-onMounted(async () => {
+
+async function updateCompanions() {
   let createdCompanions = [];
   for (let id of companionIds) {
     const response = await companionStore.getById(id);
     createdCompanions.push(response.data);
   }
   companions.value = createdCompanions.filter((element) => element !== null);
+}
+
+onMounted(async () => {
+  await updateCompanions()
 });
 </script>
 <template>
   <a-col :span="24" class="mb-8">
-    <h3>Поиск попутчиков</h3>
+    <h3>Мои попутчики</h3>
   </a-col>
-  <a-row :gutter="[8, 8]">
-    <a-col
-      v-for="(companion, index) in companions"
-      :key="index"
-      :lg="8"
-      :sm="12"
-      :xs="24"
-    >
+  <a-row v-if="companions.length" :gutter="[8, 8]">
+    <a-col v-for="(companion, index) in companions" :key="index" :lg="8" :sm="12" :xs="24">
       <a-card class="card" hoverable>
         <div>
           <span class="mdi mdi-human-male-female"></span>{{ companion?.name }}
@@ -77,31 +79,25 @@ onMounted(async () => {
         </div>
 
         <div><span class="mdi mdi-compass-outline"></span>{{ companion?.direction }}</div>
-        <div
-          :class="[
-            companion?.companionGender == 'Мужчина'
-              ? 'male'
-              : companion?.companionGender == 'Женщина'
+        <div :class="[
+          companion?.companionGender == 'Мужчина'
+            ? 'male'
+            : companion?.companionGender == 'Женщина'
               ? 'female'
               : 'not-matter',
-          ]"
-        >
-          <span
-            :class="
-              companion?.companionGender == 'Женщина'
-                ? 'mdi mdi-gender-female'
-                : companion?.companionGender == 'Мужчина'
-                ? 'mdi mdi-gender-male'
-                : 'mdi mdi-human-male-female'
-            "
-          ></span
-          >{{
-            companion?.companionGender == "Мужчина"
-              ? "Мужчину"
-              : companion?.companionGender == "Женщина"
-              ? "Женщину"
-              : "Не важно"
-          }}
+        ]">
+          <span :class="companion?.companionGender == 'Женщина'
+            ? 'mdi mdi-gender-female'
+            : companion?.companionGender == 'Мужчина'
+              ? 'mdi mdi-gender-male'
+              : 'mdi mdi-human-male-female'
+            "></span>{{
+    companion?.companionGender == "Мужчина"
+    ? "Мужчину"
+    : companion?.companionGender == "Женщина"
+      ? "Женщину"
+      : "Не важно"
+  }}
         </div>
         <div>
           <span class="mdi mdi-calendar-arrow-right"></span>
@@ -113,20 +109,18 @@ onMounted(async () => {
         <div><span class="mdi mdi-list-status"></span>{{ companion?.description }}</div>
 
         <div class="d-flex justify-center">
-          <span
-            class="mdi mdi-information-outline"
-            style="cursor: pointer; font-size: 20px"
-            @click="toCompanionResposes(companion)"
-          ></span>
-          <a-popconfirm
-            title="Вы уверены?"
-            ok-text="Да"
-            cancel-text="Нет"
-            @confirm="deleteCompanion(companion._id)">
+          <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="deleteCompanion(companion._id)">
             <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer; font-size: 20px"></span>
           </a-popconfirm>
+          <span class="mdi mdi-information-outline ml-4" style="cursor: pointer; font-size: 20px"
+            @click="toCompanionResposes(companion)"></span>
         </div>
       </a-card>
+    </a-col>
+  </a-row>
+  <a-row v-else>
+    <a-col :span="24">
+      нет попутчиков
     </a-col>
   </a-row>
 </template>
