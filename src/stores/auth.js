@@ -56,9 +56,9 @@ export const useAuth = defineStore('auth', {
             try {
                 const emailHtml = await render(BuyTripTemplate, bill);
 
-                let { data } = await UserService.buyTrip(tripId, bill, emailHtml)
-                this.user.boughtTrips.push(data)
-                return data
+                let response = await UserService.buyTrip(tripId, bill, emailHtml)
+                this.user.boughtTrips.push(response.data)
+                return response
             } catch (error) {
                 console.log(error);
             }

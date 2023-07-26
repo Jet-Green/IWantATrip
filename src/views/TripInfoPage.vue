@@ -81,44 +81,6 @@ let buyTripDialog = () => {
     }
 };
 
-async function buyTrip(isBoughtNow) {
-    if (userStore.user.fullinfo.phone) {
-        if (selectedDate.value.selected) {
-            let bill = {
-                isBoughtNow,
-                cart: selectedDate.value.selectedCosts,
-                tripId: selectedDate.value._id,
-                userInfo: {
-                    _id: userStore.user._id,
-                    fullname: userStore.user.fullinfo.fullname,
-                    phone: userStore.user.fullinfo.phone,
-                }
-            };
-
-            for (let i = 0; i < bill.cart.length; i++) {
-                if (bill.cart[i].count == 0) {
-                    bill.cart.splice(i, 1);
-                }
-            }
-            if (bill.cart.length != 0) {
-                await userStore
-                    .buyTrip(selectedDate.value._id, bill)
-                    .then(() => {
-                        message.config({ duration: 3, top: "90vh" });
-                        message.success({ content: "Тур заказан!" });
-                        buyDialog.value = false;
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    });
-            }
-        }
-    } else {
-        message.config({ duration: 3, top: "90vh" });
-        message.success({ content: "Нужен телефон" });
-    }
-}
-
 function selectDate(index) {
     for (let date of tripDates.value) {
         date.selected = false
@@ -137,7 +99,10 @@ function getCustomersCount(billsList) {
     return res
 }
 
-function refreshDates(tripFromDb) {
+async function refreshDates() {
+    let response = await tripStore.getFullTripById(_id)
+    let tripFromDb = response.data
+
     tripDates.value = []
     trip.value = tripFromDb;
     tripDates.value.push({ _id: trip.value._id, start: trip.value.start, end: trip.value.end, selected: true, selectedCosts: [], billsList: trip.value.billsList })
@@ -165,15 +130,50 @@ function refreshDates(tripFromDb) {
     }
 }
 
-onMounted(() => {
-    tripStore
-        .getFullTripById(_id)
-        .then((response) => {
-            refreshDates(response.data)
-        })
-        .catch((error) => {
-            console.log(error);
-        });
+async function buyTrip(isBoughtNow) {
+    if (userStore.user.fullinfo.phone) {
+        if (selectedDate.value.selected) {
+            let bill = {
+                isBoughtNow,
+                cart: selectedDate.value.selectedCosts,
+                tripId: selectedDate.value._id,
+                userInfo: {
+                    _id: userStore.user._id,
+                    fullname: userStore.user.fullinfo.fullname,
+                    phone: userStore.user.fullinfo.phone,
+                }
+            };
+
+            for (let i = 0; i < bill.cart.length; i++) {
+                if (bill.cart[i].count == 0) {
+                    bill.cart.splice(i, 1);
+                }
+            }
+
+            if (bill.cart.length != 0) {
+                userStore
+                    .buyTrip(selectedDate.value._id, bill)
+                    .then(async (response) => {
+                        if (response.status == 200) {
+                            message.config({ duration: 3, top: "90vh" });
+                            message.success({ content: "Тур заказан!" });
+                        }
+                        await refreshDates()
+                        buyDialog.value = false;
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+            }
+        }
+    } else {
+        message.config({ duration: 3, top: "90vh" });
+        message.success({ content: "Нужен телефон" });
+    }
+}
+
+onMounted(async () => {
+    await refreshDates()
 })
 
 let isNoPlaces = computed(() => {
