@@ -72,7 +72,8 @@ let activeKey = ref(2)
         <a-collapse-panel key="2" header="Действующие туры">
           <a-row :gutter="[8, 8]" class="mt-8" v-if="trips.length > 0">
             <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of trips" :key="index">
-              <CabinetTrip :trip="trip" :actions="['delete', 'info', 'copy', 'hide', 'edit']" @deleteTrip="deleteTrip" />
+              <CabinetTrip :trip="trip" :actions="['delete', 'info', 'copy', 'hide', 'edit', 'addDate']"
+                @deleteTrip="deleteTrip" />
             </a-col>
           </a-row>
           <a-row :lg="8" :sm="12" :xs="24" v-else>
@@ -84,7 +85,8 @@ let activeKey = ref(2)
         <a-collapse-panel key="3" header="Архивные туры">
           <a-row :gutter="[8, 8]" class="mt-8" v-if="archiveTrips.length > 0">
             <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of archiveTrips" :key="index">
-              <CabinetTrip :trip="trip" :actions="['delete', 'info', 'copy', 'edit']" @deleteTrip="deleteTrip" />
+              <CabinetTrip :trip="trip" :actions="['delete', 'info', 'copy', 'edit', 'addDate']"
+                @deleteTrip="deleteTrip" />
             </a-col>
           </a-row>
           <a-row :lg="8" :sm="12" :xs="24" v-else>

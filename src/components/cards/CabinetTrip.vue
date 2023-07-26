@@ -158,8 +158,8 @@ watch(dates, () => {
                     <span v-if="!trip.isHidden" class="mdi mdi-eye" style="color: #245159; cursor: pointer"></span>
                     <span v-else class="mdi mdi-eye-off" style="color: #245159; cursor: pointer"></span>
                 </a-popconfirm>
-                <span v-if="!trip.parent" class="mdi mdi-plus-circle-outline" style="color: #245159; cursor: pointer"
-                    @click="addDateDialog = true"></span>
+                <span v-if="!trip.parent && actions.includes('addDate')" class="mdi mdi-plus-circle-outline"
+                    style="color: #245159; cursor: pointer" @click="addDateDialog = true"></span>
                 <a-popconfirm v-if="actions.includes('copy') && !trip.parent" title="Вы уверены?" ok-text="Да"
                     cancel-text="Нет" @confirm="copyTrip(trip._id)">
                     <span class="mdi mdi-content-copy" style="color: #245159; cursor: pointer"></span>
