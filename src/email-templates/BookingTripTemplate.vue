@@ -1,10 +1,22 @@
 <script setup>
-import { EHtml, EHead, ESection } from 'vue-email';
+import { EContainer, EHeading, EHead, EHtml, ESection, EText } from 'vue-email';
 
 let props = defineProps({
-    form: { type: Object },
+    form: Object,
 })
 let booking = props.form
+
+const clearData = (dateNumber) => {
+  let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit",
+  })
+  if (date !== 'Invalid Date' && date) {
+    return date
+  }
+  return ''
+}
 </script>
 <template>
     <e-html lang="ru">
@@ -24,7 +36,10 @@ let booking = props.form
         <e-section>
             <e-container>
                 <e-heading as="h3">Заказана поездка</e-heading>
-                <e-text> Наименование: {{ booking }} </e-text>
+                <e-text> Направление: {{ booking.location }} </e-text>
+                <e-text> Пожелания: {{ booking.wishes }} </e-text>
+                <e-text> Начало: {{ clearData(booking.start) }} </e-text>
+                <e-text> Конец: {{ clearData( booking.end) }} </e-text>
             </e-container>
         </e-section>
     </e-html>

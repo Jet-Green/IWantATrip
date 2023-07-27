@@ -1,8 +1,11 @@
 <script setup>
-import { EHtml, EHead, ESection } from 'vue-email';
+import { EContainer, EHeading, EHead, EHtml, ESection, EText } from 'vue-email';
 
-defineProps({
+let props = defineProps({
+    form: Object,
 })
+let bought = props.form
+console.log(bought)
 </script>
 <template>
     <e-html>
@@ -10,7 +13,7 @@ defineProps({
             <meta charset="UTF-8">
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Куплена поездка</title>
+            <title>Создан попутчик</title>
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
             <link
@@ -20,7 +23,11 @@ defineProps({
         </e-head>
 
         <e-section>
-            <h1>Куплена поездка</h1>
+            <e-heading as="h3">Куплен тур</e-heading>
+            <e-text>Имя Фамилия покупателя: {{ bought.userInfo.fullname }}</e-text>
+            <e-text>Что выбрал?:</e-text>
+            <e-text v-for="price in bought.cart" ><b>{{ price.costType}} за {{ price.cost}}</b></e-text>
+            <e-text>Телефон: {{ bought.userInfo.phone}}</e-text>
         </e-section>
     </e-html>
 </template>

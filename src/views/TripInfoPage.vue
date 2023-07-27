@@ -7,6 +7,7 @@ import { useTrips } from "../stores/trips";
 import { useAuth } from "../stores/auth";
 import { message } from "ant-design-vue";
 import { useRouter } from "vue-router";
+import { object } from "yup";
 const router = useRouter();
 
 const route = useRoute();
@@ -80,6 +81,14 @@ let buyTripDialog = () => {
         router.push("/reg");
     }
 };
+function clearForm() {
+  Object.assign(bill, {
+    isBoughtNow: null,
+    cart: {},
+    tripId: "",
+    userInfo: {}
+  })
+}
 
 async function buyTrip(isBoughtNow) {
     if (userStore.user.fullinfo.phone) {
@@ -101,6 +110,7 @@ async function buyTrip(isBoughtNow) {
                 }
             }
             if (bill.cart.length != 0) {
+
                 await userStore
                     .buyTrip(selectedDate.value._id, bill)
                     .then(() => {
@@ -116,6 +126,7 @@ async function buyTrip(isBoughtNow) {
     } else {
         message.config({ duration: 3, top: "90vh" });
         message.success({ content: "Нужен телефон" });
+        clearForm()
     }
 }
 

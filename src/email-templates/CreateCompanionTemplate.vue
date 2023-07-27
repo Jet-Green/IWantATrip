@@ -1,5 +1,5 @@
 <script setup>
-import { EHtml, EHead, ESection } from 'vue-email';
+import { EContainer, EHeading, EHead, EHtml, ESection, EText } from 'vue-email';
 
 let props = defineProps({
     form: Object,
@@ -22,7 +22,13 @@ let companion = props.form
         </e-head>
 
         <e-section>
-            <h1>Создан попутчик {{ companion.name }}</h1>
+            <e-heading as="h3">Создан попутчик</e-heading>
+            <e-text>Имя Фамилия: {{ companion.name }} {{ companion.surname }}</e-text>
+            <e-text>Направление: {{ companion.direction }}</e-text>
+            <e-text>Описание: {{ companion.description }}</e-text>
+            <e-text>Начало: {{ clearData(companion.start) }} </e-text>
+            <e-text>Конец: {{ clearData(companion.end) }} </e-text>
+            <e-text>Телефон: {{ companion.phone }} </e-text>
         </e-section>
     </e-html>
 </template>

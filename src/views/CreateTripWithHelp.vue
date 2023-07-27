@@ -50,27 +50,26 @@ function close() {
   clearForm()
 }
 function clearForm() {
-  form.type = []
-  form.start = null
-  form.end = null
-  form.location = ""
-  form.duration = ""
-  form.adults = ""
-  form.children = ""
-  form.fromAge = ""
-  form.wishes = ""
-
+  Object.assign(form, {
+  type: [], 
+  start: null,
+  end: null,
+  location: "",
+  duration: "",
+  adults: "",
+  children: "",
+  fromAge: "",
+  wishes: "",
+  })
 }
 
 async function submit() {
-  
 
   let toSend = Object.assign(form);
   toSend.dateOfBooking = new Date().getTime()
   toSend.start = new Date(form.start).getTime();
   toSend.end = new Date(form.end).getTime();
   toSend.creatorId = userStore.user._id
-
   await userStore
     .updateUser({
       email: userStore.user.email,
