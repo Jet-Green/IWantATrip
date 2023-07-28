@@ -5,6 +5,11 @@ import { useTrips } from "../../stores/trips";
 
 const userStore = useAuth();
 
+function cancelTrip(bill_id, user_id){
+
+  userStore.cancelTrip(bill_id, user_id)
+}
+
 const clearData = (dataString) => {
   let date
   if (dataString.length == 13) {
@@ -57,18 +62,23 @@ onMounted(async () => {
                 }} руб.
               </div>
 
+              <div class="d-flex justify-end">
+                <div><a-button type="text" size="small" style="font-size: 14px" @click="cancelTrip(bill._id, userStore.user._id)">
+                    отказаться</a-button>
+                </div>
+                <div v-if="bill.tripId.isBoughtNow">
+                  <span style="color: #BCC662">
+                    <span class="mdi mdi-check-all"></span>
+                    оплачен
+                  </span>
+                </div>
+                <div v-else><span style="color: #ff6600">
+                    <span class="mdi mdi-alert-circle-outline"></span>
+                    оплатить
+                  </span>
+                </div>
+              </div>
 
-              <div class="d-flex justify-end" v-if="bill.tripId.isBoughtNow">
-                <span style="color: #BCC662">
-                  <span class="mdi mdi-check-all" style="font-size: 20px;"></span>
-                  оплачен
-                </span>
-              </div>
-              <div class="d-flex justify-end" v-else><span style="color: #ff6600">
-                  <span class="mdi mdi-alert-circle-outline" style="font-size: 20px;"></span>
-                  оплатить
-                </span>
-              </div>
             </a-card>
           </a-col>
         </a-row>
