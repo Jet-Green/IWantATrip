@@ -12,7 +12,9 @@ const dateFormatList = ["DD.MM.YY", "DD.MM.YY"];
 const ruLocale = locale;
 
 let props = defineProps(['trip', 'actions'])
-let { actions, trip } = props
+let emit = defineEmits(['deleteTrip'])
+let { actions } = props
+let trip = ref(props.trip)
 let router = useRouter()
 let tripStore = useTrips()
 let userStore = useAuth()
@@ -45,18 +47,16 @@ function copyTrip(_id) {
     router.push({ name: `CopyTrip`, query: { _id } });
 }
 async function hideTrip(_id) {
-    trip.isHidden = !trip.isHidden;
-    TripService.hideTrip(_id, trip.isHidden);
+    trip.value.isHidden = !trip.value.isHidden;
+    TripService.hideTrip(_id, trip.value.isHidden);
 }
 function goToTripPage(_id) {
     router.push(`/trip?_id=${_id}`);
 }
 async function tripToDelete(_id) {
-    let { response } = await tripStore.deleteById(_id);
-    let { status } = response
-
-    if (status != "400") {
-        trip = {}
+    let response = await tripStore.deleteById(_id);
+    if (response.status == 200) {
+        emit('deleteTrip')
     }
 }
 function updateUser(_id) {
@@ -100,7 +100,7 @@ async function submit() {
         }
     }
 
-    let res = await tripStore.createManyByDates(datesToSend, trip._id)
+    let res = await tripStore.createManyByDates(datesToSend, trip.value._id)
 
     for (let _id of res.data) {
         updateUser(_id)
@@ -111,7 +111,7 @@ async function submit() {
     }
 }
 let tripDuration = computed(() => {
-    return trip.end - trip.start
+    return Math.ceil((trip.value.end - trip.value.start) / (1000 * 60 * 60 * 24))
 })
 let showMessage = ref(false);
 
@@ -119,8 +119,10 @@ watch(dates, () => {
     for (let i = 0; i < dates.value.length; i++) {
         let date = dates.value[i]
         if (date.start && !date.end) {
-            let s = Date.parse(dayjs(date.start).$d)
-            date.end = dayjs(s + tripDuration.value)
+            let s = new Date(dayjs(date.start).$d)
+            s.setDate(s.getDate() + tripDuration.value - 1)
+
+            date.end = dayjs(s)
         }
     }
 }, { deep: true })
@@ -156,8 +158,8 @@ watch(dates, () => {
                     <span v-if="!trip.isHidden" class="mdi mdi-eye" style="color: #245159; cursor: pointer"></span>
                     <span v-else class="mdi mdi-eye-off" style="color: #245159; cursor: pointer"></span>
                 </a-popconfirm>
-                <span v-if="!trip.parent" class="mdi mdi-plus-circle-outline" style="color: #245159; cursor: pointer"
-                    @click="addDateDialog = true"></span>
+                <span v-if="!trip.parent && actions.includes('addDate')" class="mdi mdi-plus-circle-outline"
+                    style="color: #245159; cursor: pointer" @click="addDateDialog = true"></span>
                 <a-popconfirm v-if="actions.includes('copy') && !trip.parent" title="Вы уверены?" ok-text="Да"
                     cancel-text="Нет" @confirm="copyTrip(trip._id)">
                     <span class="mdi mdi-content-copy" style="color: #245159; cursor: pointer"></span>

@@ -59,6 +59,9 @@ function getOrderNumber(str) {
 <template>
     <a-card class="card" hoverable>
         <div>
+            Дата заказа : <b> {{ clearData(booking.dateOfBooking) }}</b>
+        </div>
+        <div>
             Имя: <b> {{ booking.creatorId.fullinfo.fullname }}</b>
         </div>
         <div>

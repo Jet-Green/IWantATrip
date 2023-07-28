@@ -34,12 +34,6 @@ const ageString = (age) => {
   }
   return `${age} лет`;
 }; // это гениально
-
-onMounted(async () => {
-  if (companionStore.companions.length == 0) {
-    await companionStore.fetchCompanions()
-  }
-})
 </script>
 <template>
   <div>

@@ -57,7 +57,9 @@ onMounted(() => {
         <a-col :lg="8" :sm="12" :xs="24" v-for="booking in bookings" v-if="bookings.length">
 
           <a-card class="card " hoverable>
-
+            <div>
+              <b>Дата заказа: {{ clearData(booking.dateOfBooking) }}</b>
+            </div>
             <div>
               Тур: {{ booking.type.toString().toLowerCase() }}
             </div>

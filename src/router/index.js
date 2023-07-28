@@ -233,7 +233,18 @@ const router = createRouter({
               return false
             }
           }
-        }
+        },
+        {
+          path: 'scripts',
+          name: 'Scripts',
+          component: () => import('../components/admin/Scripts.vue'),
+          beforeEnter: () => {
+            let userStore = useAuth()
+            if (!userStore.user?.roles.includes('admin')) {
+              return false
+            }
+          }
+        },
       ],
       beforeEnter: async (to, from) => {
         let userStore = useAuth()

@@ -100,8 +100,13 @@ const addBonuses = () => {
   });
 };
 
-
+let submitCount = ref(0)
 function submit() {
+  submitCount.value += 1
+  if (submitCount.value > 1) {
+    return
+  }
+
   description.value = description.value.split("<p><br></p>").join("");
   form.description = description.value;
   form.author = author;
@@ -502,8 +507,8 @@ let formSchema = yup.object({
             <a-col :xs="24" :md="12">
               <Field name="fromAge" v-slot="{ value, handleChange }" v-model="form.fromAge">
                 Мин. возраст, лет
-                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" type="number"
-                  placeholder="10" :min="0" :max="100" />
+                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" placeholder="10" :min="0"
+                  :max="100" />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="fromAge" class="error-message" />

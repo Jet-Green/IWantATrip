@@ -73,5 +73,8 @@ export default {
     },
     deletePayment(bill_id) {
         return $api.get(`/trips/delete-payment?_id=${bill_id}`)
+    },
+    updateTourists(bill) {
+        return $api.post('/trips/update-bills-tourists', { _id: bill, touristsList: bill.touristsList })
     }
 }
