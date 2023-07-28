@@ -11,10 +11,10 @@ export const useBooking = defineStore('booking', {
 
     },
     actions: {
-        async bookingTrip(form) {
+        async bookingTrip(booking) {
             try {
-                const emailHtml = await render(BookingTripTemplate, { form });
-                return BookingService.bookingTrip(emailHtml, form)
+                const emailHtml = await render(BookingTripTemplate, { form:booking });
+                return BookingService.bookingTrip(emailHtml, booking)
             } catch (err) {
                 console.log(err);
             }

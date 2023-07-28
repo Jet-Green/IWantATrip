@@ -5,6 +5,17 @@ let props = defineProps({
     form: Object,
 })
 let companion = props.form
+const clearData = (dateNumber) => {
+  let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit",
+  })
+  if (date !== 'Invalid Date' && date) {
+    return date
+  }
+  return ''
+}
 </script>
 <template>
     <e-html>
@@ -12,7 +23,6 @@ let companion = props.form
             <meta charset="UTF-8">
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Создан попутчик</title>
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
             <link

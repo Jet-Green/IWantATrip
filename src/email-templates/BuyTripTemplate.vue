@@ -5,7 +5,6 @@ let props = defineProps({
     form: Object,
 })
 let bought = props.form
-console.log(bought)
 </script>
 <template>
     <e-html>
@@ -13,7 +12,6 @@ console.log(bought)
             <meta charset="UTF-8">
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Создан попутчик</title>
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
             <link
@@ -23,7 +21,7 @@ console.log(bought)
         </e-head>
 
         <e-section>
-            <e-heading as="h3">Куплен тур</e-heading>
+            <e-heading as="h3">Куплена поездка</e-heading>
             <e-text>Имя Фамилия покупателя: {{ bought.userInfo.fullname }}</e-text>
             <e-text>Что выбрал?:</e-text>
             <e-text v-for="price in bought.cart" ><b>{{ price.costType}} за {{ price.cost}}</b></e-text>

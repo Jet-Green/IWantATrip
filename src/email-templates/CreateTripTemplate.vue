@@ -1,27 +1,14 @@
 <script setup>
 import { EContainer, EHeading, EHead, EHtml, ESection, EText } from 'vue-email';
 
-defineProps({
-    name: { type: String },
-    start: { type: Number },
-    end: { type: Number },
-    maxPeople: { type: Number },
-    duration: { type: String },
-    images: { type: Array },
-    pdfs: { type: Array },
-    tripRoute: { type: String },
-    distance: { type: String },
-    cost: { type: Array },
-    offer: { type: String },
-    description: { type: String },
-    startLocation: { type: Object },
-    tripType: { type: String },
-    fromAge: { type: String },
-    bonuses: { type: Array },
+let props = defineProps({
+    form: Object,
     email: { type: String },
     fullinfo: { type: Object }
 })
-
+let form = props.form
+let email = props.email
+let fullinfo = props.fullinfo
 const clearData = (dateNumber) => {
   let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
     year: "2-digit",
@@ -33,7 +20,6 @@ const clearData = (dateNumber) => {
   }
   return ''
 }
-
 </script>
 <template>
     <e-html lang="ru">
@@ -41,7 +27,6 @@ const clearData = (dateNumber) => {
             <meta charset="UTF-8">
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Создан тур</title>
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
             <link
@@ -53,8 +38,8 @@ const clearData = (dateNumber) => {
         <e-section>
             <e-container>
                 <e-heading as="h3">Создан Тур</e-heading>
-                <e-text> Наименование: <b>{{ name}}</b> </e-text>
-                <e-text> Дата: <b>{{clearData(start)  }}-{{ clearData(end)  }}</b> </e-text>
+                <e-text> Наименование: <b>{{ form.name}}</b> </e-text>
+                <e-text> Дата: <b>{{clearData(form.start)  }}-{{ clearData(form.end)  }}</b> </e-text>
                 <e-text> Создатель: <b>{{ fullinfo.fullname }}</b> </e-text>
                 <e-text> Почта: <b>{{ email }}</b></e-text>
                 <e-text> Телефон: <a href="tel:fullinfo.phone"> <b>{{ fullinfo.phone }}</b> </a></e-text>

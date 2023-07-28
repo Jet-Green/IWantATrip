@@ -47,20 +47,6 @@ let userInfo = reactive({
 });
 function close() {
   router.push("/trips");
-  clearForm()
-}
-function clearForm() {
-  Object.assign(form, {
-  type: [], 
-  start: null,
-  end: null,
-  location: "",
-  duration: "",
-  adults: "",
-  children: "",
-  fromAge: "",
-  wishes: "",
-  })
 }
 
 async function submit() {
