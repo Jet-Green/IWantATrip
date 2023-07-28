@@ -17,12 +17,12 @@ let props = defineProps({
 const router = useRouter();
 const tripStore = useTrips();
 let localFilter = JSON.parse(localStorage.getItem('tripFilter'))
-let time = ref([dayjs(localFilter.time[0]), dayjs(localFilter.time[1])] ?? null);
+let time = ref(localFilter.time ? [dayjs(localFilter.time[0]), dayjs(localFilter.time[1])] : null);
 let query = ref(localFilter.query ?? "");
 
 let loading = ref(false)
 
-let visible = ref(false);
+let visible = ref(localFilter.time ? true : false);
 
 function find() {
   console.log("find")
