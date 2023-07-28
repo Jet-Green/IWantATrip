@@ -106,29 +106,33 @@ async function refreshDates() {
 
     tripDates.value = []
     trip.value = tripFromDb;
-    tripDates.value.push({ _id: trip.value._id, start: trip.value.start, end: trip.value.end, selected: true, selectedCosts: [], billsList: trip.value.billsList })
+    if (trip.value.start >= Date.now()) {
+        tripDates.value.push({ _id: trip.value._id, start: trip.value.start, end: trip.value.end, selected: true, selectedCosts: [], billsList: trip.value.billsList })
 
-    selectedDate.value = tripDates.value[0]
-
-    for (let cost of tripFromDb.cost) {
-        tripDates.value[0].selectedCosts.push({
-            cost: cost.price,
-            count: 0,
-            costType: cost.first,
-        })
-    }
-
-    for (let child of trip.value.children) {
-        let toPush = { ...child, selectedCosts: [], selected: false }
         for (let cost of tripFromDb.cost) {
-            toPush.selectedCosts.push({
+            tripDates.value[0].selectedCosts.push({
                 cost: cost.price,
                 count: 0,
                 costType: cost.first,
             })
         }
-        tripDates.value.push(toPush)
     }
+
+    for (let child of trip.value.children) {
+        if (child.start >= Date.now()) {
+            let toPush = { ...child, selectedCosts: [], selected: false }
+            for (let cost of tripFromDb.cost) {
+                toPush.selectedCosts.push({
+                    cost: cost.price,
+                    count: 0,
+                    costType: cost.first,
+                })
+            }
+            tripDates.value.push(toPush)
+        }
+    }
+
+    selectDate(0)
 }
 
 async function buyTrip(isBoughtNow) {
