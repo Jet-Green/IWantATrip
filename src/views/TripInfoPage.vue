@@ -71,16 +71,20 @@ function getImg(index) {
 }
 
 let buyTripDialog = () => {
-    if (userStore.user) {
+    try{
+    if (userStore.user.fullinfo.phone) {
         if (!selectedDate.value.selected) {
             tripDates.value[0].selected = true
             selectedDate.value = tripDates.value[0]
         }
         buyDialog.value = true;
-    } else {
-        router.push("/reg");
-    }
+
+    } 
+}
+catch(e){
+    router.push("/reg")
 };
+}
 
 function selectDate(index) {
     for (let date of tripDates.value) {
@@ -261,7 +265,7 @@ let isNoPlaces = computed(() => {
                             </div>
                         </div>
                         <div class="d-flex justify-center ma-8"
-                            v-if="(trip.maxPeople - getCustomersCount(selectedDate.billsList) - selectedDate.selectedCosts.reduce((acc, cost) => { return acc + cost.count }, 0)) > 0">
+                        v-if="(trip.maxPeople - getCustomersCount(selectedDate.billsList) - selectedDate.selectedCosts.reduce((acc, cost) => { return acc + cost.count }, 0)) > 0">
                             <a-button type="primary" class="lets_go_btn" style="display: flex; justify-content: center"
                                 @click="buyTripDialog()">
                                 Купить
