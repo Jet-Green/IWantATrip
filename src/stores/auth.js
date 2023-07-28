@@ -63,9 +63,9 @@ export const useAuth = defineStore('auth', {
                 console.log(error);
             }
         },
-        async cancelTrip(_id, user_id) {
+        async cancelTrip(bill_id, user_id) {
             try {
-                return UserService.cancelTrip(_id, user_id)
+                return UserService.cancelTrip(bill_id, user_id)
             } catch (error) {
                 console.log(error);
             }
