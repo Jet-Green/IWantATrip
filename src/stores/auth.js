@@ -63,6 +63,13 @@ export const useAuth = defineStore('auth', {
                 console.log(error);
             }
         },
+        async cancelTrip(_id, user_id) {
+            try {
+                return UserService.cancelTrip(_id, user_id)
+            } catch (error) {
+                console.log(error);
+            }
+        },
         async registration(data) {
             try {
                 const response = await UserService.registration(data);
