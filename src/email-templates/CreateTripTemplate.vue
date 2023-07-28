@@ -32,11 +32,10 @@ const clearData = (dateNumber) => {
             <link
                 href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
                 rel="stylesheet">
-            <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.6.96/css/materialdesignicons.min.css" rel="stylesheet" />
+            <!-- <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.6.96/css/materialdesignicons.min.css" rel="stylesheet" /> -->
         </e-head>
 
         <e-section>
-            <e-container>
                 <e-heading as="h3">Создан Тур</e-heading>
                 <e-text> Наименование: <b>{{ form.name}}</b> </e-text>
                 <e-text> Дата: <b>{{clearData(form.start)  }}-{{ clearData(form.end)  }}</b> </e-text>
@@ -44,7 +43,6 @@ const clearData = (dateNumber) => {
                 <e-text> Почта: <b>{{ email }}</b></e-text>
                 <e-text> Телефон: <a href="tel:fullinfo.phone"> <b>{{ fullinfo.phone }}</b> </a></e-text>
                 <e-text>Компания: <b>{{ fullinfo.companyName }}</b></e-text>
-            </e-container>
         </e-section>
     </e-html>
 </template>

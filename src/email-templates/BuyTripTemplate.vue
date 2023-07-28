@@ -22,10 +22,10 @@ let bought = props.form
 
         <e-section>
             <e-heading as="h3">Куплена поездка</e-heading>
-            <e-text>Имя Фамилия покупателя: {{ bought.userInfo.fullname }}</e-text>
+            <e-text>Имя Фамилия покупателя: <b>{{ bought.userInfo.fullname }}</b></e-text>
             <e-text>Что выбрал?:</e-text>
             <e-text v-for="price in bought.cart" ><b>{{ price.costType}} за {{ price.cost}}</b></e-text>
-            <e-text>Телефон: {{ bought.userInfo.phone}}</e-text>
+            <e-text>Телефон: <a href="tel:fullinfo.phone"> <b>{{ bought.userInfo.phone}}</b></a></e-text>
         </e-section>
     </e-html>
 </template>

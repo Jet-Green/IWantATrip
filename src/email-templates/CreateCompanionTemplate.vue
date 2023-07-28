@@ -33,12 +33,12 @@ const clearData = (dateNumber) => {
 
         <e-section>
             <e-heading as="h3">Создан попутчик</e-heading>
-            <e-text>Имя Фамилия: {{ companion.name }} {{ companion.surname }}</e-text>
-            <e-text>Направление: {{ companion.direction }}</e-text>
-            <e-text>Описание: {{ companion.description }}</e-text>
-            <e-text>Начало: {{ clearData(companion.start) }} </e-text>
-            <e-text>Конец: {{ clearData(companion.end) }} </e-text>
-            <e-text>Телефон: {{ companion.phone }} </e-text>
+            <e-text>Имя Фамилия: <b>{{ companion.name }} {{ companion.surname }}</b></e-text>
+            <e-text>Направление: <b>{{ companion.direction }}</b></e-text>
+            <e-text>Описание: <b>{{ companion.description }}</b></e-text>
+            <e-text>Начало: <b>{{ clearData(companion.start) }} </b></e-text>
+            <e-text>Конец: <b>{{ clearData(companion.end) }} </b></e-text>
+            <e-text>Телефон: <a href="tel:fullinfo.phone"> <b>{{ companion.phone }}</b></a> </e-text>
         </e-section>
     </e-html>
 </template>
