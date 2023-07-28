@@ -16,9 +16,9 @@ let props = defineProps({
 
 const router = useRouter();
 const tripStore = useTrips();
-
-let time = ref(null);
-let query = ref("");
+let localFilter = JSON.parse(localStorage.getItem('tripFilter'))
+let time = ref([dayjs(localFilter.time[0]), dayjs(localFilter.time[1])] ?? null);
+let query = ref(localFilter.query ?? "");
 
 let loading = ref(false)
 
@@ -37,8 +37,10 @@ function find() {
   );
 }
 
-watch(query, (newQuery) => {
+watch([query, time], ([newQuery, newTime]) => {
   newQuery = newQuery.trim()
+  localStorage.setItem('tripFilter', JSON.stringify({ query: newQuery, time: time.value }))
+
   if (newQuery.length == 0) {
     find()
   }
@@ -51,7 +53,6 @@ onMounted(() => {
   if (props.search) {
     query.value = props.search;
   }
- 
 });
 </script>
 <template>
@@ -72,7 +73,7 @@ onMounted(() => {
             </a-col>
           </a-row>
           <a-row type="flex" justify="center" class="mt-8">
-            <a-button @click="find" type="primary" class="lets_go_btn" >поиск</a-button>
+            <a-button @click="find" type="primary" class="lets_go_btn">поиск</a-button>
           </a-row>
         </div>
       </Transition>
