@@ -43,13 +43,15 @@ let getTripsArrayByStatus = computed(() => {
 
 
 let filteredTrips = computed(() => {
+
   if (query.value.length > 2) {
+    localStorage.setItem("cabinetQuery", query.value);
     return allTrips.value.filter((trip) => trip.name.toLowerCase().includes(query.value.toLowerCase())
-    ||trip.description.toLowerCase().includes(query.value.toLowerCase())
-    ||trip.tripRoute.toLowerCase().includes(query.value.toLowerCase())
-    ||trip.tripType.toLowerCase().includes(query.value.toLowerCase())
-    ||trip.startLocation.name.toLowerCase().includes(query.value.toLowerCase())
-    ||trip.offer.toLowerCase().includes(query.value.toLowerCase()))
+      || trip.description.toLowerCase().includes(query.value.toLowerCase())
+      || trip.tripRoute.toLowerCase().includes(query.value.toLowerCase())
+      || trip.tripType.toLowerCase().includes(query.value.toLowerCase())
+      || trip.startLocation.name.toLowerCase().includes(query.value.toLowerCase())
+      || trip.offer.toLowerCase().includes(query.value.toLowerCase()))
   } else {
     return allTrips.value
   }
@@ -64,10 +66,13 @@ async function getAllTrips() {
   loading.value = false
 }
 
-
+watch(query, () => {
+  query.value.length <= 3 ? localStorage.setItem("cabinetQuery", '') : null
+})
 onMounted(async () => {
   await getAllTrips()
- 
+  query.value = localStorage.getItem("cabinetQuery");
+
 });
 
 </script>
