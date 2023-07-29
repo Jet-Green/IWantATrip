@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, toRefs } from 'vue';
 import { useRouter } from "vue-router";
 import TripService from "../../service/TripService";
 import { useTrips } from '../../stores/trips';
@@ -13,8 +13,8 @@ const ruLocale = locale;
 
 let props = defineProps(['trip', 'actions'])
 let emit = defineEmits(['deleteTrip'])
-let { actions } = props
-let trip = ref(props.trip)
+let { actions } = toRefs(props)
+let {trip} = toRefs(props)
 let router = useRouter()
 let tripStore = useTrips()
 let userStore = useAuth()

@@ -1,99 +1,133 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch, computed, } from "vue";
 import CabinetTrip from "../cards/CabinetTrip.vue";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useAuth } from "../../stores/auth.js";
 import { useTrips } from "../../stores/trips.js";
 
 let userStore = useAuth();
 let tripStore = useTrips();
 
-let breakpoints = useBreakpoints(breakpointsTailwind);
-let sm = breakpoints.smaller("md");
 
-let trips = ref([]);
-let tripsOnModeration = ref([])
-let archiveTrips = ref([])
+
+let allTrips = ref([])
+let tripsStatus = ref('tripsInWork')
 let loading = ref(true)
+let query = ref('')
 
-function getPhoneNumber(number) {
-  return `tel:${number}`
-}
 
 async function deleteTrip() {
   await getAllTrips()
 }
 
-async function getAllTrips() {
-  trips.value = []
-  tripsOnModeration.value = []
-  archiveTrips.value = []
 
-  loading.value = true
-  let userId = userStore.user._id
-  let response = await tripStore.getCreatedTripsInfoByUserId(userId)
-  let created = response.data
-  loading.value = false
-
-  for (let trip of created) {
+let getTripsArrayByStatus = computed(() => {
+  let result = {
+    archiveTrips: [],
+    tripsInWork: [],
+    tripsOnModeration: [],
+  }
+  for (let trip of filteredTrips.value) {
     if (trip.start < Date.now()) {
-      archiveTrips.value.push(trip)
+      result.archiveTrips.push(trip)
       continue
     }
     if (trip.isModerated) {
-      trips.value.push(trip);
+      result.tripsInWork.push(trip);
     } else {
-      tripsOnModeration.value.push(trip)
+      result.tripsOnModeration.push(trip)
     }
   }
+  return result
+})
+
+
+
+let filteredTrips = computed(() => {
+  if (query.value.length > 2) {
+    return allTrips.value.filter((trip) => trip.name.toLowerCase().includes(query.value.toLowerCase())
+    ||trip.description.toLowerCase().includes(query.value.toLowerCase())
+    ||trip.tripRoute.toLowerCase().includes(query.value.toLowerCase())
+    ||trip.tripType.toLowerCase().includes(query.value.toLowerCase())
+    ||trip.startLocation.name.toLowerCase().includes(query.value.toLowerCase())
+    ||trip.offer.toLowerCase().includes(query.value.toLowerCase()))
+  } else {
+    return allTrips.value
+  }
+
+})
+
+async function getAllTrips() {
+  loading.value = true
+  let userId = userStore.user._id
+  let response = await tripStore.getCreatedTripsInfoByUserId(userId)
+  allTrips.value = response.data
+  loading.value = false
 }
+
 
 onMounted(async () => {
   await getAllTrips()
+ 
 });
-let activeKey = ref(2)
+
 </script>
 <template>
   <a-row>
+    <div class="d-flex space-between align-center flex-wrap" style="width: 100%">
+
+      <a-radio-group v-model:value="tripsStatus">
+        <a-radio value="tripsOnModeration">На модерации</a-radio>
+        <a-radio value="tripsInWork">Действующие</a-radio>
+        <a-radio value="archiveTrips">Архив</a-radio>
+      </a-radio-group>
+
+
+      <div>
+        <a-input v-model:value="query" placeholder="поиск" />
+      </div>
+
+    </div>
     <a-col :span="24" v-if="loading" class="d-flex justify-center">
       <a-spin size="large" />
     </a-col>
+
     <a-col :span="24" v-else>
-      <a-collapse v-model:activeKey="activeKey" ghost>
-        <a-collapse-panel v-if="tripsOnModeration.length" key="1" header="На модерации">
-          <a-row :gutter="[8, 8]" class="mt-8" v-if="tripsOnModeration.length > 0">
-            <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of tripsOnModeration" :key="index">
-              <CabinetTrip :trip="trip" :actions="['delete', 'info', 'edit', 'msg']" @deleteTrip="deleteTrip" />
-            </a-col>
-          </a-row>
-        </a-collapse-panel>
+      <div v-if="tripsStatus == 'tripsOnModeration'">
+        <a-row :gutter="[8, 8]" class="mt-8" v-if="getTripsArrayByStatus.tripsOnModeration.length > 0">
+          <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getTripsArrayByStatus.tripsOnModeration" :key="index">
+            <CabinetTrip :trip="trip" :actions="['delete', 'info', 'edit', 'msg']" @deleteTrip="deleteTrip" />
+          </a-col>
+        </a-row>
+        <a-row :lg="8" :sm="12" :xs="24" v-else>
+          Нет туров
+        </a-row>
+      </div>
 
 
-        <a-collapse-panel key="2" header="Действующие туры">
-          <a-row :gutter="[8, 8]" class="mt-8" v-if="trips.length > 0">
-            <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of trips" :key="index">
-              <CabinetTrip :trip="trip" :actions="['delete', 'info', 'copy', 'hide', 'edit', 'addDate']"
-                @deleteTrip="deleteTrip" />
-            </a-col>
-          </a-row>
-          <a-row :lg="8" :sm="12" :xs="24" v-else>
-            Нет туров
-          </a-row>
-        </a-collapse-panel>
+      <div v-if="tripsStatus == 'tripsInWork'">
+        <a-row :gutter="[8, 8]" class="mt-8" v-if="getTripsArrayByStatus.tripsInWork.length > 0">
+          <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getTripsArrayByStatus.tripsInWork" :key="index">
+            <CabinetTrip :trip="trip" :actions="['delete', 'info', 'copy', 'hide', 'edit', 'addDate']"
+              @deleteTrip="deleteTrip" />
+          </a-col>
+        </a-row>
+        <a-row :lg="8" :sm="12" :xs="24" v-else>
+          Нет туров
+        </a-row>
+      </div>
 
 
-        <a-collapse-panel key="3" header="Архивные туры">
-          <a-row :gutter="[8, 8]" class="mt-8" v-if="archiveTrips.length > 0">
-            <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of archiveTrips" :key="index">
-              <CabinetTrip :trip="trip" :actions="['delete', 'info', 'copy', 'edit', 'addDate']"
-                @deleteTrip="deleteTrip" />
-            </a-col>
-          </a-row>
-          <a-row :lg="8" :sm="12" :xs="24" v-else>
-            Нет туров
-          </a-row>
-        </a-collapse-panel>
-      </a-collapse>
+      <div v-if="tripsStatus == 'archiveTrips'">
+        <a-row :gutter="[8, 8]" class="mt-8" v-if="getTripsArrayByStatus.archiveTrips.length > 0">
+          <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getTripsArrayByStatus.archiveTrips" :key="index">
+            <CabinetTrip :trip="trip" :actions="['delete', 'info', 'copy', 'edit', 'addDate']" @deleteTrip="deleteTrip" />
+          </a-col>
+        </a-row>
+        <a-row :lg="8" :sm="12" :xs="24" v-else>
+          Нет туров
+        </a-row>
+      </div>
+
     </a-col>
   </a-row>
 </template>
