@@ -161,7 +161,7 @@ async function buyTrip(isBoughtNow) {
 
             if (bill.cart.length != 0) {
                 userStore
-                    .buyTrip(selectedDate.value._id, bill)
+                    .buyTrip(selectedDate.value._id, bill, trip.value.name)
                     .then(async (response) => {
                         if (response.status == 200) {
                             message.config({ duration: 3, top: "90vh" });

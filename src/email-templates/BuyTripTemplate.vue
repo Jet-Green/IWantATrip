@@ -3,8 +3,10 @@ import { EContainer, EHeading, EHead, EHtml, ESection, EText } from 'vue-email';
 
 let props = defineProps({
     form: Object,
+    tripName: String,
 })
 let bought = props.form
+let tripName = props.tripName
 </script>
 <template>
     <e-html>
@@ -22,10 +24,16 @@ let bought = props.form
 
         <e-section>
             <e-heading as="h3">Куплена поездка</e-heading>
-            <e-text>Имя Фамилия покупателя: <b>{{ bought.userInfo.fullname }}</b></e-text>
-            <e-text>Что выбрал?:</e-text>
-            <e-text v-for="price in bought.cart" ><b>{{ price.costType}} за {{ price.cost}}</b></e-text>
-            <e-text>Телефон: <a href="tel:fullinfo.phone"> <b>{{ bought.userInfo.phone}}</b></a></e-text>
+            <e-text>Тур: <b>{{ tripName }}</b> </e-text>
+            <e-text>Покупатель: <b>{{ bought.userInfo.fullname }}</b></e-text>
+            <e-text>Телефон: <a href="tel:fullinfo.phone"> <b>{{ bought.userInfo.phone }}</b></a></e-text>
+            <e-text>
+                Заказ: <span v-for="price in bought.cart"><b>{{ price.count }} x {{ price.cost }}руб.</b></span>
+            </e-text>
+            <e-text>
+                Оплачен: <b>{{ bought.isBoughtNow? "да": "нет" }}</b>
+            </e-text>
+
         </e-section>
     </e-html>
 </template>
