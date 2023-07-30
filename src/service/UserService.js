@@ -26,6 +26,9 @@ export default {
         // должно быть /auth/add-feedback
         return $api.post('/add-feedback', feedbackAndEmail)
     },
+    async cancelTrip(bill_id, user_id) {
+        return $api.post('/auth/cancel-trip', {bill_id, user_id})
+    },
     addTripCalc(userId, tripCalc) {
         return $api.post('/auth/add-trip-calc', { userId, tripCalc })
     },

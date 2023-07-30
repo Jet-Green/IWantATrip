@@ -27,21 +27,37 @@ let query = reactive({
 })
 
 
-function find() {
+async function find() {
   query.strQuery = query.strQuery.trim()
   if (query.strQuery.length == 0 || query.strQuery.length > 2) {
-    companionStore.fetchCompanions(query);
+    await companionStore.fetchCompanions(query);
   }
 }
 
 watch(query, () => {
-  if (query.strQuery == "" || query.gender == "" || query.age.start || query.age.end || query.start || query.end) {
-    find();
-  }
-});
+  find();
+}, { deep: true });
 watch(date, (newDate) => {
-  query.start = newDate ? date.value[0].$d.getTime() : ""
-  query.end = newDate ? date.value[1].$d.getTime() : ""
+  if (newDate) {
+    if (newDate[1]) {
+      let endDate = new Date(date.value[1].$d);
+      endDate.setHours(23)
+      endDate.setMinutes(59)
+      endDate.setSeconds(59)
+      endDate.setMilliseconds(999)
+
+      query.end = Date.parse(endDate);
+    }
+    if (newDate[0]) {
+      let startDate = new Date(date.value[0].$d);
+      startDate.setHours(0)
+      startDate.setMinutes(0)
+      startDate.setSeconds(0)
+      startDate.setMilliseconds(0)
+
+      query.start = Date.parse(startDate);
+    }
+  }
 });
 
 onMounted(() => {
@@ -85,7 +101,7 @@ onMounted(() => {
 
             <a-col :xs="24">
               <label for="date">дата</label>
-              <a-range-picker name="date" style="width:100%" v-model:value="date" :locale="ruLocale"/>
+              <a-range-picker name="date" style="width:100%" v-model:value="date" :locale="ruLocale" />
             </a-col>
             <!-- <a-col :xs="24" class="d-flex justify-center">
                                                             <a-button @click="find" class="lets_go_btn" type="primary">поиск</a-button>

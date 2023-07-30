@@ -7,6 +7,7 @@ import { useTrips } from "../stores/trips";
 import { useAuth } from "../stores/auth";
 import { message } from "ant-design-vue";
 import { useRouter } from "vue-router";
+import { object } from "yup";
 const router = useRouter();
 
 const route = useRoute();
@@ -70,16 +71,73 @@ function getImg(index) {
 }
 
 let buyTripDialog = () => {
-    if (userStore.user) {
+    try{
+    if (userStore.user.fullinfo.phone) {
         if (!selectedDate.value.selected) {
             tripDates.value[0].selected = true
             selectedDate.value = tripDates.value[0]
         }
         buyDialog.value = true;
-    } else {
-        router.push("/reg");
-    }
+
+    } 
+}
+catch(e){
+    router.push("/reg")
 };
+}
+
+function selectDate(index) {
+    for (let date of tripDates.value) {
+        date.selected = false
+    }
+    tripDates.value[index].selected = !tripDates.value[index].selected
+    selectedDate.value = tripDates.value[index]
+}
+
+function getCustomersCount(billsList) {
+    let res = 0;
+    for (let bill of billsList) {
+        for (let cartItem of bill.cart) {
+            res += cartItem.count
+        }
+    }
+    return res
+}
+
+async function refreshDates() {
+    let response = await tripStore.getFullTripById(_id)
+    let tripFromDb = response.data
+
+    tripDates.value = []
+    trip.value = tripFromDb;
+    if (trip.value.start >= Date.now()) {
+        tripDates.value.push({ _id: trip.value._id, start: trip.value.start, end: trip.value.end, selected: true, selectedCosts: [], billsList: trip.value.billsList })
+
+        for (let cost of tripFromDb.cost) {
+            tripDates.value[0].selectedCosts.push({
+                cost: cost.price,
+                count: 0,
+                costType: cost.first,
+            })
+        }
+    }
+
+    for (let child of trip.value.children) {
+        if (child.start >= Date.now()) {
+            let toPush = { ...child, selectedCosts: [], selected: false }
+            for (let cost of tripFromDb.cost) {
+                toPush.selectedCosts.push({
+                    cost: cost.price,
+                    count: 0,
+                    costType: cost.first,
+                })
+            }
+            tripDates.value.push(toPush)
+        }
+    }
+
+    selectDate(0)
+}
 
 async function buyTrip(isBoughtNow) {
     if (userStore.user.fullinfo.phone) {
@@ -100,12 +158,16 @@ async function buyTrip(isBoughtNow) {
                     bill.cart.splice(i, 1);
                 }
             }
+
             if (bill.cart.length != 0) {
-                await userStore
-                    .buyTrip(selectedDate.value._id, bill)
-                    .then(() => {
-                        message.config({ duration: 3, top: "90vh" });
-                        message.success({ content: "Тур заказан!" });
+                userStore
+                    .buyTrip(selectedDate.value._id, bill, trip.value.name)
+                    .then(async (response) => {
+                        if (response.status == 200) {
+                            message.config({ duration: 3, top: "90vh" });
+                            message.success({ content: "Тур заказан!" });
+                        }
+                        await refreshDates()
                         buyDialog.value = false;
                     })
                     .catch((err) => {
@@ -119,44 +181,15 @@ async function buyTrip(isBoughtNow) {
     }
 }
 
-function selectDate(index) {
-    for (let date of tripDates.value) {
-        date.selected = false
+onMounted(async () => {
+    await refreshDates()
+})
+
+let isNoPlaces = computed(() => {
+    if (selectedDate.value.billsList) {
+        return (trip.value.maxPeople - getCustomersCount(selectedDate.value.billsList) - selectedDate.value.selectedCosts.reduce((acc, cost) => { return acc + cost.count }, 0)) < 0
     }
-    tripDates.value[index].selected = !tripDates.value[index].selected
-    selectedDate.value = tripDates.value[index]
-}
-
-onMounted(() => {
-    tripStore
-        .getFullTripById(_id)
-        .then((response) => {
-            trip.value = response.data;
-            tripDates.value.push({ _id: trip.value._id, start: trip.value.start, end: trip.value.end, selected: true, selectedCosts: [] })
-            for (let cost of response.data.cost) {
-                tripDates.value[0].selectedCosts.push({
-                    cost: cost.price,
-                    count: 0,
-                    costType: cost.first,
-                })
-            }
-
-            for (let child of trip.value.children) {
-                let toPush = { ...child, selectedCosts: [], selected: false }
-
-                for (let cost of response.data.cost) {
-                    toPush.selectedCosts.push({
-                        cost: cost.price,
-                        count: 0,
-                        costType: cost.first,
-                    })
-                }
-                tripDates.value.push(toPush)
-            }
-        })
-        .catch((error) => {
-            console.log(error);
-        });
+    return false
 })
 </script>
 <template>
@@ -205,10 +238,14 @@ onMounted(() => {
                             Даты:
                             <div>
                                 <a-checkable-tag class="pretty-tag" v-for="(date, index) of tripDates"
-                                    :checked="date.selected" @change="selectDate(index)">{{
-                                        clearData(date.start) }} -
-                                    {{
-                                        clearData(date.end) }}</a-checkable-tag>
+                                    :checked="date.selected" @change="selectDate(index)">
+                                    <b>
+                                        {{
+                                            clearData(date.start) }} -
+                                        {{ clearData(date.end) }}
+                                    </b>
+                                    ({{ getCustomersCount(date.billsList) + '/' + trip.maxPeople }} чел.)
+                                </a-checkable-tag>
                             </div>
                         </div>
                         <div v-if="tripDates.length < 2">
@@ -231,14 +268,16 @@ onMounted(() => {
                                 <i>{{ item.type }}: {{ item.bonus }}</i>
                             </div>
                         </div>
-                        <div class="d-flex justify-center ma-8">
-                            <a-button v-if="tripsCount != trip.maxPeople" type="primary" class="lets_go_btn"
-                                style="display: flex; justify-content: center" @click="buyTripDialog()">
+                        <div class="d-flex justify-center ma-8"
+                        v-if="(trip.maxPeople - getCustomersCount(selectedDate.billsList) - selectedDate.selectedCosts.reduce((acc, cost) => { return acc + cost.count }, 0)) > 0">
+                            <a-button type="primary" class="lets_go_btn" style="display: flex; justify-content: center"
+                                @click="buyTripDialog()">
                                 Купить
                             </a-button>
                         </div>
                         <div>
-                            <b v-if="(tripsCount == trip.maxPeople)">
+                            <b
+                                v-if="(trip.maxPeople - getCustomersCount(selectedDate.billsList) - selectedDate.selectedCosts.reduce((acc, cost) => { return acc + cost.count }, 0)) <= 0">
                                 мест больше нет
                             </b>
                         </div>
@@ -251,7 +290,7 @@ onMounted(() => {
             </a-col>
         </a-row>
 
-        <a-modal v-model:visible="buyDialog" :footer="null">
+        <a-modal v-model:visible="buyDialog" :footer="null" @cancel="refreshDates(trip)">
             <a-row :gutter="[4, 4]">
                 <a-col :span="24" :md="12">
                     Фaмилия Имя
@@ -269,13 +308,19 @@ onMounted(() => {
                         {{ clearData(selectedDate.start) + ' - ' + clearData(selectedDate.end) }}
                     </b>
 
+                    <div :style="isNoPlaces ? 'color: red' : ''">
+                        {{ (getCustomersCount(selectedDate.billsList) + selectedDate.selectedCosts.reduce((acc,
+                            cost) => { return acc + cost.count }, 0)) + '/' + trip.maxPeople }} чел.
+                    </div>
+
                     <div class="d-flex space-between align-center" v-for="cost of selectedDate.selectedCosts">
                         <div>{{ cost.costType }}</div>
                         <div> {{ cost.cost }} руб.</div>
 
                         <div class="d-flex direction-column">
                             <span style="font-size: 8px">кол-во</span>
-                            <a-input-number v-model:value="cost.count" :min="0" :max="trip.maxPeople - tripsCount"
+                            <a-input-number v-model:value="cost.count" :min="0"
+                                :max="trip.maxPeople - getCustomersCount(selectedDate.billsList)"
                                 placeholder="чел"></a-input-number>
                         </div>
                     </div>
@@ -285,10 +330,10 @@ onMounted(() => {
                 </a-col>
 
                 <a-col :span="24">
-
                     <div class="d-flex space-around">
                         <!-- <a-button type="primary" @click="buyTrip(true)"> сейчас </a-button> -->
-                        <a-button @click="buyTrip(false)" type="primary" class="lets_go_btn"> Заказать </a-button>
+                        <a-button @click="buyTrip(false)" type="primary" class="lets_go_btn" :disabled="isNoPlaces">
+                            Заказать </a-button>
                     </div>
                 </a-col>
             </a-row>
@@ -297,7 +342,6 @@ onMounted(() => {
 </template>
 <style lang="scss" scoped>
 .pretty-tag {
-    font-weight: 700;
     border-radius: 12px;
     font-size: 14px;
     padding: 4px 6px 4px 6px;

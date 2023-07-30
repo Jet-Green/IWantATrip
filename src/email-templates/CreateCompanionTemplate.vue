@@ -1,9 +1,21 @@
 <script setup>
-import { EHtml, EHead, ESection } from 'vue-email';
+import { EContainer, EHeading, EHead, EHtml, ESection, EText } from 'vue-email';
 
-defineProps({
-    name: String,
+let props = defineProps({
+    form: Object,
 })
+let companion = props.form
+const clearData = (dateNumber) => {
+  let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit",
+  })
+  if (date !== 'Invalid Date' && date) {
+    return date
+  }
+  return ''
+}
 </script>
 <template>
     <e-html>
@@ -11,7 +23,6 @@ defineProps({
             <meta charset="UTF-8">
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Создан попутчик</title>
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
             <link
@@ -21,7 +32,13 @@ defineProps({
         </e-head>
 
         <e-section>
-            <h1>Создан попутчик {{ name }}</h1>
+            <e-heading as="h3">Создан попутчик</e-heading>
+            <e-text>Имя Фамилия: <b>{{ companion.name }} {{ companion.surname }}</b></e-text>
+            <e-text>Направление: <b>{{ companion.direction }}</b></e-text>
+            <e-text>Описание: <b>{{ companion.description }}</b></e-text>
+            <e-text>Начало: <b>{{ clearData(companion.start) }} </b></e-text>
+            <e-text>Конец: <b>{{ clearData(companion.end) }} </b></e-text>
+            <e-text>Телефон: <a href="tel:fullinfo.phone"> <b>{{ companion.phone }}</b></a> </e-text>
         </e-section>
     </e-html>
 </template>

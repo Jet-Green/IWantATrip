@@ -1,8 +1,12 @@
 <script setup>
-import { EHtml, EHead, ESection } from 'vue-email';
+import { EContainer, EHeading, EHead, EHtml, ESection, EText } from 'vue-email';
 
-defineProps({
+let props = defineProps({
+    form: Object,
+    tripName: String,
 })
+let bought = props.form
+let tripName = props.tripName
 </script>
 <template>
     <e-html>
@@ -10,7 +14,6 @@ defineProps({
             <meta charset="UTF-8">
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Куплена поездка</title>
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
             <link
@@ -20,7 +23,17 @@ defineProps({
         </e-head>
 
         <e-section>
-            <h1>Куплена поездка</h1>
+            <e-heading as="h3">Куплена поездка</e-heading>
+            <e-text>Тур: <b>{{ tripName }}</b> </e-text>
+            <e-text>Покупатель: <b>{{ bought.userInfo.fullname }}</b></e-text>
+            <e-text>Телефон: <a href="tel:fullinfo.phone"> <b>{{ bought.userInfo.phone }}</b></a></e-text>
+            <e-text>
+                Заказ: <span v-for="price in bought.cart"><b>{{ price.count }} x {{ price.cost }}руб.</b></span>
+            </e-text>
+            <e-text>
+                Оплачен: <b>{{ bought.isBoughtNow? "да": "нет" }}</b>
+            </e-text>
+
         </e-section>
     </e-html>
 </template>

@@ -22,7 +22,25 @@ const clearData = (dateNumber) => {
   }
   return ''
 }
+function getDate() {
+  let start = clearData(props.trip.start)
+  let end = clearData(props.trip.end)
 
+  if (props.trip.start < Date.now()) {
+    for (let child of props.trip.children) {
+      if (child.start >= Date.now()) {
+        start = clearData(child.start)
+        end = clearData(child.end)
+      }
+    }
+  }
+
+  if (start == end)
+    return start
+  else {
+    return 'с ' + start + ' по ' + end
+  }
+}
 </script>
 <template>
   <div @click="goToTripPage" style="width: 270px">
@@ -32,11 +50,8 @@ const clearData = (dateNumber) => {
         <div>
           <img :src="trip.images[0]" style="object-fit: cover; width: 100%; height: 175px" />
         </div>
-        <span v-if="clearData(trip.start) == clearData(trip.end)">
-          <strong>{{ clearData(trip.start) }}</strong>
-        </span>
-        <span v-else>
-          c <strong>{{ clearData(trip.start) }}</strong> по <strong>{{ clearData(trip.end) }}</strong>
+        <span>
+          <strong>{{ getDate() }}</strong>
         </span>
       </a-card>
     </a-badge-ribbon>

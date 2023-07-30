@@ -47,31 +47,15 @@ let userInfo = reactive({
 });
 function close() {
   router.push("/trips");
-  clearForm()
-}
-function clearForm() {
-  form.type = []
-  form.start = null
-  form.end = null
-  form.location = ""
-  form.duration = ""
-  form.adults = ""
-  form.children = ""
-  form.fromAge = ""
-  form.wishes = ""
-
 }
 
 async function submit() {
-  
 
   let toSend = Object.assign(form);
   toSend.dateOfBooking = new Date().getTime()
   toSend.start = new Date(form.start).getTime();
   toSend.end = new Date(form.end).getTime();
   toSend.creatorId = userStore.user._id
-
-  console.log(toSend)
   await userStore
     .updateUser({
       email: userStore.user.email,
@@ -83,8 +67,7 @@ async function submit() {
     .catch((err) => {
       console.log(err);
     });
-
-  bookingStore.bookingTrip(toSend).then((res) => {
+  bookingStore.bookingTrip(toSend).then(async (res) => {
     if (res.status == 200) {
       message.config({ duration: 1.5, top: "70vh" });
       message.success({

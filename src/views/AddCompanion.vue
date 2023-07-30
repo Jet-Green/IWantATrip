@@ -47,8 +47,12 @@ const form = reactive({
   startLocation: {}
 });
 
-
+let submitCount = ref(0)
 function submit() {
+  submitCount.value += 1
+  if (submitCount.value > 1) {
+    return
+  }
   companionStore.createCompanion(form).then((res) => {
     const _id = res.data._id;
     // axios.post(`http://localhost:4089/add-companion?name=${form.name}`)
@@ -237,7 +241,8 @@ const formSchema = yup.object({
             <a-col :xs="24" :md="12">
               <Field name="phone" v-slot="{ value, handleChange }" v-model="form.phone">
                 <label>Телефон</label>
-                <a-input-number @update:value="handleChange" style="width: 100%" :value="value" placeholder="79127528874" :controls="false" maxlength="11"/>
+                <a-input-number @update:value="handleChange" style="width: 100%" :value="value" placeholder="79127528874"
+                  :controls="false" maxlength="11" />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="phone" class="error-message" />

@@ -7,23 +7,9 @@ let tripStore = useTrips()
 let tripsOnMod = ref([])
 let router = useRouter()
 
-onMounted(async () => {
-    let { data } = await tripStore.findForModeration()
-    tripsOnMod.value = data
-})
-
-
 async function tripToDelete(_id) {
-    let { response } = await tripStore.deleteById(_id);
-    let { status } = response
-
-    if (status != "400") {
-        for (let i = 0; i < trips.value.length; i++) {
-            if (trips.value[i]._id == _id) {
-                trips.value.splice(i, 1);
-            }
-        }
-    }
+    let response = await tripStore.deleteById(_id);
+    await refreshTripsOnModeration()
 }
 const clearData = (dataString) => {
     let date
@@ -41,6 +27,14 @@ const clearData = (dataString) => {
         day: "2-digit",
     })
 }
+async function refreshTripsOnModeration() {
+    let { data } = await tripStore.findForModeration()
+    tripsOnMod.value = data
+}
+
+onMounted(async () => {
+    await refreshTripsOnModeration()
+})
 </script>
 <template>
     <a-row>
@@ -76,7 +70,7 @@ const clearData = (dataString) => {
                         </div>
                     </a-card>
                 </a-col>
-                <a-col :lg="8" :sm="12" :xs="24" v-else>
+                <a-col :span="24" v-else>
                     Нет туров на модерации
                 </a-col>
             </a-row>
