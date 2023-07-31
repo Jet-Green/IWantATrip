@@ -366,14 +366,14 @@ let isNoPlaces = computed(() => {
           </a-col>
           <a-col :span="12">
           <Field name="phone" v-slot="{ value, handleChange }" v-model="userStore.user.fullinfo.phone">
-            <a-input-number
+            <a-input
               @change="handleChange"
               :value="value"
               placeholder="79127528874"
               size="medium"
               :controls="false"
               style="width:100%"
-            ></a-input-number>
+            ></a-input>
           </Field>
 
           <Transition name="fade">
