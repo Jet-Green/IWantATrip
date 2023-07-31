@@ -107,8 +107,10 @@ function submit() {
     return
   }
 
-  description.value = description.value.split("<p><br></p>").join("");
-  form.description = description.value;
+  const regexEmoji = /(?![*#0-9]+)[\p{Emoji}\p{Emoji_Modifier}\p{Emoji_Component}\p{Emoji_Modifier_Base}\p{Emoji_Presentation}]/gu
+  const regexSpaces = /[\n\r\s\t]+/g
+  description.value = description.value.split("<p><br></p>").join("").replace(/<img.*?>/g,'');
+  form.description = description.value.replace(regexEmoji, '').replace(regexSpaces, ' ');
   form.author = author;
   let send = {};
   for (let key in form) {
