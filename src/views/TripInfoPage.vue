@@ -190,11 +190,11 @@ const formSchema = yup.object({
   fullname: yup
     .string("неверный формат")
     .required("заполните поле")
-    .min(3, "минимум 3 символа"),
+    .min(5, "минимум 5 символов"),
   phone: yup
     .string("неверный формат")
     .required("заполните поле")
-    .min(3, "минимум 3 символа"),
+    .min(5, "минимум 5 символов"),
 });
 
 onMounted(async () => {
