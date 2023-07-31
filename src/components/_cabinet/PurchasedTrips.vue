@@ -5,9 +5,14 @@ import { useTrips } from "../../stores/trips";
 
 const userStore = useAuth();
 
-function cancelTrip(bill_id, user_id) {
-  userStore.cancelTrip(bill_id, user_id)
+async function updateBought() {
+  userStore.getBoughtTrips()
 }
+async function cancelTrip(bill_id, user_id) {
+  let res = await userStore.cancelTrip(bill_id, user_id)
+  if (res.status == 200)
+    await updateBought()
+  }
 
 const clearData = (dataString) => {
   let date
@@ -25,8 +30,10 @@ const clearData = (dataString) => {
 
   })
 }
+
+
 onMounted(async () => {
-  await userStore.getBoughtTrips()
+  await updateBought()
 });
 </script>
 <template>
