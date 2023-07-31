@@ -27,8 +27,9 @@ let tripName = props.tripName
             <e-text>Тур: <b>{{ tripName }}</b> </e-text>
             <e-text>Покупатель: <b>{{ bought.userInfo.fullname }}</b></e-text>
             <e-text>Телефон: <a href="tel:fullinfo.phone"> <b>{{ bought.userInfo.phone }}</b></a></e-text>
-            <e-text>
-                Заказ: <span v-for="price in bought.cart"><b>{{ price.count }} x {{ price.cost }}руб.</b></span>
+            <e-text>Заказ:</e-text>
+            <e-text v-for="price in bought.cart">
+                <b>{{ price.count }} x {{ price.cost }}руб.</b>
             </e-text>
             <e-text>
                 Оплачен: <b>{{ bought.isBoughtNow? "да": "нет" }}</b>

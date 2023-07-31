@@ -344,7 +344,7 @@ let isNoPlaces = computed(() => {
     </a-row>
 
     <a-modal v-model:visible="buyDialog" :footer="null" @cancel="refreshDates(trip)">
-      <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="buyTrip(false)">
+      <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="buyTrip(false)" class="mt-16">
         <a-row :gutter="[4, 4]">
 
             <a-col :span="12">
