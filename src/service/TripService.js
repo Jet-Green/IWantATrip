@@ -22,7 +22,7 @@ export default {
     },
 
     async createTrip(emailHtml, trip, authorEmail, fullinfo) {
-        return $api.post('/trips/create', { emailHtml, trip, emails: [authorEmail], fullinfo})
+        return $api.post('/trips/create', { emailHtml, trip, emails: [authorEmail], fullinfo })
     },
 
     async updateTrip(trip) {
@@ -76,5 +76,8 @@ export default {
     },
     updateTourists(bill) {
         return $api.post('/trips/update-bills-tourists', { _id: bill, touristsList: bill.touristsList })
+    },
+    updatePartner(partner, trip_id) {
+        return $api.post('/trips/update-partner', { partner: partner, _id: trip_id })
     }
 }

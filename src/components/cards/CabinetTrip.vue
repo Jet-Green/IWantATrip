@@ -12,16 +12,18 @@ const dateFormatList = ["DD.MM.YY", "DD.MM.YY"];
 const ruLocale = locale;
 
 let props = defineProps(['trip', 'actions'])
-let emit = defineEmits(['deleteTrip'])
+let emit = defineEmits(['deleteTrip', 'updateTrip'])
 let { actions } = toRefs(props)
-let {trip} = toRefs(props)
+let { trip } = toRefs(props)
 let router = useRouter()
 let tripStore = useTrips()
 let userStore = useAuth()
+let partner = ref(trip.value.partner??'')
 
 let dates = ref([{ start: null, end: null }])
 
 let addDateDialog = ref(false)
+let addPartnerDialog = ref(false)
 
 const clearData = (dataString) => {
     let date
@@ -110,6 +112,12 @@ async function submit() {
         addDateDialog.value = false
     }
 }
+async function addPartner() {
+
+    tripStore.updatePartner(partner.value, trip.value._id)
+        .then(() => { addPartnerDialog.value = false; emit('updateTrip') })
+        .catch(error => console.log(error))
+}
 let tripDuration = computed(() => {
     return Math.ceil((trip.value.end - trip.value.start) / (1000 * 60 * 60 * 24))
 })
@@ -134,6 +142,9 @@ watch(dates, () => {
                 {{ trip.name }}
             </div>
             <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
+            <div v-if="trip.partner">
+                <span class="mdi mdi-human-handsup"></span>{{ trip.partner }}
+            </div>
             <div>
                 <span class="mdi mdi-compass-outline"></span>{{ trip.startLocation.name }}
             </div>
@@ -167,6 +178,9 @@ watch(dates, () => {
                 <span class="mdi mdi-information-outline"
                     @click="router.push({ path: 'customers-trip', query: { _id: trip._id } })"
                     v-if="actions.includes('info')"></span>
+
+                <span v-if="!trip.parent" class="mdi mdi-human-handsup" @click="addPartnerDialog = true">
+                </span>
                 <span class="mdi mdi-email-outline" v-if="trip.moderationMessage && actions.includes('msg') && !trip.parent"
                     @click="showMessage = !showMessage"></span>
             </div>
@@ -194,6 +208,15 @@ watch(dates, () => {
             <a-button type="dashed" block @click="dates.pop()" class="mt-8 mb-8" style="color: red">
                 удалить даты
             </a-button>
+        </a-modal>
+        <a-modal v-model:visible="addPartnerDialog" title="Добавить партнера" okText="Отправить" cancelText="Отмена"
+            @ok="addPartner">
+
+            <a-col :span="24">
+                Название
+                <a-input placeholder="ООО Ласточка" v-model:value="partner"></a-input>
+
+            </a-col>
         </a-modal>
     </div>
 </template>

@@ -27,7 +27,7 @@ export const useTrips = defineStore('trips', {
         async createTrip(form, user) {
             const email = user.email
             const fullinfo = user.fullinfo
-            const emailHtml = await render(CreateTripTemplate,{ form:form , email , fullinfo});
+            const emailHtml = await render(CreateTripTemplate, { form: form, email, fullinfo });
 
             return TripService.createTrip(emailHtml, form, email, fullinfo)
         },
@@ -160,6 +160,15 @@ export const useTrips = defineStore('trips', {
             } catch (error) {
                 console.log(error);
             }
+        },
+        async updatePartner(partner, trip_id) {
+            try {
+                let res = await TripService.updatePartner( partner, trip_id)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
         }
+
     },
 })
