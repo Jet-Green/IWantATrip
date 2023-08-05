@@ -222,6 +222,7 @@ let isNoPlaces = computed(() => {
     <a-row class="justify-center d-flex">
       <a-col :xs="22" :xl="16">
         <h2 class="ma-0">{{ trip.name }}</h2>
+        <p><i> {{ trip.offer }}</i></p>
         <a-spin v-if="!trip._id" size="large"></a-spin>
         <a-row v-if="trip._id" :gutter="[12, 12]" class="text justify-center d-flex">
           <a-col :xs="24" :md="12">
@@ -247,8 +248,8 @@ let isNoPlaces = computed(() => {
             </a-carousel>
           </a-col>
           <a-col :xs="24" :md="12" class="pa-8">
-            <i> {{ trip.offer }}</i>
-            <a-divider style="border-color: #245159" dashed />
+            
+           
             <div>
               Старт: <b>{{ trip.startLocation.name }}</b>
             </div>
