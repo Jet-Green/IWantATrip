@@ -128,6 +128,11 @@ async function buyTrip(isBoughtNow) {
                 message.config({ duration: 3, top: "90vh" });
                 message.success({ content: "Тур заказан!" });
                 addCustomerDialog.value = false;
+                userInfo.value.fullname=""
+                userInfo.value.phone=""
+                for(let i of selectedByUser.value){
+                    i.count=0
+                }
             })
             .catch((err) => {
                 console.log(err);
