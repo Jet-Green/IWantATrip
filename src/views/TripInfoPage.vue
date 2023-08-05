@@ -23,8 +23,8 @@ const creatorsType = computed(() => {
   return trip.value.creatorForm[1] == "author"
     ? "автор тура"
     : trip.value.creatorForm[1] == "operator"
-    ? "туроператор"
-    : "турагенство";
+      ? "туроператор"
+      : "турагенство";
 });
 
 let tripDates = ref([]);
@@ -72,17 +72,17 @@ function getImg(index) {
 }
 
 let buyTripDialog = () => {
-  try {
-    if (userStore.user.email) {
-      if (!selectedDate.value.selected) {
-        tripDates.value[0].selected = true;
-        selectedDate.value = tripDates.value[0];
-      }
-      buyDialog.value = true;
+
+  if (userStore.user.email) {
+    if (!selectedDate.value.selected) {
+      tripDates.value[0].selected = true;
+      selectedDate.value = tripDates.value[0];
     }
-  } catch (e) {
+    buyDialog.value = true;
+  } else {
     router.push("/reg");
   }
+
 };
 
 function selectDate(index) {
@@ -175,16 +175,16 @@ async function buyTrip(isBoughtNow) {
             }
             await refreshDates();
             buyDialog.value = false;
-        })
-        .catch((err) => {
+          })
+          .catch((err) => {
             console.log(err);
-        });
+          });
+      }
     }
-}
-} else {
+  } else {
     message.config({ duration: 3, top: "90vh" });
     message.success({ content: "Нужен телефон" });
-}
+  }
 }
 const formSchema = yup.object({
   fullname: yup
@@ -205,10 +205,10 @@ let isNoPlaces = computed(() => {
   if (selectedDate.value.billsList) {
     return (
       trip.value.maxPeople -
-        getCustomersCount(selectedDate.value.billsList) -
-        selectedDate.value.selectedCosts.reduce((acc, cost) => {
-          return acc + cost.count;
-        }, 0) <
+      getCustomersCount(selectedDate.value.billsList) -
+      selectedDate.value.selectedCosts.reduce((acc, cost) => {
+        return acc + cost.count;
+      }, 0) <
       0
     );
   }
@@ -262,12 +262,8 @@ let isNoPlaces = computed(() => {
             <div>
               Даты:
               <div>
-                <a-checkable-tag
-                  class="pretty-tag"
-                  v-for="(date, index) of tripDates"
-                  :checked="date.selected"
-                  @change="selectDate(index)"
-                >
+                <a-checkable-tag class="pretty-tag" v-for="(date, index) of tripDates" :checked="date.selected"
+                  @change="selectDate(index)">
                   <b>
                     {{ clearData(date.start) }} -
                     {{ clearData(date.end) }}
@@ -280,12 +276,9 @@ let isNoPlaces = computed(() => {
               <div>Количество человек:</div>
               <div style="width: 50%">
                 <b>
-                  <a-progress
-                    :percent="(tripsCount / trip.maxPeople) * 100"
-                    :format="() => `${tripsCount}/${trip.maxPeople} чел`"
-                  >
-                  </a-progress
-                ></b>
+                  <a-progress :percent="(tripsCount / trip.maxPeople) * 100"
+                    :format="() => `${tripsCount}/${trip.maxPeople} чел`">
+                  </a-progress></b>
               </div>
             </div>
             <div>
@@ -300,37 +293,26 @@ let isNoPlaces = computed(() => {
                 <i>{{ item.type }}: {{ item.bonus }}</i>
               </div>
             </div>
-            <div
-              class="d-flex justify-center ma-8"
-              v-if="
-                trip.maxPeople -
-                  getCustomersCount(selectedDate.billsList) -
-                  selectedDate.selectedCosts.reduce((acc, cost) => {
-                    return acc + cost.count;
-                  }, 0) >
-                0
-              "
-            >
-              <a-button
-                type="primary"
-                class="lets_go_btn"
-                style="display: flex; justify-content: center"
-                @click="buyTripDialog()"
-              >
+            <div class="d-flex justify-center ma-8" v-if="trip.maxPeople -
+              getCustomersCount(selectedDate.billsList) -
+              selectedDate.selectedCosts.reduce((acc, cost) => {
+                return acc + cost.count;
+              }, 0) >
+              0
+              ">
+              <a-button type="primary" class="lets_go_btn" style="display: flex; justify-content: center"
+                @click="buyTripDialog()">
                 Купить
               </a-button>
             </div>
             <div>
-              <b
-                v-if="
-                  trip.maxPeople -
-                    getCustomersCount(selectedDate.billsList) -
-                    selectedDate.selectedCosts.reduce((acc, cost) => {
-                      return acc + cost.count;
-                    }, 0) <=
-                  0
-                "
-              >
+              <b v-if="trip.maxPeople -
+                getCustomersCount(selectedDate.billsList) -
+                selectedDate.selectedCosts.reduce((acc, cost) => {
+                  return acc + cost.count;
+                }, 0) <=
+                0
+                ">
                 мест больше нет
               </b>
             </div>
@@ -347,39 +329,25 @@ let isNoPlaces = computed(() => {
       <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="buyTrip(false)" class="mt-16">
         <a-row :gutter="[4, 4]">
 
-            <a-col :span="12">
-          <Field
-            name="fullname"
-            v-slot="{ value, handleChange }"
-            v-model="userStore.user.fullinfo.fullname"
-          >
-            <a-input
-              @change="handleChange"
-              :value="value"
-              placeholder="Иванов Иван Иванович"
-            ></a-input>
-          </Field>
+          <a-col :span="12">
+            <Field name="fullname" v-slot="{ value, handleChange }" v-model="userStore.user.fullinfo.fullname">
+              <a-input @change="handleChange" :value="value" placeholder="Иванов Иван Иванович"></a-input>
+            </Field>
 
-          <Transition name="fade">
-            <ErrorMessage name="fullname" class="error-message" />
-          </Transition>
+            <Transition name="fade">
+              <ErrorMessage name="fullname" class="error-message" />
+            </Transition>
           </a-col>
           <a-col :span="12">
-          <Field name="phone" v-slot="{ value, handleChange }" v-model="userStore.user.fullinfo.phone">
-            <a-input
-              @change="handleChange"
-              :value="value"
-              placeholder="79127528874"
-              size="medium"
-              :controls="false"
-              style="width:100%"
-            ></a-input>
-          </Field>
+            <Field name="phone" v-slot="{ value, handleChange }" v-model="userStore.user.fullinfo.phone">
+              <a-input @change="handleChange" :value="value" placeholder="79127528874" size="medium" :controls="false"
+                style="width:100%"></a-input>
+            </Field>
 
-          <Transition name="fade">
-            <ErrorMessage name="phone" class="error-message" />
-          </Transition>
-            </a-col>
+            <Transition name="fade">
+              <ErrorMessage name="phone" class="error-message" />
+            </Transition>
+          </a-col>
           <a-col :span="24">
             <div>Цены</div>
             <b>
@@ -398,21 +366,14 @@ let isNoPlaces = computed(() => {
               чел.
             </div>
 
-            <div
-              class="d-flex space-between align-center"
-              v-for="cost of selectedDate.selectedCosts"
-            >
+            <div class="d-flex space-between align-center" v-for="cost of selectedDate.selectedCosts">
               <div>{{ cost.costType }}</div>
               <div>{{ cost.cost }} руб.</div>
 
               <div class="d-flex direction-column">
                 <span style="font-size: 8px">кол-во</span>
-                <a-input-number
-                  v-model:value="cost.count"
-                  :min="0"
-                  :max="trip.maxPeople - getCustomersCount(selectedDate.billsList)"
-                  placeholder="чел"
-                ></a-input-number>
+                <a-input-number v-model:value="cost.count" :min="0"
+                  :max="trip.maxPeople - getCustomersCount(selectedDate.billsList)" placeholder="чел"></a-input-number>
               </div>
             </div>
           </a-col>
