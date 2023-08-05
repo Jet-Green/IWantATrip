@@ -19,18 +19,25 @@ const form = reactive({
 });
 
 function submit() {
-  CompanionService.addFeedback(form, router.currentRoute.value.query.companion_id).then((res) => {
-    // const _id = res.data._id;
-    message.config({ duration: 1.5, top: "70vh" });
-    message.success({
-      content: "Успешно!",
-      onClose: () => {
-        router.push("/companions");
-      },
-    });
 
-    // userStore.addFeedback(res.data)
-  });
+  if (userStore.isAuth) {
+    CompanionService.addFeedback(form, router.currentRoute.value.query.companion_id).then((res) => {
+      // const _id = res.data._id;
+      message.config({ duration: 1.5, top: "70vh" });
+      message.success({
+        content: "Успешно!",
+        onClose: () => {
+          router.push("/companions");
+        },
+      });
+
+
+    });
+  } else {
+    router.push("/reg");
+  }
+
+
 }
 </script>
 
@@ -81,6 +88,4 @@ function submit() {
     </form>
   </div>
 </template>
-<style scoped>
-
-</style>
+<style scoped></style>
