@@ -110,7 +110,7 @@ const formSchema = yup.object({
   email: yup.string("неверный формат").required("заполните поле").email('неверный формат'),
   password: yup.string("неверный формат").required("заполните поле").min(6, 'минимум 6 символов'),
   fullname: yup.string("неверный формат").required("заполните поле"),
-  // startLocation: yup.string("неверный формат").required("заполните поле")
+  startLocation: yup.string("неверный формат").required("заполните поле")
 });
 
 </script>
@@ -156,7 +156,7 @@ const formSchema = yup.object({
                 </a-auto-complete>
               </Field>
               <Transition name="fade">
-                <ErrorMessage name="location" class="error-message" />
+                <ErrorMessage name="startLocation" class="error-message" />
               </Transition>
 
               <div class="d-flex justify-center">
