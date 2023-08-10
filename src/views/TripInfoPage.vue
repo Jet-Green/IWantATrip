@@ -378,7 +378,7 @@ onMounted(async () => {
       </a-col>
     </a-row>
     <a-row class="justify-center d-flex">
-      <a-col :xs="22" :xl="16" class="justify-center d-flex ma-8">
+      <a-col :xs="22" :xl="16" class="justify-center d-flex ma-24">
         <a-button type="primary" class="lets_go_btn" style="display: flex; justify-content: center" @click="print()">
           Печать
         </a-button>
