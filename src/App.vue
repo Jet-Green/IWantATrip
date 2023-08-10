@@ -19,17 +19,7 @@ onMounted(async () => {
     await userStore.checkAuth()
   }
   // вся логика локации тут
-
   await locationStore.fetchLocations()
-  try {
-    let l = JSON.parse(localStorage.getItem("location"))
-    if (l?.coordinates) {
-      locationStore.location = l
-    }
-  } catch (error) {
-    localStorage.setItem('location', {})
-    console.log(error);
-  }
 
 
   // function notify() {

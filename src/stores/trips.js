@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 
 import { useAuth } from './auth'
-import { useLocations } from './locations'
 
 import BookingService from '../service/BookingService'
 import TripService from '../service/TripService.js'
