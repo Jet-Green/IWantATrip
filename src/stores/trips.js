@@ -33,11 +33,13 @@ export const useTrips = defineStore('trips', {
         },
         async fetchTrips(query, start, end) {
             try {
-                let locationStore = useLocations()
                 let response;
-
-                if (locationStore.location?.name) {
-                    response = await TripService.fetchTrips(this.cursor, ...locationStore.location.coordinates, query, start, end);
+                let location = localStorage.getItem('location')
+                if (location) {
+                    location = JSON.parse(location)
+                }
+                if (location?.name) {
+                    response = await TripService.fetchTrips(this.cursor, ...location.coordinates, query, start, end);
                 } else {
                     response = await TripService.fetchTrips(this.cursor, '', '', query, start, end);
                 }
