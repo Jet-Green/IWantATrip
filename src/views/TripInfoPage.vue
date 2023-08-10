@@ -228,7 +228,7 @@ onMounted(async () => {
   <div style="overflow-x: hidden">
     <BackButton :backRoute="backRoute" />
 
-    <a-row class="justify-center d-flex" id="printMe">
+    <a-row class="justify-center d-flex">
       <a-col :xs="22" :xl="16">
         <h2 class="ma-0">{{ trip.name }}</h2>
         <p><i> {{ trip.offer }}</i></p>
@@ -332,6 +332,47 @@ onMounted(async () => {
           <a-col :xs="24">
             <span v-html="trip.description"></span>
           </a-col>
+
+          <div id="printMe" style="display: none">
+            <h2 class="ma-0">{{ trip.name }}</h2>
+            <p><i> {{ trip.offer }}</i></p>
+            <div>
+              Старт: <b>{{ trip.startLocation.name }}</b>
+            </div>
+
+            <div>
+              Продолжительность: <b>{{ trip.duration }}</b>
+            </div>
+            <div>
+              Ключевые точки: <b>{{ trip.tripRoute }}</b>
+            </div>
+            <div>
+              Даты:
+              <div>
+                <a-checkable-tag class="pretty-tag" v-for="(date, index) of tripDates" :checked="date.selected"
+                  @change="selectDate(index)">
+                  <b>
+                    {{ clearData(date.start) }} -
+                    {{ clearData(date.end) }}
+                  </b>
+                  ({{ getCustomersCount(date.billsList) + "/" + trip.maxPeople }} чел.)
+                </a-checkable-tag>
+              </div>
+            </div>
+            <div>
+              Цена:
+              <div v-for="(item, index) in trip.cost" :key="index" class="cost">
+                {{ item.first }} : <b>{{ item.price }} руб.</b>
+              </div>
+            </div>
+            <div v-if="trip.bonuses.length">
+              Бонусы:
+              <div v-for="(item, index) in trip.bonuses" :key="index">
+                <i>{{ item.type }}: {{ item.bonus }}</i>
+              </div>
+            </div>
+            <span v-html="trip.description"></span>
+          </div>
 
         </a-row>
       </a-col>
