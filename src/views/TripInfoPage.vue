@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, getCurrentInstance } from "vue";
 
 import { useRoute } from "vue-router";
 import BackButton from "../components/BackButton.vue";
@@ -9,6 +9,10 @@ import { message } from "ant-design-vue";
 import { useRouter } from "vue-router";
 import * as yup from "yup";
 import { Form, Field, ErrorMessage } from 'vee-validate';
+
+const app = getCurrentInstance();
+const htmlToPaper = app.appContext.config.globalProperties.$htmlToPaper;
+
 const router = useRouter();
 
 const route = useRoute();
@@ -144,6 +148,9 @@ async function refreshDates() {
 
   selectDate(0);
 }
+const print = async () => {
+  await htmlToPaper('printMe');
+};
 
 async function buyTrip(isBoughtNow) {
   if (userStore.user.email) {
@@ -197,9 +204,7 @@ const formSchema = yup.object({
     .min(5, "минимум 5 символов"),
 });
 
-onMounted(async () => {
-  await refreshDates();
-});
+
 
 let isNoPlaces = computed(() => {
   if (selectedDate.value.billsList) {
@@ -214,17 +219,22 @@ let isNoPlaces = computed(() => {
   }
   return false;
 });
+
+onMounted(async () => {
+  await refreshDates();
+});
 </script>
 <template>
   <div style="overflow-x: hidden">
     <BackButton :backRoute="backRoute" />
 
-    <a-row class="justify-center d-flex">
+    <a-row class="justify-center d-flex" id="printMe">
       <a-col :xs="22" :xl="16">
         <h2 class="ma-0">{{ trip.name }}</h2>
         <p><i> {{ trip.offer }}</i></p>
         <a-spin v-if="!trip._id" size="large"></a-spin>
         <a-row v-if="trip._id" :gutter="[12, 12]" class="text justify-center d-flex">
+
           <a-col :xs="24" :md="12">
             <a-carousel arrows dots-class="slick-dots slick-thumb">
               <template #customPaging="props">
@@ -248,8 +258,8 @@ let isNoPlaces = computed(() => {
             </a-carousel>
           </a-col>
           <a-col :xs="24" :md="12" class="pa-8">
-            
-           
+
+
             <div>
               Старт: <b>{{ trip.startLocation.name }}</b>
             </div>
@@ -288,7 +298,7 @@ let isNoPlaces = computed(() => {
                 {{ item.first }} : <b>{{ item.price }} руб.</b>
               </div>
             </div>
-            <div>
+            <div v-if="trip.bonuses.length">
               Бонусы:
               <div v-for="(item, index) in trip.bonuses" :key="index">
                 <i>{{ item.type }}: {{ item.bonus }}</i>
@@ -322,10 +332,17 @@ let isNoPlaces = computed(() => {
           <a-col :xs="24">
             <span v-html="trip.description"></span>
           </a-col>
+
         </a-row>
       </a-col>
     </a-row>
-
+    <a-row class="justify-center d-flex">
+      <a-col :xs="22" :xl="16" class="justify-center d-flex">
+        <a-button type="primary" class="lets_go_btn" style="display: flex; justify-content: center" @click="print()">
+          Печать
+        </a-button>
+      </a-col>
+    </a-row>
     <a-modal v-model:visible="buyDialog" :footer="null" @cancel="refreshDates(trip)">
       <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="buyTrip(false)" class="mt-16">
         <a-row :gutter="[4, 4]">
