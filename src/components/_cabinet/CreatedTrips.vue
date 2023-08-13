@@ -40,8 +40,6 @@ let getTripsArrayByStatus = computed(() => {
   return result
 })
 
-
-
 let filteredTrips = computed(() => {
 
   if (query.value.length > 2) {
@@ -51,9 +49,10 @@ let filteredTrips = computed(() => {
       || trip.tripRoute.toLowerCase().includes(query.value.toLowerCase())
       || trip.tripType.toLowerCase().includes(query.value.toLowerCase())
       || trip.startLocation.name.toLowerCase().includes(query.value.toLowerCase())
-      || trip.partner.toLowerCase().includes(query.value.toLowerCase())
+      || (trip.partner ? trip.partner.toLowerCase().includes(query.value.toLowerCase()) : false)
       || trip.offer.toLowerCase().includes(query.value.toLowerCase()))
   } else {
+    localStorage.setItem("cabinetQuery", '');
     return allTrips.value
   }
 
@@ -67,12 +66,12 @@ async function getAllTrips() {
   loading.value = false
 }
 
-watch(query, () => {
-  query.value.length <= 3 ? localStorage.setItem("cabinetQuery", '') : null
-})
+// watch(query, () => {
+//   query.value.length <= 3 ? localStorage.setItem("cabinetQuery", '') : null
+// })
 onMounted(async () => {
+  query.value = localStorage.getItem("cabinetQuery") ?? '';
   await getAllTrips()
-  query.value = localStorage.getItem("cabinetQuery");
 
 });
 
@@ -101,7 +100,8 @@ onMounted(async () => {
       <div v-if="tripsStatus == 'tripsOnModeration'">
         <a-row :gutter="[8, 8]" class="mt-8" v-if="getTripsArrayByStatus.tripsOnModeration.length > 0">
           <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getTripsArrayByStatus.tripsOnModeration" :key="index">
-            <CabinetTrip :trip="trip" :actions="['delete', 'info', 'edit', 'msg']" @deleteTrip="deleteTrip" @updateTrip="getAllTrips" />
+            <CabinetTrip :trip="trip" :actions="['delete', 'info', 'edit', 'msg']" @deleteTrip="deleteTrip"
+              @updateTrip="getAllTrips" />
           </a-col>
         </a-row>
         <a-row :lg="8" :sm="12" :xs="24" v-else>
@@ -114,7 +114,7 @@ onMounted(async () => {
         <a-row :gutter="[8, 8]" class="mt-8" v-if="getTripsArrayByStatus.tripsInWork.length > 0">
           <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getTripsArrayByStatus.tripsInWork" :key="index">
             <CabinetTrip :trip="trip" :actions="['delete', 'info', 'copy', 'hide', 'edit', 'addDate']"
-              @deleteTrip="deleteTrip"  @updateTrip="getAllTrips"   />
+              @deleteTrip="deleteTrip" @updateTrip="getAllTrips" />
           </a-col>
         </a-row>
         <a-row :lg="8" :sm="12" :xs="24" v-else>
@@ -126,7 +126,8 @@ onMounted(async () => {
       <div v-if="tripsStatus == 'archiveTrips'">
         <a-row :gutter="[8, 8]" class="mt-8" v-if="getTripsArrayByStatus.archiveTrips.length > 0">
           <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getTripsArrayByStatus.archiveTrips" :key="index">
-            <CabinetTrip :trip="trip" :actions="['delete', 'info', 'copy', 'edit', 'addDate']" @deleteTrip="deleteTrip"  @updateTrip="getAllTrips"/>
+            <CabinetTrip :trip="trip" :actions="['delete', 'info', 'copy', 'edit', 'addDate']" @deleteTrip="deleteTrip"
+              @updateTrip="getAllTrips" />
           </a-col>
         </a-row>
         <a-row :lg="8" :sm="12" :xs="24" v-else>
