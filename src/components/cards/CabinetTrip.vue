@@ -130,9 +130,6 @@ let tripDuration = computed(() => {
     return Math.ceil((trip.value.end - trip.value.start) / (1000 * 60 * 60 * 24))
 })
 
-let startLocation = computed(() => {
-    return trip.value.children.length ? trip.value.startLocation.name : trip.value.parent.startLocation.name
-})
 let showMessage = ref(false);
 
 watch(dates, () => {
@@ -155,11 +152,11 @@ watch(dates, () => {
 
             </div>
             <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
-            <div v-if="trip.partner||trip.parent.partner">
-                <span class="mdi mdi-human-handsup"> </span>{{ trip.partner ?? trip.parent.partner }}
+            <div v-if="trip.partner">
+                <span class="mdi mdi-human-handsup"> </span>{{ trip.partner }}
             </div>
             <div>
-                <span class="mdi mdi-compass-outline"> </span>{{ startLocation }}
+                <span class="mdi mdi-compass-outline"> </span>{{ trip.startLocation.name }}
             </div>
             <div>
                 <span class="mdi mdi-calendar-arrow-right"></span>
