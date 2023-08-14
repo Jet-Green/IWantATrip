@@ -18,15 +18,14 @@ let { trip } = toRefs(props)
 let router = useRouter()
 let tripStore = useTrips()
 let userStore = useAuth()
-let partner = ref(trip.value.partner??'')
-
+let partner = ref(trip.value.partner ?? '')
 let dates = ref([{ start: null, end: null }])
 
 let addDateDialog = ref(false)
 let addPartnerDialog = ref(false)
 
 const clearData = (dataString) => {
-    let date
+    let date = 0
     if (dataString.length == 13) {
         const dataFromString = new Date(Number(dataString));
         date = dataFromString
@@ -59,6 +58,7 @@ async function tripToDelete(_id) {
     let response = await tripStore.deleteById(_id);
     if (response.status == 200) {
         emit('deleteTrip')
+        emit('updateTrip')
     }
 }
 function updateUser(_id) {
@@ -74,52 +74,64 @@ function updateUser(_id) {
             console.log(err);
         });
 }
+
+function startDate(date) {
+    let dateNow = new Date(date);
+    dateNow.setHours(0)
+    dateNow.setMinutes(0)
+    dateNow.setSeconds(0)
+    dateNow.setMilliseconds(0)
+    return dateNow
+}
+function endDate(date) {
+    let dateNow = new Date(date);
+    dateNow.setHours(23)
+    dateNow.setMinutes(59)
+    dateNow.setSeconds(59)
+    dateNow.setMilliseconds(999)
+    return dateNow
+}
+
 async function submit() {
     let datesToSend = []
 
     for (let d of dates.value) {
+
         let toPush = { start: null, end: null, author: userStore.user._id }
         if (d.start && d.end) {
-            let startDate = new Date(d.start.$d);
-            startDate.setHours(0)
-            startDate.setMinutes(0)
-            startDate.setSeconds(0)
-            startDate.setMilliseconds(0)
-
-            toPush.start = Number(Date.parse(startDate.toString()));
-
-            let endDate = new Date(d.end.$d);
-            endDate.setHours(23)
-            endDate.setMinutes(59)
-            endDate.setSeconds(59)
-            endDate.setMilliseconds(999)
-
-            toPush.end = Date.parse(endDate);
+            let startData = startDate(d.start.$d);
+            let endData = endDate(d.end.$d);
+            toPush.start = Number(Date.parse(startData.toString()));
+            toPush.end = Date.parse(endData);
         }
 
         if (toPush.start && toPush.end) {
             datesToSend.push(toPush)
         }
     }
-
     let res = await tripStore.createManyByDates(datesToSend, trip.value._id)
 
     for (let _id of res.data) {
-        updateUser(_id)
+        await updateUser(_id)
     }
-
     if (res.status == 200) {
+        emit('updateTrip')
         addDateDialog.value = false
     }
 }
-async function addPartner() {
 
+async function addPartner() {
     tripStore.updatePartner(partner.value, trip.value._id)
         .then(() => { addPartnerDialog.value = false; emit('updateTrip') })
         .catch(error => console.log(error))
 }
+
 let tripDuration = computed(() => {
     return Math.ceil((trip.value.end - trip.value.start) / (1000 * 60 * 60 * 24))
+})
+
+let startLocation = computed(() => {
+    return trip.value.children.length ? trip.value.startLocation.name : trip.value.parent.startLocation.name
 })
 let showMessage = ref(false);
 
@@ -139,14 +151,15 @@ watch(dates, () => {
     <div v-if="trip._id">
         <a-card class="card" hoverable :class="[trip.isHidden ? 'overlay' : '']">
             <div style="text-align:center">
-                {{ trip.name }}
+                {{ trip.name}}
+
             </div>
             <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
-            <div v-if="trip.partner">
-                <span class="mdi mdi-human-handsup"></span>{{ trip.partner }}
+            <div v-if="trip.partner||trip.parent.partner">
+                <span class="mdi mdi-human-handsup"> </span>{{ trip.partner ?? trip.parent.partner }}
             </div>
             <div>
-                <span class="mdi mdi-compass-outline"></span>{{ trip.startLocation.name }}
+                <span class="mdi mdi-compass-outline"> </span>{{ startLocation }}
             </div>
             <div>
                 <span class="mdi mdi-calendar-arrow-right"></span>
