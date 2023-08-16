@@ -9,16 +9,21 @@ import { useRoute } from "vue-router";
 const route = useRoute();
 let tripStore = useTrips()
 
+
 let handleScroll = async () => {
   let triggerHeight =
-    wrapper.value.scrollTop + wrapper.value.offsetHeight
+    wrapper.value.scrollTop + wrapper.value.offsetHeight-50
   if (triggerHeight >= wrapper.value.scrollHeight) {
-    await tripStore.fetchTrips()
+
+    await tripStore.fetchTrips().then(() => {
+      tripStore.cursor++
+    })
   }
 
 }
 
 const wrapper = ref(null)
+
 onMounted(async () => {
   wrapper.value.addEventListener("scroll", handleScroll);
   if (tripStore.trips.length == 0) {

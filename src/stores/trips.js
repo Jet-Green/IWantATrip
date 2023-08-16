@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 
 import { useAuth } from './auth'
-
+import _ from 'lodash'
 import BookingService from '../service/BookingService'
 import TripService from '../service/TripService.js'
 
@@ -45,12 +45,13 @@ export const useTrips = defineStore('trips', {
 
                 this.trips.push(...response.data);
 
-                if (response.data.length != 0)
-                    this.cursor += 1
+                // if (response.data.length != 0)
+                //     this.cursor += 1
             } catch (err) {
                 console.log(err);
             }
         },
+
         // async searchTrips(query, when) {
         //     try {
         //         if (!query && !when.start && !when.end) {
@@ -164,7 +165,7 @@ export const useTrips = defineStore('trips', {
         },
         async updatePartner(partner, trip_id) {
             try {
-                let res = await TripService.updatePartner( partner, trip_id)
+                let res = await TripService.updatePartner(partner, trip_id)
                 return res
             } catch (error) {
                 console.log(error);
