@@ -14,10 +14,7 @@ let handleScroll = async () => {
   let triggerHeight =
     wrapper.value.scrollTop + wrapper.value.offsetHeight
   if (triggerHeight == wrapper.value.scrollHeight) {
-   
-    await tripStore.fetchTrips().then(() => {
-       tripStore.cursor ++
-    })
+    await tripStore.fetchTrips()
   }
 
 }
@@ -27,9 +24,7 @@ const wrapper = ref(null)
 onMounted(async () => {
   wrapper.value.addEventListener("scroll", handleScroll);
   if (tripStore.trips.length == 0) {
-    await tripStore.fetchTrips().then(()=> {
-      tripStore.cursor ++
-    })
+    await tripStore.fetchTrips()
   }
 });
 </script>

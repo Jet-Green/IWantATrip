@@ -17,9 +17,7 @@ const trips = computed(() => {
 
 onMounted(async () => {
   if (!tripStore.trips?.length)
-    await tripStore.fetchTrips().then(() => tripStore.cursor++)
-
-
+    await tripStore.fetchTrips()
 });
 </script>
 <template>

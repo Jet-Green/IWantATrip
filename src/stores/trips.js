@@ -12,7 +12,8 @@ export const useTrips = defineStore('trips', {
     state: () => ({
         trips: [],
         cursor: 1,
-        searchCursor: 1
+        searchCursor: 1,
+        isFetching: false
     }),
     getters: {
         getTrips(state) {
@@ -32,51 +33,27 @@ export const useTrips = defineStore('trips', {
         },
         async fetchTrips(query, start, end) {
             try {
-                let response;
-                let location = localStorage.getItem('location')
-                if (location) {
-                    location = JSON.parse(location)
+                if (!this.isFetching) {
+                    this.isFetching = true
+                    let response;
+                    let location = localStorage.getItem('location')
+                    if (location) {
+                        location = JSON.parse(location)
+                    }
+                    if (location?.name) {
+                        response = await TripService.fetchTrips(this.cursor, ...location.coordinates, query, start, end);
+                        this.isFetching = false
+                    } else {
+                        response = await TripService.fetchTrips(this.cursor, '', '', query, start, end);
+                        this.isFetching = false
+                    }
+                    this.trips.push(...response.data);
+                    this.cursor++
                 }
-                if (location?.name) {
-                    response = await TripService.fetchTrips(this.cursor, ...location.coordinates, query, start, end);
-                } else {
-                    response = await TripService.fetchTrips(this.cursor, '', '', query, start, end);
-                }
-                // Это костыль убирающий дублирование туров при скроле
-                this.cursor == 1 && this.trips.length?null: this.trips.push(...response.data);
-                
-
-
-
-                // if (response.data.length != 0)
-                //     this.cursor += 1
             } catch (err) {
                 console.log(err);
             }
         },
-
-        // async searchTrips(query, when) {
-        //     try {
-        //         if (!query && !when.start && !when.end) {
-        //             if (!this.trips.length) {
-        //                 this.filteredTrips = []
-        //                 this.cursor = 0
-        //                 this.trips = []
-        //                 this.fetchTrips()
-        //             }
-        //         } else {
-        //             this.trips = []
-        //             const response = await TripService.searchTrips({ query, when: when }, this.searchCursor);
-
-        //             this.filteredTrips.push(...response.data);
-
-        //             if (response.data.length != 0)
-        //                 this.searchCursor += 2
-        //         }
-        //     } catch (err) {
-        //         console.log(err);
-        //     }
-        // },
         getById(_id) {
             return TripService.getById(_id)
         },
