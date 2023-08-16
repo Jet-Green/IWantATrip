@@ -37,8 +37,6 @@ const handleChange = async () => {
 
   if (locationSearchRequest.value == 'Не выбрано') {
     locationStore.resetLocation()
-    tripStore.searchCursor = 1
-    tripStore.filteredTrips = []
     tripStore.cursor = 1
     tripStore.trips = []
     selectLocationDialog.value = false
@@ -51,8 +49,7 @@ const handleChange = async () => {
     for (let loc of locationStore.locations) {
       if (loc.shortName == locationSearchRequest.value) {
         // start pagiantion again to update location
-        tripStore.searchCursor = 1
-        tripStore.filteredTrips = []
+  
         tripStore.cursor = 1
         tripStore.trips = []
 
