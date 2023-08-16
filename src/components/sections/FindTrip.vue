@@ -8,45 +8,18 @@ import TripCard from "../cards/TripCard.vue";
 const useTripsStore = useTrips();
 
 let tripStore = useTrips()
-let carouselWidth = ref(0);
-const carousel_container = ref(null);
+
 
 const trips = computed(() => {
   return useTripsStore.trips;
 });
-const cards = computed(() => {
-  let postersGroup = [];
-  postersGroup.push([poster.cards[0]]);
-  for (let i = 1; i < poster.cards.length - 1; i += 4) {
-    postersGroup.push(poster.cards.slice(i, i + 4));
-  }
-  return postersGroup;
-});
-// тут будет сортировка и первым элементом будет тот который нужен
 
-let onResize = () => {
-  if (carousel_container.value) {
-    carouselWidth.value = carousel_container.value.clientWidth;
-  }
-};
 
-const postsCount = computed(() => {
-  if (carouselWidth.value < 600) {
-    return 1;
-  } else {
-    return carouselWidth.value / 270;
-  }
-});
-
-watch(carousel_container, () => {
-  onResize();
-});
 onMounted(async () => {
   if (!tripStore.trips?.length)
     await tripStore.fetchTrips();
 
-  onResize();
-  window.addEventListener("resize", onResize);
+
 });
 </script>
 <template>
