@@ -7,6 +7,7 @@ import TripCard from "../cards/TripCard.vue";
 
 const useTripsStore = useTrips();
 
+let tripStore = useTrips()
 let carouselWidth = ref(0);
 const carousel_container = ref(null);
 
@@ -41,7 +42,9 @@ watch(carousel_container, () => {
   onResize();
 });
 onMounted(async () => {
-  await useTrips().fetchTrips();
+  if (!tripStore.trips?.length)
+    await tripStore.fetchTrips();
+
   onResize();
   window.addEventListener("resize", onResize);
 });
@@ -57,8 +60,8 @@ onMounted(async () => {
       <a-row v-if="trips.length">
         <a-col :span="24">
           <div class="section">
-            <div v-for="trip in trips" :key="trip.index" class="ma-8 section__item">      
-                <TripCard :trip="trip" :isPreview="true" />
+            <div v-for="trip in trips" :key="trip.index" class="ma-8 section__item">
+              <TripCard :trip="trip" :isPreview="true" />
             </div>
           </div>
         </a-col>
@@ -85,7 +88,7 @@ onMounted(async () => {
   align-items: end;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  padding:0 1rem 1rem 1rem;
+  padding: 0 1rem 1rem 1rem;
   gap: 1rem;
 }
 
