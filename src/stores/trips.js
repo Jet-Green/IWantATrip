@@ -42,8 +42,11 @@ export const useTrips = defineStore('trips', {
                 } else {
                     response = await TripService.fetchTrips(this.cursor, '', '', query, start, end);
                 }
+                // Это костыль убирающий дублирование туров при скроле
+                this.cursor == 1 && this.trips.length?null: this.trips.push(...response.data);
+                
 
-                this.trips.push(...response.data);
+
 
                 // if (response.data.length != 0)
                 //     this.cursor += 1
