@@ -9,6 +9,7 @@ import { message } from "ant-design-vue";
 import { useRouter } from "vue-router";
 import * as yup from "yup";
 import { Form, Field, ErrorMessage } from 'vee-validate';
+const API_URL = import.meta.env.VITE_API_URL
 
 const app = getCurrentInstance();
 const htmlToPaper = app.appContext.config.globalProperties.$htmlToPaper;
@@ -34,8 +35,32 @@ const creatorsType = computed(() => {
 let tripDates = ref([]);
 let trip = ref({});
 let buyDialog = ref(false);
-
 let selectedDate = ref({});
+
+let ShareLogo = ref([
+    {
+        network: "VK",
+
+    },
+    {
+        network: "WhatsApp",
+
+    },
+    {
+        network: "Telegram",
+
+    },
+    {
+        network: "Email",
+
+    },
+    {
+        network: "Viber",
+
+    },
+
+
+])
 
 let tripsCount = computed(() => {
     let sum = 0;
@@ -73,6 +98,9 @@ const clearData = (dateNumber) => {
 
 function getImg(index) {
     return trip.value.images[index];
+}
+function getLink() {
+    return 'http://localhost:5173' + route.fullPath
 }
 
 let buyTripDialog = () => {
@@ -226,7 +254,6 @@ onMounted(async () => {
 <template>
     <div style="overflow-x: hidden">
         <BackButton :backRoute="backRoute" />
-
         <a-row class="justify-center d-flex">
             <a-col :xs="22" :xl="16">
                 <h2 class="ma-0">{{ trip.name }}</h2>
@@ -315,6 +342,7 @@ onMounted(async () => {
                                 Купить
                             </a-button>
                         </div>
+
                         <div>
                             <b v-if="trip.maxPeople -
                                 getCustomersCount(selectedDate.billsList) -
@@ -325,6 +353,24 @@ onMounted(async () => {
                                 ">
                                 мест больше нет
                             </b>
+                        </div>
+                        <div class="d-flex justify-end">
+                            <a-dropdown :trigger="['click']">
+                                <a class="ant-dropdown-link" @click.prevent>
+                                    <span style="opacity: 0.5;" class="mdi mdi-24px mdi-export-variant"></span>
+                                </a>
+                                <template #overlay>
+                                    <a-menu>
+                                        <a-menu-item v-for="link, index of  ShareLogo" :key="index">
+                                            <ShareNetwork :network="link.network" :url='getLink()' :title="trip.name"
+                                                :description="trip.offer">
+                                                <span >{{ link.network }}</span>
+
+                                            </ShareNetwork>
+                                        </a-menu-item>
+                                    </a-menu>
+                                </template>
+                            </a-dropdown>
                         </div>
                     </a-col>
 
