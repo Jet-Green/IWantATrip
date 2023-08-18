@@ -279,7 +279,7 @@ let formSchema = yup.object({
                             Фотографии
                             <div class="d-flex" style="overflow-x: scroll">
                                 <img v-for="(pr, i) in        previews       " :key="i" :src="pr" alt="" class="ma-4"
-                                    style="max-width: 200px" @click="delPhotoDialog = true;
+                                    style="max-width: 200px; min-width: 50px; background:#ccc" @click="delPhotoDialog = true;
                                     targetIndex = i;" />
                             </div>
                             <a-button type="dashed" block @click=" visibleCropperModal = true" class="ma-8">
