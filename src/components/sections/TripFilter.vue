@@ -31,11 +31,32 @@ function find() {
   tripStore.filteredTrips = []
   tripStore.cursor = 1
   tripStore.trips = []
-  tripStore.fetchTrips(
-    query.value,
-    time.value ? time.value[0].$d.getTime() : "",
-    time.value ? time.value[1].$d.getTime() : "",
-  );
+  if (time.value) {
+    let start = new Date(time.value[0].$d)
+    let end = new Date(time.value[1].$d)
+
+    start.setHours(0)
+    start.setMinutes(0)
+    start.setSeconds(0)
+    start.setMilliseconds(0)
+
+    start = Number(Date.parse(start.toString()));
+
+    end.setHours(23)
+    end.setMinutes(59)
+    end.setSeconds(59)
+    end.setMilliseconds(999)
+
+    end = Number(Date.parse(end.toString()));
+
+    tripStore.fetchTrips(query.value, start, end);
+  } else {
+    tripStore.fetchTrips(
+      query.value,
+      "",
+      "",
+    );
+  }
 }
 
 
