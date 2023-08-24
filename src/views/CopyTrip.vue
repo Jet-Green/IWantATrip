@@ -112,7 +112,13 @@ const delPhoto = () => {
     images.splice(targetIndex.value, 1);
     delPhotoDialog.value = false;
 };
+
+let submitCount = ref(0)
 function submit() {
+    submitCount.value += 1
+    if (submitCount.value > 1) {
+        return
+    }
     description.value = description.value.split("<p><br></p>").join("");
     form.description = description.value;
     form.author = author;
