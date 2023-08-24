@@ -112,7 +112,12 @@ async function buyTrip(isBoughtNow) {
                 _id: null,
                 fullname: userInfo.value.fullname,
                 phone: userInfo.value.phone,
-            }
+            },
+            touristsList: [{
+                fullname: userInfo.value.fullname,
+                _id: null,
+                phone: userInfo.value.phone
+            }]
         };
 
         for (let i = 0; i < bill.cart.length; i++) {
@@ -128,10 +133,10 @@ async function buyTrip(isBoughtNow) {
                 message.config({ duration: 3, top: "90vh" });
                 message.success({ content: "Тур заказан!" });
                 addCustomerDialog.value = false;
-                userInfo.value.fullname=""
-                userInfo.value.phone=""
-                for(let i of selectedByUser.value){
-                    i.count=0
+                userInfo.value.fullname = ""
+                userInfo.value.phone = ""
+                for (let i of selectedByUser.value) {
+                    i.count = 0
                 }
             })
             .catch((err) => {

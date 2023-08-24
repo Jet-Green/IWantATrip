@@ -100,7 +100,7 @@ function getImg(index) {
     return trip.value.images[index];
 }
 function getLink() {
-    return API_URL  + route.fullPath
+    return API_URL + route.fullPath
 }
 
 let buyTripDialog = () => {
@@ -191,6 +191,11 @@ async function buyTrip(isBoughtNow) {
                     fullname: userStore.user.fullinfo.fullname,
                     phone: userStore.user.fullinfo.phone,
                 },
+                touristsList: [{
+                    _id: userStore.user._id,
+                    fullname: userStore.user.fullinfo.fullname,
+                    phone: userStore.user.fullinfo.phone,
+                }]
             };
 
             for (let i = 0; i < bill.cart.length; i++) {
@@ -364,7 +369,7 @@ onMounted(async () => {
                                         <a-menu-item v-for="link, index of  ShareLogo" :key="index">
                                             <ShareNetwork :network="link.network" :url='getLink()' :title="trip.name"
                                                 :description="trip.offer">
-                                                <span >{{ link.network }}</span>
+                                                <span>{{ link.network }}</span>
 
                                             </ShareNetwork>
                                         </a-menu-item>
