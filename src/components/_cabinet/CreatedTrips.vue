@@ -51,7 +51,7 @@ let filteredTrips = computed(() => {
       || trip.startLocation.name.toLowerCase().includes(query.value.toLowerCase())
       || (trip.partner ? trip.partner.toLowerCase().includes(query.value.toLowerCase()) : false)
       || trip.offer.toLowerCase().includes(query.value.toLowerCase())
-      )
+    )
   } else {
     localStorage.setItem("cabinetQuery", '');
     return allTrips.value
@@ -74,7 +74,6 @@ async function getAllTrips() {
 onMounted(async () => {
   query.value = localStorage.getItem("cabinetQuery") ?? '';
   await getAllTrips()
-
 });
 
 </script>
@@ -116,7 +115,7 @@ onMounted(async () => {
         <a-row :gutter="[8, 8]" class="mt-8" v-if="getTripsArrayByStatus.tripsInWork.length > 0">
           <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getTripsArrayByStatus.tripsInWork" :key="index">
 
-            <CabinetTrip :trip="trip" :actions="['delete', 'info', 'copy', 'hide', 'edit', 'addDate']"
+            <CabinetTrip :trip="trip" :actions="['delete', 'info', 'copy', 'hide', 'edit', 'addDate', 'addLocation']"
               @deleteTrip="deleteTrip" @updateTrip="getAllTrips" />
           </a-col>
         </a-row>

@@ -79,5 +79,8 @@ export default {
     },
     updatePartner(partner, trip_id) {
         return $api.post('/trips/update-partner', { partner: partner, _id: trip_id })
+    },
+    updateIncludedLocations(updateObject) {
+        return $api.post('/trips/update-included-locations', updateObject)
     }
 }

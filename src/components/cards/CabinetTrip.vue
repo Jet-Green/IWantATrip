@@ -23,6 +23,7 @@ let dates = ref([{ start: null, end: null }])
 
 let addDateDialog = ref(false)
 let addPartnerDialog = ref(false)
+let addLocationDialog = ref(false)
 
 const clearData = (dataString) => {
     let date = 0
@@ -119,7 +120,6 @@ async function submit() {
         addDateDialog.value = false
     }
 }
-
 async function addPartner() {
     tripStore.updatePartner(partner.value, trip.value._id)
         .then(() => { addPartnerDialog.value = false; emit('updateTrip') })
@@ -131,6 +131,89 @@ let tripDuration = computed(() => {
 })
 
 let showMessage = ref(false);
+
+let locationToSend = ref()
+let locationsToDelete = ref([])
+
+let locationSearchRequest = ref('')
+let possibleLocations = ref([])
+function selectStartLocation(selected) {
+    for (let l of possibleLocations.value) {
+        if (l.value == selected) {
+            locationToSend.value = l.location
+        }
+    }
+}
+
+function addToDeleteLocations(_id) {
+    for (let i = 0; i < locationsToDelete.value.length; i++) {
+        if (locationsToDelete.value[i] == _id) {
+            locationsToDelete.value.splice(i, 1)
+            return
+        }
+    }
+    locationsToDelete.value.push(_id)
+}
+
+async function updateIncludedLocations() {
+    let res = await tripStore.updateIncludedLocations({ newLocation: locationToSend.value, locationsToDelete: locationsToDelete.value, tripId: trip.value._id })
+    console.log(res);
+}
+
+watch(locationSearchRequest, async (newValue, oldValue) => {
+    if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
+        var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
+
+        var options = {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": "Token " + import.meta.env.VITE_DADATA_TOKEN
+            },
+            body: JSON.stringify({
+                query: newValue,
+                count: 5,
+                "from_bound": { "value": "city" },
+                "to_bound": { "value": "settlement" }
+            })
+        }
+
+        let res = await fetch(url, options)
+        try {
+            let suggestions = JSON.parse(await res.text()).suggestions
+            possibleLocations.value = []
+            for (let s of suggestions) {
+                let location = {
+                    value: s.value,
+                    location: {
+                        name: s.value,
+                        shortName: '',
+                        type: 'Point',
+                        coordinates: [
+                            s.data.geo_lon,
+                            s.data.geo_lat
+                        ]
+                    }
+                }
+
+                if (s.data.settlement) {
+                    location.location.shortName = s.data.settlement
+                }
+                else if (s.data.city) {
+                    location.location.shortName = s.data.city
+                } else {
+                    location.location.shortName = s.value
+                }
+
+                possibleLocations.value.push(location)
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+})
 
 watch(dates, () => {
     for (let i = 0; i < dates.value.length; i++) {
@@ -148,7 +231,7 @@ watch(dates, () => {
     <div v-if="trip._id">
         <a-card class="card" hoverable :class="[trip.isHidden ? 'overlay' : '']">
             <div style="text-align:center">
-                {{ trip.name}}
+                {{ trip.name }}
 
             </div>
             <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
@@ -172,18 +255,18 @@ watch(dates, () => {
                 </a-popconfirm>
                 <a-popconfirm v-if="actions.includes('edit') && !trip.parent" title="Вы уверены?" ok-text="Да"
                     cancel-text="Нет" @confirm="editTrip(trip._id)">
-                    <span class="mdi mdi-pen" style="color: #245159; cursor: pointer"></span>
+                    <span class="mdi mdi-pen" style="cursor: pointer"></span>
                 </a-popconfirm>
                 <a-popconfirm v-if="actions.includes('hide') && !trip.parent" title="Вы уверены?" ok-text="Да"
                     cancel-text="Нет" @confirm="hideTrip(trip._id)">
-                    <span v-if="!trip.isHidden" class="mdi mdi-eye" style="color: #245159; cursor: pointer"></span>
-                    <span v-else class="mdi mdi-eye-off" style="color: #245159; cursor: pointer"></span>
+                    <span v-if="!trip.isHidden" class="mdi mdi-eye" style="cursor: pointer"></span>
+                    <span v-else class="mdi mdi-eye-off" style="cursor: pointer"></span>
                 </a-popconfirm>
                 <span v-if="!trip.parent && actions.includes('addDate')" class="mdi mdi-plus-circle-outline"
-                    style="color: #245159; cursor: pointer" @click="addDateDialog = true"></span>
+                    style="cursor: pointer" @click="addDateDialog = true"></span>
                 <a-popconfirm v-if="actions.includes('copy') && !trip.parent" title="Вы уверены?" ok-text="Да"
                     cancel-text="Нет" @confirm="copyTrip(trip._id)">
-                    <span class="mdi mdi-content-copy" style="color: #245159; cursor: pointer"></span>
+                    <span class="mdi mdi-content-copy" style="cursor: pointer"></span>
                 </a-popconfirm>
                 <span class="mdi mdi-information-outline"
                     @click="router.push({ path: 'customers-trip', query: { _id: trip._id } })"
@@ -191,6 +274,8 @@ watch(dates, () => {
 
                 <span v-if="!trip.parent" class="mdi mdi-human-handsup" @click="addPartnerDialog = true">
                 </span>
+                <span class="mdi mdi-map-marker-plus" style="cursor: pointer"
+                    v-if="actions.includes('addLocation') && !trip.parent" @click="addLocationDialog = true"></span>
                 <span class="mdi mdi-email-outline" v-if="trip.moderationMessage && actions.includes('msg') && !trip.parent"
                     @click="showMessage = !showMessage"></span>
             </div>
@@ -228,12 +313,32 @@ watch(dates, () => {
 
             </a-col>
         </a-modal>
+        <a-modal v-model:visible="addLocationDialog" title="Изменить локации" okText="Отправить" cancelText="Отмена"
+            @ok="updateIncludedLocations">
+            <a-col :span="24">
+                <a-auto-complete v-model:value="locationSearchRequest" size="large" style="width: 100%" class="mt-8"
+                    :options="possibleLocations" placeholder="Город/поселок"
+                    @select="selectStartLocation"></a-auto-complete>
+
+                <span v-for="loc of trip.includedLocations.geometries">
+                    <a-popconfirm @confirm="addToDeleteLocations(loc._id)"
+                        :title="locationsToDelete.includes(loc._id) ? 'Не удалять?' : 'Удалить?'" ok-text="Да"
+                        cancel-text="Нет" class="mt-8">
+                        <a-tag :color="locationsToDelete.includes(loc._id) ? 'red' : ''"
+                            style="cursor: pointer; padding: 2px 6px 2px 6px; border-radius: 6px;">
+                            {{ loc.shortName ?? loc.name }}
+                        </a-tag>
+                    </a-popconfirm>
+                </span>
+            </a-col>
+        </a-modal>
     </div>
 </template>
 <style scoped lang="scss">
 .actions {
     font-size: 20px;
     position: relative;
+    color: #245159;
 
     * {
         margin: 4px;

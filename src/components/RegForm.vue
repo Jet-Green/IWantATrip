@@ -119,7 +119,8 @@ const formSchema = yup.object({
     <BackButton />
     <img v-if="!sm" src="../assets/images/auth_left.webp" style="position: fixed; left: 0px; bottom: 0px;  width: 20%;" />
 
-    <img v-if="!sm" src="../assets/images/auth_right.webp" style="position: fixed; right: 0px; bottom: 0px; width: 20% " />
+    <img v-if="!sm" src="../assets/images/auth_right.webp"
+      style="position: fixed; right: 0px; bottom: 0px; width: 20% " />
     <a-row type="flex" justify="center">
       <a-col :span="24" :md="8" class="pa-16">
         <h2>Регистрация</h2>
@@ -152,7 +153,7 @@ const formSchema = yup.object({
 
               <Field name="startLocation" v-slot="{ value, handleChange }" v-model="locationSearchRequest">
                 <a-auto-complete :value="value" @update:value="handleChange" size="large" style="width: 100%" class="mt-8"
-                  :options="possibleLocations" placeholder="Город /поселок" @select="selectStartLocation">
+                  :options="possibleLocations" placeholder="Город/поселок" @select="selectStartLocation">
                 </a-auto-complete>
               </Field>
               <Transition name="fade">
@@ -160,8 +161,7 @@ const formSchema = yup.object({
               </Transition>
 
               <div class="d-flex justify-center">
-                <a-button  class="ma-16 lets_go_btn" type="primary" 
-                  html-type="submit">Отправить</a-button>
+                <a-button class="ma-16 lets_go_btn" type="primary" html-type="submit">Отправить</a-button>
               </div>
             </Form>
           </a-col>

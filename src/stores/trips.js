@@ -150,7 +150,13 @@ export const useTrips = defineStore('trips', {
             } catch (error) {
                 console.log(error);
             }
+        },
+        async updateIncludedLocations(updateObject) {
+            try {
+                return await TripService.updateIncludedLocations(updateObject)
+            } catch (error) {
+                console.log(error);
+            }
         }
-
     },
 })

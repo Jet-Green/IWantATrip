@@ -109,7 +109,7 @@ function submit() {
 
   const regexEmoji = /(?![*#0-9]+)[\p{Emoji}\p{Emoji_Modifier}\p{Emoji_Component}\p{Emoji_Modifier_Base}\p{Emoji_Presentation}]/gu
   const regexSpaces = /[\n\r\s\t]+/g
-  description.value = description.value.split("<p><br></p>").join("").replace(/<img.*?>/g,'');
+  description.value = description.value.split("<p><br></p>").join("").replace(/<img.*?>/g, '');
   form.description = description.value.replace(regexEmoji, '').replace(regexSpaces, ' ');
   form.author = author;
   let send = {};
@@ -189,6 +189,7 @@ function submit() {
   }
 
   form.author = userStore.user._id
+  form.includedLocations = { type: 'GeometryCollection', geometries: [] }
 
   TripStore.createTrip(form, userStore.user).then(async (res) => {
     if (res.status == 200) {
