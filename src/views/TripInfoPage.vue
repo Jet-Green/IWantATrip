@@ -359,10 +359,14 @@ onMounted(async () => {
                                 мест больше нет
                             </b>
                         </div>
-                        <div class="d-flex justify-end">
+                        <div class="d-flex justify-start">
+
+                            <div style="cursor: pointer;">
+                                <span style="opacity: 0.7;" class="mdi mdi-36px mdi-printer ma-8 " @click="print()"></span>
+                            </div>
                             <a-dropdown :trigger="['click']">
                                 <a class="ant-dropdown-link" @click.prevent>
-                                    <span style="opacity: 0.5;" class="mdi mdi-24px mdi-export-variant"></span>
+                                    <span style="opacity: 0.7;" class="mdi mdi-36px mdi-share-variant-outline ma-8"></span>
                                 </a>
                                 <template #overlay>
                                     <a-menu>
@@ -425,14 +429,6 @@ onMounted(async () => {
                     </div>
 
                 </a-row>
-            </a-col>
-        </a-row>
-        <a-row class="justify-center d-flex">
-            <a-col :xs="22" :xl="16" class="justify-center d-flex ma-24">
-                <a-button type="primary" class="lets_go_btn" style="display: flex; justify-content: center"
-                    @click="print()">
-                    Печать
-                </a-button>
             </a-col>
         </a-row>
         <a-modal v-model:visible="buyDialog" :footer="null" @cancel="refreshDates(trip)">
@@ -564,6 +560,10 @@ img {
     opacity: 1;
     z-index: 1;
     top: 40%;
+}
+
+.mdi-printer:hover {
+    color: #ff6600;
 }
 
 // .ant-carousel :deep(.custom-slick-arrow:before) {
