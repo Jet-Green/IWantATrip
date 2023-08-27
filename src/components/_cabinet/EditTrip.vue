@@ -63,7 +63,7 @@ let form = ref({
     tripType: "",
     fromAge: "",
     startLocation: null,
-    bonuses:[]
+    bonuses: []
 });
 
 const removeCost = (item) => {
@@ -106,6 +106,7 @@ function submit() {
     description.value = description.value.split("<p><br></p>").join("");
     form.value.description = description.value;
     form.value.isModerated = false
+
     TripService.updateTrip(form.value).then((res) => {
         const _id = res.data._id;
         let imagesFormData = new FormData();
@@ -140,8 +141,9 @@ function updateUserInfo(info) {
 }
 function selectStartLocation(selected) {
     for (let l of possibleLocations.value) {
+        // l.value - name
         if (l.value == selected) {
-            form.value.startLocation = l.geo
+            form.value.startLocation = l.location
         }
     }
 }
@@ -172,21 +174,24 @@ watch(locationSearchRequest, async (newValue, oldValue) => {
             for (let s of suggestions) {
                 let location = {
                     value: s.value,
-                    geo: {
+                    location: {
                         name: s.value,
                         shortName: '',
-                        geo_lat: s.data.geo_lat,
-                        geo_lon: s.data.geo_lon
+                        type: 'Point',
+                        coordinates: [
+                            s.data.geo_lon,
+                            s.data.geo_lat
+                        ]
                     }
                 }
 
                 if (s.data.settlement) {
-                    location.geo.shortName = s.data.settlement
+                    location.location.shortName = s.data.settlement
                 }
                 else if (s.data.city) {
-                    location.geo.shortName = s.data.city
+                    location.location.shortName = s.data.city
                 } else {
-                    location.geo.shortName = s.value
+                    location.location.shortName = s.value
                 }
 
                 possibleLocations.value.push(location)
@@ -196,7 +201,6 @@ watch(locationSearchRequest, async (newValue, oldValue) => {
         }
     }
 })
-
 const clearData = (dataString) => {
     const dataFromString = new Date(Number(dataString));
     return dataFromString;
@@ -353,11 +357,12 @@ let formSchema = yup.object({
 
                         <a-col :span="24">
                             Бонусы и скидки
-                            <div v-for="       item        in        form.bonuses       " :key="item"
-                                style="display: flex" align="baseline" class="mb-16">
+                            <div v-for="       item        in        form.bonuses       " :key="item" style="display: flex"
+                                align="baseline" class="mb-16">
                                 <a-input v-model:value="item.type" placeholder="Количество человек" />
 
-                                <a-input v-model:value="item.bonus" style="width: 100%" placeholder="Бонусы или скидки"  class="ml-16 mr-16" />
+                                <a-input v-model:value="item.bonus" style="width: 100%" placeholder="Бонусы или скидки"
+                                    class="ml-16 mr-16" />
 
                                 <a-button @click=" removeBonuses(item)" shape="circle">
                                     <span class="mdi mdi-minus" style="cursor: pointer"></span>

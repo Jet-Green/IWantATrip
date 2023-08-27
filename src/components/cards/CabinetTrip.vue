@@ -328,8 +328,8 @@ watch(dates, () => {
                     :options="possibleLocations" placeholder="Город/поселок"
                     @select="selectStartLocation"></a-auto-complete>
 
-                <span v-for="loc of trip.includedLocations.geometries">
-                    <a-popconfirm @confirm="addToDeleteLocations(loc._id)"
+                <span v-for="(loc, index) of trip.locationNames">
+                    <a-popconfirm :disabled="index == 0" @confirm="addToDeleteLocations(loc._id)"
                         :title="locationsToDelete.includes(loc._id) ? 'Не удалять?' : 'Удалить?'" ok-text="Да"
                         cancel-text="Нет" class="mt-8">
                         <a-tag :color="locationsToDelete.includes(loc._id) ? 'red' : ''"
