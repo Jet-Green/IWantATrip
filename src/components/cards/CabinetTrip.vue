@@ -154,10 +154,18 @@ function addToDeleteLocations(_id) {
     }
     locationsToDelete.value.push(_id)
 }
-
+let submitCount = ref(0)
 async function updateIncludedLocations() {
+    if (submitCount.value > 0) {
+        return
+    }
+    submitCount.value++;
+
     let res = await tripStore.updateIncludedLocations({ newLocation: locationToSend.value, locationsToDelete: locationsToDelete.value, tripId: trip.value._id })
-    console.log(res);
+    if (res.status == 200) {
+        addLocationDialog.value = false
+        emit('updateTrip')
+    }
 }
 
 watch(locationSearchRequest, async (newValue, oldValue) => {
