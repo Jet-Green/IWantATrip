@@ -345,7 +345,6 @@ onMounted(() => {
     if (route.query._id) {
         tripStore.getById(route.query._id).then((response) => {
             let d = response.data;
-
             delete d.__v;
             form.name = d.name;
             start.value = baseTimeStart;
@@ -368,6 +367,8 @@ onMounted(() => {
             start.value = dayjs(new Date(d.start));
             end.value = dayjs(new Date(d.end));
             form.startLocation = d.startLocation;
+            form.includedLocations = d.includedLocations
+            form.locationNames = d.locationNames
             locationSearchRequest.value = d.startLocation.name;
         });
     }
