@@ -68,7 +68,8 @@ let form = reactive({
   fromAge: "",
   author: "",
   startLocation: null,
-  bonuses: []
+  bonuses: [],
+  returnConditions: ''
 });
 let fullUserInfo = null;
 
@@ -139,6 +140,7 @@ function submit() {
       author: "",
       startLocation: "",
       bonuses: [],
+      returnConditions: "",
       isModerated: false
     });
     images = [];
@@ -362,6 +364,7 @@ let formSchema = yup.object({
   offer: yup.string().required("заполните поле"),
   tripRoute: yup.string().required("заполните поле"),
   startLocation: yup.string().required("заполните поле"),
+  returnConditions: yup.string().required("заполните поле")
   // https://vee-validate.logaretm.com/v4/examples/array-fields/
 });
 </script>
@@ -565,6 +568,16 @@ let formSchema = yup.object({
                 [{ align: [] }],
               ]
                 " />
+            </a-col>
+            <a-col :span="24">
+              <Field name="returnConditions" v-slot="{ value, handleChange }" v-model="form.returnConditions">
+                Условия возврата
+                <a-textarea @update:value="handleChange" :value="value" placeholder="" size="large">
+                </a-textarea>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="offer" class="error-message" />
+              </Transition>
             </a-col>
             <!-- <a-col :span="24">
               :file-list="fileList"

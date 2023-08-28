@@ -63,7 +63,8 @@ let form = ref({
     tripType: "",
     fromAge: "",
     startLocation: null,
-    bonuses: []
+    bonuses: [],
+    returnConditions: ''
 });
 
 const removeCost = (item) => {
@@ -259,6 +260,7 @@ let formSchema = yup.object({
     offer: yup.string().required("заполните поле"),
     tripRoute: yup.string().required("заполните поле"),
     duration: yup.string().required("заполните поле"),
+    returnConditions: yup.string().required("заполните поле"),
 })
 </script>
 <template>
@@ -450,6 +452,16 @@ let formSchema = yup.object({
                                 [{ align: [] }],
                             ]
                                 " />
+                        </a-col>
+                        <a-col :span="24">
+                            <Field name="returnConditions" v-slot="{ value, handleChange }" v-model="form.returnConditions">
+                                Условия возврата
+                                <a-textarea @update:value="handleChange" :value="value" placeholder="" size="large">
+                                </a-textarea>
+                            </Field>
+                            <Transition name="fade">
+                                <ErrorMessage name="offer" class="error-message" />
+                            </Transition>
                         </a-col>
                         <a-col :span="24" class="d-flex justify-center">
                             <a-button :disabled="!meta.valid" class="lets_go_btn ma-36" type="primary"

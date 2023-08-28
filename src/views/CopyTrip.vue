@@ -72,7 +72,8 @@ let form = reactive({
     fromAge: "",
     author: "",
     startLocation: null,
-    bonuses: []
+    bonuses: [],
+    returnConditions: ""
 });
 let fullUserInfo = null;
 
@@ -149,6 +150,7 @@ function submit() {
             author: "",
             startLocation: "",
             bonuses: [],
+            returnConditions: ""
         });
         images = [];
         // pdf = [];
@@ -369,6 +371,7 @@ onMounted(() => {
             form.startLocation = d.startLocation;
             form.includedLocations = d.includedLocations
             form.locationNames = d.locationNames
+            form.returnConditions = d.returnConditions
             locationSearchRequest.value = d.startLocation.name;
         });
     }
@@ -385,6 +388,7 @@ let formSchema = yup.object({
     offer: yup.string().required("заполните поле"),
     tripRoute: yup.string().required("заполните поле"),
     startLocation: yup.string().required("заполните поле"),
+    returnConditions: yup.string().required("заполните поле"),
     // distance: yup.string().required("заполните поле"),
     // cost: yup.string().required("заполните поле"),
     // https://vee-validate.logaretm.com/v4/examples/array-fields/
@@ -593,15 +597,16 @@ let formSchema = yup.object({
                             ]
                                 " />
                         </a-col>
-                        <!-- <a-col :span="24">
-              :file-list="fileList"
-              <a-upload action="" :multiple="true">
-                <a-button type="dashed" block>
-                  <span class="mdi mdi-12px mdi-plus"></span>
-                  Загрузить pdf описание
-                </a-button>
-              </a-upload>
-            </a-col> -->
+                        <a-col :span="24">
+                            <Field name="returnConditions" v-slot="{ value, handleChange }" v-model="form.returnConditions">
+                                Условия возврата
+                                <a-textarea @update:value="handleChange" :value="value" placeholder="" size="large">
+                                </a-textarea>
+                            </Field>
+                            <Transition name="fade">
+                                <ErrorMessage name="offer" class="error-message" />
+                            </Transition>
+                        </a-col>
                         <a-col :span="24" class="d-flex justify-center">
                             <a-button class="lets_go_btn ma-36" type="primary" html-type="submit">Отправить
                             </a-button>
