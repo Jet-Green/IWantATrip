@@ -82,5 +82,8 @@ export default {
     },
     updateIncludedLocations(updateObject) {
         return $api.post('/trips/update-included-locations', updateObject)
+    },
+    updateTransports(updateObj) {
+        return $api.post('/trips/update-transports', updateObj)
     }
 }
