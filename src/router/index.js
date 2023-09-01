@@ -12,6 +12,11 @@ const router = createRouter({
       component: () => import('../views/Landing.vue'),
     },
     {
+      path: '/wl',
+      name: 'WaitingList',
+      component: () => import('../components/WaitingList.vue'),
+    },
+    {
       path: '/trips',
       name: 'TripsPage',
       component: () => import('../components/_tripsPage/TripsList.vue'),
