@@ -4,12 +4,19 @@ import { useAppState } from '../../stores/appState';
 
 let appStateStore = useAppState()
 let tripType = ref('')
+let transport = ref({})
 
 
 async function addTripType() {
     let res = await appStateStore.addTripType(tripType.value)
     if (res.status == 200) {
-        appStateStore.appState[0].tripType.push(tripType.value)
+        await appStateStore.refreshState();
+    }
+}
+async function addTransportName() {
+    let res = await appStateStore.addTransportName(transport.value.name)
+    if (res.status == 200) {
+        await appStateStore.refreshState();
     }
 }
 
@@ -34,6 +41,25 @@ onMounted(async () => {
                     <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"
                         @confirm="() => { appStateStore.deleteTripType(t) }">
                         {{ t }}
+                    </a-popconfirm>
+                </a-col>
+            </a-row>
+        </a-col>
+    </a-row>
+    <a-row>
+        <a-col :span="24">
+            <a-row>
+                <a-col :span="24">
+                    <h3>Транспорт</h3>
+                </a-col>
+                <a-col :span="24" class="d-flex align-center">
+                    <a-input placeholder="Легковой" size="large" v-model:value="transport.name"></a-input>
+                    <a-button type="primary" class="ml-12 lets_go_btn" @click="addTransportName">добавить</a-button>
+                </a-col>
+                <a-col v-for="t of appStateStore.appState[0].transport" class="ma-8" style="cursor: pointer">
+                    <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"
+                        @confirm="() => { appStateStore.deleteTransportName(t.name) }">
+                        {{ t.name }}
                     </a-popconfirm>
                 </a-col>
             </a-row>

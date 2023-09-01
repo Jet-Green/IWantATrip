@@ -11,4 +11,10 @@ export default {
     deleteTripType(name) {
         return $api.post('/app-state/delete-trip-type', { name })
     },
+    async setTransportName(name) {
+        return $api.post('/app-state/set-transport-name', { name })
+    },
+    deleteTransportName(name) {
+        return $api.post('/app-state/delete-transport-name', { name })
+    },
 }
