@@ -7,6 +7,7 @@ import { useTrips } from "../stores/trips";
 import { useAuth } from "../stores/auth";
 import { message } from "ant-design-vue";
 import { useRouter } from "vue-router";
+import { useLocations } from "../stores/locations";
 import * as yup from "yup";
 import { Form, Field, ErrorMessage } from 'vee-validate';
 const API_URL = import.meta.env.VITE_API_URL
@@ -22,6 +23,8 @@ const _id = route.query._id;
 
 const tripStore = useTrips();
 const userStore = useAuth();
+const locationStore = useLocations();
+
 const backRoute = "/trips";
 
 const creatorsType = computed(() => {
@@ -179,6 +182,22 @@ const print = async () => {
     await htmlToPaper('printMe');
 };
 
+let getStartLocationNames = computed(() => {
+
+    let starts = trip.value.includedLocations.coordinates
+
+    let results = []
+    for (let i = 0; i < starts.length; i++) {
+        for (let j = 0; j < locationStore.locations.length; j++) {
+
+            if (starts[i][0] == locationStore.locations[j].coordinates[0]) {
+
+                results.push(locationStore.locations[j].shortName)
+            }
+        }
+    }
+    return results.join(', ')
+})
 async function buyTrip(isBoughtNow) {
     if (userStore.user.email) {
         if (selectedDate.value.selected) {
@@ -292,7 +311,7 @@ onMounted(async () => {
 
 
                         <div>
-                            Старт: <b>{{ trip.startLocation.name }}</b>
+                            Старт: <b> {{ getStartLocationNames }}</b>
                         </div>
 
                         <div>
@@ -386,7 +405,11 @@ onMounted(async () => {
                     <a-col :xs="24">
                         <span v-html="trip.description"></span>
                     </a-col>
-
+                    <a-divider></a-divider>
+                    <a-col :xs="24" v-if="trip.returnConditions">
+                      <b>Условия возврата:</b>  {{ trip.returnConditions }}
+                    </a-col>
+                    
                     <div id="printMe" style="display: none">
                         <h2 class="ma-0">{{ trip.name }}</h2>
                         <p><i> {{ trip.offer }}</i></p>
@@ -426,6 +449,7 @@ onMounted(async () => {
                             </div>
                         </div>
                         <span v-html="trip.description"></span>
+
                     </div>
 
                 </a-row>

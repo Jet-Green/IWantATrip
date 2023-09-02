@@ -44,7 +44,7 @@ function getDate() {
 <template>
   <div @click="goToTripPage" style="height: 100%;" class="trip-card">
     <div class="title">
-      <p>{{ trip.name }}</p>
+      <p class="ma-0">{{ trip.name }}</p>
     </div>
 
     <a-badge-ribbon :text="`${trip.cost.length ? trip.cost[0].price : 0} руб`" color="ff6600">
@@ -54,7 +54,7 @@ function getDate() {
         </div>
 
         <div style="text-align: center;">
-          <strong>{{ getDate() }}</strong>
+          <strong>{{ getDate() }} <span v-if="trip.children.length">и ...</span> </strong>
         </div>
       </a-card>
     </a-badge-ribbon>
@@ -70,6 +70,8 @@ function getDate() {
   color: black;
   text-align: center;
   font-weight: 500;
+  background: rgb(250, 250, 250);
+
 }
 
 .trip-card {
