@@ -1,13 +1,12 @@
 <script setup>
-import { ref, computed, reactive, toRef } from "vue";
+import { ref, computed, reactive, toRefs } from "vue";
 import _ from 'lodash'
 
 let props = defineProps({
     tripsCount: Number,
 });
 
-let tripsCount = ref(props.tripsCount)
-
+const { tripsCount } = toRefs(props);
 // let tripsCount = ref(35)
 // сортированнный по capacity
 let transports = reactive([
