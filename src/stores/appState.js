@@ -30,12 +30,29 @@ export const useAppState = defineStore('app-state', {
                 if (name) {
                     let res = await AppService.deleteTripType(name)
                     if (res.status == 200) {
-                        for (let i = 0; i < this.appState[0].tripType.length; i++) {
-                            if (this.appState[0].tripType[i] == name) {
-                                this.appState[0].tripType.splice(i, 1);
-                            }
-                        }
+                        await this.refreshState();
                     }
+                    return res
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async addTransportName(name) {
+            try {
+                let res = await AppService.setTransportName(name)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async deleteTransportName(name) {
+            try {
+                if (name) {
+                    let res = await AppService.deleteTransportName(name)
+                        if (res.status == 200) {
+                            await this.refreshState();
+                        }
                     return res
                 }
             } catch (error) {
