@@ -405,8 +405,8 @@ onMounted(async () => {
                     <a-col :xs="24">
                         <span v-html="trip.description"></span>
                     </a-col>
-                    <a-divider></a-divider>
-                    <a-col :xs="24" v-if="trip.returnConditions">
+                    <a-divider class="ma-0"></a-divider>
+                    <a-col :xs="24" v-if="trip.returnConditions" class="mb-16">
                       <b>Условия возврата:</b>  {{ trip.returnConditions }}
                     </a-col>
                     
