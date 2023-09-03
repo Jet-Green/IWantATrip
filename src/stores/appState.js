@@ -50,9 +50,9 @@ export const useAppState = defineStore('app-state', {
             try {
                 if (name) {
                     let res = await AppService.deleteTransportName(name)
-                        if (res.status == 200) {
-                            await this.refreshState();
-                        }
+                    if (res.status == 200) {
+                        await this.refreshState();
+                    }
                     return res
                 }
             } catch (error) {

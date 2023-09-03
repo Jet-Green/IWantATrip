@@ -1,9 +1,10 @@
 <script setup>
-import { ref, computed, watch, toRefs } from 'vue';
+import { ref, computed, watch, toRefs, onMounted } from 'vue';
 import { useRouter } from "vue-router";
 import TripService from "../../service/TripService";
 import { useTrips } from '../../stores/trips';
 import { useAuth } from '../../stores/auth';
+import { useAppState } from '../../stores/appState';
 
 import dayjs from 'dayjs'
 
@@ -18,6 +19,7 @@ let { trip } = toRefs(props)
 let router = useRouter()
 let tripStore = useTrips()
 let userStore = useAuth()
+let appStateStore = useAppState()
 let partner = ref(trip.value.partner ?? '')
 let dates = ref([{ start: null, end: null }])
 
@@ -25,6 +27,7 @@ let addDateDialog = ref(false)
 let addPartnerDialog = ref(false)
 let addLocationDialog = ref(false)
 let updateTransportDialog = ref(false)
+let possibleTransport = ref([])
 
 const clearData = (dataString) => {
     let date = 0
@@ -178,6 +181,7 @@ let addTransportForm = ref({
 let transportToDelete = ref([])
 
 async function updateTrasports() {
+    console.log({ tripId: trip.value._id, newTransport: addTransportForm.value, transportToDelete: transportToDelete.value });
     let res = await tripStore.updateTransports({ tripId: trip.value._id, newTransport: addTransportForm.value, transportToDelete: transportToDelete.value })
     if (res.status == 200) {
         updateTransportDialog.value = false
@@ -185,13 +189,13 @@ async function updateTrasports() {
     }
 }
 
-function addToDeleteTransports(_id) {
+function addToDeleteTransports(name) {
     for (let i = 0; i < transportToDelete.value.length; i++) {
-        if (transportToDelete.value[i] == _id) {
+        if (transportToDelete.value[i].name == name) {
             return transportToDelete.value.splice(i, 1)
         }
     }
-    transportToDelete.value.push(_id)
+    transportToDelete.value.push(name)
 }
 
 watch(locationSearchRequest, async (newValue, oldValue) => {
@@ -260,6 +264,14 @@ watch(dates, () => {
         }
     }
 }, { deep: true })
+onMounted(async () => {
+    if (!appStateStore.appState[0]?.transport) {
+        await appStateStore.refreshState()
+    }
+    for (let t of appStateStore.appState[0].transport) {
+        possibleTransport.value.push({ value: t.name })
+    }
+})
 </script>
 <template>
     <div v-if="trip._id">
@@ -373,8 +385,7 @@ watch(dates, () => {
             @ok="updateTrasports">
             <a-col :span="24">
                 Тип
-                <a-auto-complete style="width: 100%" :options="[{ value: 'машина' }, { value: 'машина побольше' }]"
-                    placeholder="Минивен"
+                <a-auto-complete style="width: 100%" :options="possibleTransport" placeholder="Минивен"
                     @select="(value) => { addTransportForm.transportType = { name: value } }"></a-auto-complete>
             </a-col>
             <a-col :span="24">
@@ -393,10 +404,10 @@ watch(dates, () => {
                     addonAfter="руб."></a-input-number>
             </a-col>
             <span v-for="(transport) of trip.transports">
-                <a-popconfirm @confirm="addToDeleteTransports(transport._id)"
-                    :title="transportToDelete.includes(transport._id) ? 'Не удалять?' : 'Удалить?'" ok-text="Да"
-                    cancel-text="Нет" class="mt-8">
-                    <a-tag :color="transportToDelete.includes(transport._id) ? 'red' : ''"
+                <a-popconfirm @confirm="addToDeleteTransports(transport.transportType.name)"
+                    :title="transportToDelete.includes(transport.transportType.name) ? 'Не удалять?' : 'Удалить?'"
+                    ok-text="Да" cancel-text="Нет" class="mt-8">
+                    <a-tag :color="transportToDelete.includes(transport.transportType.name) ? 'red' : ''"
                         style="cursor: pointer; padding: 2px 6px 2px 6px; border-radius: 6px;">
                         {{ transport.transportType.name }} {{ transport.capacity }} чел.
                     </a-tag>
