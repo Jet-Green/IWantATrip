@@ -3,6 +3,7 @@ import { ref, computed, onMounted, getCurrentInstance } from "vue";
 
 import { useRoute } from "vue-router";
 import BackButton from "../components/BackButton.vue";
+import WaitingList from "../components/WaitingList.vue";
 import { useTrips } from "../stores/trips";
 import { useAuth } from "../stores/auth";
 import { message } from "ant-design-vue";
@@ -343,6 +344,9 @@ onMounted(async () => {
                             </div>
                         </div>
                         <div>
+                            <WaitingList :tripsCount="tripsCount" />
+                        </div>
+                        <div>
                             Цена:
                             <div v-for="(item, index) in trip.cost" :key="index" class="cost">
                                 {{ item.first }} : <b>{{ item.price }} руб.</b>
@@ -407,9 +411,9 @@ onMounted(async () => {
                     </a-col>
                     <a-divider class="ma-0"></a-divider>
                     <a-col :xs="24" v-if="trip.returnConditions" class="mb-16">
-                      <b>Условия возврата:</b>  {{ trip.returnConditions }}
+                        <b>Условия возврата:</b> {{ trip.returnConditions }}
                     </a-col>
-                    
+
                     <div id="printMe" style="display: none">
                         <h2 class="ma-0">{{ trip.name }}</h2>
                         <p><i> {{ trip.offer }}</i></p>

@@ -1,7 +1,14 @@
 <script setup>
-import { ref, computed, watch, reactive, onMounted } from "vue";
+import { ref, computed, reactive, toRef } from "vue";
 import _ from 'lodash'
-let tourist = ref(35)
+
+let props = defineProps({
+    tripsCount: Number,
+});
+
+let tripsCount = ref(props.tripsCount)
+
+// let tripsCount = ref(35)
 // сортированнный по capacity
 let transports = reactive([
     {
@@ -33,8 +40,8 @@ let selectTransport = computed(() => {
     let wait = {}
     let isWaiting = true
     for (let i = 0; i < transports.length; i++) {
-        if (tourist.value <= transports[i].capacity) {
-            if (tourist.value > transports[i].waiting) {
+        if (tripsCount.value <= transports[i].capacity) {
+            if (tripsCount.value > transports[i].waiting) {
                 selected = transports[i]
                 isWaiting = false
                 if (transports[i + 1]) {
@@ -56,7 +63,7 @@ let selectTransport = computed(() => {
                 break
             }
         }
-        if (tourist.value <= transports[0].waiting) {
+        if (tripsCount.value <= transports[0].waiting) {
             selected = {}
             wait = transports[0]
         }
@@ -71,32 +78,23 @@ let selectTransport = computed(() => {
 
 <template>
     <div>
-        <a-input style="width:200px" v-model:value="tourist" type="number" :min="0" />
-        <a-row class="ma-16 justify-center direction-column">
-            <a-col>
-                <div> {{selectTransport.isWaiting? "Ждет": "Едет"  }} </div>
-            </a-col>
-
-            <a-col v-if="!_.isEmpty(selectTransport.selected)">
-                <div>Едет: {{ selectTransport.selected?.type }}</div>
+        <a-row :gutter="[16]">
+            <a-col  v-if="!_.isEmpty(selectTransport.selected)">
+                <div>Едет: <b>{{ selectTransport.selected?.type }}</b> </div>
                 <div class="transport">
                     <img src="../assets/images/back.png" style="height: 100%" alt="">
                     <div v-for="seat, i in selectTransport.selected?.capacity" class="passenger-seat"
-                        :class="[seat == tourist ? 'current-passenger' : '']">
+                        :class="[seat == tripsCount ? 'current-passenger' : '']">
                     </div>
                     <img src="../assets/images/front.png" style="height: 100%" alt="">
                 </div>
-
-
             </a-col>
-
-
-            <a-col v-if="!_.isEmpty(selectTransport.wait)">
-                <div>Набирается: {{ selectTransport.wait?.type }}</div>
+            <a-col  v-if="!_.isEmpty(selectTransport.wait)">
+                <div>Заполняем: {{ selectTransport.wait?.type }}</div>
                 <div class="transport">
                     <img src="../assets/images/back.png" style="height: 100%" alt="">
                     <div v-for="seat, i in selectTransport.wait?.capacity"
-                        :class="[seat <= selectTransport.wait.waiting ? 'waiting-passenger' : 'passenger-seat', seat < selectTransport.wait.start ? 'hide' : '', seat == tourist ? 'current-passenger' : '']">
+                        :class="[seat <= selectTransport.wait.waiting ? 'waiting-passenger' : 'passenger-seat', seat < selectTransport.wait.start ? 'hide' : '', seat == tripsCount ? 'current-passenger' : '']">
                     </div>
                     <img src="../assets/images/front.png" style="height: 100%" alt="">
                 </div>
@@ -130,7 +128,6 @@ let selectTransport = computed(() => {
     border-radius: 50%;
     margin: 2px;
     background-color: rgb(111, 133, 43)
-
 }
 
 .waiting-passenger {
@@ -149,6 +146,6 @@ let selectTransport = computed(() => {
     width: 8px;
     aspect-ratio: 1;
     border-radius: 50%;
-    background:  #227597 
+    background: #227597
 }
 </style>
