@@ -1,9 +1,10 @@
 <script setup>
-import { ref, computed, watch, toRefs } from 'vue';
+import { ref, computed, watch, toRefs, onMounted } from 'vue';
 import { useRouter } from "vue-router";
 import TripService from "../../service/TripService";
 import { useTrips } from '../../stores/trips';
 import { useAuth } from '../../stores/auth';
+import { useAppState } from '../../stores/appState';
 
 import dayjs from 'dayjs'
 
@@ -18,12 +19,15 @@ let { trip } = toRefs(props)
 let router = useRouter()
 let tripStore = useTrips()
 let userStore = useAuth()
+let appStateStore = useAppState()
 let partner = ref(trip.value.partner ?? '')
 let dates = ref([{ start: null, end: null }])
 
 let addDateDialog = ref(false)
 let addPartnerDialog = ref(false)
 let addLocationDialog = ref(false)
+let updateTransportDialog = ref(false)
+let possibleTransport = ref([])
 
 const clearData = (dataString) => {
     let date = 0
@@ -167,6 +171,36 @@ async function updateIncludedLocations() {
         emit('updateTrip')
     }
 }
+let addTransportForm = ref({
+    transportType: null,
+    capacity: null,
+    waiting: null,
+    price: null
+})
+
+let transportToDelete = ref([])
+
+async function updateTrasports() {
+    let isEmptyNewTransport = false;
+    for (let key of Object.keys(addTransportForm.value)) {
+        if (!addTransportForm.value[key]) isEmptyNewTransport = true
+    }
+
+    let res = await tripStore.updateTransports({ tripId: trip.value._id, newTransport: isEmptyNewTransport ? null : addTransportForm.value, transportToDelete: transportToDelete.value })
+    if (res.status == 200) {
+        updateTransportDialog.value = false
+        emit('updateTrip')
+    }
+}
+
+function addToDeleteTransports(name) {
+    for (let i = 0; i < transportToDelete.value.length; i++) {
+        if (transportToDelete.value[i].name == name) {
+            return transportToDelete.value.splice(i, 1)
+        }
+    }
+    transportToDelete.value.push(name)
+}
 
 watch(locationSearchRequest, async (newValue, oldValue) => {
     if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
@@ -234,6 +268,14 @@ watch(dates, () => {
         }
     }
 }, { deep: true })
+onMounted(async () => {
+    if (!appStateStore.appState[0]?.transport) {
+        await appStateStore.refreshState()
+    }
+    for (let t of appStateStore.appState[0].transport) {
+        possibleTransport.value.push({ value: t.name })
+    }
+})
 </script>
 <template>
     <div v-if="trip._id">
@@ -281,6 +323,9 @@ watch(dates, () => {
                     v-if="actions.includes('info')"></span>
 
                 <span v-if="!trip.parent" class="mdi mdi-human-handsup" @click="addPartnerDialog = true">
+                </span>
+                <span v-if="!trip.parent && actions.includes('transports')" class="mdi mdi-car-estate"
+                    @click="updateTransportDialog = true">
                 </span>
                 <span class="mdi mdi-map-marker-plus" style="cursor: pointer"
                     v-if="actions.includes('addLocation') && !trip.parent" @click="addLocationDialog = true"></span>
@@ -339,6 +384,39 @@ watch(dates, () => {
                     </a-popconfirm>
                 </span>
             </a-col>
+        </a-modal>
+        <a-modal v-model:visible="updateTransportDialog" title="Изменить транспорт" okText="Отправить" cancelText="Отмена"
+            @ok="updateTrasports">
+            <a-col :span="24">
+                Тип
+                <a-auto-complete style="width: 100%" :options="possibleTransport" placeholder="Минивен"
+                    @select="(value) => { addTransportForm.transportType = { name: value } }"></a-auto-complete>
+            </a-col>
+            <a-col :span="24">
+                Вместимость
+                <a-input-number :max="trip.maxPeople" :min="1" style="width: 100%" v-model:value="addTransportForm.capacity"
+                    addonAfter="чел."></a-input-number>
+            </a-col>
+            <a-col :span="24">
+                Лист ожидания
+                <a-input-number :max="trip.maxPeople" :min="0" style="width: 100%" v-model:value="addTransportForm.waiting"
+                    addonAfter="чел."></a-input-number>
+            </a-col>
+            <a-col :span="24">
+                Цена для ожидающих
+                <a-input-number :min="1" style="width: 100%" v-model:value="addTransportForm.price"
+                    addonAfter="руб."></a-input-number>
+            </a-col>
+            <span v-for="(transport) of trip.transports">
+                <a-popconfirm @confirm="addToDeleteTransports(transport.transportType.name)"
+                    :title="transportToDelete.includes(transport.transportType.name) ? 'Не удалять?' : 'Удалить?'"
+                    ok-text="Да" cancel-text="Нет" class="mt-8">
+                    <a-tag :color="transportToDelete.includes(transport.transportType.name) ? 'red' : ''"
+                        style="cursor: pointer; padding: 2px 6px 2px 6px; border-radius: 6px;">
+                        {{ transport.transportType.name }} {{ transport.capacity }} чел.
+                    </a-tag>
+                </a-popconfirm>
+            </span>
         </a-modal>
     </div>
 </template>

@@ -101,7 +101,7 @@ onMounted(async () => {
       <div v-if="tripsStatus == 'tripsOnModeration'">
         <a-row :gutter="[8, 8]" class="mt-8" v-if="getTripsArrayByStatus.tripsOnModeration.length > 0">
           <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getTripsArrayByStatus.tripsOnModeration" :key="index">
-            <CabinetTrip :trip="trip" :actions="['delete', 'info', 'edit', 'msg']" @deleteTrip="deleteTrip"
+            <CabinetTrip :trip="trip" :actions="['delete', 'info', 'edit', 'msg', 'transports']" @deleteTrip="deleteTrip"
               @updateTrip="getAllTrips" />
           </a-col>
         </a-row>
@@ -115,7 +115,8 @@ onMounted(async () => {
         <a-row :gutter="[8, 8]" class="mt-8" v-if="getTripsArrayByStatus.tripsInWork.length > 0">
           <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getTripsArrayByStatus.tripsInWork" :key="index">
 
-            <CabinetTrip :trip="trip" :actions="['delete', 'info', 'copy', 'hide', 'edit', 'addDate', 'addLocation']"
+            <CabinetTrip :trip="trip"
+              :actions="['delete', 'info', 'copy', 'hide', 'edit', 'addDate', 'addLocation', 'transports']"
               @deleteTrip="deleteTrip" @updateTrip="getAllTrips" />
           </a-col>
         </a-row>
