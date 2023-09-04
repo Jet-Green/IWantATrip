@@ -181,8 +181,12 @@ let addTransportForm = ref({
 let transportToDelete = ref([])
 
 async function updateTrasports() {
-    console.log({ tripId: trip.value._id, newTransport: addTransportForm.value, transportToDelete: transportToDelete.value });
-    let res = await tripStore.updateTransports({ tripId: trip.value._id, newTransport: addTransportForm.value, transportToDelete: transportToDelete.value })
+    let isEmptyNewTransport = false;
+    for (let key of Object.keys(addTransportForm.value)) {
+        if (!addTransportForm.value[key]) isEmptyNewTransport = true
+    }
+
+    let res = await tripStore.updateTransports({ tripId: trip.value._id, newTransport: isEmptyNewTransport ? null : addTransportForm.value, transportToDelete: transportToDelete.value })
     if (res.status == 200) {
         updateTransportDialog.value = false
         emit('updateTrip')
