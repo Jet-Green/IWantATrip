@@ -282,7 +282,33 @@ onMounted(async () => {
         <a-row class="justify-center d-flex">
             <a-col :xs="22" :xl="16">
                 <h2 class="ma-0">{{ trip.name }}</h2>
-                <p><i> {{ trip.offer }}</i></p>
+                <div class="d-flex space-between">
+                    <p><i> {{ trip.offer }}</i> </p>
+
+                    <div>
+                        <span style="opacity: 0.7; cursor: pointer;" class="mdi mdi-24px mdi-printer ma-8 "
+                            @click="print()"></span>
+
+                        <a-dropdown :trigger="['click']">
+                            <a class="ant-dropdown-link" @click.prevent>
+                                <span style="opacity: 0.7;" class="mdi mdi-24px mdi-share-variant-outline ma-8"></span>
+                            </a>
+                            <template #overlay>
+                                <a-menu>
+                                    <a-menu-item v-for="link, index of  ShareLogo" :key="index">
+                                        <ShareNetwork :network="link.network" :url='getLink()' :title="trip.name"
+                                            :description="trip.offer">
+                                            <span>{{ link.network }}</span>
+
+                                        </ShareNetwork>
+                                    </a-menu-item>
+                                </a-menu>
+                            </template>
+                        </a-dropdown>
+                    </div>
+                </div>
+
+
                 <a-spin v-if="!trip._id" size="large"></a-spin>
                 <a-row v-if="trip._id" :gutter="[12, 12]" class="text justify-center d-flex">
 
@@ -321,7 +347,7 @@ onMounted(async () => {
                         <div>
                             Ключевые точки: <b>{{ trip.tripRoute }}</b>
                         </div>
-                        <div>
+                        <div class="d-flex">
                             Даты:
                             <div>
                                 <a-checkable-tag class="pretty-tag" v-for="(date, index) of tripDates"
@@ -338,25 +364,27 @@ onMounted(async () => {
                             <div>Количество человек:</div>
                             <div style="width: 50%">
                                 <b>
-                                    <a-progress :percent="(getCustomersCount(selectedDate.billsList) / trip.maxPeople) * 100"
+                                    <a-progress
+                                        :percent="(getCustomersCount(selectedDate.billsList) / trip.maxPeople) * 100"
                                         :format="() => `${getCustomersCount(selectedDate.billsList)}/${trip.maxPeople} чел`">
                                     </a-progress></b>
                             </div>
                         </div>
+
+                        <div class="d-flex">
+                            Цена:&nbsp
+                            <div v-for="(item, index) in trip.cost" :key="index" class="cost">
+                                {{  item.first }}: <b>{{ item.price }} руб.</b>
+                            </div>
+                        </div>
+                        <div v-if="trip.bonuses.length" class="d-flex">
+                            Бонусы:&nbsp
+                            <div v-for="(item, index) in trip.bonuses" :key="index">
+                                <i> {{  item.type }}: <b>{{ item.bonus }}</b> </i>
+                            </div>
+                        </div>
                         <div>
                             <WaitingList :tripsCount="getCustomersCount(selectedDate.billsList)" />
-                        </div>
-                        <div>
-                            Цена:
-                            <div v-for="(item, index) in trip.cost" :key="index" class="cost">
-                                {{ item.first }} : <b>{{ item.price }} руб.</b>
-                            </div>
-                        </div>
-                        <div v-if="trip.bonuses.length">
-                            Бонусы:
-                            <div v-for="(item, index) in trip.bonuses" :key="index">
-                                <i>{{ item.type }}: {{ item.bonus }}</i>
-                            </div>
                         </div>
                         <div class="d-flex justify-center ma-8" v-if="trip.maxPeople -
                             getCustomersCount(selectedDate.billsList) -
@@ -382,28 +410,7 @@ onMounted(async () => {
                                 мест больше нет
                             </b>
                         </div>
-                        <div class="d-flex justify-start">
 
-                            <div style="cursor: pointer;">
-                                <span style="opacity: 0.7;" class="mdi mdi-36px mdi-printer ma-8 " @click="print()"></span>
-                            </div>
-                            <a-dropdown :trigger="['click']">
-                                <a class="ant-dropdown-link" @click.prevent>
-                                    <span style="opacity: 0.7;" class="mdi mdi-36px mdi-share-variant-outline ma-8"></span>
-                                </a>
-                                <template #overlay>
-                                    <a-menu>
-                                        <a-menu-item v-for="link, index of  ShareLogo" :key="index">
-                                            <ShareNetwork :network="link.network" :url='getLink()' :title="trip.name"
-                                                :description="trip.offer">
-                                                <span>{{ link.network }}</span>
-
-                                            </ShareNetwork>
-                                        </a-menu-item>
-                                    </a-menu>
-                                </template>
-                            </a-dropdown>
-                        </div>
                     </a-col>
 
                     <a-col :xs="24">
