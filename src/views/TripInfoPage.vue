@@ -338,13 +338,13 @@ onMounted(async () => {
                             <div>Количество человек:</div>
                             <div style="width: 50%">
                                 <b>
-                                    <a-progress :percent="(tripsCount / trip.maxPeople) * 100"
-                                        :format="() => `${tripsCount}/${trip.maxPeople} чел`">
+                                    <a-progress :percent="(getCustomersCount(selectedDate.billsList) / trip.maxPeople) * 100"
+                                        :format="() => `${getCustomersCount(selectedDate.billsList)}/${trip.maxPeople} чел`">
                                     </a-progress></b>
                             </div>
                         </div>
                         <div>
-                            <WaitingList :tripsCount="tripsCount" />
+                            <WaitingList :tripsCount="getCustomersCount(selectedDate.billsList)" />
                         </div>
                         <div>
                             Цена:
