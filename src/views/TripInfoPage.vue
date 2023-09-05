@@ -120,7 +120,6 @@ let buyTripDialog = () => {
     }
 
 };
-
 function selectDate(index) {
     for (let date of tripDates.value) {
         date.selected = false;
@@ -243,6 +242,17 @@ async function buyTrip(isBoughtNow) {
     } else {
         message.config({ duration: 3, top: "90vh" });
         message.success({ content: "Нужен телефон" });
+    }
+}
+
+let isInWaitingList = ref(false)
+function detectIsWaiting(isWaiting) {
+    isInWaitingList.value = isWaiting
+    if (isWaiting) {
+        for (let i = 0; i < selectedDate.value.selectedCosts.length; i++) {
+            selectedDate.value.selectedCosts[i].cost = trip.value.transports[0].price
+            selectedDate.value.selectedCosts[i].costType = 'В списке ожидания'
+        }
     }
 }
 const formSchema = yup.object({
@@ -374,17 +384,18 @@ onMounted(async () => {
                         <div class="d-flex">
                             Цена:&nbsp
                             <div v-for="(item, index) in trip.cost" :key="index" class="cost">
-                                {{  item.first }}: <b>{{ item.price }} руб.</b>
+                                {{ item.first }}: <b>{{ item.price }} руб.</b>
                             </div>
                         </div>
                         <div v-if="trip.bonuses.length" class="d-flex">
                             Бонусы:&nbsp
                             <div v-for="(item, index) in trip.bonuses" :key="index">
-                                <i> {{  item.type }}: <b>{{ item.bonus }}</b> </i>
+                                <i> {{ item.type }}: <b>{{ item.bonus }}</b> </i>
                             </div>
                         </div>
-                        <div>
-                            <WaitingList :tripsCount="getCustomersCount(selectedDate.billsList)" />
+                        <div v-if="trip.transports?.length">
+                            <WaitingList :tripsCount="getCustomersCount(selectedDate.billsList)"
+                                :transport="trip.transports ?? []" />
                         </div>
                         <div class="d-flex justify-center ma-8" v-if="trip.maxPeople -
                             getCustomersCount(selectedDate.billsList) -
@@ -466,8 +477,8 @@ onMounted(async () => {
                 </a-row>
             </a-col>
         </a-row>
-        <a-modal v-model:visible="buyDialog" :footer="null" @cancel="refreshDates(trip)">
-            <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="buyTrip(false)" class="mt-16">
+        <a-modal v-model:visible="buyDialog" :footer="null" @cancel="refreshDates(trip)" :destroyOnClose="true">
+            <Form :validation-schema="formSchema" @submit="buyTrip(false)" class="mt-16">
                 <a-row :gutter="[4, 4]">
 
                     <a-col :span="12">
@@ -508,7 +519,7 @@ onMounted(async () => {
                         </div>
 
                         <div class="d-flex space-between align-center" v-for="cost of selectedDate.selectedCosts">
-                            <div>{{ cost.costType }}</div>
+                            <div :style="isInWaitingList ? { 'color': '#ff6600' } : {}">{{ cost.costType }}</div>
                             <div>{{ cost.cost }} руб.</div>
 
                             <div class="d-flex direction-column">
@@ -518,6 +529,11 @@ onMounted(async () => {
                                     placeholder="чел"></a-input-number>
                             </div>
                         </div>
+                    </a-col>
+                    <a-col :span="24" v-if="trip.transports?.length">
+                        <WaitingList :tripsCount="getCustomersCount(selectedDate.billsList) + selectedDate.selectedCosts.reduce((acc, cost) => {
+                            return acc + cost.count;
+                        }, 0)" :transport="trip.transports" @isUserWaiting="detectIsWaiting" />
                     </a-col>
                     <a-col :span="24" class="d-flex justify-end">
                         <b>Итого: {{ finalCost }} руб.</b>

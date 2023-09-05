@@ -1,37 +1,17 @@
 <script setup>
-import { ref, computed, reactive, toRefs } from "vue";
+import { computed, reactive, toRefs, onMounted } from "vue";
 import _ from 'lodash'
 
 let props = defineProps({
     tripsCount: Number,
+    transport: Array
 });
+let emit = defineEmits(['isUserWaiting'])
 
 const { tripsCount } = toRefs(props);
 // let tripsCount = ref(35)
 // сортированнный по capacity
-let transports = reactive([
-    {
-        type: "машина",
-        capacity: 5,
-        waiting: 3
-    },
-    {
-        type: "минивен",
-        capacity: 14,
-        waiting: 10
-    },
-    {
-        type: "микроавтобус",
-        capacity: 25,
-        waiting: 17
-    },
-    {
-        type: "автобус",
-        capacity: 45,
-        waiting: 30
-    }
-])
-
+let transports = reactive(props.transport)
 
 
 let selectTransport = computed(() => {
@@ -69,17 +49,19 @@ let selectTransport = computed(() => {
     }
     return { selected, wait, isWaiting }
 })
-
-
-
-
+onMounted(() => {
+    if (tripsCount.value >= (selectTransport.value.wait.waiting ?? selectTransport.value.selected.waiting)) {
+        return emit('isUserWaiting', false)
+    }
+    return emit('isUserWaiting', true)
+})
 </script>
 
 <template>
     <div>
         <a-row :gutter="[16]">
-            <a-col  v-if="!_.isEmpty(selectTransport.selected)">
-                <div>Едет: <b>{{ selectTransport.selected?.type }}</b> </div>
+            <a-col v-if="!_.isEmpty(selectTransport.selected)">
+                <div>Едет: <b>{{ selectTransport.selected?.transportType.name }}</b> </div>
                 <div class="transport">
                     <img src="../assets/images/back.png" style="height: 100%" alt="">
                     <div v-for="seat, i in selectTransport.selected?.capacity" class="passenger-seat"
@@ -88,8 +70,8 @@ let selectTransport = computed(() => {
                     <img src="../assets/images/front.png" style="height: 100%" alt="">
                 </div>
             </a-col>
-            <a-col  v-if="!_.isEmpty(selectTransport.wait)">
-                <div>Заполняем: {{ selectTransport.wait?.type }}</div>
+            <a-col v-if="!_.isEmpty(selectTransport.wait)">
+                <div>Заполняем: {{ selectTransport.wait?.transportType.name }}</div>
                 <div class="transport">
                     <img src="../assets/images/back.png" style="height: 100%" alt="">
                     <div v-for="seat, i in selectTransport.wait?.capacity"
