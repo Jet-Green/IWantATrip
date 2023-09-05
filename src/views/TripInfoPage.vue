@@ -79,13 +79,24 @@ let tripsCount = computed(() => {
 });
 
 let finalCost = computed(() => {
-    let sum = 0;
-    for (let date of tripDates.value) {
-        for (let cost of date.selectedCosts) {
-            sum += cost.cost * cost.count;
+    if (!isInWaitingList.value) {
+        let sum = 0;
+        for (let date of tripDates.value) {
+            for (let cost of date.selectedCosts) {
+                sum += cost.cost * cost.count;
+            }
         }
+        return sum;
+    } else {
+        let fixedCost = trip.value.transports[0].price
+        let sum = 0;
+        for (let date of tripDates.value) {
+            for (let cost of date.selectedCosts) {
+                sum += fixedCost * cost.count;
+            }
+        }
+        return sum;
     }
-    return sum;
 });
 
 const clearData = (dateNumber) => {
@@ -200,6 +211,13 @@ let getStartLocationNames = computed(() => {
 })
 async function buyTrip(isBoughtNow) {
     if (userStore.user.email) {
+        // цены нужно поменять
+        if (isInWaitingList.value) {
+            for (let c of selectedDate.value.selectedCosts) {
+                c.cost = trip.value.transports[0].price
+                c.costType = 'в листе ожидания'
+            }
+        }
         if (selectedDate.value.selected) {
             let bill = {
                 isBoughtNow,
@@ -248,13 +266,8 @@ async function buyTrip(isBoughtNow) {
 let isInWaitingList = ref(false)
 function detectIsWaiting(isWaiting) {
     isInWaitingList.value = isWaiting
-    if (isWaiting) {
-        for (let i = 0; i < selectedDate.value.selectedCosts.length; i++) {
-            selectedDate.value.selectedCosts[i].cost = trip.value.transports[0].price
-            selectedDate.value.selectedCosts[i].costType = 'В списке ожидания'
-        }
-    }
 }
+
 const formSchema = yup.object({
     fullname: yup
         .string("неверный формат")
@@ -519,8 +532,16 @@ onMounted(async () => {
                         </div>
 
                         <div class="d-flex space-between align-center" v-for="cost of selectedDate.selectedCosts">
-                            <div :style="isInWaitingList ? { 'color': '#ff6600' } : {}">{{ cost.costType }}</div>
-                            <div>{{ cost.cost }} руб.</div>
+                            <div v-if="isInWaitingList" style="color: #ff6600">
+                                в списке ожидания
+                            </div>
+                            <div v-else>
+                                {{ cost.costType }}
+                            </div>
+                            <div v-if="isInWaitingList">
+                                {{ trip.transports[0].price }} руб.
+                            </div>
+                            <div v-else>{{ cost.cost }} руб.</div>
 
                             <div class="d-flex direction-column">
                                 <span style="font-size: 8px">кол-во</span>
