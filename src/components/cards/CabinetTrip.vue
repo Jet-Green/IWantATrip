@@ -275,6 +275,7 @@ onMounted(async () => {
     for (let t of appStateStore.appState[0].transport) {
         possibleTransport.value.push({ value: t.name })
     }
+    addTransportForm.value.price = trip.value.transports[0]?.price ?? null
 })
 </script>
 <template>
@@ -413,7 +414,7 @@ onMounted(async () => {
                     ok-text="Да" cancel-text="Нет" class="mt-8">
                     <a-tag :color="transportToDelete.includes(transport.transportType.name) ? 'red' : ''"
                         style="cursor: pointer; padding: 2px 6px 2px 6px; border-radius: 6px;">
-                        {{ transport.transportType.name }} {{ transport.capacity }} чел.
+                        {{ transport.transportType.name }} {{ transport.waiting }}-{{ transport.capacity }} чел.
                     </a-tag>
                 </a-popconfirm>
             </span>
