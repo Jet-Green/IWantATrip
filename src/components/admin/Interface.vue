@@ -59,7 +59,7 @@ onMounted(async () => {
                 <a-col v-for="t of appStateStore.appState[0].transport" class="ma-8" style="cursor: pointer">
                     <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"
                         @confirm="() => { appStateStore.deleteTransportName(t.name) }">
-                        {{ t.name }}
+                       <div style="min-height:10px; min-width:10px; background:rgb(235,235,235) ;"> {{ t.name }}</div>
                     </a-popconfirm>
                 </a-col>
             </a-row>

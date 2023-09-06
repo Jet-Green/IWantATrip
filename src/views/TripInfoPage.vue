@@ -312,32 +312,8 @@ onMounted(async () => {
         <a-row class="justify-center d-flex">
             <a-col :xs="22" :xl="16">
                 <h2 class="ma-0">{{ trip.name }}</h2>
-                <div class="d-flex space-between">
-                    <p><i> {{ trip.offer }}</i> </p>
 
-                    <div>
-                        <span style="opacity: 0.7; cursor: pointer;" class="mdi mdi-24px mdi-printer ma-8 "
-                            @click="print()"></span>
-
-                        <a-dropdown :trigger="['click']">
-                            <a class="ant-dropdown-link" @click.prevent>
-                                <span style="opacity: 0.7;" class="mdi mdi-24px mdi-share-variant-outline ma-8"></span>
-                            </a>
-                            <template #overlay>
-                                <a-menu>
-                                    <a-menu-item v-for="link, index of  ShareLogo" :key="index">
-                                        <ShareNetwork :network="link.network" :url='getLink()' :title="trip.name"
-                                            :description="trip.offer">
-                                            <span>{{ link.network }}</span>
-
-                                        </ShareNetwork>
-                                    </a-menu-item>
-                                </a-menu>
-                            </template>
-                        </a-dropdown>
-                    </div>
-                </div>
-
+                <p><i> {{ trip.offer }}</i> </p>
 
                 <a-spin v-if="!trip._id" size="large"></a-spin>
                 <a-row v-if="trip._id" :gutter="[12, 12]" class="text justify-center d-flex">
@@ -365,7 +341,32 @@ onMounted(async () => {
                         </a-carousel>
                     </a-col>
                     <a-col :xs="24" :md="12" class="pa-8">
+                    
+                         
 
+                            <div style="float: right;">
+                                <span style="opacity: 0.7; cursor: pointer;" class="mdi mdi-24px mdi-printer ma-8 "
+                                    @click="print()"></span>
+
+                                <a-dropdown :trigger="['click']">
+                                    <a class="ant-dropdown-link" @click.prevent>
+                                        <span style="opacity: 0.7;"
+                                            class="mdi mdi-24px mdi-share-variant-outline ma-8"></span>
+                                    </a>
+                                    <template #overlay>
+                                        <a-menu>
+                                            <a-menu-item v-for="link, index of  ShareLogo" :key="index">
+                                                <ShareNetwork :network="link.network" :url='getLink()' :title="trip.name"
+                                                    :description="trip.offer">
+                                                    <span>{{ link.network }}</span>
+
+                                                </ShareNetwork>
+                                            </a-menu-item>
+                                        </a-menu>
+                                    </template>
+                                </a-dropdown>
+                            </div>
+                   
 
                         <div>
                             Старт: <b> {{ getStartLocationNames }}</b>
@@ -540,7 +541,7 @@ onMounted(async () => {
 
                         <div class="d-flex space-between align-center" v-for="cost of selectedDate.selectedCosts">
                             <div v-if="isInWaitingList" style="color: #ff6600">
-                                в списке ожидания
+                                в лист ожидания
                             </div>
                             <div v-else>
                                 {{ cost.costType }}
@@ -559,8 +560,8 @@ onMounted(async () => {
                         </div>
                     </a-col>
                     <a-col :span="24" v-if="trip.transports?.length">
-                        <WaitingList :tripsCount="getCurrentCustomerNumber"
-                            :transport="trip.transports ?? []" @isUserWaiting="detectIsWaiting" />
+                        <WaitingList :tripsCount="getCurrentCustomerNumber" :transport="trip.transports ?? []"
+                            @isUserWaiting="detectIsWaiting" />
                     </a-col>
                     <a-col :span="24" class="d-flex justify-end">
                         <b>Итого: {{ finalCost }} руб.</b>

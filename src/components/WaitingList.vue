@@ -14,6 +14,7 @@ const { tripsCount } = toRefs(props);
 let transports = reactive(props.transport)
 
 let visible = ref(false)
+let visible2 = ref(false)
 let selectTransport = computed(() => {
     let selected = {}
     let wait = {}
@@ -116,9 +117,9 @@ watch(tripsCount, () => {
                         <div class="d-flex align-center">
                             <div class="waiting-passenger"></div> &nbsp- в листе ожидания
                         </div>
-                        <div class="d-flex align-center">
+                        <!-- <div class="d-flex align-center">
                             <div class="hide"></div> &nbsp- из меньшего транспорта
-                        </div>
+                        </div> -->
 
                     </template>
 
@@ -137,10 +138,25 @@ watch(tripsCount, () => {
                 </a-popover>
             </a-col>
             <a-col v-if="!_.isEmpty(selectTransport.wait)">
-                <div>Заполняем: {{ selectTransport.wait?.transportType.name }}</div>
-                <a-popover v-model:visible="visible" @click="visible = !visible">
-                    <div class="transport">
+                <div>Заполняется: {{ selectTransport.wait?.transportType.name }}</div>
+                <a-popover v-model:visible="visible2" @click="visible2 = !visible2">
+                    <template #content>
+                        <div class="d-flex align-center">
+                            <div class="current-passenger"></div> &nbsp- текущий турист
+                        </div>
+                        <div class="d-flex align-center">
+                            <div class="passenger-seat "></div> &nbsp- вы едете
+                        </div>
+                        <div class="d-flex align-center">
+                            <div class="waiting-passenger"></div> &nbsp- в листе ожидания
+                        </div>
+                        <div class="d-flex align-center">
+                            <div class="hide"></div> &nbsp- из меньшего транспорта
+                        </div>
 
+                    </template>
+                    <div class="transport">
+                     
                         <img src="../assets/images/back.png" style="height: 100%" alt="">
 
                         <div v-for="seat, i in selectTransport.wait?.capacity"
@@ -166,10 +182,10 @@ watch(tripsCount, () => {
     height: 36px;
     width: fit-content;
     cursor: pointer;
-    border-top: 1px solid black;
-    border-bottom: 1px solid black;
-    border-top-left-radius: 15px;
-    border-bottom-left-radius: 15px;
+    // border-top: 1px solid black;
+    // border-bottom: 1px solid black;
+    // border-top-left-radius: 15px;
+    // border-bottom-left-radius: 15px;
     min-width: 50px;
 }
 
