@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive, toRefs, watch } from "vue";
+import { computed, reactive, toRefs, watch, ref } from "vue";
 import _ from 'lodash'
 
 let props = defineProps({
@@ -13,7 +13,7 @@ const { tripsCount } = toRefs(props);
 // сортированнный по capacity
 let transports = reactive(props.transport)
 
-
+let visible = ref(false)
 let selectTransport = computed(() => {
     let selected = {}
     let wait = {}
@@ -105,33 +105,60 @@ watch(tripsCount, (newValue) => {
         <a-row :gutter="[16]">
             <a-col v-if="!_.isEmpty(selectTransport.selected)">
                 <div>Едет: <b>{{ selectTransport.selected?.transportType.name }}</b> </div>
-                <div class="transport">
-                    <img src="../assets/images/back.png" style="height: 100%" alt="">
-                    <div v-for="seat, i in selectTransport.selected?.capacity" class="passenger-seat"
-                        :class="[seat == tripsCount ? 'current-passenger' : '']">
+
+                <a-popover v-model:visible="visible" @click="visible = !visible">
+                    <template #content>
+                        <div class="d-flex align-center">
+                            <div class="current-passenger"></div> &nbsp- текущий турист
+                        </div>
+                        <div class="d-flex align-center">
+                            <div class="passenger-seat "></div> &nbsp- вы едете
+                        </div>
+                        <div class="d-flex align-center">
+                            <div class="waiting-passenger"></div> &nbsp- в листе ожидания
+                        </div>
+                        <div class="d-flex align-center">
+                            <div class="hide"></div> &nbsp- из меньшего транспорта
+                        </div>
+
+                    </template>
+
+
+
+                    <div class="transport">
+                        <img src="../assets/images/back.png" style="height: 100%" alt="">
+
+                        <div v-for="seat, i in selectTransport.selected?.capacity" class="passenger-seat"
+                            :class="[seat == tripsCount ? 'current-passenger' : '']">
+
+
+                        </div>
+                        <img src="../assets/images/front.png" style="height: 100%" alt="">
                     </div>
-                    <img src="../assets/images/front.png" style="height: 100%" alt="">
-                </div>
+                </a-popover>
             </a-col>
             <a-col v-if="!_.isEmpty(selectTransport.wait)">
                 <div>Заполняем: {{ selectTransport.wait?.transportType.name }}</div>
-                <div class="transport">
-                    <img src="../assets/images/back.png" style="height: 100%" alt="">
-                    <div v-for="seat, i in selectTransport.wait?.capacity"
-                        :class="[seat <= selectTransport.wait.waiting ? 'waiting-passenger' : 'passenger-seat', seat < selectTransport.wait.start ? 'hide' : '', seat == tripsCount ? 'current-passenger' : '']">
+                <a-popover v-model:visible="visible" @click="visible = !visible">
+                    <div class="transport">
+
+                        <img src="../assets/images/back.png" style="height: 100%" alt="">
+
+                        <div v-for="seat, i in selectTransport.wait?.capacity"
+                            :class="[seat <= selectTransport.wait.waiting ? 'waiting-passenger' : 'passenger-seat', seat < selectTransport.wait.start ? 'hide' : '', seat == tripsCount ? 'current-passenger' : '']">
+                        </div>
+
+                        <img src="../assets/images/front.png" style="height: 100%" alt="">
+
                     </div>
-                    <img src="../assets/images/front.png" style="height: 100%" alt="">
-                </div>
+
+                </a-popover>
 
             </a-col>
         </a-row>
     </div>
 </template>
 <style lang="scss" scoped>
-.waitinf-list {
-    display: flex;
-}
-
 .transport {
     display: flex;
     flex-direction: column;
@@ -139,10 +166,12 @@ watch(tripsCount, (newValue) => {
     justify-content: center;
     height: 36px;
     width: fit-content;
+    cursor: pointer;
     border-top: 1px solid black;
     border-bottom: 1px solid black;
-    border-radius: 15px;
-    min-width: 75px;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    min-width: 30px;
 }
 
 .passenger-seat {
@@ -163,6 +192,10 @@ watch(tripsCount, (newValue) => {
 }
 
 .hide {
+    width: 6px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    margin: 2px;
     background-color: rgb(229, 229, 229);
 }
 
@@ -170,6 +203,7 @@ watch(tripsCount, (newValue) => {
     width: 8px;
     aspect-ratio: 1;
     border-radius: 50%;
-    background: #227597
+    border: solid 2px black;
+    // background: #227597
 }
 </style>
