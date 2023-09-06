@@ -341,32 +341,31 @@ onMounted(async () => {
                         </a-carousel>
                     </a-col>
                     <a-col :xs="24" :md="12" class="pa-8">
-                    
-                         
 
-                            <div style="float: right;">
-                                <span style="opacity: 0.7; cursor: pointer;" class="mdi mdi-24px mdi-printer ma-8 "
-                                    @click="print()"></span>
 
-                                <a-dropdown :trigger="['click']">
-                                    <a class="ant-dropdown-link" @click.prevent>
-                                        <span style="opacity: 0.7;"
-                                            class="mdi mdi-24px mdi-share-variant-outline ma-8"></span>
-                                    </a>
-                                    <template #overlay>
-                                        <a-menu>
-                                            <a-menu-item v-for="link, index of  ShareLogo" :key="index">
-                                                <ShareNetwork :network="link.network" :url='getLink()' :title="trip.name"
-                                                    :description="trip.offer">
-                                                    <span>{{ link.network }}</span>
 
-                                                </ShareNetwork>
-                                            </a-menu-item>
-                                        </a-menu>
-                                    </template>
-                                </a-dropdown>
-                            </div>
-                   
+                        <div style="float: right;">
+                            <span style="opacity: 0.7; cursor: pointer;" class="mdi mdi-24px mdi-printer ma-8 "
+                                @click="print()"></span>
+
+                            <a-dropdown :trigger="['click']">
+                                <a class="ant-dropdown-link" @click.prevent>
+                                    <span style="opacity: 0.7;" class="mdi mdi-24px mdi-share-variant-outline ma-8"></span>
+                                </a>
+                                <template #overlay>
+                                    <a-menu>
+                                        <a-menu-item v-for="link, index of  ShareLogo" :key="index">
+                                            <ShareNetwork :network="link.network" :url='getLink()' :title="trip.name"
+                                                :description="trip.offer">
+                                                <span>{{ link.network }}</span>
+
+                                            </ShareNetwork>
+                                        </a-menu-item>
+                                    </a-menu>
+                                </template>
+                            </a-dropdown>
+                        </div>
+
 
                         <div>
                             Старт: <b> {{ getStartLocationNames }}</b>
@@ -404,15 +403,22 @@ onMounted(async () => {
 
                         <div class="d-flex">
                             Цена:&nbsp
-                            <div v-for="(item, index) in trip.cost" :key="index" class="cost">
-                                {{ item.first }}: <b>{{ item.price }} руб.</b>
+                            <div>
+                                <div v-for="(item, index) in trip.cost" :key="index" class="cost">
+                                    {{ item.first }}: <b>{{ item.price }} руб.</b>
+                                </div>
                             </div>
+
+
                         </div>
                         <div v-if="trip.bonuses.length" class="d-flex">
                             Бонусы:&nbsp
-                            <div v-for="(item, index) in trip.bonuses" :key="index">
-                                <i> {{ item.type }}: <b>{{ item.bonus }}</b> </i>
+                            <div>
+                                <div v-for="(item, index) in trip.bonuses" :key="index">
+                                    <i> {{ item.type }}: <b>{{ item.bonus }}</b> </i>
+                                </div>
                             </div>
+
                         </div>
                         <div v-if="trip.transports?.length">
                             <WaitingList :tripsCount="getCustomersCount(selectedDate.billsList)"
