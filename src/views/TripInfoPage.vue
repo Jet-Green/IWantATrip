@@ -149,6 +149,13 @@ function getCustomersCount(billsList) {
     return res;
 }
 
+let getCurrentCustomerNumber = computed(() => {
+    return getCustomersCount(selectedDate.value.billsList) +
+        selectedDate.value.selectedCosts.reduce((acc, cost) => {
+            return acc + cost.count;
+        }, 0)
+})
+
 async function refreshDates() {
     let response = await tripStore.getFullTripById(_id);
     let tripFromDb = response.data;
@@ -552,9 +559,8 @@ onMounted(async () => {
                         </div>
                     </a-col>
                     <a-col :span="24" v-if="trip.transports?.length">
-                        <WaitingList :tripsCount="getCustomersCount(selectedDate.billsList) + selectedDate.selectedCosts.reduce((acc, cost) => {
-                            return acc + cost.count;
-                        }, 0)" :transport="trip.transports" @isUserWaiting="detectIsWaiting" />
+                        <WaitingList :tripsCount="getCurrentCustomerNumber"
+                            :transport="trip.transports ?? []" @isUserWaiting="detectIsWaiting" />
                     </a-col>
                     <a-col :span="24" class="d-flex justify-end">
                         <b>Итого: {{ finalCost }} руб.</b>
