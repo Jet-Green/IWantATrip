@@ -43,8 +43,9 @@ function getDate() {
 </script>
 <template>
   <div @click="goToTripPage" style="height: 100%;" class="trip-card">
-    <div class="title">
+    <div class="title d-flex direction-column space-between">
       <p class="ma-0">{{ trip.name }}</p>
+      <p class="ma-0" style="font-size:8px; text-align:right; text-transform: uppercase; ">{{ trip.tripType }}</p>
     </div>
 
     <a-badge-ribbon :text="`${trip.cost.length ? trip.cost[0].price : 0} руб`" color="ff6600">
@@ -70,7 +71,7 @@ function getDate() {
   color: black;
   text-align: center;
   font-weight: 500;
-  background: rgb(250, 250, 250);
+  background: rgb(245, 245, 245);
 
 }
 
