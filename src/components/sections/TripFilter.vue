@@ -48,10 +48,10 @@ function find() {
 
     end = Number(Date.parse(end.toString()));
     let filterTime = [start, end]
-    localStorage.setItem("filterDate", filterTime)
+    localStorage.setItem("TripfilterDate", filterTime)
     tripStore.fetchTrips(query.value, start, end);
   } else {
-    localStorage.setItem("filterDate", '')
+    localStorage.setItem("TripfilterDate", '')
     tripStore.fetchTrips(
       query.value,
       "",
@@ -62,8 +62,8 @@ function find() {
 
 
 onMounted(() => {
-  if(localStorage.getItem("filterDate")){
-    let arr = localStorage.getItem("filterDate").split(',').map(function(date) {
+  if(localStorage.getItem("TripfilterDate")){
+    let arr = localStorage.getItem("TripfilterDate").split(',').map(function(date) {
       return dayjs(new Date(+date))
   });
   time.value = arr
