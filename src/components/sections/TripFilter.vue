@@ -51,6 +51,7 @@ function find() {
     localStorage.setItem("filterDate", filterTime)
     tripStore.fetchTrips(query.value, start, end);
   } else {
+    localStorage.setItem("filterDate", '')
     tripStore.fetchTrips(
       query.value,
       "",
@@ -62,13 +63,11 @@ function find() {
 
 onMounted(() => {
   if(localStorage.getItem("filterDate")){
-    let arr = localStorage.getItem("filterDate").split(',');
-  arr.forEach(element => {
-    dayjs(element)
-  })  
-  console.log(arr);
+    let arr = localStorage.getItem("filterDate").split(',').map(function(date) {
+      return dayjs(new Date(+date))
+  });
+  time.value = arr
   }
-  // time.value = localStorage.getItem("filterDate") ?? '';
   if (props.search) {
     query.value = props.search;
   }
