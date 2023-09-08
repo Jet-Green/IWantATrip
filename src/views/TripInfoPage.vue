@@ -79,13 +79,24 @@ let tripsCount = computed(() => {
 });
 
 let finalCost = computed(() => {
-    let sum = 0;
-    for (let date of tripDates.value) {
-        for (let cost of date.selectedCosts) {
-            sum += cost.cost * cost.count;
+    if (!isInWaitingList.value) {
+        let sum = 0;
+        for (let date of tripDates.value) {
+            for (let cost of date.selectedCosts) {
+                sum += cost.cost * cost.count;
+            }
         }
+        return sum;
+    } else {
+        let fixedCost = trip.value.transports[0].price
+        let sum = 0;
+        for (let date of tripDates.value) {
+            for (let cost of date.selectedCosts) {
+                sum += fixedCost * cost.count;
+            }
+        }
+        return sum;
     }
-    return sum;
 });
 
 const clearData = (dateNumber) => {
@@ -120,7 +131,6 @@ let buyTripDialog = () => {
     }
 
 };
-
 function selectDate(index) {
     for (let date of tripDates.value) {
         date.selected = false;
@@ -138,6 +148,13 @@ function getCustomersCount(billsList) {
     }
     return res;
 }
+
+let getCurrentCustomerNumber = computed(() => {
+    return getCustomersCount(selectedDate.value.billsList) +
+        selectedDate.value.selectedCosts.reduce((acc, cost) => {
+            return acc + cost.count;
+        }, 0)
+})
 
 async function refreshDates() {
     let response = await tripStore.getFullTripById(_id);
@@ -201,6 +218,13 @@ let getStartLocationNames = computed(() => {
 })
 async function buyTrip(isBoughtNow) {
     if (userStore.user.email) {
+        // цены нужно поменять
+        if (isInWaitingList.value) {
+            for (let c of selectedDate.value.selectedCosts) {
+                c.cost = trip.value.transports[0].price
+                c.costType = 'в листе ожидания'
+            }
+        }
         if (selectedDate.value.selected) {
             let bill = {
                 isBoughtNow,
@@ -245,6 +269,12 @@ async function buyTrip(isBoughtNow) {
         message.success({ content: "Нужен телефон" });
     }
 }
+
+let isInWaitingList = ref(false)
+function detectIsWaiting(isWaiting) {
+    isInWaitingList.value = isWaiting
+}
+
 const formSchema = yup.object({
     fullname: yup
         .string("неверный формат")
@@ -282,32 +312,8 @@ onMounted(async () => {
         <a-row class="justify-center d-flex">
             <a-col :xs="22" :xl="16">
                 <h2 class="ma-0">{{ trip.name }}</h2>
-                <div class="d-flex space-between">
-                    <p><i> {{ trip.offer }}</i> </p>
 
-                    <div>
-                        <span style="opacity: 0.7; cursor: pointer;" class="mdi mdi-24px mdi-printer ma-8 "
-                            @click="print()"></span>
-
-                        <a-dropdown :trigger="['click']">
-                            <a class="ant-dropdown-link" @click.prevent>
-                                <span style="opacity: 0.7;" class="mdi mdi-24px mdi-share-variant-outline ma-8"></span>
-                            </a>
-                            <template #overlay>
-                                <a-menu>
-                                    <a-menu-item v-for="link, index of  ShareLogo" :key="index">
-                                        <ShareNetwork :network="link.network" :url='getLink()' :title="trip.name"
-                                            :description="trip.offer">
-                                            <span>{{ link.network }}</span>
-
-                                        </ShareNetwork>
-                                    </a-menu-item>
-                                </a-menu>
-                            </template>
-                        </a-dropdown>
-                    </div>
-                </div>
-
+                <p><i> {{ trip.offer }}</i> </p>
 
                 <a-spin v-if="!trip._id" size="large"></a-spin>
                 <a-row v-if="trip._id" :gutter="[12, 12]" class="text justify-center d-flex">
@@ -335,6 +341,30 @@ onMounted(async () => {
                         </a-carousel>
                     </a-col>
                     <a-col :xs="24" :md="12" class="pa-8">
+
+
+
+                        <div style="float: right;">
+                            <span style="opacity: 0.7; cursor: pointer;" class="mdi mdi-24px mdi-printer ma-8 "
+                                @click="print()"></span>
+
+                            <a-dropdown :trigger="['click']">
+                                <a class="ant-dropdown-link" @click.prevent>
+                                    <span style="opacity: 0.7;" class="mdi mdi-24px mdi-share-variant-outline ma-8"></span>
+                                </a>
+                                <template #overlay>
+                                    <a-menu>
+                                        <a-menu-item v-for="link, index of  ShareLogo" :key="index">
+                                            <ShareNetwork :network="link.network" :url='getLink()' :title="trip.name"
+                                                :description="trip.offer">
+                                                <span>{{ link.network }}</span>
+
+                                            </ShareNetwork>
+                                        </a-menu-item>
+                                    </a-menu>
+                                </template>
+                            </a-dropdown>
+                        </div>
 
 
                         <div>
@@ -373,18 +403,26 @@ onMounted(async () => {
 
                         <div class="d-flex">
                             Цена:&nbsp
-                            <div v-for="(item, index) in trip.cost" :key="index" class="cost">
-                                {{  item.first }}: <b>{{ item.price }} руб.</b>
+                            <div>
+                                <div v-for="(item, index) in trip.cost" :key="index" class="cost">
+                                    {{ item.first }}: <b>{{ item.price }} руб.</b>
+                                </div>
                             </div>
+
+
                         </div>
                         <div v-if="trip.bonuses.length" class="d-flex">
                             Бонусы:&nbsp
-                            <div v-for="(item, index) in trip.bonuses" :key="index">
-                                <i> {{  item.type }}: <b>{{ item.bonus }}</b> </i>
+                            <div>
+                                <div v-for="(item, index) in trip.bonuses" :key="index">
+                                    <i> {{ item.type }}: <b>{{ item.bonus }}</b> </i>
+                                </div>
                             </div>
+
                         </div>
-                        <div>
-                            <WaitingList :tripsCount="getCustomersCount(selectedDate.billsList)" />
+                        <div v-if="trip.transports?.length">
+                            <WaitingList :tripsCount="getCustomersCount(selectedDate.billsList)"
+                                :transport="trip.transports ?? []" />
                         </div>
                         <div class="d-flex justify-center ma-8" v-if="trip.maxPeople -
                             getCustomersCount(selectedDate.billsList) -
@@ -466,8 +504,8 @@ onMounted(async () => {
                 </a-row>
             </a-col>
         </a-row>
-        <a-modal v-model:visible="buyDialog" :footer="null" @cancel="refreshDates(trip)">
-            <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="buyTrip(false)" class="mt-16">
+        <a-modal v-model:visible="buyDialog" :footer="null" @cancel="refreshDates(trip)" :destroyOnClose="true">
+            <Form :validation-schema="formSchema" @submit="buyTrip(false)" class="mt-16">
                 <a-row :gutter="[4, 4]">
 
                     <a-col :span="12">
@@ -508,8 +546,16 @@ onMounted(async () => {
                         </div>
 
                         <div class="d-flex space-between align-center" v-for="cost of selectedDate.selectedCosts">
-                            <div>{{ cost.costType }}</div>
-                            <div>{{ cost.cost }} руб.</div>
+                            <div v-if="isInWaitingList" style="color: #ff6600">
+                                в лист ожидания
+                            </div>
+                            <div v-else>
+                                {{ cost.costType }}
+                            </div>
+                            <div v-if="isInWaitingList">
+                                {{ trip.transports[0].price }} руб.
+                            </div>
+                            <div v-else>{{ cost.cost }} руб.</div>
 
                             <div class="d-flex direction-column">
                                 <span style="font-size: 8px">кол-во</span>
@@ -518,6 +564,10 @@ onMounted(async () => {
                                     placeholder="чел"></a-input-number>
                             </div>
                         </div>
+                    </a-col>
+                    <a-col :span="24" v-if="trip.transports?.length">
+                        <WaitingList :tripsCount="getCurrentCustomerNumber" :transport="trip.transports ?? []"
+                            @isUserWaiting="detectIsWaiting" />
                     </a-col>
                     <a-col :span="24" class="d-flex justify-end">
                         <b>Итого: {{ finalCost }} руб.</b>

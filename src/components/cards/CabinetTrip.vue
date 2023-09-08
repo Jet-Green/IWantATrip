@@ -275,6 +275,7 @@ onMounted(async () => {
     for (let t of appStateStore.appState[0].transport) {
         possibleTransport.value.push({ value: t.name })
     }
+    addTransportForm.value.price = trip.value.transports[0]?.price ?? null
 })
 </script>
 <template>
@@ -387,33 +388,37 @@ onMounted(async () => {
         </a-modal>
         <a-modal v-model:visible="updateTransportDialog" title="Изменить транспорт" okText="Отправить" cancelText="Отмена"
             @ok="updateTrasports">
-            <a-col :span="24">
-                Тип
-                <a-auto-complete style="width: 100%" :options="possibleTransport" placeholder="Минивен"
-                    @select="(value) => { addTransportForm.transportType = { name: value } }"></a-auto-complete>
-            </a-col>
-            <a-col :span="24">
-                Вместимость
-                <a-input-number :max="trip.maxPeople" :min="1" style="width: 100%" v-model:value="addTransportForm.capacity"
-                    addonAfter="чел."></a-input-number>
-            </a-col>
-            <a-col :span="24">
-                Лист ожидания
-                <a-input-number :max="trip.maxPeople" :min="0" style="width: 100%" v-model:value="addTransportForm.waiting"
-                    addonAfter="чел."></a-input-number>
-            </a-col>
-            <a-col :span="24">
-                Цена для ожидающих
-                <a-input-number :min="1" style="width: 100%" v-model:value="addTransportForm.price"
-                    addonAfter="руб."></a-input-number>
-            </a-col>
+            <a-row :gutter="[16,16]">
+                <a-col :span="24" :md="12">
+                    Тип
+                    <a-auto-complete style="width: 100%" :options="possibleTransport" placeholder="Минивен"
+                        @select="(value) => { addTransportForm.transportType = { name: value } }"></a-auto-complete>
+                </a-col>
+                <a-col :span="24" :md="12">
+                    Цена для ожидающих
+                    <a-input-number :min="1" style="width: 100%" v-model:value="addTransportForm.price"></a-input-number>
+                </a-col>
+                <a-col :span="24" :md="12">
+                    Лист ожидания до, чел
+                    <a-input-number :max="trip.maxPeople" :min="0" style="width: 100%"
+                        v-model:value="addTransportForm.waiting"></a-input-number>
+                </a-col>
+                <a-col :span="24" :md="12">
+                    Вместимость, чел
+                    <a-input-number :max="trip.maxPeople" :min="1" style="width: 100%"
+                        v-model:value="addTransportForm.capacity"></a-input-number>
+                </a-col>
+            </a-row>
+
+
+
             <span v-for="(transport) of trip.transports">
                 <a-popconfirm @confirm="addToDeleteTransports(transport.transportType.name)"
                     :title="transportToDelete.includes(transport.transportType.name) ? 'Не удалять?' : 'Удалить?'"
                     ok-text="Да" cancel-text="Нет" class="mt-8">
                     <a-tag :color="transportToDelete.includes(transport.transportType.name) ? 'red' : ''"
                         style="cursor: pointer; padding: 2px 6px 2px 6px; border-radius: 6px;">
-                        {{ transport.transportType.name }} {{ transport.capacity }} чел.
+                        {{ transport.transportType.name }} {{ transport.waiting }}-{{ transport.capacity }} чел.
                     </a-tag>
                 </a-popconfirm>
             </span>
