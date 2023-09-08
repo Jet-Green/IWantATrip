@@ -17,7 +17,7 @@ let props = defineProps({
 const router = useRouter();
 const tripStore = useTrips();
 
-let time = ref([dayjs('2015-06-06', 'YYYY-MM-DD'), dayjs('2015-08-06', 'YYYY-MM-DD')]);
+let time = ref([]);
 let query = ref("");
 
 let loading = ref(false)
@@ -31,8 +31,6 @@ function find() {
   tripStore.cursor = 1
   tripStore.trips = []
   if (time.value) {
-    localStorage.setItem('filterTrips', time.value)
-    console.log(time.value);
     let start = new Date(time.value[0].$d)
     let end = new Date(time.value[1].$d)
 
@@ -49,9 +47,11 @@ function find() {
     end.setMilliseconds(999)
 
     end = Number(Date.parse(end.toString()));
-
+    let filterTime = [start, end]
+    localStorage.setItem("TripfilterDate", filterTime)
     tripStore.fetchTrips(query.value, start, end);
   } else {
+    localStorage.setItem("TripfilterDate", '')
     tripStore.fetchTrips(
       query.value,
       "",
@@ -62,8 +62,11 @@ function find() {
 
 
 onMounted(() => {
-  if (localStorage.getItem('filterTrips')) {
-    time.value = localStorage.getItem('filterTrips');
+  if(localStorage.getItem("TripfilterDate")){
+    let arr = localStorage.getItem("TripfilterDate").split(',').map(function(date) {
+      return dayjs(new Date(+date))
+  });
+  time.value = arr
   }
   if (props.search) {
     query.value = props.search;
