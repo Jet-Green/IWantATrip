@@ -156,6 +156,12 @@ body {
     padding-bottom: #{$i * 4}px;
   }
 }
+// PR
+@for $i from 1 through 8 {
+  .pr-#{$i*4} {
+    padding-right: #{$i * 4}px;
+  }
+}
 
 .unselectable {
   -moz-user-select: none;
