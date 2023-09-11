@@ -106,7 +106,7 @@ watch(tripsCount, () => {
             <a-col v-if="!_.isEmpty(selectTransport.selected)">
                 <div>Едет: <b>{{ selectTransport.selected?.transportType.name }}</b> </div>
 
-                <a-popover v-model:visible="visible" @click="visible = !visible">
+                <a-popover v-model:open="visible" @click="visible = !visible">
                     <template #content>
                         <div class="d-flex align-center">
                             <div class="current-passenger"></div> &nbsp- текущий турист
@@ -139,7 +139,7 @@ watch(tripsCount, () => {
             </a-col>
             <a-col v-if="!_.isEmpty(selectTransport.wait)">
                 <div>Заполняется: {{ selectTransport.wait?.transportType.name }}</div>
-                <a-popover v-model:visible="visible2" @click="visible2 = !visible2">
+                <a-popover v-model:open="visible2" @click="visible2 = !visible2">
                     <template #content>
                         <div class="d-flex align-center">
                             <div class="current-passenger"></div> &nbsp- текущий турист
