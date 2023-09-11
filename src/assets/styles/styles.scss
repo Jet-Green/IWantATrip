@@ -5,7 +5,8 @@
 body {
   font-family: "Montserrat", sans-serif;
   background: white;
-  line-height: 1.5714285714285714;;
+  line-height: 1.5714285714285714;
+  font-size: 14px;
 
   p {
     color: rgba(0, 0, 0, 0.9);
@@ -24,7 +25,7 @@ body {
     font-size: clamp(1.75rem, 1.3466rem + 0.8403vw, 2.25rem);
   }
 
-  .text {
+ .text {
     font-size: clamp(0.875rem, 0.6733rem + 0.4202vw, 1.125rem);
   }
 
