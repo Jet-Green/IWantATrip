@@ -78,7 +78,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <a-layout-header :style="{ position: 'fixed', zIndex: 999, width: '100%' }">
+  <a-layout-header :style="{ position: 'fixed', zIndex: 999, width: '100%', background: 'white'}">
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
         <a-row type="flex" justify="space-between">
@@ -97,7 +97,7 @@ onMounted(() => {
                 {{ locationSearchRequest }}
               </span>
             </div>
-            <a-modal :mask="false" v-model:visible="selectLocationDialog" title="Местоположение" :footer="null">
+            <a-modal :mask="false" v-model:open="selectLocationDialog" title="Местоположение" :footer="null">
 
               <a-select v-model:value="locationSearchRequest" style="width: 100%" @change="handleChange" show-search>
                 <a-select-option value="Не выбрано">Не выбрано</a-select-option>
@@ -132,7 +132,7 @@ onMounted(() => {
         </a-row>
       </a-col>
     </a-row>
-    <a-drawer placement="right" :closable="false" :visible="visibleDrawer" @close="visibleDrawer = !visibleDrawer"
+    <a-drawer placement="right" :closable="false" :open="visibleDrawer" @close="visibleDrawer = !visibleDrawer"
       width="200">
       <div @click="toComponentFromMenu('Landing')" class="route ma-8">главная</div>
       <div @click="toComponentFromMenu('TripsPage')" class="route ma-8">найти тур</div>
