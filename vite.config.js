@@ -1,13 +1,25 @@
+
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { VitePWA } from 'vite-plugin-pwa'
 
 
+const { theme } = require('ant-design-vue/lib');
+const convertLegacyToken = require('ant-design-vue/lib/theme/convertLegacyToken.js');
 
-import fs from 'fs'
-import path from 'path'
-import lessToJs from 'less-vars-to-js';
-const themeVariables = lessToJs(fs.readFileSync(path.join(__dirname, 'src/assets/styles/antd_default.less'), 'utf8'));
+const { defaultAlgorithm, defaultSeed } = theme;
+
+const mapToken = defaultAlgorithm(defaultSeed);
+const v3Token = convertLegacyToken.default(mapToken);
+
+
+
+
+
+// import fs from 'fs'
+// import path from 'path'
+// import lessToJs from 'less-vars-to-js';
+// const themeVariables = lessToJs(fs.readFileSync(path.join(__dirname, 'src/assets/styles/antd_default.less'), 'utf8'));
 
 // https://vitejs.dev/config/
 export default defineConfig(
@@ -75,13 +87,19 @@ export default defineConfig(
           }
         })
       ],
-      css: {
-        preprocessorOptions: {
-          less: {
-            modifyVars: themeVariables,
-            javascriptEnabled: true
-          }
-        }
+      loader: 'less-loader',
+      options: {
+        lessOptions: {
+          modifyVars: v3Token,
+        },
       },
+      // css: {
+      //   preprocessorOptions: {
+      //     less: {
+      //       modifyVars: themeVariables,
+      //       javascriptEnabled: true
+      //     }
+      //   }
+      // },
     }
   })
