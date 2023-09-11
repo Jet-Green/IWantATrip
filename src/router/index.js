@@ -313,10 +313,12 @@ const router = createRouter({
     },
   ],
   scrollBehavior(to, from, savedPosition) {
-    if (!savedPosition || (to.name == 'TripsPage') || (to.name == 'TripInfoPage') || (to.name == 'CompanionsPage') || (to.name == 'CreateTripNoHelp'))
+    if (savedPosition) {
+      return savedPosition
+    } else {
       return { top: 0 }
-    else return savedPosition
-  }
+    }
+  },
 })
 
 export default router

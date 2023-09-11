@@ -58,7 +58,10 @@ onMounted(async () => {
       colorSuccess: '#BCC662',
       borderRadius: 0,
       fontFamily: 'Montserrat',
-      colorBgLayout: 'white'
+      colorBgLayout: 'white',
+      colorBgBody: 'rgba(0, 0, 0, 0)',
+      cardPaddingBase: ' 0px',
+      lineHeight: 1.5714285714285714
 
 
     },
@@ -76,6 +79,4 @@ onMounted(async () => {
     </a-layout>
   </a-config-provider>
 </template>
-<style>
-
-</style>
+<style></style>
