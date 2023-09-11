@@ -62,8 +62,7 @@ onMounted(async () => {
       colorBgBody: 'rgba(0, 0, 0, 0)',
       cardPaddingBase: ' 0px',
       lineHeight: 1.5714285714285714,
-      fontSize: 'unset'
-   
+  
 
 
     },

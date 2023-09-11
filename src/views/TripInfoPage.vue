@@ -316,7 +316,7 @@ onMounted(async () => {
                 <p><i> {{ trip.offer }}</i> </p>
 
                 <a-spin v-if="!trip._id" size="large"></a-spin>
-                <a-row v-if="trip._id" :gutter="[12, 12]" class="text justify-center d-flex" style="font-size: clamp(0.875rem, 0.6733rem + 0.4202vw, 1.125rem);">
+                <a-row v-if="trip._id" :gutter="[12, 12]" class="text justify-center d-flex" >
 
                     <a-col :xs="24" :md="12">
                         <a-carousel arrows dots-class="slick-dots slick-thumb">
