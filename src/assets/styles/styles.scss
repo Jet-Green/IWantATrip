@@ -27,7 +27,9 @@ body {
  .text {
     font-size: clamp(0.875rem, 0.6733rem + 0.4202vw, 1.125rem);
   }
-
+  [class^="ant-col"], [class*=" ant-col"] {
+    font-size: unset;
+}
   .lets_go_btn {
     border-width: 2px;
     border-radius: 15px;

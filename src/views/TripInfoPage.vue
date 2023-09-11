@@ -650,9 +650,7 @@ img {
 .mdi-printer:hover {
     color: #ff6600;
 }
-.text {
-    font-size: clamp(0.875rem, 0.6733rem + 0.4202vw, 1.125rem);
-  }
+
 // .ant-carousel :deep(.custom-slick-arrow:before) {
 //   display: none;
 // }
