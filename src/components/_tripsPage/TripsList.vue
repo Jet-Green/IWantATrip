@@ -8,13 +8,15 @@ import { useRoute } from "vue-router";
 
 const route = useRoute();
 let tripStore = useTrips()
-
+let isRefreshing = ref(true)
 
 let handleScroll = async () => {
+  isRefreshing.value = true
   let triggerHeight =
     wrapper.value.scrollTop + wrapper.value.offsetHeight
   if (triggerHeight == wrapper.value.scrollHeight) {
     await tripStore.fetchTrips()
+    isRefreshing.value = false
   }
 
 }
@@ -25,6 +27,7 @@ onMounted(async () => {
   wrapper.value.addEventListener("scroll", handleScroll);
   if (tripStore.trips.length == 0) {
     await tripStore.fetchTrips()
+    isRefreshing.value = false
   }
 });
 </script>
@@ -43,6 +46,12 @@ onMounted(async () => {
           <a-row :gutter="[16, 18]" class="d-flex justify-center mt-8 pb-24" v-if="tripStore.trips.length">
             <a-col :xs="24" :sm="12" :md="8" :lg="6" v-for="trip in tripStore.trips" :key="trip.index">
               <TripListCard :trip="trip" />
+            </a-col>
+          </a-row>
+          <a-row v-else-if="isRefreshing">
+            <a-col :span="24" class="d-flex justify-center">
+              <a-spin tip="Загрузка">
+              </a-spin>
             </a-col>
           </a-row>
           <a-row v-else>
