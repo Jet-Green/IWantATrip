@@ -8,15 +8,19 @@ let transport = ref({})
 
 
 async function addTripType() {
-    let res = await appStateStore.addTripType(tripType.value)
-    if (res.status == 200) {
-        await appStateStore.refreshState();
+    if (tripType.value.length > 2) {
+        let res = await appStateStore.addTripType(tripType.value)
+        if (res.status == 200) {
+            await appStateStore.refreshState();
+        }
     }
 }
 async function addTransportName() {
-    let res = await appStateStore.addTransportName(transport.value.name)
-    if (res.status == 200) {
-        await appStateStore.refreshState();
+    if (transport.value.name.length > 2) {
+        let res = await appStateStore.addTransportName(transport.value.name)
+        if (res.status == 200) {
+            await appStateStore.refreshState();
+        }
     }
 }
 
@@ -40,7 +44,7 @@ onMounted(async () => {
                 <a-col v-for="t of appStateStore.appState[0].tripType" class="ma-8" style="cursor: pointer">
                     <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"
                         @confirm="() => { appStateStore.deleteTripType(t) }">
-                        {{ t }}
+                        <div class="name-wrapper">{{ t }}</div>
                     </a-popconfirm>
                 </a-col>
             </a-row>
@@ -59,10 +63,17 @@ onMounted(async () => {
                 <a-col v-for="t of appStateStore.appState[0].transport" class="ma-8" style="cursor: pointer">
                     <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"
                         @confirm="() => { appStateStore.deleteTransportName(t.name) }">
-                       <div style="min-height:10px; min-width:10px; background:rgb(235,235,235) ;"> {{ t.name }}</div>
+                        <div class="name-wrapper"> {{ t.name }}</div>
                     </a-popconfirm>
                 </a-col>
             </a-row>
         </a-col>
     </a-row>
 </template>
+<style lang="scss" scoped>
+.name-wrapper {
+    min-height: 10px;
+    min-width: 10px;
+    background: rgb(235, 235, 235);
+}
+</style>
