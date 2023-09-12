@@ -19,7 +19,7 @@ const sm = breakpoints.smaller("md");
       <span @click="getHistoryLength() > 0 ? router.back() : router.push('/')" style="font-size: 16px; line-height: 32px; cursor: pointer">
         <a-button shape="circle" type="text">
           <template #icon>
-            <span class="mdi mdi-arrow-left" style="font-size:20px"></span>
+            <span class="mdi mdi-arrow-left" style="font-size:16px"></span>
           </template>
         </a-button>
         <span v-if="!sm">Назад</span>
