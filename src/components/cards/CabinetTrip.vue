@@ -337,7 +337,7 @@ onMounted(async () => {
                 Замечания: {{ trip.moderationMessage }}
             </div>
         </a-card>
-        <a-modal v-model:visible="addDateDialog" title="Добавить даты" okText="Отправить" cancelText="Отмена" @ok="submit">
+        <a-modal v-model:open="addDateDialog" title="Добавить даты" okText="Отправить" cancelText="Отмена" @ok="submit">
             <a-row :gutter="[16, 16]" v-for="date of dates">
                 <a-col :span="12">
                     Дата начала
@@ -358,7 +358,7 @@ onMounted(async () => {
                 удалить даты
             </a-button>
         </a-modal>
-        <a-modal v-model:visible="addPartnerDialog" title="Добавить партнера" okText="Отправить" cancelText="Отмена"
+        <a-modal v-model:open="addPartnerDialog" title="Добавить партнера" okText="Отправить" cancelText="Отмена"
             @ok="addPartner">
 
             <a-col :span="24">
@@ -367,7 +367,7 @@ onMounted(async () => {
 
             </a-col>
         </a-modal>
-        <a-modal v-model:visible="addLocationDialog" title="Изменить локации" okText="Отправить" cancelText="Отмена"
+        <a-modal v-model:open="addLocationDialog" title="Изменить локации" okText="Отправить" cancelText="Отмена"
             @ok="updateIncludedLocations">
             <a-col :span="24">
                 <a-auto-complete v-model:value="locationSearchRequest" size="large" style="width: 100%" class="mt-8"
@@ -386,9 +386,9 @@ onMounted(async () => {
                 </span>
             </a-col>
         </a-modal>
-        <a-modal v-model:visible="updateTransportDialog" title="Изменить транспорт" okText="Отправить" cancelText="Отмена"
+        <a-modal v-model:open="updateTransportDialog" title="Изменить транспорт" okText="Отправить" cancelText="Отмена"
             @ok="updateTrasports">
-            <a-row :gutter="[16,16]">
+            <a-row :gutter="[16, 16]">
                 <a-col :span="24" :md="12">
                     Тип
                     <a-auto-complete style="width: 100%" :options="possibleTransport" placeholder="Минивен"

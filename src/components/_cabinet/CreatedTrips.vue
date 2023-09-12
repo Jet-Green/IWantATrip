@@ -129,8 +129,9 @@ onMounted(async () => {
       <div v-if="tripsStatus == 'archiveTrips'">
         <a-row :gutter="[8, 8]" class="mt-8" v-if="getTripsArrayByStatus.archiveTrips.length > 0">
           <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getTripsArrayByStatus.archiveTrips" :key="index">
-            <CabinetTrip :trip="trip" :actions="['delete', 'info', 'copy', 'edit', 'addDate']" @deleteTrip="deleteTrip"
-              @updateTrip="getAllTrips" />
+            <CabinetTrip :trip="trip"
+              :actions="['delete', 'info', 'copy', 'edit', 'addDate', 'transports', 'addLocation']"
+              @deleteTrip="deleteTrip" @updateTrip="getAllTrips" />
           </a-col>
         </a-row>
         <a-row :lg="8" :sm="12" :xs="24" v-else>
