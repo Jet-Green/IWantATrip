@@ -12,7 +12,8 @@ export const useAuth = defineStore('auth', {
         userStatus: 'user',
         user: {
             tripCalc: []
-        }
+        },
+        isRefreshing: false
     }),
     getters: {
         getUserStatus(state) {
@@ -99,16 +100,17 @@ export const useAuth = defineStore('auth', {
         },
         async checkAuth() {
             try {
+                if (this.isRefreshing) return
+                this.isRefreshing = true
                 //использовать service для вызова
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/auth/refresh`, { withCredentials: true })
                 localStorage.setItem('token', response.data.accessToken);
 
                 this.isAuth = true;
                 this.user = response.data.user
+                this.isRefreshing = false
             } catch (err) {
                 console.log(err);
-                // message.config({ duration: 3, top: '90vh' })
-                // message.error({ content: err.response?.data?.message })
             }
         },
         async logout() {
