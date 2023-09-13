@@ -22,6 +22,11 @@ let handleScroll = async () => {
 const wrapper = ref(null)
 
 onMounted(async () => {
+
+  if(route.hash) {
+    let id = route.hash.slice(1)
+    document.getElementById(id)?.scrollIntoView()
+  }
   wrapper.value.addEventListener("scroll", handleScroll);
   if (tripStore.trips.length == 0) {
     await tripStore.fetchTrips()

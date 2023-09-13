@@ -470,10 +470,10 @@ let formSchema = yup.object({
                         </a-col>
                     </a-row>
                 </Form>
-                <a-modal v-model:visible="visibleCropperModal" :footer="null">
+                <a-modal v-model:open="visibleCropperModal" :footer="null">
                     <ImageCropper @addImage="addPreview" />
                 </a-modal>
-                <a-modal v-model:visible="delPhotoDialog" :footer="null">
+                <a-modal v-model:open="delPhotoDialog" :footer="null">
                     <h3>Удалить фото?</h3>
                     <div class="d-flex justify-center">
                         <a-button class="mt-16" type="primary" @click="delPhoto">Да
