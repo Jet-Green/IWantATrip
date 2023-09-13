@@ -42,7 +42,7 @@ function getDate() {
 }
 </script>
 <template>
-  <div @click="goToTripPage" style="height: 100%;" class="trip-card">
+  <div @click="goToTripPage" style="height: 100%;" class="trip-card" :id = 'trip._id'>
     <div class="title d-flex direction-column space-between">
       <p class="ma-0">{{ trip.name }}</p>
       <p class="ma-0 pr-4" style="font-size:8px; text-align:right; text-transform: uppercase; ">{{ trip.tripType }}</p>

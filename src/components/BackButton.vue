@@ -5,7 +5,7 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 let router = useRouter();
 
 let props = defineProps({
-  backRoute: String,
+  backRoute: Object,
 });
 
 const getHistoryLength = () => { return window.history.length }
@@ -16,7 +16,8 @@ const sm = breakpoints.smaller("md");
 <template>
   <a-row type="flex" justify="center">
     <a-col :xs="22" :lg="16">
-      <span @click="getHistoryLength() > 0 ? router.back() : router.push('/')" style="font-size: 16px; line-height: 32px; cursor: pointer">
+      <span @click="backRoute ? router.push(backRoute) : router.back()"
+        style="font-size: 16px; line-height: 32px; cursor: pointer">
         <a-button shape="circle" type="text">
           <template #icon>
             <span class="mdi mdi-arrow-left" style="font-size:16px"></span>

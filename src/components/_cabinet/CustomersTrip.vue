@@ -295,7 +295,7 @@ onMounted(async () => {
             </div>
         </a-col>
     </a-row>
-    <a-modal v-model:visible="addTouristsDialog" :footer="null" title="Добавить туристов">
+    <a-modal v-model:open="addTouristsDialog" :footer="null" title="Добавить туристов">
         <a-row :gutter="[0, 8]">
             <a-col :span="12">
                 Имя
@@ -329,7 +329,7 @@ onMounted(async () => {
             </a-col>
         </a-row>
     </a-modal>
-    <a-modal v-model:visible="setPaymentDialog" :footer="null" title="Поставить оплату">
+    <a-modal v-model:open="setPaymentDialog" :footer="null" title="Поставить оплату">
         <a-row :gutter="[16, 16]">
             <a-col :span="24">
                 <div>К отплате: {{ billTotal(currentBill) }} руб.</div>
@@ -343,7 +343,7 @@ onMounted(async () => {
             </a-col>
         </a-row>
     </a-modal>
-    <a-modal v-model:visible="addCustomerDialog" :footer="null" title="Добавить покупателя">
+    <a-modal v-model:open="addCustomerDialog" :footer="null" title="Добавить покупателя">
         <a-row :gutter="[4, 4]">
             <a-col :span="24" :md="12">
                 Фaмилия Имя

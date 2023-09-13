@@ -26,7 +26,7 @@ const tripStore = useTrips();
 const userStore = useAuth();
 const locationStore = useLocations();
 
-const backRoute = "/trips";
+const backRoute = { name: 'TripsPage' ,  hash: `#${_id}` };
 
 const creatorsType = computed(() => {
     return trip.value.creatorForm[1] == "author"

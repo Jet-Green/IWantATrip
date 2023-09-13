@@ -26,7 +26,7 @@ let visible = ref(false);
 
 function find() {
   query.value = query.value.trim()
-  console.log("find")
+  localStorage.setItem("TripQuery", query.value)
   tripStore.searchCursor = 1
   tripStore.filteredTrips = []
   tripStore.cursor = 1
@@ -48,9 +48,11 @@ function find() {
     end.setMilliseconds(999)
 
     end = Number(Date.parse(end.toString()));
-
+    let filterTime = [start, end]
+    localStorage.setItem("TripfilterDate", filterTime)
     tripStore.fetchTrips(query.value, start, end);
   } else {
+    localStorage.setItem("TripfilterDate", '')
     tripStore.fetchTrips(
       query.value,
       "",
@@ -61,10 +63,16 @@ function find() {
 
 
 onMounted(() => {
+  query.value = localStorage.getItem("TripQuery") ?? '';
+  if(localStorage.getItem("TripfilterDate")){
+    let arr = localStorage.getItem("TripfilterDate").split(',').map(function(date) {
+      return dayjs(new Date(+date))
+  });
+  time.value = arr
+  }
   if (props.search) {
     query.value = props.search;
   }
-
 });
 </script>
 <template>
