@@ -2,7 +2,7 @@
 <template>
   <a-affix>
     <a-layout-footer>
-      <a-divider />
+      <!-- <a-divider /> -->
       <a-row type="flex" justify="center">
         <a-col :xs="24" :md="18">
           <a-row class="bottom_menu d-flex">

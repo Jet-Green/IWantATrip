@@ -1,6 +1,6 @@
 <script setup>
 // import MainPageMessage from '../components/sections/MainPageMessage.vue'
-// import CityGuide from "../components/sections/CityGuide.vue";
+import CityGuide from "../components/sections/CityGuide.vue";
 import ButtonsRow from "../components/sections/ButtonsRow.vue"
 import Companions from "../components/sections/Companions.vue";
 // import CreateTrip from "../components/sections/CreateTrip.vue";
@@ -18,7 +18,9 @@ import Footer from '../components/Footer.vue'
     <ToTrips />
     <FindTrip />
     <Companions />
-    <Footer />
+    <CityGuide/>
+    <Footer/>
+  
   </div>
 </template>
 <style lang="scss" scoped></style>

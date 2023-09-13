@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from "vue";
+import { useLocations } from '../../stores/locations'
 
+const locationStore = useLocations()
 let cards = [
   {
     title: "Посмотреть",
@@ -70,27 +72,20 @@ const handleChange = (value) => {
 </script>
 
 <template>
-  <a-row style="background-color: #f6f6f6" class="pa-16 justify-center">
+  <a-row style="background-color: #f6f6f6" class="pa-16 justify-center" id="guide">
     <a-col :xs="24" :md="20" :xl="16">
       <h2 style="text-align: center; margin-bottom: 0">Гид по городу</h2>
-
-      <div class="d-flex justify-center align-center">
-        <a-select
-          class="guide-select"
-          v-model:value="city"
-          :focus="focus"
-          @change="handleChange"
-          :bordered="false"
-        >
-          <a-select-option value="glazov"> Глазов </a-select-option>
-          <a-select-option value="izhevsk"> Ижевск </a-select-option>
-          <a-select-option value="perm"> Пермь </a-select-option>
-        </a-select>
+      <h3 class="d-flex justify-center align-center">
+        {{ locationStore.location.shortName }}
+      </h3>
+      <div class="d-flex">
+        <h3 style="border: solid 1px #ff6600; padding:8px; border-radius:5px; color:#ff6600; transform:rotate(-15deg); z-index: 99;">В разработке</h3>
       </div>
+     
 
       <a-row :gutter="[8, 8]" class="justify-center">
         <a-col v-for="(card, index) in cards" :key="index" :xs="12" :md="8">
-          <router-link :to="card.route">
+          <router-link to="">
             <a-card hoverable class="guide-card">
               <div>
                 <span class="mdi" :class="card.icon"> </span>
@@ -110,6 +105,7 @@ const handleChange = (value) => {
   font-size: 20px;
   margin-bottom: 16px;
 }
+
 .guide-card {
   font-size: clamp(1rem, 0.7983rem + 0.4202vw, 1.25rem);
   display: flex;
@@ -120,12 +116,13 @@ const handleChange = (value) => {
   aspect-ratio: 3/1;
   position: relative;
   padding: 8px;
-  .mdi{
+
+  .mdi {
     position: absolute;
     top: 8px;
     right: 8px;
     font-size: clamp(1.5rem, 1.1975rem + 0.6303vw, 1.875rem);
-    color:rgb(32, 95, 121);
+    color: rgb(32, 95, 121);
   }
 }
 </style>
