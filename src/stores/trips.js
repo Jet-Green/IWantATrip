@@ -48,6 +48,7 @@ export const useTrips = defineStore('trips', {
                         this.isFetching = false
                     }
                     this.trips.push(...response.data);
+                    this.trips = _.uniqBy(this.trips,'_id')
                     this.cursor++
                 }
             } catch (err) {
