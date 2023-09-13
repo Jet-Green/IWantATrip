@@ -382,7 +382,7 @@ let formSchema = yup.object({
               <h2>Создать тур</h2>
               <Field name="name" v-slot="{ value, handleChange }" v-model="form.name">
                 Название
-                <a-input placeholder="Название тура" @update:value="handleChange" :value="value" :maxlength="35"
+                <a-input placeholder="Название тура" @update:value="handleChange" :value="value" :maxlength="50"
                   show-count></a-input>
               </Field>
               <Transition name="fade">
