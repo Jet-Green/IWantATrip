@@ -69,7 +69,7 @@ function getImg(index) {
 </script>
 <template>
   <div style="overflow-x: hidden">
-    <BackButton :backRoute="'/cabinet/moderation'" />
+    <BackButton :backRoute="'/cabinet/moderation-trips'" />
 
     <a-row class="justify-center d-flex">
       <a-col :xs="22" :xl="16">
