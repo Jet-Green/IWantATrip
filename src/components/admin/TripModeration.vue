@@ -10,8 +10,6 @@ let tripStore = useTrips();
 let trip = ref({});
 let isModerated = ref(false);
 let isLoading = ref(false);
-let tripDates = ref([]);
-
 let moderationMessage = ref("");
 let router = useRouter();
 
@@ -67,26 +65,7 @@ const clearData = (dataString) => {
 function getImg(index) {
   return trip.value.images[index];
 }
-let finalCost = computed(() => {
-  if (!isInWaitingList.value) {
-    let sum = 0;
-    for (let date of tripDates.value) {
-      for (let cost of date.selectedCosts) {
-        sum += cost.cost * cost.count;
-      }
-    }
-    return sum;
-  } else {
-    let fixedCost = trip.value.transports[0].price;
-    let sum = 0;
-    for (let date of tripDates.value) {
-      for (let cost of date.selectedCosts) {
-        sum += fixedCost * cost.count;
-      }
-    }
-    return sum;
-  }
-});
+
 </script>
 <template>
   <div style="overflow-x: hidden">
@@ -141,35 +120,20 @@ let finalCost = computed(() => {
               Ключевые точки: <b>{{ trip.tripRoute }}</b>
             </div>
             <div>
-              Даты:
-              <div>
-                <a-checkable-tag
-                  class="pretty-tag"
-                  v-for="(date, index) of tripDates"
-                  :checked="date.selected"
-                  @change="selectDate(index)"
-                >
-                  <b>
-                    {{ clearData(date.start) }} -
-                    {{ clearData(date.end) }}
-                  </b>
-                  ({{ getCustomersCount(date.billsList) + "/" + trip.maxPeople }} чел.)
-                </a-checkable-tag>
-              </div>
-            </div>
-            <div>
               Ближайший выезд: <b>{{ clearData(trip.start) }}</b>
             </div>
             <div>
-              Цена
+              Цена:
               <div v-for="(item, index) in trip.cost" :key="index" class="cost">
                 {{ item.first }} : <b>{{ item.price }} руб.</b>
               </div>
             </div>
-            <div>
-              Бонусы:
-              <div v-for="(item, index) in trip.bonuses" :key="index">
-                <i>{{ item.type }} : {{ item.bonus }}</i>
+            <div v-if="trip.bonuses.length" class="d-flex">
+              Бонусы:&nbsp
+              <div>
+                <div v-for="(item, index) in trip.bonuses" :key="index">
+                  <i> {{ item.type }}: <b>{{ item.bonus }}</b> </i>
+                </div>
               </div>
             </div>
           </a-col>
@@ -177,19 +141,18 @@ let finalCost = computed(() => {
           <a-col :xs="24">
             <span v-html="trip.description"></span>
           </a-col>
+          <a-divider class="ma-0"></a-divider>
+          <a-col :xs="24" v-if="trip.returnConditions" class="mb-16">
+            <b>Условия возврата:</b> {{ trip.returnConditions }}
+          </a-col>
         </a-row>
       </a-col>
     </a-row>
 
     <a-row class="justify-center d-flex">
       <a-col :xs="22" :xl="16" class="justify-center d-flex">
-        <a-button
-          :loading="isLoading"
-          :disabled="isModerated"
-          @click="moderateTrip(trip._id)"
-          class="lets_go_btn ma-36"
-          type="primary"
-        >
+        <a-button :loading="isLoading" :disabled="isModerated" @click="moderateTrip(trip._id)" class="lets_go_btn ma-36"
+          type="primary">
           <span v-if="!isModerated">принять</span>
           <span v-else class="mdi mdi-check-outline"></span>
         </a-button>
@@ -200,12 +163,8 @@ let finalCost = computed(() => {
         <a-textarea placeholder="Комментарии" v-model:value="moderationMessage">
         </a-textarea>
         <div class="justify-center d-flex">
-          <a-button
-            :disabled="isModerated"
-            @click="sendModerationMessage"
-            class="btn_light ma-36"
-            >отправить на доработку</a-button
-          >
+          <a-button :disabled="isModerated" @click="sendModerationMessage" class="btn_light ma-36">отправить на
+            доработку</a-button>
         </div>
       </a-col>
     </a-row>
