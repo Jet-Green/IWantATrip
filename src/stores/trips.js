@@ -31,7 +31,7 @@ export const useTrips = defineStore('trips', {
 
             return TripService.createTrip(emailHtml, form, email, fullinfo)
         },
-        async fetchTrips(query, start, end) {
+        async fetchTrips(query, start, end, type) {
             try {
                 if (!this.isFetching) {
                     this.isFetching = true
@@ -41,10 +41,10 @@ export const useTrips = defineStore('trips', {
                         location = JSON.parse(location)
                     }
                     if (location?.name) {
-                        response = await TripService.fetchTrips(this.cursor, ...location.coordinates, query, start, end);
+                        response = await TripService.fetchTrips(this.cursor, ...location.coordinates, query, start, end, type);
                         this.isFetching = false
                     } else {
-                        response = await TripService.fetchTrips(this.cursor, '', '', query, start, end);
+                        response = await TripService.fetchTrips(this.cursor, '', '', query, start, end, type);
                         this.isFetching = false
                     }
                     this.trips.push(...response.data);

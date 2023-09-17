@@ -1,7 +1,8 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
-import { useTrips } from '../../stores/trips.js'
+import { useTrips } from '../../stores/trips.js';
+import { useAppState } from "../../stores/appState";
 
 import dayjs from "dayjs";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
@@ -16,15 +17,18 @@ let props = defineProps({
 
 const router = useRouter();
 const tripStore = useTrips();
+const appStore = useAppState();
 
 let time = ref(null);
 let query = ref("");
+let type = ref("");
 
 let loading = ref(false)
 
 let visible = ref(false);
 
 function find() {
+  console.log(type.value);
   query.value = query.value.trim()
   localStorage.setItem("TripQuery", query.value)
   tripStore.searchCursor = 1
@@ -50,13 +54,14 @@ function find() {
     end = Number(Date.parse(end.toString()));
     let filterTime = [start, end]
     localStorage.setItem("TripfilterDate", filterTime)
-    tripStore.fetchTrips(query.value, start, end);
+    tripStore.fetchTrips(query.value, start, end, type.value);
   } else {
     localStorage.setItem("TripfilterDate", '')
     tripStore.fetchTrips(
       query.value,
       "",
       "",
+      type.value,
     );
   }
 }
@@ -64,11 +69,11 @@ function find() {
 
 onMounted(() => {
   query.value = localStorage.getItem("TripQuery") ?? '';
-  if(localStorage.getItem("TripfilterDate")){
-    let arr = localStorage.getItem("TripfilterDate").split(',').map(function(date) {
+  if (localStorage.getItem("TripfilterDate")) {
+    let arr = localStorage.getItem("TripfilterDate").split(',').map(function (date) {
       return dayjs(new Date(+date))
-  });
-  time.value = arr
+    });
+    time.value = arr
   }
   if (props.search) {
     query.value = props.search;
@@ -80,11 +85,10 @@ onMounted(() => {
     <a-col :xs="22" :md="12">
       <a-row class="mb-8" type="flex" justify="center">
         <a-col :xs="24" :md="12" class="d-flex">
-          
           <a-input-search v-model:value="query" placeholder="поиск" enter-button style="z-index: 0" @search="find()" />
           <span class="mdi mdi-24px mdi-filter-outline ml-16" :class="{ active_filter: visible, filter: !visible }"
             @click="visible = !visible">
-            <a-range-picker style="width: 100%" v-model:value="time" :locale="ruLocale" /></span>
+          </span>
         </a-col>
       </a-row>
       <Transition name="fade">
@@ -92,6 +96,13 @@ onMounted(() => {
           <a-row type="flex" justify="center" class="mt-16">
             <a-col :xs="24" :md="12">
               <a-range-picker style="width: 100%" v-model:value="time" :locale="ruLocale" />
+            </a-col>
+            <a-col :xs="24" :md="12">
+              <a-select v-model:value="type" style="width: 100%">
+                <a-select-option v-for="   tripType    in    appStore.appState[0].tripType   " :value="tripType">{{
+                  tripType
+                }}</a-select-option>
+              </a-select>
             </a-col>
           </a-row>
           <a-row type="flex" justify="center" class="mt-8">
