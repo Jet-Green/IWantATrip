@@ -55,6 +55,7 @@ onMounted(async () => {
   <a-config-provider :theme="{
     token: {
       colorPrimary: '#ff6600',
+      colorInfo: '#ff6600',
       colorSuccess: '#BCC662',
       borderRadius: 0,
       fontFamily: 'Montserrat',

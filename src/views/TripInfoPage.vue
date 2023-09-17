@@ -378,7 +378,7 @@ onMounted(async () => {
                             Ключевые точки: <b>{{ trip.tripRoute }}</b>
                         </div>
                         <div class="d-flex">
-                            Даты: &nbsp
+                            Дата начала тура: &nbsp
                             <div>
                                 <a-checkable-tag class="pretty-tag" v-for="(date, index) of tripDates"
                                     :checked="date.selected" @change="selectDate(index)">
