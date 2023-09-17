@@ -83,7 +83,8 @@ onMounted(() => {
           
           <a-input-search v-model:value="query" placeholder="поиск" enter-button style="z-index: 0" @search="find()" />
           <span class="mdi mdi-24px mdi-filter-outline ml-16" :class="{ active_filter: visible, filter: !visible }"
-            @click="visible = !visible"></span>
+            @click="visible = !visible">
+            <a-range-picker style="width: 100%" v-model:value="time" :locale="ruLocale" /></span>
         </a-col>
       </a-row>
       <Transition name="fade">
