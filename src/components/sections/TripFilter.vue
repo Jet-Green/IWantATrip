@@ -107,7 +107,7 @@ onMounted(() => {
 
         <a-col class="d-flex direction-column" >
           <div  style="font-size:10px; line-height:10px">тип тура</div>
-          <a-select v-model:value="type" style="min-width:180px"  placeholder="Tags Mode">
+          <a-select v-model:value="type" style="min-width:180px" >
             <a-select-option  value="" ></a-select-option>
             <a-select-option placeholder="Tип тура" v-for="   tripType    in    appStore.appState[0].tripType   "
               :value="tripType">{{
@@ -118,7 +118,7 @@ onMounted(() => {
 
         <a-col class="d-flex direction-column">
           <div  style="font-size:10px; line-height:10px">даты</div>
-          <a-range-picker v-model:value="time" :locale="ruLocale" />
+          <a-range-picker v-model:value="time" :locale="ruLocale" :placeholder="['начало','конец']" />
         </a-col>
 
 
