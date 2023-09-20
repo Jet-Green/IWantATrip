@@ -100,14 +100,14 @@ onMounted(() => {
 
       <a-row :gutter="[8, 4]" class="d-flex justify-center  flex-wrap">
         <a-col class="d-flex direction-column"> 
-             <div for="search" style="font-size:10px; line-height:10px">искать</div>
-          <a-input v-model:value="query" placeholder="сочи" name="search" style="z-index: 0" />
+             <div for="search" style="font-size:10px; line-height:10px; " >искать</div>
+          <a-input v-model:value="query" placeholder="сочи" name="search" style="z-index: 0; width:150px" />
       
         </a-col>
 
         <a-col class="d-flex direction-column" >
           <div  style="font-size:10px; line-height:10px">тип тура</div>
-          <a-select v-model:value="type" style="min-width:180px" >
+          <a-select v-model:value="type" style="width:150px" >
             <a-select-option  value="" ></a-select-option>
             <a-select-option placeholder="Tип тура" v-for="   tripType    in    appStore.appState[0].tripType   "
               :value="tripType">{{
@@ -118,14 +118,14 @@ onMounted(() => {
 
         <a-col class="d-flex direction-column">
           <div  style="font-size:10px; line-height:10px">даты</div>
-          <a-range-picker v-model:value="time" :locale="ruLocale" :placeholder="['начало','конец']" />
+          <a-range-picker v-model:value="time" :locale="ruLocale" :placeholder="['начало','конец']" inputmode='none' />
         </a-col>
 
 
         <a-col  class="d-flex align-end">
           <div>
               <a-tooltip title="Искать">
-            <a-button type="primary" shape="circle" @click="find">
+            <a-button type="primary" shape="circle" @click="find" class="mr-4">
               <span class=" mdi mdi-magnify">
               </span>
 
@@ -133,7 +133,7 @@ onMounted(() => {
             </a-button>
           </a-tooltip>
           <a-tooltip title="Очистить">
-            <a-button shape="circle" @click="resetForm">
+            <a-button shape="circle" @click="resetForm" >
               <span class=" mdi mdi-close">
               </span>
               
