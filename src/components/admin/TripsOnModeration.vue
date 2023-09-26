@@ -5,7 +5,9 @@ import { useRouter } from 'vue-router'
 
 let tripStore = useTrips()
 let tripsOnMod = ref([])
+let rejectedTrips = ref([])
 let router = useRouter()
+let tripsStatus = ref('tripsOnModeration')
 
 async function tripToDelete(_id) {
     let response = await tripStore.deleteById(_id);
@@ -30,6 +32,9 @@ const clearData = (dataString) => {
 async function refreshTripsOnModeration() {
     let { data } = await tripStore.findForModeration()
     tripsOnMod.value = data
+    console.log(await tripStore.findRejectedTrips());
+    rejectedTrips.value = (await tripStore.findRejectedTrips())
+
 }
 
 onMounted(async () => {
@@ -40,7 +45,11 @@ onMounted(async () => {
     <a-row>
         <a-col :span="24">
             <h3>Туры на модерации</h3>
-            <a-row :gutter="[8, 8]" class="mt-8">
+            <a-radio-group v-model:value="tripsStatus">
+                <a-radio value="tripsOnModeration">На модерации</a-radio>
+                <a-radio value="rejected">Откaзaнные</a-radio>
+            </a-radio-group>
+            <a-row :gutter="[8, 8]" class="mt-8" v-if="tripsStatus == 'tripsOnModeration'">
                 <a-col :lg="8" :sm="12" :xs="24" v-if="tripsOnMod.length > 0" v-for="(trip, index) of tripsOnMod"
                     :key="index">
                     <a-card class="card" hoverable>
@@ -72,6 +81,40 @@ onMounted(async () => {
                 </a-col>
                 <a-col :span="24" v-else>
                     Нет туров на модерации
+                </a-col>
+            </a-row>
+            <a-row :gutter="[8, 8]" class="mt-8" v-if="tripsStatus == 'rejected'">
+                <a-col :lg="8" :sm="12" :xs="24" v-if="rejectedTrips.length > 0" v-for="(trip, index) of rejectedTrips"
+                    :key="index">
+                    <a-card class="card" hoverable>
+                        <div style="text-align:center">
+                            {{ trip.name }}
+                        </div>
+                        <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
+                        <div>
+                            <span class="mdi mdi-compass-outline"></span> {{ trip.startLocation.name }}
+                        </div>
+                        <div>
+                            <span class="mdi mdi-calendar-arrow-right"></span>
+                            {{ `c ${clearData(trip.start)}` }}
+                            <span class="mdi mdi-calendar-arrow-left"></span>
+                            {{ `по ${clearData(trip.end)}` }}
+                        </div>
+                        <div class="mt-8">Автор: {{ trip.author.fullinfo.fullname }}</div>
+
+                        <div class="actions d-flex justify-center">
+                            <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет"
+                                @confirm="tripToDelete(trip._id)" v-if="!trip.billsList.length > 0">
+                                <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+                            </a-popconfirm>
+                            <span class="mdi mdi-check-decagram-outline"
+                                @click="router.push(`/trip-moderation?_id=${trip._id}`)"
+                                style="color: #245159; cursor: pointer"></span>
+                        </div>
+                    </a-card>
+                </a-col>
+                <a-col :span="24" v-else>
+                    Нет отказаных туров
                 </a-col>
             </a-row>
         </a-col>

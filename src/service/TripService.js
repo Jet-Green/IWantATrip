@@ -50,8 +50,9 @@ export default {
     getUserTrips(ids) {
         return $api.post(`/trips/get-user-trips`, ids)
     },
-
-
+    findRejectedTrips() {
+        return $api.get('/admin/rejected-trips')
+    },
     findForModeration() {
         return $api.get('/admin/trips-on-moderation')
     },
