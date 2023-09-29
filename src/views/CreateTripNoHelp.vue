@@ -560,8 +560,7 @@ let formSchema = yup.object({
 
             <a-col :span="24" style="display: flex; flex-direction: column">
               Описание программы
-              <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" :toolbar="[
-                // [{ header: [2, 3] }],
+              <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" toolbar="[
                 ['bold', 'italic', 'underline'],
                 [{ list: 'ordered' }, { list: 'bullet' }],
                 [{ color: ['#000000', '#ff6600', '#3daff5'] }],
