@@ -415,7 +415,7 @@ onMounted(async () => {
                             Бонусы:&nbsp
                             <div>
                                 <div v-for="(item, index) in trip.bonuses" :key="index">
-                                    <i> {{ item.type }}: <b>{{ item.bonus }}</b> </i>
+                                    <i> {{ item.type }} <b>{{ item.bonus }}</b> </i>
                                 </div>
                             </div>
 

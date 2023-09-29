@@ -62,7 +62,7 @@ const ageString = (age) => {
             <a-card class="card" hoverable>
               <div>
                 <span class="mdi mdi-human-male-female"></span>{{ companion.name }} <span
-                  class="mdi mdi-human-cane"></span>{{ ageString(companion.age) }}
+                  class="mdi mdi-human-male-height"></span>{{ ageString(companion.age) }}
               </div>
 
               <div>
