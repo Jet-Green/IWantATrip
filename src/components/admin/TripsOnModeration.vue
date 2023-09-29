@@ -32,8 +32,8 @@ const clearData = (dataString) => {
 async function refreshTripsOnModeration() {
     let { data } = await tripStore.findForModeration()
     tripsOnMod.value = data
-    console.log(await tripStore.findRejectedTrips());
-    rejectedTrips.value = (await tripStore.findRejectedTrips())
+    let rejected = await tripStore.findRejectedTrips()
+    rejectedTrips.value = rejected.data
 
 }
 
