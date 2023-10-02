@@ -115,6 +115,7 @@ function getImg(index) {
     return trip.value.images[index];
 }
 function getLink() {
+    console.log(API_URL + route.fullPath)
     return API_URL + route.fullPath
 }
 
