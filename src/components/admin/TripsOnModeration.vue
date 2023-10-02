@@ -22,9 +22,9 @@ watch(tripsStatus, (status) => {
                 <a-radio value="tripsOnModeration">На модерации</a-radio>
                 <a-radio value="rejected">Откaзaнные</a-radio>
             </a-radio-group>
-            <a-row>
+      
                 <router-view />
-            </a-row>
+   
         </a-col>
     </a-row>
 </template>

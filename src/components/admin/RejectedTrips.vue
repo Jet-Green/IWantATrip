@@ -1,7 +1,10 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useTrips } from '../../stores/trips';
+import { useRouter } from "vue-router";
 
+
+let router = useRouter();
 let tripStore = useTrips()
 let rejectedTrips = ref([])
 

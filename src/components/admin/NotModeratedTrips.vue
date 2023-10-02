@@ -8,7 +8,7 @@ let tripsOnMod = ref([])
 let router = useRouter()
 
 async function tripToDelete(_id) {
-    let response = await tripStore.deleteById(_id);
+    await tripStore.deleteById(_id);
     await refreshTripsOnModeration()
 }
 const clearData = (dataString) => {

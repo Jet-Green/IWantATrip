@@ -69,7 +69,7 @@ let form = reactive({
   author: "",
   startLocation: null,
   bonuses: [],
-  returnConditions: ''
+  returnConditions: '',
 });
 let fullUserInfo = null;
 
@@ -141,7 +141,8 @@ function submit() {
       startLocation: "",
       bonuses: [],
       returnConditions: "",
-      isModerated: false
+      isModerated: false,
+     
     });
     images = [];
     // pdf = [];
@@ -191,6 +192,7 @@ function submit() {
   }
 
   form.author = userStore.user._id
+  form.createdDay = Date.now()
   form.includedLocations = { type: 'GeometryCollection', geometries: [] }
 
   TripStore.createTrip(form, userStore.user).then(async (res) => {
@@ -291,6 +293,7 @@ watch(locationSearchRequest, async (newValue, oldValue) => {
 })
 watch(description, (newValue) => {
   newContent = newValue;
+  
   form.description = description.value;
   if (newContent === newValue) return;
   quill.value.setHTML(newValue);
@@ -560,7 +563,7 @@ let formSchema = yup.object({
 
             <a-col :span="24" style="display: flex; flex-direction: column">
               Описание программы
-              <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" toolbar="[
+              <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" :toolbar="[
                 ['bold', 'italic', 'underline'],
                 [{ list: 'ordered' }, { list: 'bullet' }],
                 [{ color: ['#000000', '#ff6600', '#3daff5'] }],

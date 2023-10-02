@@ -69,7 +69,7 @@ watch(current, (newRout, oldRout) => {
               <template #title>
                 Модерация
               </template>
-              <a-menu-item key="/cabinet/moderation-trips">Туры</a-menu-item>
+              <a-menu-item key="/cabinet/moderation-trips/not-moderated-trips">Туры</a-menu-item>
               <a-menu-item key="/cabinet/moderation-companions">Попутчики</a-menu-item>
             </a-sub-menu>
             <a-menu-item key="/cabinet/orders">Заказы</a-menu-item>
