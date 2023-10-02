@@ -195,7 +195,7 @@ const router = createRouter({
           component: () => import('../components/_cabinet/Orders.vue'),
         },
         {
-          path: 'moderation-trips',
+          path: 'moderation-trips/',
           name: 'TripsOnModeration',
           component: () => import('../components/admin/TripsOnModeration.vue'),
           beforeEnter: () => {
@@ -203,7 +203,17 @@ const router = createRouter({
             if (!userStore.user?.roles.includes('admin')) {
               return false
             }
-          }
+          },
+          children:[
+            {
+              path: 'rejected-trips',
+              component: () => import('../components/admin/RejectedTrips.vue'),
+            },
+            {
+              path: 'not-moderated-trips',
+              component: () => import('../components/admin/NotModeratedTrips.vue'),
+            },
+          ]
         },
         {
           path: 'moderation-companions',

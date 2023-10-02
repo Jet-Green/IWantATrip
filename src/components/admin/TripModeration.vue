@@ -22,7 +22,7 @@ async function moderateTrip(_id) {
       setTimeout(() => {
         isModerated.value = true;
         isLoading.value = false;
-        router.push("/cabinet/moderation-trips");
+        router.push("/cabinet/moderation-trips/not-moderated-trips");
       }, 500);
     } else {
       isModerated.value = false;
@@ -36,7 +36,7 @@ async function sendModerationMessage() {
     moderationMessage.value
   );
   if (res.status == 200) {
-    router.push("/cabinet/moderation-trips");
+    router.push("/cabinet/moderation-trips/not-moderated-trips");
   }
 }
 

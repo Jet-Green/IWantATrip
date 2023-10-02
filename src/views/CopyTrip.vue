@@ -120,7 +120,7 @@ function submit() {
     if (submitCount.value > 1) {
         return
     }
-    description.value = description.value.split("<p><br></p>").join("");
+    description.value = description.value?.split("<p><br></p>").join("");
     form.description = description.value;
     form.author = author;
     let send = {};
@@ -613,10 +613,10 @@ let formSchema = yup.object({
                         </a-col>
                     </a-row>
                 </Form>
-                <a-modal v-model:visible="visibleCropperModal" :footer="null">
+                <a-modal v-model:open="visibleCropperModal" :footer="null">
                     <ImageCropper @addImage="addPreview" />
                 </a-modal>
-                <a-modal v-model:visible="delPhotoDialog" :footer="null">
+                <a-modal v-model:open="delPhotoDialog" :footer="null">
                     <h3>Удалить фото?</h3>
                     <div class="d-flex justify-center">
                         <a-button class="mt-16" type="primary" size="large" @click="delPhoto">Да
