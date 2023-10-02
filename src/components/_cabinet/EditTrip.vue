@@ -64,7 +64,8 @@ let form = ref({
     fromAge: "",
     startLocation: null,
     bonuses: [],
-    returnConditions: ''
+    returnConditions: '',
+    rejected: false,
 });
 
 const removeCost = (item) => {
@@ -107,7 +108,7 @@ function submit() {
     description.value = description.value.split("<p><br></p>").join("");
     form.value.description = description.value;
     form.value.isModerated = false
-
+    form.value.rejected = false
     TripService.updateTrip(form.value).then((res) => {
         const _id = res.data._id;
         let imagesFormData = new FormData();

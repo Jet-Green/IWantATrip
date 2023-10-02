@@ -63,7 +63,7 @@ let form = reactive({
   distance: "",
   cost: [],
   offer: "",
-  description: description.value,
+  description: "",
   tripType: "",
   fromAge: "",
   author: "",
@@ -110,7 +110,7 @@ function submit() {
 
   const regexEmoji = /(?![*#0-9]+)[\p{Emoji}\p{Emoji_Modifier}\p{Emoji_Component}\p{Emoji_Modifier_Base}\p{Emoji_Presentation}]/gu
   const regexSpaces = /[\n\r\s\t]+/g
-  description.value = description.value.split("<p><br></p>").join("").replace(/<img.*?>/g, '');
+
   form.description = description.value.replace(regexEmoji, '').replace(regexSpaces, ' ');
   form.author = author;
   let send = {};
@@ -563,6 +563,7 @@ let formSchema = yup.object({
 
             <a-col :span="24" style="display: flex; flex-direction: column">
               Описание программы
+  
               <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" :toolbar="[
                 ['bold', 'italic', 'underline'],
                 [{ list: 'ordered' }, { list: 'bullet' }],
