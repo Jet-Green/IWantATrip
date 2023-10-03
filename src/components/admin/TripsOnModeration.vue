@@ -6,7 +6,7 @@ let tripsStatus = ref('tripsOnModeration')
 let router = useRouter();
 
 watch(tripsStatus, (status) => {
-    localStorage.setItem("tripsStatus", status)
+    localStorage.setItem("moderationTripsStatus", status)
     if (status === 'tripsOnModeration') {
         return router.push('/cabinet/moderation-trips/not-moderated-trips')
     }
@@ -15,7 +15,7 @@ watch(tripsStatus, (status) => {
     }
 });
 onMounted(() => {
-    tripsStatus.value = localStorage.getItem("tripsStatus") ? localStorage.getItem("tripsStatus") : 'tripsOnModeration'
+    tripsStatus.value = localStorage.getItem("moderationTripsStatus") ? localStorage.getItem("moderationTripsStatus") : 'tripsOnModeration'
 });
 </script>
 <template>
