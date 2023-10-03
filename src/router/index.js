@@ -173,6 +173,20 @@ const router = createRouter({
         {
           path: 'created-trips',
           component: () => import('../components/_cabinet/CreatedTrips.vue'),
+          children: [
+            {
+              path: 'created-trip-on-moderation',
+              component: () => import('../components/_cabinet/CreatedTripsOnModeration.vue'),
+            },
+            {
+              path: 'created-active-trips',
+              component: () => import('../components/_cabinet/ActiveTrips.vue'),
+            },
+            {
+              path: 'created-archived-trips',
+              component: () => import('../components/_cabinet/ArchivedTrips.vue'),
+            },
+          ]
         },
         {
           path: 'customers-trip',
@@ -204,7 +218,7 @@ const router = createRouter({
               return false
             }
           },
-          children:[
+          children: [
             {
               path: 'rejected-trips',
               component: () => import('../components/admin/RejectedTrips.vue'),
