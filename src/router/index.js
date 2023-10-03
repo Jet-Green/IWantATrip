@@ -6,6 +6,11 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/payment',
+      name: 'Payment',
+      component: () => import('../views/Payment.vue')
+    },
+    {
       path: '/',
       name: 'Landing',
       component: () => import('../views/Landing.vue'),
@@ -204,7 +209,7 @@ const router = createRouter({
               return false
             }
           },
-          children:[
+          children: [
             {
               path: 'rejected-trips',
               component: () => import('../components/admin/RejectedTrips.vue'),
