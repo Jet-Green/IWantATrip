@@ -1,6 +1,8 @@
 <script setup>
 import { ref, computed, onMounted, getCurrentInstance } from "vue";
 
+import tinkoffPlugin from '../plugins/tinkoff'
+
 import { useRoute } from "vue-router";
 import BackButton from "../components/BackButton.vue";
 import WaitingList from "../components/WaitingList.vue";
@@ -26,7 +28,7 @@ const tripStore = useTrips();
 const userStore = useAuth();
 const locationStore = useLocations();
 
-const backRoute = { name: 'TripsPage' ,  hash: `#${_id}` };
+const backRoute = { name: 'TripsPage', hash: `#${_id}` };
 
 const creatorsType = computed(() => {
     return trip.value.creatorForm[1] == "author"
@@ -217,7 +219,8 @@ let getStartLocationNames = computed(() => {
     }
     return results.join(', ')
 })
-async function buyTrip(isBoughtNow) {
+let buyNow = ref(false)
+async function buyTrip() {
     if (userStore.user.email) {
         // цены нужно поменять
         if (isInWaitingList.value) {
@@ -226,9 +229,10 @@ async function buyTrip(isBoughtNow) {
                 c.costType = 'в листе ожидания'
             }
         }
+
         if (selectedDate.value.selected) {
             let bill = {
-                isBoughtNow,
+                isBoughtNow: buyNow.value,
                 cart: selectedDate.value.selectedCosts,
                 tripId: selectedDate.value._id,
                 userInfo: {
@@ -242,6 +246,17 @@ async function buyTrip(isBoughtNow) {
                     phone: userStore.user.fullinfo.phone,
                 }]
             };
+            if (buyNow.value) {
+                const orderId = Date.now().toString() + '_' + userStore.user._id
+
+                let { data, token } = await tinkoffPlugin.initPayment(orderId, finalCost.value * 100)
+                bill.tinkoff = {
+                    orderId: data.OrderId,
+                    amount: data.Amount,
+                    token
+                }
+                window.open(data.PaymentURL, '_blank')
+            }
 
             for (let i = 0; i < bill.cart.length; i++) {
                 if (bill.cart[i].count == 0) {
@@ -317,7 +332,7 @@ onMounted(async () => {
                 <p><i> {{ trip.offer }}</i> </p>
 
                 <a-spin v-if="!trip._id" size="large"></a-spin>
-                <a-row v-if="trip._id" :gutter="[12, 12]" class="text justify-center d-flex" >
+                <a-row v-if="trip._id" :gutter="[12, 12]" class="text justify-center d-flex">
 
                     <a-col :xs="24" :md="12">
                         <a-carousel arrows dots-class="slick-dots slick-thumb">
@@ -506,7 +521,7 @@ onMounted(async () => {
             </a-col>
         </a-row>
         <a-modal v-model:open="buyDialog" :footer="null" @cancel="refreshDates(trip)">
-            <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="buyTrip(false)" class="mt-16">
+            <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="buyTrip" class="mt-16">
                 <a-row :gutter="[4, 4]">
 
                     <a-col :span="12">
@@ -576,8 +591,11 @@ onMounted(async () => {
 
                     <a-col :span="24">
                         <div class="d-flex space-around">
-                            <!-- <a-button type="primary" @click="buyTrip(true)"> сейчас </a-button> -->
-                            <a-button html-type="submit" type="primary" class="lets_go_btn" :disabled="isNoPlaces">
+                            <a-button html-type="submit" type="primary" class="lets_go_btn" :disabled="isNoPlaces"
+                                @click="buyNow = true">
+                                сейчас </a-button>
+                            <a-button html-type="submit" type="primary" class="lets_go_btn" @click="buyNow = false"
+                                :disabled="isNoPlaces">
                                 Заказать
                             </a-button>
                         </div>
