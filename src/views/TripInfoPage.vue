@@ -253,7 +253,8 @@ async function buyTrip() {
                 bill.tinkoff = {
                     orderId: data.OrderId,
                     amount: data.Amount,
-                    token
+                    token,
+                    paymentId: data.PaymentId
                 }
                 window.open(data.PaymentURL, '_blank')
             }

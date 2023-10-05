@@ -1,5 +1,8 @@
 <script setup>
 import { ref, onMounted, computed, getCurrentInstance } from "vue";
+
+import tinkoffPlugin from '../../plugins/tinkoff'
+
 import { useRoute } from "vue-router";
 import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
@@ -191,6 +194,12 @@ function getPhoneNumber(number) {
 
 async function updateTripInfo() {
     let { data } = await tripStore.getFullTripById(route.query._id)
+    for (let b of data.billsList) {
+        if (b.tinkoff) {
+            let res = await tinkoffPlugin.checkOrder(b.tinkoff.orderId, b.tinkoff.amount)
+            console.log(res)
+        }
+    }
     trip.value = data;
 }
 onMounted(async () => {
