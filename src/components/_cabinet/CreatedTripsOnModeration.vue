@@ -14,7 +14,10 @@ let query = ref('')
 let getTripsOnModeration = computed(() => {
     let OnModerationTrips = [];
     for (let trip of filteredTrips.value) {
-        if (!trip.isModerated & trip.start < Date.now()) {
+        if (trip.start < Date.now()) {
+            continue
+        }
+        if (!trip.isModerated) {
             OnModerationTrips.push(trip)
         }
     }
@@ -65,9 +68,9 @@ onMounted(async () => {
     <a-col :span="24" v-if="loading" class="d-flex justify-center">
         <a-spin size="large" />
     </a-col>
-    <a-col :span="24" v-else><a-row :gutter="[8, 8]" class="mt-8" v-if="getTripsOnModeration.length > 0">
+    <a-col :span="24" v-else>
+        <a-row :gutter="[8, 8]" class="mt-8" v-if="getTripsOnModeration.length > 0">
             <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getTripsOnModeration" :key="index">
-
                 <CabinetTrip :trip="trip" :actions="['delete', 'info', 'edit', 'msg', 'transports']"
                     @deleteTrip="deleteTrip" @updateTrip="getAllTrips" />
             </a-col>

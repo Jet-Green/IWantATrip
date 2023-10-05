@@ -1,31 +1,11 @@
 <script setup>
-import { ref, onMounted, watch, computed, } from "vue";
-import CabinetTrip from "../cards/CabinetTrip.vue";
-import { useAuth } from "../../stores/auth.js";
-import { useTrips } from "../../stores/trips.js";
+import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 
-let userStore = useAuth();
-let tripStore = useTrips();
 let router = useRouter();
 
-let allTrips = ref([])
 let tripsStatus = ref('')
-let loading = ref(true)
-let query = ref('')
 
-async function getAllTrips() {
-  loading.value = true
-  let userId = userStore.user._id
-  let response = await tripStore.getCreatedTripsInfoByUserId(userId)
-
-  allTrips.value = response.data
-  loading.value = false
-}
-
-// watch(query, () => {
-//   query.value.length <= 3 ? localStorage.setItem("cabinetQuery", '') : null
-// })
 watch(tripsStatus, (status) => {
   localStorage.setItem("createdTripsStatus", status)
   if (status === 'tripsInWork') {
@@ -40,8 +20,6 @@ watch(tripsStatus, (status) => {
 });
 onMounted(async () => {
   tripsStatus.value = localStorage.getItem("createdTripsStatus") ? localStorage.getItem("createdTripsStatus") : 'tripsInWork'
-  query.value = localStorage.getItem("cabinetQuery") ?? '';
-  await getAllTrips()
 });
 
 </script>
