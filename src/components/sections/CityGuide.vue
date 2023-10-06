@@ -5,6 +5,11 @@ import { useLocations } from '../../stores/locations'
 const locationStore = useLocations()
 let cards = [
   {
+    title: "Афиша",
+    icon: "mdi-movie-roll",
+    route: "/poster",
+  },
+  {
     title: "Посмотреть",
     icon: "mdi-eiffel-tower",
     route: "/watch",
@@ -18,11 +23,6 @@ let cards = [
     title: "Жилье",
     icon: "mdi-home-city-outline",
     route: "/stay",
-  },
-  {
-    title: "Афиша",
-    icon: "mdi-movie-roll",
-    route: "/poster",
   },
   {
     title: "Экскурсии",
@@ -78,14 +78,15 @@ const handleChange = (value) => {
       <h3 class="d-flex justify-center align-center">
         {{ locationStore.location.shortName }}
       </h3>
-      <div class="d-flex">
-        <h3 style="border: solid 1px #ff6600; padding:8px; border-radius:5px; color:#ff6600; transform:rotate(-15deg); z-index: 99;">В разработке</h3>
-      </div>
-     
 
       <a-row :gutter="[8, 8]" class="justify-center">
         <a-col v-for="(card, index) in cards" :key="index" :xs="12" :md="8">
-          <router-link to="">
+          <div class="d-flex" v-if="card.route != '/poster'">
+            <h3
+              style="border: solid 1px #ff6600; padding:8px; border-radius:5px; color:#ff6600; transform:rotate(-15deg); z-index: 99;">
+              В разработке</h3>
+          </div>
+          <router-link :to="card.route == '/poster' ? card.route : ''">
             <a-card hoverable class="guide-card">
               <div>
                 <span class="mdi" :class="card.icon"> </span>

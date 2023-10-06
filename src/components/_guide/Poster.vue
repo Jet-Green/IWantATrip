@@ -1,16 +1,18 @@
 <script setup>
 import BackButton from "../BackButton.vue";
 
-import { useRouter } from 'vue-router';
-import { useGuide } from "../../stores/guide";
-
 import PosterService from "../../service/PosterService"
 import { onMounted, ref } from "vue";
+import axios from "axios";
 
 let posters = ref()
 
 onMounted(async () => {
-  let response = await PosterService.getPosters()
+  let response = await axios.post('http://localhost:3031/api/get-all', {}, {
+    headers: {
+      "Authorization": `Bearer ${123}`
+    }
+  })
   posters.value = response.data
   console.log(posters.value)
 })
@@ -22,14 +24,14 @@ onMounted(async () => {
       <a-col :xs="22" :lg="16">
         <p>Афиша</p>
       </a-col>
-        <a-col v-for="poster in posters">
-          <a-col>
+      <a-col v-for="poster in posters">
+        <a-col>
           <a-card>
             <a-card-grid style="width: 50%; text-align: center">{{ poster.image }}</a-card-grid>
             <a-card-grid style="width: 50%; text-align: center" :hoverable="false">{{ poster.title }}</a-card-grid>
           </a-card>
         </a-col>
-        </a-col>
+      </a-col>
     </a-row>
   </div>
 </template>
