@@ -20,17 +20,22 @@ onMounted(async () => {
 <template>
   <div>
     <BackButton />
-    <a-row type="flex" justify="center">
+
+    <a-row class="d-flex justify-center">
       <a-col :xs="22" :lg="16">
-        <p>Афиша</p>
+        <h2>
+          Афиши
+        </h2>
       </a-col>
-      <a-col v-for="poster in posters">
-        <a-col>
-          <a-card>
-            <a-card-grid style="width: 50%; text-align: center">{{ poster.image }}</a-card-grid>
-            <a-card-grid style="width: 50%; text-align: center" :hoverable="false">{{ poster.title }}</a-card-grid>
-          </a-card>
-        </a-col>
+    </a-row>
+
+    <a-row type="flex" justify="center">
+      <a-col span="24" :md="4" v-for="poster in posters">
+        <a-card class="ma-8">
+          <template #cover>
+            <img alt="example" :src="poster.image" />
+          </template>
+        </a-card>
       </a-col>
     </a-row>
   </div>
