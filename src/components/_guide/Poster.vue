@@ -6,21 +6,20 @@ import { onMounted, ref } from "vue";
 import axios from "axios";
 
 let posters = ref()
+const backRoute = { name: 'Landing' ,  hash: '#guide' };
 
 onMounted(async () => {
-  let response = await axios.post('http://localhost:3031/api/get-all', {}, {
+  let response = await axios.post('https://plpo.ru/api/get-all', {}, {
     headers: {
       "Authorization": `Bearer ${123}`
     }
   })
   posters.value = response.data
-  console.log(posters.value)
 })
 </script>
 <template>
   <div>
-    <BackButton />
-
+    <BackButton :backRoute="backRoute" />
     <a-row class="d-flex justify-center">
       <a-col :xs="22" :lg="16">
         <h2>
@@ -28,14 +27,20 @@ onMounted(async () => {
         </h2>
       </a-col>
     </a-row>
+    <a-row class="d-flex justify-center">
+      <a-col :xs="22" :lg="16">
+        <a-row type="flex" justify="center">
+          <a-col span="12" :md="6" v-for="poster in posters">
+            <a-card class="ma-8">
+              <template #cover>
+                <img alt="example" :src="poster.image" />
+              </template>
+            </a-card>
+          </a-col>
+        </a-row>
 
-    <a-row type="flex" justify="center">
-      <a-col span="24" :md="4" v-for="poster in posters">
-        <a-card class="ma-8">
-          <template #cover>
-            <img alt="example" :src="poster.image" />
-          </template>
-        </a-card>
+
+
       </a-col>
     </a-row>
   </div>
