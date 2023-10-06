@@ -6,7 +6,7 @@ import { onMounted, ref } from "vue";
 import axios from "axios";
 
 let posters = ref()
-const backRoute = { name: 'Landing' ,  hash: '#guide' };
+const backRoute = { name: 'Landing', hash: '#guide' };
 
 onMounted(async () => {
   let response = await axios.post('https://plpo.ru/api/get-all', {}, {
@@ -22,8 +22,11 @@ onMounted(async () => {
     <BackButton :backRoute="backRoute" />
     <a-row class="d-flex justify-center">
       <a-col :xs="22" :lg="16">
-        <h2>
+
+        <h2 class="d-flex space-between">
           Афиши
+          <a href="https://plpo.ru" target="_blank">
+            <img src="../../assets/plpo.webp" alt="" srcset="" style="max-height: 50px;"></a>
         </h2>
       </a-col>
     </a-row>
