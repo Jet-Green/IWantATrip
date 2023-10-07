@@ -110,12 +110,13 @@ const handleChange = (value) => {
   padding: 8px;
 
 
+
   .mdi {
-    position: fixed;
+    position: absolute;
     top: 8px;
     right: 8px;
     font-size: clamp(1.5rem, 1.1975rem + 0.6303vw, 1.875rem);
-    color: rgb(32, 95, 121);
+ 
   }
 }
 
@@ -124,15 +125,16 @@ const handleChange = (value) => {
   top: 50%;
   left: 40%;
   border: solid 1px #ff6600;
-  padding: 50px;
+  padding: 16px;
   border-radius: 5px;
   color: #ff6600;
   transform: rotate(-15deg);
   z-index: 99;
-  font-size: 24px;
+  font-size: clamp(1.125rem, 0.6563rem + 1.5vw, 1.5rem);
   
 }
 .opacity{
   opacity: 0.4;
+  background: white;
 }
 </style>

@@ -1,28 +1,78 @@
 <script setup>
 import BackButton from "../BackButton.vue";
-
-import PosterService from "../../service/PosterService"
-import { onMounted, ref } from "vue";
+import { onMounted, ref, reactive, watch } from "vue";
 import axios from "axios";
+import { useLocations } from "../../stores/locations";
 
-let posters = ref()
+
+const locationStore = useLocations();
+
+let posters = ref([])
+let posterTypes = ref([])
+
+
 const backRoute = { name: 'Landing', hash: '#guide' };
+let query = ref({
+  eventLocation: '',
+  eventType: []
+})
 
-onMounted(async () => {
-  let response = await axios.post('https://plpo.ru/api/get-all', {}, {
+let selectType = ref([]);
+const handleChange = (type, checked) => {
+  query.eventType = type;
+};
+
+watch(selectType, () => {
+
+  let filtered = posterTypes.value.filter((item, index) =>
+    selectType.value[index]
+  )
+  query.value.eventType = filtered.map((item) => item.name)
+  getPosters()
+}, { deep: true }
+
+
+)
+
+watch(() => locationStore.location, () => {
+  query.value.eventLocation = locationStore?.location.name
+  getPosters()
+})
+
+let getPosters = async () => {
+
+  let plpoPosters = await axios.post('https://plpo.ru/api/get-all', { query: query.value }, {
     headers: {
       "Authorization": `Bearer ${123}`
     }
   })
-  posters.value = response.data
+  posters.value = plpoPosters.data
+
+
+}
+
+onMounted(async () => {
+
+  let getTypes = await axios.get('https://plpo.ru/api/get-posters-types', {
+    headers: {
+      "Authorization": `Bearer ${123}`
+    }
+  })
+  posterTypes.value = getTypes.data.eventTypes
+
+  let setSelected = Array(posterTypes.value.length).fill(false);
+  selectType.value = setSelected
+  query.value.eventLocation = locationStore.location.name
+  await getPosters()
+
 })
+
 </script>
 <template>
   <div>
     <BackButton :backRoute="backRoute" />
     <a-row class="d-flex justify-center">
       <a-col :xs="22" :lg="16">
-
         <h2 class="d-flex space-between">
           Афиши
           <a href="https://plpo.ru" target="_blank">
@@ -30,8 +80,25 @@ onMounted(async () => {
         </h2>
       </a-col>
     </a-row>
+
     <a-row class="d-flex justify-center">
       <a-col :xs="22" :lg="16">
+        <a-row type="flex" justify="center">
+          <a-col>
+
+            <a-space :size="[0, 8]" wrap>
+              <a-checkable-tag v-for="(type, index) in posterTypes" :key="type" v-model:checked="selectType[index]"
+                @change="checked => handleChange(type.name)">
+                {{ type.name }}
+              </a-checkable-tag>
+            </a-space>
+          </a-col>
+
+        </a-row>
+
+
+
+
         <a-row type="flex" justify="center">
           <a-col span="12" :md="6" v-for="poster in posters">
             <a-card class="ma-8">
