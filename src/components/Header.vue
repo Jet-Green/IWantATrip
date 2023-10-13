@@ -67,6 +67,7 @@ onMounted(() => {
   if (localStorage.getItem("location")) {
     try {
       locationSearchRequest.value = JSON.parse(localStorage.getItem("location")).shortName
+      tripStore.location = JSON.parse(localStorage.getItem("location"))
     } catch (error) {
       localStorage.removeItem('location')
       console.log(error);
