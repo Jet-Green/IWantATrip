@@ -196,8 +196,10 @@ async function updateTripInfo() {
     let { data } = await tripStore.getFullTripById(route.query._id)
     for (let b of data.billsList) {
         if (b.tinkoff) {
-            let res = await tinkoffPlugin.checkOrder(b.tinkoff.orderId, b.tinkoff.amount)
-            console.log(res)
+            let res = await tinkoffPlugin.checkPayment(b.tinkoff.paymentId, b.tinkoff.token)
+            if (res.data.Status == "CONFIRMED") {
+                b.payment.amount = Number(res.data.Amount / 100)
+            }
         }
     }
     trip.value = data;

@@ -17,33 +17,35 @@ async function cancelPayment() {
     return res
 }
 
-async function checkOrder(orderId, amount) {
-    let payload = [
-        { "Amount": amount },
-        { "Password": VITE_TINKOFF_TERMINAL_PASS },
-        { "PaymentId": orderId },
-        { "TerminalKey": VITE_TINKOFF_TERMINAL_ID }
-    ]
-    const Token = sha256(payload)
-    console.log(payload);
+async function checkPayment(paymentId) {
+    let tokentr = VITE_TINKOFF_TERMINAL_PASS + paymentId + VITE_TINKOFF_TERMINAL_ID
+    let token = sha256(tokentr)
+    // https://securepay.tinkoff.ru/v2/GetState
     const config = {
         "TerminalKey": VITE_TINKOFF_TERMINAL_ID,
-        "OrderId": orderId,
-        "Token": Token
+        "PaymentId": paymentId,
+        "Token": token
     }
-    let res = await axios.post('https://securepay.tinkoff.ru/v2/CheckOrder', config)
+    let res = await axios.post('https://securepay.tinkoff.ru/v2/GetState', config)
 
     return res
 }
 
 async function initPayment(orderId, amount) {
-    let payload = [
-        { "Amount": amount },
-        { "Password": VITE_TINKOFF_TERMINAL_PASS },
-        { "PaymentId": orderId },
-        { "TerminalKey": VITE_TINKOFF_TERMINAL_ID }
-    ]
-    const Token = sha256(payload)
+    let payload =
+    {
+        "Amount": amount,
+        "Password": VITE_TINKOFF_TERMINAL_PASS,
+        "OrderId": orderId,
+        "TerminalKey": VITE_TINKOFF_TERMINAL_ID
+    }
+
+    let stringPayload = ''
+    for (let key of Object.keys(payload)) {
+        stringPayload += payload[key]
+    }
+
+    const Token = sha256(stringPayload)
 
     let config = {
         "TerminalKey": VITE_TINKOFF_TERMINAL_ID,
@@ -56,4 +58,4 @@ async function initPayment(orderId, amount) {
     return { data: res.data, token: Token }
 }
 
-export default { initPayment, checkOrder }
+export default { initPayment, checkPayment }
