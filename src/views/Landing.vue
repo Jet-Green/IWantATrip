@@ -1,4 +1,5 @@
 <script setup>
+import { onMounted } from "vue";
 // import MainPageMessage from '../components/sections/MainPageMessage.vue'
 import CityGuide from "../components/sections/CityGuide.vue";
 import ButtonsRow from "../components/sections/ButtonsRow.vue"
@@ -10,6 +11,18 @@ import Explanation from "../components/sections/Explanation.vue";
 import ToTrips from "../components/sections/ToTrips.vue";
 // import Hello from '../components/sections/Hello.vue';
 import Footer from '../components/Footer.vue'
+import { useRoute } from "vue-router";
+
+
+const route = useRoute();
+
+
+onMounted (()=>{
+  if(route.hash) {
+    let id = route.hash.slice(1)
+    document.getElementById(id)?.scrollIntoView()
+  }
+})
 </script>
 <template>
   <div>
@@ -18,7 +31,7 @@ import Footer from '../components/Footer.vue'
     <ToTrips />
     <FindTrip />
     <Companions />
-    <CityGuide/>
+    <CityGuide id="guide"/>
     <Footer/>
   
   </div>
