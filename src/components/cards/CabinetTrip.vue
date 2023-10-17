@@ -320,7 +320,7 @@ onMounted(async () => {
                     <span class="mdi mdi-content-copy" style="cursor: pointer"></span>
                 </a-popconfirm>
                 <span class="mdi mdi-information-outline"
-                    @click="router.push({ path: 'customers-trip', query: { _id: trip._id } })"
+                    @click="router.push({ path: '/cabinet/customers-trip', query: { _id: trip._id } })"
                     v-if="actions.includes('info')"></span>
 
                 <span v-if="!trip.parent" class="mdi mdi-human-handsup" @click="addPartnerDialog = true">
