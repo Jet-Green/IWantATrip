@@ -321,6 +321,8 @@ let isNoPlaces = computed(() => {
 
 onMounted(async () => {
     await refreshDates();
+    let res = await tinkoffPlugin.cancelPayment()
+    console.log(res);
 });
 </script>
 <template>
