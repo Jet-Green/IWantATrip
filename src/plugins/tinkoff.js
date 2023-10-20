@@ -70,7 +70,7 @@ async function initPayment(orderId, amount) {
         "Token": Token,
         "Receipt": {
             "Email": "griahadzyin@gmail.com",
-            "Taxation": 'osn',
+            "Taxation": 'usn_income',
             "Items": [
                 {
                     "Name": 'Тур',
