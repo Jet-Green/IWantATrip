@@ -128,7 +128,6 @@ async function buyTrip(isBoughtNow) {
                 bill.cart.splice(i, 1);
             }
         }
-
         await userStore
             .buyTrip(trip.value._id, bill)
             .then(() => {
@@ -246,6 +245,9 @@ onMounted(async () => {
                 <div>Сумма полная: {{ tripStat ? tripStat.totalCost : '' }} руб.</div>
             </a-card>
         </a-col>
+
+        <!-- <a-button @click="tinkoffPlugin.sendClosingReceipt('3398854005', '120000')">-----</a-button> -->
+
         <a-col :lg="8" :sm="12" :xs="24" v-for="(BILL, index) of trip.billsList">
             <div>
                 <a-card hoverable class="card">

@@ -5,7 +5,13 @@ let addContractModal = ref(false)
 
 let contractEmail = ref('')
 let contractForm = reactive({
-    // поля
+    name: '',
+    inn: '',
+    kpp: '',
+    ogrn: '',
+    yr_address: '',
+    fact_address: '',
+
 })
 
 function addContract() {

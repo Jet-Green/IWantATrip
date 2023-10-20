@@ -71,13 +71,16 @@ async function initPayment(orderId, amount) {
         "Receipt": {
             "Email": "griahadzyin@gmail.com",
             "Taxation": 'usn_income',
+            "FfdVersion": "1.2",
             "Items": [
                 {
                     "Name": 'Тур',
                     "Price": amount,
                     "Quantity": 1,
-                    "Amount": amount,
-                    "Tax": "none"
+                    "Amount": amount * 1,
+                    "Tax": "none",
+                    "PaymentMethod": "full_prepayment",
+                    "PaymentObject": "service"
                 }
             ]
         }
@@ -87,4 +90,48 @@ async function initPayment(orderId, amount) {
     return { data: res.data, token: Token }
 }
 
-export default { initPayment, checkPayment, cancelPayment }
+async function sendClosingReceipt(PaymentId, Amount) {
+    let payload =
+    {
+        // "Amount": Amount,
+        "Password": VITE_TINKOFF_TERMINAL_PASS,
+        "PaymentId": PaymentId,
+        "TerminalKey": VITE_TINKOFF_TERMINAL_ID
+    }
+
+    let stringPayload = ''
+    for (let key of Object.keys(payload)) {
+        stringPayload += payload[key]
+    }
+
+    const Token = sha256(stringPayload)
+
+    let config = {
+        "TerminalKey": VITE_TINKOFF_TERMINAL_ID,
+        "PaymentId": PaymentId,
+        "Token": Token,
+        "Receipt": {
+            "Email": "griahadzyin@gmail.com",
+            "Taxation": 'usn_income',
+            "FfdVersion": "1.2",
+            "Items": [
+                {
+                    "Name": 'Тур',
+                    "Price": Amount,
+                    "Quantity": 1,
+                    "Amount": Amount,
+                    "Tax": "none",
+                    "PaymentMethod": "full_prepayment",
+                    "PaymentObject": "service"
+                }
+            ]
+        }
+    }
+    // console.log(config);
+    // return
+    let res = await axios.post('https://securepay.tinkoff.ru/v2/SendClosingReceipt', config)
+
+    console.log(res.data);
+}
+
+export default { initPayment, checkPayment, cancelPayment, sendClosingReceipt }
