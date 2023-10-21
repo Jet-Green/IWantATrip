@@ -11,7 +11,14 @@ let contractForm = reactive({
     ogrn: '',
     yr_address: '',
     fact_address: '',
-
+    checking_account: '',
+    checking_account_bank: '',
+    cash_account: '',
+    cash_account_bank: '',
+    bik: '',
+    phone: '',
+    email: '',
+    director: '',
 })
 
 function addContract() {
