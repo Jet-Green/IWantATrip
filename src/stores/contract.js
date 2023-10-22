@@ -10,7 +10,7 @@ export const useContract = defineStore('contract', {
     actions: {
         async createContract(newContract) {
             let res = await ContractService.createContract(newContract)
-            console.log(res);
+            return res
         }
     }
 })
