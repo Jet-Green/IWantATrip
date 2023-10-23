@@ -29,6 +29,23 @@ let addLocationDialog = ref(false)
 let updateTransportDialog = ref(false)
 let possibleTransport = ref([])
 
+let showMessage = ref(false);
+
+let locationToSend = ref()
+let locationsToDelete = ref([])
+
+let locationSearchRequest = ref('')
+let possibleLocations = ref([])
+
+let submitCount = ref(0)
+let transportToDelete = ref([])
+let addTransportForm = ref({
+    transportType: null,
+    capacity: null,
+    waiting: null,
+    price: null
+})
+
 const clearData = (dataString) => {
     let date = 0
     if (dataString.length == 13) {
@@ -134,13 +151,6 @@ let tripDuration = computed(() => {
     return Math.ceil((trip.value.end - trip.value.start) / (1000 * 60 * 60 * 24))
 })
 
-let showMessage = ref(false);
-
-let locationToSend = ref()
-let locationsToDelete = ref([])
-
-let locationSearchRequest = ref('')
-let possibleLocations = ref([])
 function selectStartLocation(selected) {
     for (let l of possibleLocations.value) {
         if (l.value == selected) {
@@ -158,7 +168,7 @@ function addToDeleteLocations(_id) {
     }
     locationsToDelete.value.push(_id)
 }
-let submitCount = ref(0)
+
 async function updateIncludedLocations() {
     if (submitCount.value > 0) {
         return
@@ -171,14 +181,7 @@ async function updateIncludedLocations() {
         emit('updateTrip')
     }
 }
-let addTransportForm = ref({
-    transportType: null,
-    capacity: null,
-    waiting: null,
-    price: null
-})
 
-let transportToDelete = ref([])
 
 async function updateTrasports() {
     let isEmptyNewTransport = false;
