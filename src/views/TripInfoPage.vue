@@ -547,6 +547,14 @@ onMounted(async () => {
                         </Transition>
                     </a-col>
                     <a-col :span="24">
+                        <div class="d-flex direction-column">
+                            Место посадки
+                            <a-select placeholder="г.Глазов" v-model:value="selectedStartLocation" style="width: ">
+                                <a-select-option v-for="item in trip.locationNames" :value="item.name"></a-select-option>
+                            </a-select>
+                        </div>
+                    </a-col>
+                    <a-col :span="24">
                         <div>Цены</div>
                         <b>
                             {{ clearData(selectedDate.start) + " - " + clearData(selectedDate.end) }}
@@ -563,7 +571,6 @@ onMounted(async () => {
                             }}
                             чел.
                         </div>
-
                         <div class="d-flex space-between align-center" v-for="cost of selectedDate.selectedCosts">
                             <div v-if="isInWaitingList" style="color: #ff6600">
                                 в лист ожидания
@@ -576,11 +583,6 @@ onMounted(async () => {
                             </div>
                             <div v-else>{{ cost.cost }} руб.</div>
 
-                            <div class="d-flex direction-column">
-                                <a-select v-model:value="selectedStartLocation" style="width: 200px">
-                                    <a-select-option v-for="item in trip.locationNames" :value="item.name"></a-select-option>
-                                </a-select>
-                            </div>
                             <div class="d-flex direction-column">
                                 <span style="font-size: 8px">кол-во</span>
                                 <a-input-number v-model:value="cost.count" :min="0"

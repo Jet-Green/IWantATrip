@@ -39,7 +39,7 @@ const clearData = (dateNumber) => {
                 </div>
             </td>
             <td style="border-bottom: 1px solid black;">
-                {{ customer }}
+                {{ customer.selectedStartLocation }}
             </td>
             <td style="border-bottom: 1px solid black;">
                 <div v-for="unit, j in customer.touristsList">

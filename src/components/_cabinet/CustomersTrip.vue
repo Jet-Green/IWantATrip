@@ -25,6 +25,7 @@ let userInfo = ref({
     fullname: '',
     phone: ''
 })
+let selectedStartLocation = ref();
 let selectedByUser = ref([])
 
 let addCustomerDialog = ref(false)
@@ -85,7 +86,7 @@ async function setPayment() {
     let doc = {}
     doc.paySum = sumOfPay.value
     doc.payDocument = documentNumber.value
-    let res = await tripStore.setPayment({ bill: currentBill.value, doc:doc})
+    let res = await tripStore.setPayment({ bill: currentBill.value, doc: doc })
 
     if (res.status == 200) {
         setPaymentDialog.value = false
@@ -114,6 +115,7 @@ async function buyTrip(isBoughtNow) {
                         object.count;
                 }, 0) : 0
             },
+            selectedStartLocation: selectedStartLocation.value,
             cart,
             tripId: trip.value._id,
             userInfo: {
@@ -200,6 +202,7 @@ function getPhoneNumber(number) {
 async function updateTripInfo() {
     let { data } = await tripStore.getFullTripById(route.query._id)
     for (let b of data.billsList) {
+        console.log(data);
         if (b.tinkoff) {
             let res = await tinkoffPlugin.checkPayment(b.tinkoff.paymentId, b.tinkoff.token)
             if (res.data.Status == "CONFIRMED") {
@@ -258,6 +261,10 @@ onMounted(async () => {
                         <span class="mdi mdi-account-outline" style=""></span>
                         {{ BILL.userInfo.fullname }}
                     </div>
+                    <div v-if="BILL.selectedStartLocation">
+                        <span class="mdi mdi-map-marker-outline" style=""></span>
+                        {{ BILL.selectedStartLocation }}
+                    </div>
                     <div>
                         <span class="mdi mdi-phone-outline" style=""></span>
                         <a :href="getPhoneNumber(BILL.userInfo.phone)">
@@ -283,7 +290,7 @@ onMounted(async () => {
                         руб.
                     </div>
                     <div v-for="doc in BILL.payment?.documents  " class="d-flex justify-end">
-                        {{doc.payDocument }} --  {{doc.paySum }}  руб.
+                        {{ doc.payDocument }} -- {{ doc.paySum }} руб.
                     </div>
                     <div style="display: flex; justify-content: space-between;">
                         <div style="font-size: 20px">
@@ -303,14 +310,14 @@ onMounted(async () => {
                             }, 0) == BILL.payment.amount" style="color: #bcc662">
                                 <span class="mdi mdi-check-all" style="font-size: 20px"></span>
                                 оплачен
-                               
+
                             </span>
                             <span v-else style="display: flex; align-items: center">
                                 <span class="mdi mdi-close" style="font-size: 20px"></span>
                                 не оплачен
                             </span>
                         </b>
-                      
+
                     </div>
                 </a-card>
             </div>
@@ -382,6 +389,15 @@ onMounted(async () => {
             <a-col :span="24" :md="12">
                 Телефон
                 <a-input style="width: 100%" v-model:value="userInfo.phone" placeholder="79127528874" />
+            </a-col>
+
+            <a-col :span="24">
+                <div class="d-flex direction-column">
+                    Место посадки
+                    <a-select placeholder="г.Глазов" v-model:value="selectedStartLocation" style="width: ">
+                        <a-select-option v-for="item in trip.locationNames" :value="item.name"></a-select-option>
+                    </a-select>
+                </div>
             </a-col>
 
             <a-col :span="24">
