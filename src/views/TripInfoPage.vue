@@ -42,6 +42,7 @@ let tripDates = ref([]);
 let trip = ref({});
 let buyDialog = ref(false);
 let selectedDate = ref({});
+let selectedStartLocation = ref();
 
 let ShareLogo = ref([
     {
@@ -235,6 +236,7 @@ async function buyTrip() {
                 isBoughtNow: buyNow.value,
                 cart: selectedDate.value.selectedCosts,
                 tripId: selectedDate.value._id,
+                selectedStartLocation: selectedStartLocation.value,
                 userInfo: {
                     _id: userStore.user._id,
                     fullname: userStore.user.fullinfo.fullname,
@@ -574,6 +576,11 @@ onMounted(async () => {
                             </div>
                             <div v-else>{{ cost.cost }} руб.</div>
 
+                            <div class="d-flex direction-column">
+                                <a-select v-model:value="selectedStartLocation" style="width: 200px">
+                                    <a-select-option v-for="item in trip.locationNames" :value="item.name"></a-select-option>
+                                </a-select>
+                            </div>
                             <div class="d-flex direction-column">
                                 <span style="font-size: 8px">кол-во</span>
                                 <a-input-number v-model:value="cost.count" :min="0"

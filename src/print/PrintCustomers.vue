@@ -1,4 +1,6 @@
 <script setup>
+import { onMounted } from 'vue';
+
 defineProps({
     customers: Object,
     trip: Object
@@ -24,16 +26,20 @@ const clearData = (dateNumber) => {
         <tr style="text-align:left; ">
             <th style="border-bottom: 1px solid black;">п/н</th>
             <th style="border-bottom: 1px solid black;">Имя</th>
+            <th style="border-bottom: 1px solid black;">Место посадки</th>
             <th style="border-bottom: 1px solid black;">Телефон</th>
             <th style="border-bottom: 1px solid black;">Количество</th>
         </tr>
 
-        <tr  v-for="customer, i in customers" :key="i">
+        <tr v-for="customer, i in customers" :key="i">
             <td style="border-bottom: 1px solid black;">{{ i + 1 }}</td>
-            <td  style="border-bottom: 1px solid black;">
+            <td style="border-bottom: 1px solid black;">
                 <div v-for="unit, j in customer.touristsList">
                     {{ unit.fullname }}
                 </div>
+            </td>
+            <td style="border-bottom: 1px solid black;">
+                {{ customer }}
             </td>
             <td style="border-bottom: 1px solid black;">
                 <div v-for="unit, j in customer.touristsList">
@@ -62,6 +68,5 @@ const clearData = (dateNumber) => {
         </tr> -->
 
     </table>
-   
 </template>
 
