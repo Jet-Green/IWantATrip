@@ -419,7 +419,7 @@ onMounted(async () => {
             <a-col :span="24">
                 <div>Оплатить</div>
                 <div class="d-flex space-around">
-                    <a-button type="primary" @click="buyTrip(true)"> сейчас </a-button>
+                    <!-- <a-button type="primary" @click="buyTrip(true)"> сейчас </a-button> -->
                     <a-button @click="buyTrip(false)"> потом </a-button>
                 </div>
             </a-col>
