@@ -3,7 +3,8 @@ import { onMounted } from 'vue';
 
 defineProps({
     customers: Object,
-    trip: Object
+    trip: Object,
+    total: Object
 })
 
 const clearData = (dateNumber) => {
@@ -55,7 +56,8 @@ const clearData = (dateNumber) => {
             </td>
         </tr>
         <!-- <tr v-for="customer, i in customers" :key="i">
-            <td>{{ i + 1 }}</td>
+            <td>{{ i + 1 }}<
+                /td>
             <td>{{ customer.userInfo.fullname }}</td>
             <td>{{ customer.userInfo.phone }}</td>
             <td>
@@ -66,7 +68,12 @@ const clearData = (dateNumber) => {
             
             </td>
         </tr> -->
-
     </table>
+    <span v-if="total">
+        <h3>
+            Итого:
+            {{ total.amount }}
+        </h3>
+    </span>
 </template>
 

@@ -202,7 +202,6 @@ function getPhoneNumber(number) {
 async function updateTripInfo() {
     let { data } = await tripStore.getFullTripById(route.query._id)
     for (let b of data.billsList) {
-        console.log(data);
         if (b.tinkoff) {
             let res = await tinkoffPlugin.checkPayment(b.tinkoff.paymentId, b.tinkoff.token)
             if (res.data.Status == "CONFIRMED") {
@@ -426,7 +425,7 @@ onMounted(async () => {
         </a-row>
     </a-modal>
     <div id="printMe" style="display: none">
-        <PrintCustomers :customers="trip.billsList" :trip="trip" />
+        <PrintCustomers :customers="trip.billsList" :trip="trip" :total='tripStat' />
     </div>
     <div class="d-flex justify-center">
         <a-button @click="print()" type="primary" class="lets_go_btn ma-8">
