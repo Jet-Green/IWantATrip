@@ -1,6 +1,8 @@
 <script setup>
 import { reactive, ref } from "vue";
 import { useContract } from '../../stores/contract'
+import { Form, Field, ErrorMessage } from "vee-validate";
+import * as yup from "yup";
 
 let contractStore = useContract()
 
@@ -23,7 +25,22 @@ let contractForm = reactive({
   email: "",
   director: "",
 });
-
+let formSchema = yup.object({
+  name: yup.string().required("заполните поле"),
+  inn: yup.string().required("заполните поле"),
+  kpp: yup.string().required("заполните поле"),
+  ogrn: yup.string().required("заполните поле"),
+  yr_address: yup.string().required("заполните поле"),
+  fact_address: yup.string().required("заполните поле"),
+  checking_account: yup.string().required("заполните поле"),
+  checking_account_bank: yup.string().required("заполните поле"),
+  cash_account: yup.string().required("заполните поле"),
+  cash_account_bank: yup.string().required("заполните поле"),
+  bik: yup.string().required("заполните поле"),
+  phone: yup.string().required("заполните поле"),
+  email: yup.string().required("заполните поле"),
+  director: yup.string().required("заполните поле"),
+});
 async function addContract() {
   let res = await contractStore.createContract(contractForm)
   // пока только вывести
@@ -39,63 +56,134 @@ async function addContract() {
         cancel-text="отмена">
         <a-input placeholder="email" size="large" v-model:value="contractEmail"></a-input>
       </a-modal>
-      <Form class="ma-16" @submit="submit">
+      <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit" class="ma-16">
         <a-row :gutter="[16, 16]">
+
           <a-col :span="24">
-            Название
-            <a-input placeholder="Название" v-model:value="contractForm.name"></a-input>
+            <Field name="name" v-slot="{ value, handleChange }" v-model="contractForm.name">
+                Название
+                  <a-input placeholder="Название" @update:value="handleChange" :value="value"></a-input>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="name" class="error-message" />
+              </Transition>
           </a-col>
           <a-col :span="24">
-            ИНН
-            <a-input placeholder="14141414141414" v-model:value="contractForm.inn"></a-input>
+            <Field name="inn" v-slot="{ value, handleChange }" v-model="contractForm.inn">
+              ИНН
+                  <a-input placeholder="14141414141414" @update:value="handleChange" :value="value"></a-input>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="inn" class="error-message" />
+              </Transition>
           </a-col>
           <a-col :span="24">
-            КПП
-            <a-input placeholder="1111111111" v-model:value="contractForm.kpp"></a-input>
+            <Field name="kpp" v-slot="{ value, handleChange }" v-model="contractForm.kpp">
+              КПП
+                  <a-input placeholder="1111111111"  @update:value="handleChange" :value="value"></a-input>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="kpp" class="error-message" />
+              </Transition>
           </a-col>
           <a-col :span="24">
-            ОГРН
-            <a-input placeholder="123123123123" v-model:value="contractForm.ogrn"></a-input>
+            <Field name="ogrn" v-slot="{ value, handleChange }" v-model="contractForm.ogrn">
+              ОГРН
+                  <a-input placeholder="123123123123"  @update:value="handleChange" :value="value"></a-input>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="ogrn" class="error-message" />
+              </Transition>
           </a-col>
           <a-col :span="24">
-            Юридический адрес
-            <a-input placeholder="тут нужно локации" v-model:value="contractForm.yr_address"></a-input>
+            <Field name="yr_address" v-slot="{ value, handleChange }" v-model="contractForm.yr_address">
+              Юридический адрес
+                  <a-input placeholder="тут нужно локации"  @update:value="handleChange" :value="value"></a-input>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="yr_address" class="error-message" />
+              </Transition>
           </a-col>
           <a-col :span="24">
-            Фактический адрес
-            <a-input placeholder="и тут надо локации" v-model:value="contractForm.fact_address"></a-input>
+            <Field name="fact_address" v-slot="{ value, handleChange }" v-model="contractForm.fact_address">
+              Фактический адрес
+                  <a-input placeholder="тут нужно локации"  @update:value="handleChange" :value="value"></a-input>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="fact_address" class="error-message" />
+              </Transition>
           </a-col>
           <a-col :span="24">
-            Р/сч
-            <a-input placeholder="und" v-model:value="contractForm.checking_account"></a-input>
+            <Field name="checking_account" v-slot="{ value, handleChange }" v-model="contractForm.checking_account">
+              Р/сч
+                  <a-input placeholder="und"  @update:value="handleChange" :value="value"></a-input>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="checking_account" class="error-message" />
+              </Transition>
           </a-col>
           <a-col :span="24">
-            Отделение банка
-            <a-input placeholder="und" v-model:value="contractForm.checking_account_bank"></a-input>
+          <Field name="checking_account_bank" v-slot="{ value, handleChange }" v-model="contractForm.checking_account_bank">
+              Отделение банка
+                  <a-input placeholder="und"  @update:value="handleChange" :value="value"></a-input>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="checking_account_bank" class="error-message" />
+              </Transition>
           </a-col>
           <a-col :span="24">
-            К/сч
-            <a-input placeholder="und" v-model:value="contractForm.cash_account"></a-input>
+            <Field name="cash_account" v-slot="{ value, handleChange }" v-model="contractForm.cash_account">
+              К/сч
+                  <a-input placeholder="und"  @update:value="handleChange" :value="value"></a-input>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="cash_account" class="error-message" />
+              </Transition>
           </a-col>
           <a-col :span="24">
-            Отделение банка
-            <a-input placeholder="und" v-model:value="contractForm.cash_account_bank"></a-input>
+            <Field name="cash_account_bank" v-slot="{ value, handleChange }" v-model="contractForm.cash_account_bank">
+              Отделение банка
+                  <a-input placeholder="und"  @update:value="handleChange" :value="value"></a-input>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="cash_account_bank" class="error-message" />
+              </Transition>
           </a-col>
           <a-col :span="24">
-            БИК
-            <a-input placeholder="04040404040" v-model:value="contractForm.bik"></a-input>
+            <Field name="bik" v-slot="{ value, handleChange }" v-model="contractForm.bik">
+              БИК
+                  <a-input placeholder="04040404040"  @update:value="handleChange" :value="value"></a-input>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="bik" class="error-message" />
+              </Transition>
           </a-col>
           <a-col :span="24">
-            Телефон
-            <a-input placeholder="80000000000" v-model:value="contractForm.phone"></a-input>
+            <Field name="phone" v-slot="{ value, handleChange }" v-model="contractForm.phone">
+              Телефон
+                  <a-input placeholder="80000000000"  @update:value="handleChange" :value="value"></a-input>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="phone" class="error-message" />
+              </Transition>
           </a-col>
           <a-col :span="24">
-            Электронная почта
-            <a-input placeholder="ivanov@mail.ru" v-model:value="contractForm.email"></a-input>
+            <Field name="email" v-slot="{ value, handleChange }" v-model="contractForm.email">
+              Электронная почта
+                  <a-input placeholder="ivanov@mail.ru"  @update:value="handleChange" :value="value"></a-input>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="email" class="error-message" />
+              </Transition>
           </a-col>
           <a-col :span="24">
-            Директор
-            <a-input placeholder="Иванов Иван Иванович" v-model:value="contractForm.director"></a-input>
+            <Field name="director" v-slot="{ value, handleChange }" v-model="contractForm.director">
+              Директор
+                  <a-input placeholder="Иванов Иван Иванович"  @update:value="handleChange" :value="value"></a-input>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="director" class="error-message" />
+              </Transition>
           </a-col>
         </a-row>
       </Form>
