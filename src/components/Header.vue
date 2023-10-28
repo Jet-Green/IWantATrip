@@ -79,7 +79,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <a-layout-header :style="{ position: 'fixed', zIndex: 999, width: '100%', background: 'white'}">
+  <a-layout-header :style="{ position: 'fixed', zIndex: 999, width: '100%', background: 'white' }">
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
         <a-row type="flex" justify="space-between">
@@ -92,7 +92,7 @@ onMounted(() => {
           </a-col>
 
           <a-col>
-            <div @click="selectLocationDialog = !selectLocationDialog" style="cursor: pointer;">
+            <div class="location" @click="selectLocationDialog = !selectLocationDialog" style="cursor: pointer;">
               <span class="mdi mdi-map-marker-outline"></span>
               <span>
                 {{ locationSearchRequest }}
@@ -161,6 +161,12 @@ onMounted(() => {
   .top_menu {
     display: flex;
     justify-content: space-around;
+  }
+}
+
+.location {
+  @media (min-width: 800px) {
+    font-size: 16px;
   }
 }
 
