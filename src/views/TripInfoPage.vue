@@ -231,7 +231,7 @@ async function buyTrip() {
             }
         }
 
-        if (selectedDate.value.selected) {
+        if (selectedDate.value.selected && selectedDate.value.selectedCosts[0].count != 0) {
             let bill = {
                 isBoughtNow: buyNow.value,
                 cart: selectedDate.value.selectedCosts,
@@ -282,6 +282,9 @@ async function buyTrip() {
                         console.log(err);
                     });
             }
+        } else {
+            message.config({ duration: 3, top: "90vh" });
+            message.error({ content: "Заполните количество" });
         }
     } else {
         message.config({ duration: 3, top: "90vh" });
