@@ -1,7 +1,7 @@
 <script setup>
-import { onMounted } from 'vue';
+import { computed } from 'vue';
 
-defineProps({
+let props = defineProps({
     customers: Object,
     trip: Object,
     total: Object
@@ -18,6 +18,28 @@ const clearData = (dateNumber) => {
     }
     return "";
 };
+let customersInCart = (index) => {
+    let sum = props.customers[index].cart.reduce((accumulator, currentValue) => accumulator + currentValue.count, 0)
+    return sum
+}
+
+function compare(a, b) {
+    if (a.selectedStartLocation < b.selectedStartLocation) {
+        return -1;
+    }
+    if (a.selectedStartLocation > b.selectedStartLocation) {
+        return 1;
+    }
+    return 0;
+}
+
+let sortCustomersByStartLocation = computed(() => {
+    if (props.customers) {
+        return props.customers.sort(compare)
+    }
+})
+
+
 </script>
 <template>
     <h3 style="text-align:center">{{ trip.name }}</h3>
@@ -32,7 +54,7 @@ const clearData = (dateNumber) => {
             <th style="border-bottom: 1px solid black;">Количество</th>
         </tr>
 
-        <tr v-for="customer, i in customers" :key="i">
+        <tr v-for="customer, i in sortCustomersByStartLocation" :key="i">
             <td style="border-bottom: 1px solid black;">{{ i + 1 }}</td>
             <td style="border-bottom: 1px solid black;">
                 <div v-for="unit, j in customer.touristsList">
@@ -48,10 +70,11 @@ const clearData = (dateNumber) => {
                 </div>
             </td>
             <td style="border-bottom: 1px solid black;">
-                <span v-for="item, j in  customer.cart">
+                {{ customersInCart(i) }}
+                <!-- <span v-for="item, j in  customer.cart">
                     {{ item.count }}
                     <span v-if="customer.cart.length > j + 1">+</span>
-                </span>
+                </span> -->
 
             </td>
         </tr>
@@ -70,9 +93,9 @@ const clearData = (dateNumber) => {
         </tr> -->
     </table>
     <span v-if="total">
-        <h3>
+        <h3 style="text-align:end; padding:16px">
             Итого:
-            {{ total.amount }}
+            {{ total.amount }} чел.
         </h3>
     </span>
 </template>
