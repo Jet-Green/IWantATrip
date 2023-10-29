@@ -22,7 +22,7 @@ let router = useRouter();
 let visibleDrawer = ref(false);
 let selectLocationDialog = ref(false)
 
-let locationSearchRequest = ref('Не выбрано')
+let locationSearchRequest = ref('Ваш город')
 
 
 function toComponentFromMenu(routName) {
@@ -35,7 +35,7 @@ function toComponentFromMenu(routName) {
 
 const handleChange = async () => {
 
-  if (locationSearchRequest.value == 'Не выбрано') {
+  if (locationSearchRequest.value == 'Ваш город') {
     locationStore.resetLocation()
     tripStore.cursor = 1
     tripStore.trips = []
@@ -92,16 +92,16 @@ onMounted(() => {
           </a-col>
 
           <a-col>
-            <div class="location" @click="selectLocationDialog = !selectLocationDialog" style="cursor: pointer;">
+            <div class="location" @click="selectLocationDialog = !selectLocationDialog" style="cursor: pointer; font-weight: bold;">
               <span class="mdi mdi-map-marker-outline"></span>
               <span>
-                {{ locationSearchRequest }}
+                {{ locationSearchRequest?locationSearchRequest:"Ваш город" }}
               </span>
             </div>
             <a-modal :mask="false" v-model:open="selectLocationDialog" title="Местоположение" :footer="null">
 
               <a-select v-model:value="locationSearchRequest" style="width: 100%" @change="handleChange" show-search>
-                <a-select-option value="Не выбрано">Не выбрано</a-select-option>
+                <a-select-option value="Ваш город">Ваш город</a-select-option>
                 <a-select-option v-for="(location, index) of locationStore.locations" :key="index"
                   :value="location.shortName">{{ location.name }}</a-select-option>
               </a-select>
