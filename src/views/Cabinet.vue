@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useAuth } from "../stores/auth";
 import { useRouter, RouterView } from "vue-router";
 import BackButton from "../components/BackButton.vue";
@@ -14,12 +14,22 @@ let sm = breakpoints.smaller("md");
 // чтобы не сбрасывалось при обновлении
 let current = ref([router.currentRoute.value.path]);
 
+let showBookingNotifications = ref(false)
+
 const logOut = () => {
   userStore.logout();
   router.push("/");
 };
 watch(current, (newRout, oldRout) => {
   router.push(newRout[0])
+})
+onMounted(() => {
+  for (let n of userStore.user?.notifications) {
+    if (n.type == 'BookingTrip' && n.send == true) {
+      showBookingNotifications.value = true
+      break
+    }
+  }
 })
 </script>
 <template>
@@ -46,8 +56,6 @@ watch(current, (newRout, oldRout) => {
             <template #title>
               <span v-if=!sm>Туры</span>
               <span v-else class="mdi mdi-24px mdi-map-outline" style="color: #245159; cursor: pointer"></span>
-
-
             </template>
             <a-menu-item key="/cabinet/created-trips">Созданные</a-menu-item>
             <a-menu-item key="/cabinet/purchased-trips">Забронированные</a-menu-item>
@@ -57,13 +65,15 @@ watch(current, (newRout, oldRout) => {
           <a-menu-item key="/cabinet/my-companions">
             <span v-if=!sm>Попутчики</span>
             <span v-else class="mdi mdi-24px mdi-human-capacity-decrease" style="color: #245159; cursor: pointer"></span>
-
           </a-menu-item>
-          <a-sub-menu key="sub2" v-if="userStore.user.roles.includes('manager')">
+          <a-menu-item key="/cabinet/booking-notifications" v-if="showBookingNotifications">
+            <span v-if=!sm>Заказы</span>
+            <span v-else class="mdi mdi-24px mdi-hand-wave-outline" style="color: #245159; cursor: pointer"></span>
+          </a-menu-item>
+          <a-sub-menu key=" sub2" v-if="userStore.user.roles.includes('manager')">
             <template #title>
               <span v-if=!sm>Админ</span>
               <span v-else class="mdi mdi-24px mdi-cog-outline" style="color: #245159; cursor: pointer"></span>
-
             </template>
             <a-sub-menu key="sub01">
               <template #title>

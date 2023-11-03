@@ -194,6 +194,10 @@ const router = createRouter({
           ]
         },
         {
+          path: 'booking-notifications',
+          component: () => import('../components/_cabinet/BookingNotifications.vue'),
+        },
+        {
           path: 'customers-trip',
           component: () => import('../components/_cabinet/CustomersTrip.vue'),
         },
