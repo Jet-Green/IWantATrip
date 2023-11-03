@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, reactive } from 'vue'
 import { useAdmin } from '../../stores/admin'
 import UserCard from "./UserCard.vue"
 
@@ -18,6 +18,9 @@ let createTripEmails = ref([])
 let bookingTripEmails = ref([])
 let createCompanionEmails = ref([])
 let buyTripEmails = ref([])
+
+// notifications
+let bookingTripNotifications = ref([])
 
 let users = ref([])
 
@@ -44,6 +47,49 @@ async function addEmail(event, email) {
         }
     }
 }
+let cabinetNotifications = reactive({
+    bookingTrip: ''
+})
+async function addCabinetNotifications(event, email) {
+    email = email.trim()
+    if (email.length > 2) {
+        let res = await adminStore.addCabinetNotifications(event, email)
+        await getNotifications('BookingTrip')
+    }
+}
+async function getNotifications(event) {
+    let res = await adminStore.getNotifications(event)
+
+    switch (event) {
+        case 'CreateTrip':
+            break
+        case 'BookingTrip':
+            bookingTripNotifications.value = res.data
+            break
+        case 'CreateCompanion':
+            break
+        case 'BuyTrip':
+            break
+    }
+}
+
+async function deleteNotfications(event, email) {
+    let res = await adminStore.deleteNotfications(event, email)
+    if (res.status == 200) {
+        switch (event) {
+            case 'CreateTrip':
+                break
+            case 'BookingTrip':
+                await getNotifications('BookingTrip')
+                break
+            case 'CreateCompanion':
+                break
+            case 'BuyTrip':
+                break
+        }
+    }
+}
+
 async function getEmails(event) {
     let res = await adminStore.getEmails(event)
     let emails = res.data.sendMailsTo[0].emails
@@ -118,9 +164,31 @@ onMounted(async () => {
     await getEmails('BookingTrip')
     await getEmails('CreateCompanion')
     await getEmails('BuyTrip')
+
+    await getNotifications('BookingTrip')
 })
 </script>
 <template>
+    <a-row>
+        <a-col :span="24">
+            <h3>Отправлять заказ тура</h3>
+        </a-col>
+        <a-col :span="24" class="d-flex align-center">
+            <a-input v-model:value="cabinetNotifications.bookingTrip" placeholder="email" />
+            <a-button type="primary" class="ml-12 lets_go_btn"
+                @click="addCabinetNotifications('BookingTrip', cabinetNotifications.bookingTrip)">добавить</a-button>
+        </a-col>
+        <a-col v-if="createTripEmails.length != 0" v-for="email of bookingTripNotifications" class="ma-4"
+            style="cursor: pointer; font-size: 12px;">
+            <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"
+                @confirm="deleteNotfications('BookingTrip', email)">
+                {{ email }}
+            </a-popconfirm>
+        </a-col>
+        <a-col v-else>
+            пусто
+        </a-col>
+    </a-row>
     <a-row class="mt-16">
         <a-col :span="24">
             <h3>Email-уведомления</h3>
