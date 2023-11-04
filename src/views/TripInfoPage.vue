@@ -41,7 +41,9 @@ const creatorsType = computed(() => {
 let tripDates = ref([]);
 let trip = ref({});
 let buyDialog = ref(false);
+let buyNow = ref(false)
 let selectedDate = ref({});
+let selectedStartLocation = ref();
 
 let ShareLogo = ref([
     {
@@ -68,17 +70,17 @@ let ShareLogo = ref([
 
 ])
 
-let tripsCount = computed(() => {
-    let sum = 0;
-    for (let i = 0; i < trip.value.billsList.length; i++) {
-        if (trip.value.billsList[i]) {
-            for (let j = 0; j < trip.value.billsList[i].cart?.length; j++) {
-                sum += trip.value.billsList[i].cart[j].count;
-            }
-        }
-    }
-    return sum;
-});
+// let tripsCount = computed(() => {
+//     let sum = 0;
+//     for (let i = 0; i < trip.value.billsList.length; i++) {
+//         if (trip.value.billsList[i]) {
+//             for (let j = 0; j < trip.value.billsList[i].cart?.length; j++) {
+//                 sum += trip.value.billsList[i].cart[j].count;
+//             }
+//         }
+//     }
+//     return sum;
+// });
 
 let finalCost = computed(() => {
     if (!isInWaitingList.value) {
@@ -165,6 +167,7 @@ async function refreshDates() {
 
     tripDates.value = [];
     trip.value = tripFromDb;
+    selectedStartLocation.value = trip?.value.locationNames[0].name
     if (trip.value.start >= Date.now()) {
         tripDates.value.push({
             _id: trip.value._id,
@@ -219,7 +222,7 @@ let getStartLocationNames = computed(() => {
     }
     return results.join(', ')
 })
-let buyNow = ref(false)
+
 async function buyTrip() {
     if (userStore.user.email) {
         // цены нужно поменять
@@ -230,11 +233,12 @@ async function buyTrip() {
             }
         }
 
-        if (selectedDate.value.selected) {
+        if (selectedDate.value.selected && selectedDate.value.selectedCosts[0].count != 0) {
             let bill = {
                 isBoughtNow: buyNow.value,
                 cart: selectedDate.value.selectedCosts,
                 tripId: selectedDate.value._id,
+                selectedStartLocation: selectedStartLocation.value,
                 userInfo: {
                     _id: userStore.user._id,
                     fullname: userStore.user.fullinfo.fullname,
@@ -280,6 +284,9 @@ async function buyTrip() {
                         console.log(err);
                     });
             }
+        } else {
+            message.config({ duration: 3, top: "90vh" });
+            message.error({ content: "Заполните количество" });
         }
     } else {
         message.config({ duration: 3, top: "90vh" });
@@ -523,7 +530,7 @@ onMounted(async () => {
         </a-row>
         <a-modal v-model:open="buyDialog" :footer="null" @cancel="refreshDates(trip)">
             <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="buyTrip" class="mt-16">
-                <a-row :gutter="[4, 4]">
+                <a-row :gutter="[4, 8]">
 
                     <a-col :span="12">
                         <Field name="fullname" v-slot="{ value, handleChange }" v-model="userStore.user.fullinfo.fullname">
@@ -544,24 +551,37 @@ onMounted(async () => {
                             <ErrorMessage name="phone" class="error-message" />
                         </Transition>
                     </a-col>
+                    <a-col :span="24" v-if="trip.locationNames.length > 1">
+                        <div class="d-flex direction-column">
+                            Место посадки
+                            <a-select placeholder="г.Глазов" v-model:value="selectedStartLocation">
+                                <a-select-option v-for="item in trip.locationNames" :value="item.name"></a-select-option>
+                            </a-select>
+                        </div>
+                    </a-col>
                     <a-col :span="24">
-                        <div>Цены</div>
-                        <b>
-                            {{ clearData(selectedDate.start) + " - " + clearData(selectedDate.end) }}
-                        </b>
-
-                        <div :style="isNoPlaces ? 'color: red' : ''">
-                            {{
-                                getCustomersCount(selectedDate.billsList) +
-                                selectedDate.selectedCosts.reduce((acc, cost) => {
-                                    return acc + cost.count;
-                                }, 0) +
-                                "/" +
-                                trip.maxPeople
-                            }}
-                            чел.
+                        <div>Даты: <b>
+                                {{ clearData(selectedDate.start) + " - " + clearData(selectedDate.end) }}
+                            </b>
                         </div>
 
+                        <div>
+                            Туристы:
+                            <b :style="isNoPlaces ? 'color: red' : ''">
+                                {{
+                                    getCustomersCount(selectedDate.billsList) +
+                                    selectedDate.selectedCosts.reduce((acc, cost) => {
+                                        return acc + cost.count;
+                                    }, 0) +
+                                    "/" +
+                                    trip.maxPeople
+                                }}
+                                чел.
+                            </b>
+                        </div>
+                    </a-col>
+                    <a-col :span="24">
+                        <div>Цены:</div>
                         <div class="d-flex space-between align-center" v-for="cost of selectedDate.selectedCosts">
                             <div v-if="isInWaitingList" style="color: #ff6600">
                                 в лист ожидания
@@ -592,9 +612,9 @@ onMounted(async () => {
 
                     <a-col :span="24">
                         <div class="d-flex space-around">
-                            <a-button html-type="submit" type="primary" class="lets_go_btn" :disabled="isNoPlaces"
+                            <!-- <a-button html-type="submit" type="primary" class="lets_go_btn" :disabled="isNoPlaces"
                                 @click="buyNow = true">
-                                сейчас </a-button>
+                                сейчас </a-button> -->
                             <a-button html-type="submit" type="primary" class="lets_go_btn" @click="buyNow = false"
                                 :disabled="isNoPlaces">
                                 Заказать

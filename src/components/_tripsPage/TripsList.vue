@@ -15,7 +15,11 @@ let handleScroll = async () => {
   let triggerHeight =
     wrapper.value.scrollTop + wrapper.value.offsetHeight
   if (triggerHeight == wrapper.value.scrollHeight) {
-    await tripStore.fetchTrips()
+    await tripStore.fetchTrips(
+      tripStore?.tripFilter.query,
+      tripStore?.tripFilter.start,
+      tripStore?.tripFilter.end,
+      tripStore?.tripFilter.type)
     isRefreshing.value = false
   }
 
@@ -25,7 +29,7 @@ const wrapper = ref(null)
 
 onMounted(async () => {
 
-  if(route.hash) {
+  if (route.hash) {
     let id = route.hash.slice(1)
     document.getElementById(id)?.scrollIntoView()
   }

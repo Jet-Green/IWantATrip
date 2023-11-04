@@ -13,7 +13,13 @@ export const useTrips = defineStore('trips', {
         trips: [],
         cursor: 1,
         searchCursor: 1,
-        isFetching: false
+        isFetching: false,
+        tripFilter: {
+            query: "",
+            start: "",
+            end: "",
+            type: ""
+        }
     }),
     getters: {
         getTrips(state) {
@@ -48,7 +54,7 @@ export const useTrips = defineStore('trips', {
                         this.isFetching = false
                     }
                     this.trips.push(...response.data);
-                    this.trips = _.uniqBy(this.trips,'_id')
+                    this.trips = _.uniqBy(this.trips, '_id')
                     this.cursor++
                 }
             } catch (err) {

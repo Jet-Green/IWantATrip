@@ -25,6 +25,7 @@ let userInfo = ref({
     fullname: '',
     phone: ''
 })
+let selectedStartLocation = ref();
 let selectedByUser = ref([])
 
 let addCustomerDialog = ref(false)
@@ -36,6 +37,7 @@ let addTouristsDialog = ref(false)
 let currentBill = ref(null)
 
 let sumOfPay = ref(0)
+let documentNumber = ref('')
 const print = async () => {
     await htmlToPaper('printMe');
 };
@@ -81,12 +83,16 @@ let billTotal = (bill) => {
 
 async function setPayment() {
     currentBill.value.payment.amount = sumOfPay.value
-    let res = await tripStore.setPayment(currentBill.value)
+    let doc = {}
+    doc.paySum = sumOfPay.value
+    doc.payDocument = documentNumber.value
+    let res = await tripStore.setPayment({ bill: currentBill.value, doc: doc })
 
     if (res.status == 200) {
         setPaymentDialog.value = false
         await updateTripInfo()
         sumOfPay.value = 0
+        documentNumber.value = ''
     }
 }
 async function deletePayment(bill) {
@@ -109,6 +115,7 @@ async function buyTrip(isBoughtNow) {
                         object.count;
                 }, 0) : 0
             },
+            selectedStartLocation: selectedStartLocation.value,
             cart,
             tripId: trip.value._id,
             userInfo: {
@@ -255,6 +262,10 @@ onMounted(async () => {
                         <span class="mdi mdi-account-outline" style=""></span>
                         {{ BILL.userInfo.fullname }}
                     </div>
+                    <div v-if="BILL.selectedStartLocation">
+                        <span class="mdi mdi-map-marker-outline" style=""></span>
+                        {{ BILL.selectedStartLocation }}
+                    </div>
                     <div>
                         <span class="mdi mdi-phone-outline" style=""></span>
                         <a :href="getPhoneNumber(BILL.userInfo.phone)">
@@ -279,6 +290,9 @@ onMounted(async () => {
                         }}
                         руб.
                     </div>
+                    <div v-for="doc in BILL.payment?.documents  " class="d-flex justify-end">
+                        {{ doc.payDocument }} -- {{ doc.paySum }} руб.
+                    </div>
                     <div style="display: flex; justify-content: space-between;">
                         <div style="font-size: 20px">
                             <span @click="() => { setPaymentDialog = true; currentBill = BILL }"
@@ -297,12 +311,14 @@ onMounted(async () => {
                             }, 0) == BILL.payment.amount" style="color: #bcc662">
                                 <span class="mdi mdi-check-all" style="font-size: 20px"></span>
                                 оплачен
+
                             </span>
                             <span v-else style="display: flex; align-items: center">
                                 <span class="mdi mdi-close" style="font-size: 20px"></span>
                                 не оплачен
                             </span>
                         </b>
+
                     </div>
                 </a-card>
             </div>
@@ -348,8 +364,17 @@ onMounted(async () => {
                 <div>К отплате: {{ billTotal(currentBill) }} руб.</div>
                 <div>Оплачено: {{ currentBill.payment.amount }} руб.</div>
                 <div>Оплатить: {{ billTotal(currentBill) - currentBill.payment.amount }} руб.</div>
-                <a-input-number style="width: 100%" placeholder="8900" v-model:value="sumOfPay"
-                    :max="billTotal(currentBill) - currentBill.payment.amount" />
+                <a-row :gutter="[4, 4]">
+                    <a-col cols="6">
+                        <a-input-number style="width: 100%" placeholder="8900" v-model:value="sumOfPay"
+                            :max="billTotal(currentBill) - currentBill.payment.amount" />
+                    </a-col>
+                    <a-col cols="6">
+                        <a-input style="width: 100%" v-model:value="documentNumber" placeholder="документ" />
+                    </a-col>
+                </a-row>
+
+
             </a-col>
             <a-col :span="24">
                 <a-button @click="setPayment()" type="primary" class="lets_go_btn">оплатить</a-button>
@@ -365,6 +390,15 @@ onMounted(async () => {
             <a-col :span="24" :md="12">
                 Телефон
                 <a-input style="width: 100%" v-model:value="userInfo.phone" placeholder="79127528874" />
+            </a-col>
+
+            <a-col :span="24">
+                <div class="d-flex direction-column">
+                    Место посадки
+                    <a-select placeholder="г.Глазов" v-model:value="selectedStartLocation" style="width: ">
+                        <a-select-option v-for="item in trip.locationNames" :value="item.name"></a-select-option>
+                    </a-select>
+                </div>
             </a-col>
 
             <a-col :span="24">
@@ -386,14 +420,14 @@ onMounted(async () => {
             <a-col :span="24">
                 <div>Оплатить</div>
                 <div class="d-flex space-around">
-                    <a-button type="primary" @click="buyTrip(true)"> сейчас </a-button>
+                    <!-- <a-button type="primary" @click="buyTrip(true)"> сейчас </a-button> -->
                     <a-button @click="buyTrip(false)"> потом </a-button>
                 </div>
             </a-col>
         </a-row>
     </a-modal>
     <div id="printMe" style="display: none">
-        <PrintCustomers :customers="trip.billsList" :trip="trip" />
+        <PrintCustomers :customers="trip.billsList" :trip="trip" :total='tripStat' />
     </div>
     <div class="d-flex justify-center">
         <a-button @click="print()" type="primary" class="lets_go_btn ma-8">
