@@ -51,7 +51,7 @@ onMounted(() => {
 <template>
     <a-row>
         <a-col :span="24">
-            <h3>Вы заказали</h3>
+            <h3>заказанных</h3>
             <a-row :gutter="[8, 8]" class="mt-8">
                 <a-col :lg="8" :sm="12" :xs="24" v-for="booking in bookings" v-if="bookings.length">
 
