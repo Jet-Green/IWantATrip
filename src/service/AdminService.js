@@ -15,5 +15,14 @@ export default {
     },
     deleteEmail(event, email) {
         return $api.get(`/admin/delete-email?event=${event}&email=${email}`)
+    },
+    addCabinetNotifications(event, email) {
+        return $api.post('/admin/add-cabinet-notifications', { event, email })
+    },
+    getNotifications(event) {
+        return $api.post('/admin/get-notifications', { event })
+    },
+    deleteNotfications(event, email) {
+        return $api.post('/admin/delete-notifications', { event, email })
     }
 }

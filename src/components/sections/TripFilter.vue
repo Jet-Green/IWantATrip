@@ -24,15 +24,11 @@ let query = ref("");
 let type = ref("");
 
 
-
-let visible = ref(false);
-
 function find() {
   query.value = query.value.trim()
   localStorage.setItem("TripQuery", query.value)
   localStorage.setItem("TripType", type.value)
   tripStore.searchCursor = 1
-  tripStore.filteredTrips = []
   tripStore.cursor = 1
   tripStore.trips = []
   if (time.value) {
@@ -52,10 +48,16 @@ function find() {
     end.setMilliseconds(999)
 
     end = Number(Date.parse(end.toString()));
-
+    tripStore.tripFilter.query = query.value
+    tripStore.tripFilter.start = start
+    tripStore.tripFilter.end = end
+    tripStore.tripFilter.type = type.value
     tripStore.fetchTrips(query.value, start, end, type.value);
   } else {
-
+    tripStore.tripFilter.query = query.value
+    tripStore.tripFilter.start = ""
+    tripStore.tripFilter.end = ""
+    tripStore.tripFilter.type = type.value
     tripStore.fetchTrips(
       query.value,
       "",
@@ -66,6 +68,10 @@ function find() {
 }
 
 function resetForm() {
+  tripStore.tripFilter.query = ""
+  tripStore.tripFilter.start = ""
+  tripStore.tripFilter.end = ""
+  tripStore.tripFilter.type = ""
   time.value = null;
   query.value = '';
   type.value = '';
@@ -98,17 +104,17 @@ onMounted(() => {
   <a-row type="flex" justify="center" class="section_bg ">
     <a-col :xs="22" :lg="16">
 
-      <a-row :gutter="[8, 4]" class="d-flex justify-center  flex-wrap">
-        <a-col class="d-flex direction-column"> 
-             <div for="search" style="font-size:10px; line-height:10px; " >искать</div>
-          <a-input v-model:value="query" placeholder="сочи" name="search" style="z-index: 0; width:150px" />
-      
+      <a-row :gutter="[8, 4]" class="d-flex justify-center align-center flex-wrap">
+        <a-col :span="12" :md="6" class="d-flex direction-column">
+          <div for="search" style="font-size:10px; line-height:10px; ">искать</div>
+          <a-input v-model:value="query" placeholder="сочи" name="search" style="z-index: 0; width:100%" />
+
         </a-col>
 
-        <a-col class="d-flex direction-column" >
-          <div  style="font-size:10px; line-height:10px">тип тура</div>
-          <a-select v-model:value="type" style="width:150px" >
-            <a-select-option  value="" ></a-select-option>
+        <a-col :span="12" :md="6" class="d-flex direction-column">
+          <div style="font-size:10px; line-height:10px">вид тура</div>
+          <a-select v-model:value="type">
+            <a-select-option value=""></a-select-option>
             <a-select-option placeholder="Tип тура" v-for="   tripType    in    appStore.appState[0].tripType   "
               :value="tripType">{{
                 tripType
@@ -116,31 +122,27 @@ onMounted(() => {
           </a-select>
         </a-col>
 
-        <a-col class="d-flex direction-column">
-          <div  style="font-size:10px; line-height:10px">даты</div>
-          <a-range-picker v-model:value="time" :locale="ruLocale" :placeholder="['начало','конец']" inputmode='none' />
-        </a-col>
-
-
-        <a-col  class="d-flex align-end">
-          <div>
-              <a-tooltip title="Искать">
-            <a-button type="primary" shape="circle" @click="find" class="mr-4">
-              <span class=" mdi mdi-magnify">
-              </span>
-
-
-            </a-button>
-          </a-tooltip>
-          <a-tooltip title="Очистить">
-            <a-button shape="circle" @click="resetForm" >
-              <span class=" mdi mdi-close">
-              </span>
-              
-            </a-button>
-          </a-tooltip>
+        <a-col :span="24" :md="12" class="d-flex align-center space-between" >
+          <div class="d-flex direction-column" style="width:70%">
+            <div style="font-size:10px; line-height:10px">даты</div>
+            <a-range-picker v-model:value="time" :locale="ruLocale" :placeholder="['начало', 'конец']" inputmode='none'  />
           </div>
-        
+          <div class="pa-8">
+            <a-tooltip title="Искать">
+              <a-button type="primary" shape="circle" @click="find" class="mr-4">
+                <span class=" mdi mdi-magnify">
+                </span>
+              </a-button>
+            </a-tooltip>
+            <a-tooltip title="Очистить">
+              <a-button shape="circle" @click="resetForm">
+                <span class=" mdi mdi-close">
+                </span>
+
+              </a-button>
+            </a-tooltip>
+          </div>
+
         </a-col>
 
 

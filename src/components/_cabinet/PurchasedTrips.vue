@@ -12,7 +12,7 @@ async function cancelTrip(bill_id, user_id) {
   let res = await userStore.cancelTrip(bill_id, user_id)
   if (res.status == 200)
     await updateBought()
-  }
+}
 
 const clearData = (dataString) => {
   let date
@@ -29,6 +29,12 @@ const clearData = (dataString) => {
     day: "2-digit",
 
   })
+}
+let tripTotalPrice = (bill) => {
+  return bill.cart.reduce((accumulator, object) => {
+    return accumulator + object.cost *
+      object.count;
+  }, 0)
 }
 
 
@@ -59,28 +65,26 @@ onMounted(async () => {
                 {{ cartItem.costType }} {{ cartItem.count }} x {{ cartItem.cost }} руб.
               </div>
 
-              <div class="d-flex justify-end"> <span>Итого: </span>
+              <div class="d-flex justify-end"> <span>Стоимость: </span>
                 {{
-                  bill.cart.reduce((accumulator, object) => {
-                    return accumulator + object.cost *
-                      object.count;
-                  }, 0)
+                  tripTotalPrice(bill)
                 }} руб.
               </div>
+              <div class="d-flex justify-end"> <span>Оплачено:{{ bill.payment.amount }} руб. </span> </div>
+              <!-- {{ bill }} -->
               <a-row class="actions d-flex justify-center">
-                  <a-popconfirm title="Отказаться?" ok-text="Да" cancel-text="Нет"
-                    @confirm="cancelTrip(bill._id, userStore.user._id)">
-                    <span class="mdi mdi-close-circle-outline"></span>
-                  </a-popconfirm>
-                  <a-col v-if="bill.tripId.isBoughtNow"><span style="color: #BCC662;">
+                <a-popconfirm title="Отказаться?" ok-text="Да" cancel-text="Нет"
+                  @confirm="cancelTrip(bill._id, userStore.user._id)">
+                  <span class="mdi mdi-close-circle-outline" v-if="!bill.payment.amount"></span>
+                </a-popconfirm>
+                <a-col v-if="bill.tripId.isBoughtNow"><span style="color: #BCC662;">
                     <span class="mdi mdi-check-all"></span>
                     оплачен
                   </span></a-col>
-                  <a-popconfirm v-else title="Оплатить?" ok-text="Да" cancel-text="Нет"
-                    @confirm="">
-                    <span class="mdi mdi-cart-outline">
-                </span>
-                  </a-popconfirm>
+                <a-popconfirm v-else title="Оплатить?" ok-text="Да" cancel-text="Нет" @confirm="">
+                  <span class="mdi mdi-cart-outline" v-if="tripTotalPrice(bill) > bill.payment.amount">
+                  </span>
+                </a-popconfirm>
               </a-row>
             </a-card>
           </a-col>
@@ -92,11 +96,12 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 .actions {
-    font-size: 20px;
-    position: relative;
+  font-size: 20px;
+  position: relative;
 
-    * {
-        margin: 4px;
-        cursor: pointer;
-    }
-}</style>
+  * {
+    margin: 4px;
+    cursor: pointer;
+  }
+}
+</style>

@@ -46,6 +46,27 @@ export const useAdmin = defineStore('admin', {
             } catch (error) {
                 console.log(error);
             }
+        },
+        addCabinetNotifications(event, email) {
+            try {
+                return AdminService.addCabinetNotifications(event, email)
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        getNotifications(event) {
+            try {
+                return AdminService.getNotifications(event)
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        deleteNotfications(event, email) {
+            try {
+                return AdminService.deleteNotfications(event, email)
+            } catch (error) {
+                console.log(error);
+            }
         }
     }
 });
