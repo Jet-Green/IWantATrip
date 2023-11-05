@@ -122,6 +122,11 @@ const router = createRouter({
       component: () => import('../components/_guide/Transport.vue')
     },
     {
+      path: '/taxi',
+      name: 'Taxi',
+      component: () => import('../components/_guide/Taxi.vue')
+    },
+    {
       path: '/eat',
       name: 'ToEat',
       component: () => import('../components/_guide/ToEat.vue')

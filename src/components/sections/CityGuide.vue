@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from "vue";
 import { useLocations } from '../../stores/locations'
-import { and } from "@vueuse/core";
 
 const locationStore = useLocations()
 let cards = [
