@@ -124,7 +124,7 @@ function getLink() {
 }
 
 let buyTripDialog = () => {
-
+    console.log(trip)
     if (userStore.user.email) {
         if (!selectedDate.value.selected) {
             tripDates.value[0].selected = true;
@@ -609,6 +609,9 @@ onMounted(async () => {
                     <a-col :span="24" class="d-flex justify-end">
                         <b>Итого: {{ finalCost }} руб.</b>
                     </a-col>
+                    <div v-if="trip.partner">
+                         <h4 class="warning">Наличие мест требует уточнения!</h4>       
+                    </div>
 
                     <a-col :span="24">
                         <div class="d-flex space-around">
@@ -690,12 +693,8 @@ img {
 .mdi-printer:hover {
     color: #ff6600;
 }
-
-// .ant-carousel :deep(.custom-slick-arrow:before) {
-//   display: none;
-// }
-
-// .ant-carousel :deep(.custom-slick-arrow:hover) {
-//   opacity: 0.8;
-// }
+.warning{
+    color: red;
+    font-style: italic;
+}
 </style>
