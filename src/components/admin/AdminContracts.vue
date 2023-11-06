@@ -190,22 +190,23 @@ function submit() {
     email: "",
     director: "",
 });
+  close()
   }
 }
 let formSchema = yup.object({
   name: yup.string().required("заполните поле"),
+  email: yup.string().email('неверный формат').required("заполните поле"),
   inn: yup.string().required("заполните поле"),
   kpp: yup.string().required("заполните поле"),
   ogrn: yup.string().required("заполните поле"),
+  bik: yup.string().required("заполните поле"),
   yr_address: yup.string().required("заполните поле"),
   fact_address: yup.string().required("заполните поле"),
   checking_account: yup.string().required("заполните поле"),
   checking_account_bank: yup.string().required("заполните поле"),
   cash_account: yup.string().required("заполните поле"),
   cash_account_bank: yup.string().required("заполните поле"),
-  bik: yup.string().required("заполните поле"),
   phone: yup.string().required("заполните поле"),
-  email: yup.string().email('неверный формат').required("заполните поле"),
   director: yup.string().required("заполните поле"),
 });
 async function addContract() {
@@ -218,7 +219,7 @@ async function addContract() {
   <a-row>
     <a-col :span="24">
       <h3>Договоры</h3>
-      <a-button type="primary" class="lets_go_btn" @click="addContractModal = true"
+      <!-- <a-button type="primary" class="lets_go_btn" @click="addContractModal = true"
         >добавить</a-button
       >
       <a-modal
@@ -229,15 +230,15 @@ async function addContract() {
         cancel-text="отмена"
       >
         <a-input placeholder="email" size="large" v-model:value="contractEmail"></a-input>
-      </a-modal>
+      </a-modal> -->
       <Form
         :validation-schema="formSchema"
         v-slot="{ meta }"
         @submit="submit"
-        class="ma-16"
+        class="mt-16 mb-16"
       >
         <a-row :gutter="[16, 16]">
-          <a-col :span="24">
+          <a-col :span="12">
             <Field
               name="name"
               v-slot="{ value, handleChange }"
@@ -254,7 +255,24 @@ async function addContract() {
               <ErrorMessage name="name" class="error-message" />
             </Transition>
           </a-col>
-          <a-col :span="24">
+          <a-col :span="12">
+            <Field
+              name="email"
+              v-slot="{ value, handleChange }"
+              v-model="contractForm.email"
+            >
+              Электронная почта
+              <a-input
+                placeholder="ivanov@mail.ru"
+                @update:value="handleChange"
+                :value="value"
+              ></a-input>
+            </Field>
+            <Transition name="fade">
+              <ErrorMessage name="email" class="error-message" />
+            </Transition>
+          </a-col>
+          <a-col :span="12">
             <Field name="inn" v-slot="{ value, handleChange }" v-model="contractForm.inn">
               ИНН
               <a-input
@@ -268,7 +286,7 @@ async function addContract() {
               <ErrorMessage name="inn" class="error-message" />
             </Transition>
           </a-col>
-          <a-col :span="24">
+          <a-col :span="12">
             <Field name="kpp" v-slot="{ value, handleChange }" v-model="contractForm.kpp">
               КПП
               <a-input
@@ -282,7 +300,7 @@ async function addContract() {
               <ErrorMessage name="kpp" class="error-message" />
             </Transition>
           </a-col>
-          <a-col :span="24">
+          <a-col :span="12">
             <Field
               name="ogrn"
               v-slot="{ value, handleChange }"
@@ -300,7 +318,21 @@ async function addContract() {
               <ErrorMessage name="ogrn" class="error-message" />
             </Transition>
           </a-col>
-          <a-col :span="24">
+          <a-col :span="12">
+            <Field name="bik" v-slot="{ value, handleChange }" v-model="contractForm.bik">
+              БИК
+              <a-input
+                placeholder="999999999"
+                @update:value="handleChange"
+                :value="value"
+                :maxlength="9"
+              ></a-input>
+            </Field>
+            <Transition name="fade">
+              <ErrorMessage name="bik" class="error-message" />
+            </Transition>
+          </a-col>
+          <a-col :span="12">
             <Field
               name="yr_address"
               v-slot="{ value, handleChange }"
@@ -321,7 +353,7 @@ async function addContract() {
               <ErrorMessage name="yr_address" class="error-message" />
             </Transition>
           </a-col>
-          <a-col :span="24">
+          <a-col :span="12">
             <Field
               name="fact_address"
               v-slot="{ value, handleChange }"
@@ -342,7 +374,7 @@ async function addContract() {
               <ErrorMessage name="fact_address" class="error-message" />
             </Transition>
           </a-col>
-          <a-col :span="24">
+          <a-col :span="12">
             <Field
               name="checking_account"
               v-slot="{ value, handleChange }"
@@ -359,7 +391,7 @@ async function addContract() {
               <ErrorMessage name="checking_account" class="error-message" />
             </Transition>
           </a-col>
-          <a-col :span="24">
+          <a-col :span="12">
             <Field
               name="checking_account_bank"
               v-slot="{ value, handleChange }"
@@ -376,7 +408,7 @@ async function addContract() {
               <ErrorMessage name="checking_account_bank" class="error-message" />
             </Transition>
           </a-col>
-          <a-col :span="24">
+          <a-col :span="12">
             <Field
               name="cash_account"
               v-slot="{ value, handleChange }"
@@ -393,7 +425,7 @@ async function addContract() {
               <ErrorMessage name="cash_account" class="error-message" />
             </Transition>
           </a-col>
-          <a-col :span="24">
+          <a-col :span="12">
             <Field
               name="cash_account_bank"
               v-slot="{ value, handleChange }"
@@ -408,20 +440,6 @@ async function addContract() {
             </Field>
             <Transition name="fade">
               <ErrorMessage name="cash_account_bank" class="error-message" />
-            </Transition>
-          </a-col>
-          <a-col :span="24">
-            <Field name="bik" v-slot="{ value, handleChange }" v-model="contractForm.bik">
-              БИК
-              <a-input
-                placeholder="999999999"
-                @update:value="handleChange"
-                :value="value"
-                :maxlength="9"
-              ></a-input>
-            </Field>
-            <Transition name="fade">
-              <ErrorMessage name="bik" class="error-message" />
             </Transition>
           </a-col>
           <a-col :span="24">
@@ -444,23 +462,6 @@ async function addContract() {
           </a-col>
           <a-col :span="24">
             <Field
-              name="email"
-              v-slot="{ value, handleChange }"
-              v-model="contractForm.email"
-            >
-              Электронная почта
-              <a-input
-                placeholder="ivanov@mail.ru"
-                @update:value="handleChange"
-                :value="value"
-              ></a-input>
-            </Field>
-            <Transition name="fade">
-              <ErrorMessage name="email" class="error-message" />
-            </Transition>
-          </a-col>
-          <a-col :span="24">
-            <Field
               name="director"
               v-slot="{ value, handleChange }"
               v-model="contractForm.director"
@@ -476,7 +477,7 @@ async function addContract() {
               <ErrorMessage name="director" class="error-message" />
             </Transition>
           </a-col>
-          <a-button class="lets_go_btn" type="primary" html-type="submit">Отправить
+          <a-button class="lets_go_btn ml-4" type="primary" html-type="submit">Отправить
               </a-button>
         </a-row>
       </Form>
