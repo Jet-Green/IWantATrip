@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, getCurrentInstance } from "vue";
-
+import _ from 'lodash'
 import tinkoffPlugin from '../plugins/tinkoff'
 
 import { useRoute } from "vue-router";
@@ -44,6 +44,7 @@ let buyDialog = ref(false);
 let buyNow = ref(false)
 let selectedDate = ref({});
 let selectedStartLocation = ref();
+let isInWaitingList = ref(false)
 
 let ShareLogo = ref([
     {
@@ -83,24 +84,25 @@ let ShareLogo = ref([
 // });
 
 let finalCost = computed(() => {
-    if (!isInWaitingList.value) {
-        let sum = 0;
-        for (let date of tripDates.value) {
-            for (let cost of date.selectedCosts) {
-                sum += cost.cost * cost.count;
-            }
+    // if (!isInWaitingList.value) {
+    let sum = 0;
+    for (let date of tripDates.value) {
+        for (let cost of date.selectedCosts) {
+            sum += cost.cost * cost.count;
         }
-        return sum;
-    } else {
-        let fixedCost = trip.value.transports[0].price
-        let sum = 0;
-        for (let date of tripDates.value) {
-            for (let cost of date.selectedCosts) {
-                sum += fixedCost * cost.count;
-            }
-        }
-        return sum;
     }
+    return sum;
+    // } 
+    // else {
+    //     let fixedCost = trip.value.transports[0].price
+    //     let sum = 0;
+    //     for (let date of tripDates.value) {
+    //         for (let cost of date.selectedCosts) {
+    //             sum += fixedCost * cost.count;
+    //         }
+    //     }
+    //     return sum;
+    // }
 });
 
 const clearData = (dateNumber) => {
@@ -119,12 +121,12 @@ function getImg(index) {
     return trip.value.images[index];
 }
 function getLink() {
-    console.log(API_URL + route.fullPath)
+
     return API_URL + route.fullPath
 }
 
 let buyTripDialog = () => {
-    console.log(trip)
+
     if (userStore.user.email) {
         if (!selectedDate.value.selected) {
             tripDates.value[0].selected = true;
@@ -167,6 +169,11 @@ async function refreshDates() {
 
     tripDates.value = [];
     trip.value = tripFromDb;
+    //сортируем транспорт по возрастанию
+    if (trip.value.transports.length) {    
+        trip.value.transports = _.sortBy(tripFromDb.transports, [function (o) { return o.capacity; }])
+    }
+
     selectedStartLocation.value = trip?.value.locationNames[0].name
     if (trip.value.start >= Date.now()) {
         tripDates.value.push({
@@ -226,15 +233,17 @@ let getStartLocationNames = computed(() => {
 async function buyTrip() {
     if (userStore.user.email) {
         // цены нужно поменять
-        if (isInWaitingList.value) {
-            for (let c of selectedDate.value.selectedCosts) {
-                c.cost = trip.value.transports[0].price
-                c.costType = 'в листе ожидания'
-            }
-        }
+        // if (isInWaitingList.value) {
+        //     for (let c of selectedDate.value.selectedCosts) {
+        //         c.cost = trip.value.transports[0].price
+        //         c.costType = 'в листе ожидания'
+        //     }
+        // }
 
-        if (selectedDate.value.selected && selectedDate.value.selectedCosts[0].count != 0) {
+        if (selectedDate.value.selected && finalCost.value > 0) {
             let bill = {
+                isWaitingList: isInWaitingList.value,
+                date: Date.now(),
                 isBoughtNow: buyNow.value,
                 cart: selectedDate.value.selectedCosts,
                 tripId: selectedDate.value._id,
@@ -294,7 +303,7 @@ async function buyTrip() {
     }
 }
 
-let isInWaitingList = ref(false)
+
 function detectIsWaiting(isWaiting) {
     isInWaitingList.value = isWaiting
 }
@@ -582,18 +591,19 @@ onMounted(async () => {
                     </a-col>
                     <a-col :span="24">
                         <div>Цены:</div>
+                        <div v-if="isInWaitingList" style="color: #ff6600">
+                            Вы в листе ожидания
+                        </div>
                         <div class="d-flex space-between align-center" v-for="cost of selectedDate.selectedCosts">
-                            <div v-if="isInWaitingList" style="color: #ff6600">
-                                в лист ожидания
-                            </div>
-                            <div v-else>
+
+                            <div>
                                 {{ cost.costType }}
                             </div>
-                            <div v-if="isInWaitingList">
+                            <!-- <div v-if="isInWaitingList">
                                 {{ trip.transports[0].price }} руб.
                             </div>
-                            <div v-else>{{ cost.cost }} руб.</div>
-
+                            <div v-else>{{ cost.cost }} руб.</div> -->
+                            <div>{{ cost.cost }} руб.</div>
                             <div class="d-flex direction-column">
                                 <span style="font-size: 8px">кол-во</span>
                                 <a-input-number v-model:value="cost.count" :min="0"
@@ -609,8 +619,9 @@ onMounted(async () => {
                     <a-col :span="24" class="d-flex justify-end">
                         <b>Итого: {{ finalCost }} руб.</b>
                     </a-col>
+
                     <div v-if="trip.partner">
-                         <h4 class="warning">Наличие мест требует уточнения!</h4>       
+                        <h4 class="warning">Наличие мест требует уточнения!</h4>
                     </div>
 
                     <a-col :span="24">
@@ -693,7 +704,8 @@ img {
 .mdi-printer:hover {
     color: #ff6600;
 }
-.warning{
+
+.warning {
     color: red;
     font-style: italic;
 }

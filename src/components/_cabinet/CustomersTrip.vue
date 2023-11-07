@@ -256,9 +256,16 @@ onMounted(async () => {
         <a-col :lg="8" :sm="12" :xs="24" v-for="(BILL, index) of trip.billsList">
             <div>
                 <a-card hoverable class="card">
+                    <div class="d-flex space-between">
+                        <div style="color:#ff6600"><span v-if="BILL?.isWaitingList"> Лист ожидания</span></div> <b>{{
+                            clearData(BILL?.date)
+                        }}</b>
+                    </div>
+                    <div> </div>
                     <div>
                         <span class="mdi mdi-account-outline" style=""></span>
                         {{ BILL.userInfo.fullname }}
+
                     </div>
                     <div v-if="BILL.selectedStartLocation">
                         <span class="mdi mdi-map-marker-outline" style=""></span>

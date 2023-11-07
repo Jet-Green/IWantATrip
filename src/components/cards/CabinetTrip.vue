@@ -392,15 +392,15 @@ onMounted(async () => {
         <a-modal v-model:open="updateTransportDialog" title="Изменить транспорт" okText="Отправить" cancelText="Отмена"
             @ok="updateTrasports">
             <a-row :gutter="[16, 16]">
-                <a-col :span="24" :md="12">
+                <a-col :span="24" :md="24">
                     Тип
                     <a-auto-complete style="width: 100%" :options="possibleTransport" placeholder="Минивен"
                         @select="(value) => { addTransportForm.transportType = { name: value } }"></a-auto-complete>
                 </a-col>
-                <a-col :span="24" :md="12">
+                <!-- <a-col :span="24" :md="12">
                     Цена для ожидающих
                     <a-input-number :min="1" style="width: 100%" v-model:value="addTransportForm.price"></a-input-number>
-                </a-col>
+                </a-col> -->
                 <a-col :span="24" :md="12">
                     Лист ожидания до, чел
                     <a-input-number :max="trip.maxPeople" :min="0" style="width: 100%"

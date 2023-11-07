@@ -51,49 +51,6 @@ let selectTransport = computed(() => {
     return { selected, wait, isWaiting }
 })
 
-// function detectTransportBySeat(seatNumber) {
-//     if (transports.length > 1) {
-//         for (let i = 1; i < transports.length; i++) {
-//             if (seatNumber >= transports[i - 1].capacity && seatNumber <= transports[i].capacity) {
-//                 return { transport: transports[i], index: i }
-//             }
-//         }
-//     } else {
-//         return { transport: transports[0], index: 0 }
-//     }
-//     // на всякий
-//     return { transport: transports[0], index: 0 }
-// }
-
-// let startSeat;
-// function nextSeat(seatNumber) {
-//     let currentTransport = detectTransportBySeat(seatNumber)
-//     let startTransport = detectTransportBySeat(startSeat)
-
-//     // если не совпадают, то машина точно набралась
-//     if (currentTransport.index != startTransport.index) {
-//         let peopleInCar = seatNumber - transports[currentTransport.index - 1].capacity
-//         if (peopleInCar <= currentTransport.transport.waiting)
-//             return { isWaiting: true }
-//         else
-//             return { isWaiting: false }
-//     } else {
-//         // теперь нужно определить, входим ли мы в места, которые ждут
-//         if (currentTransport.index > 0) {
-//             // человек набралось именно в этой машине
-//             let peopleInCar = seatNumber - transports[currentTransport.index - 1].capacity
-//             if (peopleInCar <= currentTransport.transport.waiting)
-//                 return { isWaiting: true }
-//             else
-//                 return { isWaiting: false }
-//         } else {
-//             if (seatNumber <= currentTransport.transport.waiting)
-//                 return { isWaiting: true }
-//             else
-//                 return { isWaiting: false }
-//         }
-//     }
-// }
 
 watch(tripsCount, () => { 
     emit('isUserWaiting', selectTransport.value.isWaiting)
