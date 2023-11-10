@@ -70,7 +70,7 @@ onMounted(() => {
             <span v-if=!sm>Заказы</span>
             <span v-else class="mdi mdi-24px mdi-hand-wave-outline" style="color: #245159; cursor: pointer"></span>
           </a-menu-item>
-          <a-sub-menu key=" sub2" v-if="userStore.user.roles.includes('manager')">
+          <a-sub-menu key="sub2" v-if="userStore.user.roles.includes('manager')">
             <template #title>
               <span v-if=!sm>Админ</span>
               <span v-else class="mdi mdi-24px mdi-cog-outline" style="color: #245159; cursor: pointer"></span>
@@ -85,8 +85,16 @@ onMounted(() => {
             <a-menu-item key="/cabinet/orders">Заказы</a-menu-item>
             <a-menu-item v-if="userStore.user.roles.includes('admin')" key="/cabinet/interface">Интерфейс</a-menu-item>
             <a-menu-item v-if="userStore.user.roles.includes('admin')" key="/cabinet/management">Управление</a-menu-item>
-            <a-menu-item v-if="userStore.user.roles.includes('admin')"
-              key="/cabinet/admin-contracts">Договоры</a-menu-item>
+
+            <a-sub-menu key="sub3">
+              <template #title>
+                Договоры
+              </template>
+              <a-menu-item v-if="userStore.user.roles.includes('admin')"
+                key="/cabinet/add-admin-contract">Добавить</a-menu-item>
+              <a-menu-item v-if="userStore.user.roles.includes('admin')"
+                key="/cabinet/admin-contracts-list">Список</a-menu-item>
+            </a-sub-menu>
             <!-- <a-menu-item v-if="userStore.user.roles.includes('admin')" key="/cabinet/scripts"
               style="color: red">Scripts</a-menu-item> -->
           </a-sub-menu>
