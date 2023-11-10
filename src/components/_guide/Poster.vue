@@ -18,12 +18,12 @@ let query = ref({
 })
 
 let selectType = ref([]);
-const handleChange = (type, checked) => {
-  query.eventType = type;
-};
+
+function goToPlpo(poster_id){
+  window.open(`https://plpo.ru/post?_id=${poster_id}`)
+}
 
 watch(selectType, () => {
-
   let filtered = posterTypes.value.filter((item, index) =>
     selectType.value[index]
   )
@@ -40,7 +40,6 @@ watch(() => locationStore.location, () => {
 })
 
 let getPosters = async () => {
-
   let plpoPosters = await axios.post('https://plpo.ru/api/get-all', { query: query.value }, {
     headers: {
       "Authorization": `Bearer ${123}`
@@ -48,11 +47,9 @@ let getPosters = async () => {
   })
   posters.value = plpoPosters.data
 
-
 }
 
 onMounted(async () => {
-
   let getTypes = await axios.get('https://plpo.ru/api/get-posters-types', {
     headers: {
       "Authorization": `Bearer ${123}`
@@ -62,9 +59,8 @@ onMounted(async () => {
 
   let setSelected = Array(posterTypes.value.length).fill(false);
   selectType.value = setSelected
-  query.value.eventLocation = locationStore.location.name
+  query.value.eventLocation = locationStore?.location.name
   await getPosters()
-
 })
 
 </script>
@@ -85,10 +81,8 @@ onMounted(async () => {
       <a-col :xs="22" :lg="16">
         <a-row type="flex" justify="center">
           <a-col>
-
             <a-space :size="[0, 8]" wrap>
-              <a-checkable-tag v-for="(type, index) in posterTypes" :key="type" v-model:checked="selectType[index]"
-                @change="checked => handleChange(type.name)">
+              <a-checkable-tag v-for="(type, index) in posterTypes" :key="type" v-model:checked="selectType[index]">
                 {{ type.name }}
               </a-checkable-tag>
             </a-space>
@@ -101,9 +95,9 @@ onMounted(async () => {
 
         <a-row type="flex" justify="center">
           <a-col span="12" :md="6" v-for="poster in posters">
-            <a-card class="ma-8">
+            <a-card class="ma-8" style="cursor:pointer">
               <template #cover>
-                <img alt="example" :src="poster.image" />
+                <img alt="example" :src="poster.image" @click="goToPlpo(poster._id)"/>
               </template>
             </a-card>
           </a-col>
