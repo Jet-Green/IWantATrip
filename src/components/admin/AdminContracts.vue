@@ -6,7 +6,6 @@ import * as yup from "yup";
 
 let contractStore = useContract()
 
-let addContractModal = ref(false);
 let yrLocationSearchRequest = ref("")
 let factLocationSearchRequest = ref("")
 let possibleLocations = ref([])
@@ -154,101 +153,72 @@ watch(factLocationSearchRequest, async (newValue, oldValue) => {
     }
   }
 })
+
+async function addContract() {
+  contractForm.yr_address = contractForm.yr_address.name
+  contractForm.fact_address = contractForm.fact_address.name
+
+  let res = await contractStore.createContract(contractForm, contractEmail.value)
+  if (res.status == 200) {
+    Object.assign(contractForm, {
+      name: "",
+      inn: "",
+      kpp: "",
+      ogrn: "",
+      yr_address: null,
+      fact_address: null,
+      checking_account: "",
+      checking_account_bank: "",
+      cash_account: "",
+      cash_account_bank: "",
+      bik: "",
+      phone: "",
+      email: "",
+      director: "",
+    })
+
+    contractEmail.value = ""
+  }
+}
+
 // need modification
 let submitCount = ref(0)
-function submit() {
-
+async function submit() {
   submitCount.value += 1
   if (submitCount.value > 1) {
     return
   }
-
-  let send = {};
-  for (let key in form) {
-    send[key] = form[key];
-  }
-
-  function close() {
-    router.push("/cabinet/me");
-    clearForm()
-  }
-
-  function clearForm() {
-  Object.assign(contractForm,{
-    name: "",
-    inn: "",
-    kpp: "",
-    ogrn: "",
-    yr_address: "",
-    fact_address: "",
-    checking_account: "",
-    checking_account_bank: "",
-    cash_account: "",
-    cash_account_bank: "",
-    bik: "",
-    phone: "",
-    email: "",
-    director: "",
-});
+  if (contractEmail.value.length >= 3) {
+    await addContract()
   }
 }
 let formSchema = yup.object({
   name: yup.string().required("заполните поле"),
-  inn: yup.string().max(10,'максимум 10 символов').required("заполните поле"),
-  kpp: yup.string().max(9,'максимум 9 символов').required("заполните поле"),
-  ogrn: yup.string().max(13,'максимум 13 символов').required("заполните поле"),
+  inn: yup.string().max(10, 'максимум 10 символов').required("заполните поле"),
+  kpp: yup.string().max(9, 'максимум 9 символов').required("заполните поле"),
+  ogrn: yup.string().max(13, 'максимум 13 символов').required("заполните поле"),
   yr_address: yup.string().required("заполните поле"),
   fact_address: yup.string().required("заполните поле"),
   checking_account: yup.string().required("заполните поле"),
   checking_account_bank: yup.string().required("заполните поле"),
   cash_account: yup.string().required("заполните поле"),
   cash_account_bank: yup.string().required("заполните поле"),
-  bik: yup.string().max(9,'максимум 9 символов').required("заполните поле"),
-  phone: yup.string().max(11,'максимум 11 символов').required("заполните поле"),
+  bik: yup.string().max(9, 'максимум 9 символов').required("заполните поле"),
+  phone: yup.string().max(11, 'максимум 11 символов').required("заполните поле"),
   email: yup.string().email('неверный формат').required("заполните поле"),
   director: yup.string().required("заполните поле"),
 });
-async function addContract() {
-  let res = await contractStore.createContract(contractForm)
-  // пока только вывести
-  console.log(res);
-}
 </script>
 <template>
   <a-row>
     <a-col :span="24">
       <h3>Договоры</h3>
-      <a-button type="primary" class="lets_go_btn" @click="addContractModal = true"
-        >добавить</a-button
-      >
-      <a-modal
-        v-model:open="addContractModal"
-        title="Добавить контракт"
-        @ok="addContract"
-        ok-text="отправить"
-        cancel-text="отмена"
-      >
-        <a-input placeholder="email" size="large" v-model:value="contractEmail"></a-input>
-      </a-modal>
-      <Form
-        :validation-schema="formSchema"
-        v-slot="{ meta }"
-        @submit="submit"
-        class="ma-16"
-      >
+      <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit" class="ma-16">
         <a-row :gutter="[16, 16]">
           <a-col :span="24">
-            <Field
-              name="name"
-              v-slot="{ value, handleChange }"
-              v-model="contractForm.name"
-            >
+            <Field name="name" v-slot="{ value, handleChange }" v-model="contractForm.name">
               Название
-              <a-input
-                placeholder="Название"
-                @update:value="handleChange"
-                :value="value"
-              ></a-input>
+              <a-input placeholder="Название" @update:value="handleChange" :value="value"></a-input>
             </Field>
             <Transition name="fade">
               <ErrorMessage name="name" class="error-message" />
@@ -257,11 +227,7 @@ async function addContract() {
           <a-col :span="24">
             <Field name="inn" v-slot="{ value, handleChange }" v-model="contractForm.inn">
               ИНН
-              <a-input
-                placeholder="1010101010"
-                @update:value="handleChange"
-                :value="value"
-              ></a-input>
+              <a-input placeholder="1010101010" @update:value="handleChange" :value="value"></a-input>
             </Field>
             <Transition name="fade">
               <ErrorMessage name="inn" class="error-message" />
@@ -270,48 +236,26 @@ async function addContract() {
           <a-col :span="24">
             <Field name="kpp" v-slot="{ value, handleChange }" v-model="contractForm.kpp">
               КПП
-              <a-input
-                placeholder="999999999"
-                @update:value="handleChange"
-                :value="value"
-              ></a-input>
+              <a-input placeholder="999999999" @update:value="handleChange" :value="value"></a-input>
             </Field>
             <Transition name="fade">
               <ErrorMessage name="kpp" class="error-message" />
             </Transition>
           </a-col>
           <a-col :span="24">
-            <Field
-              name="ogrn"
-              v-slot="{ value, handleChange }"
-              v-model="contractForm.ogrn"
-            >
+            <Field name="ogrn" v-slot="{ value, handleChange }" v-model="contractForm.ogrn">
               ОГРН
-              <a-input
-                placeholder="СГГККННХХХХХЧ"
-                @update:value="handleChange"
-                :value="value"
-              ></a-input>
+              <a-input placeholder="СГГККННХХХХХЧ" @update:value="handleChange" :value="value"></a-input>
             </Field>
             <Transition name="fade">
               <ErrorMessage name="ogrn" class="error-message" />
             </Transition>
           </a-col>
           <a-col :span="24">
-            <Field
-              name="yr_address"
-              v-slot="{ value, handleChange }"
-              v-model="yrLocationSearchRequest"
-            >
+            <Field name="yr_address" v-slot="{ value, handleChange }" v-model="yrLocationSearchRequest">
               Юридический адрес
-              <a-auto-complete
-                :value="value"
-                @update:value="handleChange"
-                style="width: 100%"
-                :options="possibleLocations"
-                placeholder="Глазов"
-                @select="selectStartLocationYr"
-              >
+              <a-auto-complete :value="value" @update:value="handleChange" style="width: 100%"
+                :options="possibleLocations" placeholder="Глазов" @select="selectStartLocationYr">
               </a-auto-complete>
             </Field>
             <Transition name="fade">
@@ -319,20 +263,10 @@ async function addContract() {
             </Transition>
           </a-col>
           <a-col :span="24">
-            <Field
-              name="fact_address"
-              v-slot="{ value, handleChange }"
-              v-model="factLocationSearchRequest"
-            >
+            <Field name="fact_address" v-slot="{ value, handleChange }" v-model="factLocationSearchRequest">
               Фактический адрес
-              <a-auto-complete
-                :value="value"
-                @update:value="handleChange"
-                style="width: 100%"
-                :options="possibleLocations"
-                placeholder="Глазов"
-                @select="selectStartLocationFact"
-              >
+              <a-auto-complete :value="value" @update:value="handleChange" style="width: 100%"
+                :options="possibleLocations" placeholder="Глазов" @select="selectStartLocationFact">
               </a-auto-complete>
             </Field>
             <Transition name="fade">
@@ -340,68 +274,37 @@ async function addContract() {
             </Transition>
           </a-col>
           <a-col :span="24">
-            <Field
-              name="checking_account"
-              v-slot="{ value, handleChange }"
-              v-model="contractForm.checking_account"
-            >
+            <Field name="checking_account" v-slot="{ value, handleChange }" v-model="contractForm.checking_account">
               Р/сч
-              <a-input
-                placeholder="20202020202020202020"
-                @update:value="handleChange"
-                :value="value"
-              ></a-input>
+              <a-input placeholder="20202020202020202020" @update:value="handleChange" :value="value"></a-input>
             </Field>
             <Transition name="fade">
               <ErrorMessage name="checking_account" class="error-message" />
             </Transition>
           </a-col>
           <a-col :span="24">
-            <Field
-              name="checking_account_bank"
-              v-slot="{ value, handleChange }"
-              v-model="contractForm.checking_account_bank"
-            >
+            <Field name="checking_account_bank" v-slot="{ value, handleChange }"
+              v-model="contractForm.checking_account_bank">
               Отделение банка
-              <a-input
-                placeholder=""
-                @update:value="handleChange"
-                :value="value"
-              ></a-input>
+              <a-input placeholder="" @update:value="handleChange" :value="value"></a-input>
             </Field>
             <Transition name="fade">
               <ErrorMessage name="checking_account_bank" class="error-message" />
             </Transition>
           </a-col>
           <a-col :span="24">
-            <Field
-              name="cash_account"
-              v-slot="{ value, handleChange }"
-              v-model="contractForm.cash_account"
-            >
+            <Field name="cash_account" v-slot="{ value, handleChange }" v-model="contractForm.cash_account">
               К/сч
-              <a-input
-                placeholder="20202020202020202020"
-                @update:value="handleChange"
-                :value="value"
-              ></a-input>
+              <a-input placeholder="20202020202020202020" @update:value="handleChange" :value="value"></a-input>
             </Field>
             <Transition name="fade">
               <ErrorMessage name="cash_account" class="error-message" />
             </Transition>
           </a-col>
           <a-col :span="24">
-            <Field
-              name="cash_account_bank"
-              v-slot="{ value, handleChange }"
-              v-model="contractForm.cash_account_bank"
-            >
+            <Field name="cash_account_bank" v-slot="{ value, handleChange }" v-model="contractForm.cash_account_bank">
               Отделение банка
-              <a-input
-                placeholder="und"
-                @update:value="handleChange"
-                :value="value"
-              ></a-input>
+              <a-input placeholder="und" @update:value="handleChange" :value="value"></a-input>
             </Field>
             <Transition name="fade">
               <ErrorMessage name="cash_account_bank" class="error-message" />
@@ -410,69 +313,46 @@ async function addContract() {
           <a-col :span="24">
             <Field name="bik" v-slot="{ value, handleChange }" v-model="contractForm.bik">
               БИК
-              <a-input
-                placeholder="999999999"
-                @update:value="handleChange"
-                :value="value"
-              ></a-input>
+              <a-input placeholder="999999999" @update:value="handleChange" :value="value"></a-input>
             </Field>
             <Transition name="fade">
               <ErrorMessage name="bik" class="error-message" />
             </Transition>
           </a-col>
           <a-col :span="24">
-            <Field
-              name="phone"
-              v-slot="{ value, handleChange }"
-              v-model="contractForm.phone"
-            >
+            <Field name="phone" v-slot="{ value, handleChange }" v-model="contractForm.phone">
               Телефон
-              <a-input
-                placeholder="80000000000"
-                @update:value="handleChange"
-                :value="value"
-              ></a-input>
+              <a-input placeholder="80000000000" @update:value="handleChange" :value="value"></a-input>
             </Field>
             <Transition name="fade">
               <ErrorMessage name="phone" class="error-message" />
             </Transition>
           </a-col>
           <a-col :span="24">
-            <Field
-              name="email"
-              v-slot="{ value, handleChange }"
-              v-model="contractForm.email"
-            >
+            <Field name="email" v-slot="{ value, handleChange }" v-model="contractForm.email">
               Электронная почта
-              <a-input
-                placeholder="ivanov@mail.ru"
-                @update:value="handleChange"
-                :value="value"
-              ></a-input>
+              <a-input placeholder="ivanov@mail.ru" @update:value="handleChange" :value="value"></a-input>
             </Field>
             <Transition name="fade">
               <ErrorMessage name="email" class="error-message" />
             </Transition>
           </a-col>
           <a-col :span="24">
-            <Field
-              name="director"
-              v-slot="{ value, handleChange }"
-              v-model="contractForm.director"
-            >
+            <Field name="director" v-slot="{ value, handleChange }" v-model="contractForm.director">
               Директор
-              <a-input
-                placeholder="Иванов Иван Иванович"
-                @update:value="handleChange"
-                :value="value"
-              ></a-input>
+              <a-input placeholder="Иванов Иван Иванович" @update:value="handleChange" :value="value"></a-input>
             </Field>
             <Transition name="fade">
               <ErrorMessage name="director" class="error-message" />
             </Transition>
           </a-col>
-          <a-button class="lets_go_btn" type="primary" html-type="submit">Отправить
-              </a-button>
+          <a-col :span="24" :sm="18" class="mb-16">
+            <a-input placeholder="email пользователя" v-model:value="contractEmail"></a-input>
+          </a-col>
+          <a-col :span="24" :sm="6">
+            <a-button class="lets_go_btn" type="primary" html-type="submit">Отправить
+            </a-button>
+          </a-col>
         </a-row>
       </Form>
     </a-col>

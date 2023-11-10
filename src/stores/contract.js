@@ -8,8 +8,8 @@ export const useContract = defineStore('contract', {
     getters: {
     },
     actions: {
-        async createContract(newContract) {
-            let res = await ContractService.createContract(newContract)
+        async createContract(newContract, userEmail) {
+            let res = await ContractService.createContract(newContract, userEmail)
             return res
         }
     }
