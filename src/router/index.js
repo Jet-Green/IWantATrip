@@ -278,6 +278,17 @@ const router = createRouter({
           }
         },
         {
+          path: 'transport',
+          name: 'AdminTransport',
+          component: () => import('../components/admin/Transport.vue'),
+          beforeEnter: () => {
+            let userStore = useAuth()
+            if (!userStore.user?.roles.includes('admin')) {
+              return false
+            }
+          }
+        },
+        {
           path: 'scripts',
           name: 'Scripts',
           component: () => import('../components/admin/Scripts.vue'),
