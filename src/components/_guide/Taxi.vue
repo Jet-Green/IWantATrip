@@ -18,13 +18,14 @@ onMounted(async () => {
     <a-row type="flex" justify="center">
         <a-col :xs="22" :lg="16">
             <h2>Такси</h2>
-            <a-row type="flex" justify="center">
-            <a-col v-for="t of appStateStore.appState[0].taxi" :xs="24" :lg="6">
-                <a-card style="padding: 30px; text-align: center;" class="ma-4">
-                    {{ t.name }} {{ t.number }}
-                </a-card>
-            </a-col>
-        </a-row>
+            <a-row :gutter="[16, 16]" type="flex" justify="center">
+                <a-col v-for="t of appStateStore.appState[0].taxi" :xs="24" :sm='12' :md="8" :lg="6">
+                    <a-card hoverable style="padding: 30px; text-align: center; border-radius: 5px;">
+                        {{ t.name }} <br />
+                        <b> <span class="mdi mdi-phone-in-talk"></span>{{ t.number }}</b>
+                    </a-card>
+                </a-col>
+            </a-row>
         </a-col>
     </a-row>
 </template>
