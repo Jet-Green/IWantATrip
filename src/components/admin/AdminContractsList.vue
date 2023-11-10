@@ -13,49 +13,51 @@ onMounted(async () => {
         <a-col v-for="c in contractStore.contracts" :span="24" :md="8">
             <a-card class="pa-8">
                 <div>
-                    Название: <b>{{ c.name }}</b>
+                    <b>Название: </b>{{ c.name }}
                 </div>
                 <div>
-                    ИНН: <b>{{ c.inn }}</b>
+                    <b>ИНН: </b>{{ c.inn }}
                 </div>
                 <div>
-                    КПП: <b>{{ c.kpp }}</b>
+                    <b>КПП: </b>{{ c.kpp }}
                 </div>
                 <div>
-                    ОГРН: <b>{{ c.ogrn }}</b>
+                    <b>ОГРН: </b>{{ c.ogrn }}
                 </div>
                 <div>
-                    Юр. адрес: <b>{{ c.yr_address }}</b>
+                    <b>Юр. адрес: </b>{{ c.yr_address }}
                 </div>
                 <div>
-                    Фактический адрес: <b>{{ c.fact_address }}</b>
+                    <b>Фактический адрес: </b>{{ c.fact_address }}
                 </div>
                 <div>
-                    Р/сч: <b>{{ c.checking_account }}</b>
+                    <b>Р/сч: </b>{{ c.checking_account }}
                 </div>
                 <div>
-                    Банк р/сч: <b>{{ c.checking_account_bank }}</b>
+                    <b>Банк р/сч: </b>{{ c.checking_account_bank }}
                 </div>
                 <div>
-                    К/сч: <b>{{ c.cash_account }}</b>
+                    <b>К/сч: </b> {{ c.cash_account }}
                 </div>
                 <div>
-                    Банк к/сч: <b>{{ c.cash_account_bank }}</b>
+                    <b>Банк к/сч: </b>{{ c.cash_account_bank }}
                 </div>
                 <div>
-                    БИК: <b>{{ c.bik }}</b>
+                    <b>БИК: </b>{{ c.bik }}
                 </div>
                 <div>
-                    Телефон: <b>{{ c.phone }}</b>
+                    <b>Телефон: </b>{{ c.phone }}
                 </div>
                 <div>
-                    Email: <b>{{ c.email }}</b>
+                    <b>Email: </b>{{ c.email }}
                 </div>
                 <div>
-                    Директор: <b>{{ c.director }}</b>
+                    <b>Директор: </b>{{ c.director }}
                 </div>
 
-                Email пользователя: {{ c.userEmail }}
+                <div>
+                    <b>Email пользователя: </b> {{ c.userEmail }}
+                </div>
             </a-card>
         </a-col>
     </a-row>
