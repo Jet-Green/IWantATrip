@@ -194,6 +194,10 @@ const router = createRouter({
           ]
         },
         {
+          path: 'booking-notifications',
+          component: () => import('../components/_cabinet/BookingNotifications.vue'),
+        },
+        {
           path: 'customers-trip',
           component: () => import('../components/_cabinet/CustomersTrip.vue'),
         },
@@ -271,6 +275,28 @@ const router = createRouter({
           path: 'scripts',
           name: 'Scripts',
           component: () => import('../components/admin/Scripts.vue'),
+          beforeEnter: () => {
+            let userStore = useAuth()
+            if (!userStore.user?.roles.includes('admin')) {
+              return false
+            }
+          }
+        },
+        {
+          path: "add-admin-contract",
+          name: 'AddAdminContract',
+          component: () => import('../components/admin/AddAdminContract.vue'),
+          beforeEnter: () => {
+            let userStore = useAuth()
+            if (!userStore.user?.roles.includes('admin')) {
+              return false
+            }
+          }
+        },
+        {
+          path: "admin-contracts-list",
+          name: 'AdminContracts',
+          component: () => import('../components/admin/AdminContractsList.vue'),
           beforeEnter: () => {
             let userStore = useAuth()
             if (!userStore.user?.roles.includes('admin')) {
