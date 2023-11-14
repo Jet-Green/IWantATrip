@@ -1,13 +1,9 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import BookingService from "../../service/BookingService";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { useAuth } from "../../stores/auth.js";
+import { useRouter } from 'vue-router'
 
-let userStore = useAuth();
-
-let breakpoints = useBreakpoints(breakpointsTailwind);
-let sm = breakpoints.smaller("md");
+const router = useRouter()
 
 let bookings = ref([]);
 const clearData = (dateNumber) => {
@@ -24,6 +20,10 @@ const clearData = (dateNumber) => {
 
 function changeStatus(_id, status) {
     tripStore.changeBookStatus(_id, status)
+}
+
+function goToOfferTripPage(bookingId) {
+    router.push({ name: 'OfferTrip', query: { booking_id: bookingId } })
 }
 
 function getOrderNumber(str) {
@@ -51,7 +51,7 @@ onMounted(() => {
 <template>
     <a-row>
         <a-col :span="24">
-            <h3>заказанных</h3>
+            <h3>Заказы</h3>
             <a-row :gutter="[8, 8]" class="mt-8">
                 <a-col :lg="8" :sm="12" :xs="24" v-for="booking in bookings" v-if="bookings.length">
 
@@ -84,7 +84,9 @@ onMounted(() => {
                         <div>
                             Заказ № {{ getOrderNumber(booking._id) }} <b>{{ getOrderStatus(booking.status) }}</b>
                         </div>
-
+                        <div class="d-flex justify-end">
+                            <a-button @click="goToOfferTripPage(booking._id)">предложить</a-button>
+                        </div>
                     </a-card>
 
                 </a-col>

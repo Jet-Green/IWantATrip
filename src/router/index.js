@@ -162,6 +162,11 @@ const router = createRouter({
       component: () => import('../components/_guide/Souvenirs.vue')
     },
     {
+      path: '/offer-trip',
+      name: 'OfferTrip',
+      component: () => import('../components/_cabinet/forms/OfferTrip.vue'),
+    },
+    {
       path: '/cabinet/',
       name: 'Cabinet',
       component: () => import('../views/Cabinet.vue'),

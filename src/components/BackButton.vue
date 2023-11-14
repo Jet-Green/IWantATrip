@@ -14,7 +14,7 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const sm = breakpoints.smaller("md");
 </script>
 <template>
-  <a-row type="flex" justify="center">
+  <a-row type="flex" justify="center" class="mb-8">
     <a-col :xs="22" :lg="16">
       <span @click="backRoute ? router.push(backRoute) : router.back()"
         style="font-size: 16px; line-height: 32px; cursor: pointer">
