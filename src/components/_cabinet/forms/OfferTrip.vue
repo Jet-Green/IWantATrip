@@ -1,17 +1,30 @@
 <script setup>
 import { ref, watch } from 'vue'
 
+import { useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
+
+import { useBooking } from '../../../stores/booking.js'
+
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 
 import BackButton from '../../BackButton.vue';
 
+const route = useRoute()
+const router = useRouter()
+
+const bookingStore = useBooking()
+
 const quill = ref(null);
 
 let offerText = ref('')
 
-function sendOffer() {
-    console.log(offerText.value);
+async function sendOffer() {
+    let res = await bookingStore.offerTrip({ offerText: offerText.value, date: Date.now() }, route.query.booking_id)
+    if (res.status == 200) {
+        router.push('/cabinet/booking-notifications')
+    }
 }
 
 watch(offerText, (newValue) => {
