@@ -43,7 +43,7 @@ let addTransportForm = ref({
     transportType: null,
     capacity: null,
     waiting: null,
-    price: null
+    // price: null
 })
 
 const clearData = (dataString) => {
@@ -185,6 +185,7 @@ async function updateIncludedLocations() {
 
 async function updateTrasports() {
     let isEmptyNewTransport = false;
+    console.log(addTransportForm.value)
     for (let key of Object.keys(addTransportForm.value)) {
         if (!addTransportForm.value[key]) isEmptyNewTransport = true
     }
@@ -278,7 +279,7 @@ onMounted(async () => {
     for (let t of appStateStore.appState[0].transport) {
         possibleTransport.value.push({ value: t.name })
     }
-    addTransportForm.value.price = trip.value.transports[0]?.price ?? null
+     // addTransportForm.value.price = trip.value.transports[0]?.price ?? null
 })
 </script>
 <template>
