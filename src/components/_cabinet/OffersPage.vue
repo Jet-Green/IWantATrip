@@ -24,6 +24,12 @@ const clearData = (dateNumber) => {
     }
     return ''
 }
+function acceptOffer() {
+    console.log('accept');
+}
+function rejectOffer() {
+    console.log('reject');
+}
 
 onMounted(async () => {
     offers.value = await bookingStore.getOffersByBookingId(route.query.booking_id)
@@ -43,6 +49,14 @@ onMounted(async () => {
                             <div>
                                 Название организации: <b>{{ offer.offerer.name }}</b>
                             </div>
+                            <div class="mt-16">
+                                <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="acceptOffer">
+                                    <a-button class="mr-8 rounded" type="primary">принять</a-button>
+                                </a-popconfirm>
+                                <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="rejectOffer">
+                                    <a-button class="rounded">отказать</a-button>
+                                </a-popconfirm>
+                            </div>
                             <div style="text-align: end; position: absolute; bottom: 0; right: 0; margin: 0 10px 10px 0">
                                 {{ clearData(offer.date) }}
                             </div>
@@ -53,3 +67,8 @@ onMounted(async () => {
         </a-row>
     </div>
 </template>
+<style scoped>
+.rounded {
+    border-radius: 16px;
+}
+</style>
