@@ -35,16 +35,21 @@ onMounted(async () => {
         </a-col>
 
         <a-row :gutter="[16, 16]" class="mt-3" type="flex" justify="center">
-            <a-col v-for="t of appStateStore.appState[0].taxi" :xs="24" :sm='12' :md="8" :lg="6">
-                <a-card hoverable style="padding:20px 30px; border-radius: 5px;">
-                    <b>{{ t.name }}</b> <br />
-                    <a href="tel:" class="number">
-                        <span class="mdi mdi-phone-in-talk"></span> {{ t.number }}
-                    </a>
+            <a-col v-for="(t, i) in appStateStore.appState[0].taxi" :xs="24" :md="12" :lg="8">
+                <a-card hoverable style="padding:20px 30px; border-radius: 5px;" :class='i % 2 == 0 ? "orange" : "blue"'>
+                    <a-row>
+                        <a-col :span="20">
+                            <b>{{ t.name }}</b> <br />
+                            <a href="tel:" class="number">
+                                <span class="mdi mdi-phone-in-talk"></span> {{ t.number }}
+                            </a>
+                        </a-col>
+                        <a-col><span class="mdi mdi-taxi taxi"></span></a-col>
+                    </a-row>
                     <div class="actions d-flex justify-center">
                         <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет"
                             @confirm="appStateStore.deleteTaxi(t.name)">
-                            <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+                            <span class="mdi mdi-delete" style="color: white; cursor: pointer"></span>
                         </a-popconfirm>
                     </div>
                 </a-card>
