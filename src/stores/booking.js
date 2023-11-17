@@ -25,6 +25,14 @@ export const useBooking = defineStore('booking', {
             } catch (error) {
                 console.log(error);
             }
+        },
+        async getOffersByBookingId(booking_id) {
+            try {
+                let res = await BookingService.getOffersByBookingId(booking_id)
+                return res.data
+            } catch (error) {
+                console.log(error);
+            }
         }
     },
 })

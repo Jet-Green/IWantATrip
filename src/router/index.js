@@ -167,6 +167,11 @@ const router = createRouter({
       component: () => import('../components/_cabinet/forms/OfferTrip.vue'),
     },
     {
+      path: '/offers',
+      name: 'OffersPage',
+      component: () => import('../components/_cabinet/OffersPage.vue'),
+    },
+    {
       path: '/cabinet/',
       name: 'Cabinet',
       component: () => import('../views/Cabinet.vue'),

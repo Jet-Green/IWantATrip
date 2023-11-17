@@ -18,5 +18,8 @@ export default {
     },
     offerTrip(offer, bookingId) {
         return $api.post(`/booking/offer-trip`, { offer, bookingId })
+    },
+    getOffersByBookingId(booking_id) {
+        return $api.post(`/booking/offers?booking_id=${booking_id}`)
     }
 }
