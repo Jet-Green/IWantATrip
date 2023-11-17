@@ -32,15 +32,18 @@ onMounted(async () => {
 <template>
     <div>
         <BackButton />
-        <a-row type="flex" justify="center">
+        <a-row type="flex" justify="center" style="margin-bottom: 44px;">
             <a-col :xs="22" :lg="16">
                 <h3>Предложения</h3>
                 <a-row class="mt-8" :gutter="[8, 8]">
-                    <a-col :span="24" v-for="offer in offers">
+                    <a-col :span="24" v-for="offer in  offers">
                         <a-card style="padding: 12px">
                             <span v-html="offer.offerText">
                             </span>
-                            <div style="text-align: end;">
+                            <div>
+                                Название организации: <b>{{ offer.offerer.name }}</b>
+                            </div>
+                            <div style="text-align: end; position: absolute; bottom: 0; right: 0; margin: 0 10px 10px 0">
                                 {{ clearData(offer.date) }}
                             </div>
                         </a-card>

@@ -59,7 +59,7 @@ onMounted(() => {
       <h3>Вы заказали</h3>
       <a-row :gutter="[16, 16]" class="mt-8">
         <a-col :lg="8" :sm="12" :xs="24" v-for="booking in bookings" v-if="bookings.length">
-          <a-card hoverable style="padding: 12px; height: 100%; position: relative;" @click="goToOffersPage(booking._id)">
+          <a-card hoverable style="padding: 12px; height: 100%; position: relative;" @click="booking.offers?.length > 0 ? goToOffersPage(booking._id): () => {}">
             <div v-if="booking.offers?.length > 0" class="custom-badge">
               {{ booking.offers.length }}
             </div>
