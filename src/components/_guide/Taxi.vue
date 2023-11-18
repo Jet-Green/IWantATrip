@@ -27,7 +27,7 @@ onMounted(async () => {
             <a-col :xs="22" :lg="16">
                 <h2>Такси</h2>
                 <a-row :gutter="[8, 8]" type="flex" justify="center">
-                    <a-col v-for="(t, i) in localTaxi" :xs="12" :md="8">
+                    <a-col v-for="(t, i) in localTaxi" :xs="24" :md="12" :xl="8">
                         <a :href="`tel:${t.phone}`">
                             <a-card hoverable style="padding:10px 10px; border-radius: 10px; position: relative;"
                                 :class='i % 2 == 0 ? "orange" : "blue"'>
