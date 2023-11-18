@@ -15,5 +15,14 @@ export default {
 
     async uploadGuideElementImage(image) {
         return $api.post('/guide/upload-image', image)
-    }
+    },
+    async setTaxi(taxi) {
+        return $api.post('/guide/set-taxi', { taxi})
+    },
+    async deleteTaxi(name) {
+        return $api.post('/guide/delete-taxi', { name })
+    },
+    async getLocalTaxi(location) {
+        return $api.post('/guide/get-local-taxi', {location})
+    },
 }

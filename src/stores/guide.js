@@ -26,6 +26,35 @@ export const useGuide = defineStore('guide', {
             } catch (err) {
                 console.log(err);
             }
+        },
+        async addTaxi(taxi) {
+            try {
+                let res = await GuideService.setTaxi(taxi)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async getLocalTaxi(location) {
+            try {
+                let res = await GuideService.getLocalTaxi(location)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async deleteTaxi(name) {
+            try {
+                if (name) {
+                    let res = await GuideService.deleteTaxi(name)
+                    if (res.status == 200) {
+                        await this.refreshState();
+                    }
+                    return res
+                }
+            } catch (error) {
+                console.log(error);
+            }
         }
     },
 })

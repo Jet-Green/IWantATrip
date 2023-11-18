@@ -60,26 +60,6 @@ export const useAppState = defineStore('app-state', {
                 console.log(error);
             }
         },
-        async addTaxi(name, number) {
-            try {
-                let res = await AppService.setTaxi(name, number)
-                return res
-            } catch (error) {
-                console.log(error);
-            }
-        },
-        async deleteTaxi(name) {
-            try {
-                if (name) {
-                    let res = await AppService.deleteTaxi(name)
-                    if (res.status == 200) {
-                        await this.refreshState();
-                    }
-                    return res
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        }
+     
     },
 })

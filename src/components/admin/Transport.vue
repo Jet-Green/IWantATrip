@@ -1,28 +1,45 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useAppState } from '../../stores/appState';
+import { useGuide } from '../../stores/guide';
 
-let appStateStore = useAppState()
+let guideStore = useGuide()
 
 let addTaxiModal = ref(false)
 let taxi = ref({})
 
+let localTaxi = ref({})
+
 async function addTaxi() {
-    if (taxi.value.name.length > 2 && taxi.value.number.length > 2) {
-        let res = await appStateStore.addTaxi(taxi.value.name, taxi.value.number)
+    if (taxi.value.name.length > 2 && taxi.value.phone.length > 2) {
+        let location = {}
+        if (localStorage.getItem("location")) {
+            location = JSON.parse(localStorage.getItem("location"))
+            taxi.value.location = location
+        }
+        let res = await guideStore.addTaxi(taxi.value)
         addTaxiModal.value = false;
         taxi.value = {}
         if (res.status == 200) {
-            await appStateStore.refreshState();
+            rafreshTaxi()
         }
     }
 }
 
+let rafreshTaxi = async () => {
+    let location = {}
+    if (localStorage.getItem("location")) {
+        location = JSON.parse(localStorage.getItem("location"))
+    }
+    let res = await guideStore.getLocalTaxi(location)
+    localTaxi.value = res.data[0].taxi
+}
+let deleteTaxi = async (name) => {
+    await guideStore.deleteTaxi(name)
+    rafreshTaxi()
+}
 
 onMounted(async () => {
-    if (!appStateStore.appState) {
-        await appStateStore.refreshState();
-    }
+    await rafreshTaxi()
 })
 </script>
 <template>
@@ -33,23 +50,14 @@ onMounted(async () => {
                 <span class="mdi mdi-taxi mr-4"></span> Добавить
             </a-button>
         </a-col>
-
         <a-row :gutter="[16, 16]" class="mt-3" type="flex" justify="center">
-            <a-col v-for="(t, i) in appStateStore.appState[0].taxi" :xs="24" :md="12" :lg="8">
-                <a-card hoverable style="padding:20px 30px; border-radius: 5px;" :class='i % 2 == 0 ? "orange" : "blue"'>
-                    <a-row>
-                        <a-col :span="20">
-                            <b>{{ t.name }}</b> <br />
-                            <a href="tel:" class="number">
-                                <span class="mdi mdi-phone-in-talk"></span> {{ t.number }}
-                            </a>
-                        </a-col>
-                        <a-col><span class="mdi mdi-taxi taxi"></span></a-col>
-                    </a-row>
+            <a-col v-for="(t, i) in localTaxi" :xs="12" :md="6" :lg="6">
+                <a-card hoverable style="padding:10px 10px; border-radius: 10px; font-size:18px;">
+                    <b>{{ t.name }}</b> <br />
+                    <span class="mdi mdi-phone-in-talk"></span> {{ t.phone }}
                     <div class="actions d-flex justify-center">
-                        <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет"
-                            @confirm="appStateStore.deleteTaxi(t.name)">
-                            <span class="mdi mdi-delete" style="color: white; cursor: pointer"></span>
+                        <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="deleteTaxi(t.name)">
+                            <span class="mdi mdi-delete" style=" cursor: pointer"></span>
                         </a-popconfirm>
                     </div>
                 </a-card>
@@ -63,7 +71,7 @@ onMounted(async () => {
                 </a-col>
                 <a-col :span="24" :md="12">
                     Телефон
-                    <a-input style="width: 100%" v-model:value="taxi.number" placeholder="79127528874" />
+                    <a-input style="width: 100%" v-model:value="taxi.phone" placeholder="79127528874" />
                 </a-col>
                 <a-col :span="24">
                     <a-button type="primary" @click="addTaxi()"> добавить </a-button>
@@ -76,18 +84,12 @@ onMounted(async () => {
 .actions {
     font-size: 20px;
     position: relative;
-    color: #245159;
+    color: black;
 
     * {
         cursor: pointer;
     }
 }
 
-b {
-    font-size: 23px;
-}
 
-.number {
-    font-size: 16px;
-}
 </style>
