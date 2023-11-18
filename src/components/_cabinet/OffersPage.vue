@@ -3,10 +3,12 @@ import { onMounted, ref } from 'vue'
 import BackButton from '../BackButton.vue';
 
 import { useBooking } from '../../stores/booking';
+import { useAuth } from '../../stores/auth'
 
 import { useRoute } from 'vue-router';
 
 const bookingStore = useBooking()
+const authStore = useAuth()
 const route = useRoute()
 
 let offers = ref([])
@@ -24,8 +26,8 @@ const clearData = (dateNumber) => {
     }
     return ''
 }
-function acceptOffer() {
-    console.log('accept');
+function acceptOffer(offerId) {
+    bookingStore.acceptOffer(route.query.booking_id, offerId, { ...authStore.user.fullinfo, email: authStore.user.email })
 }
 function rejectOffer() {
     console.log('reject');
@@ -50,7 +52,8 @@ onMounted(async () => {
                                 Название организации: <b>{{ offer.offerer.name }}</b>
                             </div>
                             <div class="mt-16">
-                                <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="acceptOffer">
+                                <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет"
+                                    @confirm="acceptOffer(offer._id)">
                                     <a-button class="mr-8 rounded" type="primary">принять</a-button>
                                 </a-popconfirm>
                                 <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="rejectOffer">

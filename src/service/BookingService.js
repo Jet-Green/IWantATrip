@@ -21,5 +21,8 @@ export default {
     },
     getOffersByBookingId(booking_id) {
         return $api.post(`/booking/offers?booking_id=${booking_id}`)
+    },
+    acceptOffer(bookingId, offerId, client) {
+        return $api.post('/booking/accept-offer', { bookingId, offerId, client })
     }
 }

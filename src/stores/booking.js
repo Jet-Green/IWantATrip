@@ -33,6 +33,14 @@ export const useBooking = defineStore('booking', {
             } catch (error) {
                 console.log(error);
             }
+        },
+        async acceptOffer(bookingId, offerId, client) {
+            try {
+                let res = await BookingService.acceptOffer(bookingId, offerId, client)
+                return res.data
+            } catch (error) {
+                console.log(error);
+            }
         }
     },
 })
