@@ -54,41 +54,42 @@ async function addCabinetNotifications(event, email) {
     email = email.trim()
     if (email.length > 2) {
         let res = await adminStore.addCabinetNotifications(event, email)
-        await getNotifications('BookingTrip')
+     
+        // await getNotifications('BookingTrip')
     }
 }
-async function getNotifications(event) {
-    let res = await adminStore.getNotifications(event)
+// async function getNotifications(event) {
+//     let res = await adminStore.getNotifications(event)
 
-    switch (event) {
-        case 'CreateTrip':
-            break
-        case 'BookingTrip':
-            bookingTripNotifications.value = res.data
-            break
-        case 'CreateCompanion':
-            break
-        case 'BuyTrip':
-            break
-    }
-}
+//     switch (event) {
+//         case 'CreateTrip':
+//             break
+//         case 'BookingTrip':
+//             bookingTripNotifications.value = res.data
+//             break
+//         case 'CreateCompanion':
+//             break
+//         case 'BuyTrip':
+//             break
+//     }
+// }
 
-async function deleteNotfications(event, email) {
-    let res = await adminStore.deleteNotfications(event, email)
-    if (res.status == 200) {
-        switch (event) {
-            case 'CreateTrip':
-                break
-            case 'BookingTrip':
-                await getNotifications('BookingTrip')
-                break
-            case 'CreateCompanion':
-                break
-            case 'BuyTrip':
-                break
-        }
-    }
-}
+// async function deleteNotfications(event, email) {
+//     let res = await adminStore.deleteNotfications(event, email)
+//     if (res.status == 200) {
+//         switch (event) {
+//             case 'CreateTrip':
+//                 break
+//             case 'BookingTrip':
+//                 await getNotifications('BookingTrip')
+//                 break
+//             case 'CreateCompanion':
+//                 break
+//             case 'BuyTrip':
+//                 break
+//         }
+//     }
+// }
 
 async function getEmails(event) {
     let res = await adminStore.getEmails(event)
@@ -165,7 +166,7 @@ onMounted(async () => {
     await getEmails('CreateCompanion')
     await getEmails('BuyTrip')
 
-    await getNotifications('BookingTrip')
+    // await getNotifications('BookingTrip')
 })
 </script>
 <template>
