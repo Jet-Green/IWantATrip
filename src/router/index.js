@@ -117,6 +117,16 @@ const router = createRouter({
       component: () => import('../components/_guide/ToWatch.vue')
     },
     {
+      path: '/transport',
+      name: 'Transport',
+      component: () => import('../components/_guide/Transport.vue')
+    },
+    {
+      path: '/taxi',
+      name: 'Taxi',
+      component: () => import('../components/_guide/Taxi.vue')
+    },
+    {
       path: '/eat',
       name: 'ToEat',
       component: () => import('../components/_guide/ToEat.vue')
@@ -264,6 +274,17 @@ const router = createRouter({
           path: 'management',
           name: 'Management',
           component: () => import('../components/admin/Management.vue'),
+          beforeEnter: () => {
+            let userStore = useAuth()
+            if (!userStore.user?.roles.includes('admin')) {
+              return false
+            }
+          }
+        },
+        {
+          path: 'transport',
+          name: 'AdminTransport',
+          component: () => import('../components/admin/Transport.vue'),
           beforeEnter: () => {
             let userStore = useAuth()
             if (!userStore.user?.roles.includes('admin')) {

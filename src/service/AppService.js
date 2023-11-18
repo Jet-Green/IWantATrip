@@ -17,4 +17,10 @@ export default {
     deleteTransportName(name) {
         return $api.post('/app-state/delete-transport-name', { name })
     },
+    async setTaxi(name, number) {
+        return $api.post('/app-state/set-taxi', { name, number })
+    },
+    deleteTaxi(name) {
+        return $api.post('/app-state/delete-taxi', { name })
+    },
 }

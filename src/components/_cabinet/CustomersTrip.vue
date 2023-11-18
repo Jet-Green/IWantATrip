@@ -232,7 +232,7 @@ onMounted(async () => {
             }}</a-breadcrumb-item>
             <a-breadcrumb-item>Покупатели</a-breadcrumb-item>
         </a-breadcrumb>
-        <a-button class="lets_go_btn" @click="addCustomerDialog = true">
+        <a-button type="primary" class="lets_go_btn" @click="addCustomerDialog = true">
             + Покупатель
         </a-button>
     </a-col>

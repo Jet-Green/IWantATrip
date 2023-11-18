@@ -84,6 +84,12 @@ onMounted(() => {
             </a-sub-menu>
             <a-menu-item key="/cabinet/orders">Заказы</a-menu-item>
             <a-menu-item v-if="userStore.user.roles.includes('admin')" key="/cabinet/interface">Интерфейс</a-menu-item>
+            <a-sub-menu key="sub02">
+              <template #title>
+                Гид
+              </template>
+              <a-menu-item key="/cabinet/transport">Транспорт</a-menu-item>
+            </a-sub-menu>
             <a-menu-item v-if="userStore.user.roles.includes('admin')" key="/cabinet/management">Управление</a-menu-item>
 
             <a-sub-menu key="sub3">

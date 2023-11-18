@@ -10,9 +10,9 @@ let cards = [
     route: "/poster",
   },
   {
-    title: "Посмотреть",
-    icon: "mdi-eiffel-tower",
-    route: "/watch",
+    title: "Транспорт",
+    icon: "mdi mdi-train-car",
+    route: "/transport",
    
   },
   {
@@ -75,10 +75,10 @@ const handleChange = (value) => {
         <h3 class="in-work">
           В разработке</h3>
         <a-col v-for="(card, index) in cards" :key="index" :xs="12" :md="8">
-          <div class="d-flex" v-if="card.route != '/poster'">
+          <div class="d-flex" v-if="card.route != '/poster' || card.route !='/transport'">
           </div>
-          <router-link :to="card.route == '/poster' ? card.route : ''">
-            <a-card hoverable class="guide-card" :class="{ opacity: card.route != '/poster' }">
+          <router-link :to="card.route == '/poster' ? card.route : card.route == '/transport' ? card.route : '' ">
+            <a-card hoverable class="guide-card" :class="{ opacity: card.route != '/poster' && card.route != '/transport' }">
               <div>
                 <span class="mdi" :class="card.icon"> </span>
                 <span>

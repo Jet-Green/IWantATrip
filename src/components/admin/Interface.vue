@@ -5,6 +5,7 @@ import { useAppState } from '../../stores/appState';
 let appStateStore = useAppState()
 let tripType = ref('')
 let transport = ref({})
+let taxi = ref({})
 
 
 async function addTripType() {
