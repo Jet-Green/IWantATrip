@@ -24,12 +24,12 @@ watch(current, (newRout, oldRout) => {
   router.push(newRout[0])
 })
 onMounted(() => {
-  for (let n of userStore.user?.notifications) {
-    if (n.type == 'BookingTrip' && n.send == true) {
-      showBookingNotifications.value = true
-      break
-    }
-  }
+  // for (let n of userStore.user?.notifications) {
+  //   if (n.type == 'BookingTrip' && n.send == true) {
+  //     showBookingNotifications.value = true
+  //     break
+  //   }
+  // }
 })
 </script>
 <template>
