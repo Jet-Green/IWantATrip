@@ -19,10 +19,16 @@ export default {
     offerTrip(offer, bookingId) {
         return $api.post(`/booking/offer-trip`, { offer, bookingId })
     },
-    getOffersByBookingId(booking_id) {
-        return $api.post(`/booking/offers?booking_id=${booking_id}`)
+    getOffersByBookingId(booking_id, status) {
+        return $api.post(`/booking/offers?booking_id=${booking_id}&status=${status}`)
     },
     acceptOffer(bookingId, offerId, client) {
         return $api.post('/booking/accept-offer', { bookingId, offerId, client })
-    }
+    },
+    rejectOffer(bookingId, offerId) {
+        return $api.post('/booking/reject-offer', { bookingId, offerId })
+    },
+    toNewOffer(bookingId, offerId) {
+        return $api.post('/booking/to-new-offer', { bookingId, offerId })
+    },
 }

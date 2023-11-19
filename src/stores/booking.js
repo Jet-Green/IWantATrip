@@ -26,10 +26,10 @@ export const useBooking = defineStore('booking', {
                 console.log(error);
             }
         },
-        async getOffersByBookingId(booking_id) {
+        async getOffersByBookingId(booking_id, status) {
             try {
-                let res = await BookingService.getOffersByBookingId(booking_id)
-                return res.data
+                let res = await BookingService.getOffersByBookingId(booking_id, status)
+                return res
             } catch (error) {
                 console.log(error);
             }
@@ -37,10 +37,26 @@ export const useBooking = defineStore('booking', {
         async acceptOffer(bookingId, offerId, client) {
             try {
                 let res = await BookingService.acceptOffer(bookingId, offerId, client)
-                return res.data
+                return res
             } catch (error) {
                 console.log(error);
             }
-        }
+        },
+        async rejectOffer(bookingId, offerId, client) {
+            try {
+                let res = await BookingService.rejectOffer(bookingId, offerId, client)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async toNewOffer(bookingId, offerId, client) {
+            try {
+                let res = await BookingService.toNewOffer(bookingId, offerId, client)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
+        },
     },
 })

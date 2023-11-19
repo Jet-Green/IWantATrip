@@ -1,77 +1,38 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import BackButton from '../BackButton.vue';
 
-import { useBooking } from '../../stores/booking';
-import { useAuth } from '../../stores/auth'
+import { useRouter } from 'vue-router';
 
-import { useRoute } from 'vue-router';
+const router = useRouter()
 
-const bookingStore = useBooking()
-const authStore = useAuth()
-const route = useRoute()
+let { booking_id } = router.currentRoute.value.query
+let offerStatus = ref('new')
 
-let offers = ref([])
+watch(offerStatus, (newValue) => {
+    router.push(`/offers/${newValue}?booking_id=${booking_id}`)
+})
 
-const clearData = (dateNumber) => {
-    let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
-        hour: '2-digit',
-        minute: '2-digit',
-        year: "2-digit",
-        month: "2-digit",
-        day: "2-digit",
-    })
-    if (date !== 'Invalid Date' && date) {
-        return date
-    }
-    return ''
-}
-function acceptOffer(offerId) {
-    bookingStore.acceptOffer(route.query.booking_id, offerId, { ...authStore.user.fullinfo, email: authStore.user.email })
-}
-function rejectOffer() {
-    console.log('reject');
-}
-
-onMounted(async () => {
-    offers.value = await bookingStore.getOffersByBookingId(route.query.booking_id)
+onMounted(() => {
+    // /offers/new -> path[2] === new
+    let path = router.currentRoute.value.path.split('/')[2]
+    offerStatus.value = path
 })
 </script>
 <template>
     <div>
-        <BackButton />
+        <BackButton :backRoute="{ path: '/cabinet/booking-trips' }" />
         <a-row type="flex" justify="center" style="margin-bottom: 44px;">
             <a-col :xs="22" :lg="16">
                 <h3>Предложения</h3>
-                <a-row class="mt-8" :gutter="[8, 8]">
-                    <a-col :span="24" v-for="offer in  offers">
-                        <a-card style="padding: 12px">
-                            <span v-html="offer.offerText">
-                            </span>
-                            <div>
-                                Название организации: <b>{{ offer.offerer.name }}</b>
-                            </div>
-                            <div class="mt-16">
-                                <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет"
-                                    @confirm="acceptOffer(offer._id)">
-                                    <a-button class="mr-8 rounded" type="primary">принять</a-button>
-                                </a-popconfirm>
-                                <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="rejectOffer">
-                                    <a-button class="rounded">отказать</a-button>
-                                </a-popconfirm>
-                            </div>
-                            <div style="text-align: end; position: absolute; bottom: 0; right: 0; margin: 0 10px 10px 0">
-                                {{ clearData(offer.date) }}
-                            </div>
-                        </a-card>
-                    </a-col>
-                </a-row>
+                <a-radio-group v-model:value="offerStatus">
+                    <a-radio value="new">Новые</a-radio>
+                    <a-radio value="accepted">Принятые</a-radio>
+                    <a-radio value="rejected">Отклонённые</a-radio>
+                </a-radio-group>
+
+                <router-view />
             </a-col>
         </a-row>
     </div>
 </template>
-<style scoped>
-.rounded {
-    border-radius: 16px;
-}
-</style>

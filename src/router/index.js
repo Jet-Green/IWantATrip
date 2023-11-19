@@ -170,6 +170,23 @@ const router = createRouter({
       path: '/offers',
       name: 'OffersPage',
       component: () => import('../components/_cabinet/OffersPage.vue'),
+      children: [
+        {
+          path: 'new',
+          name: 'NewOffers',
+          component: () => import('../components/_cabinet/offers/NewOffers.vue'),
+        },
+        {
+          path: 'accepted',
+          name: 'AcceptedOffers',
+          component: () => import('../components/_cabinet/offers/AcceptedOffers.vue'),
+        },
+        {
+          path: 'rejected',
+          name: 'RejectedOffers',
+          component: () => import('../components/_cabinet/offers/RejectedOffers.vue'),
+        }
+      ]
     },
     {
       path: '/cabinet/',
