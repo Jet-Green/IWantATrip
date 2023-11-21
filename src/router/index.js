@@ -172,6 +172,33 @@ const router = createRouter({
       component: () => import('../components/_guide/Souvenirs.vue')
     },
     {
+      path: '/offer-trip',
+      name: 'OfferTrip',
+      component: () => import('../components/_cabinet/forms/OfferTrip.vue'),
+    },
+    {
+      path: '/offers',
+      name: 'OffersPage',
+      component: () => import('../components/_cabinet/OffersPage.vue'),
+      children: [
+        {
+          path: 'new',
+          name: 'NewOffers',
+          component: () => import('../components/_cabinet/offers/NewOffers.vue'),
+        },
+        {
+          path: 'accepted',
+          name: 'AcceptedOffers',
+          component: () => import('../components/_cabinet/offers/AcceptedOffers.vue'),
+        },
+        {
+          path: 'rejected',
+          name: 'RejectedOffers',
+          component: () => import('../components/_cabinet/offers/RejectedOffers.vue'),
+        }
+      ]
+    },
+    {
       path: '/cabinet/',
       name: 'Cabinet',
       component: () => import('../views/Cabinet.vue'),
