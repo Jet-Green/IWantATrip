@@ -26,11 +26,7 @@ async function addTaxi() {
 }
 
 let refreshTaxi = async () => {
-    let location = {}
-    if (localStorage.getItem("location")) {
-        location = JSON.parse(localStorage.getItem("location"))
-    }
-    let res = await guideStore.getLocalTaxi(location)
+    let res = await guideStore.getLocalTaxi()
     localTaxi.value = res.data[0]?.taxi
 }
 let deleteTaxi = async (name) => {
@@ -54,7 +50,8 @@ onMounted(async () => {
             <a-col v-for="(t, i) in localTaxi" :xs="12" :md="6" :lg="6">
                 <a-card hoverable style="padding:10px 10px; border-radius: 10px; font-size:18px;">
                     <b>{{ t.name }}</b> <br />
-                    <span class="mdi mdi-phone-in-talk"></span> {{ t.phone }}
+                    <span class="mdi mdi-phone-in-talk"></span> {{ t.phone }}<br />
+                    {{ t.location.name }}
                     <div class="actions d-flex justify-center">
                         <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="deleteTaxi(t.name)">
                             <span class="mdi mdi-delete" style=" cursor: pointer"></span>

@@ -14,7 +14,7 @@ let refreshTaxi = async () => {
         location = JSON.parse(localStorage.getItem("location"))
     }
     let res = await guideStore.getLocalTaxi(location)
-    localTaxi.value = res.data[0]?.taxi
+    localTaxi.value = res.data[0].taxi
 }
 onMounted(async () => {
     refreshTaxi()
