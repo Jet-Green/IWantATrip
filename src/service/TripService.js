@@ -86,5 +86,9 @@ export default {
     },
     updateTransports(updateObj) {
         return $api.post('/trips/update-transports', updateObj)
+    },
+    findTripByCustomerName(name) {
+      
+        return $api.post('/trips/find-trip-by-name', { name: name })
     }
 }
