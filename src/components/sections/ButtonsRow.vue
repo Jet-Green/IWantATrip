@@ -117,7 +117,7 @@ function routeTo(buttonRoute) {
 }
 
 .order {
-  background: linear-gradient(rgb(252, 79, 6), rgb(255, 84, 14));
+  background: linear-gradient(rgb(252, 79, 6), #ff540e);
 }
 
 .city-guide {
