@@ -185,7 +185,6 @@ async function updateIncludedLocations() {
 
 async function updateTrasports() {
     let isEmptyNewTransport = false;
-    console.log(addTransportForm.value)
     for (let key of Object.keys(addTransportForm.value)) {
         if (!addTransportForm.value[key]) isEmptyNewTransport = true
     }

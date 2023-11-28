@@ -61,6 +61,7 @@ onMounted(() => {
             <a-menu-item key="/cabinet/purchased-trips">Забронированные</a-menu-item>
             <a-menu-item key="/cabinet/booking-trips">Заказанные</a-menu-item>
             <a-menu-item key="/calc">Калькулятор</a-menu-item>
+            <a-menu-item key="/cabinet/find-buyer">Найти покупателя</a-menu-item>
           </a-sub-menu>
           <a-menu-item key="/cabinet/my-companions">
             <span v-if=!sm>Попутчики</span>

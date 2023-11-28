@@ -174,6 +174,14 @@ export const useTrips = defineStore('trips', {
             } catch (error) {
                 console.log(error);
             }
+        },
+        async findTripByCustomerName(name ) {
+            try {
+           
+                return await TripService.findTripByCustomerName(name)
+            } catch (error) {
+                console.log(error);
+            }
         }
     },
 })

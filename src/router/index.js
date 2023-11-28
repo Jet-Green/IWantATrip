@@ -228,7 +228,12 @@ const router = createRouter({
               path: 'created-archived-trips',
               component: () => import('../components/_cabinet/ArchivedTrips.vue'),
             },
+         
           ]
+        },
+        {
+          path: 'find-buyer',
+          component: () => import('../components/_cabinet/FindBuyer.vue'),
         },
         {
           path: 'booking-notifications',
