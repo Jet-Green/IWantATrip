@@ -29,9 +29,9 @@ let refreshTaxi = async () => {
     let res = await guideStore.getLocalTaxi()
     localTaxi.value = res.data
 }
-let deleteTaxi = async (name) => {
-    await guideStore.deleteTaxi(name)
-    rafreshTaxi()
+let deleteTaxi = async (_id) => {
+    await guideStore.deleteTaxi(_id)
+    refreshTaxi()
 }
 
 onMounted(async () => {
@@ -53,7 +53,7 @@ onMounted(async () => {
                     <span class="mdi mdi-phone-in-talk"></span> {{ t.phone }}<br />
                     {{ t.location.name }}
                     <div class="actions d-flex justify-center">
-                        <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="deleteTaxi(t.name)">
+                        <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="deleteTaxi(t._id)">
                             <span class="mdi mdi-delete" style=" cursor: pointer"></span>
                         </a-popconfirm>
                     </div>
