@@ -27,7 +27,7 @@ async function addTaxi() {
 
 let refreshTaxi = async () => {
     let res = await guideStore.getLocalTaxi()
-    localTaxi.value = res.data[0]?.taxi
+    localTaxi.value = res.data
 }
 let deleteTaxi = async (name) => {
     await guideStore.deleteTaxi(name)
