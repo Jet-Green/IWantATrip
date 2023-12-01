@@ -106,7 +106,7 @@ function routeTo(buttonRoute) {
 }
 
 .taxi {
-  border: #FFBF00 solid 5px;
+  border: #FFBF00 solid 3px;
   color: black;
 
   &:hover {
@@ -123,7 +123,7 @@ function routeTo(buttonRoute) {
 }
 
 .order {
-  border: #454154 solid 5px;
+  border: #454154 solid 3px;
   color: #454154;
 
   &:hover {
@@ -141,7 +141,7 @@ function routeTo(buttonRoute) {
 
 .public {
 
-  border: #ff540e solid 5px;
+  border: #ff540e solid 3px;
   color: #ff540e;
 
   &:hover {
