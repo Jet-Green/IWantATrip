@@ -175,10 +175,9 @@ export const useTrips = defineStore('trips', {
                 console.log(error);
             }
         },
-        async findTripByCustomerName(name ) {
+        async findTripByCustomerName(name, userId ) {
             try {
-           
-                return await TripService.findTripByCustomerName(name)
+                return await TripService.findTripByCustomerName(name, userId)
             } catch (error) {
                 console.log(error);
             }

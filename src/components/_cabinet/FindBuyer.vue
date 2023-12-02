@@ -15,22 +15,9 @@ let tripsByCustomers = ref([]);
 
 let findUsersTrip = async () => {
 
-    // loading.value = true
     let userId = userStore.user._id
-    let response = await tripStore.findTripByCustomerName(buyer.value)
-    let customerTrips = response.data
-
-    customerTrips.forEach(async (trip) => {
-        tripsByCustomers.value = []
-        if (trip.tripId) {
-            if (trip.tripId.author == userId) {
-
-                tripsByCustomers.value.push(trip)
-
-            }
-        }
-
-    })
+    let response = await tripStore.findTripByCustomerName(buyer.value, userId)
+    tripsByCustomers.value = response.data
 }
 const clearData = (dataString) => {
     let date = 0
@@ -53,22 +40,23 @@ const clearData = (dataString) => {
 </script>
 <template>
     <div class="d-flex ma-4">
-        <a-input v-model:value="buyer" placeholder="покупатель"  style="width: 250px;"/>
+        <a-input v-model:value="buyer" placeholder="покупатель" style="width: 250px;" />
         <a-button @click="findUsersTrip()" class="ma-4 lets_go_btn">Найти</a-button>
     </div>
 
     <div>
+
         <a-row :gutter="[8, 8]">
-            <a-col :lg="8" :sm="12" :xs="24" v-for="trip in tripsByCustomers" >
-                <a-card class="card" hoverable >
+            <a-col :lg="8" :sm="12" :xs="24" v-for="trip in tripsByCustomers">
+                <a-card class="card" hoverable>
                     <div style="text-align:center">
-                        {{ trip.tripId.name }}
+                        {{ trip.name }}
                     </div>
                     <div>
                         <span class="mdi mdi-calendar-arrow-right"></span>
-                        {{ `c ${clearData(trip.tripId.start)}` }}
+                        {{ `c ${clearData(trip.start)}` }}
                         <span class="mdi mdi-calendar-arrow-left"></span>
-                        {{ `по ${clearData(trip.tripId.end)}` }}
+                        {{ `по ${clearData(trip.end)}` }}
                     </div>
                 </a-card>
             </a-col>
