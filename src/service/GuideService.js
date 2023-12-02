@@ -19,8 +19,8 @@ export default {
     async setTaxi(taxi) {
         return $api.post('/guide/set-taxi', { taxi})
     },
-    async deleteTaxi(name) {
-        return $api.post('/guide/delete-taxi', { name })
+    async deleteTaxi(_id) {
+        return $api.post('/guide/delete-taxi', { _id })
     },
     async getLocalTaxi(location) {
         return $api.post('/guide/get-local-taxi', {location})

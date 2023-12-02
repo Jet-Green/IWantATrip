@@ -30,9 +30,12 @@ export const useLocations = defineStore('locations', {
             coordinates
         */
         async setLocation(newLocation) {
-            
+
             localStorage.setItem('location', JSON.stringify(newLocation))
             this.location = newLocation
+        },
+        async refreshLocation() {
+            this.location = JSON.parse(localStorage.getItem('location'))
         },
         async resetLocation() {
             localStorage.setItem('location', JSON.stringify({}))
