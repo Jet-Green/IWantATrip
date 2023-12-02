@@ -308,7 +308,7 @@ function detectIsWaiting(isWaiting) {
     isInWaitingList.value = isWaiting
 }
 
-const phoneRegex = /^((8|\+7)[\- ]?)?[\d\- ]{5,10}$/gm
+const phoneRegex = /^((8|7|\+7|\+8)[\- ]?)?[\d\- ]{5,10}$/gm
 const formSchema = yup.object({
     fullname: yup
         .string("неверный формат")
