@@ -308,15 +308,16 @@ function detectIsWaiting(isWaiting) {
     isInWaitingList.value = isWaiting
 }
 
+const phoneRegex = /^((8|\+7)[\- ]?)?[\d\- ]{5,10}$/gm
 const formSchema = yup.object({
     fullname: yup
         .string("неверный формат")
         .required("заполните поле")
         .min(5, "минимум 5 символов"),
     phone: yup
-        .string("неверный формат")
-        .required("заполните поле")
-        .min(5, "минимум 5 символов"),
+        .string().matches(phoneRegex, "введите № телефона"),
+
+        
 });
 
 
