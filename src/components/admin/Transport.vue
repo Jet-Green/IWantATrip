@@ -25,21 +25,17 @@ async function addTaxi() {
     }
 }
 
-let rafreshTaxi = async () => {
-    let location = {}
-    if (localStorage.getItem("location")) {
-        location = JSON.parse(localStorage.getItem("location"))
-    }
-    let res = await guideStore.getLocalTaxi(location)
-    localTaxi.value = res.data[0].taxi
+let refreshTaxi = async () => {
+    let res = await guideStore.getLocalTaxi()
+    localTaxi.value = res.data
 }
-let deleteTaxi = async (name) => {
-    await guideStore.deleteTaxi(name)
-    rafreshTaxi()
+let deleteTaxi = async (_id) => {
+    await guideStore.deleteTaxi(_id)
+    refreshTaxi()
 }
 
 onMounted(async () => {
-    await rafreshTaxi()
+    await refreshTaxi()
 })
 </script>
 <template>
@@ -50,18 +46,22 @@ onMounted(async () => {
                 <span class="mdi mdi-taxi mr-4"></span> Добавить
             </a-button>
         </a-col>
-        <a-row :gutter="[16, 16]" class="mt-3" type="flex" justify="center">
+        <a-row v-if="localTaxi" :gutter="[16, 16]" class="mt-3" type="flex" justify="center">
             <a-col v-for="(t, i) in localTaxi" :xs="12" :md="6" :lg="6">
                 <a-card hoverable style="padding:10px 10px; border-radius: 10px; font-size:18px;">
                     <b>{{ t.name }}</b> <br />
-                    <span class="mdi mdi-phone-in-talk"></span> {{ t.phone }}
+                    <span class="mdi mdi-phone-in-talk"></span> {{ t.phone }}<br />
+                    {{ t.location.name }}
                     <div class="actions d-flex justify-center">
-                        <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="deleteTaxi(t.name)">
+                        <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="deleteTaxi(t._id)">
                             <span class="mdi mdi-delete" style=" cursor: pointer"></span>
                         </a-popconfirm>
                     </div>
                 </a-card>
             </a-col>
+        </a-row>
+        <a-row v-else>
+            В выбраном месте нет такси.
         </a-row>
         <a-modal v-model:open="addTaxiModal" :footer="null" title="Добавить такси">
             <a-row :gutter="[4, 24]">

@@ -43,10 +43,10 @@ export const useGuide = defineStore('guide', {
                 console.log(error);
             }
         },
-        async deleteTaxi(name) {
+        async deleteTaxi(_id) {
             try {
-                if (name) {
-                    let res = await GuideService.deleteTaxi(name)
+                if (_id) {
+                    let res = await GuideService.deleteTaxi(_id)
                     if (res.status == 200) {
                         await this.refreshState();
                     }
