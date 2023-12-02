@@ -85,11 +85,6 @@ onMounted(async () => {
     font-size: 20px;
     position: relative;
     color: black;
-
-    * {
-        cursor: pointer;
-    }
+    cursor: pointer;
 }
-
-
 </style>
