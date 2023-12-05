@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed, getCurrentInstance } from "vue";
+import { ref, onMounted, computed, getCurrentInstance, watch } from "vue";
 
 import tinkoffPlugin from '../../plugins/tinkoff'
 
@@ -35,6 +35,9 @@ let setPaymentDialog = ref(false)
 let addTouristsDialog = ref(false)
 
 let currentBill = ref(null)
+
+let isSupervisor = ref(false);
+let supervisor = ref({});
 
 let sumOfPay = ref(0)
 let documentNumber = ref('')
@@ -107,7 +110,7 @@ async function deletePayment(bill) {
 }
 async function buyTrip(isBoughtNow) {
     if (userInfo.value.phone) {
-        let cart = [...selectedByUser.value]
+        let cart = [...selectedByUser.value, supervisor.value]
         let bill = {
             payment: {
                 amount: isBoughtNow ? cart.reduce((accumulator, object) => {
@@ -147,6 +150,8 @@ async function buyTrip(isBoughtNow) {
                 for (let i of selectedByUser.value) {
                     i.count = 0
                 }
+                isSupervisor.value = false
+                supervisor.value.count = 0
             })
             .catch((err) => {
                 console.log(err);
@@ -156,7 +161,6 @@ async function buyTrip(isBoughtNow) {
         message.error({ content: "Нужен телефон" });
     }
 }
-
 async function updateTourists(bill) {
     for (let i = 0; i < bill.touristsList.length; i++) {
         let t = bill.touristsList[i]
@@ -168,7 +172,6 @@ async function updateTourists(bill) {
             bill.touristsList.splice(i, 1)
         }
     }
-
     let res = await tripStore.updateTourists(bill)
     if (res.status == 200) {
         addTouristsDialog.value = false
@@ -210,8 +213,14 @@ async function updateTripInfo() {
     }
     trip.value = data;
 }
+watch(isSupervisor, (sup) => {
+    if (sup == false) {
+        supervisor.value.count = 0
+    }
+})
 onMounted(async () => {
     await updateTripInfo()
+    supervisor.value = ({ cost: 0, count: 0, costType: 'руководитель' })
     for (let cost of trip.value.cost) {
         selectedByUser.value.push({
             cost: cost.price,
@@ -419,6 +428,15 @@ onMounted(async () => {
                             :max="trip.maxPeople - tripStat.amount" placeholder="чел"></a-input-number>
                     </div>
                 </div>
+                <div v-if='isSupervisor' class="d-flex space-between align-center">
+                    руководитель<span>0 руб. </span>
+                    <div class="d-flex direction-column">
+                        <span style="font-size: 8px">кол-во</span>
+                        <a-input-number v-model:value="supervisor.count" :min="0" :max="trip.maxPeople - tripStat.amount"
+                            placeholder="чел"></a-input-number>
+                    </div>
+                </div>
+                <a-checkbox v-model:checked="isSupervisor">Руководитель</a-checkbox>
             </a-col>
             <a-col :span="24">
                 <b>Итого: {{ finalCost }} руб.</b>
