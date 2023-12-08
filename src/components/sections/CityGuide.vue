@@ -16,15 +16,15 @@ let cards = [
    
   },
   {
-    title: "Еда",
-    icon: "mdi-food-outline",
-    route: "/eat",
+    title: "Гостиницы",
+    icon: "mdi-home-city-outline",
+    route: "/stay",
    
   },
   {
-    title: "Жилье",
-    icon: "mdi-home-city-outline",
-    route: "/stay",
+    title: "Еда",
+    icon: "mdi-food-outline",
+    route: "/eat",
    
   },
   {
@@ -75,10 +75,10 @@ const handleChange = (value) => {
         <h3 class="in-work">
           В разработке</h3>
         <a-col v-for="(card, index) in cards" :key="index" :xs="12" :md="8">
-          <div class="d-flex" v-if="card.route != '/poster' || card.route !='/transport'">
+          <div class="d-flex" v-if="card.route != '/poster' || card.route !='/transport' || card.route !='/stay'">
           </div>
-          <router-link :to="card.route == '/poster' ? card.route : card.route == '/transport' ? card.route : '' ">
-            <a-card hoverable class="guide-card" :class="{ opacity: card.route != '/poster' && card.route != '/transport' }">
+          <router-link :to="card.route == '/poster' ? card.route : card.route == '/transport' ? card.route : card.route == '/stay' ? card.route : ''">
+            <a-card hoverable class="guide-card" :class="{ opacity: card.route != '/poster' && card.route != '/transport' && card.route != '/stay'}">
               <div>
                 <span class="mdi" :class="card.icon"> </span>
                 <span>
