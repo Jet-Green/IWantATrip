@@ -15,12 +15,11 @@ useGuideStore.fetchElementsByQuery('watch');
     <BackButton />
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
-        <p>Где остановиться</p>
+        <h2>
+          Поиск гостиниц
+        </h2>
       </a-col>
       <a-col :xs="22" :lg="16">
-        <a-button type="primary" class="lets_go_btn" 
-          @click="router.push(`/add-guide-element?type=${router.currentRoute.value.path.slice(1)}`)">Добавить
-        </a-button>
       </a-col>
     </a-row>
   </div>

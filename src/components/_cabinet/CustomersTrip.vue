@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed, getCurrentInstance } from "vue";
+import { ref, onMounted, computed, getCurrentInstance, watch } from "vue";
 
 import tinkoffPlugin from '../../plugins/tinkoff'
 
@@ -35,6 +35,9 @@ let setPaymentDialog = ref(false)
 let addTouristsDialog = ref(false)
 
 let currentBill = ref(null)
+
+let isSupervisor = ref(false);
+let supervisor = ref({});
 
 let sumOfPay = ref(0)
 let documentNumber = ref('')
@@ -107,7 +110,7 @@ async function deletePayment(bill) {
 }
 async function buyTrip(isBoughtNow) {
     if (userInfo.value.phone) {
-        let cart = [...selectedByUser.value]
+        let cart = [...selectedByUser.value, supervisor.value]
         let bill = {
             payment: {
                 amount: isBoughtNow ? cart.reduce((accumulator, object) => {
@@ -147,6 +150,8 @@ async function buyTrip(isBoughtNow) {
                 for (let i of selectedByUser.value) {
                     i.count = 0
                 }
+                isSupervisor.value = false
+                supervisor.value.count = 0
             })
             .catch((err) => {
                 console.log(err);
@@ -156,7 +161,6 @@ async function buyTrip(isBoughtNow) {
         message.error({ content: "Нужен телефон" });
     }
 }
-
 async function updateTourists(bill) {
     for (let i = 0; i < bill.touristsList.length; i++) {
         let t = bill.touristsList[i]
@@ -168,7 +172,6 @@ async function updateTourists(bill) {
             bill.touristsList.splice(i, 1)
         }
     }
-
     let res = await tripStore.updateTourists(bill)
     if (res.status == 200) {
         addTouristsDialog.value = false
@@ -210,8 +213,14 @@ async function updateTripInfo() {
     }
     trip.value = data;
 }
+watch(isSupervisor, (sup) => {
+    if (sup == false) {
+        supervisor.value.count = 0
+    }
+})
 onMounted(async () => {
     await updateTripInfo()
+    supervisor.value = ({ cost: 0, count: 0, costType: 'руководитель' })
     for (let cost of trip.value.cost) {
         selectedByUser.value.push({
             cost: cost.price,
@@ -279,7 +288,10 @@ onMounted(async () => {
                             {{ BILL.userInfo.phone }}</a>
                     </div>
                     <div v-for="cartItem of BILL.cart">
-                        {{ cartItem.costType }} {{ cartItem.count }} x {{ cartItem.cost }} руб.
+                        <div v-if="cartItem.count">
+                            {{ cartItem.costType }} {{ cartItem.count }} x {{ cartItem.cost }} руб.
+                        </div>
+
                     </div>
 
                     <div class="d-flex justify-end">
@@ -312,17 +324,24 @@ onMounted(async () => {
                         </div>
 
                         <b>
-                            <span v-if="BILL.cart.reduce((accumulator, object) => {
-                                return accumulator + object.cost *
-                                    object.count;
-                            }, 0) == BILL.payment.amount" style="color: #bcc662">
+                            <span v-if="billTotal(BILL) == BILL.payment.amount" style="color: #bcc662">
                                 <span class="mdi mdi-check-all" style="font-size: 20px"></span>
                                 оплачен
 
                             </span>
-                            <span v-else style="display: flex; align-items: center">
+                            <!-- <span v-if="billTotal(BILL) > 0 && billTotal(BILL) < BILL.payment.amount" style="display: flex; align-items: center">
                                 <span class="mdi mdi-close" style="font-size: 20px"></span>
-                                не оплачен
+                                оплачен частично
+                            </span> -->
+                            <span v-if="billTotal(BILL) != BILL.payment.amount" style="display: flex; align-items: center">
+                                <div v-if="BILL.payment.amount == 0" style="color: #ff6600">
+                                    <span class="mdi mdi-close" style="font-size: 20px; " ></span>
+                                    не оплачен
+                                </div>
+                                <div v-else style="color: #20A0CE">
+                                    <span class="mdi mdi-check" style="font-size: 20px"></span>
+                                    частично
+                                </div>
                             </span>
                         </b>
 
@@ -419,16 +438,25 @@ onMounted(async () => {
                             :max="trip.maxPeople - tripStat.amount" placeholder="чел"></a-input-number>
                     </div>
                 </div>
+                <div v-if='isSupervisor' class="d-flex space-between align-center">
+                    руководитель<span>0 руб. </span>
+                    <div class="d-flex direction-column">
+                        <span style="font-size: 8px">кол-во</span>
+                        <a-input-number v-model:value="supervisor.count" :min="0" :max="trip.maxPeople - tripStat.amount"
+                            placeholder="чел"></a-input-number>
+                    </div>
+                </div>
+                <a-checkbox v-model:checked="isSupervisor">Руководитель</a-checkbox>
             </a-col>
             <a-col :span="24">
                 <b>Итого: {{ finalCost }} руб.</b>
             </a-col>
 
             <a-col :span="24">
-                <div>Оплатить</div>
+                <div>Создать счет</div>
                 <div class="d-flex space-around">
-                    <a-button type="primary" @click="buyTrip(true)"> сейчас </a-button>
-                    <a-button @click="buyTrip(false)"> потом </a-button>
+                    <!-- <a-button type="primary" @click="buyTrip(true)"> сейчас </a-button> -->
+                    <a-button @click="buyTrip(false)" type="primary"> создать </a-button>
                 </div>
             </a-col>
         </a-row>
