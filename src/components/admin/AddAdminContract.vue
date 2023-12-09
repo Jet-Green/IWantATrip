@@ -1,31 +1,11 @@
 <script setup>
 import { reactive, ref, watch } from "vue";
 import { useContract } from "../../stores/contract";
-// import { Form, Field, ErrorMessage } from "vee-validate";
-// import * as yup from "yup";
 
 let contractStore = useContract();
 
-let yrLocationSearchRequest = ref("");
-let factLocationSearchRequest = ref("");
+let LocationSearchRequest = ref("");
 let possibleLocations = ref([]);
-
-// function selectStartLocationYr(selected) {
-//   for (let l of possibleLocations.value) {
-//     // l.value - name
-//     if (l.value == selected) {
-//       contractForm.yr_address = l.location
-//     }
-//   }
-// }
-// function selectStartLocationFact(selected) {
-//   for (let l of possibleLocations.value) {
-//     // l.value - name
-//     if (l.value == selected) {
-//       contractForm.fact_address = l.location
-//     }
-//   }
-// }
 
 let contractEmail = ref("");
 let contractForm = reactive({
@@ -36,15 +16,7 @@ let contractForm = reactive({
   kpp: "",
   okved: "",
   ogrn: "",
-  addresses: [
-    {
-      type: "actual",
-      zip: "427627",
-      country: "RUS",
-      city: "Глазов",
-      street: "ул. Калинина, 2А",
-    },
-  ],
+  addresses: [],
   email: "",
   founders: {
     individuals: [],
@@ -67,115 +39,58 @@ let contractForm = reactive({
   },
   fiscalization: { company: "OrangeData" },
 });
-// need modification
-// watch(yrLocationSearchRequest, async (newValue, oldValue) => {
-//   if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
-//     var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
 
-//     var options = {
-//       method: "POST",
-//       mode: "cors",
-//       headers: {
-//         "Content-Type": "application/json",
-//         "Accept": "application/json",
-//         "Authorization": "Token " + import.meta.env.VITE_DADATA_TOKEN
-//       },
-//       body: JSON.stringify({
-//         query: newValue,
-//         count: 5,
-//         "from_bound": { "value": "city" },
-//         "to_bound": { "value": "settlement" }
-//       })
-//     }
+watch(LocationSearchRequest, async (newValue, oldValue) => {
+  if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
+    var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
 
-//     let res = await fetch(url, options)
-//     try {
-//       let suggestions = JSON.parse(await res.text()).suggestions
-//       possibleLocations.value = []
-//       for (let s of suggestions) {
-//         let location = {
-//           value: s.value,
-//           location: {
-//             name: s.value,
-//             shortName: '',
-//             type: 'Point',
-//             coordinates: [
-//               s.data.geo_lon,
-//               s.data.geo_lat
-//             ]
-//           }
-//         }
+    var options = {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: "Token " + import.meta.env.VITE_DADATA_TOKEN,
+      },
+      body: JSON.stringify({
+        query: newValue,
+        count: 5,
+        from_bound: { value: "city" },
+        to_bound: { value: "settlement" },
+      }),
+    };
 
-//         if (s.data.settlement) {
-//           location.location.shortName = s.data.settlement
-//         }
-//         else if (s.data.city) {
-//           location.location.shortName = s.data.city
-//         } else {
-//           location.location.shortName = s.value
-//         }
+    let res = await fetch(url, options);
+    try {
+      let suggestions = JSON.parse(await res.text()).suggestions;
+      console.log(suggestions);
+      possibleLocations.value = [];
+      for (let s of suggestions) {
+        let location = {
+          value: s.value,
+          location: {
+            name: s.value,
+            shortName: "",
+            type: "Point",
+            coordinates: [s.data.geo_lon, s.data.geo_lat],
+          },
+        };
 
-//         possibleLocations.value.push(location)
-//       }
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   }
-// })
-// watch(factLocationSearchRequest, async (newValue, oldValue) => {
-//   if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
-//     var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
+        if (s.data.settlement) {
+          location.location.shortName = s.data.settlement;
+        } else if (s.data.city) {
+          location.location.shortName = s.data.city;
+        } else {
+          location.location.shortName = s.value;
+        }
 
-//     var options = {
-//       method: "POST",
-//       mode: "cors",
-//       headers: {
-//         "Content-Type": "application/json",
-//         "Accept": "application/json",
-//         "Authorization": "Token " + import.meta.env.VITE_DADATA_TOKEN
-//       },
-//       body: JSON.stringify({
-//         query: newValue,
-//         count: 5,
-//         "from_bound": { "value": "city" },
-//         "to_bound": { "value": "settlement" }
-//       })
-//     }
-
-//     let res = await fetch(url, options)
-//     try {
-//       let suggestions = JSON.parse(await res.text()).suggestions
-//       possibleLocations.value = []
-//       for (let s of suggestions) {
-//         let location = {
-//           value: s.value,
-//           location: {
-//             name: s.value,
-//             shortName: '',
-//             type: 'Point',
-//             coordinates: [
-//               s.data.geo_lon,
-//               s.data.geo_lat
-//             ]
-//           }
-//         }
-
-//         if (s.data.settlement) {
-//           location.location.shortName = s.data.settlement
-//         }
-//         else if (s.data.city) {
-//           location.location.shortName = s.data.city
-//         } else {
-//           location.location.shortName = s.value
-//         }
-
-//         possibleLocations.value.push(location)
-//       }
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   }
-// })
+        possibleLocations.value.push(location);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+});
 
 async function addContract() {
   let res = await contractStore.createContract(contractForm, contractEmail.value);
@@ -245,6 +160,33 @@ const removeFounders = (item) => {
     contractForm.founders.individuals.splice(index, 1);
   }
 };
+const addAdresses = () => {
+  contractForm.addresses.push({
+    type: "actual",
+    zip: "427627",
+    country: "RUS",
+    city: "Глазов",
+    street: "ул. Калинина, 2А",
+  });
+};
+const removeAdresses = (item) => {
+  let index = contractForm.addresses.indexOf(item);
+  if (index !== -1) {
+    contractForm.addresses.splice(index, 1);
+  }
+};
+function selectStartLocation(selected, item) {
+  let index = contractForm.founders.individuals.indexOf(item);
+  if (index !== -1) {
+    for (let l of possibleLocations.value) {
+      // l.value - name
+      if (l.value == selected) {
+        contractForm.founders.individuals[index].address = l.location;
+        possibleLocations = [];
+      }
+    }
+  }
+}
 
 let submitCount = ref(0);
 async function submit() {
@@ -325,40 +267,41 @@ async function submit() {
               </a-button>
             </a-col>
           </a-row>
-
-          <a-row
-            v-for="(item, index) in contractForm.addresses"
-            :key="index"
-            align="middle"
-            class="mb-4 d-flex"
-            :gutter="[4, 4]"
-          >
-            <a-col :xs="12">
-              type
-              <a-input placeholder="" v-model:value="item.type"></a-input>
-            </a-col>
-            <a-col :xs="12">
-              zip
-              <a-input placeholder="" v-model:value="item.zip"></a-input>
-            </a-col>
-            <a-col :xs="12">
-              country
-              <a-input placeholder="" v-model:value="item.country"></a-input>
-            </a-col>
-            <a-col :xs="12">
-              city
-              <a-input placeholder="" v-model:value="item.city"></a-input>
-            </a-col>
-            <a-col :xs="24">
-              street
-              <a-input placeholder="" v-model:value="item.street"></a-input>
-            </a-col>
-            <a-col :span="24" :offset="12" class="justify-center">
-              <a-button @click="removeAdresses(item)" shape="circle">
-                <span class="mdi mdi-minus" style="cursor: pointer"></span>
-              </a-button>
-            </a-col>
-          </a-row>
+          <a-col :span="24">
+            <a-row
+              v-for="(item, index) in contractForm.addresses"
+              :key="index"
+              align="middle"
+              class="mb-4 d-flex"
+              :gutter="[4, 4]"
+            >
+              <a-col :xs="12">
+                type
+                <a-input placeholder="" v-model:value="item.type"></a-input>
+              </a-col>
+              <a-col :xs="12">
+                zip
+                <a-input placeholder="" v-model:value="item.zip"></a-input>
+              </a-col>
+              <a-col :xs="12">
+                country
+                <a-input placeholder="" v-model:value="item.country"></a-input>
+              </a-col>
+              <a-col :xs="12">
+                city
+                <a-input placeholder="" v-model:value="item.city"></a-input>
+              </a-col>
+              <a-col :xs="24">
+                street
+                <a-input placeholder="" v-model:value="item.street"></a-input>
+              </a-col>
+              <a-col :span="24" :offset="12" class="justify-center">
+                <a-button @click="removeAdresses(item)" shape="circle">
+                  <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                </a-button>
+              </a-col>
+            </a-row>
+          </a-col>
           <!-- <a-col :span="24">
             Юридический адрес
             <a-auto-complete :value="value" @update:value="handleChange" style="width: 100%" :options="possibleLocations"
@@ -404,7 +347,15 @@ async function submit() {
             </a-col>
             <a-col :xs="12">
               address
-              <a-input placeholder="" v-model:value="item.address"></a-input>
+              <a-auto-complete
+                v-model:value="item.address"
+                @change="LocationSearchRequest = item.address"
+                style="width: 100%"
+                :options="LocationSearchRequest.length > 2 ? possibleLocations : []"
+                placeholder="Глазов"
+                @select="selectStartLocation(item)"
+              >
+              </a-auto-complete>
             </a-col>
             <a-col :span="24" :offset="12" class="justify-center">
               <a-button @click="removeFounders(item)" shape="circle">
@@ -499,7 +450,7 @@ async function submit() {
                 v-model:value="contractForm.fiscalization.company"
               ></a-input>
             </a-col>
-            <a-col :span="12" >
+            <a-col :span="12">
               <a-input
                 placeholder="email пользователя"
                 v-model:value="contractEmail"
