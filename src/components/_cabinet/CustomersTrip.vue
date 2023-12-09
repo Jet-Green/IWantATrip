@@ -288,7 +288,10 @@ onMounted(async () => {
                             {{ BILL.userInfo.phone }}</a>
                     </div>
                     <div v-for="cartItem of BILL.cart">
-                        {{ cartItem.costType }} {{ cartItem.count }} x {{ cartItem.cost }} руб.
+                        <div v-if="cartItem.count">
+                            {{ cartItem.costType }} {{ cartItem.count }} x {{ cartItem.cost }} руб.
+                        </div>
+
                     </div>
 
                     <div class="d-flex justify-end">
@@ -321,17 +324,24 @@ onMounted(async () => {
                         </div>
 
                         <b>
-                            <span v-if="BILL.cart.reduce((accumulator, object) => {
-                                return accumulator + object.cost *
-                                    object.count;
-                            }, 0) == BILL.payment.amount" style="color: #bcc662">
+                            <span v-if="billTotal(BILL) == BILL.payment.amount" style="color: #bcc662">
                                 <span class="mdi mdi-check-all" style="font-size: 20px"></span>
                                 оплачен
 
                             </span>
-                            <span v-else style="display: flex; align-items: center">
+                            <!-- <span v-if="billTotal(BILL) > 0 && billTotal(BILL) < BILL.payment.amount" style="display: flex; align-items: center">
                                 <span class="mdi mdi-close" style="font-size: 20px"></span>
-                                не оплачен
+                                оплачен частично
+                            </span> -->
+                            <span v-if="billTotal(BILL) != BILL.payment.amount" style="display: flex; align-items: center">
+                                <div v-if="BILL.payment.amount == 0" style="color: #ff6600">
+                                    <span class="mdi mdi-close" style="font-size: 20px; " ></span>
+                                    не оплачен
+                                </div>
+                                <div v-else style="color: #20A0CE">
+                                    <span class="mdi mdi-check" style="font-size: 20px"></span>
+                                    частично
+                                </div>
                             </span>
                         </b>
 
@@ -443,10 +453,10 @@ onMounted(async () => {
             </a-col>
 
             <a-col :span="24">
-                <div>Оплатить</div>
+                <div>Создать счет</div>
                 <div class="d-flex space-around">
-                    <a-button type="primary" @click="buyTrip(true)"> сейчас </a-button>
-                    <a-button @click="buyTrip(false)"> потом </a-button>
+                    <!-- <a-button type="primary" @click="buyTrip(true)"> сейчас </a-button> -->
+                    <a-button @click="buyTrip(false)" type="primary"> создать </a-button>
                 </div>
             </a-col>
         </a-row>
