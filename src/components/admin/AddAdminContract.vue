@@ -267,53 +267,47 @@ async function submit() {
               </a-button>
             </a-col>
           </a-row>
+          
           <a-col :span="24">
             <a-row
               v-for="(item, index) in contractForm.addresses"
               :key="index"
               align="middle"
               class="mb-4 d-flex"
-              :gutter="[4, 4]"
             >
-              <a-col :xs="12">
-                type
-                <a-input placeholder="" v-model:value="item.type"></a-input>
+              <a-col :xs="22">
+                <a-row :gutter="[4, 4]">
+                  <a-col :xs="12">
+                    type
+                    <a-input placeholder="" v-model:value="item.type"></a-input>
+                  </a-col>
+                  <a-col :xs="12">
+                    zip
+                    <a-input placeholder="" v-model:value="item.zip"></a-input>
+                  </a-col>
+                  <a-col :xs="12">
+                    country
+                    <a-input placeholder="" v-model:value="item.country"></a-input>
+                  </a-col>
+                  <a-col :xs="12">
+                    city
+                    <a-input placeholder="" v-model:value="item.city"></a-input>
+                  </a-col>
+                  <a-col :xs="24">
+                    street
+                    <a-input placeholder="" v-model:value="item.street"></a-input>
+                  </a-col>
+                </a-row>
               </a-col>
-              <a-col :xs="12">
-                zip
-                <a-input placeholder="" v-model:value="item.zip"></a-input>
-              </a-col>
-              <a-col :xs="12">
-                country
-                <a-input placeholder="" v-model:value="item.country"></a-input>
-              </a-col>
-              <a-col :xs="12">
-                city
-                <a-input placeholder="" v-model:value="item.city"></a-input>
-              </a-col>
-              <a-col :xs="24">
-                street
-                <a-input placeholder="" v-model:value="item.street"></a-input>
-              </a-col>
-              <a-col :span="24" :offset="12" class="justify-center">
+              <a-col :span="2" style="justify-content: center">
+                <a-row justify="center">
                 <a-button @click="removeAdresses(item)" shape="circle">
                   <span class="mdi mdi-minus" style="cursor: pointer"></span>
                 </a-button>
+                </a-row>
               </a-col>
             </a-row>
           </a-col>
-          <!-- <a-col :span="24">
-            Юридический адрес
-            <a-auto-complete :value="value" @update:value="handleChange" style="width: 100%" :options="possibleLocations"
-              placeholder="Глазов" @select="selectStartLocationYr">
-            </a-auto-complete>
-          </a-col>
-          <a-col :span="24">
-            Фактический адрес
-            <a-auto-complete :value="value" @update:value="handleChange" style="width: 100%" :options="possibleLocations"
-              placeholder="Глазов" @select="selectStartLocationFact">
-            </a-auto-complete>
-          </a-col> -->
 
           <a-row :gutter="[4, 4]">
             <a-col :xs="20">
@@ -333,6 +327,8 @@ async function submit() {
             class="mb-4 d-flex"
             :gutter="[4, 4]"
           >
+           <a-col :xs="22">
+            <a-row :gutter="[4, 4]">
             <a-col :xs="12">
               firstName
               <a-input placeholder="" v-model:value="item.firstName"></a-input>
@@ -357,10 +353,14 @@ async function submit() {
               >
               </a-auto-complete>
             </a-col>
-            <a-col :span="24" :offset="12" class="justify-center">
+            </a-row>
+          </a-col>
+            <a-col :span="2" class="justify-center">
+              <a-row justify="center">
               <a-button @click="removeFounders(item)" shape="circle">
                 <span class="mdi mdi-minus" style="cursor: pointer"></span>
               </a-button>
+            </a-row>
             </a-col>
           </a-row>
 
