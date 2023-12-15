@@ -104,6 +104,9 @@ onMounted(() => {
             </a-sub-menu>
             <!-- <a-menu-item v-if="userStore.user.roles.includes('admin')" key="/cabinet/scripts"
               style="color: red">Scripts</a-menu-item> -->
+            <a-menu-item v-if="userStore.user.roles.includes('admin')" key="/cabinet/determinate-winner">
+              Розыгрыш
+            </a-menu-item>
           </a-sub-menu>
         </a-menu>
 

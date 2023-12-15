@@ -357,6 +357,17 @@ const router = createRouter({
             }
           }
         },
+        {
+          path: "determinate-winner",
+          name: 'DeterminateWinner',
+          component: () => import('../components/admin/DeterminateWinner.vue'),
+          beforeEnter: () => {
+            let userStore = useAuth()
+            if (!userStore.user?.roles.includes('admin')) {
+              return false
+            }
+          }
+        },
       ],
       beforeEnter: async (to, from) => {
         let userStore = useAuth()

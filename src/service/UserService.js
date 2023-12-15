@@ -37,5 +37,8 @@ export default {
     },
     getBoughtTrips(userId) {
         return $api.get(`/auth/get-bought-trips?user_id=${userId}`)
+    },
+    determineWinner() {
+        return $api.get('/auth/determine-winner')
     }
 }

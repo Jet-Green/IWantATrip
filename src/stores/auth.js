@@ -163,6 +163,14 @@ export const useAuth = defineStore('auth', {
             } catch (error) {
                 console.log(error);
             }
+        },
+        async determineWinner() {
+            try {
+                let res = await UserService.determineWinner()
+                return res.data
+            } catch (error) {
+                console.log(error);
+            }
         }
     },
 })
