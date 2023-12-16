@@ -40,17 +40,17 @@ watch(() => locationStore.location, () => {
 })
 
 let getPosters = async () => {
-  let plpoPosters = await axios.post('https://plpo.ru/api/get-all', { query: query.value }, {
+  let plpoPosters = await axios.post('https://api.plpo.ru/api/get-all', { query: query.value }, {
     headers: {
       "Authorization": `Bearer ${123}`
     }
   })
   posters.value = plpoPosters.data
-
+  
 }
 
 onMounted(async () => {
-  let getTypes = await axios.get('https://plpo.ru/api/get-posters-types', {
+  let getTypes = await axios.get('https://api.plpo.ru/api/get-posters-types', {
     headers: {
       "Authorization": `Bearer ${123}`
     }
@@ -93,8 +93,6 @@ onMounted(async () => {
           </a-col>
 
         </a-row>
-
-
 
 
         <a-row type="flex" justify="center">
