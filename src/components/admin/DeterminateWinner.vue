@@ -13,7 +13,7 @@ async function getWinner() {
 
     winner.value = await useAuth().determineWinner()
     confetti()
-    
+
     loading.value = false
     loaded.value = true
 }
@@ -21,18 +21,19 @@ async function getWinner() {
 
 <template>
     <div v-if="loaded && winner" class="w-100 d-flex justify-center align-center" style="margin-top: 8px">
-        <div style="border: 1px solid #AAAAAA; padding: 10px;">
+        <div style=" padding: 20px;">
             <strong style="font-size: 26px;">{{ winner.fullname }}</strong>
-            <div style="font-size: 18px;">{{ winner.fullinfo.phone }}</div>
+            <div style="font-size: 18px;">{{ winner.email }}</div>
         </div>
     </div>
-    
-    <div v-else-if="!winner && loaded">
-        Нет победителя
+
+    <div v-else-if="!winner && loaded" class="d-flex justify-center">
+        <b>Нет победителя</b>
     </div>
-    
-    <div v-else-if="loading">
-        Загрузка
+
+    <div v-else-if="loading" class="d-flex justify-center">
+        <a-spin tip="Думаем!">
+        </a-spin>
     </div>
 
     <div class="d-flex justify-center" style="margin-top: 20px;">
