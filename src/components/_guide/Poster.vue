@@ -77,8 +77,8 @@ onMounted(async () => {
       </a-col>
     </a-row>
    
-        <!-- <iframe title="Афиши" style="width: 100%; height:90dvh; border: none" src="https://plpo.ru/frame/frame-posters">
-        </iframe> -->
+        <iframe title="Афиши" style="width: 100%; height:90dvh; border: none" src="http://localhost:3000/frame">
+        </iframe>
  
 
     <a-row class="d-flex justify-center">
