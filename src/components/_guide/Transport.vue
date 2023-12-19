@@ -34,7 +34,7 @@ function routeTo(buttonRoute) {
 
           </a-col>
           <a-col :xs="4" class="img"><img src="../../assets/images/ship.webp" alt="" style="height: 30%" /></a-col>
-          <a-col :xs="10" class="big-button order">
+          <a-col :xs="10" class="big-button order" @click="routeTo('/orderTransport')">
             <div>Заказать транспорт</div>
             <div class="help-text">
 
