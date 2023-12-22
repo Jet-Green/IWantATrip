@@ -88,7 +88,10 @@ export default {
         return $api.post('/trips/update-transports', updateObj)
     },
     findTripByCustomerName(name, userId) {
-      
+
         return $api.post('/trips/find-trip-by-name', { name: name, userId: userId })
+    },
+    setUserComment(body) {
+        return $api.put('/trips/set-user-comment', body)
     }
 }

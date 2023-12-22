@@ -32,6 +32,7 @@ let filteredTrips = computed(() => {
             || trip.startLocation.name.toLowerCase().includes(query.value.toLowerCase())
             || (trip.partner ? trip.partner.toLowerCase().includes(query.value.toLowerCase()) : false)
             || trip.offer.toLowerCase().includes(query.value.toLowerCase())
+            || trip.userComment?.toLowerCase().includes(query.value.toLowerCase())
         )
     } else {
         localStorage.setItem("cabinetQuery", '');
@@ -69,7 +70,7 @@ onMounted(async () => {
             <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getArchivedTrips" :key="index">
 
                 <CabinetTrip :trip="trip"
-                :actions="['delete', 'info', 'copy', 'edit', 'addDate', 'transports', 'addLocation']"
+                    :actions="['delete', 'info', 'copy', 'edit', 'addDate', 'transports', 'addLocation', 'editComment']"
                     @deleteTrip="deleteTrip" @updateTrip="getAllTrips" />
             </a-col>
         </a-row>

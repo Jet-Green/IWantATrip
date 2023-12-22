@@ -27,6 +27,7 @@ let addDateDialog = ref(false)
 let addPartnerDialog = ref(false)
 let addLocationDialog = ref(false)
 let updateTransportDialog = ref(false)
+let editCommentDialog = ref(false)
 let possibleTransport = ref([])
 
 let showMessage = ref(false);
@@ -45,6 +46,7 @@ let addTransportForm = ref({
     waiting: null,
     // price: null
 })
+let userComment = ref('')
 
 const clearData = (dataString) => {
     let date = 0
@@ -81,6 +83,13 @@ async function tripToDelete(_id) {
     if (response.status == 200) {
         emit('deleteTrip')
         emit('updateTrip')
+    }
+}
+async function setUserComment(_id) {
+    let response = await tripStore.setUserComment(_id, userComment.value)
+    if (response.status == 200) {
+        emit('updateTrip')
+        editCommentDialog.value = false
     }
 }
 function updateUser(_id) {
@@ -278,7 +287,7 @@ onMounted(async () => {
     for (let t of appStateStore.appState[0].transport) {
         possibleTransport.value.push({ value: t.name })
     }
-     // addTransportForm.value.price = trip.value.transports[0]?.price ?? null
+    // addTransportForm.value.price = trip.value.transports[0]?.price ?? null
 })
 </script>
 <template>
@@ -309,12 +318,12 @@ onMounted(async () => {
                 </a-popconfirm>
                 <a-popconfirm v-if="actions.includes('edit') && !trip.parent" title="Вы уверены?" ok-text="Да"
                     cancel-text="Нет" @confirm="editTrip(trip._id)">
-                    <span class="mdi mdi-pen" style="cursor: pointer"></span>
+                    <span class="mdi mdi-pencil" style="cursor: pointer"></span>
                 </a-popconfirm>
                 <a-popconfirm v-if="actions.includes('hide') && !trip.parent" title="Вы уверены?" ok-text="Да"
                     cancel-text="Нет" @confirm="hideTrip(trip._id)">
-                    <span v-if="!trip.isHidden" class="mdi mdi-eye" style="cursor: pointer"></span>
-                    <span v-else class="mdi mdi-eye-off" style="cursor: pointer"></span>
+                    <span v-if="!trip.isHidden" class="mdi mdi-eye-outline" style="cursor: pointer"></span>
+                    <span v-else class="mdi mdi-eye-off-outline" style="cursor: pointer"></span>
                 </a-popconfirm>
                 <span v-if="!trip.parent && actions.includes('addDate')" class="mdi mdi-plus-circle-outline"
                     style="cursor: pointer" @click="addDateDialog = true"></span>
@@ -331,15 +340,26 @@ onMounted(async () => {
                 <span v-if="!trip.parent && actions.includes('transports')" class="mdi mdi-car-estate"
                     @click="updateTransportDialog = true">
                 </span>
-                <span class="mdi mdi-map-marker-plus" style="cursor: pointer"
+                <span class="mdi mdi-map-marker-plus-outline" style="cursor: pointer"
                     v-if="actions.includes('addLocation') && !trip.parent" @click="addLocationDialog = true"></span>
                 <span class="mdi mdi-email-outline" v-if="trip.moderationMessage && actions.includes('msg') && !trip.parent"
                     @click="showMessage = !showMessage"></span>
+                <span v-if="actions.includes('editComment') && !trip.parent" class="mdi mdi-comment-edit-outline"
+                    @click="editCommentDialog = !editCommentDialog; userComment = trip.userComment"></span>
             </div>
             <div v-if="showMessage">
                 Замечания: {{ trip.moderationMessage }}
             </div>
         </a-card>
+        <a-modal v-model:open="editCommentDialog" title="Изменить комментарий" okText="Отправить" cancelText="Отмена"
+            @ok="setUserComment(trip._id)">
+            <a-row>
+                <a-col :span="24">
+                    <a-textarea placeholder="Крутой тур" v-model:value="userComment"
+                        style="min-height: 120px;"></a-textarea>
+                </a-col>
+            </a-row>
+        </a-modal>
         <a-modal v-model:open="addDateDialog" title="Добавить даты" okText="Отправить" cancelText="Отмена" @ok="submit">
             <a-row :gutter="[16, 16]" v-for="date of dates">
                 <a-col :span="12">

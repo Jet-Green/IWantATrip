@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch, computed, } from "vue";
+import { ref, onMounted, computed } from "vue";
 import CabinetTrip from "../cards/CabinetTrip.vue";
 import { useAuth } from "../../stores/auth.js";
 import { useTrips } from "../../stores/trips.js";
@@ -35,6 +35,7 @@ let filteredTrips = computed(() => {
             || trip.startLocation.name.toLowerCase().includes(query.value.toLowerCase())
             || (trip.partner ? trip.partner.toLowerCase().includes(query.value.toLowerCase()) : false)
             || trip.offer.toLowerCase().includes(query.value.toLowerCase())
+            || trip.userComment?.toLowerCase().includes(query.value.toLowerCase())
         )
     } else {
         localStorage.setItem("cabinetQuery", '');
@@ -73,7 +74,7 @@ onMounted(async () => {
         <a-row :gutter="[8, 8]" class="mt-8" v-if="getTripsInWork.length > 0">
             <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getTripsInWork" :key="index">
                 <CabinetTrip :trip="trip"
-                :actions="['delete', 'info', 'copy', 'hide', 'edit', 'addDate', 'addLocation', 'transports']"
+                    :actions="['delete', 'info', 'copy', 'hide', 'edit', 'addDate', 'addLocation', 'transports', 'editComment']"
                     @deleteTrip="deleteTrip" @updateTrip="getAllTrips" />
             </a-col>
         </a-row>
