@@ -109,13 +109,6 @@ function routeTo(buttonRoute) {
   border: #FFBF00 solid 1px;
   color: black;
 
-  &:hover {
-
-    background: #FFBF00;
-    color: white;
-
-  }
-
   &:active {
     background: #FFBF00;
 
@@ -125,13 +118,6 @@ function routeTo(buttonRoute) {
 .order {
   border: #454154 solid 1px;
   color: #454154;
-
-  &:hover {
-
-    background: #454154;
-    color: white;
-
-  }
 
   &:active {
     background: #454154;
@@ -143,13 +129,6 @@ function routeTo(buttonRoute) {
 
   border: #ff540e solid 1px;
   color: #ff540e;
-
-  &:hover {
-
-    background: #ff540e;
-    color: white;
-
-  }
 
   &:active {
     background: #ff540e;
