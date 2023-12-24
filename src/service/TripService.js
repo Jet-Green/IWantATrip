@@ -93,5 +93,8 @@ export default {
     },
     setUserComment(body) {
         return $api.put('/trips/set-user-comment', body)
+    },
+    editUserComment(body) {
+        return $api.put('/trips/bill-user-comment', body)
     }
 }

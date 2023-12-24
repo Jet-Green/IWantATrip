@@ -188,6 +188,13 @@ export const useTrips = defineStore('trips', {
             } catch (error) {
                 console.log(error);
             }
+        },
+        async editUserComment(bodyObj) {
+            try {
+                return await TripService.editUserComment(bodyObj)
+            } catch (error) {
+
+            }
         }
     },
 })
