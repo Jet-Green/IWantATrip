@@ -13,7 +13,6 @@ export const useGuide = defineStore('guide', {
         async fetchElementsByQuery(name) {
             try {
                 const response = await GuideService.fetchElementsByQuery(name);
-                console.log(response);
 
                 this[name] = response.data;
             } catch (err) {
