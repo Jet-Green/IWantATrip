@@ -7,6 +7,7 @@ import { onMounted } from "vue";
 
 const router = useRouter()
 const useGuideStore = useGuide();
+const backRoute = { name: 'Landing', hash: '#guide' };
 
 useGuideStore.fetchElementsByQuery('watch');
 onMounted(() => {
@@ -17,7 +18,7 @@ onMounted(() => {
 </script>
 <template>
   <div>
-    <BackButton />
+    <BackButton :backRoute="backRoute" />
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
         <h2>
