@@ -5,7 +5,8 @@ import { number } from 'yup';
 
 export const useAppState = defineStore('app-state', {
     state: () => ({
-        appState: null
+        appState: null,
+        widgetIsMount: true,
     }),
     getters: {
     },
