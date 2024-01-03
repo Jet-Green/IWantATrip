@@ -46,7 +46,8 @@ async function checkPayment(paymentId) {
     return res
 }
 
-async function initPayment(orderId, amount) {
+async function initPayment(orderId) {
+    let amount = 1000
     let payload =
     {
         "Amount": amount,
@@ -73,20 +74,53 @@ async function initPayment(orderId, amount) {
             "Taxation": 'usn_income',
             "FfdVersion": "1.2",
             "Items": [
+                // {
+                //     "Name": 'Тур',
+                //     "Price": amount,
+                //     "Quantity": 1,
+                //     "Amount": amount * 1,
+                //     "MeasurementUnit": "шт",
+                //     "Tax": "none",
+                //     "PaymentMethod": "full_prepayment",
+                //     "PaymentObject": "service"
+                // }
                 {
-                    "Name": 'Тур',
+                    // Платформа Союз
+                    "AgentData": {
+                        "AgentSign": "paying_agent",
+                        "OperationName": "Покупка Взрослый билет",
+                        "Phones": ["+79128523316"],
+                        "ReceiverPhones": ["+79128523316"],
+                    },
+                    // Поставщик тура
+                    "SupplierInfo": {
+                        "Phones": ["+79128523316"],
+                        "Name": "ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ \"ВЕАКОМ\"",
+                        "Inn": "1837013663"
+                    },
+                    "PaymentMethod": "full_payment",
+                    "PaymentObject": "service",
+                    "Name": "Взрослый билет",
                     "Price": amount,
                     "Quantity": 1,
-                    "Amount": amount * 1,
-                    "Tax": "none",
-                    "PaymentMethod": "full_prepayment",
-                    "PaymentObject": "service"
-                }
+                    "Amount": amount,
+                    "Tax": "vat10",
+                    "ShopCode": "1347849",
+                    "MeasurementUnit": "шт"
+                },
             ]
-        }
+        },
+        "Shops": [
+            {
+                "ShopCode": "1347849",
+                "Name": "Взрослый билет",
+                "Amount": amount,
+                "Fee": Math.floor(amount * 0.05)
+            }
+        ]
     }
     let res = await axios.post('https://securepay.tinkoff.ru/v2/Init', config)
-
+    console.log(res);
     return { data: res.data, token: Token }
 }
 
@@ -121,7 +155,7 @@ async function sendClosingReceipt(PaymentId, Amount) {
                     "Quantity": 1,
                     "Amount": Amount,
                     "Tax": "none",
-                    "PaymentMethod": "full_prepayment",
+                    "PaymentMethod": "full_payment",
                     "PaymentObject": "service"
                 }
             ]
@@ -134,4 +168,10 @@ async function sendClosingReceipt(PaymentId, Amount) {
     console.log(res.data);
 }
 
-export default { initPayment, checkPayment, cancelPayment, sendClosingReceipt }
+async function registerShop(shopData) {
+    // https://sm-register.tinkoff.ru/register
+    let res = await axios.post('https://sm-register.tinkoff.ru/register', shopData, { headers: `Authorization:Bearer + ${import.meta.env.VITE_SM_REGISTER_ACCESS_TOKEN}` })
+
+}
+
+export default { initPayment, checkPayment, cancelPayment, sendClosingReceipt, registerShop }

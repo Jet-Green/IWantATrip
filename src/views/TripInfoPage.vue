@@ -170,7 +170,7 @@ async function refreshDates() {
     tripDates.value = [];
     trip.value = tripFromDb;
     //сортируем транспорт по возрастанию
-    if (trip.value.transports.length) {    
+    if (trip.value.transports.length) {
         trip.value.transports = _.sortBy(tripFromDb.transports, [function (o) { return o.capacity; }])
     }
 
@@ -317,7 +317,7 @@ const formSchema = yup.object({
     phone: yup
         .string().matches(phoneRegex, "введите № телефона"),
 
-        
+
 });
 
 
@@ -627,9 +627,9 @@ onMounted(async () => {
 
                     <a-col :span="24">
                         <div class="d-flex space-around">
-                            <!-- <a-button html-type="submit" type="primary" class="lets_go_btn" :disabled="isNoPlaces"
+                            <a-button html-type="submit" type="primary" class="lets_go_btn" :disabled="isNoPlaces"
                                 @click="buyNow = true">
-                                сейчас </a-button> -->
+                                сейчас </a-button>
                             <a-button html-type="submit" type="primary" class="lets_go_btn" @click="buyNow = false"
                                 :disabled="isNoPlaces">
                                 Заказать
