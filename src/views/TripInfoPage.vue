@@ -262,7 +262,7 @@ async function buyTrip() {
             if (buyNow.value) {
                 const orderId = Date.now().toString() + '_' + userStore.user._id
 
-                let { data, token } = await tinkoffPlugin.initPayment(orderId, finalCost.value * 100)
+                let { data, token } = await tinkoffPlugin.initPayment(orderId, bill.cart, userStore.user.email)
                 bill.tinkoff = {
                     orderId: data.OrderId,
                     amount: data.Amount,

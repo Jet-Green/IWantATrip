@@ -46,11 +46,41 @@ async function checkPayment(paymentId) {
     return res
 }
 
-async function initPayment(orderId) {
-    let amount = 1000
+async function initPayment(orderId, cart, clientEmail) {
+    let Items = []
+    let totalAmount = 0
+    for (let cartItem of cart) {
+        Items.push(
+            {
+                // Платформа Союз
+                "AgentData": {
+                    "AgentSign": "paying_agent",
+                    "OperationName": `Покупка "${cartItem.costType}"`,
+                    "Phones": ["+79128523316"],
+                    "ReceiverPhones": ["+79128523316"],
+                },
+                // Поставщик тура
+                "SupplierInfo": {
+                    "Phones": ["+79128523316"],
+                    "Name": "ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ \"ВЕАКОМ\"",
+                    "Inn": "1837013663"
+                },
+                "PaymentMethod": "full_payment",
+                "PaymentObject": "service",
+                "Name": cartItem.costType,
+                "Price": cartItem.cost * 100,
+                "Quantity": cartItem.count,
+                "Amount": cartItem.cost * 100 * cartItem.count,
+                "Tax": "usn_income",
+                "ShopCode": "1347849",
+                "MeasurementUnit": "шт"
+            },
+        )
+        totalAmount += cartItem.cost * 100 * cartItem.count
+    }
     let payload =
     {
-        "Amount": amount,
+        "Amount": totalAmount,
         "Password": VITE_TINKOFF_TERMINAL_PASS,
         "OrderId": orderId,
         "TerminalKey": VITE_TINKOFF_TERMINAL_ID
@@ -65,62 +95,25 @@ async function initPayment(orderId) {
 
     let config = {
         "TerminalKey": VITE_TINKOFF_TERMINAL_ID,
-        "Amount": amount,
+        "Amount": totalAmount,
         "OrderId": orderId,
         "Description": "Покупка тура",
         "Token": Token,
         "Receipt": {
-            "Email": "griahadzyin@gmail.com",
+            "Email": clientEmail,
             "Taxation": 'usn_income',
             "FfdVersion": "1.2",
-            "Items": [
-                // {
-                //     "Name": 'Тур',
-                //     "Price": amount,
-                //     "Quantity": 1,
-                //     "Amount": amount * 1,
-                //     "MeasurementUnit": "шт",
-                //     "Tax": "none",
-                //     "PaymentMethod": "full_prepayment",
-                //     "PaymentObject": "service"
-                // }
-                {
-                    // Платформа Союз
-                    "AgentData": {
-                        "AgentSign": "paying_agent",
-                        "OperationName": "Покупка Взрослый билет",
-                        "Phones": ["+79128523316"],
-                        "ReceiverPhones": ["+79128523316"],
-                    },
-                    // Поставщик тура
-                    "SupplierInfo": {
-                        "Phones": ["+79128523316"],
-                        "Name": "ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ \"ВЕАКОМ\"",
-                        "Inn": "1837013663"
-                    },
-                    "PaymentMethod": "full_payment",
-                    "PaymentObject": "service",
-                    "Name": "Взрослый билет",
-                    "Price": amount,
-                    "Quantity": 1,
-                    "Amount": amount,
-                    "Tax": "vat10",
-                    "ShopCode": "1347849",
-                    "MeasurementUnit": "шт"
-                },
-            ]
+            "Items": Items,
         },
         "Shops": [
             {
                 "ShopCode": "1347849",
-                "Name": "Взрослый билет",
-                "Amount": amount,
-                "Fee": Math.floor(amount * 0.05)
+                "Name": "Тур",
+                "Amount": totalAmount,
             }
         ]
     }
     let res = await axios.post('https://securepay.tinkoff.ru/v2/Init', config)
-    console.log(res);
     return { data: res.data, token: Token }
 }
 
