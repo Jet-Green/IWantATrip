@@ -71,7 +71,7 @@ async function initPayment(orderId, cart, clientEmail) {
                 "Price": cartItem.cost * 100,
                 "Quantity": cartItem.count,
                 "Amount": cartItem.cost * 100 * cartItem.count,
-                "Tax": "usn_income",
+                "Tax": "vat10",
                 "ShopCode": "1347849",
                 "MeasurementUnit": "шт"
             },
@@ -114,7 +114,8 @@ async function initPayment(orderId, cart, clientEmail) {
         ]
     }
     let res = await axios.post('https://securepay.tinkoff.ru/v2/Init', config)
-    return { data: res.data, token: Token }
+    console.log(res);
+    return { data: res.data, token: Token, success: res.data.Success }
 }
 
 async function sendClosingReceipt(PaymentId, Amount) {
