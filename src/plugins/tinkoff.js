@@ -71,7 +71,7 @@ async function initPayment(orderId, cart, clientEmail, shopInfo) {
                 "Price": cartItem.cost * 100,
                 "Quantity": cartItem.count,
                 "Amount": cartItem.cost * 100 * cartItem.count,
-                "Tax": "vat10",
+                "Tax": "vat0",
                 "ShopCode": shopInfo.ShopCode,
                 "MeasurementUnit": "шт"
             },
