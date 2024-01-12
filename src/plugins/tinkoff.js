@@ -46,7 +46,7 @@ async function checkPayment(paymentId) {
     return res
 }
 
-async function initPayment(orderId, cart, clientEmail) {
+async function initPayment(orderId, cart, clientEmail, shopInfo) {
     let Items = []
     let totalAmount = 0
     for (let cartItem of cart) {
@@ -61,9 +61,9 @@ async function initPayment(orderId, cart, clientEmail) {
                 },
                 // Поставщик тура
                 "SupplierInfo": {
-                    "Phones": ["+79128523316"],
-                    "Name": "ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ \"ВЕАКОМ\"",
-                    "Inn": "1837013663"
+                    "Phones": shopInfo.Phones,
+                    "Name": shopInfo.Name,
+                    "Inn": shopInfo.Inn
                 },
                 "PaymentMethod": "full_payment",
                 "PaymentObject": "service",
@@ -72,7 +72,7 @@ async function initPayment(orderId, cart, clientEmail) {
                 "Quantity": cartItem.count,
                 "Amount": cartItem.cost * 100 * cartItem.count,
                 "Tax": "vat10",
-                "ShopCode": "1347849",
+                "ShopCode": shopInfo.ShopCode,
                 "MeasurementUnit": "шт"
             },
         )
@@ -107,7 +107,7 @@ async function initPayment(orderId, cart, clientEmail) {
         },
         "Shops": [
             {
-                "ShopCode": "1347849",
+                "ShopCode": shopInfo.ShopCode,
                 "Name": "Тур",
                 "Amount": totalAmount,
             }

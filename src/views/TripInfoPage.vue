@@ -261,8 +261,7 @@ async function buyTrip() {
             };
             if (buyNow.value) {
                 const orderId = Date.now().toString() + '_' + userStore.user._id
-
-                let { data, token, success } = await tinkoffPlugin.initPayment(orderId, bill.cart, userStore.user.email)
+                let { data, token, success } = await tinkoffPlugin.initPayment(orderId, bill.cart, userStore.user.email, trip.value.tinkoffContract)
                 if (!success) {
                     message.config({ duration: 3, top: "90vh" });
                     message.error({ content: "Ошибка при оплате" });
