@@ -178,6 +178,14 @@ function submit() {
   form.createdDay = Date.now()
   form.includedLocations = { type: 'GeometryCollection', geometries: [] }
 
+  let t = userStore.user.tinkoffContract
+  form.tinkoffContract = {
+    ShopCode: t.shopInfo.shopCode,
+    Name: t.fullName,
+    Phones: t.ceo.phone,
+    Inn: t.inn
+  }
+
   TripStore.createTrip(form, userStore.user).then(async (res) => {
     if (res.status == 200) {
       const _id = res.data._id;
