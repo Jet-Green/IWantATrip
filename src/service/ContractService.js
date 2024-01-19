@@ -6,5 +6,8 @@ export default {
     },
     getAll() {
         return $api.post('/contract/get-all')
+    },
+    addContractEmail(body) {
+        return $api.put('/contract/add-contract-email', body)
     }
 }

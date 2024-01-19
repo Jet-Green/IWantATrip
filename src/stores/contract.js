@@ -30,6 +30,9 @@ export const useContract = defineStore('contract', {
             this.contracts = res.data
 
             return res
+        },
+        async addContractEmail(contractId, contractEmail) {
+            return await ContractService.addContractEmail({ contractId, contractEmail })
         }
     }
 })
