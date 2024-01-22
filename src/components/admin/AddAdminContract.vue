@@ -267,7 +267,7 @@ async function submit() {
               </a-button>
             </a-col>
           </a-row>
-          
+
           <a-col :span="24">
             <a-row
               v-for="(item, index) in contractForm.addresses"
@@ -301,9 +301,9 @@ async function submit() {
               </a-col>
               <a-col :span="2" style="justify-content: center">
                 <a-row justify="center">
-                <a-button @click="removeAdresses(item)" shape="circle">
-                  <span class="mdi mdi-minus" style="cursor: pointer"></span>
-                </a-button>
+                  <a-button @click="removeAdresses(item)" shape="circle">
+                    <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                  </a-button>
                 </a-row>
               </a-col>
             </a-row>
@@ -327,40 +327,41 @@ async function submit() {
             class="mb-4 d-flex"
             :gutter="[4, 4]"
           >
-           <a-col :xs="22">
-            <a-row :gutter="[4, 4]">
-            <a-col :xs="12">
-              firstName
-              <a-input placeholder="" v-model:value="item.firstName"></a-input>
+            <a-col :xs="22">
+              <a-row :gutter="[4, 4]">
+                <a-col :xs="12">
+                  firstName
+                  <a-input placeholder="" v-model:value="item.firstName"></a-input>
+                </a-col>
+                <a-col :xs="12">
+                  lastName
+                  <a-input placeholder="" v-model:value="item.lastName"></a-input>
+                </a-col>
+                <a-col :xs="12">
+                  citizenship
+                  <a-input placeholder="" v-model:value="item.citizenship"></a-input>
+                </a-col>
+                <a-col :xs="12">
+                  address
+                  <a-auto-complete
+                    v-model:value="item.address"
+                    @change="LocationSearchRequest = item.address"
+                    style="width: 100%"
+                    :options="LocationSearchRequest.length > 2 ? possibleLocations : []"
+                    placeholder="Глазов"
+                    @select="selectStartLocation(item)"
+                  >
+                  </a-auto-complete>
+                </a-col>
+              </a-row>
             </a-col>
-            <a-col :xs="12">
-              lastName
-              <a-input placeholder="" v-model:value="item.lastName"></a-input>
-            </a-col>
-            <a-col :xs="12">
-              citizenship
-              <a-input placeholder="" v-model:value="item.citizenship"></a-input>
-            </a-col>
-            <a-col :xs="12">
-              address
-              <a-auto-complete
-                v-model:value="item.address"
-                @change="LocationSearchRequest = item.address"
-                style="width: 100%"
-                :options="LocationSearchRequest.length > 2 ? possibleLocations : []"
-                placeholder="Глазов"
-                @select="selectStartLocation(item)"
-              >
-              </a-auto-complete>
-            </a-col>
-            </a-row>
-          </a-col>
+            
             <a-col :span="2" class="justify-center">
               <a-row justify="center">
-              <a-button @click="removeFounders(item)" shape="circle">
-                <span class="mdi mdi-minus" style="cursor: pointer"></span>
-              </a-button>
-            </a-row>
+                <a-button @click="removeFounders(item)" shape="circle">
+                  <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                </a-button>
+              </a-row>
             </a-col>
           </a-row>
 

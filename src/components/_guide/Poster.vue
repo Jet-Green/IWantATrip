@@ -1,7 +1,15 @@
 <script setup>
+import { onMounted } from "vue";
 import BackButton from "../BackButton.vue";
-
-
+import { get } from "@vueuse/core";
+const getIframe = async() => {
+  let iframe = await document.getElementById('iframe');
+    console.log(iframe)
+    iframe.contentWindow.postMessage('message', '*');
+}
+onMounted(() => {
+  getIframe()
+})
 </script>
 <template>
   <div>
@@ -15,10 +23,11 @@ import BackButton from "../BackButton.vue";
         </h2>
       </a-col>
     </a-row>
-   
-        <iframe title="Афиши" style="width: 100%; height:90dvh; border: none" src="https://plpo.ru/frame/frame-posters">
-        </iframe>
- 
+
+    <iframe title="Афиши" style="width: 100%; height:90dvh; border: none" src="https://plpo.ru/posters" id="iframe">
+    
+    </iframe>
+
 
   </div>
 </template>
