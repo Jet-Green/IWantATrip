@@ -1,14 +1,9 @@
 <script setup>
 import { onMounted } from "vue";
 import BackButton from "../BackButton.vue";
-import { get } from "@vueuse/core";
-const getIframe = async() => {
-  let iframe = await document.getElementById('iframe');
-    console.log(iframe)
-    iframe.contentWindow.postMessage('message', '*');
-}
 onMounted(() => {
-  getIframe()
+  let iframe = document.getElementById('iframe');
+  iframe.contentWindow.postMessage('message', '*');
 })
 </script>
 <template>
