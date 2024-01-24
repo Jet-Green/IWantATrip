@@ -1,15 +1,8 @@
 <script setup>
-import { onMounted } from "vue";
+import { useRouter } from "vue-router";
 import BackButton from "../BackButton.vue";
-import { get } from "@vueuse/core";
-const getIframe = async() => {
-  let iframe = await document.getElementById('iframe');
-    console.log(iframe)
-    iframe.contentWindow.postMessage('message', '*');
-}
-onMounted(() => {
-  getIframe()
-})
+let loc_name = JSON.parse(localStorage.getItem("location")).name
+let src= `https://plpo.ru/posters?location=${loc_name}`
 </script>
 <template>
   <div>
@@ -24,7 +17,7 @@ onMounted(() => {
       </a-col>
     </a-row>
 
-    <iframe title="Афиши" style="width: 100%; height:90dvh; border: none" src="https://plpo.ru/posters" id="iframe">
+    <iframe title="Афиши" style="width: 100%; height:90dvh; border: none" :src=src id="iframe">
     
     </iframe>
 
