@@ -223,8 +223,8 @@ async function updateTripInfo() {
 async function editUserComment() {
     let response = await tripStore.editUserComment({ billId: currentBill.value._id, comment: userComment.value })
     if (response.status == 200) {
-        await updateTripInfo()
         editUserCommentDialog.value = false
+        await updateTripInfo()
     }
 }
 
