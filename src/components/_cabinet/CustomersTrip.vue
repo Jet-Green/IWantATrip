@@ -340,8 +340,13 @@ onMounted(async () => {
                                     </a-popconfirm>
                                     <span class="mdi mdi-account-plus-outline ml-4"
                                         @click="showAddTouristsDialog(BILL)"></span>
-                                    <span class="mdi mdi-comment-edit-outline ml-4"
+                                    <a-badge :dot="true" v-if="BILL.userComment?.length > 0">
+                                        <span class="mdi mdi-18px mdi-comment-edit-outline ml-4"
+                                            @click="showEditUserCommentDialog(BILL)"></span>
+                                    </a-badge>
+                                    <span v-else class="mdi mdi-18px mdi-comment-edit-outline ml-4"
                                         @click="showEditUserCommentDialog(BILL)"></span>
+
                                 </div>
 
                                 <b>
@@ -420,7 +425,7 @@ onMounted(async () => {
                 }}
                 руб.
             </div>
-            <a-input v-model:value="userComment" placeholder="Комментарий к чеку" class="mt-12 mb-12" />
+            <a-textarea v-model:value="userComment" placeholder="Комментарий к чеку" class="mt-12 mb-12" />
 
             <a-col :span="24" class="d-flex justify-center mt-8">
                 <a-button @click="editUserCommentDialog = false">отмена</a-button>
