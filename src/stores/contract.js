@@ -33,6 +33,9 @@ export const useContract = defineStore('contract', {
         },
         async addContractEmail(contractId, contractEmail) {
             return await ContractService.addContractEmail({ contractId, contractEmail })
+        },
+        async deleteContractEmail(contractId, contractEmail) {
+            return await ContractService.deleteContractEmail(contractId, contractEmail)
         }
     }
 })

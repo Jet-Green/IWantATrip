@@ -1,26 +1,34 @@
 <script setup>
+import ContractCard from '../cards/ContractCard.vue';
+
 import { notification } from 'ant-design-vue';
-import { LoadingOutlined, CheckCircleOutlined } from '@ant-design/icons-vue';
+import { LoadingOutlined, CheckCircleOutlined, WarningOutlined } from '@ant-design/icons-vue';
 import { h } from 'vue';
 
 import { onMounted, ref } from 'vue';
 import { useContract } from '../../stores/contract'
 
 const contractStore = useContract()
-let addContractEmailDialog = ref(false)
 
 
-let contractEmail = ref('')
 let addContractEmailMessage = ref('')
 let addContractEmailMainMessage = ref('')
 let notificationIcon = ref(h(LoadingOutlined, { style: 'color: #ff6600' }))
 
-async function addContractEmail(contract) {
+function clearDialog() {
+    addContractEmailMessage.value = ''
+    addContractEmailMainMessage.value = ''
+}
+
+async function addContractEmail({ contractEmail, contract }) {
     const contractId = contract._id
-    let notificationKey = contractId + contractEmail.value
+    // Нужен, чтобы их много не открывалось.
+    let notificationKey = contractId + contractEmail
+    // разные казусы бывают с message, поэтому лучше постоянно очищать перед использованием
+    clearDialog()
+    addContractEmailMessage.value = `Добавляем ${contract.fullName} в ${contractEmail}`
 
-    addContractEmailMessage.value = `Добавляем ${contract.fullName} в ${contractEmail.value}`
-
+    // типа загрузка
     notification.open({
         message: () => addContractEmailMainMessage.value,
         description: () => addContractEmailMessage.value,
@@ -30,33 +38,36 @@ async function addContractEmail(contract) {
         class: 'notification-custom',
         key: notificationKey
     });
-    let response = await contractStore.addContractEmail(contractId, contractEmail.value)
 
-    // if (response.status == 400) {
-    // }
-    // if (res.status == 400) {
-    //     addContractEmailMainMessage.value = res.data.message
-    //     addContractEmailMessage.value = ''
+    let response = await contractStore.addContractEmail(contractId, contractEmail)
+    // если ошибка
+    if (response.status == 201) {
+        notificationIcon.value = h(WarningOutlined, { style: 'color: #ff6600' })
 
-    //     setTimeout(() => {
-    //         notification.close(notificationKey)
-    //     }, 1000)
-    // }
+        clearDialog()
+        addContractEmailMainMessage.value = response.data.message
+        // тут 3 секунды, чтобы пользователь вдуплил, что происходит.
+        setTimeout(() => {
+            notification.close(notificationKey)
+        }, 3000)
+    }
 
-    // setTimeout(() => {
-    //     notificationIcon.value = h(CheckCircleOutlined, { style: 'color: #BCC662' })
-    //     addContractEmailMainMessage.value = 'Готово'
-    //     addContractEmailMessage.value = ''
+    // если нет ошибки
+    if (response.status == 200) {
+        clearDialog()
+        // зелёное уведомление
+        notificationIcon.value = h(CheckCircleOutlined, { style: 'color: #BCC662' })
+        addContractEmailMainMessage.value = 'Готово'
 
-    //     setTimeout(() => {
-    //         notification.close(notificationKey)
-    //     }, 1000)
-    // }, 4000)
+        setTimeout(() => {
+            notification.close(notificationKey)
+        }, 2000)
+    }
+}
 
-    // после всех вычислений
-    // setTimeout(() => {
-    //     
-    // }, 1000)
+async function deleteContractEmail({ contractEmail, contract }) {
+    // простая операция, поэтому необязательно показывать диалоги
+    let response = await contractStore.deleteContractEmail(contract._id, contractEmail)
 }
 
 onMounted(async () => {
@@ -65,63 +76,9 @@ onMounted(async () => {
 </script>
 <template>
     <a-row :gutter="[16, 16]">
-        <a-col v-for="contract in contractStore.contracts" :span="24" :md="8">
-            <a-card class="pa-8">
-                <div>
-                    <b>Название: </b>{{ contract.name }}
-                </div>
-                <div>
-                    <b>ИНН: </b>{{ contract.inn }}
-                </div>
-                <div>
-                    <b>КПП: </b>{{ contract.kpp }}
-                </div>
-                <div>
-                    <b>ОГРН: </b>{{ contract.ogrn }}
-                </div>
-                <div>
-                    <b>Юр. адрес: </b>{{ contract.yr_address }}
-                </div>
-                <div>
-                    <b>Фактический адрес: </b>{{ contract.fact_address }}
-                </div>
-                <div>
-                    <b>Р/сч: </b>{{ contract.checking_account }}
-                </div>
-                <div>
-                    <b>Банк р/сч: </b>{{ contract.checking_account_bank }}
-                </div>
-                <div>
-                    <b>К/сч: </b> {{ contract.cash_account }}
-                </div>
-                <div>
-                    <b>Банк к/сч: </b>{{ contract.cash_account_bank }}
-                </div>
-                <div>
-                    <b>БИК: </b>{{ contract.bik }}
-                </div>
-                <div>
-                    <b>Телефон: </b>{{ contract.phone }}
-                </div>
-                <div>
-                    <b>Email: </b>{{ contract.email }}
-                </div>
-                <div>
-                    <b>Директор: </b>{{ contract.director }}
-                </div>
-
-                <div>
-                    <b>Email пользователя: </b> {{ contract.userEmail }}
-                    <a-button size="small" @click="addContractEmailDialog = true">
-                        <span class="mdi mdi-plus"></span>
-                    </a-button>
-                </div>
-            </a-card>
-            <a-modal v-model:open="addContractEmailDialog" @ok="addContractEmail(contract)" cancelText="отмена"
-                okText="отправить" :mask="false">
-                email пользователя
-                <a-input placeholder="gorodaivesi@gmail.com" v-model:value="contractEmail"></a-input>
-            </a-modal>
+        <a-col v-for="contract in contractStore.contracts" :span="24" :md="8" :key="contract._id">
+            <ContractCard :contract="contract" @addContractEmail="addContractEmail"
+                @deleteContractEmail="deleteContractEmail" />
         </a-col>
     </a-row>
 </template>
