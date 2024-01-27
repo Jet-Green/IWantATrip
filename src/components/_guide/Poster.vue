@@ -2,7 +2,7 @@
 import { useRouter } from "vue-router";
 import BackButton from "../BackButton.vue";
 let loc_name = JSON.parse(localStorage.getItem("location")).name
-let src= `http://localhost:3000/frame?location=${loc_name}`
+let src= `https://plpo.ru/frame?location=${loc_name}`
 </script>
 <template>
   <div>
