@@ -170,7 +170,7 @@ async function refreshDates() {
     tripDates.value = [];
     trip.value = tripFromDb;
     //сортируем транспорт по возрастанию
-    if (trip.value.transports.length) {    
+    if (trip.value.transports.length) {
         trip.value.transports = _.sortBy(tripFromDb.transports, [function (o) { return o.capacity; }])
     }
 
@@ -261,8 +261,12 @@ async function buyTrip() {
             };
             if (buyNow.value) {
                 const orderId = Date.now().toString() + '_' + userStore.user._id
-
-                let { data, token } = await tinkoffPlugin.initPayment(orderId, finalCost.value * 100)
+                let { data, token, success } = await tinkoffPlugin.initPayment(orderId, bill.cart, userStore.user.email, trip.value.tinkoffContract)
+                if (!success) {
+                    message.config({ duration: 3, top: "90vh" });
+                    message.error({ content: "Ошибка при оплате" });
+                    return
+                }
                 bill.tinkoff = {
                     orderId: data.OrderId,
                     amount: data.Amount,
@@ -317,7 +321,7 @@ const formSchema = yup.object({
     phone: yup
         .string().matches(phoneRegex, "введите № телефона"),
 
-        
+
 });
 
 
@@ -627,9 +631,9 @@ onMounted(async () => {
 
                     <a-col :span="24">
                         <div class="d-flex space-around">
-                            <!-- <a-button html-type="submit" type="primary" class="lets_go_btn" :disabled="isNoPlaces"
+                            <a-button html-type="submit" type="primary" class="lets_go_btn" :disabled="isNoPlaces"
                                 @click="buyNow = true">
-                                сейчас </a-button> -->
+                                сейчас </a-button>
                             <a-button html-type="submit" type="primary" class="lets_go_btn" @click="buyNow = false"
                                 :disabled="isNoPlaces">
                                 Заказать
