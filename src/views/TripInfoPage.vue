@@ -631,9 +631,9 @@ onMounted(async () => {
 
                     <a-col :span="24">
                         <div class="d-flex space-around">
-                            <a-button html-type="submit" type="primary" class="lets_go_btn" :disabled="isNoPlaces"
+                            <!-- <a-button html-type="submit" type="primary" class="lets_go_btn" :disabled="isNoPlaces"
                                 @click="buyNow = true">
-                                сейчас </a-button>
+                                сейчас </a-button> -->
                             <a-button html-type="submit" type="primary" class="lets_go_btn" @click="buyNow = false"
                                 :disabled="isNoPlaces">
                                 Заказать
