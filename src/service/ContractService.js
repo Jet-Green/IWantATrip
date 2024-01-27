@@ -6,5 +6,11 @@ export default {
     },
     getAll() {
         return $api.post('/contract/get-all')
+    },
+    addContractEmail(body) {
+        return $api.put('/contract/contract-email', body)
+    },
+    deleteContractEmail(contractId, contractEmail) {
+        return $api.delete(`/contract/contract-email?_id=${contractId}&email=${contractEmail}`)
     }
 }

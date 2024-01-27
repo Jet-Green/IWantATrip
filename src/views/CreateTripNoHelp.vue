@@ -1,7 +1,6 @@
 <script setup>
 import BackButton from "../components/BackButton.vue";
 import ImageCropper from "../components/ImageCropper.vue";
-import UserFullInfo from "../components/forms/UserFullInfo.vue";
 
 import { watch, nextTick, ref, reactive, onMounted } from "vue";
 import { QuillEditor } from "@vueup/vue-quill";
@@ -71,7 +70,6 @@ let form = reactive({
   bonuses: [],
   returnConditions: '',
 });
-let fullUserInfo = null;
 
 const removeCost = (item) => {
   let index = form.cost.indexOf(item);
@@ -142,7 +140,7 @@ function submit() {
       bonuses: [],
       returnConditions: "",
       isModerated: false,
-     
+
     });
     images = [];
     // pdf = [];
@@ -166,34 +164,27 @@ function submit() {
   }
 
   function updateUser(_id) {
-    if (fullUserInfo) {
-      userStore
-        .updateUser({
-          email: userStore.user.email,
-          fullinfo: fullUserInfo,
-          $push: { trips: _id },
-        })
-        .then((response) => {
-          userStore.user = response.data;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      userStore
-        .updateUser({ email: userStore.user.email, $push: { trips: _id } })
-        .then((response) => {
-          userStore.user = response.data;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+    userStore
+      .updateUser({ email: userStore.user.email, $push: { trips: _id } })
+      .then((response) => {
+        userStore.user = response.data;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   form.author = userStore.user._id
   form.createdDay = Date.now()
   form.includedLocations = { type: 'GeometryCollection', geometries: [] }
+
+  let t = userStore.user.tinkoffContract
+  form.tinkoffContract = {
+    ShopCode: t.shopInfo.shopCode,
+    Name: t.fullName,
+    Phones: t.ceo.phone,
+    Inn: t.inn
+  }
 
   TripStore.createTrip(form, userStore.user).then(async (res) => {
     if (res.status == 200) {
@@ -225,10 +216,6 @@ const delPhoto = () => {
   delPhotoDialog.value = false;
   localStorage.setItem('createTripImages', JSON.stringify(previews.value))
 };
-function updateUserInfo(info) {
-  fullUserInfo = info;
-  author = fullUserInfo._id
-}
 function selectStartLocation(selected) {
   for (let l of possibleLocations.value) {
     // l.value - name
@@ -293,7 +280,7 @@ watch(locationSearchRequest, async (newValue, oldValue) => {
 })
 watch(description, (newValue) => {
   newContent = newValue;
-  
+
   form.description = description.value;
   if (newContent === newValue) return;
   quill.value.setHTML(newValue);
@@ -378,9 +365,6 @@ let formSchema = yup.object({
       <a-col :xs="22" :lg="12">
         <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
           <a-row :gutter="[16, 16]">
-            <a-col :span="24">
-              <UserFullInfo @fullInfo="updateUserInfo" />
-            </a-col>
             <a-col :span="24">
               <h2>Создать тур</h2>
               <Field name="name" v-slot="{ value, handleChange }" v-model="form.name">
@@ -563,7 +547,7 @@ let formSchema = yup.object({
 
             <a-col :span="24" style="display: flex; flex-direction: column">
               Описание программы
-  
+
               <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" :toolbar="[
                 ['bold', 'italic', 'underline'],
                 [{ list: 'ordered' }, { list: 'bullet' }],

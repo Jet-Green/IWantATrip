@@ -55,6 +55,11 @@ const router = createRouter({
 
         if (!userStore.isAuth)
           return '/auth'
+
+        if (!userStore.user.tinkoffContract?._id) {
+          localStorage.setItem('fallbackMessage', JSON.stringify({ subtitle: 'Нужно заключить договор с платформой, чтобы создать тур', title: "Нет договора с \"Города и Веси\"" }))
+          return '/fourothree'
+        }
       }
     },
     {
@@ -233,7 +238,7 @@ const router = createRouter({
               path: 'created-archived-trips',
               component: () => import('../components/_cabinet/ArchivedTrips.vue'),
             },
-         
+
           ]
         },
         {
@@ -434,6 +439,11 @@ const router = createRouter({
       name: 'Contacts',
       component: () => import('../views/Contacts.vue')
     },
+    {
+      path: '/fourothree',
+      name: 'FourOThree',
+      component: () => import('../views/fallbacks/403.vue')
+    }
   ],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {

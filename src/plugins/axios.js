@@ -22,11 +22,13 @@ $api.interceptors.response.use(function (response) {
 }, function (error) {
     // Любые коды состояния, выходящие за пределы диапазона 2xx, вызывают срабатывание этой функции
     // Здесь можете сделать что-то с ошибкой ответа
-    message.config({ duration: 3, top: '90vh' })
-    message.error({ content: error.response?.data?.message })
+    // ошибка с кодом 400 используется для других функций
+    if (error.response.status > 400) {
+        message.config({ duration: 3, top: '90vh' })
+        message.error({ content: error.response?.data?.message })
 
-    console.log("ERROR: ", error);
-
+        console.log("ERROR: ", error);
+    }
     return error
 });
 
