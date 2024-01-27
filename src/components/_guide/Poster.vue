@@ -15,10 +15,12 @@ import BackButton from "../BackButton.vue";
         </h2>
       </a-col>
     </a-row>
-   
-        <iframe title="Афиши" style="width: 100%; height:90dvh; border: none" src="https://plpo.ru/frame/frame-posters">
+    <a-row class="d-flex justify-center">
+      <a-col :xs="22" :lg="16">
+        <iframe title="Афиши" style="width: 100%; height:90dvh; border: none" src="https://plpo.ru/frame">
         </iframe>
- 
+      </a-col>
+    </a-row>
 
   </div>
 </template>
