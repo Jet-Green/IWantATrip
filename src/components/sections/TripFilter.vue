@@ -11,8 +11,6 @@ dayjs.locale('ru');
 
 const ruLocale = locale;
 
-const dateFormat = 'YYYY/MM/DD';
-
 let props = defineProps({
   search: String,
 });
@@ -21,26 +19,21 @@ let props = defineProps({
 const tripStore = useTrips();
 const appStore = useAppState();
 
-let time = ref([]);
+let time = ref(null);
 let query = ref("");
 let type = ref("");
 
 
 function find() {
-
   query.value = query.value.trim()
   localStorage.setItem("TripQuery", query.value)
   localStorage.setItem("TripType", type.value)
-
   tripStore.searchCursor = 1
   tripStore.cursor = 1
   tripStore.trips = []
   if (time.value) {
     let start = new Date(time.value[0].$d)
     let end = new Date(time.value[1].$d)
-
-    localStorage.setItem("TripTimeStart", start)
-    localStorage.setItem("TripTimeEnd", end)
 
     start.setHours(0)
     start.setMinutes(0)
@@ -81,9 +74,7 @@ function resetForm() {
   tripStore.tripFilter.type = ""
   time.value = null;
   query.value = '';
-
-  localStorage.setItem("TripTimeStart", "")
-  localStorage.setItem("TripTimeEnd", "")
+  type.value = '';
   localStorage.setItem("TripQuery", "")
   localStorage.setItem("TripType", "")
 
@@ -97,12 +88,6 @@ watchEffect(() => {
 onMounted(() => {
   query.value = localStorage.getItem("TripQuery") ?? '';
   type.value = localStorage.getItem("TripType") ?? '';
-
-  if (localStorage.getItem("TripTimeStart")) {
-    time.value[0] = dayjs(localStorage.getItem("TripTimeStart"), dateFormat)
-    time.value[1] = dayjs(localStorage.getItem("TripTimeEnd"), dateFormat)
-  }
-
   if (props.search) {
     query.value = props.search;
   }
@@ -137,10 +122,10 @@ onMounted(() => {
           </a-select>
         </a-col>
 
-        <a-col :span="24" :md="12" class="d-flex align-center space-between">
+        <a-col :span="24" :md="12" class="d-flex align-center space-between" >
           <div class="d-flex direction-column" style="width:70%">
             <div style="font-size:10px; line-height:10px">даты</div>
-            <a-range-picker v-model:value="time" :locale="ruLocale" :placeholder="['начало', 'конец']" inputmode='none' />
+            <a-range-picker v-model:value="time" :locale="ruLocale" :placeholder="['начало', 'конец']" inputmode='none'  />
           </div>
           <div class="pa-8">
             <a-tooltip title="Искать">
