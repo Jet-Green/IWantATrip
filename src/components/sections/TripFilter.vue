@@ -11,8 +11,6 @@ dayjs.locale('ru');
 
 const ruLocale = locale;
 
-const dateFormat = 'YYYY/MM/DD';
-
 let props = defineProps({
   search: String,
 });
@@ -90,17 +88,14 @@ function resetForm() {
   find()
 }
 
-watchEffect(() => {
-
-})
-
 onMounted(() => {
   query.value = localStorage.getItem("TripQuery") ?? '';
   type.value = localStorage.getItem("TripType") ?? '';
 
   if (localStorage.getItem("TripTimeStart")) {
-    time.value[0] = dayjs(localStorage.getItem("TripTimeStart"), dateFormat)
-    time.value[1] = dayjs(localStorage.getItem("TripTimeEnd"), dateFormat)
+    console.log('jopa');
+    time.value[0] = dayjs(localStorage.getItem("TripTimeStart"))
+    time.value[1] = dayjs(localStorage.getItem("TripTimeEnd"))
   }
 
   if (props.search) {
