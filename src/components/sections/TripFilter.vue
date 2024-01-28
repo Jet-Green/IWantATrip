@@ -93,9 +93,9 @@ onMounted(() => {
   type.value = localStorage.getItem("TripType") ?? '';
 
   if (localStorage.getItem("TripTimeStart")) {
-    console.log('jopa');
     time.value[0] = dayjs(localStorage.getItem("TripTimeStart"))
     time.value[1] = dayjs(localStorage.getItem("TripTimeEnd"))
+    find()
   }
 
   if (props.search) {
@@ -135,7 +135,7 @@ onMounted(() => {
         <a-col :span="24" :md="12" class="d-flex align-center space-between">
           <div class="d-flex direction-column" style="width:70%">
             <div style="font-size:10px; line-height:10px">даты</div>
-            <a-range-picker v-model:value="time" :locale="ruLocale" :placeholder="['начало', 'конец']" inputmode='none' />
+            <a-range-picker v-model:value="time" :locale="ruLocale" :allowClear="false" :placeholder="['начало', 'конец']" inputmode='none' />
           </div>
           <div class="pa-8">
             <a-tooltip title="Искать">
