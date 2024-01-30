@@ -53,9 +53,9 @@ export const useAuth = defineStore('auth', {
         setUserStatus(text) {
             this.userStatus = text
         },
-        async buyTrip(tripId, bill, tripName) {
+        async buyTrip(tripId, bill, tripInfToSend) {
             try {
-                const emailHtml = await render(BuyTripTemplate, { form: bill, tripName: tripName });
+                const emailHtml = await render(BuyTripTemplate, { form: bill, trip: tripInfToSend });
 
                 let response = await UserService.buyTrip(tripId, bill, emailHtml)
                 this.user.boughtTrips.push(response.data)
