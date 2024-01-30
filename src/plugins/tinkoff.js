@@ -164,8 +164,8 @@ async function sendClosingReceipt(PaymentId, Amount) {
 
 async function registerShop(shopData) {
     // https://sm-register.tinkoff.ru/register
-    let res = await axios.post('https://sm-register.tinkoff.ru/register', shopData, { headers: `Authorization:Bearer + ${import.meta.env.VITE_SM_REGISTER_ACCESS_TOKEN}` })
-
+    let res = await axios.post('https://sm-register.tinkoff.ru/register', shopData, { headers: { Authorization: `Bearer + ${import.meta.env.VITE_TINKOFF_SM_REGISTER_ACCESS_TOKEN}` } })
+    console.log(res);
 }
 
 export default { initPayment, checkPayment, cancelPayment, sendClosingReceipt, registerShop }
