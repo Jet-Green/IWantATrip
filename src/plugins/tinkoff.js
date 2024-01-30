@@ -55,7 +55,7 @@ async function initPayment(orderId, cart, clientEmail, shopInfo) {
                 // Платформа Союз
                 "AgentData": {
                     "AgentSign": "paying_agent",
-                    "OperationName": `Покупка "${cartItem.costType}"`,
+                    "OperationName": `Покупка "${cartItem.costType}"`.slice(0, 22),
                     "Phones": ["+79128523316"],
                     "ReceiverPhones": ["+79128523316"],
                 },
