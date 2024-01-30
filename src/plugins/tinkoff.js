@@ -46,10 +46,41 @@ async function checkPayment(paymentId) {
     return res
 }
 
-async function initPayment(orderId, amount) {
+async function initPayment(orderId, cart, clientEmail, shopInfo) {
+    let Items = []
+    let totalAmount = 0
+    for (let cartItem of cart) {
+        Items.push(
+            {
+                // Платформа Союз
+                "AgentData": {
+                    "AgentSign": "paying_agent",
+                    "OperationName": `Покупка "${cartItem.costType}"`,
+                    "Phones": ["+79128523316"],
+                    "ReceiverPhones": ["+79128523316"],
+                },
+                // Поставщик тура
+                "SupplierInfo": {
+                    "Phones": shopInfo.Phones,
+                    "Name": shopInfo.Name,
+                    "Inn": shopInfo.Inn
+                },
+                "PaymentMethod": "full_payment",
+                "PaymentObject": "service",
+                "Name": cartItem.costType,
+                "Price": cartItem.cost * 100,
+                "Quantity": cartItem.count,
+                "Amount": cartItem.cost * 100 * cartItem.count,
+                "Tax": "vat0",
+                "ShopCode": String(shopInfo.ShopCode),
+                "MeasurementUnit": "шт"
+            },
+        )
+        totalAmount += cartItem.cost * 100 * cartItem.count
+    }
     let payload =
     {
-        "Amount": amount,
+        "Amount": totalAmount,
         "Password": VITE_TINKOFF_TERMINAL_PASS,
         "OrderId": orderId,
         "TerminalKey": VITE_TINKOFF_TERMINAL_ID
@@ -64,30 +95,27 @@ async function initPayment(orderId, amount) {
 
     let config = {
         "TerminalKey": VITE_TINKOFF_TERMINAL_ID,
-        "Amount": amount,
+        "Amount": totalAmount,
         "OrderId": orderId,
         "Description": "Покупка тура",
         "Token": Token,
         "Receipt": {
-            "Email": "griahadzyin@gmail.com",
+            "Email": clientEmail,
             "Taxation": 'usn_income',
             "FfdVersion": "1.2",
-            "Items": [
-                {
-                    "Name": 'Тур',
-                    "Price": amount,
-                    "Quantity": 1,
-                    "Amount": amount * 1,
-                    "Tax": "none",
-                    "PaymentMethod": "full_prepayment",
-                    "PaymentObject": "service"
-                }
-            ]
-        }
+            "Items": Items,
+        },
+        "Shops": [
+            {
+                "ShopCode": String(shopInfo.ShopCode),
+                "Name": "Тур",
+                "Amount": totalAmount,
+            }
+        ]
     }
     let res = await axios.post('https://securepay.tinkoff.ru/v2/Init', config)
-
-    return { data: res.data, token: Token }
+    console.log(res);
+    return { data: res.data, token: Token, success: res.data.Success }
 }
 
 async function sendClosingReceipt(PaymentId, Amount) {
@@ -121,7 +149,7 @@ async function sendClosingReceipt(PaymentId, Amount) {
                     "Quantity": 1,
                     "Amount": Amount,
                     "Tax": "none",
-                    "PaymentMethod": "full_prepayment",
+                    "PaymentMethod": "full_payment",
                     "PaymentObject": "service"
                 }
             ]
@@ -134,4 +162,10 @@ async function sendClosingReceipt(PaymentId, Amount) {
     console.log(res.data);
 }
 
-export default { initPayment, checkPayment, cancelPayment, sendClosingReceipt }
+async function registerShop(shopData) {
+    // https://sm-register.tinkoff.ru/register
+    let res = await axios.post('https://sm-register.tinkoff.ru/register', shopData, { headers: `Authorization:Bearer + ${import.meta.env.VITE_SM_REGISTER_ACCESS_TOKEN}` })
+
+}
+
+export default { initPayment, checkPayment, cancelPayment, sendClosingReceipt, registerShop }
