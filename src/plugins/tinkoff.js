@@ -71,7 +71,7 @@ async function initPayment(orderId, cart, clientEmail, shopInfo) {
                 "Price": cartItem.cost * 100,
                 "Quantity": cartItem.count,
                 "Amount": cartItem.cost * 100 * cartItem.count,
-                "Tax": "vat0",
+                "Tax": "none",
                 "ShopCode": String(shopInfo.ShopCode),
                 "MeasurementUnit": "шт"
             },
@@ -102,7 +102,7 @@ async function initPayment(orderId, cart, clientEmail, shopInfo) {
         "Receipt": {
             "Email": clientEmail,
             "Taxation": 'usn_income',
-            "FfdVersion": "1.2",
+            "FfdVersion": "1.05",
             "Items": Items,
         },
         "Shops": [
@@ -141,7 +141,7 @@ async function sendClosingReceipt(PaymentId, Amount) {
         "Receipt": {
             "Email": "griahadzyin@gmail.com",
             "Taxation": 'usn_income',
-            "FfdVersion": "1.2",
+            "FfdVersion": "1.05",
             "Items": [
                 {
                     "Name": 'Тур',
