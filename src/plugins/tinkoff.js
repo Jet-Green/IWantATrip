@@ -50,32 +50,34 @@ async function initPayment(orderId, cart, clientEmail, shopInfo) {
     let Items = []
     let totalAmount = 0
     for (let cartItem of cart) {
-        Items.push(
-            {
-                // Платформа Союз
-                "AgentData": {
-                    "AgentSign": "paying_agent",
-                    "OperationName": `Покупка "${cartItem.costType}"`,
-                    "Phones": ["+79128523316"],
-                    "ReceiverPhones": ["+79128523316"],
+        if (cartItem.count) {
+            Items.push(
+                {
+                    // Платформа Союз
+                    "AgentData": {
+                        "AgentSign": "paying_agent",
+                        "OperationName": `Покупка "${cartItem.costType}"`,
+                        "Phones": ["+79128523316"],
+                        "ReceiverPhones": ["+79128523316"],
+                    },
+                    // Поставщик тура
+                    "SupplierInfo": {
+                        "Phones": shopInfo.Phones,
+                        "Name": shopInfo.Name,
+                        "Inn": shopInfo.Inn
+                    },
+                    "PaymentMethod": "full_payment",
+                    "PaymentObject": "service",
+                    "Name": cartItem.costType,
+                    "Price": cartItem.cost * 100,
+                    "Quantity": cartItem.count,
+                    "Amount": cartItem.cost * 100 * cartItem.count,
+                    "Tax": "none",
+                    "ShopCode": String(shopInfo.ShopCode),
+                    "MeasurementUnit": "шт"
                 },
-                // Поставщик тура
-                "SupplierInfo": {
-                    "Phones": shopInfo.Phones,
-                    "Name": shopInfo.Name,
-                    "Inn": shopInfo.Inn
-                },
-                "PaymentMethod": "full_payment",
-                "PaymentObject": "service",
-                "Name": cartItem.costType,
-                "Price": cartItem.cost * 100,
-                "Quantity": cartItem.count,
-                "Amount": cartItem.cost * 100 * cartItem.count,
-                "Tax": "none",
-                "ShopCode": String(shopInfo.ShopCode),
-                "MeasurementUnit": "шт"
-            },
-        )
+            )
+        }
         totalAmount += cartItem.cost * 100 * cartItem.count
     }
     let payload =
