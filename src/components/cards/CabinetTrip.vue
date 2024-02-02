@@ -48,6 +48,8 @@ let addTransportForm = ref({
 })
 let userComment = ref('')
 
+let checked = ref(false)
+
 const clearData = (dataString) => {
     let date = 0
     if (dataString.length == 13) {
@@ -214,6 +216,16 @@ function addToDeleteTransports(name) {
     transportToDelete.value.push(name)
 }
 
+function moveToCatalog(_id, isCatalog) {
+
+    if (isCatalog) {
+        tripStore.updateIsCatalog(_id, false)
+    } else {
+        tripStore.updateIsCatalog(_id, true)
+    }
+
+}
+
 watch(locationSearchRequest, async (newValue, oldValue) => {
     if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
         var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
@@ -281,6 +293,7 @@ watch(dates, () => {
     }
 }, { deep: true })
 onMounted(async () => {
+    checked.value = trip.value.isCatalog
     if (!appStateStore.appState[0]?.transport) {
         await appStateStore.refreshState()
     }
@@ -293,9 +306,12 @@ onMounted(async () => {
 <template>
     <div v-if="trip._id">
         <a-card class="card" hoverable :class="[trip.isHidden ? 'overlay' : '']">
-            <div style="text-align:center">
-                {{ trip.name }}
-
+            <div class="d-flex">
+                <div style="width:100%;text-align:center">{{ trip.name }}</div>
+                <a-tooltip>
+                    <template #title>Каталог</template>
+                    <a-checkbox v-model:checked="checked" @change="moveToCatalog(trip._id, trip.isCatalog)"></a-checkbox>
+                </a-tooltip>
             </div>
             <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
             <div v-if="trip.partner">

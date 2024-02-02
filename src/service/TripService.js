@@ -81,6 +81,9 @@ export default {
     updatePartner(partner, trip_id) {
         return $api.post('/trips/update-partner', { partner: partner, _id: trip_id })
     },
+    updateIsCatalog(_id, isCatalog) {
+        return $api.post('/trips/update-iscatalog', {_id: _id, isCatalog: isCatalog })
+    },
     updateIncludedLocations(updateObject) {
         return $api.post('/trips/update-included-locations', updateObject)
     },

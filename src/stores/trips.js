@@ -161,6 +161,14 @@ export const useTrips = defineStore('trips', {
                 console.log(error);
             }
         },
+        async updateIsCatalog(_id, isCatalog) {
+            try {
+                let res = await TripService.updateIsCatalog(_id, isCatalog)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
+        },
         async updateIncludedLocations(updateObject) {
             try {
                 return await TripService.updateIncludedLocations(updateObject)

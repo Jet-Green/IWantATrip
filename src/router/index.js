@@ -238,6 +238,10 @@ const router = createRouter({
               path: 'created-archived-trips',
               component: () => import('../components/_cabinet/ArchivedTrips.vue'),
             },
+            {
+              path: 'catalog-trips',
+              component: () => import('../components/_cabinet/CatalogTrips.vue'),
+            },
 
           ]
         },
