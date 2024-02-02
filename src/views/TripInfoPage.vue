@@ -283,11 +283,8 @@ async function buyTrip() {
             }
 
             if (bill.cart.length != 0) {
-                let tripInfToSend = {name:trip.value.name,
-                                    start:trip.value.start,
-                                    end:trip.value.end}
                 userStore
-                    .buyTrip(selectedDate.value._id, bill, tripInfToSend)
+                    .buyTrip(selectedDate.value._id, bill)
                     .then(async (response) => {
                         if (response.status == 200) {
                             message.config({ duration: 3, top: "90vh" });
