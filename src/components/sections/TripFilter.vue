@@ -23,6 +23,12 @@ let time = ref([]);
 let query = ref("");
 let type = ref("");
 
+let router = useRouter();
+
+function toCatalog() {
+  router.push(`/catalog`);
+}
+
 
 function find() {
 
@@ -141,6 +147,12 @@ onMounted(() => {
             <a-tooltip title="Искать">
               <a-button type="primary" shape="circle" @click="find" class="mr-4">
                 <span class=" mdi mdi-magnify">
+                </span>
+              </a-button>
+            </a-tooltip>
+            <a-tooltip title="Каталог">
+              <a-button shape="circle" @click="toCatalog">
+                <span class="mdi mdi-bulletin-board">
                 </span>
               </a-button>
             </a-tooltip>
