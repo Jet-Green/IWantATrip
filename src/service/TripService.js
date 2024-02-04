@@ -47,6 +47,9 @@ export default {
     async clearTripsDB() {
         return $api.get('/trips/clear')
     },
+    findCatalogTrips() {
+        return $api.get('/trips/catalog-trips')
+    },
     getUserTrips(ids) {
         return $api.post(`/trips/get-user-trips`, ids)
     },

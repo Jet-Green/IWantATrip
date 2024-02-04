@@ -22,8 +22,8 @@ let router = useRouter();
 function find() {
 
     query.value = query.value.trim()
-    localStorage.setItem("TripQuery", query.value)
-    localStorage.setItem("TripType", type.value)
+    localStorage.setItem("CatalogTripQuery", query.value)
+    localStorage.setItem("CatalogTripQuery", type.value)
 
     tripStore.searchCursor = 1
     tripStore.cursor = 1
@@ -46,15 +46,15 @@ function resetForm() {
     time.value = null;
     query.value = '';
 
-    localStorage.setItem("TripQuery", "")
-    localStorage.setItem("TripType", "")
+    localStorage.setItem("CatalogTripQuery", "")
+    localStorage.setItem("CatalogTripQuery", "")
 
     find()
 }
 
 onMounted(() => {
-    query.value = localStorage.getItem("TripQuery") ?? '';
-    type.value = localStorage.getItem("TripType") ?? '';
+    query.value = localStorage.getItem("CatalogTripQuery") ?? '';
+    type.value = localStorage.getItem("CatalogTripQuery") ?? '';
 
 
     if (props.search) {

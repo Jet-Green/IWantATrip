@@ -76,6 +76,9 @@ export const useTrips = defineStore('trips', {
         findRejectedTrips() {
             return TripService.findRejectedTrips()
         },
+        findCatalogTrips() {
+            return TripService.findCatalogTrips()
+        },
         async moderateTrip(_id) {
             try {
                 return await TripService.moderateTrip(_id)
