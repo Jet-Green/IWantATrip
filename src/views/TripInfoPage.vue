@@ -260,7 +260,7 @@ async function buyTrip() {
                 }]
             };
             if (buyNow.value) {
-                const orderId = Date.now().toString() + '_' + userStore.user._id
+                const orderId = Date.now().toString()
                 let { data, token, success } = await tinkoffPlugin.initPayment(orderId, bill.cart, userStore.user.email, trip.value.tinkoffContract)
                 if (!success) {
                     message.config({ duration: 3, top: "90vh" });
