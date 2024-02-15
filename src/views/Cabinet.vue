@@ -59,6 +59,7 @@ onMounted(() => {
             </template>
             <a-menu-item key="/cabinet/created-trips">Созданные</a-menu-item>
             <a-menu-item key="/cabinet/purchased-trips">Забронированные</a-menu-item>
+            <a-menu-item key="/cabinet/bought-trips">Купленные</a-menu-item>
             <a-menu-item key="/cabinet/booking-trips">Заказанные</a-menu-item>
             <a-menu-item key="/calc">Калькулятор</a-menu-item>
             <a-menu-item key="/cabinet/find-buyer">Найти покупателя</a-menu-item>

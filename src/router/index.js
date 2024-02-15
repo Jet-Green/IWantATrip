@@ -258,6 +258,10 @@ const router = createRouter({
           component: () => import('../components/_cabinet/PurchasedTrips.vue'),
         },
         {
+          path: 'bought-trips',
+          component: () => import('../components/_cabinet/BoughtTrips.vue')
+        },
+        {
           path: 'my-companions',
           component: () => import('../components/_cabinet/MyCompanions.vue'),
         },
