@@ -3,6 +3,8 @@ import { ref, computed, onMounted, getCurrentInstance } from "vue";
 import _ from 'lodash'
 import tinkoffPlugin from '../plugins/tinkoff'
 
+import TinkoffLogo from "../assets/images/tinkofflogo.svg"
+
 import { useRoute } from "vue-router";
 import BackButton from "../components/BackButton.vue";
 import WaitingList from "../components/WaitingList.vue";
@@ -631,9 +633,16 @@ onMounted(async () => {
 
                     <a-col :span="24">
                         <div class="d-flex space-around">
-                            <a-button html-type="submit" type="primary" class="lets_go_btn" :disabled="isNoPlaces"
-                                @click="buyNow = true">
-                                сейчас </a-button>
+                            <div class="buy-btn">
+                                <div>
+                                    <a-button html-type="submit" :disabled="isNoPlaces" @click="buyNow = true" class="btn">
+                                        оплатить
+                                    </a-button>
+                                </div>
+                                <div class="d-flex justify-center">
+                                    <img :src="TinkoffLogo" class="tinkoff-logo">
+                                </div>
+                            </div>
                             <a-button html-type="submit" type="primary" class="lets_go_btn" @click="buyNow = false"
                                 :disabled="isNoPlaces">
                                 Заказать
@@ -713,5 +722,27 @@ img {
 .warning {
     color: red;
     font-style: italic;
+}
+
+.buy-btn {
+    display: flex;
+    flex-direction: column;
+
+    .tinkoff-logo {
+        height: 20px;
+        width: 78px;
+    }
+
+    img {
+        -moz-user-select: -moz-none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -o-user-select: none;
+        user-select: none;
+    }
+
+    .btn {
+        border-radius: 15px;
+    }
 }
 </style>
