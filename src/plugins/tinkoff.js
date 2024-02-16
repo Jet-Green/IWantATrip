@@ -46,7 +46,7 @@ async function checkPayment(paymentId) {
     return res
 }
 
-async function initPayment(orderId, cart, clientEmail, shopInfo) {
+async function initPayment(orderId, cart, clientEmail, shopInfo, tripName) {
     let Items = []
     let totalAmount = 0
     for (let cartItem of cart) {
@@ -56,7 +56,7 @@ async function initPayment(orderId, cart, clientEmail, shopInfo) {
                     // Платформа Союз
                     "AgentData": {
                         "AgentSign": "another",
-                        "OperationName": `Покупка "${cartItem.costType}"`,
+                        "OperationName": `"${cartItem.costType}" - ${tripName}`.slice(0, 63),
                         "Phones": ["+79128523316"],
                         "ReceiverPhones": ["+79128523316"],
                     },
@@ -99,7 +99,7 @@ async function initPayment(orderId, cart, clientEmail, shopInfo) {
         "TerminalKey": VITE_TINKOFF_TERMINAL_ID,
         "Amount": totalAmount,
         "OrderId": orderId,
-        "Description": "Покупка тура",
+        "Description": `Покупка "${tripName}"`,
         "Token": Token,
         "Receipt": {
             "Email": clientEmail,

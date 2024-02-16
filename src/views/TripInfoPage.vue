@@ -261,7 +261,7 @@ async function buyTrip() {
             };
             if (buyNow.value) {
                 const orderId = Date.now().toString()
-                let { data, token, success } = await tinkoffPlugin.initPayment(orderId, bill.cart, userStore.user.email, trip.value.tinkoffContract)
+                let { data, token, success } = await tinkoffPlugin.initPayment(orderId, bill.cart, userStore.user.email, trip.value.tinkoffContract, trip.value.name)
                 if (!success) {
                     message.config({ duration: 3, top: "90vh" });
                     message.error({ content: "Ошибка при оплате" });
@@ -631,7 +631,7 @@ onMounted(async () => {
 
                     <a-col :span="24">
                         <div class="d-flex space-around">
-                          <a-button html-type="submit" type="primary" class="lets_go_btn" :disabled="isNoPlaces"
+                            <a-button html-type="submit" type="primary" class="lets_go_btn" :disabled="isNoPlaces"
                                 @click="buyNow = true">
                                 сейчас </a-button>
                             <a-button html-type="submit" type="primary" class="lets_go_btn" @click="buyNow = false"
