@@ -1,6 +1,8 @@
-<script setup></script>
+<script setup>
+
+</script>
 <template>
     <div>
-        jkkjjjh
+        купленные
     </div>
 </template>
