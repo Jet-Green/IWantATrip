@@ -195,6 +195,15 @@ export const useTrips = defineStore('trips', {
             } catch (error) {
 
             }
+        },
+        async getBoughtTrips() {
+            try {
+                let userStore = useAuth()
+                let res = await TripService.getBoughtTrips(userStore.user._id)
+                return res.data
+            } catch (error) {
+                console.log(error);
+            }
         }
     },
 })

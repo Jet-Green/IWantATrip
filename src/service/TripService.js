@@ -96,5 +96,8 @@ export default {
     },
     editUserComment(body) {
         return $api.put('/trips/bill-user-comment', body)
+    },
+    getBoughtTrips(userId) {
+        return $api.get(`/trips/bought?userId=${userId}`)
     }
 }
