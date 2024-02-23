@@ -46,26 +46,15 @@ onMounted(async () => {
             <div>
                 <a-card hoverable class="card">
                     <div class="d-flex space-between">
-                        <div style="color:#ff6600"><span v-if="BILL?.isWaitingList"> Лист ожидания</span></div>
+                        <div>
+                            {{ BILL.tripId.name }}
+                        </div>
                         <b>{{
                             clearData(BILL?.date)
                         }}</b>
                     </div>
+                    <div style="color:#ff6600"><span v-if="BILL?.isWaitingList"> Лист ожидания</span></div>
                     <div> </div>
-                    <div>
-                        <span class="mdi mdi-account-outline" style=""></span>
-                        {{ BILL.userInfo.fullname }}
-
-                    </div>
-                    <div v-if="BILL.selectedStartLocation">
-                        <span class="mdi mdi-map-marker-outline" style=""></span>
-                        {{ BILL.selectedStartLocation }}
-                    </div>
-                    <div>
-                        <span class="mdi mdi-phone-outline" style=""></span>
-                        <a :href="getPhoneNumber(BILL.userInfo.phone)">
-                            {{ BILL.userInfo.phone }}</a>
-                    </div>
                     <div v-for="cartItem of BILL.cart">
                         <div v-if="cartItem.count">
                             {{ cartItem.costType }} {{ cartItem.count }} x {{ cartItem.cost }} руб.
