@@ -6,6 +6,7 @@ import { useTrips } from '../../stores/trips'
 const tripStore = useTrips()
 
 let bought = ref([])
+let loading = ref(false)
 
 const clearData = (dateNumber) => {
     let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
@@ -28,6 +29,7 @@ let billTotal = (bill) => {
     return result
 }
 onMounted(async () => {
+    loading.value = true
     let result = []
     let data = await tripStore.getBoughtTrips()
     for (let bill of data) {
@@ -38,10 +40,16 @@ onMounted(async () => {
         result.push(bill)
     }
     bought.value = result.reverse()
+    loading.value = false
 })
 </script>
 <template>
-    <a-row :gutter="[8, 8]">
+    <a-row v-if="loading">
+        <a-col :span="24" class="d-flex justify-center mt-16">
+            <a-spin size="large" />
+        </a-col>
+    </a-row>
+    <a-row v-else :gutter="[8, 8]">
         <a-col :lg="8" :sm="12" :xs="24" v-for="BILL of bought">
             <div>
                 <a-card hoverable class="card">

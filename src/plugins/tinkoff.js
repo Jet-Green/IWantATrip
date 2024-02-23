@@ -116,7 +116,6 @@ async function initPayment(orderId, cart, clientEmail, shopInfo, tripName) {
         ]
     }
     let res = await axios.post('https://securepay.tinkoff.ru/v2/Init', config)
-    
     return { data: res.data, token: Token, success: res.data.Success }
 }
 
@@ -161,7 +160,7 @@ async function sendClosingReceipt(PaymentId, Amount) {
     // return
     let res = await axios.post('https://securepay.tinkoff.ru/v2/SendClosingReceipt', config)
 
- 
+
 }
 
 async function registerShop(shopData) {
