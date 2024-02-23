@@ -56,7 +56,7 @@ async function initPayment(orderId, cart, clientEmail, shopInfo, tripName) {
                     // Платформа Союз
                     "AgentData": {
                         "AgentSign": "another",
-                        "OperationName": `"${cartItem.costType}" - ${tripName}`.slice(0, 63),
+                        "OperationName": `"${cartItem.costType}":${tripName}`.slice(0, 24),
                         "Phones": ["+79128523316"],
                         "ReceiverPhones": ["+79128523316"],
                     },
@@ -116,7 +116,7 @@ async function initPayment(orderId, cart, clientEmail, shopInfo, tripName) {
         ]
     }
     let res = await axios.post('https://securepay.tinkoff.ru/v2/Init', config)
-    console.log(res);
+    
     return { data: res.data, token: Token, success: res.data.Success }
 }
 
@@ -141,7 +141,7 @@ async function sendClosingReceipt(PaymentId, Amount) {
         "PaymentId": PaymentId,
         "Token": Token,
         "Receipt": {
-            "Email": "griahadzyin@gmail.com",
+            "Email": "sokolov-glazov@yandex.ru",
             "Taxation": 'usn_income',
             "FfdVersion": "1.05",
             "Items": [
@@ -161,7 +161,7 @@ async function sendClosingReceipt(PaymentId, Amount) {
     // return
     let res = await axios.post('https://securepay.tinkoff.ru/v2/SendClosingReceipt', config)
 
-    console.log(res.data);
+ 
 }
 
 async function registerShop(shopData) {

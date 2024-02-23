@@ -730,7 +730,7 @@ img {
 
     .tinkoff-logo {
         height: 20px;
-        width: 78px;
+        width: 90px;
     }
 
     img {
