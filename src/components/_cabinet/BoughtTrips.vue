@@ -1,12 +1,23 @@
 <script setup>
+import TinkoffLogo from '../../assets/images/tinkofflogo.svg'
 import tinkoffPlugin from '../../plugins/tinkoff';
 import { onMounted, ref } from 'vue';
 import { useTrips } from '../../stores/trips'
+import { useAuth } from '../../stores/auth'
+
 
 const tripStore = useTrips()
+const userStore = useAuth()
 
+// все чеки
 let bought = ref([])
+// индикатор загрузки
 let loading = ref(false)
+// диалоговое окно
+let buyDialog = ref(false)
+// оплатить -> выводится инфа по этому чеку
+let currentBill = ref({})
+
 
 const clearData = (dateNumber) => {
     let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
@@ -19,23 +30,64 @@ const clearData = (dateNumber) => {
     }
     return "";
 };
-function getPhoneNumber(number) {
-    return `tel:${number}`;
-}
 let billTotal = (bill) => {
-    let result = bill.cart.reduce((accumulator, object) => {
+    return bill.cart.reduce((accumulator, object) => {
         return accumulator + object.cost * object.count;
     }, 0)
-    return result
+}
+
+function openBuyDialog(cardId) {
+    for (let b of bought.value) {
+        if (b._id == cardId) {
+            currentBill.value = b
+            break
+        }
+    }
+    console.log(currentBill.value);
+    buyDialog.value = true
+}
+async function buyTrip() {
+    const orderId = Date.now().toString()
+    let { data, token, success } =
+        await tinkoffPlugin.initPayment(orderId, currentBill.value.cart, userStore.user.email, currentBill.value.tripId.tinkoffContract, currentBill.value.tripId.name)
+    if (!success) {
+        message.config({ duration: 3, top: "90vh" });
+        message.error({ content: "Ошибка при оплате" });
+        return
+    }
+    currentBill.value.tinkoff =
+    {
+        orderId: data.OrderId,
+        amount: data.Amount,
+        token,
+        paymentId: data.PaymentId
+    }
+
+    window.open(data.PaymentURL, '_blank')
+
+    userStore
+        .payTinkoffBill(currentBill.value, currentBill.value.tinkoff, currentBill.value.tripId.name, currentBill.value.tripId.author.email)
+        .then(async (response) => {
+            if (response.status == 200) {
+                message.config({ duration: 3, top: "90vh" });
+                message.success({ content: "Тур заказан!" });
+            }
+            buyDialog.value = false;
+        })
+        .catch((err) => {
+            console.log(err);
+        });
 }
 onMounted(async () => {
     loading.value = true
     let result = []
     let data = await tripStore.getBoughtTrips()
     for (let bill of data) {
-        let res = await tinkoffPlugin.checkPayment(bill.tinkoff.paymentId, bill.tinkoff.token)
-        if (res.data.Status == "CONFIRMED") {
-            bill.payment.amount = Number(res.data.Amount / 100)
+        if (bill.tinkoff) {
+            let res = await tinkoffPlugin.checkPayment(bill.tinkoff.paymentId, bill.tinkoff.token)
+            if (res.data.Status == "CONFIRMED") {
+                bill.payment.amount = Number(res.data.Amount / 100)
+            }
         }
         result.push(bill)
     }
@@ -95,19 +147,102 @@ onMounted(async () => {
                                 оплачен
                             </span>
                             <span v-if="billTotal(BILL) != BILL.payment.amount" style="display: flex; align-items: center">
-                                <div v-if="BILL.payment.amount == 0" style="color: #ff6600">
-                                    <span class="mdi mdi-close" style="font-size: 20px; "></span>
-                                    не оплачен
-                                </div>
-                                <div v-else style="color: #20A0CE">
-                                    <span class="mdi mdi-check" style="font-size: 20px"></span>
-                                    частично
+                                <div class="buy-btn">
+                                    <div>
+                                        <a-button @click="openBuyDialog(BILL._id)" class="btn">
+                                            оплатить
+                                        </a-button>
+                                    </div>
+                                    <div class="d-flex justify-center">
+                                        <img :src="TinkoffLogo" class="tinkoff-logo">
+                                    </div>
                                 </div>
                             </span>
                         </b>
                     </div>
+
                 </a-card>
             </div>
+
         </a-col>
     </a-row>
+    <a-modal v-model:open="buyDialog" :footer="null">
+        <form @submit.prevent="buyTrip" class="mt-16">
+            <a-row :gutter="[4, 8]">
+                <a-col :span="24">
+                    <div class="d-flex direction-column">
+                        Место посадки:<b>
+                            {{ currentBill.selectedStartLocation }}
+                        </b>
+                    </div>
+                </a-col>
+                <a-col :span="24">
+                    <div>Даты: <b>
+                            {{ clearData(currentBill.tripId.start) + " - " + clearData(currentBill.tripId.start) }}
+                        </b>
+                    </div>
+                </a-col>
+                <a-col :span="24">
+                    <div>Цены:</div>
+                    <div v-if="currentBill.isWaitingList" style="color: #ff6600">
+                        Вы в листе ожидания
+                    </div>
+                    <a-row v-for="cost of currentBill.cart">
+                        <a-col :span="8">
+                            {{ cost.costType }}
+                        </a-col>
+
+                        <a-col :span="8">{{ cost.cost }} руб.</a-col>
+                        <a-col :span="8" class="d-flex justify-end">
+                            {{ cost.count }} чел.
+                        </a-col>
+                    </a-row>
+                </a-col>
+                <a-col :span="24" class="d-flex justify-end">
+                    <b>Итого: {{ billTotal(currentBill) }} руб.</b>
+                </a-col>
+                <div v-if="currentBill.tripId?.partner">
+                    <h4 class="warning">Наличие мест требует уточнения!</h4>
+                </div>
+
+                <a-col :span="24">
+                    <div class="d-flex space-around">
+                        <div class="buy-btn">
+                            <div>
+                                <a-button html-type="submit" class="btn">
+                                    оплатить
+                                </a-button>
+                            </div>
+                            <div class="d-flex justify-center">
+                                <img :src="TinkoffLogo" class="tinkoff-logo">
+                            </div>
+                        </div>
+                    </div>
+                </a-col>
+            </a-row>
+        </Form>
+    </a-modal>
 </template>
+<style lang="scss" scoped>
+.buy-btn {
+    display: flex;
+    flex-direction: column;
+
+    .tinkoff-logo {
+        height: 20px;
+        width: 90px;
+    }
+
+    img {
+        -moz-user-select: -moz-none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -o-user-select: none;
+        user-select: none;
+    }
+
+    .btn {
+        border-radius: 15px;
+    }
+}
+</style>

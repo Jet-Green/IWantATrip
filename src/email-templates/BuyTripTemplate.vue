@@ -32,7 +32,7 @@ let tripName = props.tripName
                 <b>{{ price.count }} x {{ price.cost }}руб.</b>
             </e-text>
             <e-text>
-                Оплачен: <b>{{ bought.isBoughtNow? "да": "нет" }}</b>
+                Оплачен: <b>{{ bought.tinkoff ? "да" : "нет" }}</b>
             </e-text>
 
         </e-section>

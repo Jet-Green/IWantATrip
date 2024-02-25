@@ -64,6 +64,16 @@ export const useAuth = defineStore('auth', {
                 console.log(error);
             }
         },
+        async payTinkoffBill(bill, tinkoffData, tripName, author) {
+            try {
+                const emailHtml = await render(BuyTripTemplate, { form: bill, tripName });
+
+                let response = await UserService.payTinkoffBill({ billId: bill._id, tinkoffData, emailHtml, author })
+                console.log(response);
+            } catch (error) {
+                console.log(error);
+            }
+        },
         async cancelTrip(bill_id, user_id) {
             try {
                 return UserService.cancelTrip(bill_id, user_id)
