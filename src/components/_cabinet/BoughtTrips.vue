@@ -36,6 +36,28 @@ let billTotal = (bill) => {
     }, 0)
 }
 
+async function updateBought() {
+    loading.value = true
+    let result = []
+    let data = await tripStore.getBoughtTrips()
+    for (let bill of data) {
+        if (bill.tinkoff) {
+            let res = await tinkoffPlugin.checkPayment(bill.tinkoff.paymentId, bill.tinkoff.token)
+            if (res.data.Status == "CONFIRMED") {
+                bill.payment.amount = Number(res.data.Amount / 100)
+            }
+        }
+        result.push(bill)
+    }
+    bought.value = result.reverse()
+    loading.value = false
+}
+
+async function cancelTrip(bill_id, user_id) {
+    let res = await userStore.cancelTrip(bill_id, user_id)
+    if (res.status == 200)
+        await updateBought()
+}
 function openBuyDialog(cardId) {
     for (let b of bought.value) {
         if (b._id == cardId) {
@@ -79,20 +101,7 @@ async function buyTrip() {
         });
 }
 onMounted(async () => {
-    loading.value = true
-    let result = []
-    let data = await tripStore.getBoughtTrips()
-    for (let bill of data) {
-        if (bill.tinkoff) {
-            let res = await tinkoffPlugin.checkPayment(bill.tinkoff.paymentId, bill.tinkoff.token)
-            if (res.data.Status == "CONFIRMED") {
-                bill.payment.amount = Number(res.data.Amount / 100)
-            }
-        }
-        result.push(bill)
-    }
-    bought.value = result.reverse()
-    loading.value = false
+    await updateBought()
 })
 </script>
 <template>
@@ -140,25 +149,28 @@ onMounted(async () => {
                     <div v-for="doc in BILL.payment?.documents" class="d-flex justify-end">
                         {{ doc.payDocument }} -- {{ doc.paySum }} руб.
                     </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <b>
-                            <span v-if="billTotal(BILL) == BILL.payment.amount" style="color: #bcc662">
-                                <span class="mdi mdi-check-all" style="font-size: 20px"></span>
-                                оплачен
-                            </span>
-                            <span v-if="billTotal(BILL) != BILL.payment.amount" style="display: flex; align-items: center">
-                                <div class="buy-btn">
-                                    <div>
-                                        <a-button @click="openBuyDialog(BILL._id)" class="btn">
-                                            оплатить
-                                        </a-button>
-                                    </div>
-                                    <div class="d-flex justify-center">
-                                        <img :src="TinkoffLogo" class="tinkoff-logo">
-                                    </div>
+                    <div style="display: flex; align-items: start; justify-content: space-between;">
+                        <span v-if="billTotal(BILL) == BILL.payment.amount" style="color: #bcc662">
+                            <span class="mdi mdi-check-all" style="font-size: 20px"></span>
+                            оплачен
+                        </span>
+                        <span v-if="billTotal(BILL) != BILL.payment.amount && BILL.payment.amount == 0"
+                            style="display: flex; align-items: center">
+                            <div class="buy-btn">
+                                <div>
+                                    <a-button @click="openBuyDialog(BILL._id)" class="btn">
+                                        оплатить
+                                    </a-button>
                                 </div>
-                            </span>
-                        </b>
+                                <div class="d-flex justify-center">
+                                    <img :src="TinkoffLogo" class="tinkoff-logo">
+                                </div>
+                            </div>
+                        </span>
+                        <a-popconfirm v-if="BILL.payment.amount == 0" title="Отказаться?" ok-text="Да" cancel-text="Нет"
+                            @confirm="cancelTrip(BILL._id, userStore.user._id)">
+                            <span class="mdi mdi-24px mdi-delete ml-16" style="color: #ff6600"></span>
+                        </a-popconfirm>
                     </div>
 
                 </a-card>
