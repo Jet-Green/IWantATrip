@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted, computed, getCurrentInstance, watch } from "vue";
 
+import TinkoffLogo from '../../assets/images/tinkofflogo.svg'
+
 import tinkoffPlugin from '../../plugins/tinkoff'
 
 import { useRoute } from "vue-router";
@@ -214,6 +216,7 @@ async function updateTripInfo() {
             let res = await tinkoffPlugin.checkPayment(b.tinkoff.paymentId, b.tinkoff.token)
             if (res.data.Status == "CONFIRMED") {
                 b.payment.amount = Number(res.data.Amount / 100)
+                b.purchasedByTinkoff = true
             }
         }
     }
@@ -349,7 +352,10 @@ onMounted(async () => {
 
                                 </div>
 
-                                <b>
+                                <b v-if="BILL.purchasedByTinkoff">
+                                    <img :src="TinkoffLogo" class="tinkoff-logo">
+                                </b>
+                                <b v-else>
                                     <span v-if="billTotal(BILL) == BILL.payment.amount" style="color: #bcc662">
                                         <span class="mdi mdi-check-all" style="font-size: 20px"></span>
                                         оплачен
@@ -546,5 +552,9 @@ onMounted(async () => {
         </a-modal>
     </a-row>
 </template>
-
-<style scoped></style>
+<style scoped lang="scss">
+.tinkoff-logo {
+    height: 20px;
+    width: 90px;
+}
+</style>
