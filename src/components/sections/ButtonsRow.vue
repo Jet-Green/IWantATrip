@@ -1,6 +1,4 @@
 <script setup>
-import { ref, reactive, watch } from "vue";
-import { useElementBounding } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { useAuth } from "../../stores/auth";
 
@@ -32,15 +30,14 @@ function routeTo(buttonRoute) {
             выберите что нравится
           </div>
         </a-col>
-        <a-col :xs="7" class="img"><img src="../../assets/images/house.webp" alt="" style="height: 30%" /></a-col>
+        <!-- <a-col :xs="7" class="img"><img src="../../assets/images/house.webp" alt="" style="height: 30%" /></a-col>
         <a-col :xs="10" class="big-button create" @click="routeTo('/create-no-help')">
           <div>Создать</div>
           <div class="help-text">
             создайте тур <br />
             привлеките туристов
           </div>
-        </a-col>
-        <a-col :xs="7" class="img"><img src="../../assets/images/mountain.webp" alt="" style="width: 30%" /></a-col>
+        </a-col> -->
         <a-col :xs="10" class="big-button companions" @click="routeTo('/companions')">
           <div>Попутчики</div>
           <div class="help-text">
