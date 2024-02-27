@@ -53,7 +53,7 @@ onMounted(async () => {
               <div style="text-align:center">{{ bill.tripId.name }} </div>
               <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
               <div>
-                <span class="mdi mdi-compass-outline"></span> {{ bill.tripId.startLocation.name }}
+                <span class="mdi mdi-compass-outline"></span> {{ bill.tripId.startLocation?.name }}
               </div>
               <div>
                 <span class="mdi mdi-calendar-arrow-right"></span>

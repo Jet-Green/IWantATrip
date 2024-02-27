@@ -201,12 +201,13 @@ function selectStartLocation(selected, item) {
 
 let submitCount = ref(0);
 async function submit() {
+  await addContract();
   submitCount.value += 1;
   if (submitCount.value > 1) {
     return;
   }
   if (contractEmail.value.length >= 3) {
-    await addContract();
+
   }
 }
 </script>

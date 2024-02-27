@@ -11,13 +11,19 @@ import CreateTripTemplate from '../email-templates/CreateTripTemplate.vue';
 export const useTrips = defineStore('trips', {
     state: () => ({
         trips: [],
+        catalog: [],
         cursor: 1,
+        catalogCursor: 1,
         searchCursor: 1,
         isFetching: false,
         tripFilter: {
             query: "",
             start: "",
             end: "",
+            type: ""
+        },
+        catalogFilter: {
+            query: "",
             type: ""
         }
     }),
@@ -61,6 +67,31 @@ export const useTrips = defineStore('trips', {
                 console.log(err);
             }
         },
+        async fetchCatalogTrips(query, type) {
+            try {
+                if (!this.isFetching) {
+                    this.isFetching = true
+                    let response;
+                    let location = localStorage.getItem('location')
+                    if (location) {
+                        location = JSON.parse(location)
+                    }
+                    if (location?.name) {
+                        response = await TripService.fetchCatalogTrips(this.catalogCursor, ...location.coordinates, query, type);
+                        this.isFetching = false
+                    } else {
+                        response = await TripService.fetchCatalogTrips(this.catalogCursor, '', '', query, type);
+                        this.isFetching = false
+                    }
+                    this.catalog.push(...response.data);
+                    this.catalog = _.uniqBy(this.catalog, '_id')
+                    this.catalogCursor++
+                }
+
+            } catch (err) {
+                console.log(err);
+            }
+        },
         getById(_id) {
             return TripService.getById(_id)
         },
@@ -75,6 +106,9 @@ export const useTrips = defineStore('trips', {
         },
         findRejectedTrips() {
             return TripService.findRejectedTrips()
+        },
+        findCatalogTrips() {
+            return TripService.findCatalogTrips()
         },
         async moderateTrip(_id) {
             try {
@@ -161,6 +195,14 @@ export const useTrips = defineStore('trips', {
                 console.log(error);
             }
         },
+        async updateIsCatalog(_id, isCatalog) {
+            try {
+                let res = await TripService.updateIsCatalog(_id, isCatalog)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
+        },
         async updateIncludedLocations(updateObject) {
             try {
                 return await TripService.updateIncludedLocations(updateObject)
@@ -194,6 +236,15 @@ export const useTrips = defineStore('trips', {
                 return await TripService.editUserComment(bodyObj)
             } catch (error) {
 
+            }
+        },
+        async getBoughtTrips() {
+            try {
+                let userStore = useAuth()
+                let res = await TripService.getBoughtTrips(userStore.user._id)
+                return res.data
+            } catch (error) {
+                console.log(error);
             }
         }
     },

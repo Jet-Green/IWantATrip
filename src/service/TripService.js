@@ -10,6 +10,9 @@ export default {
     async fetchTrips(cursor, lon, lat, query = '', start = '', end = '', type = '') {
         return $api.get(`/trips/get-all?cursor=${cursor}&lon=${lon}&lat=${lat}&query=${query}&start=${start}&end=${end}&type=${type}`)
     },
+    async fetchCatalogTrips(cursor, lon, lat, query = '', type = '') {
+        return $api.get(`/trips/get-all-catalog?cursor=${cursor}&lon=${lon}&lat=${lat}&query=${query}&type=${type}`)
+    },
     async searchTrips(req, cursor) {
         return $api.post(`/trips/search?cursor=${cursor}`, req)
     },
@@ -47,6 +50,9 @@ export default {
     async clearTripsDB() {
         return $api.get('/trips/clear')
     },
+    findCatalogTrips() {
+        return $api.get('/trips/catalog-trips')
+    },
     getUserTrips(ids) {
         return $api.post(`/trips/get-user-trips`, ids)
     },
@@ -81,6 +87,9 @@ export default {
     updatePartner(partner, trip_id) {
         return $api.post('/trips/update-partner', { partner: partner, _id: trip_id })
     },
+    updateIsCatalog(_id, isCatalog) {
+        return $api.post('/trips/update-iscatalog', {_id: _id, isCatalog: isCatalog })
+    },
     updateIncludedLocations(updateObject) {
         return $api.post('/trips/update-included-locations', updateObject)
     },
@@ -96,5 +105,8 @@ export default {
     },
     editUserComment(body) {
         return $api.put('/trips/bill-user-comment', body)
+    },
+    getBoughtTrips(userId) {
+        return $api.get(`/trips/bought?userId=${userId}`)
     }
 }

@@ -46,7 +46,7 @@ async function checkPayment(paymentId) {
     return res
 }
 
-async function initPayment(orderId, cart, clientEmail, shopInfo) {
+async function initPayment(orderId, cart, clientEmail, shopInfo, tripName) {
     let Items = []
     let totalAmount = 0
     for (let cartItem of cart) {
@@ -55,8 +55,8 @@ async function initPayment(orderId, cart, clientEmail, shopInfo) {
                 {
                     // Платформа Союз
                     "AgentData": {
-                        "AgentSign": "paying_agent",
-                        "OperationName": `Покупка "${cartItem.costType}"`,
+                        "AgentSign": "another",
+                        "OperationName": `"${cartItem.costType}":${tripName}`.slice(0, 24),
                         "Phones": ["+79128523316"],
                         "ReceiverPhones": ["+79128523316"],
                     },
@@ -99,7 +99,7 @@ async function initPayment(orderId, cart, clientEmail, shopInfo) {
         "TerminalKey": VITE_TINKOFF_TERMINAL_ID,
         "Amount": totalAmount,
         "OrderId": orderId,
-        "Description": "Покупка тура",
+        "Description": `Покупка "${tripName}"`,
         "Token": Token,
         "Receipt": {
             "Email": clientEmail,
@@ -116,7 +116,6 @@ async function initPayment(orderId, cart, clientEmail, shopInfo) {
         ]
     }
     let res = await axios.post('https://securepay.tinkoff.ru/v2/Init', config)
-    console.log(res);
     return { data: res.data, token: Token, success: res.data.Success }
 }
 
@@ -141,7 +140,7 @@ async function sendClosingReceipt(PaymentId, Amount) {
         "PaymentId": PaymentId,
         "Token": Token,
         "Receipt": {
-            "Email": "griahadzyin@gmail.com",
+            "Email": "sokolov-glazov@yandex.ru",
             "Taxation": 'usn_income',
             "FfdVersion": "1.05",
             "Items": [
@@ -161,13 +160,13 @@ async function sendClosingReceipt(PaymentId, Amount) {
     // return
     let res = await axios.post('https://securepay.tinkoff.ru/v2/SendClosingReceipt', config)
 
-    console.log(res.data);
+
 }
 
 async function registerShop(shopData) {
     // https://sm-register.tinkoff.ru/register
-    let res = await axios.post('https://sm-register.tinkoff.ru/register', shopData, { headers: `Authorization:Bearer + ${import.meta.env.VITE_SM_REGISTER_ACCESS_TOKEN}` })
-
+    let res = await axios.post('https://sm-register.tinkoff.ru/register', shopData, { headers: { Authorization: `Bearer + ${import.meta.env.VITE_TINKOFF_SM_REGISTER_ACCESS_TOKEN}` } })
+    console.log(res);
 }
 
 export default { initPayment, checkPayment, cancelPayment, sendClosingReceipt, registerShop }
