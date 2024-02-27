@@ -59,7 +59,7 @@ let info = userStore.user.fullinfo;
       </a-col>
 
       <a-col>
-        <a-button @click="router.push('/create-no-help')">
+        <a-button @click="router.push('/create-catalog-trip')">
           Создать тур в каталоге
         </a-button>
       </a-col>
