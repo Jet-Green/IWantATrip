@@ -1,6 +1,8 @@
 <script setup>
+import { useRouter } from "vue-router";
 import { useAuth } from "../../stores/auth";
 
+let router = useRouter()
 const userStore = useAuth();
 const user = userStore.user;
 let info = userStore.user.fullinfo;
@@ -48,6 +50,20 @@ let info = userStore.user.fullinfo;
         </a-col>
       </a-row>
     </div>
+
+    <a-row gutter="5">
+      <a-col>
+        <a-button @click="router.push('/create-no-help')">
+          Создать
+        </a-button>
+      </a-col>
+
+      <a-col>
+        <a-button @click="router.push('/create-no-help')">
+          Создать тур в каталоге
+        </a-button>
+      </a-col>
+    </a-row>
   </div>
 </template>
 <style lang="scss" scoped>
