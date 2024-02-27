@@ -52,23 +52,23 @@ let locationSearchRequest = ref("")
 // необходимо добавить поле количество людей в туре
 let form = reactive({
   name: "",
-  start: null,
-  end: null,
-  maxPeople: null,
+  // start: null,
+  // end: null,
+  // maxPeople: null,
   duration: "",
   images: [],
   //pdf: [],
   tripRoute: "",
-  distance: "",
-  cost: [],
+  // distance: "",
+  // cost: [],
   offer: "",
   description: "",
   tripType: "",
   fromAge: "",
   author: "",
   startLocation: null,
-  bonuses: [],
-  returnConditions: '',
+  // bonuses: [],
+  // returnConditions: '',
 });
 
 const removeCost = (item) => {
@@ -123,22 +123,15 @@ function submit() {
   function clearForm() {
     Object.assign(form, {
       name: "",
-      start: null,
-      end: null,
-      maxPeople: null,
       duration: "",
       images: [],
       tripRoute: "",
-      distance: "",
-      cost: [],
       offer: "",
       description: description.value,
       tripType: "",
       fromAge: "",
       author: "",
       startLocation: "",
-      bonuses: [],
-      returnConditions: "",
       isModerated: false,
 
     });
@@ -186,7 +179,7 @@ function submit() {
     Inn: t.inn
   }
 
-  TripStore.createTrip(form, userStore.user).then(async (res) => {
+  TripStore.createCatalogTrip(form, userStore.user).then(async (res) => {
     if (res.status == 200) {
       const _id = res.data._id;
       await uploadTripImages(_id)
@@ -366,7 +359,7 @@ let formSchema = yup.object({
         <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
           <a-row :gutter="[16, 16]">
             <a-col :span="24">
-              <h2>Создать тур</h2>
+              <h2>Создать тур в каталоге</h2>
               <Field name="name" v-slot="{ value, handleChange }" v-model="form.name">
                 Название
                 <a-input placeholder="Название тура" @update:value="handleChange" :value="value" :maxlength="50"
