@@ -28,6 +28,10 @@ export default {
         return $api.post('/trips/create', { emailHtml, trip, emails: [authorEmail], fullinfo })
     },
 
+    async createCatalogTrip(emailHtml, trip, authorEmail, fullinfo) {
+        return $api.post('/trips/create-catalog-trip', { emailHtml, trip, emails: [authorEmail], fullinfo })
+    },
+
     async updateTrip(trip) {
         return $api.post('/trips/update', trip)
     },
