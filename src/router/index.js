@@ -68,6 +68,24 @@ const router = createRouter({
       }
     },
     {
+      path: '/create-catalog-trip',
+      name: 'CreateCatalogTrip',
+      component: () => import('../views/CreateCatalogTrip.vue'),
+      beforeEnter: async (to, from) => {
+        let userStore = useAuth()
+        if (!localStorage.getItem('token') || !userStore.isAuth)
+          await userStore.checkAuth()
+
+        if (!userStore.isAuth)
+          return '/auth'
+
+        if (!userStore.user.tinkoffContract?._id) {
+          localStorage.setItem('fallbackMessage', JSON.stringify({ subtitle: 'Нужно заключить договор с платформой, чтобы создать тур', title: "Нет договора с \"Города и Веси\"" }))
+          return '/fourothree'
+        }
+      }
+    },
+    {
       path: '/copy-trip',
       name: 'CopyTrip',
       component: () => import('../views/CopyTrip.vue'),
