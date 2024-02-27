@@ -11,13 +11,19 @@ import CreateTripTemplate from '../email-templates/CreateTripTemplate.vue';
 export const useTrips = defineStore('trips', {
     state: () => ({
         trips: [],
+        catalog: [],
         cursor: 1,
+        catalogCursor: 1,
         searchCursor: 1,
         isFetching: false,
         tripFilter: {
             query: "",
             start: "",
             end: "",
+            type: ""
+        },
+        catalogFilter: {
+            query: "",
             type: ""
         }
     }),
@@ -57,6 +63,31 @@ export const useTrips = defineStore('trips', {
                     this.trips = _.uniqBy(this.trips, '_id')
                     this.cursor++
                 }
+            } catch (err) {
+                console.log(err);
+            }
+        },
+        async fetchCatalogTrips(query, type) {
+            try {
+                if (!this.isFetching) {
+                    this.isFetching = true
+                    let response;
+                    let location = localStorage.getItem('location')
+                    if (location) {
+                        location = JSON.parse(location)
+                    }
+                    if (location?.name) {
+                        response = await TripService.fetchCatalogTrips(this.catalogCursor, ...location.coordinates, query, type);
+                        this.isFetching = false
+                    } else {
+                        response = await TripService.fetchCatalogTrips(this.catalogCursor, '', '', query, type);
+                        this.isFetching = false
+                    }
+                    this.catalog.push(...response.data);
+                    this.catalog = _.uniqBy(this.catalog, '_id')
+                    this.catalogCursor++
+                }
+
             } catch (err) {
                 console.log(err);
             }

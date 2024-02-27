@@ -28,7 +28,7 @@ const router = createRouter({
     },
     {
       path: '/catalog',
-      name: 'CatalogPage',
+    name: 'CatalogPage',
       component: () => import('../components/CatalogList.vue'),
     },
     {

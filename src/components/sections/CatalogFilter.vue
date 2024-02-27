@@ -12,7 +12,6 @@ let props = defineProps({
 const tripStore = useTrips();
 const appStore = useAppState();
 
-let time = ref([]);
 let query = ref("");
 let type = ref("");
 
@@ -21,30 +20,28 @@ let router = useRouter();
 
 function find() {
 
+    tripStore.catalogCursor = 1
+
     query.value = query.value.trim()
     localStorage.setItem("CatalogTripQuery", query.value)
     localStorage.setItem("CatalogTripQuery", type.value)
 
-    tripStore.searchCursor = 1
-    tripStore.cursor = 1
-    tripStore.trips = []
+    tripStore.catalogFilter.query = query.value
+    tripStore.catalogFilter.type = type.value
 
-    tripStore.tripFilter.query = query.value
-    tripStore.tripFilter.type = type.value
-    tripStore.fetchTrips(
+    tripStore.fetchCatalogTrips(
         query.value,
-        "",
-        "",
         type.value,
     );
 }
 
 
 function resetForm() {
-    tripStore.tripFilter.query = ""
-    tripStore.tripFilter.type = ""
-    time.value = null;
     query.value = '';
+    type.value = '';
+
+    tripStore.catalogFilter.query = query.value
+    tripStore.catalogFilter.type = type.value
 
     localStorage.setItem("CatalogTripQuery", "")
     localStorage.setItem("CatalogTripQuery", "")
@@ -66,7 +63,7 @@ onMounted(() => {
 
 </script>
 <template>
-    <a-row type="flex" justify="center" class="section_bg ">
+    <a-row type="flex" justify="center" class="section_bg">
         <a-col :xs="22" :lg="12">
 
             <a-row :gutter="[8, 4]" class="d-flex justify-center align-center flex-wrap">
@@ -113,7 +110,6 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-
 .active_filter {
     color: #ff6600;
     cursor: pointer;

@@ -8,45 +8,39 @@ import { useRoute } from "vue-router";
 
 const route = useRoute();
 let tripStore = useTrips()
-let catalogTrips = ref([])
-// let isRefreshing = ref(true)
+let isRefreshing = ref(true)
 
-// let handleScroll = async () => {
-//   isRefreshing.value = true
-//   let triggerHeight =
-//     wrapper.value.scrollTop + wrapper.value.offsetHeight + 5
+let handleScroll = async () => {
+    isRefreshing.value = true
+    let triggerHeight =
+        wrapper.value.scrollTop + wrapper.value.offsetHeight + 5
 
-//   if (triggerHeight > wrapper.value.offsetHeight) {
-//     triggerHeight = wrapper.value.scrollHeight
-//   }
+    if (triggerHeight > wrapper.value.offsetHeight) {
+        triggerHeight = wrapper.value.scrollHeight
+    }
 
-//   if (triggerHeight == wrapper.value.scrollHeight) {
-//     await tripStore.fetchTrips(
-//       tripStore?.tripFilter.query,
-//       tripStore?.tripFilter.start,
-//       tripStore?.tripFilter.end,
-//       tripStore?.tripFilter.type)
-//     isRefreshing.value = false
-//   }
+    if (triggerHeight == wrapper.value.scrollHeight) {
+        await tripStore.fetchCatalogTrips(
+            tripStore?.tripFilter.query,
+            tripStore?.tripFilter.type
+        )
+        isRefreshing.value = false
+    }
 
-// }
+}
 
-// const wrapper = ref(null)
+const wrapper = ref(null)
 
 onMounted(async () => {
-    let responce = await tripStore.findCatalogTrips()
-    catalogTrips.value = responce.data
-    console.log(catalogTrips.value);
-
-    //   if (route.hash) {
-    //     let id = route.hash.slice(1)
-    //     document.getElementById(id)?.scrollIntoView()
-    //   }
-    //   wrapper.value.addEventListener("scroll", handleScroll);
-    //   if (tripStore.trips.length == 0) {
-    //     await tripStore.fetchTrips()
-    //     isRefreshing.value = false
-    //   }
+    if (route.hash) {
+        let id = route.hash.slice(1)
+        document.getElementById(id)?.scrollIntoView()
+    }
+    wrapper.value.addEventListener("scroll", handleScroll);
+    if (tripStore.catalog.length == 0) {
+        await tripStore.fetchCatalogTrips()
+        isRefreshing.value = false
+    }
 });
 </script>
 <template>
@@ -61,8 +55,8 @@ onMounted(async () => {
             <CatalogFilter :search="route.query.search" />
             <a-row class="d-flex justify-center">
                 <a-col :xs="22" :lg="16">
-                    <a-row :gutter="[16, 18]" class="d-flex justify-center mt-8 pb-24" v-if="catalogTrips.length">
-                        <a-col :xs="24" :sm="12" :md="8" :lg="6" v-for="trip in catalogTrips" :key="trip.index">
+                    <a-row :gutter="[16, 18]" class="d-flex justify-center mt-8 pb-24" v-if="tripStore.catalog">
+                        <a-col :xs="24" :sm="12" :md="8" :lg="6" v-for="trip in tripStore.catalog" :key="trip.index">
                             <CatalogListCard :trip="trip" />
                         </a-col>
                     </a-row>
