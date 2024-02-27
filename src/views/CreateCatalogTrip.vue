@@ -338,16 +338,12 @@ function handleImgError(i) {
 
 let formSchema = yup.object({
   name: yup.string().required("заполните поле"),
-  start: yup.object().required("заполните поле"),
-  end: yup.object().required("заполните поле"),
   duration: yup.string().required("заполните поле"),
-  maxPeople: yup.string().required("заполните поле"),
   tripType: yup.string().required("заполните поле"),
   fromAge: yup.string().required("заполните поле"),
   offer: yup.string().required("заполните поле"),
   tripRoute: yup.string().required("заполните поле"),
   startLocation: yup.string().required("заполните поле"),
-  returnConditions: yup.string().required("заполните поле")
   // https://vee-validate.logaretm.com/v4/examples/array-fields/
 });
 </script>
