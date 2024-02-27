@@ -92,10 +92,11 @@ onMounted(() => {
           </a-col>
 
           <a-col>
-            <div class="location" @click="selectLocationDialog = !selectLocationDialog" style="cursor: pointer; font-weight: bold;">
+            <div class="location" @click="selectLocationDialog = !selectLocationDialog"
+              style="cursor: pointer; font-weight: bold;">
               <span class="mdi mdi-map-marker-outline"></span>
               <span>
-                {{ locationSearchRequest?locationSearchRequest:"Ваш город" }}
+                {{ locationSearchRequest ? locationSearchRequest : "Ваш город" }}
               </span>
             </div>
             <a-modal :mask="false" v-model:open="selectLocationDialog" title="Местоположение" :footer="null">
@@ -112,9 +113,6 @@ onMounted(() => {
             <div @click="toComponentFromMenu('TripsPage')" class="route">найти</div>
             <div @click="toComponentFromMenu('CreateTripWithHelp')" class="route">
               заказать
-            </div>
-            <div @click="toComponentFromMenu('CreateTripNoHelp')" class="route">
-              создать
             </div>
             <div @click="toComponentFromMenu('CompanionsPage')" class="route">
               попутчики
@@ -139,9 +137,6 @@ onMounted(() => {
       <div @click="toComponentFromMenu('TripsPage')" class="route ma-8">найти тур</div>
       <div @click="toComponentFromMenu('CreateTripWithHelp')" class="route ma-8">
         заказать тур
-      </div>
-      <div @click="toComponentFromMenu('CreateTripNoHelp')" class="route ma-8">
-        создать тур
       </div>
       <div @click="toComponentFromMenu('CompanionsPage')" class="route ma-8">
         попутчики
