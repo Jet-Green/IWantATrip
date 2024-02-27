@@ -27,6 +27,11 @@ const router = createRouter({
       // component: TripsPage,
     },
     {
+      path: '/catalog',
+    name: 'CatalogPage',
+      component: () => import('../components/CatalogList.vue'),
+    },
+    {
       path: '/company-info-page',
       name: 'CompanyInfoPage',
       component: () => import('../views/CompanyInfoPage.vue'),
@@ -115,6 +120,11 @@ const router = createRouter({
       path: '/trip',
       name: 'TripInfoPage',
       component: () => import('../views/TripInfoPage.vue')
+    },
+    {
+      path: '/catalog-trip',
+      name: 'CatalogInfoPage',
+      component: () => import('../views/CatalogInfoPage.vue')
     },
     {
       path: '/watch',
@@ -237,6 +247,10 @@ const router = createRouter({
             {
               path: 'created-archived-trips',
               component: () => import('../components/_cabinet/ArchivedTrips.vue'),
+            },
+            {
+              path: 'catalog-trips',
+              component: () => import('../components/_cabinet/CatalogTrips.vue'),
             },
 
           ]
