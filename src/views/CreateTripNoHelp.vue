@@ -549,10 +549,11 @@ let formSchema = yup.object({
               Описание программы
 
               <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" :toolbar="[
-                ['bold', 'italic', 'underline'],
-                [{ list: 'ordered' }, { list: 'bullet' }],
-                [{ color: ['#000000', '#ff6600', '#3daff5'] }],
-                [{ align: [] }],
+                ['bold', 'italic', 'underline',{ color: ['#000000', '#ff6600', '#3daff5'] }],
+             
+                [{ list: 'ordered' }, { list: 'bullet' },{ align: [] }],
+           
+                ['link']
               ]
                 " />
             </a-col>
