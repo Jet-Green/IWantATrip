@@ -149,7 +149,7 @@ function submit() {
         _id + "_" + i + ".jpg"
       );
     }
-    TripService.uploadTripImages(imagesFormData).then(() => {
+    TripService.uploadCatalogTripImages(imagesFormData).then(() => {
       console.log('фотографии загружены')
       localStorage.removeItem('createTripImages')
     })
@@ -347,6 +347,7 @@ let formSchema = yup.object({
   // https://vee-validate.logaretm.com/v4/examples/array-fields/
 });
 </script>
+
 <template>
   <div>
     <BackButton />
@@ -370,7 +371,7 @@ let formSchema = yup.object({
               <div class="d-flex" style="overflow-x: scroll">
                 <img v-for="(pr, i) in    previews   " :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
                   @click="delPhotoDialog = true;
-                  targetIndex = i;" @error="handleImgError(i)" />
+      targetIndex = i;" @error="handleImgError(i)" />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
@@ -426,49 +427,47 @@ let formSchema = yup.object({
               <div class="d-flex space-between ">Цены
                 <a-tooltip>
                   <template #title>калькулятор</template>
-                  <router-link :to="{ name: 'PriceCalc' }" target="_blank">
-                    <span class="mdi mdi-calculator" style="cursor: pointer; font-size: 24px; color:#ff6600"></span>
-                  </router-link>
-                </a-tooltip>
-              </div>
+<router-link :to="{ name: 'PriceCalc' }" target="_blank">
+  <span class="mdi mdi-calculator" style="cursor: pointer; font-size: 24px; color:#ff6600"></span>
+</router-link>
+</a-tooltip>
+</div>
 
 
-              <div v-for="   item    in    form.cost   " :key="item.type" style="display: flex" align="baseline"
-                class="mb-16">
-                <a-input v-model:value="item.first" placeholder="Для кого" />
+<div v-for="   item    in    form.cost   " :key="item.type" style="display: flex" align="baseline" class="mb-16">
+  <a-input v-model:value="item.first" placeholder="Для кого" />
 
-                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" type="number" :min="0"
-                  :step="1" class="ml-16 mr-16" />
+  <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" type="number" :min="0" :step="1"
+    class="ml-16 mr-16" />
 
-                <a-button @click="removeCost(item)" shape="circle">
-                  <span class="mdi mdi-minus" style="cursor: pointer"></span>
-                </a-button>
-              </div>
+  <a-button @click="removeCost(item)" shape="circle">
+    <span class="mdi mdi-minus" style="cursor: pointer"></span>
+  </a-button>
+</div>
 
-              <a-button type="dashed" block @click="addCost" class="ma-8">
-                <span class="mdi mdi-12px mdi-plus"></span>
-                Добавить цены
-              </a-button>
-            </a-col>
+<a-button type="dashed" block @click="addCost" class="ma-8">
+  <span class="mdi mdi-12px mdi-plus"></span>
+  Добавить цены
+</a-button>
+</a-col>
 
-            <a-col :span="24">
+<a-col :span="24">
 
-              <div v-for="   item    in    form.bonuses   " style="display: flex" align="baseline" class="mb-16">
-                <a-input v-model:value="item.type" placeholder="Количество человек" />
+  <div v-for="   item    in    form.bonuses   " style="display: flex" align="baseline" class="mb-16">
+    <a-input v-model:value="item.type" placeholder="Количество человек" />
 
-                <a-input v-model:value="item.bonus" style="width: 100%" placeholder="Бонусы или скидки"
-                  class="ml-16 mr-16" />
+    <a-input v-model:value="item.bonus" style="width: 100%" placeholder="Бонусы или скидки" class="ml-16 mr-16" />
 
-                <a-button @click="removeBonuses(item)" shape="circle">
-                  <span class="mdi mdi-minus" style="cursor: pointer"></span>
-                </a-button>
-              </div>
+    <a-button @click="removeBonuses(item)" shape="circle">
+      <span class="mdi mdi-minus" style="cursor: pointer"></span>
+    </a-button>
+  </div>
 
-              <a-button type="dashed" block @click="addBonuses" class="ma-8">
-                <span class="mdi mdi-12px mdi-plus"></span>
-                бонусы и скидки
-              </a-button>
-            </a-col> -->
+  <a-button type="dashed" block @click="addBonuses" class="ma-8">
+    <span class="mdi mdi-12px mdi-plus"></span>
+    бонусы и скидки
+  </a-button>
+</a-col> -->
 
             <a-col :xs="24" :md="12">
               <Field name="tripType" v-slot="{ value, handleChange }" v-model="form.tripType">
@@ -476,8 +475,8 @@ let formSchema = yup.object({
                 <div>
                   <a-select @update:value="handleChange" :value="value" style="width: 100%">
                     <a-select-option v-for="   tripType    in    appStore.appState[0].tripType   " :value="tripType">{{
-                      tripType
-                    }}</a-select-option>
+        tripType
+      }}</a-select-option>
                   </a-select>
                 </div>
               </Field>
@@ -489,8 +488,8 @@ let formSchema = yup.object({
             <a-col :xs="24" :md="12">
               <Field name="fromAge" v-slot="{ value, handleChange }" v-model="form.fromAge">
                 Мин. возраст, лет
-                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" placeholder="10" :min="0"
-                  :max="100" />
+                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" placeholder="10"
+                  :min="0" :max="100" />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="fromAge" class="error-message" />
@@ -514,8 +513,8 @@ let formSchema = yup.object({
             <a-col :span="24">
               <Field name="offer" v-slot="{ value, handleChange }" v-model="form.offer">
                 Краткое описание
-                <a-textarea @update:value="handleChange" :value="value" placeholder="Едем в Татарстан за новыми эмоциями!"
-                  size="large">
+                <a-textarea @update:value="handleChange" :value="value"
+                  placeholder="Едем в Татарстан за новыми эмоциями!" size="large">
                 </a-textarea>
               </Field>
               <Transition name="fade">
@@ -538,12 +537,12 @@ let formSchema = yup.object({
               Описание программы
 
               <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" :toolbar="[
-                ['bold', 'italic', 'underline'],
-                [{ list: 'ordered' }, { list: 'bullet' }],
-                [{ color: ['#000000', '#ff6600', '#3daff5'] }],
-                [{ align: [] }],
-              ]
-                " />
+        ['bold', 'italic', 'underline'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        [{ color: ['#000000', '#ff6600', '#3daff5'] }],
+        [{ align: [] }],
+      ]
+        " />
             </a-col>
             <!-- <a-col :span="24">
               <Field name="returnConditions" v-slot="{ value, handleChange }" v-model="form.returnConditions">
