@@ -19,7 +19,7 @@ let props = defineProps({
 const tripStore = useTrips();
 const appStore = useAppState();
 
-let time = ref([]);
+let time = ref(null);
 let query = ref("");
 let type = ref("");
 
@@ -85,6 +85,7 @@ function resetForm() {
   tripStore.tripFilter.type = ""
   time.value = null;
   query.value = '';
+  type.value = '';
 
   localStorage.setItem("TripTimeStart", "")
   localStorage.setItem("TripTimeEnd", "")
