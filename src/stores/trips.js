@@ -43,6 +43,13 @@ export const useTrips = defineStore('trips', {
 
             return TripService.createTrip(emailHtml, form, email, fullinfo)
         },
+        async createCatalogTrip(form, user) {
+            const email = user.email
+            const fullinfo = user.fullinfo
+            const emailHtml = await render(CreateTripTemplate, { form: form, email, fullinfo });
+
+            return TripService.createCatalogTrip(emailHtml, form, email, fullinfo)
+        },
         async fetchTrips(query, start, end, type) {
             try {
                 if (!this.isFetching) {

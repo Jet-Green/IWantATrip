@@ -47,7 +47,7 @@ onMounted(async () => {
 </script>
 <template>
   <div>
-    <BackButton />
+    <BackButton backRoute="/" />
     <div class="wrapper" ref="wrapper">
       <a-row type="flex" justify="center">
         <a-col :xs="22" :lg="16">

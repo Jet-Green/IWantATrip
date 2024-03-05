@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import CabinetTrip from "../cards/CabinetTrip.vue";
+import CatalogCabinetTrip from "../cards/CatalogCabinetTrip.vue";
 import { useAuth } from "../../stores/auth.js";
 import { useTrips } from "../../stores/trips.js";
 
@@ -70,9 +70,10 @@ onMounted(async () => {
     <a-col :span="24" v-else>
         <a-row :gutter="[8, 8]" class="mt-8" v-if="getCatalogTrips.length > 0">
             <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getCatalogTrips" :key="index">
-                <CabinetTrip :trip="trip"
+                <CatalogCabinetTrip :trip="trip" />
+                <!-- <CabinetTrip :trip="trip"
                     :actions="['delete', 'info', 'copy', 'hide', 'edit', 'addDate', 'addLocation', 'transports', 'editComment']"
-                    @deleteTrip="deleteTrip" @updateTrip="getAllTrips" />
+                    @deleteTrip="deleteTrip" @updateTrip="getAllTrips" /> -->
             </a-col>
         </a-row>
         <a-row :lg="8" :sm="12" :xs="24" v-else>

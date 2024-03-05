@@ -7,11 +7,12 @@ const userStore = useAuth();
 const user = userStore.user;
 let info = userStore.user.fullinfo;
 </script>
+
 <template>
   <div v-if="user" class="mt-12">
     <a-row>
       <a-avatar style="margin-right: 8px; font-size: large; font-weight: bold" size="large">{{ user.fullname[0]
-      }}</a-avatar>
+        }}</a-avatar>
       <h3 style="font-size: 28px; font-weight: bold">{{ user.fullname }}</h3>
     </a-row>
 
@@ -51,7 +52,7 @@ let info = userStore.user.fullinfo;
       </a-row>
     </div>
 
-    <a-row gutter="5">
+    <a-row :gutter="[5]">
       <a-col>
         <a-button @click="router.push('/create-no-help')">
           Создать
@@ -66,6 +67,7 @@ let info = userStore.user.fullinfo;
     </a-row>
   </div>
 </template>
+
 <style lang="scss" scoped>
 .w-100 {
   width: 100%;
