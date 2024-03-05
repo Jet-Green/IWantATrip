@@ -189,6 +189,14 @@ export const useTrips = defineStore('trips', {
                 console.log(error);
             }
         },
+        async updateCatalogTrip(_id, trip) {
+            try {
+                let res = await TripService.updateCatalogTrip(_id, trip)
+                return res.data
+            } catch (error) {
+                console.error(error)
+            }
+        }
         async updateTourists(bill) {
             try {
                 let res = await TripService.updateTourists(bill)

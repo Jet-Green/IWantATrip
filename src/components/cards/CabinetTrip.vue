@@ -217,11 +217,10 @@ function addToDeleteTransports(name) {
 }
 
 function moveToCatalog(_id, isCatalog) {
-
     if (isCatalog) {
-        tripStore.updateIsCatalog(_id, false)
+        // await TripService.updateTrip() false
     } else {
-        tripStore.updateIsCatalog(_id, true)
+        // tripStore.createCatalogTrip(props.trip) true
     }
 
 }

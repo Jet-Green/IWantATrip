@@ -100,6 +100,9 @@ export default {
     updateIsCatalog(_id, isCatalog) {
         return $api.post('/trips/update-iscatalog', { _id: _id, isCatalog: isCatalog })
     },
+    updateCatalogTrip(_id, trip) {
+        return $api.post('/trips/update-catalog-trip', { _id, trip })
+    },
     updateIncludedLocations(updateObject) {
         return $api.post('/trips/update-included-locations', updateObject)
     },
