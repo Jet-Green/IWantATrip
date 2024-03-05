@@ -114,6 +114,9 @@ onMounted(() => {
             <div @click="toComponentFromMenu('CreateTripWithHelp')" class="route">
               заказать
             </div>
+            <div @click="toComponentFromMenu('CatalogPage')" class="route">
+              каталог
+            </div>
             <div @click="toComponentFromMenu('CompanionsPage')" class="route">
               попутчики
             </div>
