@@ -28,7 +28,7 @@ const router = createRouter({
     },
     {
       path: '/catalog',
-    name: 'CatalogPage',
+      name: 'CatalogPage',
       component: () => import('../components/CatalogList.vue'),
     },
     {
@@ -323,6 +323,27 @@ const router = createRouter({
             {
               path: 'not-moderated-trips',
               component: () => import('../components/admin/NotModeratedTrips.vue'),
+            },
+          ]
+        },
+        {
+          path: 'catalog-trips-moderation/',
+          name: 'CatalogTripsModeration',
+          component: () => import('../components/admin/CatalogTripsModeration.vue'),
+          beforeEnter: () => {
+            let userStore = useAuth()
+            if (!userStore.user?.roles.includes('admin')) {
+              return false
+            }
+          },
+          children: [
+            {
+              path: 'rejected',
+              component: () => import('../components/admin/catalog/Rejected.vue')
+            },
+            {
+              path: 'on-moderation',
+              component: () => import('../components/admin/catalog/OnModeration.vue')
             },
           ]
         },
