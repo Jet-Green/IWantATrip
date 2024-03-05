@@ -115,5 +115,8 @@ export default {
     },
     getBoughtTrips(userId) {
         return $api.get(`/trips/bought?userId=${userId}`)
+    },
+    getCatalogTripById(catalogTripId) {
+        return $api.get(`/trips/catalog?_id=${catalogTripId}`)
     }
 }

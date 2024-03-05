@@ -1,7 +1,6 @@
 <script setup>
 import BackButton from "../components/BackButton.vue";
 import ImageCropper from "../components/ImageCropper.vue";
-import UserFullInfo from "../components/forms/UserFullInfo.vue";
 
 import { watch, nextTick, ref, reactive, onMounted } from "vue";
 import { QuillEditor } from "@vueup/vue-quill";
@@ -62,7 +61,6 @@ let form = reactive({
     maxPeople: null,
     duration: "",
     images: [],
-    //pdf: [],
     tripRoute: "",
     distance: "",
     cost: [],
@@ -71,9 +69,10 @@ let form = reactive({
     tripType: "",
     fromAge: "",
     author: "",
-    startLocation: null,
+    startLocation: "",
     bonuses: [],
-    returnConditions: ""
+    returnConditions: "",
+    isModerated: false,
 });
 let fullUserInfo = null;
 
@@ -150,7 +149,8 @@ function submit() {
             author: "",
             startLocation: "",
             bonuses: [],
-            returnConditions: ""
+            returnConditions: "",
+            isModerated: false,
         });
         images = [];
         // pdf = [];
@@ -198,6 +198,15 @@ function submit() {
     }
 
     form.author = userStore.user._id
+
+    let t = userStore.user.tinkoffContract
+    form.tinkoffContract = {
+        ShopCode: t.shopInfo.shopCode,
+        Name: t.fullName,
+        Phones: t.ceo.phone,
+        Inn: t.inn
+    }
+
     tripStore.createTrip(form, userStore.user).then(async (res) => {
         if (res.status == 200) {
             const _id = res.data._id;
@@ -343,7 +352,7 @@ const clearData = (dataString) => {
 
     })
 }
-onMounted(() => {
+onMounted(async () => {
     if (route.query._id) {
         tripStore.getById(route.query._id).then((response) => {
             let d = response.data;
@@ -374,6 +383,29 @@ onMounted(() => {
             form.returnConditions = d.returnConditions
             locationSearchRequest.value = d.startLocation.name;
         });
+    } else if (route.query.catalog_id) {
+        let response = await tripStore.getCatalogTripById(route.query.catalog_id)
+        let d = response.data;
+        delete d.__v;
+        form.name = d.name;
+        start.value = baseTimeStart;
+        end.value = baseTimeEnd;
+        period.value = baseTimePeriod;
+        period.value.$d = clearData(Date.parse(d.period));
+        form.duration = d.duration;
+        form.tripType = d.tripType;
+        form.distance = d.distance;
+        quill.value.setHTML(d.description);
+        form.fromAge = d.fromAge;
+        form.tripRoute = d.tripRoute;
+        form.offer = d.offer;
+        form.author = d.author;
+
+        form.startLocation = d.startLocation;
+        form.includedLocations = d.includedLocations
+        form.locationNames = d.locationNames
+        form.returnConditions = d.returnConditions
+        locationSearchRequest.value = d.startLocation.name;
     }
 });
 
@@ -394,6 +426,7 @@ let formSchema = yup.object({
     // https://vee-validate.logaretm.com/v4/examples/array-fields/
 });
 </script>
+
 <template>
     <div>
         <BackButton />
@@ -401,9 +434,6 @@ let formSchema = yup.object({
             <a-col :xs="22" :lg="12">
                 <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
                     <a-row :gutter="[16, 16]">
-                        <a-col :span="24">
-                            <UserFullInfo @fullInfo="updateUserInfo" />
-                        </a-col>
                         <a-col :span="24">
                             <h2>Создать тур</h2>
                             <Field name="name" v-slot="{ value, handleChange }" v-model="form.name">
@@ -420,7 +450,7 @@ let formSchema = yup.object({
                             <div class="d-flex" style="overflow-x: scroll">
                                 <img v-for="(pr, i) in    previews   " :key="i" :src="pr" alt="" class="ma-4"
                                     style="max-width: 200px" @click="delPhotoDialog = true;
-                                    targetIndex = i;" />
+            targetIndex = i;" />
                             </div>
                             <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                                 <span class="mdi mdi-12px mdi-plus"></span>
@@ -486,8 +516,8 @@ let formSchema = yup.object({
                                 align="baseline" class="mb-16">
                                 <a-input v-model:value="item.first" placeholder="Для кого" />
 
-                                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0"
-                                    :step="0.01" class="ml-16 mr-16" />
+                                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена"
+                                    :min="0" :step="0.01" class="ml-16 mr-16" />
 
                                 <a-button @click="removeCost(item)" shape="circle">
                                     <span class="mdi mdi-minus" style="cursor: pointer"></span>
@@ -527,8 +557,8 @@ let formSchema = yup.object({
                                     <a-select @update:value="handleChange" :value="value" style="width: 100%">
                                         <a-select-option v-for="   tripType    in    appStore.appState[0].tripType   "
                                             :value="tripType">{{
-                                                tripType
-                                            }}</a-select-option>
+                tripType
+            }}</a-select-option>
                                     </a-select>
                                 </div>
                             </Field>
@@ -549,7 +579,8 @@ let formSchema = yup.object({
                         </a-col>
 
                         <a-col :xs="24">
-                            <Field name="startLocation" v-slot="{ value, handleChange }" v-model="locationSearchRequest">
+                            <Field name="startLocation" v-slot="{ value, handleChange }"
+                                v-model="locationSearchRequest">
                                 Место старта
                                 <a-auto-complete :value="value" @update:value="handleChange" style="width: 100%"
                                     :options="possibleLocations" placeholder="Глазов" @select="selectStartLocation">
@@ -588,17 +619,19 @@ let formSchema = yup.object({
 
                         <a-col :span="24" style="display: flex; flex-direction: column">
                             Описание программы
-                            <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" :toolbar="[
-                                // [{ header: [2, 3] }],
-                                ['bold', 'italic', 'underline'],
-                                [{ list: 'ordered' }, { list: 'bullet' }],
-                                [{ color: ['#000000', '#ff6600', '#3daff5'] }],
-                                [{ align: [] }],
-                            ]
-                                " />
+                            <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html"
+                                :toolbar="[
+                // [{ header: [2, 3] }],
+                ['bold', 'italic', 'underline'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                [{ color: ['#000000', '#ff6600', '#3daff5'] }],
+                [{ align: [] }],
+            ]
+                " />
                         </a-col>
                         <a-col :span="24">
-                            <Field name="returnConditions" v-slot="{ value, handleChange }" v-model="form.returnConditions">
+                            <Field name="returnConditions" v-slot="{ value, handleChange }"
+                                v-model="form.returnConditions">
                                 Условия возврата
                                 <a-textarea @update:value="handleChange" :value="value" placeholder="" size="large">
                                 </a-textarea>
