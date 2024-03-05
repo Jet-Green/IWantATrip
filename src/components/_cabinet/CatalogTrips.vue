@@ -47,8 +47,7 @@ async function deleteTrip() {
 
 async function getAllTrips() {
     loading.value = true
-    let userId = userStore.user._id
-    let response = await tripStore.getCreatedTripsInfoByUserId(userId)
+    let response = await tripStore.getMyCatalogTrips()
 
     allTrips.value = response.data
     loading.value = false
