@@ -1,7 +1,8 @@
 <script setup>
+import { useRouter } from "vue-router";
 import BackButton from "../BackButton.vue";
-
-
+let loc_name = JSON.parse(localStorage.getItem("location")).name
+let src= `https://plpo.ru/frame?location=${loc_name}`
 </script>
 <template>
   <div>
@@ -15,12 +16,10 @@ import BackButton from "../BackButton.vue";
         </h2>
       </a-col>
     </a-row>
-    <a-row class="d-flex justify-center">
-      <a-col :xs="22" :lg="16">
-        <iframe title="Афиши" style="width: 100%; height:90dvh; border: none" src="https://plpo.ru/frame">
-        </iframe>
-      </a-col>
-    </a-row>
+
+    <iframe title="Афиши" style="width: 100%; height:90dvh; border: none" :src=src id="iframe">
+    
+    </iframe>
 
 
   </div>

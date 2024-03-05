@@ -7,8 +7,8 @@ export default {
     async forgotPassword(email) {
         return $api.post('/auth/forgot-password', { 'email': email })
     },
-    async buyTrip(tripId, bill, emailHtml) {
-        return $api.post(`/trips/buy-trip?_id=${tripId}`, { bill, emailHtml })
+    async buyTrip(tripId, bill, emailHtmlForAdmins, emailHtmlForUser) {
+        return $api.post(`/trips/buy-trip?_id=${tripId}`, { bill, emailHtmlForAdmins, emailHtmlForUser})
     },
     payTinkoffBill(body) {
         return $api.post(`/trips/pay-tinkoff`, body)

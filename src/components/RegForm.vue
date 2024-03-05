@@ -144,8 +144,8 @@ const formSchema = yup.object({
               </Transition>
 
               <Field name="password" type="password" v-slot="{ value, handleChange }" v-model="formState.password">
-                <a-input @update:value="handleChange" :value="value" placeholder="Введите пароль" size="large"
-                  type="password" class="mt-8"></a-input>
+                <a-input-password @update:value="handleChange" :value="value" placeholder="Введите пароль" size="large"
+                  type="password" class="mt-8"></a-input-password>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="password" class="error-message" />

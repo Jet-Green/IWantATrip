@@ -43,6 +43,9 @@ export default {
         return $api.post('/trips/upload-images', images)
     },
 
+    async uploadCatalogTripImages(images) {
+        return $api.post('/trips/upload-catalog-images', images)
+    },
     async uploadTripPdf(pdf) {
         return $api.post('/trips/upload-pdf', pdf)
     },
@@ -95,7 +98,7 @@ export default {
         return $api.post('/trips/update-partner', { partner: partner, _id: trip_id })
     },
     updateIsCatalog(_id, isCatalog) {
-        return $api.post('/trips/update-iscatalog', {_id: _id, isCatalog: isCatalog })
+        return $api.post('/trips/update-iscatalog', { _id: _id, isCatalog: isCatalog })
     },
     updateIncludedLocations(updateObject) {
         return $api.post('/trips/update-included-locations', updateObject)
