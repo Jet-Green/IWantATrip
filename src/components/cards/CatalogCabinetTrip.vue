@@ -9,11 +9,16 @@ let router = useRouter()
 
 let { trip } = toRefs(props)
 
+function goToCopyCatalog() {
+    router.push(`/copy-trip?catalog_id=${trip.value._id}`)
+}
+
 async function hideTrip(_id) {
     trip.value.isHidden = !trip.value.isHidden;
     TripService.hideTrip(_id, trip.value.isHidden);
 }
 </script>
+
 <template>
     <a-card class="card" hoverable :class="[trip.isHidden ? 'overlay' : '']">
         <div class="d-flex">
@@ -25,7 +30,7 @@ async function hideTrip(_id) {
         </div>
 
         <div class="actions d-flex justify-center">
-            <a-popconfirm title="В активные?" ok-text="Да" cancel-text="Нет" @confirm="() => { router.push('/') }">
+            <a-popconfirm title="В активные?" ok-text="Да" cancel-text="Нет" @confirm="goToCopyCatalog">
                 <span class="mdi mdi-plus-circle-outline" style="cursor: pointer"></span>
             </a-popconfirm>
             <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="hideTrip(trip._id)">
@@ -35,6 +40,7 @@ async function hideTrip(_id) {
         </div>
     </a-card>
 </template>
+
 <style scoped lang="scss">
 .actions {
     font-size: 20px;
