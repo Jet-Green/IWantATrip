@@ -11,17 +11,7 @@ let allTrips = ref([])
 let loading = ref(true)
 let query = ref('')
 
-let getCatalogTrips = computed(() => {
-    let catalogTrips = [];
-    for (let trip of filteredTrips.value) {
-        if (trip.isCatalog) {
-            catalogTrips.push(trip);
-        }
-    }
-    return catalogTrips
-})
-
-let filteredTrips = computed(() => {
+let trips = computed(() => {
 
     if (query.value.length > 2) {
         localStorage.setItem("cabinetQuery", query.value);
@@ -67,8 +57,8 @@ onMounted(async () => {
         <a-spin size="large" />
     </a-col>
     <a-col :span="24" v-else>
-        <a-row :gutter="[8, 8]" class="mt-8" v-if="getCatalogTrips.length > 0">
-            <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getCatalogTrips" :key="index">
+        <a-row :gutter="[8, 8]" class="mt-8" v-if="trips.length > 0">
+            <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of trips" :key="index">
                 <CatalogCabinetTrip :trip="trip" />
                 <!-- <CabinetTrip :trip="trip"
                     :actions="['delete', 'info', 'copy', 'hide', 'edit', 'addDate', 'addLocation', 'transports', 'editComment']"
