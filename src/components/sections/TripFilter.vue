@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watchEffect } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useTrips } from '../../stores/trips.js';
 import { useAppState } from "../../stores/appState";
@@ -19,7 +19,7 @@ let props = defineProps({
 const tripStore = useTrips();
 const appStore = useAppState();
 
-let time = ref(null);
+let time = ref([]);
 let query = ref("");
 let type = ref("");
 
@@ -28,6 +28,22 @@ let router = useRouter();
 function toCatalog() {
   router.push(`/catalog`);
 }
+
+watch(time, (newTime) => {
+  if (newTime) {
+    let start = new Date(newTime[0].$d)
+    let end = new Date(newTime[1].$d)
+
+    localStorage.setItem("TripTimeStart", start)
+    localStorage.setItem("TripTimeEnd", end)
+    find()
+  }
+  else {
+    localStorage.setItem("TripTimeStart", '')
+    localStorage.setItem("TripTimeEnd", '')
+    find()
+  }
+});
 
 
 function find() {
@@ -100,8 +116,9 @@ onMounted(() => {
   type.value = localStorage.getItem("TripType") ?? '';
 
   if (localStorage.getItem("TripTimeStart")) {
-    time.value[0] = dayjs(localStorage.getItem("TripTimeStart"))
-    time.value[1] = dayjs(localStorage.getItem("TripTimeEnd"))
+    time.value = []
+    time.value.push(dayjs(localStorage.getItem("TripTimeStart")))
+    time.value.push(dayjs(localStorage.getItem("TripTimeEnd")))
     find()
   }
 
