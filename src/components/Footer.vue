@@ -1,4 +1,8 @@
-<script setup></script>
+<script setup>
+import MadeWithLove from '../assets/images/madewithlove.svg'
+
+</script>
+
 <template>
   <a-affix>
     <a-layout-footer>
@@ -19,7 +23,8 @@
                   <a href="https://doc.gorodaivesi.ru/privacy/agentDocs.html" target="_blank">Агентский договор</a>
                 </div>
                 <div>
-                  <a href="https://doc.gorodaivesi.ru/privacy/agreement.html" target="_blank">Согласие на обработку персональных данных</a>
+                  <a href="https://doc.gorodaivesi.ru/privacy/agreement.html" target="_blank">Согласие на обработку
+                    персональных данных</a>
                 </div>
                 <div>
                   <a href="https://doc.gorodaivesi.ru/privacy/agentDocs.html">Агентский договор</a>
@@ -42,7 +47,7 @@
                 <router-link to="/contacts">
                   <div> Контакты </div>
                 </router-link>
-                
+
                 <!-- ! -->
               </div>
             </a-col>
@@ -53,9 +58,7 @@
 
               <div>
                 <div>
-                  <a href="https://doc.gorodaivesi.ru/education/create-trip.html" target="_blank"
-                    >Создать поездку</a
-                  >
+                  <a href="https://doc.gorodaivesi.ru/education/create-trip.html" target="_blank">Создать поездку</a>
                 </div>
                 <div>
                   <a href="https://doc.gorodaivesi.ru/education/reg.html" target="_blank">Регистрация</a>
@@ -69,13 +72,15 @@
       <a-row type="flex" justify="center" class="mt-16">
         <a-col>
           <a href="https://qbit-club.com/" target="_blank">
-            <b> Сделано в Кубит </b>
+            <img :src="MadeWithLove" style="height: 40px; user-select: none;">
+            <!-- <b> Сделано в Кубит </b> -->
           </a>
         </a-col>
       </a-row>
     </a-layout-footer>
   </a-affix>
 </template>
+
 <style scoped>
 .bottom_menu {
   font-size: clamp(12px, 2vw, 14px);
