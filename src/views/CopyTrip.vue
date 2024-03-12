@@ -48,9 +48,9 @@ var author = ref()
 let possibleLocations = ref([])
 // cropper
 let visibleCropperModal = ref(false);
-let previews = ref([]);
+let previews = ref(localStorage.getItem('copyTripImages') ? JSON.parse(localStorage.getItem('copyTripImages')) : []);
 // отправляем на сервер
-let images = []; // type: blob
+let images = localStorage.getItem('copyTripImages') ? JSON.parse(localStorage.getItem('copyTripImages')) : []; // type: blob
 //let pdf = [];
 let locationSearchRequest = ref("")
 // необходимо добавить поле количество людей в туре
@@ -111,6 +111,7 @@ const delPhoto = () => {
     previews.value.splice(targetIndex.value, 1);
     images.splice(targetIndex.value, 1);
     delPhotoDialog.value = false;
+    localStorage.setItem('copyTripImages', JSON.stringify(previews.value))
 };
 
 let submitCount = ref(0)
@@ -168,6 +169,7 @@ function submit() {
         }
         TripService.uploadTripImages(imagesFormData).then(() => {
             console.log('фотографии загружены')
+            localStorage.removeItem('copyTripImages')
         })
     }
 
@@ -228,6 +230,7 @@ function addPreview(blob) {
     visibleCropperModal.value = false;
     images.push(blob);
     previews.value.push(URL.createObjectURL(blob));
+    localStorage.setItem('copyTripImages', JSON.stringify(previews.value))
 }
 function updateUserInfo(info) {
     fullUserInfo = info;
