@@ -26,6 +26,9 @@ export default {
     async deleteTrip(_id) {
         return $api.post('/trips/delete-by-id', _id)
     },
+    async catalogToDelete(_id) {
+        return $api.post('/trips/delete-catalog-by-id', _id)
+    },
 
     async createTrip(emailHtml, trip, authorEmail, fullinfo) {
         return $api.post('/trips/create', { emailHtml, trip, emails: [authorEmail], fullinfo })
@@ -63,6 +66,12 @@ export default {
     findCatalogTrips() {
         return $api.get('/trips/catalog-trips')
     },
+    findRejectedCatalog() {
+        return $api.get('/admin/rejected-catalog-trips')
+    },
+    findCatalogForModeration() {
+        return $api.get('/admin/catalog-trips-on-moderation')
+    },
     getUserTrips(ids) {
         return $api.post(`/trips/get-user-trips`, ids)
     },
@@ -96,9 +105,6 @@ export default {
     },
     updatePartner(partner, trip_id) {
         return $api.post('/trips/update-partner', { partner: partner, _id: trip_id })
-    },
-    updateIsCatalog(_id, isCatalog) {
-        return $api.post('/trips/update-iscatalog', { _id: _id, isCatalog: isCatalog })
     },
     updateCatalogTrip(_id, trip) {
         return $api.post('/trips/update-catalog-trip', { _id, trip })

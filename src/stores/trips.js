@@ -108,6 +108,9 @@ export const useTrips = defineStore('trips', {
         deleteById(_id) {
             return TripService.deleteTrip({ _id: _id });
         },
+        catalogToDelete(_id) {
+            return TripService.catalogToDelete({ _id: _id });
+        },
         getCustomers(ids) {
             return TripService.getCustomers(ids)
         },
@@ -119,6 +122,12 @@ export const useTrips = defineStore('trips', {
         },
         findCatalogTrips() {
             return TripService.findCatalogTrips()
+        },
+        findRejectedCatalog() {
+            return TripService.findRejectedCatalog()
+        },
+        findCatalogForModeration() {
+            return TripService.findCatalogForModeration()
         },
         async moderateTrip(_id) {
             try {
