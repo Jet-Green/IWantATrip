@@ -14,17 +14,16 @@ const appStore = useAppState();
 
 let query = ref("");
 let type = ref("");
+let tripTypes=ref("")
 
 let router = useRouter();
 
-
-function find() {
-
+function find (){
     tripStore.catalogCursor = 1
-
+    
     query.value = query.value.trim()
     localStorage.setItem("CatalogTripQuery", query.value)
-    localStorage.setItem("CatalogTripQuery", type.value)
+    localStorage.setItem("CatalogTripType", type.value)
 
     tripStore.catalogFilter.query = query.value
     tripStore.catalogFilter.type = type.value
@@ -44,21 +43,20 @@ function resetForm() {
     tripStore.catalogFilter.type = type.value
 
     localStorage.setItem("CatalogTripQuery", "")
-    localStorage.setItem("CatalogTripQuery", "")
+    localStorage.setItem("CatalogTripType", "")
 
     find()
 }
 
-onMounted(() => {
+onMounted(async() => {
     query.value = localStorage.getItem("CatalogTripQuery") ?? '';
-    type.value = localStorage.getItem("CatalogTripQuery") ?? '';
-
+    type.value = localStorage.getItem("CatalogTripType") ?? '';
+    tripTypes=await appStore.appState[0].tripType
 
     if (props.search) {
         query.value = props.search;
     }
     query.value || type.value ? find() : null
-
 });
 
 </script>
@@ -78,7 +76,7 @@ onMounted(() => {
                     <a-select v-model:value="type">
                         <a-select-option value=""></a-select-option>
                         <a-select-option placeholder="Tип тура"
-                            v-for="   tripType    in    appStore.appState[0].tripType   " :value="tripType">{{
+                            v-for="tripType in tripTypes" :value="tripType">{{
                                 tripType
                             }}</a-select-option>
                     </a-select>
