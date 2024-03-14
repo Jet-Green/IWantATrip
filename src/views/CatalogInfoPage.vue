@@ -154,7 +154,7 @@ onMounted(async () => {
                         </div>
                         <a-button type="primary" class="lets_go_btn" style="display: flex; justify-content: center"
                                 @click="orderCatalogDialog()">
-                                Купить
+                                Заказать
                         </a-button>
                     </a-col>
 
