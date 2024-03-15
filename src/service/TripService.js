@@ -84,6 +84,9 @@ export default {
     getFullTripById(_id) {
         return $api.get(`/trips/get-full-trip?_id=${_id}`)
     },
+    getFullCatalogById(_id) {
+        return $api.get(`/trips/get-full-catalog?_id=${_id}`)
+    },
 
     setPayment(bill) {
         return $api.post(`/trips/set-payment`, bill)

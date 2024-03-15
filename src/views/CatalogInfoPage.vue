@@ -60,25 +60,26 @@ const print = async () => {
     await htmlToPaper('printMe');
 };
 
-let getStartLocationNames = computed(() => {
+// let getStartLocationNames = computed(() => {
 
-    let starts = trip.value.includedLocations.coordinates
+//     let starts = trip.value.includedLocations.coordinates
 
-    let results = []
-    for (let i = 0; i < starts.length; i++) {
-        for (let j = 0; j < locationStore.locations.length; j++) {
+//     let results = []
+//     for (let i = 0; i < starts.length; i++) {
+//         for (let j = 0; j < locationStore.locations.length; j++) {
 
-            if (starts[i][0] == locationStore.locations[j].coordinates[0]) {
+//             if (starts[i][0] == locationStore.locations[j].coordinates[0]) {
 
-                results.push(locationStore.locations[j].shortName)
-            }
-        }
-    }
-    return results.join(', ')
-})
+//                 results.push(locationStore.locations[j].shortName)
+//             }
+//         }
+//     }
+//     return results.join(', ')
+// })
 
 onMounted(async () => {
-    let response = await tripStore.getFullTripById(_id);
+    let response = await tripStore.getFullCatalogById(_id);
+    console.log(response.data)
     let tripFromDb = response.data;
     trip.value = tripFromDb;
 });
