@@ -125,7 +125,8 @@ onMounted(async () => {
 
                             <a-dropdown :trigger="['click']">
                                 <a class="ant-dropdown-link" @click.prevent>
-                                    <span style="opacity: 0.7;" class="mdi mdi-24px mdi-share-variant-outline ma-8"></span>
+                                    <span style="opacity: 0.7;"
+                                        class="mdi mdi-24px mdi-share-variant-outline ma-8"></span>
                                 </a>
                                 <template #overlay>
                                     <a-menu>

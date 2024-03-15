@@ -84,8 +84,14 @@ export default {
     moderateTrip(_id) {
         return $api.get(`/admin/moderate-trip?_id=${_id}`)
     },
+    moderateCatalogTrip(_id) {
+        return $api.get(`/admin/moderate-catalog-trip?_id=${_id}`)
+    },
     sendModerationMessage(trip_id, msg) {
         return $api.post(`/admin/send-moderation-message?tripId=${trip_id}`, { msg })
+    },
+    sendCatalogModerationMessage(trip_id, msg) {
+        return $api.post(`/admin/send-catalog-moderation-message?tripId=${trip_id}`, { msg })
     },
     getCreatedTripsInfoByUserId(_id) {
         return $api.get(`/trips/created-trips-info?_id=${_id}`)

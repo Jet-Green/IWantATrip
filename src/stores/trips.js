@@ -129,9 +129,9 @@ export const useTrips = defineStore('trips', {
         findCatalogForModeration() {
             return TripService.findCatalogForModeration()
         },
-        async moderateTrip(_id) {
+        async moderateCatalogTrip(_id) {
             try {
-                return await TripService.moderateTrip(_id)
+                return await TripService.moderateCatalogTrip(_id)
             } catch (error) {
                 console.log(error);
             }
@@ -139,6 +139,13 @@ export const useTrips = defineStore('trips', {
         async sendModerationMessage(trip_id, msg) {
             try {
                 return await TripService.sendModerationMessage(trip_id, msg)
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async sendCatalogModerationMessage(trip_id, msg) {
+            try {
+                return await TripService.sendCatalogModerationMessage(trip_id, msg)
             } catch (error) {
                 console.log(error);
             }

@@ -459,6 +459,19 @@ const router = createRouter({
       }
     },
     {
+      path: '/catalog-trip-moderation',
+      name: 'CatalogTripModeration',
+      component: () => import('../components/admin/CatalogTripModeration.vue'),
+      beforeEnter: async () => {
+        let userStore = useAuth()
+        if (!localStorage.getItem('token') || !userStore.isAuth)
+          await userStore.checkAuth()
+        if (!userStore.user?.roles.includes('admin')) {
+          return false
+        }
+      }
+    },
+    {
       path: '/reg',
       name: 'RegForm',
       component: () => import('../components/RegForm.vue')
