@@ -117,7 +117,7 @@ function submit() {
   }
 
   function close() {
-    router.push("/trips");
+    router.push("/cabinet/created-trips/");
     clearForm()
   }
   function clearForm() {
