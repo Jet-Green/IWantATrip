@@ -167,7 +167,7 @@ function submit() {
 
     function updateUser(_id) {
         userStore
-            .updateUser({ email: userStore.user.email, $push: { catalogTrips: _id } })
+            .updateUser({ email: userStore.user.email, $push: { trips: _id } })
             .then((response) => {
                 userStore.user = response.data;
             })
