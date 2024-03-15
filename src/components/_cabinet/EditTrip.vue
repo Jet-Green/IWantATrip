@@ -287,7 +287,7 @@ let formSchema = yup.object({
                             <div class="d-flex" style="overflow-x: scroll">
                                 <img v-for="(pr, i) in        previews       " :key="i" :src="pr" alt="" class="ma-4"
                                     style="max-width: 200px; min-width: 50px; background:#ccc" @click="delPhotoDialog = true;
-                                    targetIndex = i;" />
+            targetIndex = i;" />
                             </div>
                             <a-button type="dashed" block @click=" visibleCropperModal = true" class="ma-8">
                                 <span class="mdi mdi-12px mdi-plus"></span>
@@ -344,8 +344,8 @@ let formSchema = yup.object({
                                 style="display: flex" align="baseline" class="mb-16">
                                 <a-input v-model:value="item.first" placeholder="Для кого" />
 
-                                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" :min="0"
-                                    :step="0.01" class="ml-16 mr-16" />
+                                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена"
+                                    :min="0" :step="0.01" class="ml-16 mr-16" />
 
                                 <a-button @click=" removeCost(item)" shape="circle">
                                     <span class="mdi mdi-minus" style="cursor: pointer"></span>
@@ -360,8 +360,8 @@ let formSchema = yup.object({
 
                         <a-col :span="24">
                             Бонусы и скидки
-                            <div v-for="       item        in        form.bonuses       " :key="item" style="display: flex"
-                                align="baseline" class="mb-16">
+                            <div v-for="       item        in        form.bonuses       " :key="item"
+                                style="display: flex" align="baseline" class="mb-16">
                                 <a-input v-model:value="item.type" placeholder="Количество человек" />
 
                                 <a-input v-model:value="item.bonus" style="width: 100%" placeholder="Бонусы или скидки"
@@ -407,7 +407,8 @@ let formSchema = yup.object({
                         </a-col>
 
                         <a-col :xs="24">
-                            <Field name="startLocation" v-slot="{ value, handleChange }" v-model="locationSearchRequest">
+                            <Field name="startLocation" v-slot="{ value, handleChange }"
+                                v-model="locationSearchRequest">
                                 Место старта
                                 <a-auto-complete :value="value" @update:value="handleChange" style="width: 100%"
                                     :options="possibleLocations" placeholder="Глазов" @select="selectStartLocation">
@@ -445,17 +446,13 @@ let formSchema = yup.object({
 
                         <a-col :span="24" style="display: flex; flex-direction: column">
                             Описание программы
-                            <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" :toolbar="[
-                                // [{ header: [2, 3] }],
-                                ['bold', 'italic', 'underline'],
-                                [{ list: 'ordered' }, { list: 'bullet' }],
-                                [{ color: ['#000000', '#ff6600', '#3daff5'] }],
-                                [{ align: [] }],
-                            ]
-                                " />
+
+                            <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html"
+                                :toolbar="[['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }], [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }], ['link']]" />
                         </a-col>
                         <a-col :span="24">
-                            <Field name="returnConditions" v-slot="{ value, handleChange }" v-model="form.returnConditions">
+                            <Field name="returnConditions" v-slot="{ value, handleChange }"
+                                v-model="form.returnConditions">
                                 Условия возврата
                                 <a-textarea @update:value="handleChange" :value="value" placeholder="" size="large">
                                 </a-textarea>

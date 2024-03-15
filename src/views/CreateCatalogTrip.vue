@@ -536,13 +536,8 @@ let formSchema = yup.object({
             <a-col :span="24" style="display: flex; flex-direction: column">
               Описание программы
 
-              <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" :toolbar="[
-        ['bold', 'italic', 'underline'],
-        [{ list: 'ordered' }, { list: 'bullet' }],
-        [{ color: ['#000000', '#ff6600', '#3daff5'] }],
-        [{ align: [] }],
-      ]
-        " />
+              <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html"
+                :toolbar="[['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }], [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }], ['link']]" />
             </a-col>
             <!-- <a-col :span="24">
               <Field name="returnConditions" v-slot="{ value, handleChange }" v-model="form.returnConditions">
