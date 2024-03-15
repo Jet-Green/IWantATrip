@@ -38,6 +38,9 @@ async function hideTrip(_id) {
                 <span v-else class="mdi mdi-eye-off-outline" style="cursor: pointer"></span>
             </a-popconfirm>
         </div>
+        <div v-if="trip.moderationMessage && trip.rejected && !trip.isModerated">
+            {{ trip.moderationMessage }}
+        </div>
     </a-card>
 </template>
 

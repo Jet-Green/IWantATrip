@@ -141,5 +141,8 @@ export default {
     },
     moveToCatalog(tripId) {
         return $api.post('/trips/move-to-catalog', { tripId })
+    },
+    getMyCatalogTripsOnModeration(body) {
+        return $api.post('/trips/my-catalog-on-moderation', body)
     }
 }

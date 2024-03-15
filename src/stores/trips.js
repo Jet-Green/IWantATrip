@@ -102,6 +102,9 @@ export const useTrips = defineStore('trips', {
         async getMyCatalogTrips(body) {
             return await TripService.getMyCatalogTrips(body)
         },
+        async getMyCatalogTripsOnModeration(body) {
+            return await TripService.getMyCatalogTripsOnModeration(body)
+        },
         getById(_id) {
             return TripService.getById(_id)
         },
