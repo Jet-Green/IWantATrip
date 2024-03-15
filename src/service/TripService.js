@@ -19,8 +19,8 @@ export default {
     async getById(_id) {
         return $api.get(`/trips/get-by-id?_id=${_id}`)
     },
-    async getMyCatalogTrips() {
-        return $api.get('/trips/get-my-catalog-trips')
+    async getMyCatalogTrips(body) {
+        return $api.post('/trips/get-my-catalog-trips', body)
     },
 
     async deleteTrip(_id) {
