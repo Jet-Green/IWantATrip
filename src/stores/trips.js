@@ -108,6 +108,9 @@ export const useTrips = defineStore('trips', {
         deleteById(_id) {
             return TripService.deleteTrip({ _id: _id });
         },
+        catalogToDelete(_id) {
+            return TripService.catalogToDelete({ _id: _id });
+        },
         getCustomers(ids) {
             return TripService.getCustomers(ids)
         },
@@ -120,9 +123,15 @@ export const useTrips = defineStore('trips', {
         findCatalogTrips() {
             return TripService.findCatalogTrips()
         },
-        async moderateTrip(_id) {
+        findRejectedCatalog() {
+            return TripService.findRejectedCatalog()
+        },
+        findCatalogForModeration() {
+            return TripService.findCatalogForModeration()
+        },
+        async moderateCatalogTrip(_id) {
             try {
-                return await TripService.moderateTrip(_id)
+                return await TripService.moderateCatalogTrip(_id)
             } catch (error) {
                 console.log(error);
             }
@@ -130,6 +139,13 @@ export const useTrips = defineStore('trips', {
         async sendModerationMessage(trip_id, msg) {
             try {
                 return await TripService.sendModerationMessage(trip_id, msg)
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async sendCatalogModerationMessage(trip_id, msg) {
+            try {
+                return await TripService.sendCatalogModerationMessage(trip_id, msg)
             } catch (error) {
                 console.log(error);
             }
