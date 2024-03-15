@@ -60,26 +60,12 @@ const print = async () => {
     await htmlToPaper('printMe');
 };
 
-// let getStartLocationNames = computed(() => {
+function orderCatalogDialog() {
 
-//     let starts = trip.value.includedLocations.coordinates
-
-//     let results = []
-//     for (let i = 0; i < starts.length; i++) {
-//         for (let j = 0; j < locationStore.locations.length; j++) {
-
-//             if (starts[i][0] == locationStore.locations[j].coordinates[0]) {
-
-//                 results.push(locationStore.locations[j].shortName)
-//             }
-//         }
-//     }
-//     return results.join(', ')
-// })
+}
 
 onMounted(async () => {
     let response = await tripStore.getFullCatalogById(_id);
-    console.log(response.data)
     let tripFromDb = response.data;
     trip.value = tripFromDb;
 });
@@ -126,7 +112,8 @@ onMounted(async () => {
 
                             <a-dropdown :trigger="['click']">
                                 <a class="ant-dropdown-link" @click.prevent>
-                                    <span style="opacity: 0.7;" class="mdi mdi-24px mdi-share-variant-outline ma-8"></span>
+                                    <span style="opacity: 0.7;"
+                                        class="mdi mdi-24px mdi-share-variant-outline ma-8"></span>
                                 </a>
                                 <template #overlay>
                                     <a-menu>
@@ -144,7 +131,7 @@ onMounted(async () => {
 
 
                         <div>
-                            Старт: <b> {{ getStartLocationNames }}</b>
+                            Старт: <b> {{ trip.startLocation?.name }}</b>
                         </div>
 
                         <div>
@@ -154,8 +141,8 @@ onMounted(async () => {
                             Ключевые точки: <b>{{ trip.tripRoute }}</b>
                         </div>
                         <a-button type="primary" class="lets_go_btn" style="display: flex; justify-content: center"
-                                @click="orderCatalogDialog()">
-                                Заказать
+                            @click="orderCatalogDialog()">
+                            Заказать
                         </a-button>
                     </a-col>
 
