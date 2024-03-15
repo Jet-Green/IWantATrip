@@ -122,7 +122,6 @@ export default {
         return $api.post('/trips/update-transports', updateObj)
     },
     findTripByCustomerName(name, userId) {
-
         return $api.post('/trips/find-trip-by-name', { name: name, userId: userId })
     },
     setUserComment(body) {
@@ -136,5 +135,8 @@ export default {
     },
     getCatalogTripById(catalogTripId) {
         return $api.get(`/trips/catalog?_id=${catalogTripId}`)
+    },
+    moveToCatalog(tripId) {
+        return $api.post('/trips/move-to-catalog', { tripId })
     }
 }

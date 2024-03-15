@@ -125,7 +125,7 @@ onMounted(() => {
     query.value = props.search;
   }
   query.value || type.value ? find() : null
-
+//Надо обязательно вводить дату, иначе ошибка
 });
 
 </script>

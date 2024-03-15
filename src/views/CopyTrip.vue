@@ -113,12 +113,7 @@ const delPhoto = () => {
     delPhotoDialog.value = false;
 };
 
-let submitCount = ref(0)
 function submit() {
-    submitCount.value += 1
-    if (submitCount.value > 1) {
-        return
-    }
     description.value = description.value?.split("<p><br></p>").join("");
     form.description = description.value;
     form.author = author;
@@ -206,7 +201,6 @@ function submit() {
         Phones: t.ceo.phone,
         Inn: t.inn
     }
-
     tripStore.createTrip(form, userStore.user).then(async (res) => {
         if (res.status == 200) {
             const _id = res.data._id;
@@ -349,7 +343,6 @@ const clearData = (dataString) => {
         year: "2-digit",
         month: "2-digit",
         day: "2-digit",
-
     })
 }
 onMounted(async () => {

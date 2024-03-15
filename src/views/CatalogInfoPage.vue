@@ -153,7 +153,10 @@ onMounted(async () => {
                         <div>
                             Ключевые точки: <b>{{ trip.tripRoute }}</b>
                         </div>
-
+                        <a-button type="primary" class="lets_go_btn" style="display: flex; justify-content: center"
+                                @click="orderCatalogDialog()">
+                                Заказать
+                        </a-button>
                     </a-col>
 
                     <a-col :xs="24">
