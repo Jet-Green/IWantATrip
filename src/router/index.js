@@ -98,6 +98,20 @@ const router = createRouter({
           return '/auth'
       }
     },
+
+    {
+      path: '/catalog-to-active',
+      name: 'CatalogTripToActive',
+      component: () => import('../views/CatalogTripToActive.vue'),
+      beforeEnter: async (to, from) => {
+        let userStore = useAuth()
+        if (!localStorage.getItem('token') || !userStore.isAuth)
+          await userStore.checkAuth()
+
+        if (!userStore.isAuth)
+          return '/auth'
+      }
+    },
     {
       path: '/companions',
       name: 'CompanionsPage',

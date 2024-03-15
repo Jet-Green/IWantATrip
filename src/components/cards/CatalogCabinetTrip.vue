@@ -10,7 +10,7 @@ let router = useRouter()
 let { trip } = toRefs(props)
 
 function goToCopyCatalog() {
-    router.push(`/copy-trip?catalog_id=${trip.value._id}`)
+    router.push(`/catalog-to-active?_id=${trip.value._id}`)
 }
 
 async function hideTrip(_id) {

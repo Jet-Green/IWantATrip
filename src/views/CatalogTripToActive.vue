@@ -74,7 +74,6 @@ let form = reactive({
     returnConditions: "",
     isModerated: false,
 });
-let fullUserInfo = null;
 
 const removeCost = (item) => {
     let index = form.cost.indexOf(item);
@@ -167,29 +166,14 @@ function submit() {
     }
 
     function updateUser(_id) {
-        if (fullUserInfo) {
-            userStore
-                .updateUser({
-                    email: userStore.user.email,
-                    fullinfo: fullUserInfo,
-                    $push: { trips: _id },
-                })
-                .then((response) => {
-                    userStore.user = response.data;
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        } else {
-            userStore
-                .updateUser({ email: userStore.user.email, $push: { trips: _id } })
-                .then((response) => {
-                    userStore.user = response.data;
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        }
+        userStore
+            .updateUser({ email: userStore.user.email, $push: { catalogTrips: _id } })
+            .then((response) => {
+                userStore.user = response.data;
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     }
 
     form.author = userStore.user._id
@@ -222,11 +206,6 @@ function addPreview(blob) {
     visibleCropperModal.value = false;
     images.push(blob);
     previews.value.push(URL.createObjectURL(blob));
-}
-function updateUserInfo(info) {
-    fullUserInfo = info;
-    author = fullUserInfo._id
-
 }
 function selectStartLocation(selected) {
     for (let l of possibleLocations.value) {
@@ -347,35 +326,28 @@ const clearData = (dataString) => {
 }
 onMounted(async () => {
     if (route.query._id) {
-        tripStore.getById(route.query._id).then((response) => {
-            let d = response.data;
-            delete d.__v;
-            form.name = d.name;
-            start.value = baseTimeStart;
-            end.value = baseTimeEnd;
-            period.value = baseTimePeriod;
-            start.value.$d = clearData(d.start);
-            end.value.$d = clearData(d.end);
-            period.value.$d = clearData(Date.parse(d.period));
-            form.maxPeople = d.maxPeople;
-            form.duration = d.duration;
-            form.tripType = d.tripType;
-            form.distance = d.distance;
-            form.cost = d.cost;
-            form.bonuses = d.bonuses;
-            quill.value.setHTML(d.description);
-            form.fromAge = d.fromAge;
-            form.tripRoute = d.tripRoute;
-            form.offer = d.offer;
-            form.author = d.author;
-            start.value = dayjs(new Date(d.start));
-            end.value = dayjs(new Date(d.end));
-            form.startLocation = d.startLocation;
-            form.includedLocations = d.includedLocations
-            form.locationNames = d.locationNames
-            form.returnConditions = d.returnConditions
-            locationSearchRequest.value = d.startLocation.name;
-        });
+        let response = await tripStore.getCatalogTripById(route.query._id)
+        let d = response.data;
+        delete d.__v;
+        form.name = d.name;
+        start.value = baseTimeStart;
+        end.value = baseTimeEnd;
+        period.value = baseTimePeriod;
+        period.value.$d = clearData(Date.parse(d.period));
+        form.duration = d.duration;
+        form.tripType = d.tripType;
+        form.distance = d.distance;
+        quill.value.setHTML(d.description);
+        form.fromAge = d.fromAge;
+        form.tripRoute = d.tripRoute;
+        form.offer = d.offer;
+        form.author = d.author;
+
+        form.startLocation = d.startLocation;
+        form.includedLocations = d.includedLocations
+        form.locationNames = d.locationNames
+        form.returnConditions = d.returnConditions
+        locationSearchRequest.value = d.startLocation.name;
     }
 });
 
@@ -405,7 +377,7 @@ let formSchema = yup.object({
                 <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
                     <a-row :gutter="[16, 16]">
                         <a-col :span="24">
-                            <h2>Создать тур</h2>
+                            <h2>Скопировать из каталога</h2>
                             <Field name="name" v-slot="{ value, handleChange }" v-model="form.name">
                                 Название
                                 <a-input placeholder="Название тура" @update:value="handleChange" :value="value"
