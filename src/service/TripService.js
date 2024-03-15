@@ -60,6 +60,9 @@ export default {
     async hideTrip(_id, v) {
         return $api.get(`/trips/hide?_id=${_id}&v=${v}`)
     },
+    hideCatalogTrip(_id, v) {
+        return $api.get(`/trips/hide-catalog?_id=${_id}&v=${v}`)
+    },
     async clearTripsDB() {
         return $api.get('/trips/clear')
     },

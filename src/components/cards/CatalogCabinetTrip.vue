@@ -15,7 +15,7 @@ function goToCopyCatalog() {
 
 async function hideTrip(_id) {
     trip.value.isHidden = !trip.value.isHidden;
-    TripService.hideTrip(_id, trip.value.isHidden);
+    TripService.hideCatalogTrip(_id, trip.value.isHidden);
 }
 </script>
 
