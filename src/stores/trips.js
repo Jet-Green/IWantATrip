@@ -151,6 +151,13 @@ export const useTrips = defineStore('trips', {
                 console.log(error);
             }
         },
+        async getFullCatalogById(_id) {
+            try {
+                return await TripService.getFullCatalogById(_id)
+            } catch (error) {
+                console.log(error);
+            }
+        },
         async setPayment(bill) {
             try {
                 return await TripService.setPayment(bill)
