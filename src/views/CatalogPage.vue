@@ -14,6 +14,7 @@ const route = useRoute();
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
         <h2>Каталог</h2>
+       
       </a-col>
     </a-row>
     <CatalogFilter :search="route.query.search" />

@@ -99,11 +99,11 @@ export const useTrips = defineStore('trips', {
                 console.log(err);
             }
         },
-        async getMyCatalogTrips(body) {
-            return await TripService.getMyCatalogTrips(body)
+        async getMyCatalogTrips(id) {
+            return await TripService.getMyCatalogTrips(id)
         },
-        async getMyCatalogTripsOnModeration(body) {
-            return await TripService.getMyCatalogTripsOnModeration(body)
+        async getMyCatalogTripsOnModeration(id) {
+            return await TripService.getMyCatalogTripsOnModeration(id)
         },
         getById(_id) {
             return TripService.getById(_id)

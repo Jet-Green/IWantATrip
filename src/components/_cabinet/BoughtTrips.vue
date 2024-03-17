@@ -116,7 +116,7 @@ onMounted(async () => {
                 <a-card hoverable class="card">
                     <div class="d-flex space-between">
                         <div>
-                            {{ BILL.tripId.name }}
+                            {{ BILL.tripId?.name }}
                         </div>
                         <b>{{
                             clearData(BILL?.date)

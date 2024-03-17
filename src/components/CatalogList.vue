@@ -49,7 +49,8 @@ onMounted(async () => {
         <div class="wrapper" ref="wrapper">
             <a-row type="flex" justify="center">
                 <a-col :xs="22" :lg="16">
-                    <h2>Каталог</h2>
+                    <h2>Каталог туров</h2>
+                    <p><i>можно организовать в удобные даты</i> </p>
                 </a-col>
             </a-row>
             <!-- <CatalogFilter :search="route.query.search" /> -->

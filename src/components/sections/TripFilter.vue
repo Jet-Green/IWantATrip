@@ -56,8 +56,8 @@ function find() {
   tripStore.cursor = 1
   tripStore.trips = []
   if (time.value) {
-    let start = new Date(time.value[0].$d)
-    let end = new Date(time.value[1].$d)
+    let start = new Date(time.value[0]?.$d)
+    let end = new Date(time.value[1]?.$d)
 
     localStorage.setItem("TripTimeStart", start)
     localStorage.setItem("TripTimeEnd", end)
@@ -169,12 +169,7 @@ onMounted(() => {
                 </span>
               </a-button>
             </a-tooltip>
-            <a-tooltip title="Каталог">
-              <a-button shape="circle" @click="toCatalog">
-                <span class="mdi mdi-bulletin-board">
-                </span>
-              </a-button>
-            </a-tooltip>
+  
             <a-tooltip title="Очистить">
               <a-button shape="circle" @click="resetForm">
                 <span class=" mdi mdi-close">

@@ -140,19 +140,20 @@ onMounted(async () => {
                         <div>
                             Ключевые точки: <b>{{ trip.tripRoute }}</b>
                         </div>
-                        <a-button type="primary" class="lets_go_btn" style="display: flex; justify-content: center"
+                        
+                        <!-- <a-button type="primary" class="lets_go_btn" style="display: flex; justify-content: center"
                             @click="orderCatalogDialog()">
                             Заказать
-                        </a-button>
+                        </a-button> -->
                     </a-col>
 
                     <a-col :xs="24">
                         <span v-html="trip.description"></span>
                     </a-col>
-                    <a-divider class="ma-0"></a-divider>
+                    <!-- <a-divider class="ma-0"></a-divider>
                     <a-col :xs="24" v-if="trip.returnConditions" class="mb-16">
                         <b>Условия возврата:</b> {{ trip.returnConditions }}
-                    </a-col>
+                    </a-col> -->
 
                     <div id="printMe" style="display: none">
                         <h2 class="ma-0">{{ trip.name }}</h2>

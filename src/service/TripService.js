@@ -19,8 +19,8 @@ export default {
     async getById(_id) {
         return $api.get(`/trips/get-by-id?_id=${_id}`)
     },
-    async getMyCatalogTrips(body) {
-        return $api.post('/trips/get-my-catalog-trips', body)
+    async getMyCatalogTrips(id) {
+        return $api.post('/trips/get-my-catalog-trips', {id})
     },
 
     async deleteTrip(_id) {
@@ -145,7 +145,7 @@ export default {
     moveToCatalog(tripId) {
         return $api.post('/trips/move-to-catalog', { tripId })
     },
-    getMyCatalogTripsOnModeration(body) {
-        return $api.post('/trips/my-catalog-on-moderation', body)
+    getMyCatalogTripsOnModeration(id) {
+        return $api.post('/trips/my-catalog-on-moderation', {id})
     }
 }

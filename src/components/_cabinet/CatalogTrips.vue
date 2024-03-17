@@ -54,14 +54,14 @@ let moderatedTrips = computed(() => {
 
 async function getAllModeratedTrips() {
     loading.value = true
-    let response = await tripStore.getMyCatalogTrips({ catalogTrips: userStore.user?.catalogTrips })
+    let response = await tripStore.getMyCatalogTrips(userStore.user?._id)
 
     allModeratedTrips.value = response.data
     loading.value = false
 }
 async function getAllNotModeratedTrips() {
     loading.value = true
-    let response = await tripStore.getMyCatalogTripsOnModeration({ catalogTrips: userStore.user?.catalogTrips })
+    let response = await tripStore.getMyCatalogTripsOnModeration(userStore.user?._id)
 
     allNotModeratedTrips.value = response.data
     loading.value = false
