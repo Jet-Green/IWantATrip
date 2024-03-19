@@ -70,10 +70,10 @@ export default {
         return $api.get('/catalog/catalog-trips')
     },
     findRejectedCatalog() {
-        return $api.get('/catalog/rejected-catalog-trips')
+        return $api.get('/admin/rejected-catalog-trips')
     },
     findCatalogForModeration() {
-        return $api.get('/catalog/catalog-trips-on-moderation')
+        return $api.get('/admin/catalog-trips-on-moderation')
     },
     getUserTrips(ids) {
         return $api.post(`/trips/get-user-trips`, ids)
@@ -88,13 +88,13 @@ export default {
         return $api.get(`/admin/moderate-trip?_id=${_id}`)
     },
     moderateCatalogTrip(_id) {
-        return $api.get(`/catalog/moderate-catalog-trip?_id=${_id}`)
+        return $api.get(`/admin/moderate-catalog-trip?_id=${_id}`)
     },
     sendModerationMessage(trip_id, msg) {
         return $api.post(`/admin/send-moderation-message?tripId=${trip_id}`, { msg })
     },
     sendCatalogModerationMessage(trip_id, msg) {
-        return $api.post(`/catalog/send-catalog-moderation-message?tripId=${trip_id}`, { msg })
+        return $api.post(`/admin/send-catalog-moderation-message?tripId=${trip_id}`, { msg })
     },
     getCreatedTripsInfoByUserId(_id) {
         return $api.get(`/trips/created-trips-info?_id=${_id}`)
