@@ -55,7 +55,8 @@ function find() {
   tripStore.searchCursor = 1
   tripStore.cursor = 1
   tripStore.trips = []
-  if (time.value) {
+
+  if (time.value[0] && time.value[1]) {
     let start = new Date(time.value[0]?.$d)
     let end = new Date(time.value[1]?.$d)
 
@@ -99,7 +100,7 @@ function resetForm() {
   tripStore.tripFilter.start = ""
   tripStore.tripFilter.end = ""
   tripStore.tripFilter.type = ""
-  time.value = null;
+  time.value = [];
   query.value = '';
   type.value = '';
 
@@ -115,17 +116,20 @@ onMounted(() => {
   query.value = localStorage.getItem("TripQuery") ?? '';
   type.value = localStorage.getItem("TripType") ?? '';
 
-  if (localStorage.getItem("TripTimeStart")) {
+  if (localStorage.getItem("TripTimeStart") && localStorage.getItem("TripTimeStart").toString() != 'Invalid Date') {
     time.value.push(dayjs(localStorage.getItem("TripTimeStart")))
-    time.value.push(dayjs(localStorage.getItem("TripTimeEnd")))
-    find()
   }
+  if (localStorage.getItem('TripTimeEnd') && localStorage.getItem('TripTimeEnd').toString() != 'Invalid Date') {
+    time.value.push(dayjs(localStorage.getItem("TripTimeEnd")))
+  }
+
+  find()
 
   if (props.search) {
     query.value = props.search;
   }
   query.value || type.value ? find() : null
-//Надо обязательно вводить дату, иначе ошибка
+  //Надо обязательно вводить дату, иначе ошибка
 });
 
 </script>
@@ -169,7 +173,7 @@ onMounted(() => {
                 </span>
               </a-button>
             </a-tooltip>
-  
+
             <a-tooltip title="Очистить">
               <a-button shape="circle" @click="resetForm">
                 <span class=" mdi mdi-close">
