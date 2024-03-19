@@ -7,7 +7,7 @@ export default {
     async getCustomers(ids) {
         return $api.post('/trips/get-customers', ids)
     },
-    async fetchTrips(cursor, lon, lat, query = '', start = '', end = '', type = '') {
+    async fetchTrips(cursor, lon, lat, query, start, end, type) {
         return $api.get(`/trips/get-all?cursor=${cursor}&lon=${lon}&lat=${lat}&query=${query}&start=${start}&end=${end}&type=${type}`)
     },
     async fetchCatalogTrips(cursor, lon, lat, query = '', type = '') {
@@ -20,7 +20,7 @@ export default {
         return $api.get(`/trips/get-by-id?_id=${_id}`)
     },
     async getMyCatalogTrips(id) {
-        return $api.post('/trips/get-my-catalog-trips', {id})
+        return $api.post('/trips/get-my-catalog-trips', { id })
     },
 
     async deleteTrip(_id) {
@@ -146,6 +146,6 @@ export default {
         return $api.post('/trips/move-to-catalog', { tripId })
     },
     getMyCatalogTripsOnModeration(id) {
-        return $api.post('/trips/my-catalog-on-moderation', {id})
+        return $api.post('/trips/my-catalog-on-moderation', { id })
     }
 }
