@@ -20,7 +20,7 @@ const tripStore = useTrips();
 const appStore = useAppState();
 
 let time = ref([]);
-let query = ref("");
+let query = ref(localStorage.getItem("TripQuery") ? localStorage.getItem("TripQuery") : "");
 let type = ref("");
 
 let router = useRouter();
@@ -30,7 +30,7 @@ function toCatalog() {
 }
 
 watch(time, (newTime) => {
-  if (newTime) {
+  if (newTime[0] && newTime[1]) {
     let start = new Date(newTime[0].$d)
     let end = new Date(newTime[1].$d)
 
@@ -146,46 +146,37 @@ onMounted(() => {
         <a-col :span="12" :md="6" class="d-flex direction-column">
           <div for="search" style="font-size:10px; line-height:10px; ">искать</div>
           <a-input v-model:value="query" placeholder="сочи" name="search" style="z-index: 0; width:100%" />
-
         </a-col>
 
         <a-col :span="12" :md="6" class="d-flex direction-column">
           <div style="font-size:10px; line-height:10px">вид тура</div>
           <a-select v-model:value="type">
             <a-select-option value=""></a-select-option>
-            <a-select-option placeholder="Tип тура" v-for="   tripType    in    appStore.appState[0].tripType   "
-              :value="tripType">{{
-      tripType
-    }}</a-select-option>
+            <a-select-option placeholder="Tип тура" v-for="tripType in appStore.appState[0].tripType" :value="tripType">
+              {{ tripType }}
+            </a-select-option>
           </a-select>
         </a-col>
 
         <a-col :span="24" :md="12" class="d-flex align-center space-between">
-          <div class="d-flex direction-column" style="width:70%">
+          <div class="d-flex direction-column" style="width:100%">
             <div style="font-size:10px; line-height:10px">даты</div>
             <a-range-picker v-model:value="time" :locale="ruLocale" :placeholder="['начало', 'конец']"
               inputmode='none' />
           </div>
-          <div class="pa-8">
-            <a-tooltip title="Искать">
-              <a-button type="primary" shape="circle" @click="find" class="mr-4">
-                <span class=" mdi mdi-magnify">
-                </span>
-              </a-button>
-            </a-tooltip>
-
-            <a-tooltip title="Очистить">
-              <a-button shape="circle" @click="resetForm">
-                <span class=" mdi mdi-close">
-                </span>
-
-              </a-button>
-            </a-tooltip>
-          </div>
-
         </a-col>
-
-
+        <a-col :span="24" class="d-flex justify-center mt-16 mb-16">
+          <a-button type="primary" shape="round" @click="find" class="mr-4">
+            <!-- <span class=" mdi mdi-magnify">
+              </span> -->
+            найти
+          </a-button>
+          <a-button shape="round" @click="resetForm">
+            <!-- <span class=" mdi mdi-close">
+              </span> -->
+            очистить
+          </a-button>
+        </a-col>
       </a-row>
     </a-col>
   </a-row>

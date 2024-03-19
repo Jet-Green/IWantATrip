@@ -43,7 +43,7 @@ onMounted(async () => {
 </script>
 <template>
   <div>
-    <BackButton backRoute="/" />
+    <BackButton :backRoute="{ path: '/' }" />
     <div class="wrapper" ref="wrapper">
       <a-row type="flex" justify="center">
         <a-col :xs="22" :lg="16">
