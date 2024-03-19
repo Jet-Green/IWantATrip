@@ -633,9 +633,13 @@ onMounted(async () => {
 
                     <a-col :span="24">
                         <div class="d-flex space-around">
+                            <a-button html-type="submit" class="btn" @click="buyNow = false"
+                                :disabled="isNoPlaces">
+                                Заказать
+                            </a-button>
                             <div class="buy-btn">
                                 <div>
-                                    <a-button html-type="submit" :disabled="isNoPlaces" @click="buyNow = true" class="btn">
+                                    <a-button html-type="submit" :disabled="isNoPlaces" @click="buyNow = true" type="primary" class="lets_go_btn">
                                         оплатить
                                     </a-button>
                                 </div>
@@ -643,10 +647,6 @@ onMounted(async () => {
                                     <img :src="TinkoffLogo" class="tinkoff-logo">
                                 </div>
                             </div>
-                            <a-button html-type="submit" type="primary" class="lets_go_btn" @click="buyNow = false"
-                                :disabled="isNoPlaces">
-                                Заказать
-                            </a-button>
                         </div>
                     </a-col>
                 </a-row>
@@ -741,8 +741,8 @@ img {
         user-select: none;
     }
 
-    .btn {
-        border-radius: 15px;
-    }
+}
+.btn {
+    border-radius: 15px;
 }
 </style>

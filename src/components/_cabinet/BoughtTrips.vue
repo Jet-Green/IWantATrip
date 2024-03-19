@@ -158,7 +158,7 @@ onMounted(async () => {
                             style="display: flex; align-items: center">
                             <div class="buy-btn">
                                 <div>
-                                    <a-button @click="openBuyDialog(BILL._id)" class="btn">
+                                    <a-button @click="openBuyDialog(BILL._id)" type="primary" class="lets_go_btn">
                                         оплатить
                                     </a-button>
                                 </div>
@@ -221,7 +221,7 @@ onMounted(async () => {
                     <div class="d-flex space-around">
                         <div class="buy-btn">
                             <div>
-                                <a-button html-type="submit" class="btn">
+                                <a-button html-type="submit" type="primary" class="lets_go_btn">
                                     оплатить
                                 </a-button>
                             </div>
@@ -251,10 +251,6 @@ onMounted(async () => {
         -webkit-user-select: none;
         -o-user-select: none;
         user-select: none;
-    }
-
-    .btn {
-        border-radius: 15px;
     }
 }
 </style>
