@@ -36,7 +36,8 @@ onMounted(async () => {
                 </div>
                 <div class="mt-8">Автор: {{ catalog.author.fullinfo.fullname }}</div>
                 <div class="actions d-flex justify-center">
-                    <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="catalogToDelete(catalog._id)">
+                    <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет"
+                        @confirm="catalogToDelete(catalog._id)">
                         <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
                     </a-popconfirm>
                     <span class="mdi mdi-check-decagram-outline"
@@ -46,7 +47,7 @@ onMounted(async () => {
             </a-card>
         </a-col>
         <a-col :span="24" v-else>
-            Нет отказаных туров в каталоге
+            Нет туров
         </a-col>
     </a-row>
 </template>

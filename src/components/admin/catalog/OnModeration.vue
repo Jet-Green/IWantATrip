@@ -46,7 +46,7 @@ onMounted(async () => {
             </a-card>
         </a-col>
         <a-col :span="24" v-else>
-            Нет туров в каталоге на модерации
+            Нет туров
         </a-col>
     </a-row>
 </template>
