@@ -78,18 +78,13 @@ function find() {
     tripStore.tripFilter.start = start
     tripStore.tripFilter.end = end
     tripStore.tripFilter.type = type.value
-    tripStore.fetchTrips(query.value, start, end, type.value);
+    tripStore.fetchTrips();
   } else {
     tripStore.tripFilter.query = query.value
     tripStore.tripFilter.start = ""
     tripStore.tripFilter.end = ""
     tripStore.tripFilter.type = type.value
-    tripStore.fetchTrips(
-      query.value,
-      "",
-      "",
-      type.value,
-    );
+    tripStore.fetchTrips();
   }
 }
 
