@@ -17,6 +17,9 @@ watch(tripsStatus, (status) => {
   if (status === 'archiveTrips') {
     return router.push('/cabinet/created-trips/created-archived-trips')
   }
+  if (status === 'catalogTrips') {
+    return router.push('/cabinet/created-trips/catalog-trips')
+  }
 });
 onMounted(async () => {
   tripsStatus.value = localStorage.getItem("createdTripsStatus") ? localStorage.getItem("createdTripsStatus") : 'tripsInWork'
@@ -31,6 +34,7 @@ onMounted(async () => {
         <a-radio value="tripsOnModeration">На модерации</a-radio>
         <a-radio value="tripsInWork">Действующие</a-radio>
         <a-radio value="archiveTrips">Архив</a-radio>
+        <a-radio value="catalogTrips">Каталог</a-radio>
       </a-radio-group>
 
       <router-view />

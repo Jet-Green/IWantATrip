@@ -3,6 +3,8 @@ import { ref, computed, onMounted, getCurrentInstance } from "vue";
 import _ from 'lodash'
 import tinkoffPlugin from '../plugins/tinkoff'
 
+import TinkoffLogo from "../assets/images/tinkofflogo.svg"
+
 import { useRoute } from "vue-router";
 import BackButton from "../components/BackButton.vue";
 import WaitingList from "../components/WaitingList.vue";
@@ -170,7 +172,7 @@ async function refreshDates() {
     tripDates.value = [];
     trip.value = tripFromDb;
     //сортируем транспорт по возрастанию
-    if (trip.value.transports.length) {    
+    if (trip.value.transports.length) {
         trip.value.transports = _.sortBy(tripFromDb.transports, [function (o) { return o.capacity; }])
     }
 
@@ -260,9 +262,13 @@ async function buyTrip() {
                 }]
             };
             if (buyNow.value) {
-                const orderId = Date.now().toString() + '_' + userStore.user._id
-
-                let { data, token } = await tinkoffPlugin.initPayment(orderId, finalCost.value * 100)
+                const orderId = Date.now().toString()
+                let { data, token, success } = await tinkoffPlugin.initPayment(orderId, bill.cart, userStore.user.email, trip.value.tinkoffContract, trip.value.name)
+                if (!success) {
+                    message.config({ duration: 3, top: "90vh" });
+                    message.error({ content: "Ошибка при оплате" });
+                    return
+                }
                 bill.tinkoff = {
                     orderId: data.OrderId,
                     amount: data.Amount,
@@ -280,7 +286,7 @@ async function buyTrip() {
 
             if (bill.cart.length != 0) {
                 userStore
-                    .buyTrip(selectedDate.value._id, bill, trip.value.name)
+                    .buyTrip(selectedDate.value._id, bill)
                     .then(async (response) => {
                         if (response.status == 200) {
                             message.config({ duration: 3, top: "90vh" });
@@ -317,7 +323,7 @@ const formSchema = yup.object({
     phone: yup
         .string().matches(phoneRegex, "введите № телефона"),
 
-        
+
 });
 
 
@@ -627,13 +633,20 @@ onMounted(async () => {
 
                     <a-col :span="24">
                         <div class="d-flex space-around">
-                            <!-- <a-button html-type="submit" type="primary" class="lets_go_btn" :disabled="isNoPlaces"
-                                @click="buyNow = true">
-                                сейчас </a-button> -->
-                            <a-button html-type="submit" type="primary" class="lets_go_btn" @click="buyNow = false"
+                            <a-button html-type="submit" class="btn" @click="buyNow = false"
                                 :disabled="isNoPlaces">
                                 Заказать
                             </a-button>
+                            <div class="buy-btn">
+                                <div>
+                                    <a-button html-type="submit" :disabled="isNoPlaces" @click="buyNow = true" type="primary" class="lets_go_btn">
+                                        оплатить
+                                    </a-button>
+                                </div>
+                                <div class="d-flex justify-center">
+                                    <img :src="TinkoffLogo" class="tinkoff-logo">
+                                </div>
+                            </div>
                         </div>
                     </a-col>
                 </a-row>
@@ -709,5 +722,27 @@ img {
 .warning {
     color: red;
     font-style: italic;
+}
+
+.buy-btn {
+    display: flex;
+    flex-direction: column;
+
+    .tinkoff-logo {
+        height: 20px;
+        width: 90px;
+    }
+
+    img {
+        -moz-user-select: -moz-none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -o-user-select: none;
+        user-select: none;
+    }
+
+}
+.btn {
+    border-radius: 15px;
 }
 </style>

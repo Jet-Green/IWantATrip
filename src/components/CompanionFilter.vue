@@ -13,7 +13,7 @@ const ruLocale = locale;
 const companionStore = useCompanions();
 let router = useRouter();
 let visible = ref(false);
-let date = ref(null)
+let date = ref([])
 let query = reactive({
   strQuery: "",
   gender: "",
@@ -30,6 +30,7 @@ let query = reactive({
 async function find() {
   query.strQuery = query.strQuery.trim()
   if (query.strQuery.length == 0 || query.strQuery.length > 2) {
+    console.log('aboba');
     await companionStore.fetchCompanions(query);
   }
 }
@@ -45,6 +46,7 @@ watch(date, (newDate) => {
       endDate.setMinutes(59)
       endDate.setSeconds(59)
       endDate.setMilliseconds(999)
+      localStorage.setItem("CompanionTimeEnd", endDate)
 
       query.end = Date.parse(endDate);
     }
@@ -54,13 +56,32 @@ watch(date, (newDate) => {
       startDate.setMinutes(0)
       startDate.setSeconds(0)
       startDate.setMilliseconds(0)
+      localStorage.setItem("CompanionTimeStart", startDate)
 
       query.start = Date.parse(startDate);
     }
   }
+  else{
+    localStorage.setItem("CompanionTimeEnd", '')
+    localStorage.setItem("CompanionTimeStart", '')
+    query.start = ''
+    query.end = ''
+  }
 });
 
 onMounted(() => {
+  if (localStorage.getItem("CompanionTimeStart")) {
+
+    let dateStart = localStorage.getItem("CompanionTimeStart")
+    let dateEnd = localStorage.getItem("CompanionTimeEnd")
+    
+    date.value[0] = dayjs(dateStart)
+    date.value[1] = dayjs(dateEnd)
+
+    query.start = Date.parse(new Date(dateStart))
+    query.end = Date.parse(new Date(dateEnd))
+    find()
+  }
   find()
 });
 </script>

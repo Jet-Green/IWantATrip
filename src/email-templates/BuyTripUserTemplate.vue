@@ -7,7 +7,7 @@ let props = defineProps({
 })
 let bought = props.form
 let trip = props.trip
-
+console.log(trip)
 const clearData = (dateNumber) => {
     let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
         year: "2-digit",
@@ -37,6 +37,8 @@ const clearData = (dateNumber) => {
         <e-section>
             <e-heading as="h3">Куплена поездка</e-heading>
             <e-text>Тур: <b>{{ trip.name }}</b> </e-text>
+            <e-text>Автор тура: <b>{{ trip.fullname }}</b> </e-text>
+            <e-text>Описание: <b>{{ trip.description }}</b> </e-text>
             <e-text>C: <b>{{ clearData(trip.start) }}</b> По: <b>{{ clearData(trip.end) }}</b></e-text>
             <e-text>Покупатель: <b>{{ bought.userInfo.fullname }}</b></e-text>
             <e-text>Телефон: <a :href="`tel:${bought.userInfo.phone}`"> <b>{{ bought.userInfo.phone }}</b></a></e-text>
@@ -45,8 +47,9 @@ const clearData = (dateNumber) => {
                 <b>{{ price.count }} x {{ price.cost }}руб.</b>
             </e-text>
             <e-text>
-                Оплачен: <b>{{ bought.tinkoff ? "да" : "нет" }}</b>
+                Оплачен: <b>{{ bought.isBoughtNow? "да": "нет" }}</b>
             </e-text>
+            <e-text>Условия возврата: <b>{{ trip.returnConditions }}</b> </e-text>
 
         </e-section>
     </e-html>

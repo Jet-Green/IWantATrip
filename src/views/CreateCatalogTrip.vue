@@ -52,23 +52,23 @@ let locationSearchRequest = ref("")
 // необходимо добавить поле количество людей в туре
 let form = reactive({
   name: "",
-  start: null,
-  end: null,
-  maxPeople: null,
+  // start: null,
+  // end: null,
+  // maxPeople: null,
   duration: "",
   images: [],
   //pdf: [],
   tripRoute: "",
-  distance: "",
-  cost: [],
+  // distance: "",
+  // cost: [],
   offer: "",
   description: "",
   tripType: "",
   fromAge: "",
   author: "",
   startLocation: null,
-  bonuses: [],
-  returnConditions: '',
+  // bonuses: [],
+  // returnConditions: '',
 });
 
 const removeCost = (item) => {
@@ -117,28 +117,21 @@ function submit() {
   }
 
   function close() {
-    router.push("/trips");
+    router.push("/cabinet/created-trips/");
     clearForm()
   }
   function clearForm() {
     Object.assign(form, {
       name: "",
-      start: null,
-      end: null,
-      maxPeople: null,
       duration: "",
       images: [],
       tripRoute: "",
-      distance: "",
-      cost: [],
       offer: "",
       description: description.value,
       tripType: "",
       fromAge: "",
       author: "",
       startLocation: "",
-      bonuses: [],
-      returnConditions: "",
       isModerated: false,
 
     });
@@ -156,7 +149,7 @@ function submit() {
         _id + "_" + i + ".jpg"
       );
     }
-    TripService.uploadTripImages(imagesFormData).then(() => {
+    TripService.uploadCatalogTripImages(imagesFormData).then(() => {
       console.log('фотографии загружены')
       localStorage.removeItem('createTripImages')
     })
@@ -165,7 +158,7 @@ function submit() {
 
   function updateUser(_id) {
     userStore
-      .updateUser({ email: userStore.user.email, $push: { trips: _id } })
+      .updateUser({ email: userStore.user.email, $push: { catalogTrips: _id } })
       .then((response) => {
         userStore.user = response.data;
       })
@@ -186,7 +179,7 @@ function submit() {
     Inn: t.inn
   }
 
-  TripStore.createTrip(form, userStore.user).then(async (res) => {
+  TripStore.createCatalogTrip(form, userStore.user).then(async (res) => {
     if (res.status == 200) {
       const _id = res.data._id;
       await uploadTripImages(_id)
@@ -345,19 +338,16 @@ function handleImgError(i) {
 
 let formSchema = yup.object({
   name: yup.string().required("заполните поле"),
-  start: yup.object().required("заполните поле"),
-  end: yup.object().required("заполните поле"),
   duration: yup.string().required("заполните поле"),
-  maxPeople: yup.string().required("заполните поле"),
   tripType: yup.string().required("заполните поле"),
   fromAge: yup.string().required("заполните поле"),
   offer: yup.string().required("заполните поле"),
   tripRoute: yup.string().required("заполните поле"),
   startLocation: yup.string().required("заполните поле"),
-  returnConditions: yup.string().required("заполните поле")
   // https://vee-validate.logaretm.com/v4/examples/array-fields/
 });
 </script>
+
 <template>
   <div>
     <BackButton />
@@ -366,7 +356,7 @@ let formSchema = yup.object({
         <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
           <a-row :gutter="[16, 16]">
             <a-col :span="24">
-              <h2>Создать тур</h2>
+              <h2>Создать тур в каталоге</h2>
               <Field name="name" v-slot="{ value, handleChange }" v-model="form.name">
                 Название
                 <a-input placeholder="Название тура" @update:value="handleChange" :value="value" :maxlength="50"
@@ -381,7 +371,7 @@ let formSchema = yup.object({
               <div class="d-flex" style="overflow-x: scroll">
                 <img v-for="(pr, i) in    previews   " :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
                   @click="delPhotoDialog = true;
-                  targetIndex = i;" @error="handleImgError(i)" />
+      targetIndex = i;" @error="handleImgError(i)" />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
@@ -389,7 +379,7 @@ let formSchema = yup.object({
               </a-button>
             </a-col>
 
-            <a-col :span="12">
+            <!-- <a-col :span="12">
               <Field name="start" v-slot="{ value, handleChange }" v-model="start">
                 Дата начала
                 <a-date-picker @update:value="handleChange" :value="value" style="width: 100%" placeholder="Начало"
@@ -409,7 +399,7 @@ let formSchema = yup.object({
               <Transition name="fade">
                 <ErrorMessage name="end" class="error-message" />
               </Transition>
-            </a-col>
+            </a-col> -->
 
             <a-col :span="12">
 
@@ -422,7 +412,7 @@ let formSchema = yup.object({
                 <ErrorMessage name="duration" class="error-message" />
               </Transition>
             </a-col>
-            <a-col :span="12">
+            <!-- <a-col :span="12">
               <Field name="maxPeople" v-slot="{ value, handleChange }" v-model="form.maxPeople">
                 Макс. число людей
                 <a-input-number @update:value="handleChange" :value="value" style="width: 100%" type="number"
@@ -431,55 +421,53 @@ let formSchema = yup.object({
               <Transition name="fade">
                 <ErrorMessage name="maxPeople" class="error-message" />
               </Transition>
-            </a-col>
+            </a-col> -->
 
-            <a-col :span="24">
+            <!-- <a-col :span="24">
               <div class="d-flex space-between ">Цены
                 <a-tooltip>
                   <template #title>калькулятор</template>
-                  <router-link :to="{ name: 'PriceCalc' }" target="_blank">
-                    <span class="mdi mdi-calculator" style="cursor: pointer; font-size: 24px; color:#ff6600"></span>
-                  </router-link>
-                </a-tooltip>
-              </div>
+<router-link :to="{ name: 'PriceCalc' }" target="_blank">
+  <span class="mdi mdi-calculator" style="cursor: pointer; font-size: 24px; color:#ff6600"></span>
+</router-link>
+</a-tooltip>
+</div>
 
 
-              <div v-for="   item    in    form.cost   " :key="item.type" style="display: flex" align="baseline"
-                class="mb-16">
-                <a-input v-model:value="item.first" placeholder="Для кого" />
+<div v-for="   item    in    form.cost   " :key="item.type" style="display: flex" align="baseline" class="mb-16">
+  <a-input v-model:value="item.first" placeholder="Для кого" />
 
-                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" type="number" :min="0"
-                  :step="1" class="ml-16 mr-16" />
+  <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена" type="number" :min="0" :step="1"
+    class="ml-16 mr-16" />
 
-                <a-button @click="removeCost(item)" shape="circle">
-                  <span class="mdi mdi-minus" style="cursor: pointer"></span>
-                </a-button>
-              </div>
+  <a-button @click="removeCost(item)" shape="circle">
+    <span class="mdi mdi-minus" style="cursor: pointer"></span>
+  </a-button>
+</div>
 
-              <a-button type="dashed" block @click="addCost" class="ma-8">
-                <span class="mdi mdi-12px mdi-plus"></span>
-                Добавить цены
-              </a-button>
-            </a-col>
+<a-button type="dashed" block @click="addCost" class="ma-8">
+  <span class="mdi mdi-12px mdi-plus"></span>
+  Добавить цены
+</a-button>
+</a-col>
 
-            <a-col :span="24">
+<a-col :span="24">
 
-              <div v-for="   item    in    form.bonuses   " style="display: flex" align="baseline" class="mb-16">
-                <a-input v-model:value="item.type" placeholder="Количество человек" />
+  <div v-for="   item    in    form.bonuses   " style="display: flex" align="baseline" class="mb-16">
+    <a-input v-model:value="item.type" placeholder="Количество человек" />
 
-                <a-input v-model:value="item.bonus" style="width: 100%" placeholder="Бонусы или скидки"
-                  class="ml-16 mr-16" />
+    <a-input v-model:value="item.bonus" style="width: 100%" placeholder="Бонусы или скидки" class="ml-16 mr-16" />
 
-                <a-button @click="removeBonuses(item)" shape="circle">
-                  <span class="mdi mdi-minus" style="cursor: pointer"></span>
-                </a-button>
-              </div>
+    <a-button @click="removeBonuses(item)" shape="circle">
+      <span class="mdi mdi-minus" style="cursor: pointer"></span>
+    </a-button>
+  </div>
 
-              <a-button type="dashed" block @click="addBonuses" class="ma-8">
-                <span class="mdi mdi-12px mdi-plus"></span>
-                бонусы и скидки
-              </a-button>
-            </a-col>
+  <a-button type="dashed" block @click="addBonuses" class="ma-8">
+    <span class="mdi mdi-12px mdi-plus"></span>
+    бонусы и скидки
+  </a-button>
+</a-col> -->
 
             <a-col :xs="24" :md="12">
               <Field name="tripType" v-slot="{ value, handleChange }" v-model="form.tripType">
@@ -487,8 +475,8 @@ let formSchema = yup.object({
                 <div>
                   <a-select @update:value="handleChange" :value="value" style="width: 100%">
                     <a-select-option v-for="   tripType    in    appStore.appState[0].tripType   " :value="tripType">{{
-                      tripType
-                    }}</a-select-option>
+        tripType
+      }}</a-select-option>
                   </a-select>
                 </div>
               </Field>
@@ -500,8 +488,8 @@ let formSchema = yup.object({
             <a-col :xs="24" :md="12">
               <Field name="fromAge" v-slot="{ value, handleChange }" v-model="form.fromAge">
                 Мин. возраст, лет
-                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" placeholder="10" :min="0"
-                  :max="100" />
+                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" placeholder="10"
+                  :min="0" :max="100" />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="fromAge" class="error-message" />
@@ -525,8 +513,8 @@ let formSchema = yup.object({
             <a-col :span="24">
               <Field name="offer" v-slot="{ value, handleChange }" v-model="form.offer">
                 Краткое описание
-                <a-textarea @update:value="handleChange" :value="value" placeholder="Едем в Татарстан за новыми эмоциями!"
-                  size="large">
+                <a-textarea @update:value="handleChange" :value="value"
+                  placeholder="Едем в Татарстан за новыми эмоциями!" size="large">
                 </a-textarea>
               </Field>
               <Transition name="fade">
@@ -548,16 +536,10 @@ let formSchema = yup.object({
             <a-col :span="24" style="display: flex; flex-direction: column">
               Описание программы
 
-              <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" :toolbar="[
-                ['bold', 'italic', 'underline',{ color: ['#000000', '#ff6600', '#3daff5'] }],
-             
-                [{ list: 'ordered' }, { list: 'bullet' },{ align: [] }],
-           
-                ['link']
-              ]
-                " />
+              <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html"
+                :toolbar="[['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }], [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }], ['link']]" />
             </a-col>
-            <a-col :span="24">
+            <!-- <a-col :span="24">
               <Field name="returnConditions" v-slot="{ value, handleChange }" v-model="form.returnConditions">
                 Условия возврата
                 <a-textarea @update:value="handleChange" :value="value" placeholder="" size="large">
@@ -566,7 +548,7 @@ let formSchema = yup.object({
               <Transition name="fade">
                 <ErrorMessage name="offer" class="error-message" />
               </Transition>
-            </a-col>
+            </a-col> -->
             <!-- <a-col :span="24">
               :file-list="fileList"
               <a-upload action="" :multiple="true">

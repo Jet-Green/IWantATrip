@@ -11,13 +11,19 @@ import CreateTripTemplate from '../email-templates/CreateTripTemplate.vue';
 export const useTrips = defineStore('trips', {
     state: () => ({
         trips: [],
+        catalog: [],
         cursor: 1,
+        catalogCursor: 1,
         searchCursor: 1,
         isFetching: false,
         tripFilter: {
             query: "",
             start: "",
             end: "",
+            type: ""
+        },
+        catalogFilter: {
+            query: "",
             type: ""
         }
     }),
@@ -37,7 +43,14 @@ export const useTrips = defineStore('trips', {
 
             return TripService.createTrip(emailHtml, form, email, fullinfo)
         },
-        async fetchTrips(query, start, end, type) {
+        async createCatalogTrip(form, user) {
+            const email = user.email
+            const fullinfo = user.fullinfo
+            const emailHtml = await render(CreateTripTemplate, { form: form, email, fullinfo });
+
+            return TripService.createCatalogTrip(emailHtml, form, email, fullinfo)
+        },
+        async fetchTrips() {
             try {
                 if (!this.isFetching) {
                     this.isFetching = true
@@ -47,10 +60,10 @@ export const useTrips = defineStore('trips', {
                         location = JSON.parse(location)
                     }
                     if (location?.name) {
-                        response = await TripService.fetchTrips(this.cursor, ...location.coordinates, query, start, end, type);
+                        response = await TripService.fetchTrips(this.cursor, ...location.coordinates, this.tripFilter.query, this.tripFilter.start, this.tripFilter.end, this.tripFilter.type);
                         this.isFetching = false
                     } else {
-                        response = await TripService.fetchTrips(this.cursor, '', '', query, start, end, type);
+                        response = await TripService.fetchTrips(this.cursor, '', '', this.tripFilter.query, this.tripFilter.start, this.tripFilter.end, this.tripFilter.type);
                         this.isFetching = false
                     }
                     this.trips.push(...response.data);
@@ -61,11 +74,45 @@ export const useTrips = defineStore('trips', {
                 console.log(err);
             }
         },
+        async fetchCatalogTrips(query, type) {
+            try {
+                if (!this.isFetching) {
+                    this.isFetching = true
+                    let response;
+                    let location = localStorage.getItem('location')
+                    if (location) {
+                        location = JSON.parse(location)
+                    }
+                    if (location?.name) {
+                        response = await TripService.fetchCatalogTrips(this.catalogCursor, ...location.coordinates, query, type);
+                        this.isFetching = false
+                    } else {
+                        response = await TripService.fetchCatalogTrips(this.catalogCursor, '', '', query, type);
+                        this.isFetching = false
+                    }
+                    this.catalog.push(...response.data);
+                    this.catalog = _.uniqBy(this.catalog, '_id')
+                    this.catalogCursor++
+                }
+
+            } catch (err) {
+                console.log(err);
+            }
+        },
+        async getMyCatalogTrips(id) {
+            return await TripService.getMyCatalogTrips(id)
+        },
+        async getMyCatalogTripsOnModeration(id) {
+            return await TripService.getMyCatalogTripsOnModeration(id)
+        },
         getById(_id) {
             return TripService.getById(_id)
         },
         deleteById(_id) {
             return TripService.deleteTrip({ _id: _id });
+        },
+        catalogToDelete(_id) {
+            return TripService.catalogToDelete({ _id: _id });
         },
         getCustomers(ids) {
             return TripService.getCustomers(ids)
@@ -76,9 +123,18 @@ export const useTrips = defineStore('trips', {
         findRejectedTrips() {
             return TripService.findRejectedTrips()
         },
-        async moderateTrip(_id) {
+        findCatalogTrips() {
+            return TripService.findCatalogTrips()
+        },
+        findRejectedCatalog() {
+            return TripService.findRejectedCatalog()
+        },
+        findCatalogForModeration() {
+            return TripService.findCatalogForModeration()
+        },
+        async moderateCatalogTrip(_id) {
             try {
-                return await TripService.moderateTrip(_id)
+                return await TripService.moderateCatalogTrip(_id)
             } catch (error) {
                 console.log(error);
             }
@@ -86,6 +142,13 @@ export const useTrips = defineStore('trips', {
         async sendModerationMessage(trip_id, msg) {
             try {
                 return await TripService.sendModerationMessage(trip_id, msg)
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async sendCatalogModerationMessage(trip_id, msg) {
+            try {
+                return await TripService.sendCatalogModerationMessage(trip_id, msg)
             } catch (error) {
                 console.log(error);
             }
@@ -103,6 +166,13 @@ export const useTrips = defineStore('trips', {
         async getFullTripById(_id) {
             try {
                 return await TripService.getFullTripById(_id)
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async getFullCatalogById(_id) {
+            try {
+                return await TripService.getFullCatalogById(_id)
             } catch (error) {
                 console.log(error);
             }
@@ -145,6 +215,14 @@ export const useTrips = defineStore('trips', {
                 console.log(error);
             }
         },
+        async updateCatalogTrip(_id, trip) {
+            try {
+                let res = await TripService.updateCatalogTrip(_id, trip)
+                return res.data
+            } catch (error) {
+                console.error(error)
+            }
+        },
         async updateTourists(bill) {
             try {
                 let res = await TripService.updateTourists(bill)
@@ -156,6 +234,14 @@ export const useTrips = defineStore('trips', {
         async updatePartner(partner, trip_id) {
             try {
                 let res = await TripService.updatePartner(partner, trip_id)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async updateIsCatalog(_id, isCatalog) {
+            try {
+                let res = await TripService.updateIsCatalog(_id, isCatalog)
                 return res
             } catch (error) {
                 console.log(error);
@@ -194,6 +280,29 @@ export const useTrips = defineStore('trips', {
                 return await TripService.editUserComment(bodyObj)
             } catch (error) {
 
+            }
+        },
+        async getBoughtTrips() {
+            try {
+                let userStore = useAuth()
+                let res = await TripService.getBoughtTrips(userStore.user._id)
+                return res.data
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async getCatalogTripById(catalogTripId) {
+            try {
+                return await TripService.getCatalogTripById(catalogTripId)
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async moveToCatalog(tripId) {
+            try {
+                return await TripService.moveToCatalog(tripId)
+            } catch (error) {
+                console.log(error);
             }
         }
     },

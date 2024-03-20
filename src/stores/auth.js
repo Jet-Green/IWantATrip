@@ -1,10 +1,12 @@
 import { defineStore } from 'pinia'
 import UserService from '../service/UserService'
+import TripService from '../service/TripService';
 import LocationService from '../service/LocationService';
 import axios from 'axios'
 
 import { render } from 'vue-email';
 import BuyTripTemplate from '../email-templates/BuyTripTemplate.vue';
+import BuyTripUserTemplate from '../email-templates/BuyTripUserTemplate.vue';
 
 export const useAuth = defineStore('auth', {
     state: () => ({
@@ -53,13 +55,36 @@ export const useAuth = defineStore('auth', {
         setUserStatus(text) {
             this.userStatus = text
         },
-        async buyTrip(tripId, bill, tripName) {
+        async buyTrip(tripId, bill) {
+            let trip = await TripService.getById(tripId)
+            trip=trip.data
+            let infToAdmins = {name:trip.name,
+                start:trip.start,
+                end:trip.end}
+            let infToUser = {name:trip.name,
+                    start:trip.start,
+                    end:trip.end,
+                    returnConditions:trip.returnConditions,
+                    description:trip.description,
+                    fullname:trip.author.fullname
+                }
             try {
-                const emailHtml = await render(BuyTripTemplate, { form: bill, tripName: tripName });
+                const emailHtmlForAdmins = await render(BuyTripTemplate, { form: bill, trip: infToAdmins });
+                const emailHtmlForUser = await render(BuyTripUserTemplate, { form: bill, trip: infToUser});
 
-                let response = await UserService.buyTrip(tripId, bill, emailHtml)
+                let response = await UserService.buyTrip(tripId, bill, emailHtmlForAdmins, emailHtmlForUser)
                 this.user.boughtTrips.push(response.data)
                 return response
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async payTinkoffBill(bill, tinkoffData, tripName, author) {
+            try {
+                const emailHtml = await render(BuyTripTemplate, { form: bill, tripName });
+
+                let response = await UserService.payTinkoffBill({ billId: bill._id, tinkoffData, emailHtml, author })
+                console.log(response);
             } catch (error) {
                 console.log(error);
             }

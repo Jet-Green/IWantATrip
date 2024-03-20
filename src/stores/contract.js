@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
-// import { message } from 'ant-design-vue';
+import { message } from 'ant-design-vue';
 import ContractService from '../service/ContractService.js'
+import tinkoffPlugin from '../plugins/tinkoff.js'
 
 export const useContract = defineStore('contract', {
     state: () => ({
@@ -10,8 +11,18 @@ export const useContract = defineStore('contract', {
     },
     actions: {
         async createContract(newContract, userEmail) {
-            let res = await ContractService.createContract(newContract, userEmail)
-            return res
+            let tinkoffRes = await tinkoffPlugin.registerShop(newContract)
+            console.log(tinkoffRes);
+            if (tinkoffRes.status != '200') {
+                message.config({ duration: 10 });
+                message.error({ content: tinkoffRes.data.errors });
+                return
+            }
+
+            newContract.shopInfo = tinkoffRes.data
+
+            let response = await ContractService.createContract(newContract, userEmail)
+            return response
         },
         async getAll() {
             let res = await ContractService.getAll()
@@ -19,6 +30,12 @@ export const useContract = defineStore('contract', {
             this.contracts = res.data
 
             return res
+        },
+        async addContractEmail(contractId, contractEmail) {
+            return await ContractService.addContractEmail({ contractId, contractEmail })
+        },
+        async deleteContractEmail(contractId, contractEmail) {
+            return await ContractService.deleteContractEmail(contractId, contractEmail)
         }
     }
 })

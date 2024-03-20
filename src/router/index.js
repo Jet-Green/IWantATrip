@@ -27,6 +27,11 @@ const router = createRouter({
       // component: TripsPage,
     },
     {
+      path: '/catalog',
+      name: 'CatalogPage',
+      component: () => import('../components/CatalogList.vue'),
+    },
+    {
       path: '/company-info-page',
       name: 'CompanyInfoPage',
       component: () => import('../views/CompanyInfoPage.vue'),
@@ -55,12 +60,49 @@ const router = createRouter({
 
         if (!userStore.isAuth)
           return '/auth'
+
+        if (!userStore.user.tinkoffContract?._id) {
+          localStorage.setItem('fallbackMessage', JSON.stringify({ subtitle: 'Нужно заключить договор с платформой, чтобы создать тур', title: "Нет договора с \"Города и Веси\"" }))
+          return '/fourothree'
+        }
+      }
+    },
+    {
+      path: '/create-catalog-trip',
+      name: 'CreateCatalogTrip',
+      component: () => import('../views/CreateCatalogTrip.vue'),
+      beforeEnter: async (to, from) => {
+        let userStore = useAuth()
+        if (!localStorage.getItem('token') || !userStore.isAuth)
+          await userStore.checkAuth()
+
+        if (!userStore.isAuth)
+          return '/auth'
+
+        if (!userStore.user.tinkoffContract?._id) {
+          localStorage.setItem('fallbackMessage', JSON.stringify({ subtitle: 'Нужно заключить договор с платформой, чтобы создать тур', title: "Нет договора с \"Города и Веси\"" }))
+          return '/fourothree'
+        }
       }
     },
     {
       path: '/copy-trip',
       name: 'CopyTrip',
       component: () => import('../views/CopyTrip.vue'),
+      beforeEnter: async (to, from) => {
+        let userStore = useAuth()
+        if (!localStorage.getItem('token') || !userStore.isAuth)
+          await userStore.checkAuth()
+
+        if (!userStore.isAuth)
+          return '/auth'
+      }
+    },
+
+    {
+      path: '/catalog-to-active',
+      name: 'CatalogTripToActive',
+      component: () => import('../views/CatalogTripToActive.vue'),
       beforeEnter: async (to, from) => {
         let userStore = useAuth()
         if (!localStorage.getItem('token') || !userStore.isAuth)
@@ -110,6 +152,11 @@ const router = createRouter({
       path: '/trip',
       name: 'TripInfoPage',
       component: () => import('../views/TripInfoPage.vue')
+    },
+    {
+      path: '/catalog-trip',
+      name: 'CatalogInfoPage',
+      component: () => import('../views/CatalogInfoPage.vue')
     },
     {
       path: '/watch',
@@ -233,7 +280,11 @@ const router = createRouter({
               path: 'created-archived-trips',
               component: () => import('../components/_cabinet/ArchivedTrips.vue'),
             },
-         
+            {
+              path: 'catalog-trips',
+              component: () => import('../components/_cabinet/CatalogTrips.vue'),
+            },
+
           ]
         },
         {
@@ -251,6 +302,10 @@ const router = createRouter({
         {
           path: 'purchased-trips',
           component: () => import('../components/_cabinet/PurchasedTrips.vue'),
+        },
+        {
+          path: 'bought-trips',
+          component: () => import('../components/_cabinet/BoughtTrips.vue')
         },
         {
           path: 'my-companions',
@@ -282,6 +337,27 @@ const router = createRouter({
             {
               path: 'not-moderated-trips',
               component: () => import('../components/admin/NotModeratedTrips.vue'),
+            },
+          ]
+        },
+        {
+          path: 'catalog-trips-moderation/',
+          name: 'CatalogTripsModeration',
+          component: () => import('../components/admin/CatalogTripsModeration.vue'),
+          beforeEnter: () => {
+            let userStore = useAuth()
+            if (!userStore.user?.roles.includes('admin')) {
+              return false
+            }
+          },
+          children: [
+            {
+              path: 'rejected',
+              component: () => import('../components/admin/catalog/Rejected.vue')
+            },
+            {
+              path: 'on-moderation',
+              component: () => import('../components/admin/catalog/OnModeration.vue')
             },
           ]
         },
@@ -397,6 +473,19 @@ const router = createRouter({
       }
     },
     {
+      path: '/catalog-trip-moderation',
+      name: 'CatalogTripModeration',
+      component: () => import('../components/admin/CatalogTripModeration.vue'),
+      beforeEnter: async () => {
+        let userStore = useAuth()
+        if (!localStorage.getItem('token') || !userStore.isAuth)
+          await userStore.checkAuth()
+        if (!userStore.user?.roles.includes('admin')) {
+          return false
+        }
+      }
+    },
+    {
       path: '/reg',
       name: 'RegForm',
       component: () => import('../components/RegForm.vue')
@@ -434,6 +523,11 @@ const router = createRouter({
       name: 'Contacts',
       component: () => import('../views/Contacts.vue')
     },
+    {
+      path: '/fourothree',
+      name: 'FourOThree',
+      component: () => import('../views/fallbacks/403.vue')
+    }
   ],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {

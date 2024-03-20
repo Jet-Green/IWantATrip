@@ -20,11 +20,7 @@ let handleScroll = async () => {
   }
 
   if (triggerHeight == wrapper.value.scrollHeight) {
-    await tripStore.fetchTrips(
-      tripStore?.tripFilter.query,
-      tripStore?.tripFilter.start,
-      tripStore?.tripFilter.end,
-      tripStore?.tripFilter.type)
+    await tripStore.fetchTrips()
     isRefreshing.value = false
   }
 
@@ -47,7 +43,7 @@ onMounted(async () => {
 </script>
 <template>
   <div>
-    <BackButton />
+    <BackButton :backRoute="{ path: '/' }" />
     <div class="wrapper" ref="wrapper">
       <a-row type="flex" justify="center">
         <a-col :xs="22" :lg="16">

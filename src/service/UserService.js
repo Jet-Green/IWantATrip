@@ -7,8 +7,11 @@ export default {
     async forgotPassword(email) {
         return $api.post('/auth/forgot-password', { 'email': email })
     },
-    async buyTrip(tripId, bill, emailHtml) {
-        return $api.post(`/trips/buy-trip?_id=${tripId}`, { bill, emailHtml })
+    async buyTrip(tripId, bill, emailHtmlForAdmins, emailHtmlForUser) {
+        return $api.post(`/trips/buy-trip?_id=${tripId}`, { bill, emailHtmlForAdmins, emailHtmlForUser})
+    },
+    payTinkoffBill(body) {
+        return $api.post(`/trips/pay-tinkoff`, body)
     },
     async registration(data) {
         return $api.post('/auth/registration', data)
@@ -27,7 +30,7 @@ export default {
         return $api.post('/add-feedback', feedbackAndEmail)
     },
     async cancelTrip(bill_id, user_id) {
-        return $api.post('/auth/cancel-trip', {bill_id, user_id})
+        return $api.post('/auth/cancel-trip', { bill_id, user_id })
     },
     addTripCalc(userId, tripCalc) {
         return $api.post('/auth/add-trip-calc', { userId, tripCalc })

@@ -48,6 +48,8 @@ let addTransportForm = ref({
 })
 let userComment = ref('')
 
+let checked = ref(false)
+
 const clearData = (dataString) => {
     let date = 0
     if (dataString.length == 13) {
@@ -214,6 +216,10 @@ function addToDeleteTransports(name) {
     transportToDelete.value.push(name)
 }
 
+async function moveToCatalog(_id) {
+    await tripStore.moveToCatalog(_id)
+}
+
 watch(locationSearchRequest, async (newValue, oldValue) => {
     if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
         var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
@@ -281,6 +287,7 @@ watch(dates, () => {
     }
 }, { deep: true })
 onMounted(async () => {
+    checked.value = trip.value.isCatalog
     if (!appStateStore.appState[0]?.transport) {
         await appStateStore.refreshState()
     }
@@ -293,9 +300,12 @@ onMounted(async () => {
 <template>
     <div v-if="trip._id">
         <a-card class="card" hoverable :class="[trip.isHidden ? 'overlay' : '']">
-            <div style="text-align:center">
-                {{ trip.name }}
-
+            <div class="d-flex">
+                <div style="width:100%;text-align:center">{{ trip.name }}
+                </div>
+                <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="moveToCatalog(trip._id)">
+                    <span class="mdi mdi-send" style="cursor: pointer; font-size: 20px; color: #245159;"></span>
+                </a-popconfirm>
             </div>
             <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
             <div v-if="trip.partner">
@@ -342,7 +352,8 @@ onMounted(async () => {
                 </span>
                 <span class="mdi mdi-map-marker-plus-outline" style="cursor: pointer"
                     v-if="actions.includes('addLocation') && !trip.parent" @click="addLocationDialog = true"></span>
-                <span class="mdi mdi-email-outline" v-if="trip.moderationMessage && actions.includes('msg') && !trip.parent"
+                <span class="mdi mdi-email-outline"
+                    v-if="trip.moderationMessage && actions.includes('msg') && !trip.parent"
                     @click="showMessage = !showMessage"></span>
                 <span v-if="actions.includes('editComment') && !trip.parent" class="mdi mdi-comment-edit-outline"
                     @click="editCommentDialog = !editCommentDialog; userComment = trip.userComment"></span>
@@ -364,8 +375,8 @@ onMounted(async () => {
             <a-row :gutter="[16, 16]" v-for="date of dates">
                 <a-col :span="12">
                     Дата начала
-                    <a-date-picker style="width: 100%" v-model:value="date.start" placeholder="Начало" :locale="ruLocale"
-                        :format="dateFormatList" />
+                    <a-date-picker style="width: 100%" v-model:value="date.start" placeholder="Начало"
+                        :locale="ruLocale" :format="dateFormatList" />
                 </a-col>
 
                 <a-col :span="12">

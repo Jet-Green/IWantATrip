@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted, computed, getCurrentInstance, watch } from "vue";
 
+import TinkoffLogo from '../../assets/images/tinkofflogo.svg'
+
 import tinkoffPlugin from '../../plugins/tinkoff'
 
 import { useRoute } from "vue-router";
@@ -214,6 +216,7 @@ async function updateTripInfo() {
             let res = await tinkoffPlugin.checkPayment(b.tinkoff.paymentId, b.tinkoff.token)
             if (res.data.Status == "CONFIRMED") {
                 b.payment.amount = Number(res.data.Amount / 100)
+                b.purchasedByTinkoff = true
             }
         }
     }
@@ -223,8 +226,8 @@ async function updateTripInfo() {
 async function editUserComment() {
     let response = await tripStore.editUserComment({ billId: currentBill.value._id, comment: userComment.value })
     if (response.status == 200) {
-        await updateTripInfo()
         editUserCommentDialog.value = false
+        await updateTripInfo()
     }
 }
 
@@ -340,11 +343,19 @@ onMounted(async () => {
                                     </a-popconfirm>
                                     <span class="mdi mdi-account-plus-outline ml-4"
                                         @click="showAddTouristsDialog(BILL)"></span>
-                                    <span class="mdi mdi-comment-edit-outline ml-4"
+                                    <a-badge :dot="true" v-if="BILL.userComment?.length > 0">
+                                        <span class="mdi mdi-18px mdi-comment-edit-outline ml-4"
+                                            @click="showEditUserCommentDialog(BILL)"></span>
+                                    </a-badge>
+                                    <span v-else class="mdi mdi-18px mdi-comment-edit-outline ml-4"
                                         @click="showEditUserCommentDialog(BILL)"></span>
+
                                 </div>
 
-                                <b>
+                                <b v-if="BILL.purchasedByTinkoff">
+                                    <img :src="TinkoffLogo" class="tinkoff-logo">
+                                </b>
+                                <b v-else>
                                     <span v-if="billTotal(BILL) == BILL.payment.amount" style="color: #bcc662">
                                         <span class="mdi mdi-check-all" style="font-size: 20px"></span>
                                         оплачен
@@ -420,7 +431,7 @@ onMounted(async () => {
                 }}
                 руб.
             </div>
-            <a-input v-model:value="userComment" placeholder="Комментарий к чеку" class="mt-12 mb-12" />
+            <a-textarea v-model:value="userComment" placeholder="Комментарий к чеку" class="mt-12 mb-12" />
 
             <a-col :span="24" class="d-flex justify-center mt-8">
                 <a-button @click="editUserCommentDialog = false">отмена</a-button>
@@ -541,5 +552,9 @@ onMounted(async () => {
         </a-modal>
     </a-row>
 </template>
-
-<style scoped></style>
+<style scoped lang="scss">
+.tinkoff-logo {
+    height: 20px;
+    width: 90px;
+}
+</style>
