@@ -148,7 +148,7 @@ onMounted(() => {
         </a-col>
 
         <a-col :span="24" :md="12" class="d-flex align-center space-between">
-          <div class="d-flex direction-column" style="width:70%">
+          <div class="d-flex direction-column" style="width: 100%">
             <div style="font-size:10px; line-height:10px">даты</div>
             <a-range-picker v-model:value="time" :locale="ruLocale" :placeholder="['начало', 'конец']"
               inputmode='none' />
