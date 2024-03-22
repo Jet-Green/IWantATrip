@@ -27,10 +27,7 @@ async function submit() {
                         <a-input v-model:value="form.topic" placeholder="Тема" :maxlength="50" show-count></a-input>
                         
                         <div class="mt-8">
-                            <QuillEditor theme="snow" v-model:content="form.description" contentType="html" :toolbar="[
-                                ['bold', 'italic', 'underline'],
-                                ['link']
-                            ]" />
+                            <a-textarea v-model:value="form.description" placeholder="Описание"></a-textarea>
                         </div>
 
                         <a-button @click="submit" class="lets_go_btn mt-12" type="primary">Отправить</a-button>
