@@ -637,7 +637,7 @@ onMounted(async () => {
                                 :disabled="isNoPlaces">
                                 Заказать
                             </a-button>
-                            <div class="buy-btn">
+                            <div class="buy-btn" v-if="!trip.partner">
                                 <div>
                                     <a-button html-type="submit" :disabled="isNoPlaces" @click="buyNow = true" type="primary" class="lets_go_btn">
                                         оплатить
