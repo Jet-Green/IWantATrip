@@ -15,13 +15,13 @@ const appStore = useAppState();
 let query = ref("");
 let type = ref("");
 
-let tripTypes=ref("")
+let tripTypes = ref("")
 
 // let router = useRouter();
 
-function find (){
+function find() {
     tripStore.catalogCursor = 1
-    
+
     query.value = query.value.trim()
     localStorage.setItem("CatalogTripQuery", query.value)
     localStorage.setItem("CatalogTripType", type.value)
@@ -51,10 +51,10 @@ function resetForm() {
     find()
 }
 
-onMounted(async() => {
+onMounted(async () => {
     query.value = localStorage.getItem("CatalogTripQuery") ?? '';
     type.value = localStorage.getItem("CatalogTripType") ?? '';
-    tripTypes=appStore.appState[0].tripType
+    tripTypes = appStore.appState[0].tripType
 
     if (props.search) {
         query.value = props.search;
@@ -65,43 +65,29 @@ onMounted(async() => {
 </script>
 <template>
     <a-row type="flex" justify="center" class="section_bg">
-        <a-col :xs="22" :lg="12">
+        <a-col :xs="22" :lg="16">
 
             <a-row :gutter="[8, 4]" class="d-flex justify-center align-center flex-wrap">
-                <a-col :span="12" :md="6" class="d-flex direction-column">
+                <a-col :span="12" :md="12" class="d-flex direction-column">
                     <div for="search" style="font-size:10px; line-height:10px; ">искать</div>
                     <a-input v-model:value="query" placeholder="сочи" name="search" style="z-index: 0; width:100%" />
 
                 </a-col>
 
-                <a-col :span="12" :md="6" class="d-flex direction-column">
+                <a-col :span="12" :md="12" class="d-flex direction-column">
                     <div style="font-size:10px; line-height:10px">вид тура</div>
                     <a-select v-model:value="type">
                         <a-select-option value=""></a-select-option>
-                        <a-select-option placeholder="Tип тура"
-                            v-for="tripType in tripTypes" :value="tripType">{{
-                                tripType
-                            }}</a-select-option>
+                        <a-select-option placeholder="Tип тура" v-for="tripType in tripTypes" :value="tripType">{{tripType}}</a-select-option>
                     </a-select>
                 </a-col>
-
-                <a-col :span="24" :md="12" class="d-flex align-center justify-end">
-                    <div class="pa-8">
-                        <a-tooltip title="Искать">
-                            <a-button type="primary" shape="circle" @click="find" class="mr-4">
-                                <span class=" mdi mdi-magnify">
-                                </span>
-                            </a-button>
-                        </a-tooltip>
-                        <a-tooltip title="Очистить">
-                            <a-button shape="circle" @click="resetForm">
-                                <span class=" mdi mdi-close">
-                                </span>
-
-                            </a-button>
-                        </a-tooltip>
-                    </div>
-
+                <a-col :span="24" class="d-flex justify-center mt-16 mb-16">
+                    <a-button type="primary" shape="round" @click="find" class="mr-4">
+                        найти
+                    </a-button>
+                    <a-button shape="round" @click="resetForm">
+                        очистить
+                    </a-button>
                 </a-col>
 
 
