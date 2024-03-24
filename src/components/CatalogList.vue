@@ -53,7 +53,7 @@ onMounted(async () => {
                     <p><i>можно организовать в удобные даты</i> </p>
                 </a-col>
             </a-row>
-            <!-- <CatalogFilter :search="route.query.search" /> -->
+            <CatalogFilter :search="route.query.search" />
             <a-row class="d-flex justify-center">
                 <a-col :xs="22" :lg="16">
                     <a-row :gutter="[16, 18]" class="d-flex justify-center mt-8 pb-24" v-if="tripStore.catalog">

@@ -14,9 +14,10 @@ const appStore = useAppState();
 
 let query = ref("");
 let type = ref("");
+
 let tripTypes=ref("")
 
-let router = useRouter();
+// let router = useRouter();
 
 function find (){
     tripStore.catalogCursor = 1
@@ -25,17 +26,19 @@ function find (){
     localStorage.setItem("CatalogTripQuery", query.value)
     localStorage.setItem("CatalogTripType", type.value)
 
+    tripStore.cursor = 1
+    tripStore.catalog = []
+
     tripStore.catalogFilter.query = query.value
     tripStore.catalogFilter.type = type.value
 
-    tripStore.fetchCatalogTrips(
-        query.value,
-        type.value,
-    );
+    tripStore.fetchCatalogTrips();
 }
 
 
 function resetForm() {
+    tripStore.catalogFilter.query = ""
+    tripStore.catalogFilter.type = ""
     query.value = '';
     type.value = '';
 
@@ -51,7 +54,7 @@ function resetForm() {
 onMounted(async() => {
     query.value = localStorage.getItem("CatalogTripQuery") ?? '';
     type.value = localStorage.getItem("CatalogTripType") ?? '';
-    tripTypes=await appStore.appState[0].tripType
+    tripTypes=appStore.appState[0].tripType
 
     if (props.search) {
         query.value = props.search;
