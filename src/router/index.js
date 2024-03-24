@@ -524,6 +524,11 @@ const router = createRouter({
       component: () => import('../views/Contacts.vue')
     },
     {
+      path: '/tinkoff-payment',
+      name: 'TinkoffPayment',
+      component: () => import('../views/TinkoffPayment.vue')
+    },
+    {
       path: '/fourothree',
       name: 'FourOThree',
       component: () => import('../views/fallbacks/403.vue')
