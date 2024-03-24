@@ -7,10 +7,21 @@ import { useIdea } from '../stores/idea'
 
 let form = ref({
     topic: '',
-    description: ''
+    offer: '',
+    date: '',
+    tripRoute: '',
+    maxPeople: '',
+    description: '',
 })
 
+const quill = ref(null);
+
 async function submit() {
+    // form.value.description=form.value.description.replaceAll('<p>','')
+    // form.value.description=form.value.description.replaceAll('<span','')
+    // form.value.description=form.value.description.replaceAll('</span>','')
+    // form.value.description=form.value.description.replaceAll('</p>','')
+    // form.value.description=form.value.description.replaceAll('<br>','')
     await useIdea().createIdea(form.value)
 }
 </script>
@@ -26,6 +37,18 @@ async function submit() {
                     <a-col :span="24" :lg="18">
                         <a-input v-model:value="form.topic" placeholder="Тема" :maxlength="50" show-count></a-input>
                         
+                        <div class="mt-8">
+                            <a-textarea v-model:value="form.offer" placeholder="Краткое описание"></a-textarea>
+                        </div>
+                        <div class="mt-8">
+                            <a-textarea v-model:value="form.date" placeholder="Примерная дата"></a-textarea>
+                        </div>
+                        <div class="mt-8">
+                            <a-textarea v-model:value="form.tripRoute" placeholder="Маршрут"></a-textarea>
+                        </div>
+                        <div class="mt-8">
+                            <a-textarea v-model:value="form.maxPeople" placeholder="Количество людей"></a-textarea>
+                        </div>                        
                         <div class="mt-8">
                             <a-textarea v-model:value="form.description" placeholder="Описание"></a-textarea>
                         </div>
