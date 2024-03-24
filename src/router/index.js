@@ -62,7 +62,7 @@ const router = createRouter({
           return '/auth'
 
         if (!userStore.user.tinkoffContract?._id) {
-          localStorage.setItem('fallbackMessage', JSON.stringify({ subtitle: 'Нужно заключить договор с платформой, чтобы создать тур', title: "Нет договора с \"Города и Веси\"" }))
+          localStorage.setItem('fallbackMessage', JSON.stringify({ subtitle: 'Нужно заключить договор с платформой, чтобы создать тур', title: "Нет договора с \"Города и Веси\"", may_send_idea: true }))
           return '/fourothree'
         }
       }
@@ -80,7 +80,7 @@ const router = createRouter({
           return '/auth'
 
         if (!userStore.user.tinkoffContract?._id) {
-          localStorage.setItem('fallbackMessage', JSON.stringify({ subtitle: 'Нужно заключить договор с платформой, чтобы создать тур', title: "Нет договора с \"Города и Веси\"" }))
+          localStorage.setItem('fallbackMessage', JSON.stringify({ subtitle: 'Нужно заключить договор с платформой, чтобы создать тур', title: "Нет договора с \"Города и Веси\"", may_send_idea: true }))
           return '/fourothree'
         }
       }
@@ -98,7 +98,19 @@ const router = createRouter({
           return '/auth'
       }
     },
+    {
+      path: '/send-idea',
+      name: 'SendIdea',
+      component: () => import('../views/SendIdea.vue'),
+      beforeEnter: async (to, from) => {
+        let userStore = useAuth()
+        if (!localStorage.getItem('token') || !userStore.isAuth)
+          await userStore.checkAuth()
 
+        if (!userStore.isAuth)
+          return '/auth'
+      }
+    },
     {
       path: '/catalog-to-active',
       name: 'CatalogTripToActive',
