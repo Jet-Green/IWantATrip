@@ -71,9 +71,9 @@ import MadeWithLove from '../assets/images/madewithlove.svg'
 
       <a-row type="flex" justify="center" class="mt-16">
         <a-col>
-          <a href="https://qbit-club.com/" target="_blank">
-            <!-- <img :src="MadeWithLove" style="height: 40px; user-select: none;"> -->
-            <b> Сделано в Кубит </b>
+          <a href="https://qbit-club.com/" target="_blank" style="user-select: none;">
+            <img :src="MadeWithLove" style="height: 60px;">
+            <!-- <b> Сделано в Кубит </b> -->
           </a>
         </a-col>
       </a-row>
