@@ -136,7 +136,7 @@ onMounted(() => {
           <a-input v-model:value="query" placeholder="сочи" name="search" style="z-index: 0; width:100%" />
         </a-col>
 
-        <a-col :span="12" :md="6" class="d-flex direction-column">
+        <a-col :span="12" :md="6" class="d-flex direction-column" v-if="appStore.appState">
           <div style="font-size:10px; line-height:10px">вид тура</div>
           <a-select v-model:value="type">
             <a-select-option value=""></a-select-option>

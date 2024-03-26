@@ -107,7 +107,7 @@ onMounted(async () => {
 <template>
     <a-row v-if="loading">
         <a-col :span="24" class="d-flex justify-center mt-16">
-            <a-spin size="large" />
+            <img src="../../assets/images/founddog.webp" alt="" style="height: 150px;">
         </a-col>
     </a-row>
     <a-row v-else :gutter="[8, 8]">
@@ -118,9 +118,7 @@ onMounted(async () => {
                         <div>
                             {{ BILL.tripId?.name }}
                         </div>
-                        <b>{{
-                            clearData(BILL?.date)
-                        }}</b>
+                        <b>{{ clearData(BILL?.date) }}</b>
                     </div>
                     <div style="color:#ff6600"><span v-if="BILL?.isWaitingList"> Лист ожидания</span></div>
                     <div> </div>
@@ -133,17 +131,13 @@ onMounted(async () => {
 
                     <div class="d-flex justify-end">
                         <span>Итого: </span>
-                        {{
-                            billTotal(BILL)
-                        }}
+                        {{ billTotal(BILL) }}
                         руб.
 
                     </div>
                     <div class="d-flex justify-end">
                         <span>Оплачено: </span>
-                        {{
-                            BILL.payment.amount
-                        }}
+                        {{ BILL.payment.amount }}
                         руб.
                     </div>
                     <div v-for="doc in BILL.payment?.documents" class="d-flex justify-end">

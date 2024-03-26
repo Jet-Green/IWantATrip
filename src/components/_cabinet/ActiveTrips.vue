@@ -68,7 +68,7 @@ onMounted(async () => {
         <a-input v-model:value="query" placeholder="поиск" />
     </div>
     <a-col :span="24" v-if="loading" class="d-flex justify-center">
-        <a-spin size="large" />
+        <img src="../../assets/images/founddog.webp" alt="" style="height: 150px;">
     </a-col>
     <a-col :span="24" v-else>
         <a-row :gutter="[8, 8]" class="mt-8" v-if="getTripsInWork.length > 0">

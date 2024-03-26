@@ -83,7 +83,7 @@ onMounted(async () => {
             <a-collapse v-model:activeKey="activeKey" ghost>
                 <a-collapse-panel key="1" header="Активные">
                     <a-col :span="24" v-if="loading" class="d-flex justify-center">
-                        <a-spin size="large" />
+                        <img src="../../assets/images/founddog.webp" alt="" style="height: 150px;">
                     </a-col>
                     <a-col :span="24" v-else>
                         <a-row :gutter="[8, 8]" class="mt-8" v-if="moderatedTrips.length > 0">
@@ -98,7 +98,7 @@ onMounted(async () => {
                 </a-collapse-panel>
                 <a-collapse-panel key="2" header="На модерации">
                     <a-col :span="24" v-if="loading" class="d-flex justify-center">
-                        <a-spin size="large" />
+                        <img src="../../assets/images/founddog.webp" alt="" style="height: 150px;">
                     </a-col>
                     <a-col :span="24" v-else>
                         <a-row :gutter="[8, 8]" class="mt-8" v-if="notModeratedTrips.length > 0">
