@@ -1,5 +1,6 @@
 <script setup>
 import { QuillEditor } from '@vueup/vue-quill';
+import { useRouter } from "vue-router";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 import { ref, watch } from 'vue';
 import BackButton from '../components/BackButton.vue';
@@ -14,15 +15,24 @@ let form = ref({
     description: '',
 })
 
+const router = useRouter();
 const quill = ref(null);
 
+function clearForm() {
+    Object.assign(form, {
+    topic: '',
+    offer: '',
+    date: '',
+    tripRoute: '',
+    maxPeople: '',
+    description: '',
+    })
+}
+
 async function submit() {
-    // form.value.description=form.value.description.replaceAll('<p>','')
-    // form.value.description=form.value.description.replaceAll('<span','')
-    // form.value.description=form.value.description.replaceAll('</span>','')
-    // form.value.description=form.value.description.replaceAll('</p>','')
-    // form.value.description=form.value.description.replaceAll('<br>','')
     await useIdea().createIdea(form.value)
+    router.push("/");
+    clearForm()
 }
 </script>
 
