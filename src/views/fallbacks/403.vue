@@ -1,6 +1,7 @@
 <script setup>
 import { onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import BackButton from '../../components/BackButton.vue';
 
 let router = useRouter()
 let title = "403"
@@ -14,15 +15,16 @@ try {
 } catch (error) {
     console.log(error);
 }
-onUnmounted(() => {
-    localStorage.removeItem('fallbackMessage')
-})
 </script>
 <template>
-    <a-result status="403" :title="title" :sub-title="subtitle">
-        <template #extra>
-            <a-button @click="router.back()">Назад</a-button>
-            <a-button v-if="may_send_idea" @click="router.push('/send-idea')">Предложить идею</a-button>
-        </template>
-    </a-result>
+    <div>
+        <BackButton :back-route="{ path: '/' }" />
+        <a-result status="403" :title="title" :sub-title="subtitle">
+            <template #extra>
+                <a-button v-if="may_send_idea" @click="router.push('/send-idea')" class="lets_go_btn" type="primary"
+                    size="large" shape="round">Предложить идею</a-button>
+                <a-button size="large" shape="round">заключить договор</a-button>
+            </template>
+        </a-result>
+    </div>
 </template>
