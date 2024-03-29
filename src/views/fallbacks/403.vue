@@ -21,9 +21,12 @@ try {
         <BackButton :back-route="{ path: '/' }" />
         <a-result status="403" :title="title" :sub-title="subtitle">
             <template #extra>
-                <a-button v-if="may_send_idea" @click="router.push('/send-idea')" class="lets_go_btn" type="primary"
-                    size="large" shape="round">Предложить идею</a-button>
-                <a-button size="large" shape="round">заключить договор</a-button>
+                <div class="d-flex flex-wrap justify-center ">
+                    <a-button v-if="may_send_idea" @click="router.push('/send-idea')" class="lets_go_btn ma-4" type="primary"
+                        size="large" shape="round">Предложить идею</a-button>
+                    <a-button size="large" shape="round" class=" ma-4">заключить договор</a-button>
+                </div>
+
             </template>
         </a-result>
     </div>
