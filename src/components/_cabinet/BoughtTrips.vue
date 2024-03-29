@@ -58,17 +58,15 @@ async function cancelTrip(bill_id, user_id) {
     if (res.status == 200)
         await updateBought()
 }
-function openBuyDialog(cardId) {
+async function buyTrip(cardId) {
     for (let b of bought.value) {
         if (b._id == cardId) {
             currentBill.value = b
             break
         }
     }
-    console.log(currentBill.value);
+    // console.log(currentBill.value);
     buyDialog.value = true
-}
-async function buyTrip() {
     const orderId = Date.now().toString()
     let { data, token, success } =
         await tinkoffPlugin.initPayment(orderId, currentBill.value.cart, userStore.user.email, currentBill.value.tripId.tinkoffContract, currentBill.value.tripId.name)
@@ -152,7 +150,7 @@ onMounted(async () => {
                             style="display: flex; align-items: center">
                             <div class="buy-btn">
                                 <div>
-                                    <a-button @click="openBuyDialog(BILL._id)" type="primary" class="lets_go_btn">
+                                    <a-button @click="buyTrip(BILL._id)" type="primary" class="lets_go_btn">
                                         оплатить
                                     </a-button>
                                 </div>
@@ -172,7 +170,7 @@ onMounted(async () => {
 
         </a-col>
     </a-row>
-    <a-modal v-model:open="buyDialog" :footer="null">
+    <!-- <a-modal v-model:open="buyDialog" :footer="null">
         <form @submit.prevent="buyTrip" class="mt-16">
             <a-row :gutter="[4, 8]">
                 <a-col :span="24">
@@ -227,7 +225,7 @@ onMounted(async () => {
                 </a-col>
             </a-row>
         </Form>
-    </a-modal>
+    </a-modal> -->
 </template>
 <style lang="scss" scoped>
 .buy-btn {

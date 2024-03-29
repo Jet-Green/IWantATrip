@@ -30,7 +30,6 @@ let query = reactive({
 async function find() {
   query.strQuery = query.strQuery.trim()
   if (query.strQuery.length == 0 || query.strQuery.length > 2) {
-    console.log('aboba');
     await companionStore.fetchCompanions(query);
   }
 }
