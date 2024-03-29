@@ -1,5 +1,5 @@
 <script setup>
-import MadeWithLove from '../assets/images/madewithlove.svg'
+// import MadeWithLove from '../assets/images/madewithlove.svg'
 
 </script>
 
@@ -72,7 +72,7 @@ import MadeWithLove from '../assets/images/madewithlove.svg'
       <a-row type="flex" justify="center" class="mt-16">
         <a-col>
           <a href="https://qbit-club.com/" target="_blank" style="user-select: none;">
-            <img :src="MadeWithLove" style="height: 60px;">
+            <img src="../assets/images/madewithlove.webp" style="height: 60px;">
             <!-- <b> Сделано в Кубит </b> -->
           </a>
         </a-col>
