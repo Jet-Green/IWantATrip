@@ -212,14 +212,15 @@ async function submit() {
 }
 </script>
 <template>
-  <a-row>
-    <a-col :span="24">
-      <h3>Договоры</h3>
+  
+      <h2>Данные для договора</h2>
+      <p style="font-size:10px">Внимательно и аккуратно заполните форму</p>
+
       <form @submit.prevent="submit" class="ma-16">
         <a-row :gutter="[16, 16]">
           <a-col :span="24">
-            fullName
-            <a-input placeholder="Название" v-model:value="contractForm.fullName"></a-input>
+            Полное наименование
+            <a-input placeholder="Общество с ограниченной ответственностью 'Огонёк'" v-model:value="contractForm.fullName"></a-input>
           </a-col>
           <a-col :span="12">
             billingDescriptor
@@ -408,6 +409,5 @@ async function submit() {
           </a-row>
         </a-row>
       </form>
-    </a-col>
-  </a-row>
+
 </template>

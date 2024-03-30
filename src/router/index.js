@@ -439,6 +439,7 @@ const router = createRouter({
             }
           }
         },
+     
         {
           path: "admin-contracts-list",
           name: 'AdminContracts',
@@ -544,7 +545,14 @@ const router = createRouter({
       path: '/fourothree',
       name: 'FourOThree',
       component: () => import('../views/fallbacks/403.vue')
-    }
+    },
+    {
+      path: "/contract-create",
+      name: 'ContractCreate',
+      component: () => import('../components/forms/ContractCreate.vue'),
+     
+    },
+
   ],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {

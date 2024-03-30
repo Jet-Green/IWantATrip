@@ -24,7 +24,7 @@ try {
                 <div class="d-flex flex-wrap justify-center ">
                     <a-button v-if="may_send_idea" @click="router.push('/send-idea')" class="lets_go_btn ma-4" type="primary"
                         size="large" shape="round">Предложить идею</a-button>
-                    <a-button size="large" shape="round" class=" ma-4">заключить договор</a-button>
+                    <a-button size="large" shape="round" @click="router.push('/contract-create')" class=" ma-4">заключить договор</a-button>
                 </div>
 
             </template>
