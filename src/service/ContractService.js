@@ -1,8 +1,14 @@
 import $api from "../plugins/axios";
 
 export default {
-    createContract(newContract, userEmail) {
-        return $api.post(`/contract/create`, { contract: newContract, userEmail: userEmail })
+    deleteContract (_id) {
+        return $api.post(`/contract/delete`, { _id: _id }) 
+    },
+    registerContract (newContract, userEmail) {
+        return $api.post(`/contract/register`, { contract: newContract, userEmail: userEmail })
+    },
+    createContract(contractId,userEmail, shopInfo) {
+        return $api.post(`/contract/create`, { contractId: contractId,userEmail: userEmail, shopInfo: shopInfo })
     },
     getAll() {
         return $api.post('/contract/get-all')
@@ -12,5 +18,6 @@ export default {
     },
     deleteContractEmail(contractId, contractEmail) {
         return $api.delete(`/contract/contract-email?_id=${contractId}&email=${contractEmail}`)
-    }
+    }, 
+
 }

@@ -54,14 +54,19 @@ let info = userStore.user.fullinfo;
 
     <a-row :gutter="[5]">
       <a-col>
-        <a-button @click="router.push('/create-no-help')">
-          Создать
+        <a-button class="btn_light ma-8" @click="router.push('/create-no-help')">
+          Создать тур
         </a-button>
       </a-col>
 
       <a-col>
-        <a-button @click="router.push('/create-catalog-trip')">
+        <a-button class="btn_light ma-8" @click="router.push('/create-catalog-trip')">
           Создать тур в каталоге
+        </a-button>
+      </a-col>
+      <a-col>
+        <a-button class="btn_light ma-8" @click="router.push('/send-idea')">
+          Подать идею
         </a-button>
       </a-col>
     </a-row>

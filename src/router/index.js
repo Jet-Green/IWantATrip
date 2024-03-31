@@ -431,6 +431,7 @@ const router = createRouter({
         {
           path: "add-admin-contract",
           name: 'AddAdminContract',
+          props: true ,
           component: () => import('../components/admin/AddAdminContract.vue'),
           beforeEnter: () => {
             let userStore = useAuth()

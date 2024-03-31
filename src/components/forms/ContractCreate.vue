@@ -4,6 +4,11 @@ import { useContract } from "../../stores/contract";
 import BackButton from '../../components/BackButton.vue';
 import { useAuth } from "../../stores/auth.js";
 
+import { useRouter } from 'vue-router'
+
+
+let router = useRouter()
+
 
 let userStore = useAuth();
 
@@ -65,60 +70,10 @@ let contractForm = reactive({
   fiscalization: { company: "OrangeData" },
 });
 
-watch(LocationSearchRequest, async (newValue, oldValue) => {
-  if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
-    var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
 
-    var options = {
-      method: "POST",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: "Token " + import.meta.env.VITE_DADATA_TOKEN,
-      },
-      body: JSON.stringify({
-        query: newValue,
-        count: 5,
-        from_bound: { value: "city" },
-        to_bound: { value: "settlement" },
-      }),
-    };
-
-    let res = await fetch(url, options);
-    try {
-      let suggestions = JSON.parse(await res.text()).suggestions;
-      console.log(suggestions);
-      possibleLocations.value = [];
-      for (let s of suggestions) {
-        let location = {
-          value: s.value,
-          location: {
-            name: s.value,
-            shortName: "",
-            type: "Point",
-            coordinates: [s.data.geo_lon, s.data.geo_lat],
-          },
-        };
-
-        if (s.data.settlement) {
-          location.location.shortName = s.data.settlement;
-        } else if (s.data.city) {
-          location.location.shortName = s.data.city;
-        } else {
-          location.location.shortName = s.value;
-        }
-
-        possibleLocations.value.push(location);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-});
 
 async function addContract() {
-  let res = await contractStore.createContract(contractForm, contractEmail.value);
+  let res = await contractStore.registerContract(contractForm, contractEmail.value);
   console.log(res);
   if (res.status == 200) {
     Object.assign(contractForm, {
@@ -174,6 +129,7 @@ async function addContract() {
     });
 
     contractEmail.value = "";
+    router.push('/fourothree')
   }
 }
 const addFounders = () => {
@@ -192,22 +148,10 @@ const removeFounders = (item) => {
 };
 
 
-// function selectStartLocation(selected, item) {
-//   let index = contractForm.founders.individuals.indexOf(item);
-//   if (index !== -1) {
-//     for (let l of possibleLocations.value) {
-//       // l.value - name
-//       if (l.value == selected) {
-//         contractForm.founders.individuals[index].address = l.location;
-//         possibleLocations = [];
-//       }
-//     }
-//   }
-// }
 
 let submitCount = ref(0);
 async function submit() {
-  // await addContract();
+  await addContract();
   submitCount.value += 1;
   if (submitCount.value > 1) {
     return;
@@ -228,16 +172,16 @@ async function submit() {
 
         <form @submit.prevent="submit" class="ma-16">
           <a-row :gutter="[16, 16]">
-            <a-col :span="24">
+            <a-col :span="24" >
               Полное наименование
               <a-input placeholder="Общество с ограниченной ответственностью 'Огонёк'"
                 v-model:value="contractForm.fullName" required></a-input>
             </a-col>
-            <a-col :span="12">
+            <a-col :span="24" :md="12" >
               Отображение в выписках, латиница
               <a-input placeholder="Ogonek" v-model:value="contractForm.billingDescriptor" required></a-input>
             </a-col>
-            <a-col :span="12">
+            <a-col :span="24" :md="12">
               Краткое наименование
               <a-input placeholder="ООО 'Огонёк'" v-model:value="contractForm.name" required></a-input>
             </a-col>
@@ -318,10 +262,6 @@ async function submit() {
               <h3>Учредители <a-button @click="addFounders" shape="circle">
                   <span class="mdi mdi-plus" style="cursor: pointer"></span>
                 </a-button></h3>
-
-              //добавить добавление юрлиц
-
-
               <a-row v-for="(item, index) in contractForm.founders.individuals" :key="index" align="middle"
                 class="mb-4 d-flex" :gutter="[4, 4]">
                 <a-col :xs="22">

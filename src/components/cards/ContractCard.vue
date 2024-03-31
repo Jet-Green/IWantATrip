@@ -1,5 +1,13 @@
 <script setup>
 import { ref } from 'vue'
+import { useContract } from '../../stores/contract'
+import { useRouter } from 'vue-router'
+
+let router = useRouter()
+
+
+
+const contractStore = useContract()
 
 const props = defineProps({
     contract: Object
@@ -17,6 +25,15 @@ function addContractEmail() {
 function deleteContractEmail(email) {
     emit('deleteContractEmail', { contractEmail: email, contract })
 }
+async function deleteContract(_id) {
+    await contractStore.deleteContract(_id)
+    await contractStore.getAll()
+}
+function checkContract() {
+    contractStore.setEditingContract(contract)
+    router.push({ name: "AddAdminContract"})
+}
+
 </script>
 <template>
     <a-card class="pa-8">
@@ -25,6 +42,14 @@ function deleteContractEmail(email) {
             email пользователя
             <a-input placeholder="gorodaivesi@gmail.com" v-model:value="contractEmail"></a-input>
         </a-modal>
+
+        <div class="d-flex justify-center" v-if="!contract.hasOwnProperty('shopInfo')">
+            <a-button class="lets_go_btn ma-8" type="primary" @click="checkContract()"> Проверить договор</a-button>
+        </div>
+        <div class="d-flex justify-center" v-if="!contract.hasOwnProperty('shopInfo')">
+            <a-button class="btn_light ma-8" @click="deleteContract(contract._id)"> Удалить договор</a-button>
+        </div>
+
 
         <div>
             <b>Название: </b>{{ contract.name }}
@@ -39,34 +64,13 @@ function deleteContractEmail(email) {
             <b>ОГРН: </b>{{ contract.ogrn }}
         </div>
         <div>
-            <b>Юр. адрес: </b>{{ contract.yr_address }}
-        </div>
-        <div>
-            <b>Фактический адрес: </b>{{ contract.fact_address }}
-        </div>
-        <div>
-            <b>Р/сч: </b>{{ contract.checking_account }}
-        </div>
-        <div>
-            <b>Банк р/сч: </b>{{ contract.checking_account_bank }}
-        </div>
-        <div>
-            <b>К/сч: </b> {{ contract.cash_account }}
-        </div>
-        <div>
-            <b>Банк к/сч: </b>{{ contract.cash_account_bank }}
-        </div>
-        <div>
-            <b>БИК: </b>{{ contract.bik }}
-        </div>
-        <div>
-            <b>Телефон: </b>{{ contract.phone }}
+            <b>Телефон: </b>{{ contract.ceo.phone }}
         </div>
         <div>
             <b>Email: </b>{{ contract.email }}
         </div>
         <div>
-            <b>Директор: </b>{{ contract.director }}
+            <b>Директор: </b>{{ `${contract.ceo.firstName} ${contract.ceo.lastName} ` }}
         </div>
 
         <div>
