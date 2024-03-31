@@ -73,7 +73,7 @@ onMounted(async () => {
                                 <div class="d-flex justify-center">
                                     <img src="../assets/images/notfound.jpg" alt="" style="height: 150px;">
                                 </div>
-                                <h3>извини, я тур не нашёл</h3>
+                                <h3>я ничего не нашёл</h3>
                             </div>
                         </a-col>
                     </a-row>

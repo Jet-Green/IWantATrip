@@ -93,6 +93,7 @@ function resetForm() {
   tripStore.tripFilter.start = ""
   tripStore.tripFilter.end = ""
   tripStore.tripFilter.type = ""
+  type.value = ""
   time.value = [];
   query.value = '';
 
