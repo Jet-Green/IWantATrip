@@ -344,10 +344,10 @@ onUnmounted(() => {
         <a-input placeholder="OrangeData" v-model:value="contractForm.fiscalization.company" disabled></a-input>
       </a-col>
       <a-divider></a-divider>
-      <a-col :span="12">
+      <!-- <a-col :span="12">
         Кабинет(email) контракта
-        <a-input placeholder="fleshtur19@gmail.com" v-model:value="contractForm.userEmails[0]" disabled></a-input>
-      </a-col>
+        <a-input placeholder="fleshtur19@gmail.com" v-model:value="contractForm.userEmails[0]" ></a-input>
+      </a-col> -->
       <a-col :span="24" class="d-flex justify-center pa-16">
         <a-button class="lets_go_btn" type="primary" html-type="submit">Отправить
         </a-button>
