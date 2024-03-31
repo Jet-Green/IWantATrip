@@ -303,7 +303,7 @@ onMounted(async () => {
             <div class="d-flex">
                 <div style="width:100%;text-align:center">{{ trip.name }}
                 </div>
-                <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="moveToCatalog(trip._id)">
+                <a-popconfirm title="В каталог?" ok-text="Да" cancel-text="Нет" @confirm="moveToCatalog(trip._id)">
                     <span class="mdi mdi-send" style="cursor: pointer; font-size: 20px; color: #245159;"></span>
                 </a-popconfirm>
             </div>
