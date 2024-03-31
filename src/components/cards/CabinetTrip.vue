@@ -23,11 +23,14 @@ let appStateStore = useAppState()
 let partner = ref(trip.value.partner ?? '')
 let dates = ref([{ start: null, end: null }])
 
+const userTripCalc = ref([{ _id: '', name: 'пустой калькулятор' }, ...userStore.user?.tripCalc])
+// console.log(userTripCalc.value);
 let addDateDialog = ref(false)
 let addPartnerDialog = ref(false)
 let addLocationDialog = ref(false)
 let updateTransportDialog = ref(false)
 let editCommentDialog = ref(false)
+let calculatorDialog = ref(false)
 let possibleTransport = ref([])
 
 let showMessage = ref(false);
@@ -47,6 +50,7 @@ let addTransportForm = ref({
     // price: null
 })
 let userComment = ref('')
+let tripCalculator = ref(trip.value.calculator ? { _id: trip.value.calculator._id, name: trip.value.calculator.name } : { _id: '', name: 'пустой калькулятор' })
 
 let checked = ref(false)
 
@@ -220,6 +224,25 @@ async function moveToCatalog(_id) {
     await tripStore.moveToCatalog(_id)
 }
 
+async function setTripCalculator() {
+    if (tripCalculator.value == '' && !trip.value.calculator) {
+        return calculatorDialog.value = false
+    }
+    if (tripCalculator.value == trip.value.calculator?._id) {
+        return calculatorDialog.value = false
+    }
+    let res = await userStore.setTripCalculator(tripCalculator.value, trip.value._id);
+    if (res.status == 200) {
+        emit('updateTrip')
+        calculatorDialog.value = false
+    }
+}
+
+function goToTripCalc() {
+    localStorage.setItem("tripCalcPreview", JSON.stringify(trip.value.calculator));
+    router.push('/calc')
+}
+
 watch(locationSearchRequest, async (newValue, oldValue) => {
     if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
         var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
@@ -301,8 +324,11 @@ onMounted(async () => {
     <div v-if="trip._id">
         <a-card class="card" hoverable :class="[trip.isHidden ? 'overlay' : '']">
             <div class="d-flex">
-                <div style="width:100%;text-align:center">{{ trip.name }}
-                </div>
+                <div style="width:100%;text-align:center;">{{ trip.name }}</div>
+
+                <span class="mdi mdi-calculator"
+                    style="cursor: pointer; margin-right: 8px; font-size: 20px; color: #245159;"
+                    @click="calculatorDialog = !calculatorDialog"></span>
                 <a-popconfirm title="В каталог?" ok-text="Да" cancel-text="Нет" @confirm="moveToCatalog(trip._id)">
                     <span class="mdi mdi-send" style="cursor: pointer; font-size: 20px; color: #245159;"></span>
                 </a-popconfirm>
@@ -362,6 +388,31 @@ onMounted(async () => {
                 Замечания: {{ trip.moderationMessage }}
             </div>
         </a-card>
+        <a-modal v-model:open="calculatorDialog" title="Привязанный калькулятор" okText="Отправить" cancelText="Отмена"
+            @ok="setTripCalculator">
+
+            <a-col :span="24">
+                <div v-if="trip.calculator" class="mb-16">
+                    <span class="calc-href" @click="goToTripCalc">
+                        {{ trip.calculator.name }}
+                    </span>
+                </div>
+
+                Новый калькулятор
+                <a-select v-model:value="tripCalculator" :options="userTripCalc"
+                    :fieldNames="{ label: 'name', value: '_id' }" style="width: 100%"
+                    placeholder="Название калькулятора">
+                    <template #option="calc">
+                        <span v-if="calc._id">
+                            {{ calc.name }}
+                        </span>
+                        <span v-else style="color: #ff6600;">
+                            {{ calc.name }}
+                        </span>
+                    </template>
+                </a-select>
+            </a-col>
+        </a-modal>
         <a-modal v-model:open="editCommentDialog" title="Изменить комментарий" okText="Отправить" cancelText="Отмена"
             @ok="setUserComment(trip._id)">
             <a-row>
@@ -471,6 +522,11 @@ onMounted(async () => {
     }
 }
 
+.calc-href {
+    cursor: pointer;
+    color: #ff6600;
+    text-decoration: underline;
+}
 
 
 .overlay {

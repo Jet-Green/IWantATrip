@@ -57,20 +57,23 @@ export const useAuth = defineStore('auth', {
         },
         async buyTrip(tripId, bill) {
             let trip = await TripService.getById(tripId)
-            trip=trip.data
-            let infToAdmins = {name:trip.name,
-                start:trip.start,
-                end:trip.end}
-            let infToUser = {name:trip.name,
-                    start:trip.start,
-                    end:trip.end,
-                    returnConditions:trip.returnConditions,
-                    description:trip.description,
-                    fullname:trip.author.fullname
-                }
+            trip = trip.data
+            let infToAdmins = {
+                name: trip.name,
+                start: trip.start,
+                end: trip.end
+            }
+            let infToUser = {
+                name: trip.name,
+                start: trip.start,
+                end: trip.end,
+                returnConditions: trip.returnConditions,
+                description: trip.description,
+                fullname: trip.author.fullname
+            }
             try {
                 const emailHtmlForAdmins = await render(BuyTripTemplate, { form: bill, trip: infToAdmins });
-                const emailHtmlForUser = await render(BuyTripUserTemplate, { form: bill, trip: infToUser});
+                const emailHtmlForUser = await render(BuyTripUserTemplate, { form: bill, trip: infToUser });
 
                 let response = await UserService.buyTrip(tripId, bill, emailHtmlForAdmins, emailHtmlForUser)
                 this.user.boughtTrips.push(response.data)
@@ -193,6 +196,14 @@ export const useAuth = defineStore('auth', {
             try {
                 let res = await UserService.determineWinner()
                 return res.data
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async setTripCalculator(calcId, tripId) {
+            try {
+                let res = await UserService.setTripCalculator({ calcId, tripId })
+                return res
             } catch (error) {
                 console.log(error);
             }
