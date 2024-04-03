@@ -50,6 +50,10 @@ export const useContract = defineStore('contract', {
             let response = await ContractService.createContract(newContract._id, userEmail, shopInfo)
             return response
         },
+        async updateContract(newContract, userEmail) {
+            let tinkoffRes = await tinkoffPlugin.updateContract()
+            console.log(tinkoffRes);
+        },
         async getAll() {
             let res = await ContractService.getAll()
 

@@ -431,7 +431,7 @@ const router = createRouter({
         {
           path: "add-admin-contract",
           name: 'AddAdminContract',
-          props: true ,
+          props: true,
           component: () => import('../components/admin/AddAdminContract.vue'),
           beforeEnter: () => {
             let userStore = useAuth()
@@ -440,7 +440,18 @@ const router = createRouter({
             }
           }
         },
-     
+        // UpdateContract
+        {
+          path: "update-contract",
+          name: 'UpdateContract',
+          component: () => import('../components/admin/UpdateContract.vue'),
+          beforeEnter: () => {
+            let userStore = useAuth()
+            if (!userStore.user?.roles.includes('admin')) {
+              return false
+            }
+          }
+        },
         {
           path: "admin-contracts-list",
           name: 'AdminContracts',
@@ -551,7 +562,7 @@ const router = createRouter({
       path: "/contract-create",
       name: 'ContractCreate',
       component: () => import('../components/forms/ContractCreate.vue'),
-     
+
     },
 
   ],

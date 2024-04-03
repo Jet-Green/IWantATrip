@@ -169,4 +169,8 @@ async function registerShop(shopData) {
     console.log(res);
 }
 
-export default { initPayment, checkPayment, cancelPayment, sendClosingReceipt, registerShop }
+async function updateContract() {
+    return 'update'
+}
+
+export default { initPayment, checkPayment, cancelPayment, sendClosingReceipt, registerShop, updateContract }
