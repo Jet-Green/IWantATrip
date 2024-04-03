@@ -109,7 +109,7 @@ function submit() {
     form.value.description = description.value;
     form.value.isModerated = false
     form.value.rejected = false
-    if (form.value.calculator?.length == 0)
+    if (form.value.calculator?.length == 0 || !form.value.calculator)
         form.value.calculator = null
     TripService.updateTrip(form.value).then((res) => {
         const _id = res.data._id;
