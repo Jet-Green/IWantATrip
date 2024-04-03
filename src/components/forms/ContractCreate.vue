@@ -45,11 +45,7 @@ let contractForm = reactive({
   email: "",
   founders: {
     individuals: [
-      {
-        firstName: "",
-        lastName: "",
-        citizenship: "Россия",
-      },
+
     ],
   },
   ceo: {
@@ -103,11 +99,7 @@ async function addContract() {
       email: "",
       founders: {
         individuals: [
-          {
-            firstName: "",
-            lastName: "",
-            citizenship: "Россия",
-          },
+
         ],
       },
       ceo: {
@@ -160,6 +152,15 @@ async function submit() {
 
   }
 }
+watch(
+  () => contractForm.inn,
+  () => {
+    if (contractForm.inn.length == 12) {
+      contractForm.kpp = '000000000'
+    }
+
+  }
+)
 </script>
 <template>
   <div>
@@ -172,12 +173,12 @@ async function submit() {
 
         <form @submit.prevent="submit" class="ma-16">
           <a-row :gutter="[16, 16]">
-            <a-col :span="24" >
+            <a-col :span="24">
               Полное наименование
               <a-input placeholder="Общество с ограниченной ответственностью 'Огонёк'"
                 v-model:value="contractForm.fullName" required></a-input>
             </a-col>
-            <a-col :span="24" :md="12" >
+            <a-col :span="24" :md="12">
               Отображение в выписках, латиница
               <a-input placeholder="Ogonek" v-model:value="contractForm.billingDescriptor" required></a-input>
             </a-col>
@@ -230,8 +231,8 @@ async function submit() {
                 </a-col>
                 <a-col :xs="24">
                   Улица
-                  <a-input placeholder="Красногорский тракт, 3"
-                    v-model:value="contractForm.addresses[0].street" required></a-input>
+                  <a-input placeholder="Красногорский тракт, 3" v-model:value="contractForm.addresses[0].street"
+                    required></a-input>
                 </a-col>
               </a-row>
             </a-col>
@@ -250,8 +251,8 @@ async function submit() {
                 </a-col>
                 <a-col :xs="24">
                   Улица
-                  <a-input placeholder="Красногорский тракт, 3"
-                    v-model:value="contractForm.addresses[1].street" required></a-input>
+                  <a-input placeholder="Красногорский тракт, 3" v-model:value="contractForm.addresses[1].street"
+                    required></a-input>
                 </a-col>
               </a-row>
 
@@ -322,11 +323,13 @@ async function submit() {
             </a-col>
             <a-col :xs="12">
               Расчетный счет
-              <a-input placeholder="40702810209000055117" v-model:value="contractForm.bankAccount.account" required></a-input>
+              <a-input placeholder="40702810209000055117" v-model:value="contractForm.bankAccount.account"
+                required></a-input>
             </a-col>
             <a-col :xs="12">
               Наименование банка
-              <a-input placeholder="АКБ 'Датабанк' ПАО" v-model:value="contractForm.bankAccount.bankName" required></a-input>
+              <a-input placeholder="АКБ 'Датабанк' ПАО" v-model:value="contractForm.bankAccount.bankName"
+                required></a-input>
             </a-col>
             <a-col :xs="12">
               БИК
@@ -350,7 +353,7 @@ async function submit() {
             <a-col :span="12">
                 <a-input placeholder="СГГККННХХХХХЧ" v-model:value="contractForm.fiscalization.company"></a-input>
               </a-col> -->
-              <a-divider></a-divider>
+            <a-divider></a-divider>
             <a-col :span="12">
               Кабинет(email) контракта
               <a-input placeholder="fleshtur19@gmail.com" v-model:value="contractEmail" disabled></a-input>

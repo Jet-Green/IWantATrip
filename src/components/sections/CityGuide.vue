@@ -64,7 +64,7 @@ const handleChange = (value) => {
 </script>
 
 <template>
-  <a-row style="background-color: #f6f6f6: position: relative;" class="pa-16 justify-center" >
+  <a-row style="background-color: #f6f6f6; position: relative;" class="pa-16 justify-center" >
     <a-col :xs="24" :md="20" :xl="16">
       <h2 style="text-align: center; margin-bottom: 0">Гид по городу</h2>
       <h3 class="d-flex justify-center align-center">
