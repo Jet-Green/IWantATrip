@@ -50,9 +50,9 @@ export const useContract = defineStore('contract', {
             let response = await ContractService.createContract(newContract._id, userEmail, shopInfo)
             return response
         },
-        async updateContract(newContract, userEmail) {
-            let tinkoffRes = await tinkoffPlugin.updateContract()
-            console.log(tinkoffRes);
+        async updateContract(newContract) {
+            let tinkoffRes = await tinkoffPlugin.updateContract(newContract)
+            return tinkoffRes
         },
         async getAll() {
             let res = await ContractService.getAll()
@@ -66,6 +66,9 @@ export const useContract = defineStore('contract', {
         },
         async deleteContractEmail(contractId, contractEmail) {
             return await ContractService.deleteContractEmail(contractId, contractEmail)
+        },
+        async getContractById(contractId) {
+            return await ContractService.getContractById(contractId)
         }
     }
 })
