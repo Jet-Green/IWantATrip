@@ -13,7 +13,6 @@ export const useAuth = defineStore('auth', {
         isAuth: false,
         userStatus: 'user',
         user: {
-            tripCalc: []
         },
         isRefreshing: false
     }),

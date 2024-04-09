@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuth } from '../stores/auth'
+import tinkoffPlugin from '../plugins/tinkoff'
 
 
 const router = createRouter({
@@ -431,7 +432,7 @@ const router = createRouter({
         {
           path: "add-admin-contract",
           name: 'AddAdminContract',
-          props: true ,
+          props: true,
           component: () => import('../components/admin/AddAdminContract.vue'),
           beforeEnter: () => {
             let userStore = useAuth()
@@ -440,7 +441,6 @@ const router = createRouter({
             }
           }
         },
-     
         {
           path: "admin-contracts-list",
           name: 'AdminContracts',
@@ -473,6 +473,26 @@ const router = createRouter({
           return '/auth'
       }
     },
+    // UpdateContract
+    {
+      path: "/update-contract",
+      name: 'UpdateContract',
+      component: () => import('../components/admin/UpdateContract.vue'),
+      beforeEnter: async () => {
+        let userStore = useAuth()
+        if (!localStorage.getItem('token') || !userStore.isAuth)
+          await userStore.checkAuth()
+
+        if (!userStore.user?.roles?.includes('admin')) {
+          return '/'
+        }
+
+        let isTinkoffAuth = await tinkoffPlugin.checkAuth()
+        if (!isTinkoffAuth) {
+          return '/'
+        }
+      }
+    },
     {
       path: '/trip-moderation',
       name: 'TripModeration',
@@ -497,6 +517,7 @@ const router = createRouter({
         if (!userStore.user?.roles.includes('admin')) {
           return false
         }
+
       }
     },
     {
@@ -551,7 +572,7 @@ const router = createRouter({
       path: "/contract-create",
       name: 'ContractCreate',
       component: () => import('../components/forms/ContractCreate.vue'),
-     
+
     },
 
   ],

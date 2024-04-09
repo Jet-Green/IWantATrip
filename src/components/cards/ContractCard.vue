@@ -31,7 +31,7 @@ async function deleteContract(_id) {
 }
 function checkContract() {
     contractStore.setEditingContract(contract)
-    router.push({ name: "AddAdminContract"})
+    router.push({ name: "AddAdminContract" })
 }
 
 </script>
@@ -49,7 +49,14 @@ function checkContract() {
         <div class="d-flex justify-center" v-if="!contract.hasOwnProperty('shopInfo')">
             <a-button class="btn_light ma-8" @click="deleteContract(contract._id)"> Удалить договор</a-button>
         </div>
-
+        <div class="edit-btn">
+            <a-button shape="circle" type="dashed" size="small"
+                @click="router.push({ name: 'UpdateContract', query: { _id: contract._id } })">
+                <template #icon>
+                    <span class="mdi mdi-pencil"></span>
+                </template>
+            </a-button>
+        </div>
 
         <div>
             <b>Название: </b>{{ contract.name }}
@@ -76,7 +83,8 @@ function checkContract() {
         <div>
             <b>Пользователи: </b>
             <a-tag style="font-size: 13px;" v-for="email in contract.userEmails" closable
-                @close="deleteContractEmail(email)">{{ email }}</a-tag>
+                @close="deleteContractEmail(email)">{{
+            email }}</a-tag>
 
             <a-button size="small" @click="addContractEmailDialog = true">
                 <span class="mdi mdi-plus"></span>
@@ -84,3 +92,10 @@ function checkContract() {
         </div>
     </a-card>
 </template>
+<style lang="scss" scoped>
+.edit-btn {
+    position: absolute;
+    right: -10px;
+    top: -10px;
+}
+</style>
