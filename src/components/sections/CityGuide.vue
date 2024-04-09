@@ -13,43 +13,43 @@ let cards = [
     title: "Транспорт",
     icon: "mdi mdi-train-car",
     route: "/transport",
-   
+
   },
   {
     title: "Гостиницы",
     icon: "mdi-home-city-outline",
     route: "/stay",
-   
+
   },
   {
     title: "Еда",
     icon: "mdi-food-outline",
     route: "/eat",
-   
+
   },
   {
     title: "Экскурсии",
     icon: "mdi-crowd",
-    route: "/excurs",
-  
+    route: "/excursion",
+
   },
   {
     title: "Развлечения",
     icon: "mdi-human-female-dance",
     route: "/enter",
- 
+
   },
   {
     title: "Гиды",
     icon: "mdi-human-greeting-proximity",
     route: "/guides",
- 
+
   },
   {
     title: "Сувениры",
     icon: "mdi-gift-outline",
     route: "/souvenirs",
-   
+
   },
 ];
 const city = ref("Глазов");
@@ -64,7 +64,7 @@ const handleChange = (value) => {
 </script>
 
 <template>
-  <a-row style="background-color: #f6f6f6; position: relative;" class="pa-16 justify-center" >
+  <a-row style="background-color: #f6f6f6; position: relative;" class="pa-16 justify-center">
     <a-col :xs="24" :md="20" :xl="16">
       <h2 style="text-align: center; margin-bottom: 0">Гид по городу</h2>
       <h3 class="d-flex justify-center align-center">
@@ -75,10 +75,12 @@ const handleChange = (value) => {
         <h3 class="in-work">
           В разработке</h3>
         <a-col v-for="(card, index) in cards" :key="index" :xs="12" :md="8">
-          <div class="d-flex" v-if="card.route != '/poster' || card.route !='/transport' || card.route !='/stay'">
+          <div class="d-flex" v-if="card.route != '/poster' || card.route != '/transport' || card.route != '/stay'">
           </div>
-          <router-link :to="card.route == '/poster' ? card.route : card.route == '/transport' ? card.route : card.route == '/stay' ? card.route : ''">
-            <a-card hoverable class="guide-card" :class="{ opacity: card.route != '/poster' && card.route != '/transport' && card.route != '/stay'}">
+          <router-link
+            :to="card.route == '/poster' ? card.route : card.route == '/transport' ? card.route : card.route == '/stay' ? card.route : ''">
+            <a-card hoverable class="guide-card"
+              :class="{ opacity: card.route != '/poster' && card.route != '/transport' && card.route != '/stay' }">
               <div>
                 <span class="mdi" :class="card.icon"> </span>
                 <span>
@@ -116,7 +118,7 @@ const handleChange = (value) => {
     top: 8px;
     right: 8px;
     font-size: clamp(1.5rem, 1.1975rem + 0.6303vw, 1.875rem);
- 
+
   }
 }
 
@@ -131,9 +133,10 @@ const handleChange = (value) => {
   transform: rotate(-15deg);
   z-index: 99;
   font-size: clamp(1.125rem, 0.6563rem + 1.5vw, 1.5rem);
-  
+
 }
-.opacity{
+
+.opacity {
   opacity: 0.4;
   background: white;
 }
