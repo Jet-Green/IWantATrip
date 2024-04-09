@@ -572,9 +572,12 @@ const router = createRouter({
       path: "/contract-create",
       name: 'ContractCreate',
       component: () => import('../components/forms/ContractCreate.vue'),
-
     },
-
+    {
+      path: "/create-excursion",
+      name: "CreateExcursion",
+      component: () => import('../views/CreateExcursion.vue')
+    }
   ],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {

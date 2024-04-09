@@ -69,6 +69,11 @@ let info = userStore.user.fullinfo;
           Подать идею
         </a-button>
       </a-col>
+      <a-col>
+        <a-button class="btn_light ma-8" @click="router.push('/create-excursion')">
+          создать экскурсию
+        </a-button>
+      </a-col>
     </a-row>
   </div>
 </template>
