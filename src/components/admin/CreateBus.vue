@@ -1,195 +1,119 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 
 let bus = ref({
 	name: '',
 	author: '',
-	width: 800, // cm
-	height: 255, // cm
+	rows: null,
+	seats_in_row: null,
+	stuff: []
 })
 
-let seat_size = ref({
-	width: 45, // cm
-	height: 45 // cm
+let seats = ref([])
+let result = ref([])
+let bus_el = ref()
+
+watch([() => bus.value.rows, () => bus.value.seats_in_row], ([rows, seats_in_row]) => {
+	seats.value = []
+	for (let i = 0; i <= rows * seats_in_row; i++) {
+		seats.value.push({ number: '' })
+	}
 })
 
-let spawn = {
-	x: 40, // cm
-	y: 40 // cm
-}
+watch(seats, value => {
+	result.value = []
+	value.forEach((seat, index) => {
+		if (!seat.number) return
 
-let seats = ref(localStorage.getItem('seats') ? JSON.parse(localStorage.getItem('seats')) : [])
-
-let active_seat_id = ref()
-let active_seat = seats[seats.value.findIndex(seat => seat._id === active_seat_id.value)]
-let current_seat_number = ref()
-
-function createSeat() {
-	seats.value.push(
-		Object.assign({ 
-			_id: generateId(), 
-			number: current_seat_number.value, 
-			width: seat_size.value.width, 
-			height: seat_size.value.height 
-		}, spawn)
-	)
-
-	current_seat_number.value = null
-}
-
-function generateId() {
-	return (Math.random() + 1).toString(36).substring(2)
-} 
-
-function mouseDown() {
-	console.log('dfgdfg')
-}
-
-onMounted(() => {
-	watch(seats, async value => {
-		localStorage.setItem('seats', JSON.stringify(value))
-		let container = document.getElementById('container')
-		await new Promise(r => setTimeout(r, 100))
-		value.forEach(seat_object => {
-			let seat = document.getElementById(seat_object._id)
-	
-			seat.onmousedown = function(event) {
-				let shiftX = event.clientX - seat.getBoundingClientRect().left
-				let shiftY = event.clientY - seat.getBoundingClientRect().top
-	
-				moveAt(event.pageX, event.pageY)
-	
-				function moveAt(pageX, pageY) {
-					let x = pageX - container.getBoundingClientRect().x - shiftX
-					let y = pageY - container.getBoundingClientRect().y - shiftY
-					seat.style.left = x + 'px'
-					seat.style.top = y + 'px'
-					seats.value[seats.value.findIndex(seat => seat._id === seat_object._id)].x = x
-					seats.value[seats.value.findIndex(seat => seat._id === seat_object._id)].y = y
-				}
-	
-				function onMouseMove(event) {
-					moveAt(event.pageX, event.pageY)
-				}
-				document.addEventListener('mousemove', onMouseMove)
-				seat.onmouseup = function() {
-					document.removeEventListener('mousemove', onMouseMove)
-					seat.onmouseup = null
-				}
-			}
-			seat.ondragstart = function() {
-				return false
-			}
+		let seat_el = document.getElementById('seat-'+index)
+		result.value.push({
+			number: seat.number,
+			x: (seat_el.getBoundingClientRect().x - bus_el.value.getBoundingClientRect().x) / bus_el.value.getBoundingClientRect().width,
+			y: (seat_el.getBoundingClientRect().y - bus_el.value.getBoundingClientRect().y) / bus_el.value.getBoundingClientRect().height,
+			width: seat_el.getBoundingClientRect().width / bus_el.value.getBoundingClientRect().width,
+			height: seat_el.getBoundingClientRect().height / bus_el.value.getBoundingClientRect().height,
 		})
-	}, { deep: true, immediate: true })
-})
+	})
+}, { deep: true })
 </script>
 
 <template>
 	<a-row type="flex" justify="center">
-		<a-col :xs="22" :lg="16">
-			<h2>Создать автобус</h2>
-			
-			<a-row class="mt-8" :gutter="[0, 8]">
-				<a-col :span="14">
-					Название
-					<a-input v-model:value="bus.name" placeholder="Сапсан"></a-input>
-				</a-col>
-				<a-col :span="14">
-					Автор
-					<a-input v-model:value="bus.author" placeholder="Турагенство Галина"></a-input>
-				</a-col>
-				<a-col :span="24">
-					Длина автобуса
-					<a-input-number min="200" v-model:value="bus.width"></a-input-number>
-					см
-				</a-col>
-				<a-col :span="24">
-					Ширина автобуса
-					<a-input-number min="100" v-model:value="bus.height"></a-input-number>
-					см
-				</a-col>
-				<a-col :span="24">
-					Размер создаваемого места (ДхШ):
+	<a-col :xs="22" :lg="16">
+		<h2>Создать автобус</h2>
+		
+		<a-row class="mt-8" :gutter="[0, 8]">
+			<a-col :span="14">
+				Название
+				<a-input v-model:value="bus.name" placeholder="Сапсан"></a-input>
+			</a-col>
+			<a-col :span="14">
+				Автор
+				<a-input v-model:value="bus.author" placeholder="Турагенство Галина"></a-input>
+			</a-col>
+			<a-col :span="24">
+				Кол-во рядов
+				<a-input-number min="1" v-model:value="bus.rows"></a-input-number>
+			</a-col>
+			<a-col :span="24">
+				Кол-во мест в ряду
+				<a-input-number min="1" v-model:value="bus.seats_in_row"></a-input-number>
+			</a-col>
 
-					<a-input-number v-model:value="seat_size.width" />
-					см 
-					<a-input-number v-model:value="seat_size.height" />
-					см
-				</a-col>
-				<a-col :span="24">
-					<a-row align="bottom" :gutter="[10, 0]">
-						<a-col :span="10">
-							Номер
-							<a-input v-model:value="current_seat_number" placeholder="10A"></a-input>
-						</a-col>
-						<a-col :span="10">
-							<a-button 
-								@click="createSeat" 
-								class="lets_go_btn" 
-								:disabled="active_seat_id || !current_seat_number"
-							>
-								Создать
-							</a-button>
-						</a-col>
-					</a-row>
-				</a-col>
-				<a-col :span="24">
-					<a-button :disabled="!active_seat_id">Удалить место</a-button>
-				</a-col>
-				
+			<a-col :span="24" style="overflow: auto;" class="mt-16">
+				<div class="background" ref="bus_el" :style="`position: relative; grid-template-rows: repeat(${bus.rows}, 1fr); grid-template-columns: repeat(${bus.seats_in_row}, 1fr);`" id="bus">
+					<input 
+						v-for="index in bus.rows * bus.seats_in_row"
+						v-model="seats[index-1].number" 
+						:id="'seat-' + (index-1)"
+						type="text"
+						:style="`
+							z-index: 100;
+							transition: all .15s;
+							border: ${seats[index-1].number ? '1px solid #555555' : '1px dashed #333333'};
+							background: ${seats[index-1].number ? '#D9D9D9' : '#FFFFFF'}; 
+							font-weight: bold;
+							font-size: 17px;
+							text-align: center;
+							min-height: 30px;
+							width: 100%;
+							height: 100%;
+					`" />
+					
+					<div style="
+						position: absolute; 
+						left: 25px; 
+						top: 25px; 
+						height: 53px; 
+						width: 46px; 
+						background: url(/driver-seat.svg) 50% 50% no-repeat; 
+						background-size: cover;
+					" />
+				</div>
+			</a-col>
+			{{ result }}
+			<a-col :span="24">
 
-				<a-col :span="24" style="overflow: auto;" class="mt-16">
-					<div :style="`position: relative; width: ${bus.width}px; height: ${bus.height}px;`" id="container">
-						<div 
-							v-for="seat in seats" 
-							:id="seat._id" 
-							:style="`
-								background: #D9D9D9; 
-								z-index: 1000; 
-								position: absolute; 
-								display: flex;
-								flex-direction: row;
-								justify-content: center;
-								font-weight: bold;
-								font-size: 17px;
-								cursor: pointer;
-								align-items: center;
-								top: ${seat.y}px; 
-								left: ${seat.x}px; 
-								width: ${seat.width}px; 
-								height: ${seat.height}px;
-						`">
-							{{ seat.number }}
-						</div>
-						
-						<div 
-							style="
-								position: absolute; 
-								bottom: 25px; 
-								left: 30px; 
-								width: 53px; 
-								height: 46px; 
-								background: url(/driver-seat.svg) 50% 50% no-repeat; 
-								background-size: cover;
-							" 
-							width="53" 
-							height="46" 
-						/>
-						<div class="background" style="position: absolute; top: 0; right: 0; bottom: 0; left: 0;"></div>
-					</div>
-				</a-col>
-			</a-row>
-		</a-col>
+			</a-col>
+		</a-row>
+	</a-col>
 	</a-row>
 </template>
 
 <style lang="scss" scoped>
 .background {
-	box-sizing: border-box;
 	border-radius: 24px;
 	border-width: 2.5px;
 	border-style: solid;
 	border-color: #8F8F8F;
+}
+#bus {
+	padding: 95px 14px 25px 14px;
+	display: grid;
+	min-width: 225px;
+	max-width: 225px;
+	min-height: 600px;
+	width: auto;
+	gap: 6px;
 }
 </style>
