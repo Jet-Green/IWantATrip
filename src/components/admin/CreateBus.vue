@@ -1,6 +1,7 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import _ from 'lodash'
+import Bus from '../Bus.vue';
 
 let bus = ref({
 	name: '',
@@ -8,14 +9,18 @@ let bus = ref({
 	rows: null,
 	seats_in_row: null,
 	aspect_ratio: null,
+	seats: [],
 	stuff: []
 })
 
+/** Места (dev) */
 let seats = ref([])
+/** Все номера мест */
 let seats_numbers = ref([])
-let result = ref([])
+/** HTML автобуса */
 let bus_el = ref()
 
+// На изменение кол-ва рядов и мест в ряду всё очищаем и ставим нулевые места
 watch([() => bus.value.rows, () => bus.value.seats_in_row], ([rows, seats_in_row]) => {
 	seats.value = []
 	seats_numbers.value = []
@@ -25,28 +30,31 @@ watch([() => bus.value.rows, () => bus.value.seats_in_row], ([rows, seats_in_row
 	}
 })
 
-watch(seats, value => {
-	result.value = []
+onMounted(() => watch(seats, value => {
+	bus.value.seats = []
 	let bus_rect = bus_el.value.getBoundingClientRect()
 
 	value.forEach((seat, index) => {
 		if (!seat.number) return
 
-		let seat_el = document.getElementById('seat-'+index)
+		let seat_el = document.getElementById(`seat-${index}`)
 		let seat_rect = seat_el.getBoundingClientRect()
-		result.value.push({
+		bus.value.seats.push({
 			number: seat.number,
-			x: (seat_rect.x - bus_rect.x) / bus_rect.width,
-			y: (seat_rect.y - bus_rect.y) / bus_rect.height,
-			width: seat_rect.width / bus_rect.width,
-			height: seat_rect.height / bus_rect.height,
+			x: (seat_rect.x - bus_rect.x) / bus_rect.width, // часть от длины
+			y: (seat_rect.y - bus_rect.y) / bus_rect.height, // часть от высоты
+			width: seat_rect.width / bus_rect.width, // часть длины
+			height: seat_rect.height / bus_rect.height, // часть высоты
 		})
 	})
 
 	seats_numbers.value = value.filter(seat => seat.number).map(seat => seat.number)
 	bus.value.stuff = bus.value.stuff.filter(seat => seats_numbers.value.includes(seat))
 	bus.value.aspect_ratio = bus_rect.width / bus_rect.height
-}, { deep: true })
+}, { deep: true }))
+
+let selected_seats = ref([])
+let free_seats = ref(['1', '2'])
 </script>
 
 <template>
@@ -65,25 +73,36 @@ watch(seats, value => {
 			</a-col>
 			<a-col :span="24">
 				Кол-во рядов
-				<a-input-number min="1" v-model:value="bus.rows"></a-input-number>
+				<a-input-number :min="1" placeholder="10" v-model:value="bus.rows"></a-input-number>
 			</a-col>
 			<a-col :span="24">
 				Кол-во мест в ряду
-				<a-input-number min="1" max="5" v-model:value="bus.seats_in_row"></a-input-number>
+				<a-input-number :min="1" :max="6" placeholder="5" v-model:value="bus.seats_in_row"></a-input-number>
 			</a-col>
 			<a-col :span="14">
 				Служебные места
-				<a-select
-					v-model:value="bus.stuff"
-					:options="seats_numbers.map(num => ({ value: num }))"
-					mode="multiple"
-					style="width: 100%;"
-					placeholder="1, 2"
-				></a-select>
+				<a-config-provider>
+					<template #renderEmpty>
+						<div style="text-align: center; color: black;">Нет номеров</div>
+					</template>
+
+					<div class="config-provider">
+						<a-select
+							v-model:value="bus.stuff"
+							:options="seats_numbers.map(num => ({ value: num }))"
+							mode="multiple"
+							style="width: 100%;"
+							placeholder="1, 2"
+						/>
+					</div>
+				</a-config-provider>
 			</a-col>
 
 			<a-col :span="24" style="overflow: auto;" class="mt-16">
-				<div class="background" ref="bus_el" :style="`grid-template-rows: repeat(${bus.rows}, 1fr); grid-template-columns: repeat(${bus.seats_in_row}, 1fr);`" id="bus">
+				<div id="bus" ref="bus_el" :style="{
+					'grid-template-rows': `repeat(${bus.rows}, 1fr)`, 
+					'grid-template-columns': `repeat(${bus.seats_in_row}, 1fr)`
+				}">
 					<input 
 						v-for="index in _.range(bus.rows * bus.seats_in_row)"
 						v-model="seats[index].number" 
@@ -91,28 +110,24 @@ watch(seats, value => {
 						type="text"
 						class="seat"
 						autocomplete="off"
-						:style="`border: ${seats[index].number ? '1px solid #555555' : '1px dashed #333333'};
-								 background: ${seats[index].number ? bus.stuff.includes(seats[index].number) ? '#E87C64' : '#D9D9D9' : '#FFFFFF'};
-						`" 
+						:style="{
+							border: seats[index].number ? '1px solid #555555' : '1px dashed #333333',
+							background: seats[index].number ? bus.stuff.includes(seats[index].number) ? '#E87C64' : '#D9D9D9' : '#FFFFFF'
+						}" 
 					/>
 					
-					<div style="
-						position: absolute; 
-						left: 25px; 
-						top: 25px; 
-						height: 53px; 
-						width: 46px; 
-						background: url(/driver-seat.svg) 50% 50% no-repeat; 
-						background-size: cover;
-					" />
+					<div class="driver" />
 				</div>
 			</a-col>
-			<a-col :span="24">
-				{{ bus }}
 
-				{{ seats_numbers }}
-				
-				{{ result }}
+			<a-col :span="24">
+				<div style="width: 50%;">
+					<Bus 
+						v-model:bus="bus" 
+						v-model:selected_seats="selected_seats" 
+						:free_seats="free_seats"
+					/>
+				</div>
 			</a-col>
 		</a-row>
 	</a-col>
@@ -120,16 +135,15 @@ watch(seats, value => {
 </template>
 
 <style lang="scss" scoped>
-.background {
-	border-radius: 24px;
-	border-width: 2.5px;
-	border-style: solid;
-	border-color: #8F8F8F;
-}
 #bus {
 	padding: 95px 14px 25px 14px;
 	position: relative;
 	display: grid;
+	border-radius: 24px;
+	border-width: 2.5px;
+	border-style: solid;
+	border-color: #8F8F8F;
+	justify-items: center;
 	min-width: 225px;
 	max-width: 225px;
 	min-height: 300px;
@@ -144,6 +158,16 @@ watch(seats, value => {
 	text-align: center;
 	width: 100%;
 	max-width: 60px;
+	min-width: 0;
 	aspect-ratio: 1;
+}
+.driver { 
+	position: absolute; 
+	left: 25px; 
+	top: 25px; 
+	height: 53px; 
+	width: 46px; 
+	background: url(/driver-seat.svg) 50% 50% no-repeat; 
+	background-size: cover;
 }
 </style>
