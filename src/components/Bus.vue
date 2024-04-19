@@ -1,15 +1,27 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, watch } from 'vue';
 
 let props = defineProps({
-    bus: Object,
-    selected_seats: Array,
-    free_seats: Array
+    bus: {
+        type: Object,
+        required: true
+    },
+    selected_seats: {
+        type: Array,
+        default: []
+    },
+    free_seats: { 
+        type: Array,
+        default: []
+    },
+    all_free: Boolean,
+    preview: Boolean
 })
 let emit = defineEmits(['update:bus', 'update:selected_seats'])
 
 let bus = props.bus
-let free_seats = props.free_seats
+let preview = props.preview
+let free_seats = props.all_free ? bus.seats.map(seat => seat.number).filter(seat => !bus.stuff.includes(seat)) : props.free_seats
 let selected_seats = computed({
     get() {
         return props['selected_seats']
@@ -20,7 +32,7 @@ let selected_seats = computed({
 })
 
 function select(num) {
-    if (bus.stuff.includes(num) || !free_seats.includes(num)) return
+    if (bus.stuff.includes(num) || !free_seats.includes(num) || preview) return
 
     if (selected_seats.value.includes(num)) {
         selected_seats.value = selected_seats.value.filter(item => item !== num)
@@ -34,7 +46,7 @@ function select(num) {
     <div style="container-type: inline-size;">
         <div class="bus" ref="bus_el" :style="{
             'aspect-ratio': bus.aspect_ratio
-        }">
+        }" :class="{ 'no-select': preview }">
             <div
                 v-for="seat in bus.seats" 
                 @click="select(seat.number)"
@@ -45,7 +57,7 @@ function select(num) {
                     top: seat.y * 100 + '%',
                     width: seat.width * 100 + '%',
                     height: seat.height * 100 + '%',
-                    background: selected_seats.includes(seat.number) ? '#83F14F' : bus.stuff.includes(seat.number) || !free_seats.includes(seat.number) ? '#E87C64' : '#D9D9D9'
+                    background: preview ? (bus.stuff.includes(seat.number) ? '#E87C64' : '#D9D9D9') : selected_seats.includes(seat.number) ? '#83F14F' : bus.stuff.includes(seat.number) || !free_seats.includes(seat.number) ? '#E87C64' : '#D9D9D9'
                 }"
             >
                 {{ seat.number }}
@@ -62,7 +74,7 @@ function select(num) {
 	border-width: 2.5px;
 	border-style: solid;
 	border-color: #8F8F8F;
-    border-radius: calc(24/225*100cqw);
+    border-radius: calc(22/225*100cqw);
 	width: 100%;
 }
 .driver {
@@ -81,8 +93,13 @@ function select(num) {
     user-select: none;
     display: flex;
     justify-content: center;
+    overflow: hidden;
     align-items: center;
     font-weight: bold;
-	font-size: 100%;
+	font-size: 7.5cqw;
+    object-fit: cover;
+}
+.no-select * {
+    cursor: default !important;
 }
 </style>

@@ -2,6 +2,11 @@
 import { onMounted, ref, watch } from 'vue';
 import _ from 'lodash'
 import Bus from '../Bus.vue';
+import { useBus } from '../../stores/bus';
+import { message } from "ant-design-vue";
+import { useRouter } from 'vue-router';
+
+let router = useRouter()
 
 let bus = ref({
 	name: '',
@@ -21,12 +26,24 @@ let seats_numbers = ref([])
 let bus_el = ref()
 
 // На изменение кол-ва рядов и мест в ряду всё очищаем и ставим нулевые места
-watch([() => bus.value.rows, () => bus.value.seats_in_row], ([rows, seats_in_row]) => {
-	seats.value = []
-	seats_numbers.value = []
-	bus.value.stuff = []
-	for (let i = 0; i <= rows * seats_in_row; i++) {
-		seats.value.push({ number: '' })
+watch([() => bus.value.rows, () => bus.value.seats_in_row], ([rows, seats_in_row], [old_rows, old_seats_in_row]) => {
+	if (rows === old_rows) {
+		seats.value = []
+		seats_numbers.value = []
+		bus.value.stuff = []
+		for (let i = 0; i < rows * seats_in_row; i++) {
+			seats.value.push({ number: '' })
+		}
+	}
+	else if (rows > old_rows) {
+		for (let i = 0; i < seats_in_row; i++) {
+			seats.value.push({ number: '' })
+		}
+	}
+	else {
+		for (let i = 0; i < seats_in_row; i++) {
+			seats.value.pop()
+		}
 	}
 })
 
@@ -53,8 +70,22 @@ onMounted(() => watch(seats, value => {
 	bus.value.aspect_ratio = bus_rect.width / bus_rect.height
 }, { deep: true }))
 
-let selected_seats = ref([])
-let free_seats = ref(['1', '2'])
+let valid = ref()
+watch(bus, () => {
+	valid.value = seats_numbers.value.length && (new Set(seats_numbers.value)).size === seats_numbers.value.length && bus.value.name && bus.value.author
+}, { immediate: true, deep: true })
+
+async function send() {
+    let res = await useBus().createBus(bus.value)
+	
+	if (res.status === 200) {
+		message.config({ duration: 0.5, top: '70vh' })
+		message.success({
+		  	content: 'Успешно!',
+		  	onClose: () => router.back()
+		})
+	}
+}
 </script>
 
 <template>
@@ -63,23 +94,23 @@ let free_seats = ref(['1', '2'])
 		<h2>Создать автобус</h2>
 		
 		<a-row class="mt-8" :gutter="[0, 8]">
-			<a-col :span="14">
+			<a-col :xs="24" :lg="14">
 				Название
 				<a-input v-model:value="bus.name" placeholder="Сапсан"></a-input>
 			</a-col>
-			<a-col :span="14">
+			<a-col :xs="24" :lg="14">
 				Автор
 				<a-input v-model:value="bus.author" placeholder="Турагенство Галина"></a-input>
 			</a-col>
-			<a-col :span="24">
+			<a-col :xs="24" :lg="24">
 				Кол-во рядов
 				<a-input-number :min="1" placeholder="10" v-model:value="bus.rows"></a-input-number>
 			</a-col>
-			<a-col :span="24">
+			<a-col :xs="24" :lg="24">
 				Кол-во мест в ряду
 				<a-input-number :min="1" :max="6" placeholder="5" v-model:value="bus.seats_in_row"></a-input-number>
 			</a-col>
-			<a-col :span="14">
+			<a-col :xs="24" :lg="14">
 				Служебные места
 				<a-config-provider>
 					<template #renderEmpty>
@@ -120,15 +151,18 @@ let free_seats = ref(['1', '2'])
 				</div>
 			</a-col>
 
-			<a-col :span="24">
-				<div style="width: 50%;">
-					<Bus 
-						v-model:bus="bus" 
-						v-model:selected_seats="selected_seats" 
-						:free_seats="free_seats"
-					/>
-				</div>
+			<a-col :span="24" class="mt-16">
+				<a-button @click="send" class="lets_go_btn" :disabled="!valid">
+					Отправить
+				</a-button>
 			</a-col>
+
+			<a-col :spam="24" v-if="!valid" style="color: red;" class="mt-4">
+				Недостаточно данных или есть повторы
+			</a-col>
+
+
+			{{ buses }}
 		</a-row>
 	</a-col>
 	</a-row>
@@ -139,7 +173,7 @@ let free_seats = ref(['1', '2'])
 	padding: 95px 14px 25px 14px;
 	position: relative;
 	display: grid;
-	border-radius: 24px;
+	border-radius: 22px;
 	border-width: 2.5px;
 	border-style: solid;
 	border-color: #8F8F8F;
