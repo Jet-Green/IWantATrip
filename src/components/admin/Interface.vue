@@ -1,12 +1,16 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router';
 import { useAppState } from '../../stores/appState';
+import Bus from '../Bus.vue';
+import { useBus } from '../../stores/bus';
 
+let router = useRouter()
 let appStateStore = useAppState()
 let tripType = ref('')
 let transport = ref({})
 let taxi = ref({})
-
+let buses = ref()
 
 async function addTripType() {
     if (tripType.value.length > 2) {
@@ -29,6 +33,7 @@ onMounted(async () => {
     if (!appStateStore.appState) {
         await appStateStore.refreshState();
     }
+    buses.value = await useBus().get()
 })
 </script>
 <template>
@@ -66,6 +71,25 @@ onMounted(async () => {
                         @confirm="() => { appStateStore.deleteTransportName(t.name) }">
                         <div class="name-wrapper"> {{ t.name }}</div>
                     </a-popconfirm>
+                </a-col>
+            </a-row>
+        </a-col>
+    </a-row>
+    <a-row>
+        <a-col :span="24">
+            <a-row>
+                <a-col :span="24">
+                    <h3>Автобусы</h3>
+                </a-col>
+                <a-col :span="24">
+                    <a-row>
+                        <a-col :span="4" v-for="bus in buses">
+                            <Bus :bus="bus" preview />
+                        </a-col>
+                    </a-row>
+                </a-col>
+                <a-col :span="24" class="d-flex align-center">
+                    <a-button type="primary" class="lets_go_btn" @click="router.push('/create-bus')">добавить</a-button>
                 </a-col>
             </a-row>
         </a-col>

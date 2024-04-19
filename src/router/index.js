@@ -162,6 +162,10 @@ const router = createRouter({
       }
     },
     {
+      path: '/create-bus', 
+      component: () => import('../components/admin/CreateBus.vue'),
+    },
+    {
       path: '/trip',
       name: 'TripInfoPage',
       component: () => import('../views/TripInfoPage.vue')
