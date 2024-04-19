@@ -185,9 +185,6 @@ document.addEventListener('keydown', event => {
 			<a-col :spam="24" v-if="!valid" style="color: red;" class="mt-4">
 				Недостаточно данных или есть повторы
 			</a-col>
-
-
-			{{ buses }}
 		</a-row>
 	</a-col>
 	</a-row>
