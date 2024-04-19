@@ -86,6 +86,31 @@ async function send() {
 		})
 	}
 }
+
+document.addEventListener('keydown', event => {
+    if (!document.activeElement) return
+
+	if (event.code === 'ArrowUp') {
+		let id = 'seat-' + (Number(document.activeElement.id.split('-')[1]) - bus.value.seats_in_row)
+        let input = document.getElementById(id)
+		input?.focus()
+    }
+	if (event.code === 'ArrowRight') {
+		let id = 'seat-' + (Number(document.activeElement.id.split('-')[1]) + 1)
+        let input = document.getElementById(id)
+		input?.focus()
+    }
+    if (event.code === 'ArrowDown') {
+		let id = 'seat-' + (Number(document.activeElement.id.split('-')[1]) + bus.value.seats_in_row)
+        let input = document.getElementById(id)
+		input?.focus()
+    }
+	if (event.code === 'ArrowLeft') {
+		let id = 'seat-' + (Number(document.activeElement.id.split('-')[1]) - 1)
+        let input = document.getElementById(id)
+		input?.focus()
+    }
+})
 </script>
 
 <template>
