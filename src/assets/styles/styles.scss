@@ -171,6 +171,18 @@ body {
     padding-right: #{$i * 4}px;
   }
 }
+// PX
+@for $i from 1 through 8 {
+  .px-#{$i*4} {
+    padding: 0 #{$i * 4}px;
+  }
+}
+// PY
+@for $i from 1 through 8 {
+  .py-#{$i*4} {
+    padding: #{$i * 4}px 0;
+  }
+}
 
 .unselectable {
   -moz-user-select: none;
