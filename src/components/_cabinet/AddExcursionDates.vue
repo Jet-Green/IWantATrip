@@ -1,4 +1,7 @@
 <script setup>
+import { useExcursion } from '../../stores/excursion'
+
+const excursionStore = useExcursion()
 </script>
 <template>
   <a-row>

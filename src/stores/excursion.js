@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import ExcursionService from '../service/ExcursionService.js'
 
+import { useAuth } from './auth.js'
+
 export const useExcursion = defineStore('excursion', {
     state: () => ({
     }),
@@ -8,7 +10,7 @@ export const useExcursion = defineStore('excursion', {
     },
     actions: {
         async create(excursion) {
-            return ExcursionService.create(excursion)
+            return await ExcursionService.create({ excursion, userId: useAuth().user._id })
         }
     }
 })
