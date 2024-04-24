@@ -301,6 +301,10 @@ const router = createRouter({
           ]
         },
         {
+          path: 'add-excursion-dates',
+          component: () => import('../components/_cabinet/AddExcursionDates.vue')
+        },
+        {
           path: 'find-buyer',
           component: () => import('../components/_cabinet/FindBuyer.vue'),
         },
