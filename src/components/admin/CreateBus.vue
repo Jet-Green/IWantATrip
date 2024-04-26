@@ -5,6 +5,7 @@ import Bus from '../Bus.vue';
 import { useBus } from '../../stores/bus';
 import { message } from "ant-design-vue";
 import { useRouter } from 'vue-router';
+import BackButton from '../BackButton.vue';
 
 let router = useRouter()
 
@@ -114,6 +115,9 @@ document.addEventListener('keydown', event => {
 </script>
 
 <template>
+	<div>
+	<BackButton />
+
 	<a-row type="flex" justify="center">
 	<a-col :xs="22" :lg="16">
 		<h2>Создать автобус</h2>
@@ -188,6 +192,7 @@ document.addEventListener('keydown', event => {
 		</a-row>
 	</a-col>
 	</a-row>
+	</div>
 </template>
 
 <style lang="scss" scoped>
