@@ -38,37 +38,37 @@ let currentStep = ref(0);
 const steps = [
   {
     title: 'Местоположение',
-    description: 'выберите город для поиска туров рядом',
+    description: 'выберите ваш город',
     placement: 'bottom',
     target: () => locationBar.value,
   },
   {
     title: 'Найти',
-    description: 'поиск туров',
+    description: 'используйте фильтр, выберите тур который вам понравится',
     placement: 'bottom',
     target: () => find.value,
   },
   {
     title: 'Заказать',
-    description: 'заказать тур',
+    description: 'заполните форму, и мы поможем с выбором тура',
     placement: 'bottom',
     target: () => order.value,
   },
   {
     title: 'Каталог',
-    description: 'поиск тура в каталоге',
+    description: 'возможные варианты туров, которые можно организовать в удобное для вас время',
     placement: 'bottom',
     target: () => catalog.value,
   },
   {
     title: 'Попутчики',
-    description: 'поиск попутчиков',
+    description: 'найдите попутчиков или присоединитесь к другим',
     placement: 'bottom',
     target: () => companion.value,
   },
   {
     title: 'Кабинет',
-    description: 'личный кабинет пользователя',
+    description: 'управление аккаунтом, создание и администрирование туров',
     placement: 'bottom',
     target: () => auth.value,
   },

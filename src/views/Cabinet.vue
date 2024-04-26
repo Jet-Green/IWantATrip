@@ -27,20 +27,20 @@ let companions = ref(null);
 
 const steps = [
   {
-    title: 'Кабинет',
-    description: 'личный кабинет с информацией о пользователе',
+    title: 'О пользователе',
+    description: 'контактные данные, создание тура, экскурсии, идеи',
     placement: 'bottom',
     target: () => cab.value,
   },
   {
     title: 'Туры',
-    description: 'купленные и созданные туры',
+    description: 'управление и администрирование купленными и созданными турами',
     placement: 'bottom',
     target: () => tur.value,
   },
   {
     title: 'Попутчики',
-    description: 'информация о созданных попутчикач',
+    description: 'отклики на ваши анкеты и управление анкетами',
     placement: 'bottom',
     target: () => companions.value,
   }
