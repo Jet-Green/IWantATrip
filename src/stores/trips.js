@@ -50,7 +50,7 @@ export const useTrips = defineStore('trips', {
 
             return TripService.createCatalogTrip(emailHtml, form, email, fullinfo)
         },
-        async fetchTrips(query, start, end, type) {
+        async fetchTrips() {
             try {
                 if (!this.isFetching) {
                     this.isFetching = true
@@ -60,10 +60,10 @@ export const useTrips = defineStore('trips', {
                         location = JSON.parse(location)
                     }
                     if (location?.name) {
-                        response = await TripService.fetchTrips(this.cursor, ...location.coordinates, query, start, end, type);
+                        response = await TripService.fetchTrips(this.cursor, ...location.coordinates, this.tripFilter.query, this.tripFilter.start, this.tripFilter.end, this.tripFilter.type);
                         this.isFetching = false
                     } else {
-                        response = await TripService.fetchTrips(this.cursor, '', '', query, start, end, type);
+                        response = await TripService.fetchTrips(this.cursor, '', '', this.tripFilter.query, this.tripFilter.start, this.tripFilter.end, this.tripFilter.type);
                         this.isFetching = false
                     }
                     this.trips.push(...response.data);
@@ -74,7 +74,7 @@ export const useTrips = defineStore('trips', {
                 console.log(err);
             }
         },
-        async fetchCatalogTrips(query, type) {
+        async fetchCatalogTrips() {
             try {
                 if (!this.isFetching) {
                     this.isFetching = true
@@ -84,10 +84,10 @@ export const useTrips = defineStore('trips', {
                         location = JSON.parse(location)
                     }
                     if (location?.name) {
-                        response = await TripService.fetchCatalogTrips(this.catalogCursor, ...location.coordinates, query, type);
+                        response = await TripService.fetchCatalogTrips(this.catalogCursor, ...location.coordinates, this.catalogFilter.query, this.catalogFilter.type);
                         this.isFetching = false
                     } else {
-                        response = await TripService.fetchCatalogTrips(this.catalogCursor, '', '', query, type);
+                        response = await TripService.fetchCatalogTrips(this.catalogCursor, '', '', this.catalogFilter.query, this.catalogFilter.type);
                         this.isFetching = false
                     }
                     this.catalog.push(...response.data);
@@ -173,6 +173,13 @@ export const useTrips = defineStore('trips', {
         async getFullCatalogById(_id) {
             try {
                 return await TripService.getFullCatalogById(_id)
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async moderateTrip(_id) {
+            try {
+                return await TripService.moderateTrip(_id)
             } catch (error) {
                 console.log(error);
             }

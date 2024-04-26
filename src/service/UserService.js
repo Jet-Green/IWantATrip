@@ -8,7 +8,7 @@ export default {
         return $api.post('/auth/forgot-password', { 'email': email })
     },
     async buyTrip(tripId, bill, emailHtmlForAdmins, emailHtmlForUser) {
-        return $api.post(`/trips/buy-trip?_id=${tripId}`, { bill, emailHtmlForAdmins, emailHtmlForUser})
+        return $api.post(`/trips/buy-trip?_id=${tripId}`, { bill, emailHtmlForAdmins, emailHtmlForUser })
     },
     payTinkoffBill(body) {
         return $api.post(`/trips/pay-tinkoff`, body)
@@ -50,4 +50,7 @@ export default {
     getTourStatus(_id) {
         return $api.get(`/auth/get-tour?user_id=${_id}`)
     },
+    setTripCalculator(body) {
+        return $api.put('/auth/set-trip-calculator', body)
+    }
 }

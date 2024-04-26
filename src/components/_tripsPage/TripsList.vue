@@ -20,11 +20,7 @@ let handleScroll = async () => {
   }
 
   if (triggerHeight == wrapper.value.scrollHeight) {
-    await tripStore.fetchTrips(
-      tripStore?.tripFilter.query,
-      tripStore?.tripFilter.start,
-      tripStore?.tripFilter.end,
-      tripStore?.tripFilter.type)
+    await tripStore.fetchTrips()
     isRefreshing.value = false
   }
 
@@ -47,7 +43,7 @@ onMounted(async () => {
 </script>
 <template>
   <div>
-    <BackButton backRoute="/" />
+    <BackButton :backRoute="{ path: '/' }" />
     <div class="wrapper" ref="wrapper">
       <a-row type="flex" justify="center">
         <a-col :xs="22" :lg="16">
@@ -64,13 +60,17 @@ onMounted(async () => {
           </a-row>
           <a-row v-else-if="isRefreshing">
             <a-col :span="24" class="d-flex justify-center">
-              <a-spin tip="Загрузка">
-              </a-spin>
+              <img src="../../assets/images/founddog.webp" alt="" style="height: 150px;">
             </a-col>
           </a-row>
           <a-row v-else>
-            <a-col :span="24" class="d-flex justify-center">
-              нет туров
+            <a-col :span="24" class="d-flex justify-center align-center">
+              <div style="display: flex; flex-direction: column;">
+                <div class="d-flex justify-center">
+                  <img src="../../assets/images/notfound.jpg" alt="" style="height: 150px;">
+                </div>
+                <h3>я ничего не нашёл</h3>
+              </div>
             </a-col>
           </a-row>
         </a-col>

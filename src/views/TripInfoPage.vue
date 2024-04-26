@@ -261,6 +261,7 @@ async function buyTrip() {
                     phone: userStore.user.fullinfo.phone,
                 }]
             };
+            let tinkoffUrl = ''
             if (buyNow.value) {
                 const orderId = Date.now().toString()
                 let { data, token, success } = await tinkoffPlugin.initPayment(orderId, bill.cart, userStore.user.email, trip.value.tinkoffContract, trip.value.name)
@@ -275,7 +276,7 @@ async function buyTrip() {
                     token,
                     paymentId: data.PaymentId
                 }
-                window.open(data.PaymentURL, '_blank')
+                tinkoffUrl = data.PaymentURL
             }
 
             for (let i = 0; i < bill.cart.length; i++) {
@@ -298,6 +299,9 @@ async function buyTrip() {
                     .catch((err) => {
                         console.log(err);
                     });
+            }
+            if (tinkoffUrl) {
+                router.push({ name: 'TinkoffPayment', query: { url: tinkoffUrl } })
             }
         } else {
             message.config({ duration: 3, top: "90vh" });
@@ -390,7 +394,8 @@ onMounted(async () => {
 
                             <a-dropdown :trigger="['click']">
                                 <a class="ant-dropdown-link" @click.prevent>
-                                    <span style="opacity: 0.7;" class="mdi mdi-24px mdi-share-variant-outline ma-8"></span>
+                                    <span style="opacity: 0.7;"
+                                        class="mdi mdi-24px mdi-share-variant-outline ma-8"></span>
                                 </a>
                                 <template #overlay>
                                     <a-menu>
@@ -465,12 +470,12 @@ onMounted(async () => {
                                 :transport="trip.transports ?? []" />
                         </div>
                         <div class="d-flex justify-center ma-8" v-if="trip.maxPeople -
-                            getCustomersCount(selectedDate.billsList) -
-                            selectedDate.selectedCosts.reduce((acc, cost) => {
-                                return acc + cost.count;
-                            }, 0) >
-                            0
-                            ">
+            getCustomersCount(selectedDate.billsList) -
+            selectedDate.selectedCosts.reduce((acc, cost) => {
+                return acc + cost.count;
+            }, 0) >
+            0
+            ">
                             <a-button type="primary" class="lets_go_btn" style="display: flex; justify-content: center"
                                 @click="buyTripDialog()">
                                 Купить
@@ -479,12 +484,12 @@ onMounted(async () => {
 
                         <div>
                             <b v-if="trip.maxPeople -
-                                getCustomersCount(selectedDate.billsList) -
-                                selectedDate.selectedCosts.reduce((acc, cost) => {
-                                    return acc + cost.count;
-                                }, 0) <=
-                                0
-                                ">
+            getCustomersCount(selectedDate.billsList) -
+            selectedDate.selectedCosts.reduce((acc, cost) => {
+                return acc + cost.count;
+            }, 0) <=
+            0
+            ">
                                 мест больше нет
                             </b>
                         </div>
@@ -549,7 +554,8 @@ onMounted(async () => {
                 <a-row :gutter="[4, 8]">
 
                     <a-col :span="12">
-                        <Field name="fullname" v-slot="{ value, handleChange }" v-model="userStore.user.fullinfo.fullname">
+                        <Field name="fullname" v-slot="{ value, handleChange }"
+                            v-model="userStore.user.fullinfo.fullname">
                             <a-input @change="handleChange" :value="value" placeholder="Иванов Иван Иванович"></a-input>
                         </Field>
 
@@ -571,7 +577,8 @@ onMounted(async () => {
                         <div class="d-flex direction-column">
                             Место посадки
                             <a-select placeholder="г.Глазов" v-model:value="selectedStartLocation">
-                                <a-select-option v-for="item in trip.locationNames" :value="item.name"></a-select-option>
+                                <a-select-option v-for="item in trip.locationNames"
+                                    :value="item.name"></a-select-option>
                             </a-select>
                         </div>
                     </a-col>
@@ -585,13 +592,13 @@ onMounted(async () => {
                             Туристы:
                             <b :style="isNoPlaces ? 'color: red' : ''">
                                 {{
-                                    getCustomersCount(selectedDate.billsList) +
-                                    selectedDate.selectedCosts.reduce((acc, cost) => {
-                                        return acc + cost.count;
-                                    }, 0) +
-                                    "/" +
-                                    trip.maxPeople
-                                }}
+            getCustomersCount(selectedDate.billsList) +
+            selectedDate.selectedCosts.reduce((acc, cost) => {
+                return acc + cost.count;
+            }, 0) +
+            "/" +
+            trip.maxPeople
+        }}
                                 чел.
                             </b>
                         </div>
@@ -633,9 +640,13 @@ onMounted(async () => {
 
                     <a-col :span="24">
                         <div class="d-flex space-around">
-                            <div class="buy-btn">
+                            <a-button html-type="submit" class="btn" @click="buyNow = false" :disabled="isNoPlaces">
+                                Заказать
+                            </a-button>
+                            <div class="buy-btn" v-if="!trip.partner">
                                 <div>
-                                    <a-button html-type="submit" :disabled="isNoPlaces" @click="buyNow = true" class="btn">
+                                    <a-button html-type="submit" :disabled="isNoPlaces" @click="buyNow = true"
+                                        type="primary" class="lets_go_btn">
                                         оплатить
                                     </a-button>
                                 </div>
@@ -643,10 +654,6 @@ onMounted(async () => {
                                     <img :src="TinkoffLogo" class="tinkoff-logo">
                                 </div>
                             </div>
-                            <a-button html-type="submit" type="primary" class="lets_go_btn" @click="buyNow = false"
-                                :disabled="isNoPlaces">
-                                Заказать
-                            </a-button>
                         </div>
                     </a-col>
                 </a-row>
@@ -741,8 +748,9 @@ img {
         user-select: none;
     }
 
-    .btn {
-        border-radius: 15px;
-    }
+}
+
+.btn {
+    border-radius: 15px;
 }
 </style>

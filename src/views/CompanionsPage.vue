@@ -73,20 +73,20 @@ const ageString = (age) => {
                 <span class="mdi mdi-compass-outline"></span>{{ companion.direction }}
               </div>
               <div :class="[
-                companion.companionGender == 'Мужчина'
-                  ? 'male'
-                  : companion.companionGender == 'Женщина'
-                    ? 'female'
-                    : 'not-matter',
-              ]">
+        companion.companionGender == 'Мужчина'
+          ? 'male'
+          : companion.companionGender == 'Женщина'
+            ? 'female'
+            : 'not-matter',
+      ]">
                 <span :class="companion.companionGender == 'Женщина'
-                  ? 'mdi mdi-gender-female'
-                  : companion.companionGender == 'Мужчина'
-                    ? 'mdi mdi-gender-male'
-                    : 'mdi mdi-human-male-female'
-                  "></span>
+        ? 'mdi mdi-gender-female'
+        : companion.companionGender == 'Мужчина'
+          ? 'mdi mdi-gender-male'
+          : 'mdi mdi-human-male-female'
+        "></span>
                 {{ companion.companionGender == "Мужчина" ? "Мужчину" : companion.companionGender ==
-                  "Женщина" ? "Женщину" : "Не важно"
+        "Женщина" ? "Женщину" : "Не важно"
                 }}
               </div>
               <div>
@@ -104,18 +104,23 @@ const ageString = (age) => {
                   <span>отклик</span>
                 </template>
                 <a-button shape="circle" class="accept" @click="
-                  router.push({
-                    path: '/add-feedback',
-                    query: { companion_id: companion._id },
-                  })
-                  ">
+        router.push({
+          path: '/add-feedback',
+          query: { companion_id: companion._id },
+        })
+        ">
                   <span class="mdi mdi-thumb-up-outline"></span>
                 </a-button>
               </a-tooltip>
             </a-card>
           </a-col>
           <a-col v-else style="text-align: center" :span="24">
-            Нет попутчиков
+            <div style="display: flex; flex-direction: column; margin-top: 16px;">
+              <div class="d-flex justify-center">
+                <img src="../assets/images/notfound.jpg" alt="" style="height: 150px;">
+              </div>
+              <h3>извини, я не нашёл</h3>
+            </div>
           </a-col>
         </a-row>
       </a-col>
@@ -166,4 +171,3 @@ const ageString = (age) => {
   }
 }
 </style>
-

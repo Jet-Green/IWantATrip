@@ -258,8 +258,8 @@ onMounted(async () => {
             <a-col :span="24" class="mb-8 d-flex space-between">
                 <a-breadcrumb>
                     <a-breadcrumb-item @click="router.push('/cabinet/created-trips')">{{
-                        trip.name
-                    }}</a-breadcrumb-item>
+            trip.name
+        }}</a-breadcrumb-item>
                     <a-breadcrumb-item>Покупатели</a-breadcrumb-item>
                 </a-breadcrumb>
                 <a-button type="primary" class="lets_go_btn" @click="addCustomerDialog = true">
@@ -289,8 +289,8 @@ onMounted(async () => {
                             <div class="d-flex space-between">
                                 <div style="color:#ff6600"><span v-if="BILL?.isWaitingList"> Лист ожидания</span></div>
                                 <b>{{
-                                    clearData(BILL?.date)
-                                }}</b>
+            clearData(BILL?.date)
+        }}</b>
                             </div>
                             <div> </div>
                             <div>
@@ -317,16 +317,16 @@ onMounted(async () => {
                             <div class="d-flex justify-end">
                                 <span>Итого: </span>
                                 {{
-                                    billTotal(BILL)
-                                }}
+            billTotal(BILL)
+        }}
                                 руб.
 
                             </div>
                             <div class="d-flex justify-end">
                                 <span>Оплачено: </span>
                                 {{
-                                    BILL.payment.amount
-                                }}
+                BILL.payment.amount
+            }}
                                 руб.
                             </div>
                             <div v-for="doc in BILL.payment?.documents" class="d-flex justify-end">
@@ -388,7 +388,7 @@ onMounted(async () => {
             </div>
         </a-col>
         <a-col v-else :span="24" class="d-flex justify-center">
-            <a-spin size="large" style="margin-top: 50px;" />
+            <img src="../../assets/images/founddog.webp" alt="" style="height: 150px; margin-top: 50px;">
         </a-col>
 
 
@@ -419,16 +419,16 @@ onMounted(async () => {
             <div class="d-flex justify-end">
                 <span>Итого: </span>
                 {{
-                    billTotal(currentBill)
-                }}
+            billTotal(currentBill)
+        }}
                 руб.
 
             </div>
             <div class="d-flex justify-end">
                 <span>Оплачено: </span>
                 {{
-                    currentBill.payment.amount
-                }}
+                currentBill.payment.amount
+            }}
                 руб.
             </div>
             <a-textarea v-model:value="userComment" placeholder="Комментарий к чеку" class="mt-12 mb-12" />
@@ -460,8 +460,8 @@ onMounted(async () => {
                 <a-col :span="24">
                     <a-button type="dashed" block @click="currentBill.touristsList.push({ fullname: '', phone: '' })"
                         :disabled="currentBill.cart.reduce((accumulator, object) => {
-                            return accumulator + object.count;
-                        }, 0) == currentBill.touristsList.length">+
+            return accumulator + object.count;
+        }, 0) == currentBill.touristsList.length">+
                         добавить</a-button>
                 </a-col>
                 <a-col :span="24">

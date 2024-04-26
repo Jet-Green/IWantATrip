@@ -7,11 +7,11 @@ export default {
     async getCustomers(ids) {
         return $api.post('/trips/get-customers', ids)
     },
-    async fetchTrips(cursor, lon, lat, query = '', start = '', end = '', type = '') {
+    async fetchTrips(cursor, lon, lat, query, start, end, type) {
         return $api.get(`/trips/get-all?cursor=${cursor}&lon=${lon}&lat=${lat}&query=${query}&start=${start}&end=${end}&type=${type}`)
     },
     async fetchCatalogTrips(cursor, lon, lat, query = '', type = '') {
-        return $api.get(`/trips/get-all-catalog?cursor=${cursor}&lon=${lon}&lat=${lat}&query=${query}&type=${type}`)
+        return $api.get(`/catalog/get-all-catalog?cursor=${cursor}&lon=${lon}&lat=${lat}&query=${query}&type=${type}`)
     },
     async searchTrips(req, cursor) {
         return $api.post(`/trips/search?cursor=${cursor}`, req)
@@ -20,14 +20,14 @@ export default {
         return $api.get(`/trips/get-by-id?_id=${_id}`)
     },
     async getMyCatalogTrips(id) {
-        return $api.post('/trips/get-my-catalog-trips', {id})
+        return $api.post('/catalog/get-my-catalog-trips', { id })
     },
 
     async deleteTrip(_id) {
         return $api.post('/trips/delete-by-id', _id)
     },
     async catalogToDelete(_id) {
-        return $api.post('/trips/delete-catalog-by-id', _id)
+        return $api.post('/catalog/delete-catalog-by-id', _id)
     },
 
     async createTrip(emailHtml, trip, authorEmail, fullinfo) {
@@ -35,7 +35,7 @@ export default {
     },
 
     async createCatalogTrip(emailHtml, trip, authorEmail, fullinfo) {
-        return $api.post('/trips/create-catalog-trip', { emailHtml, trip, emails: [authorEmail], fullinfo })
+        return $api.post('/catalog/create-catalog-trip', { emailHtml, trip, emails: [authorEmail], fullinfo })
     },
 
     async updateTrip(trip) {
@@ -47,7 +47,7 @@ export default {
     },
 
     async uploadCatalogTripImages(images) {
-        return $api.post('/trips/upload-catalog-images', images)
+        return $api.post('/catalog/upload-catalog-images', images)
     },
     async uploadTripPdf(pdf) {
         return $api.post('/trips/upload-pdf', pdf)
@@ -61,13 +61,13 @@ export default {
         return $api.get(`/trips/hide?_id=${_id}&v=${v}`)
     },
     hideCatalogTrip(_id, v) {
-        return $api.get(`/trips/hide-catalog?_id=${_id}&v=${v}`)
+        return $api.get(`/catalog/hide-catalog?_id=${_id}&v=${v}`)
     },
     async clearTripsDB() {
         return $api.get('/trips/clear')
     },
     findCatalogTrips() {
-        return $api.get('/trips/catalog-trips')
+        return $api.get('/catalog/catalog-trips')
     },
     findRejectedCatalog() {
         return $api.get('/admin/rejected-catalog-trips')
@@ -103,7 +103,7 @@ export default {
         return $api.get(`/trips/get-full-trip?_id=${_id}`)
     },
     getFullCatalogById(_id) {
-        return $api.get(`/trips/get-full-catalog?_id=${_id}`)
+        return $api.get(`/catalog/get-full-catalog?_id=${_id}`)
     },
 
     setPayment(bill) {
@@ -119,7 +119,7 @@ export default {
         return $api.post('/trips/update-partner', { partner: partner, _id: trip_id })
     },
     updateCatalogTrip(_id, trip) {
-        return $api.post('/trips/update-catalog-trip', { _id, trip })
+        return $api.post('/catalog/update-catalog-trip', { _id, trip })
     },
     updateIncludedLocations(updateObject) {
         return $api.post('/trips/update-included-locations', updateObject)
@@ -140,12 +140,12 @@ export default {
         return $api.get(`/trips/bought?userId=${userId}`)
     },
     getCatalogTripById(catalogTripId) {
-        return $api.get(`/trips/catalog?_id=${catalogTripId}`)
+        return $api.get(`/catalog/catalog?_id=${catalogTripId}`)
     },
     moveToCatalog(tripId) {
-        return $api.post('/trips/move-to-catalog', { tripId })
+        return $api.post('/catalog/move-to-catalog', { tripId })
     },
     getMyCatalogTripsOnModeration(id) {
-        return $api.post('/trips/my-catalog-on-moderation', {id})
+        return $api.post('/catalog/my-catalog-on-moderation', { id })
     }
 }

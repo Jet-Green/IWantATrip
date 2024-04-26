@@ -162,8 +162,8 @@ onMounted(async () => {
               <template #title>
                 Договоры
               </template>
-              <a-menu-item v-if="userStore.user.roles.includes('admin')"
-                key="/cabinet/add-admin-contract">Добавить</a-menu-item>
+              <!-- <a-menu-item v-if="userStore.user.roles.includes('admin')"
+                key="/cabinet/add-admin-contract">Добавить</a-menu-item> -->
               <a-menu-item v-if="userStore.user.roles.includes('admin')"
                 key="/cabinet/admin-contracts-list">Список</a-menu-item>
             </a-sub-menu>

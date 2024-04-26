@@ -5,6 +5,7 @@ import {
   computed,
   watch,
   onMounted,
+  onUnmounted,
   getCurrentInstance,
 } from "vue";
 import BackButton from "../../components/BackButton.vue";
@@ -263,6 +264,8 @@ watch(
 );
 
 watch(form, (newValue, oldValue) => {
+  if (localStorage.getItem("tripCalcPreview")) return
+  
   localStorage.setItem("tripCalc", JSON.stringify(form));
   if (!form.tourists) {
     form.tourists = 1;
@@ -278,11 +281,14 @@ watch(form, (newValue, oldValue) => {
 });
 
 onMounted(async () => {
-  let readData = JSON.parse(localStorage.getItem("tripCalc"));
+  let readData = JSON.parse(localStorage.getItem("tripCalcPreview")) ?? JSON.parse(localStorage.getItem("tripCalc"));
   if (readData) {
     Object.assign(form, readData);
   }
 });
+onUnmounted(() => {
+  localStorage.removeItem("tripCalcPreview")
+})
 </script>
 <template>
   <div>
@@ -356,8 +362,8 @@ onMounted(async () => {
               <p class="ma-0 label">cтоимость</p>
             </a-col>
           </a-row>
-          <a-row v-for="(item, index) in form.groupCost" :key="index" style="display: flex" align="baseline" class="mb-4"
-            :gutter="[4, 4]">
+          <a-row v-for="(item, index) in form.groupCost" :key="index" style="display: flex" align="baseline"
+            class="mb-4" :gutter="[4, 4]">
             <a-col :xs="10">
               <a-input v-model:value="item.type" placeholder="гид" />
             </a-col>
@@ -465,10 +471,10 @@ onMounted(async () => {
               <div strong class="ma-0">
                 Рентабельность:
                 {{
-                  result(form.tourists).profitability
-                  ? result(form.tourists).profitability
-                  : 0
-                }}%
+          result(form.tourists).profitability
+            ? result(form.tourists).profitability
+            : 0
+        }}%
               </div>
             </a-col>
           </a-row>
@@ -557,7 +563,7 @@ onMounted(async () => {
     </div>
   </div>
 </template>
-<style  lang="scss" scoped>
+<style lang="scss" scoped>
 .title {
   text-align: center;
   margin-top: 8px;

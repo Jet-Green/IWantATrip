@@ -5,24 +5,54 @@ import tinkoffPlugin from '../plugins/tinkoff.js'
 
 export const useContract = defineStore('contract', {
     state: () => ({
-        contracts: []
+        contracts: [],
+        editingContract: {},
     }),
     getters: {
     },
     actions: {
+        async deleteContract(_id) {
+            let res = await ContractService.deleteContract(_id)
+            return res
+        },
+        async registerContract(newContract, userEmail) {
+
+            let response = await ContractService.registerContract(newContract, userEmail)
+            return response
+        },
+        setEditingContract(contract) {
+            this.editingContract = contract
+        },
+        clearEditingContract() {
+            this.editingContract = {}
+        },
+
+
         async createContract(newContract, userEmail) {
-            let tinkoffRes = await tinkoffPlugin.registerShop(newContract)
-            console.log(tinkoffRes);
-            if (tinkoffRes.status != '200') {
-                message.config({ duration: 10 });
-                message.error({ content: tinkoffRes.data.errors });
-                return
+            let shopInfo = {}
+            if (process.env.NODE_ENV == 'development') {
+                shopInfo = {
+                    code: "1375669",
+                    shopCode: 1375669,
+                    terminals: []
+                }
+            }
+            if (process.env.NODE_ENV == 'production') {
+                let tinkoffRes = await tinkoffPlugin.registerShop(newContract)
+                if (tinkoffRes.status != '200') {
+                    message.config({ duration: 10 });
+                    message.error({ content: tinkoffRes.data.errors });
+                    return
+                }
+                shopInfo = tinkoffRes.data
             }
 
-            newContract.shopInfo = tinkoffRes.data
-
-            let response = await ContractService.createContract(newContract, userEmail)
+            let response = await ContractService.createContract(newContract._id, userEmail, shopInfo)
             return response
+        },
+        async updateContract(newContract) {
+            let tinkoffRes = await tinkoffPlugin.updateContract(newContract)
+            return tinkoffRes
         },
         async getAll() {
             let res = await ContractService.getAll()
@@ -36,6 +66,9 @@ export const useContract = defineStore('contract', {
         },
         async deleteContractEmail(contractId, contractEmail) {
             return await ContractService.deleteContractEmail(contractId, contractEmail)
+        },
+        async getContractById(contractId) {
+            return await ContractService.getContractById(contractId)
         }
     }
 })

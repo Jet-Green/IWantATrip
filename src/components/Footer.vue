@@ -1,5 +1,5 @@
 <script setup>
-import MadeWithLove from '../assets/images/madewithlove.svg'
+// import MadeWithLove from '../assets/images/madewithlove.svg'
 
 </script>
 
@@ -9,8 +9,8 @@ import MadeWithLove from '../assets/images/madewithlove.svg'
       <!-- <a-divider /> -->
       <a-row type="flex" justify="center">
         <a-col :xs="24" :md="18">
-          <a-row class="bottom_menu d-flex">
-            <a-col :xs="8" class="d-flex align-center direction-column">
+          <a-row class="bottom_menu d-flex space-around">
+            <a-col class="d-flex align-center direction-column">
               <div>
                 <a href="https://doc.gorodaivesi.ru/privacy/main.html" target="_blank"><b>Документы</b> </a>
               </div>
@@ -26,12 +26,9 @@ import MadeWithLove from '../assets/images/madewithlove.svg'
                   <a href="https://doc.gorodaivesi.ru/privacy/agreement.html" target="_blank">Согласие на обработку
                     персональных данных</a>
                 </div>
-                <div>
-                  <a href="https://doc.gorodaivesi.ru/privacy/agentDocs.html">Агентский договор</a>
-                </div>
               </div>
             </a-col>
-            <a-col :xs="8" class="d-flex align-center direction-column">
+            <a-col class="d-flex align-center direction-column">
               <div>
                 <a href="https://doc.gorodaivesi.ru" target="_blank"><b>О проекте</b> </a>
               </div>
@@ -51,7 +48,7 @@ import MadeWithLove from '../assets/images/madewithlove.svg'
                 <!-- ! -->
               </div>
             </a-col>
-            <a-col :xs="8" class="d-flex align-center direction-column">
+            <!-- <a-col :xs="8" class="d-flex align-center direction-column">
               <div>
                 <a href="https://doc.gorodaivesi.ru/education/main.html" target="_blank"><b>Обучение</b></a>
               </div>
@@ -64,16 +61,16 @@ import MadeWithLove from '../assets/images/madewithlove.svg'
                   <a href="https://doc.gorodaivesi.ru/education/reg.html" target="_blank">Регистрация</a>
                 </div>
               </div>
-            </a-col>
+            </a-col> -->
           </a-row>
         </a-col>
       </a-row>
 
       <a-row type="flex" justify="center" class="mt-16">
         <a-col>
-          <a href="https://qbit-club.com/" target="_blank">
-            <!-- <img :src="MadeWithLove" style="height: 40px; user-select: none;"> -->
-            <b> Сделано в Кубит </b>
+          <a href="https://qbit-club.com/" target="_blank" style="user-select: none;">
+            <img src="../assets/images/madewithlove.webp" style="height: 60px;">
+            <!-- <b> Сделано в Кубит </b> -->
           </a>
         </a-col>
       </a-row>

@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuth } from '../stores/auth'
+import tinkoffPlugin from '../plugins/tinkoff'
 
 
 const router = createRouter({
@@ -62,7 +63,7 @@ const router = createRouter({
           return '/auth'
 
         if (!userStore.user.tinkoffContract?._id) {
-          localStorage.setItem('fallbackMessage', JSON.stringify({ subtitle: 'Нужно заключить договор с платформой, чтобы создать тур', title: "Нет договора с \"Города и Веси\"" }))
+          localStorage.setItem('fallbackMessage', JSON.stringify({ subtitle: 'Нужно заключить договор с платформой, чтобы создать тур', title: "Нет договора с \"Города и Веси\"", may_send_idea: true }))
           return '/fourothree'
         }
       }
@@ -80,7 +81,7 @@ const router = createRouter({
           return '/auth'
 
         if (!userStore.user.tinkoffContract?._id) {
-          localStorage.setItem('fallbackMessage', JSON.stringify({ subtitle: 'Нужно заключить договор с платформой, чтобы создать тур', title: "Нет договора с \"Города и Веси\"" }))
+          localStorage.setItem('fallbackMessage', JSON.stringify({ subtitle: 'Нужно заключить договор с платформой, чтобы создать тур', title: "Нет договора с \"Города и Веси\"", may_send_idea: true }))
           return '/fourothree'
         }
       }
@@ -98,7 +99,19 @@ const router = createRouter({
           return '/auth'
       }
     },
+    {
+      path: '/send-idea',
+      name: 'SendIdea',
+      component: () => import('../views/SendIdea.vue'),
+      beforeEnter: async (to, from) => {
+        let userStore = useAuth()
+        if (!localStorage.getItem('token') || !userStore.isAuth)
+          await userStore.checkAuth()
 
+        if (!userStore.isAuth)
+          return '/auth'
+      }
+    },
     {
       path: '/catalog-to-active',
       name: 'CatalogTripToActive',
@@ -147,6 +160,10 @@ const router = createRouter({
         if (!userStore.isAuth)
           return '/auth'
       }
+    },
+    {
+      path: '/create-bus', 
+      component: () => import('../components/admin/CreateBus.vue'),
     },
     {
       path: '/trip',
@@ -419,6 +436,7 @@ const router = createRouter({
         {
           path: "add-admin-contract",
           name: 'AddAdminContract',
+          props: true,
           component: () => import('../components/admin/AddAdminContract.vue'),
           beforeEnter: () => {
             let userStore = useAuth()
@@ -459,6 +477,26 @@ const router = createRouter({
           return '/auth'
       }
     },
+    // UpdateContract
+    {
+      path: "/update-contract",
+      name: 'UpdateContract',
+      component: () => import('../components/admin/UpdateContract.vue'),
+      beforeEnter: async () => {
+        let userStore = useAuth()
+        if (!localStorage.getItem('token') || !userStore.isAuth)
+          await userStore.checkAuth()
+
+        if (!userStore.user?.roles?.includes('admin')) {
+          return '/'
+        }
+
+        let isTinkoffAuth = await tinkoffPlugin.checkAuth()
+        if (!isTinkoffAuth) {
+          return '/'
+        }
+      }
+    },
     {
       path: '/trip-moderation',
       name: 'TripModeration',
@@ -483,6 +521,7 @@ const router = createRouter({
         if (!userStore.user?.roles.includes('admin')) {
           return false
         }
+
       }
     },
     {
@@ -524,10 +563,22 @@ const router = createRouter({
       component: () => import('../views/Contacts.vue')
     },
     {
+      path: '/tinkoff-payment',
+      name: 'TinkoffPayment',
+      component: () => import('../views/TinkoffPayment.vue')
+    },
+    {
       path: '/fourothree',
       name: 'FourOThree',
       component: () => import('../views/fallbacks/403.vue')
-    }
+    },
+    {
+      path: "/contract-create",
+      name: 'ContractCreate',
+      component: () => import('../components/forms/ContractCreate.vue'),
+
+    },
+
   ],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {

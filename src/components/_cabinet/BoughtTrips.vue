@@ -58,17 +58,15 @@ async function cancelTrip(bill_id, user_id) {
     if (res.status == 200)
         await updateBought()
 }
-function openBuyDialog(cardId) {
+async function buyTrip(cardId) {
     for (let b of bought.value) {
         if (b._id == cardId) {
             currentBill.value = b
             break
         }
     }
-    console.log(currentBill.value);
+    // console.log(currentBill.value);
     buyDialog.value = true
-}
-async function buyTrip() {
     const orderId = Date.now().toString()
     let { data, token, success } =
         await tinkoffPlugin.initPayment(orderId, currentBill.value.cart, userStore.user.email, currentBill.value.tripId.tinkoffContract, currentBill.value.tripId.name)
@@ -107,7 +105,7 @@ onMounted(async () => {
 <template>
     <a-row v-if="loading">
         <a-col :span="24" class="d-flex justify-center mt-16">
-            <a-spin size="large" />
+            <img src="../../assets/images/founddog.webp" alt="" style="height: 150px;">
         </a-col>
     </a-row>
     <a-row v-else :gutter="[8, 8]">
@@ -118,9 +116,7 @@ onMounted(async () => {
                         <div>
                             {{ BILL.tripId?.name }}
                         </div>
-                        <b>{{
-                            clearData(BILL?.date)
-                        }}</b>
+                        <b>{{ clearData(BILL?.date) }}</b>
                     </div>
                     <div style="color:#ff6600"><span v-if="BILL?.isWaitingList"> Лист ожидания</span></div>
                     <div> </div>
@@ -133,17 +129,13 @@ onMounted(async () => {
 
                     <div class="d-flex justify-end">
                         <span>Итого: </span>
-                        {{
-                            billTotal(BILL)
-                        }}
+                        {{ billTotal(BILL) }}
                         руб.
 
                     </div>
                     <div class="d-flex justify-end">
                         <span>Оплачено: </span>
-                        {{
-                            BILL.payment.amount
-                        }}
+                        {{ BILL.payment.amount }}
                         руб.
                     </div>
                     <div v-for="doc in BILL.payment?.documents" class="d-flex justify-end">
@@ -158,7 +150,7 @@ onMounted(async () => {
                             style="display: flex; align-items: center">
                             <div class="buy-btn">
                                 <div>
-                                    <a-button @click="openBuyDialog(BILL._id)" class="btn">
+                                    <a-button @click="buyTrip(BILL._id)" type="primary" class="lets_go_btn">
                                         оплатить
                                     </a-button>
                                 </div>
@@ -178,7 +170,7 @@ onMounted(async () => {
 
         </a-col>
     </a-row>
-    <a-modal v-model:open="buyDialog" :footer="null">
+    <!-- <a-modal v-model:open="buyDialog" :footer="null">
         <form @submit.prevent="buyTrip" class="mt-16">
             <a-row :gutter="[4, 8]">
                 <a-col :span="24">
@@ -221,7 +213,7 @@ onMounted(async () => {
                     <div class="d-flex space-around">
                         <div class="buy-btn">
                             <div>
-                                <a-button html-type="submit" class="btn">
+                                <a-button html-type="submit" type="primary" class="lets_go_btn">
                                     оплатить
                                 </a-button>
                             </div>
@@ -233,7 +225,7 @@ onMounted(async () => {
                 </a-col>
             </a-row>
         </Form>
-    </a-modal>
+    </a-modal> -->
 </template>
 <style lang="scss" scoped>
 .buy-btn {
@@ -251,10 +243,6 @@ onMounted(async () => {
         -webkit-user-select: none;
         -o-user-select: none;
         user-select: none;
-    }
-
-    .btn {
-        border-radius: 15px;
     }
 }
 </style>

@@ -169,4 +169,29 @@ async function registerShop(shopData) {
     console.log(res);
 }
 
-export default { initPayment, checkPayment, cancelPayment, sendClosingReceipt, registerShop }
+async function updateContract(contract) {
+    // это обновит контракт, не трогать
+    let accessToken = localStorage.getItem('tinkoffAccessToken')
+    let stringShopCode = contract.shopInfo.code
+    let res = await axios.patch(`https://sm-register.tinkoff.ru/register/${stringShopCode}`, contract, { headers: { Authorization: `Bearer + ${accessToken}` } })
+
+    return res
+}
+
+async function checkAuth() {
+    const env = import.meta.env
+    const body = {
+        grant_type: 'password',
+        username: env.VITE_TINKOFF_USERNAME,
+        password: env.VITE_TINKOFF_PASSWORD
+    }
+    let res = await axios.post('https://sm-register.tinkoff.ru/oauth/token', body, { auth: { Username: 'partner', Password: 'partner' } })
+    if (res.status == 200) {
+        localStorage.setItem('tinkoffAccessToken', res.data.access_token)
+        localStorage.setItem('tinkoffRefreshToken', res.data.refresh_token)
+        return true
+    }
+    return false
+}
+
+export default { initPayment, checkPayment, cancelPayment, sendClosingReceipt, registerShop, updateContract, checkAuth }
