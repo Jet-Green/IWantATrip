@@ -1,6 +1,6 @@
 <script setup>
 import { useRouter } from "vue-router";
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, nextTick } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useAuth } from "../stores/auth";
 import { useLocations } from "../stores/locations";
@@ -32,7 +32,8 @@ let auth = ref(null);
 
 let locationSearchRequest = ref('Ваш город')
 
-const open = ref(false);
+// знакомство с меню
+let open = ref(true);
 let currentStep = ref(0);
 
 const steps = [
@@ -74,12 +75,16 @@ const steps = [
   },
 ];
 
-function openHeaderTour(state, step = 0) {
-  open.value = state
-  if (step > 0) {
-    return userStore.showTour(step, 'landingTour', userStore.user._id)
+
+function openHeaderTour(state) {
+  if (state) {
+    open.value = state
+    localStorage.setItem('headerTour', true)
+  } else {
+    currentStep.value = 0
+    open.value = false
+    localStorage.setItem('headerTour', false)
   }
-  return userStore.showTour(0, 'landingTour', userStore.user._id)
 }
 const next = () => {
   currentStep.value++;
@@ -125,18 +130,13 @@ const handleChange = async () => {
     }
   }
 };
-userStore.$subscribe((mutation, state) => {
-  if (state.user._id && window.screen.width >= 800) {
-    if (userStore.user?.educationTours?.landingTour + 1 < steps.length) {
-      currentStep.value = userStore.user?.educationTours?.landingTour
-      openHeaderTour(true, userStore.user?.educationTours?.landingTour)
-    }
-    if (!userStore.user?.educationTours?.landingTour) {
-      openHeaderTour(true, 0)
-    }
-  }
-})
-onMounted(() => {
+
+onMounted(async () => {
+  await nextTick();
+  if (localStorage.getItem('headerTour') == 'false') {
+    open.value = JSON.parse(localStorage?.getItem('headerTour'))
+  } 
+
   if (localStorage.getItem("location")) {
     try {
       locationSearchRequest.value = JSON.parse(localStorage.getItem("location")).shortName
@@ -151,9 +151,10 @@ onMounted(() => {
 
 <template>
   <a-layout-header :style="{ position: 'fixed', zIndex: 999, width: '100%', background: 'white' }">
-    <a-config-provider :locale="ruRU"> <a-tour :open="open" v-model:current="currentStep" :steps="steps"
-        @finish='openHeaderTour(false, currentStep)' @click="next"
-        @close='openHeaderTour(false, currentStep)' /></a-config-provider>
+    <a-config-provider :locale="ruRU">
+      <a-tour :open="open" v-model:current="currentStep" :steps="steps" @finish='openHeaderTour(false)' @click="next"
+        @close='openHeaderTour(false)' />
+    </a-config-provider>
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
         <a-row type="flex" justify="space-between">
@@ -166,6 +167,7 @@ onMounted(() => {
           </a-col>
 
           <a-col>
+
             <div ref='locationBar' class="location" @click="selectLocationDialog = !selectLocationDialog"
               style="cursor: pointer; font-weight: bold;">
               <span class="mdi mdi-map-marker-outline"></span>
@@ -183,7 +185,7 @@ onMounted(() => {
             </a-modal>
           </a-col>
 
-          <a-col v-if="!sm" :span="10" class="top_menu">
+          <a-col v-if="!sm" :span="10" class="top_menu" >
             <div ref='find' @click="toComponentFromMenu('TripsPage')" class="route">найти</div>
             <div ref='order' @click="toComponentFromMenu('CreateTripWithHelp')" class="route">
               заказать
@@ -194,12 +196,15 @@ onMounted(() => {
             <div ref='companion' @click="toComponentFromMenu('CompanionsPage')" class="route">
               попутчики
             </div>
+            <span class="mdi mdi-18px mdi-information-variant" style="color: #245159; cursor: pointer; margin-top: -10px;"
+              @click="open = !open"></span>
             <span ref='auth' v-if="userStore.isAuth" class="mdi mdi-24px mdi-home" @click="toComponentFromMenu('Me')"
               style="cursor: pointer" cancelText="отмена">
             </span>
             <span ref='auth' v-if="!userStore.isAuth" class="mdi mdi-24px mdi-login"
               @click="toComponentFromMenu('RegForm')" style="cursor: pointer">
             </span>
+            
           </a-col>
           <a-col v-else>
             <span class="mdi mdi-24px mdi-menu" style="color: #245159; cursor: pointer"
@@ -208,6 +213,9 @@ onMounted(() => {
         </a-row>
       </a-col>
     </a-row>
+
+    
+
     <a-drawer placement="right" :closable="false" :open="visibleDrawer" @close="visibleDrawer = !visibleDrawer"
       width="200">
       <div @click="toComponentFromMenu('Landing')" class="route ma-8">главная</div>
