@@ -1,6 +1,6 @@
 <script setup>
 import { useRouter } from "vue-router";
-import { ref, watch, onMounted, nextTick } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useAuth } from "../stores/auth";
 import { useLocations } from "../stores/locations";
@@ -131,11 +131,11 @@ const handleChange = async () => {
   }
 };
 
-onMounted(async () => {
-  await nextTick();
-  if (localStorage.getItem('headerTour') == 'false') {
+onMounted(() => {
+
+  if (localStorage.getItem('headerTour') == 'false' || !sm.value) {
     open.value = JSON.parse(localStorage?.getItem('headerTour'))
-  } 
+  }
 
   if (localStorage.getItem("location")) {
     try {
@@ -151,7 +151,7 @@ onMounted(async () => {
 
 <template>
   <a-layout-header :style="{ position: 'fixed', zIndex: 999, width: '100%', background: 'white' }">
-    <a-config-provider :locale="ruRU">
+    <a-config-provider :locale="ruRU" v-if="!sm">
       <a-tour :open="open" v-model:current="currentStep" :steps="steps" @finish='openHeaderTour(false)' @click="next"
         @close='openHeaderTour(false)' />
     </a-config-provider>
@@ -185,7 +185,7 @@ onMounted(async () => {
             </a-modal>
           </a-col>
 
-          <a-col v-if="!sm" :span="10" class="top_menu" >
+          <a-col v-if="!sm" :span="10" class="top_menu">
             <div ref='find' @click="toComponentFromMenu('TripsPage')" class="route">найти</div>
             <div ref='order' @click="toComponentFromMenu('CreateTripWithHelp')" class="route">
               заказать
@@ -196,15 +196,15 @@ onMounted(async () => {
             <div ref='companion' @click="toComponentFromMenu('CompanionsPage')" class="route">
               попутчики
             </div>
-            <span class="mdi mdi-18px mdi-information-variant" style="color: #245159; cursor: pointer; margin-top: -10px;"
-              @click="open = !open"></span>
+            <span class="mdi mdi-18px mdi-information-variant"
+              style="color: #245159; cursor: pointer; margin-top: -10px;" @click="open = !open"></span>
             <span ref='auth' v-if="userStore.isAuth" class="mdi mdi-24px mdi-home" @click="toComponentFromMenu('Me')"
               style="cursor: pointer" cancelText="отмена">
             </span>
             <span ref='auth' v-if="!userStore.isAuth" class="mdi mdi-24px mdi-login"
               @click="toComponentFromMenu('RegForm')" style="cursor: pointer">
             </span>
-            
+
           </a-col>
           <a-col v-else>
             <span class="mdi mdi-24px mdi-menu" style="color: #245159; cursor: pointer"
@@ -214,7 +214,7 @@ onMounted(async () => {
       </a-col>
     </a-row>
 
-    
+
 
     <a-drawer placement="right" :closable="false" :open="visibleDrawer" @close="visibleDrawer = !visibleDrawer"
       width="200">

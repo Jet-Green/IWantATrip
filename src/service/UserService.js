@@ -44,12 +44,7 @@ export default {
     determineWinner() {
         return $api.get('/auth/determine-winner')
     },
-    showTour(step, type, _id) {
-        return $api.post('/auth/show-tour',{ step, type, _id })
-    },
-    getTourStatus(_id) {
-        return $api.get(`/auth/get-tour?user_id=${_id}`)
-    },
+ 
     setTripCalculator(body) {
         return $api.put('/auth/set-trip-calculator', body)
     }

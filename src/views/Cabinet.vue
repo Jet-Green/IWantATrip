@@ -17,7 +17,7 @@ let current = ref([router.currentRoute.value.path]);
 
 let showBookingNotifications = ref(false)
 
-const open = ref(false);
+const open = ref(true);
 let currentStep = ref(0);
 
 let cab = ref(null);
@@ -34,7 +34,7 @@ const steps = [
   },
   {
     title: 'Туры',
-    description: 'управление и администрирование купленными и созданными турами',
+    description: 'управление купленными и созданными турами, заказами',
     placement: 'bottom',
     target: () => tur.value,
   },
@@ -45,12 +45,15 @@ const steps = [
     target: () => companions.value,
   }
 ];
-function openCabinetTour(state, step = 0) {
-  open.value = state
-  if (step > 0) {
-    return userStore.showTour(step, 'cabinetTour', userStore.user._id)
+function openCabinetTour(state) {
+  if (state) {
+    open.value = state
+    localStorage.setItem('cabinetTour', true)
+  } else {
+    currentStep.value = 0
+    open.value = false
+    localStorage.setItem('cabinetTour', false)
   }
-  return userStore.showTour(0, 'cabinetTour', userStore.user._id)
 }
 const next = () => {
   currentStep.value++;
@@ -65,17 +68,10 @@ watch(current, (newRout, oldRout) => {
 })
 
 onMounted(async () => {
-  await userStore.getTourStatus(userStore.user._id)
-  if (window.screen.width >= 800) {
-    if (userStore.user?.educationTours?.cabinetTour + 1 < steps.length) {
-      currentStep.value = userStore.user?.educationTours?.cabinetTour
-      openCabinetTour(true, userStore.user?.educationTours?.cabinetTour)
-    }
-    if (!userStore.user?.educationTours?.cabinetTour) {
-      openCabinetTour(true, 0)
-    }
-
+  if (localStorage.getItem('cabinetTour') == 'false' || !sm.value) {
+    open.value = JSON.parse(localStorage?.getItem('cabinetTour'))
   }
+
   // for (let n of userStore.user?.notifications) {
   //   if (n.type == 'BookingTrip' && n.send == true) {
   //     showBookingNotifications.value = true
@@ -88,9 +84,9 @@ onMounted(async () => {
 <template>
   <div>
     <BackButton></BackButton>
-    <a-config-provider :locale="ruRU">
-      <a-tour :open="open" v-model:current="currentStep" :steps="steps" @finish='openCabinetTour(false, currentStep)'
-        @click="next" @close='openCabinetTour(false, currentStep)'>
+    <a-config-provider :locale="ruRU" v-if="!sm">
+      <a-tour :open="open" v-model:current="currentStep" :steps="steps" @finish='openCabinetTour(false)' @click="next"
+        @close='openCabinetTour(false)'>
       </a-tour>
     </a-config-provider>
 
@@ -98,6 +94,8 @@ onMounted(async () => {
       <a-col :xs="22" :sm="16">
         <h2>
           Кабинет
+          <span v-if="!sm" class="mdi mdi-18px mdi-information-variant"
+            style="color: #245159; cursor: pointer; vertical-align: super;" @click="open = !open"></span>
           <span @click="logOut()" class="mdi mdi-24px mdi-logout" style="cursor: pointer; float: right">
           </span>
         </h2>

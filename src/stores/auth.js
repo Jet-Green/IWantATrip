@@ -199,22 +199,7 @@ export const useAuth = defineStore('auth', {
                 console.log(error);
             }
         },
-        async showTour(step,type,_id) {
-            try {
-                let res = await UserService.showTour(step,type,_id)
-                return res.data
-            } catch (error) {
-                console.log(error);
-            }
-        },
-        async getTourStatus(_id) {
-            try {
-                let res = await UserService.getTourStatus(_id)
-                return res.data
-            } catch (error) {
-                console.log(error);
-            }
-        },
+ 
         async setTripCalculator(calcId, tripId) {
             try {
                 let res = await UserService.setTripCalculator({ calcId, tripId })
