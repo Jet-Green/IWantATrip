@@ -14,6 +14,10 @@ let props = defineProps({
         type: Array,
         default: []
     },
+    max_count: {
+        type: Number,
+        default: 1
+    },
     all_free: Boolean,
     preview: Boolean
 })
@@ -21,10 +25,11 @@ let emit = defineEmits(['update:bus', 'update:selected_seats'])
 
 let bus = props.bus
 let preview = props.preview
+let max_count = props.max_count
 let free_seats = props.all_free ? bus.seats.map(seat => seat.number).filter(seat => !bus.stuff.includes(seat)) : props.free_seats
 let selected_seats = computed({
     get() {
-        return props['selected_seats']
+        return props.selected_seats
     },
     set(value) {
         emit('update:selected_seats', value)
@@ -36,7 +41,11 @@ function select(num) {
 
     if (selected_seats.value.includes(num)) {
         selected_seats.value = selected_seats.value.filter(item => item !== num)
-    } else {
+    }
+    else if (selected_seats.value.length >= max_count) {
+        return
+    } 
+    else {
         selected_seats.value.push(num)
     }
 }
