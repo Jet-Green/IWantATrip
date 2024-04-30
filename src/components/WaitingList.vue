@@ -4,9 +4,10 @@ import _ from 'lodash'
 
 let props = defineProps({
     tripsCount: Number,
-    transport: Array
+    transport: Array,
+    selected: Object
 });
-let emit = defineEmits(['isUserWaiting'])
+let emit = defineEmits(['isUserWaiting', 'update:selected'])
 
 const { tripsCount } = toRefs(props);
 // let tripsCount = ref(35)
@@ -54,7 +55,8 @@ let selectTransport = computed(() => {
 
 watch(tripsCount, () => { 
     emit('isUserWaiting', selectTransport.value.isWaiting)
-})
+    emit('update:selected', selectTransport.value.selected)
+}, { immediate: true })
 </script>
 
 <template>
