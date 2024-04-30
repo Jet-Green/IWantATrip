@@ -7,6 +7,7 @@ import { useLocations } from "../stores/locations";
 
 import { useTrips } from '../stores/trips';
 import { useCompanions } from "../stores/companions";
+import ruRU from 'ant-design-vue/es/locale/ru_RU';
 
 // import TripCreatorReg from "./forms/TripCreatorReg.vue";
 // import LogoSvg from "../components/_explanation/LogoSvg.vue";
@@ -20,9 +21,75 @@ let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
 let router = useRouter();
 let visibleDrawer = ref(false);
-let selectLocationDialog = ref(false)
+let selectLocationDialog = ref(false);
+
+let locationBar = ref(null);
+let find = ref(null);
+let order = ref(null);
+let companion = ref(null);
+let catalog = ref(null);
+let auth = ref(null);
 
 let locationSearchRequest = ref('Ваш город')
+
+// знакомство с меню
+let open = ref(true);
+let currentStep = ref(0);
+
+const steps = [
+  {
+    title: 'Местоположение',
+    description: 'выберите ваш город',
+    placement: 'bottom',
+    target: () => locationBar.value,
+  },
+  {
+    title: 'Найти',
+    description: 'используйте фильтр, выберите тур который вам понравится',
+    placement: 'bottom',
+    target: () => find.value,
+  },
+  {
+    title: 'Заказать',
+    description: 'заполните форму, и мы поможем с выбором тура',
+    placement: 'bottom',
+    target: () => order.value,
+  },
+  {
+    title: 'Каталог',
+    description: 'возможные варианты туров, которые можно организовать в удобное для вас время',
+    placement: 'bottom',
+    target: () => catalog.value,
+  },
+  {
+    title: 'Попутчики',
+    description: 'найдите попутчиков или присоединитесь к другим',
+    placement: 'bottom',
+    target: () => companion.value,
+  },
+  {
+    title: 'Кабинет',
+    description: 'управление аккаунтом, создание и администрирование туров',
+    placement: 'bottom',
+    target: () => auth.value,
+  },
+];
+
+
+function openHeaderTour(state) {
+  if (state) {
+    open.value = state
+    localStorage.setItem('headerTour', true)
+  } else {
+    currentStep.value = 0
+    open.value = false
+    localStorage.setItem('headerTour', false)
+  }
+}
+const next = () => {
+  currentStep.value++;
+};
+
 
 
 function toComponentFromMenu(routName) {
@@ -63,7 +130,13 @@ const handleChange = async () => {
     }
   }
 };
+
 onMounted(() => {
+
+  if (localStorage.getItem('headerTour') == 'false' || !sm.value) {
+    open.value = JSON.parse(localStorage?.getItem('headerTour'))
+  }
+
   if (localStorage.getItem("location")) {
     try {
       locationSearchRequest.value = JSON.parse(localStorage.getItem("location")).shortName
@@ -73,13 +146,15 @@ onMounted(() => {
       console.log(error);
     }
   }
-
 })
-
 </script>
 
 <template>
   <a-layout-header :style="{ position: 'fixed', zIndex: 999, width: '100%', background: 'white' }">
+    <a-config-provider :locale="ruRU" v-if="!sm">
+      <a-tour :open="open" v-model:current="currentStep" :steps="steps" @finish='openHeaderTour(false)' @click="next"
+        @close='openHeaderTour(false)' />
+    </a-config-provider>
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
         <a-row type="flex" justify="space-between">
@@ -92,7 +167,8 @@ onMounted(() => {
           </a-col>
 
           <a-col>
-            <div class="location" @click="selectLocationDialog = !selectLocationDialog"
+
+            <div ref='locationBar' class="location" @click="selectLocationDialog = !selectLocationDialog"
               style="cursor: pointer; font-weight: bold;">
               <span class="mdi mdi-map-marker-outline"></span>
               <span>
@@ -110,22 +186,25 @@ onMounted(() => {
           </a-col>
 
           <a-col v-if="!sm" :span="10" class="top_menu">
-            <div @click="toComponentFromMenu('TripsPage')" class="route">найти</div>
-            <div @click="toComponentFromMenu('CreateTripWithHelp')" class="route">
+            <div ref='find' @click="toComponentFromMenu('TripsPage')" class="route">найти</div>
+            <div ref='order' @click="toComponentFromMenu('CreateTripWithHelp')" class="route">
               заказать
             </div>
-            <div @click="toComponentFromMenu('CatalogPage')" class="route">
+            <div ref='catalog' @click="toComponentFromMenu('CatalogPage')" class="route">
               каталог
             </div>
-            <div @click="toComponentFromMenu('CompanionsPage')" class="route">
+            <div ref='companion' @click="toComponentFromMenu('CompanionsPage')" class="route">
               попутчики
             </div>
-            <span v-if="userStore.isAuth" class="mdi mdi-24px mdi-home" @click="toComponentFromMenu('Me')"
+            <span class="mdi mdi-18px mdi-information-variant"
+              style="color: #245159; cursor: pointer; margin-top: -10px;" @click="open = !open"></span>
+            <span ref='auth' v-if="userStore.isAuth" class="mdi mdi-24px mdi-home" @click="toComponentFromMenu('Me')"
               style="cursor: pointer" cancelText="отмена">
             </span>
-            <span v-if="!userStore.isAuth" class="mdi mdi-24px mdi-login" @click="toComponentFromMenu('RegForm')"
-              style="cursor: pointer">
+            <span ref='auth' v-if="!userStore.isAuth" class="mdi mdi-24px mdi-login"
+              @click="toComponentFromMenu('RegForm')" style="cursor: pointer">
             </span>
+
           </a-col>
           <a-col v-else>
             <span class="mdi mdi-24px mdi-menu" style="color: #245159; cursor: pointer"
@@ -134,6 +213,9 @@ onMounted(() => {
         </a-row>
       </a-col>
     </a-row>
+
+
+
     <a-drawer placement="right" :closable="false" :open="visibleDrawer" @close="visibleDrawer = !visibleDrawer"
       width="200">
       <div @click="toComponentFromMenu('Landing')" class="route ma-8">главная</div>
@@ -142,8 +224,8 @@ onMounted(() => {
         заказать тур
       </div>
       <div @click="toComponentFromMenu('CatalogPage')" class="route ma-8">
-              каталог
-            </div>
+        каталог
+      </div>
       <div @click="toComponentFromMenu('CompanionsPage')" class="route ma-8">
         попутчики
       </div>
@@ -193,5 +275,4 @@ onMounted(() => {
 //   .ant-modal-body {
 //     flex: 1;
 //   }
-// }
-</style>
+// }</style>

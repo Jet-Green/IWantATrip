@@ -81,16 +81,17 @@ onMounted(async () => {
                 <a-col :span="24">
                     <h3>Автобусы</h3>
                 </a-col>
+                <a-col :span="24" class="d-flex justify-end pa-4">
+                    <a-button type="primary" class="lets_go_btn" @click="router.push('/create-bus')">создать</a-button>
+                </a-col>
                 <a-col :span="24">
-                    <a-row>
+                    <a-row :gutter=[4,4]>
                         <a-col :span="4" v-for="bus in buses">
                             <Bus :bus="bus" preview />
                         </a-col>
                     </a-row>
                 </a-col>
-                <a-col :span="24" class="d-flex align-center">
-                    <a-button type="primary" class="lets_go_btn" @click="router.push('/create-bus')">добавить</a-button>
-                </a-col>
+              
             </a-row>
         </a-col>
     </a-row>

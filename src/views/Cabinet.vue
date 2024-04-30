@@ -4,6 +4,7 @@ import { useAuth } from "../stores/auth";
 import { useRouter, RouterView } from "vue-router";
 import BackButton from "../components/BackButton.vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import ruRU from 'ant-design-vue/es/locale/ru_RU';
 
 const userStore = useAuth();
 const router = useRouter();
@@ -16,6 +17,48 @@ let current = ref([router.currentRoute.value.path]);
 
 let showBookingNotifications = ref(false)
 
+const open = ref(true);
+let currentStep = ref(0);
+
+let cab = ref(null);
+let tur = ref(null);
+let companions = ref(null);
+
+
+const steps = [
+  {
+    title: 'О пользователе',
+    description: 'контактные данные, создание тура, экскурсии, идеи',
+    placement: 'bottom',
+    target: () => cab.value,
+  },
+  {
+    title: 'Туры',
+    description: 'управление купленными и созданными турами, заказами',
+    placement: 'bottom',
+    target: () => tur.value,
+  },
+  {
+    title: 'Попутчики',
+    description: 'отклики на ваши анкеты и управление анкетами',
+    placement: 'bottom',
+    target: () => companions.value,
+  }
+];
+function openCabinetTour(state) {
+  if (state) {
+    open.value = state
+    localStorage.setItem('cabinetTour', true)
+  } else {
+    currentStep.value = 0
+    open.value = false
+    localStorage.setItem('cabinetTour', false)
+  }
+}
+const next = () => {
+  currentStep.value++;
+};
+
 const logOut = () => {
   userStore.logout();
   router.push("/");
@@ -23,7 +66,12 @@ const logOut = () => {
 watch(current, (newRout, oldRout) => {
   router.push(newRout[0])
 })
-onMounted(() => {
+
+onMounted(async () => {
+  if (localStorage.getItem('cabinetTour') == 'false' || !sm.value) {
+    open.value = JSON.parse(localStorage?.getItem('cabinetTour'))
+  }
+
   // for (let n of userStore.user?.notifications) {
   //   if (n.type == 'BookingTrip' && n.send == true) {
   //     showBookingNotifications.value = true
@@ -36,11 +84,18 @@ onMounted(() => {
 <template>
   <div>
     <BackButton></BackButton>
+    <a-config-provider :locale="ruRU" v-if="!sm">
+      <a-tour :open="open" v-model:current="currentStep" :steps="steps" @finish='openCabinetTour(false)' @click="next"
+        @close='openCabinetTour(false)'>
+      </a-tour>
+    </a-config-provider>
 
     <a-row type="flex" justify="center">
       <a-col :xs="22" :sm="16">
         <h2>
           Кабинет
+          <span v-if="!sm" class="mdi mdi-18px mdi-information-variant"
+            style="color: #245159; cursor: pointer; vertical-align: super;" @click="open = !open"></span>
           <span @click="logOut()" class="mdi mdi-24px mdi-logout" style="cursor: pointer; float: right">
           </span>
         </h2>
@@ -50,12 +105,12 @@ onMounted(() => {
       <a-col :xs="22" :lg="16" class="mb-8">
         <a-menu v-model:selectedKeys="current" mode="horizontal">
           <a-menu-item key="/cabinet/me">
-            <span v-if=!sm>О пользователе</span>
+            <span ref='cab' v-if=!sm>О пользователе</span>
             <span v-else class="mdi mdi-24px mdi-account-outline" style="color: #245159; cursor: pointer"></span>
           </a-menu-item>
           <a-sub-menu key="sub1">
             <template #title>
-              <span v-if=!sm>Туры</span>
+              <span ref='tur' v-if=!sm>Туры</span>
               <span v-else class="mdi mdi-24px mdi-map-outline" style="color: #245159; cursor: pointer"></span>
             </template>
             <a-menu-item key="/cabinet/created-trips">Созданные</a-menu-item>
@@ -65,7 +120,7 @@ onMounted(() => {
             <a-menu-item key="/cabinet/find-buyer">Найти покупателя</a-menu-item>
           </a-sub-menu>
           <a-menu-item key="/cabinet/my-companions">
-            <span v-if=!sm>Попутчики</span>
+            <span ref='companions' v-if=!sm>Попутчики</span>
             <span v-else class="mdi mdi-24px mdi-human-capacity-decrease"
               style="color: #245159; cursor: pointer"></span>
           </a-menu-item>
