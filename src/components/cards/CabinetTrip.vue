@@ -490,7 +490,7 @@ onMounted(async () => {
                         v-model="selected_bus"
                         @select="bus => {
                             bus = JSON.parse(bus);
-                            addTransportForm.transportType = { name: bus.name };
+                            addTransportForm.transportType = { name: bus.name, bus_id: bus._id };
                             addTransportForm.capacity = bus.seats.length - bus.stuff.length;
                         }"
                         style="width: 100%"
