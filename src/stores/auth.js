@@ -199,6 +199,7 @@ export const useAuth = defineStore('auth', {
                 console.log(error);
             }
         },
+ 
         async setTripCalculator(calcId, tripId) {
             try {
                 let res = await UserService.setTripCalculator({ calcId, tripId })
