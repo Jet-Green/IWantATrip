@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, getCurrentInstance } from "vue";
+import { ref, computed, onMounted, getCurrentInstance, watch } from "vue";
 import _ from 'lodash'
 import tinkoffPlugin from '../plugins/tinkoff'
 
@@ -15,6 +15,8 @@ import { useRouter } from "vue-router";
 import { useLocations } from "../stores/locations";
 import * as yup from "yup";
 import { Form, Field, ErrorMessage } from 'vee-validate';
+import Bus from "../components/Bus.vue";
+import { useBus } from "../stores/bus";
 const API_URL = import.meta.env.VITE_API_URL
 
 const app = getCurrentInstance();
@@ -29,6 +31,13 @@ const _id = route.query._id;
 const tripStore = useTrips();
 const userStore = useAuth();
 const locationStore = useLocations();
+
+let bus = ref()
+let selected_bus = ref()
+watch(selected_bus, value => {
+    if (value.transportType.bus_id)
+        bus.value = await useBus().getById(value.transportType.bus_id)
+})
 
 const backRoute = { name: 'TripsPage', hash: `#${_id}` };
 
@@ -627,7 +636,7 @@ onMounted(async () => {
                         </div>
                     </a-col>
                     <a-col :span="24" v-if="trip.transports?.length">
-                        <WaitingList :tripsCount="getCurrentCustomerNumber" :transport="trip.transports ?? []"
+                        <WaitingList v-model:selected="selected_bus" :tripsCount="getCurrentCustomerNumber" :transport="trip.transports ?? []"
                             @isUserWaiting="detectIsWaiting" />
                     </a-col>
                     <a-col :span="24" class="d-flex justify-end">
@@ -655,6 +664,9 @@ onMounted(async () => {
                                 </div>
                             </div>
                         </div>
+                    </a-col>
+
+                    <a-col :span="24">
                     </a-col>
                 </a-row>
             </Form>
