@@ -55,7 +55,7 @@ let contractForm = reactive({
     details: "Платформа \"Города и Веси\" оплата тура",
     tax: 5,
   },
-  fiscalization: { company: "OrangeData" },
+  fiscalization: { company: "OrangeData", notifyUrl: "https://gorodaivesi.ru/fiscalization" },
 });
 
 
@@ -113,7 +113,7 @@ async function addContract() {
         details: "Платформа \"Города и Веси\" оплата тура",
         tax: 7,
       },
-      fiscalization: { company: "OrangeData" },
+      fiscalization: { company: "OrangeData", notifyUrl: "https://gorodaivesi.ru/fiscalization" },
     });
     router.push('/')
     contractEmail.value = "";
@@ -160,7 +160,7 @@ onUnmounted(() => {
 <template>
 
   <h2>Договор. Регистрация в Тинькофф</h2>
-  <p style="font-size:10px">Внимательно и аккуратно заполните форму</p>
+  <p style="font-size: 12px">Внимательно и аккуратно заполните форму</p>
 
   <form @submit.prevent="submit" class="ma-16">
     <a-row :gutter="[16, 16]">
@@ -172,6 +172,7 @@ onUnmounted(() => {
       <a-col :span="24" :md="12">
         Отображение в выписках, латиница
         <a-input placeholder="Ogonek" v-model:value="contractForm.billingDescriptor" required></a-input>
+        <p style="font-size: 12px;">Максимум 14 символов. Пишите без точек, латиницей</p>
       </a-col>
       <a-col :span="24" :md="12">
         Краткое наименование
@@ -342,6 +343,9 @@ onUnmounted(() => {
       </a-col>
       <a-col :span="12">
         <a-input placeholder="OrangeData" v-model:value="contractForm.fiscalization.company" disabled></a-input>
+      </a-col>
+      <a-col :span="12">
+        <a-input v-model:value="contractForm.fiscalization.notifyUrl" disabled></a-input>
       </a-col>
       <a-divider></a-divider>
       <!-- <a-col :span="12">

@@ -44,6 +44,7 @@ export default {
     determineWinner() {
         return $api.get('/auth/determine-winner')
     },
+ 
     setTripCalculator(body) {
         return $api.put('/auth/set-trip-calculator', body)
     }
