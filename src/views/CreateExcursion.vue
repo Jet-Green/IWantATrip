@@ -2,7 +2,6 @@
 import BackButton from '../components/BackButton.vue';
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
-import '@vuepic/vue-datepicker/dist/main.css'
 import { reactive } from "vue"
 import { useRouter } from 'vue-router';
 import { useExcursion } from '../stores/excursion'
@@ -56,11 +55,3 @@ async function submit() {
     </a-row>
   </div>
 </template>
-<!-- GLOBAL STYLES -->
-<style lang="scss">
-.dp-custom-calendar {
-  .dp__calendar_item {
-    padding: 2px;
-  }
-}
-</style>

@@ -2,7 +2,7 @@
 import VueDatePicker from '@vuepic/vue-datepicker';
 import datePlugin from '../plugins/dates'
 import { ref, watch } from 'vue'
-
+import '@vuepic/vue-datepicker/dist/main.css'
 
 let activeKey = ref()
 
@@ -67,3 +67,11 @@ watch(dates, (newValue, oldValue) => {
     </a-col>
   </a-row>
 </template>
+<!-- GLOBAL STYLES -->
+<style lang="scss">
+.dp-custom-calendar {
+  .dp__calendar_item {
+    padding: 2px;
+  }
+}
+</style>
