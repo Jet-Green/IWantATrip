@@ -216,9 +216,14 @@ const router = createRouter({
       component: () => import('../components/_guide/Poster.vue')
     },
     {
-      path: '/excurs',
-      name: 'Excursions',
+      path: '/excursions',
+      name: 'ExcursionsPage',
       component: () => import('../components/_guide/Excursions.vue')
+    },
+    {
+      path: '/excursion',
+      name: 'ExcursionPage',
+      component: () => import('../views/ExcursionPage.vue')
     },
     {
       path: '/enter',

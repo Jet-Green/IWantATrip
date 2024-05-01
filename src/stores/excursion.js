@@ -26,6 +26,13 @@ export const useExcursion = defineStore('excursion', {
         async createDates(dates, _id) {
             const userStore = useAuth()
             return await ExcursionService.createDates(dates, _id, userStore.user._id)
+        },
+        async getAll() {
+            return await ExcursionService.getAll()
+        },
+        // get excursionDate by id
+        async getEDateById(_id) {
+            return await ExcursionService.getEDateById(_id)
         }
     }
 })

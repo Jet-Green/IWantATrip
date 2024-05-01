@@ -12,5 +12,11 @@ export default {
     },
     createDates(dates, _id, userId) {
         return $api.post(`/excursion/dates`, { dates, excursionId: _id, userId })
+    },
+    getAll() {
+        return $api.post('/excursion/all')
+    },
+    getEDateById(_id) {
+        return $api.get(`/excursion/date?_id=${_id}`)
     }
 }
