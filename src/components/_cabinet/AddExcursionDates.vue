@@ -1,6 +1,8 @@
 <script setup>
 import { onMounted, ref } from "vue"
 
+import BackButton from '../BackButton.vue'
+
 import ExcursionDates from '../ExcursionDates.vue'
 
 import { useRoute } from 'vue-router';

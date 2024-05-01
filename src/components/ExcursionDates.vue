@@ -23,6 +23,7 @@ watch(dates, (newValue, oldValue) => {
     }
   }
 })
+
 watch([dates, times], () => {
   emit('change-dates', datePlugin.excursions.concatDateAndTime(dates.value, times.value))
 }, { deep: true })
@@ -46,10 +47,10 @@ watch([dates, times], () => {
               <template #header>
                 {{ (new Date(date)).toLocaleDateString('ru-RU', {
                   year: 'numeric', month: 'long', day: 'numeric'
-                }) }}
+                }) }} {{ times[i].length == 0 ? 'по запросу' : '' }}
               </template>
               <a-row :gutter="[6, 6]" class="mb-16 d-flex justify-center">
-                <a-col v-for="(time, j) of times[i]" :span="24" :md="12" :lg="8">
+                <a-col v-for="(time, j) of times[i]" :span="24" :md="12" :lg="8" v-if="times[i].length > 0">
                   <VueDatePicker v-model="times[i][j]" placeholder="Время" time-picker cancel-text="отмена"
                     select-text="выбрать" @cleared="times[i].splice(j, 1)">
                     <template #input-icon>
@@ -57,6 +58,11 @@ watch([dates, times], () => {
                         class="mdi mdi-calendar-outline ml-8"></span>
                     </template>
                   </VueDatePicker>
+                </a-col>
+                <a-col v-else :span="24" style="text-align: center;">
+                  <b>
+                    По запросу
+                  </b>
                 </a-col>
               </a-row>
               <div style="width: 100%;" class="d-flex justify-center">
