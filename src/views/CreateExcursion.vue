@@ -36,26 +36,25 @@ function handleImgError(i) {
   localStorage.setItem('createTripImages', JSON.stringify(previews.value))
 }
 function uploadTripImages(_id) {
-    let imagesFormData = new FormData();
-    for (let i = 0; i < images.length; i++) {
-      imagesFormData.append(
-        "trip-image",
-        new File([images[i]], _id + "_" + i + ".jpg"),
-        _id + "_" + i + ".jpg"
-      );
-    }
-    TripService.uploadCatalogTripImages(imagesFormData).then(() => {
-      console.log('фотографии загружены')
-      localStorage.removeItem('createTripImages')
-    })
-
+  let imagesFormData = new FormData();
+  for (let i = 0; i < images.length; i++) {
+    imagesFormData.append(
+      "trip-image",
+      new File([images[i]], _id + "_" + i + ".jpg"),
+      _id + "_" + i + ".jpg"
+    );
   }
+  TripService.uploadCatalogTripImages(imagesFormData).then(() => {
+    console.log('фотографии загружены')
+    localStorage.removeItem('createTripImages')
+  })
+
+}
 // add img
 
 
 
 let form = reactive({
-
   name: '',
   contacts: {
     phone: '',
@@ -82,6 +81,19 @@ let form = reactive({
 
 let formSchema = yup.object({
   name: yup.string().required("заполните поле"),
+  contacts: yup.object({
+    phone: yup.string().required("заполните поле"),
+    email: yup.string().required("заполните поле")
+  }),
+  description: yup.string().required("заполните поле"), // quill ??
+  duration: yup.string().required("заполните поле"),
+  minPeople: yup.number().required("заполните поле"),
+  maxPeople: yup.number().required("заполните поле"),
+  startPlace: yup.string().required("заполните поле"),
+  minAge: yup.number().required("заполните поле"),
+  deadline: yup.string().required("заполните поле"),
+  requirements: yup.string().required("заполните поле"),
+  availability: yup.string().required("заполните поле")
 })
 async function submit() {
   let response = await excursionStore.create(form)
@@ -102,18 +114,20 @@ async function submit() {
               <h2>Создать экскурсию</h2>
             </a-col>
             <a-col :span="24">
-              <Field name="name">
+              <Field name="name" v-slot="{ value, handleChange }" v-model="form.name">
                 Название экскурсии
-                <a-input placeholder="Моя профессия - металлург" v-model="form.name" />
-                <ErrorMessage name="name" class="error-message" />
+                <a-input placeholder="Моя профессия - металлург" @update:value="handleChange" :value="value"></a-input>
               </Field>
+              <Transition name="fade">
+                <ErrorMessage name="name" class="error-message" />
+              </Transition>
             </a-col>
             <a-col :xs="24">
               Фотографии
               <div class="d-flex" style="overflow-x: scroll">
-                <img v-for="(pr, i) in    previews   " :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
+                <img v-for="(pr, i) in previews   " :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
                   @click="delPhotoDialog = true;
-      targetIndex = i;" @error="handleImgError(i)" />
+                  targetIndex = i;" @error="handleImgError(i)" />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
@@ -122,111 +136,127 @@ async function submit() {
             </a-col>
 
             <a-col :span="24">
-              <Field name="description">
+              <Field name="description" v-slot="{ value, handleChange }" v-model="form.description">
                 Описание
                 <a-textarea
-                  placeholder="Мы посетим завод ЧМЗ, познакомимся с профессией металлург, узнаем об особенностях профессии"
-                  v-model="form.description" />
+                  placeholder="Мы посетим завод ЧМЗ, познакомимся с профессией металлург, узнаем об особенностях специальности"
+                  @update:value="handleChange" :value="value" />
+              </Field>
+              <Transition name="fade">
                 <ErrorMessage name="description" class="error-message" />
-              </Field>
+              </Transition>
             </a-col>
             <a-col :span="24">
-              <Field name="requirements">
+              <Field name="requirements" v-slot="{ value, handleChange }" v-model="form.requirements">
                 Особые требования
-                <a-textarea placeholder="паспорт, бахилы, теплая одежда" v-model="form.requirements" />
+                <a-textarea placeholder="паспорт, бахилы, теплая одежда" @update:value="handleChange" :value="value" />
+              </Field>
+              <Transition name="fade">
                 <ErrorMessage name="requirements" class="error-message" />
-              </Field>
+              </Transition>
             </a-col>
             <!-- добавить ddata -->
             <a-col :span="24">
-
-              <Field name="location">
-                Город проведения
-                <a-textarea placeholder="Глазов" v-model="form.location" />
-                <ErrorMessage name="location" class="error-message" />
-              </Field>
+              Город проведения
+              <a-textarea placeholder="Глазов" v-model="form.location" />
             </a-col>
             <!-- добавить ddata -->
             <a-col :span="24">
-              <Field name="startPlace">
+              <Field name="startPlace" v-slot="{ value, handleChange }" v-model="form.startPlace">
                 Место начала
-                <a-input placeholder="Западная проходная ЧМЗ" v-model="form.startPlace" />
-                <ErrorMessage name="startPlace" class="error-message" />
+                <a-input placeholder="Западная проходная ЧМЗ" @update:value="handleChange" :value="value" />
               </Field>
+              <Transition name="fade">
+                <ErrorMessage name="startPlace" class="error-message" />
+              </Transition>
             </a-col>
             <a-col :span="24" :md="12">
-              <Field name="duration">
+              <Field name="duration" v-slot="{ value, handleChange }" v-model="form.duration">
                 Продолжительность
-                <a-input placeholder="1 час" v-model="form.duration" />
-                <ErrorMessage name="duration" class="error-message" />
+                <a-input placeholder="1 час" @update:value="handleChange" :value="value" />
               </Field>
+              <Transition name="fade">
+                <ErrorMessage name="duration" class="error-message" />
+              </Transition>
             </a-col>
 
             <a-col :span="24" :md="12">
-              <Field name="deadline">
+              <Field name="deadline" v-slot="{ value, handleChange }" v-model="form.deadline">
                 <div>Срок подачи заявки</div>
-                <a-input placeholder="За 10 дней" v-model="form.deadline" />
+                <a-input placeholder="За 10 дней" @update:value="handleChange" :value="value" />
+              </Field>
+              <Transition name="fade">
                 <ErrorMessage name="deadline" class="error-message" />
-              </Field>
+              </Transition>
             </a-col>
             <a-col :span="24" :md="12">
-              <Field name="minPeople">
-                <div> Минимальное количество</div>
-                <a-input-number min="1" placeholder="5" v-model="form.minPeople" style="width: 100%;" />
+              <Field name="minPeople" v-slot="{ value, handleChange }" v-model="form.minPeople">
+                <div>Минимальное количество</div>
+                <a-input-number min="1" placeholder="5" @update:value="handleChange" :value="value"
+                  style="width: 100%;" />
+              </Field>
+              <Transition name="fade">
                 <ErrorMessage name="minPeople" class="error-message" />
-              </Field>
+              </Transition>
             </a-col>
             <a-col :span="24" :md="12">
-              <Field name="maxPeople">
+              <Field name="maxPeople" v-slot="{ value, handleChange }" v-model="form.maxPeople">
                 <div>Максимальное количество</div>
-                <a-input-number min="1" placeholder="15" v-model="form.maxPeople" style="width: 100%;" />
-                <ErrorMessage name="maxPeople" class="error-message" />
+                <a-input-number min="1" placeholder="15" @update:value="handleChange" :value="value"
+                  style="width: 100%;" />
               </Field>
+              <Transition name="fade">
+                <ErrorMessage name="maxPeople" class="error-message" />
+              </Transition>
             </a-col>
             <a-col :span="24">
-              <Field name="guides">
-                Экскурсовод
-                <a-input placeholder="Александр Невский" v-model="form.guides[0].name" />
-                <ErrorMessage name="guides" class="error-message" />
-              </Field>
+              Экскурсовод
+              <a-input placeholder="Александр Невский" v-model="form.guides[0].name" />
             </a-col>
 
             <a-col :span="24" :md="12">
-              <Field name="minAge">
-                <div> Минимальный возраст</div>
-
-                <a-input-number min="0" placeholder="14 лет" v-model="form.minAge" style="width: 100%;" />
+              <Field name="minAge" v-slot="{ value, handleChange }" v-model="form.minAge">
+                <div>Минимальный возраст</div>
+                <a-input-number min="0" placeholder="14 лет" @update:value="handleChange" :value="value"
+                  style="width: 100%;" />
+              </Field>
+              <Transition name="fade">
                 <ErrorMessage name="minAge" class="error-message" />
-              </Field>
+              </Transition>
             </a-col>
 
 
             <a-col :span="24" :md="12">
-              <Field name="availability">
+              <Field name="availability" v-slot="{ value, handleChange }" v-model="form.availability">
                 <div>ОВЗ доступность</div>
-                <a-input placeholder="да/нет" v-model="form.availability" />
+                <a-input placeholder="да/нет" @update:value="handleChange" :value="value" />
+              </Field>
+              <Transition name="fade">
                 <ErrorMessage name="availability" class="error-message" />
-              </Field>
+              </Transition>
             </a-col>
             <a-col :span="24" :md="12">
-              <Field name="phone">
+              <Field name="phone" v-slot="{ value, handleChange }" v-model="form.contacts.phone">
                 Телефон
-                <a-input placeholder="8909909909" v-model="form.contacts.phone" />
-                <ErrorMessage name="phone" class="error-message" />
+                <a-input placeholder="8909909909" @update:value="handleChange" :value="value" />
               </Field>
+              <Transition name="fade">
+                <ErrorMessage name="phone" class="error-message" />
+              </Transition>
             </a-col>
             <a-col :span="24" :md="12">
-              <Field name="email">
+              <Field name="email" v-slot="{ value, handleChange }" v-model="form.contacts.email">
                 E-mail
-                <a-input placeholder="teat@ya.ru" v-model="form.contacts.email" />
-                <ErrorMessage name="email" class="error-message" />
+                <a-input placeholder="teat@ya.ru" @update:value="handleChange" :value="value" />
               </Field>
+              <Transition name="fade">
+                <ErrorMessage name="email" class="error-message" />
+              </Transition>
             </a-col>
             <!-- кроппер для добавления картинок -->
             <a-col :span="24" class="d-flex justify-center">
               <a-button class="lets_go_btn ma-36" type="primary" html-type="submit">Отправить</a-button>
             </a-col>
-
           </a-row>
         </Form>
         <a-modal v-model:open="visibleCropperModal" :footer="null" :destroyOnClose="true">
