@@ -11,6 +11,10 @@ import { useExcursion } from '../stores/excursion'
 
 const excursionStore = useExcursion()
 const router = useRouter()
+
+let locationSearchRequest = ref("")
+let possibleLocations = ref([])
+
 let visibleCropperModal = ref(false);
 let previews = ref(localStorage.getItem('createTripImages') ? JSON.parse(localStorage.getItem('createTripImages')) : []);
 let images = localStorage.getItem('createTripImages') ? JSON.parse(localStorage.getItem('createTripImages')) : []; // type: blob
@@ -35,6 +39,16 @@ function handleImgError(i) {
   images.splice(i, 1)
   localStorage.setItem('createTripImages', JSON.stringify(previews.value))
 }
+
+function selectStartLocation(selected) {
+  for (let l of possibleLocations.value) {
+    // l.value - name
+    if (l.value == selected) {
+      form.location = l.location
+    }
+  }
+}
+
 function uploadTripImages(_id) {
   let imagesFormData = new FormData();
   for (let i = 0; i < images.length; i++) {
@@ -101,6 +115,61 @@ async function submit() {
     router.push('/cabinet/me')
   }
 }
+
+watch(locationSearchRequest, async (newValue, oldValue) => {
+  if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
+    var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
+
+    var options = {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": "Token " + import.meta.env.VITE_DADATA_TOKEN
+      },
+      body: JSON.stringify({
+        query: newValue,
+        count: 5,
+        "from_bound": { "value": "city" },
+        "to_bound": { "value": "settlement" }
+      })
+    }
+
+    let res = await fetch(url, options)
+    try {
+      let suggestions = JSON.parse(await res.text()).suggestions
+      possibleLocations.value = []
+      for (let s of suggestions) {
+        let location = {
+          value: s.value,
+          location: {
+            name: s.value,
+            shortName: '',
+            type: 'Point',
+            coordinates: [
+              s.data.geo_lon,
+              s.data.geo_lat
+            ]
+          }
+        }
+
+        if (s.data.settlement) {
+          location.location.shortName = s.data.settlement
+        }
+        else if (s.data.city) {
+          location.location.shortName = s.data.city
+        } else {
+          location.location.shortName = s.value
+        }
+
+        possibleLocations.value.push(location)
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+})
 </script>
 
 <template>
@@ -155,12 +224,18 @@ async function submit() {
                 <ErrorMessage name="requirements" class="error-message" />
               </Transition>
             </a-col>
-            <!-- добавить ddata -->
+
             <a-col :span="24">
-              Город проведения
-              <a-textarea placeholder="Глазов" v-model="form.location" />
+              <Field name="location" v-slot="{ value, handleChange }" v-model="locationSearchRequest">
+                Город проведения
+                <a-auto-complete :value="value" @update:value="handleChange" style="width: 100%"
+                  :options="possibleLocations" placeholder="Глазов" @select="selectStartLocation">
+                </a-auto-complete>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="location" class="error-message" />
+              </Transition>
             </a-col>
-            <!-- добавить ddata -->
             <a-col :span="24">
               <Field name="startPlace" v-slot="{ value, handleChange }" v-model="form.startPlace">
                 Место начала
