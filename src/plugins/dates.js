@@ -5,7 +5,7 @@ export default {
         /**
          * принимает dates в формате массива дат(dayjs) 
          * times в формате {hours: Number, minutes: Number, seconds: Number}
-         * возвращает Array<Object> { date: String, time: Array<Object> }
+         * возвращает Array<Object> { date: Object, times: Array<Object> }
          */
         concatDateAndTime(dates, times) {
             let res = []
@@ -16,7 +16,7 @@ export default {
                 let date = dayjs(dates[i])
                 res.push({
                     date: { year: date.$y, month: date.$M, day: date.$D },
-                    time: times[i]
+                    times: times[i]
                 })
             }
 

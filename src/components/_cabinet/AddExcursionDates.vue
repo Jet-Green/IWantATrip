@@ -1,47 +1,38 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { onMounted, ref } from "vue"
 
-import { useExcursion } from '../../stores/excursion'
+import ExcursionDates from '../ExcursionDates.vue'
 
-let excursions = ref([])
+import { useRoute } from 'vue-router';
+import { useExcursion } from '../../stores/excursion';
 
+const route = useRoute()
 const excursionStore = useExcursion()
+const _id = route.query._id
+
+let excursion = ref({})
+let dates = ref([])
+
+function setDates(d) {
+  dates.value = d
+}
+
+async function submit() {
+  await excursionStore.createDates(dates.value, _id)
+}
 
 onMounted(async () => {
-  let response = await excursionStore.getUserExcursions()
-  excursions.value = response.data
+  const response = await excursionStore.getById(_id)
+  excursion.value = response.data
 })
 </script>
 <template>
   <a-row>
     <a-col :span="24">
-      <h3>Расписание экскурсий</h3>
-    </a-col>
-    <a-col v-for="excursion in excursions" :span="24" :sm="12" :md="8">
-      <a-card class="card">
-        <template #title>
-          {{ excursion.name }}
-        </template>
-        <div class="actions">
-          <a-popconfirm title="Добавить расписание?" ok-text="Да"
-            cancel-text="Нет" @confirm="">
-            <span class="mdi mdi-calendar-month-outline" style="cursor: pointer"></span>
-          </a-popconfirm>
-        </div>
-      </a-card>
+      {{ excursion }}
+      <ExcursionDates @change-dates="setDates" />
+
+      <a-button @click="submit">отправить</a-button>
     </a-col>
   </a-row>
 </template>
-<style scoped lang="scss">
-.card {}
-.actions {
-  font-size: 20px;
-    position: relative;
-    color: #245159;
-
-    * {
-        margin: 4px;
-        cursor: pointer;
-    }
-}
-</style>

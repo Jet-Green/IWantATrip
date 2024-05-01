@@ -6,5 +6,11 @@ export default {
     },
     getUserExcursions(userId) {
         return $api.get(`/excursion/get-excursions?user_id=${userId}`)
+    },
+    getById(_id) {
+        return $api.get(`/excursion?_id=${_id}`)
+    },
+    createDates(dates, _id, userId) {
+        return $api.post(`/excursion/dates`, { dates, excursionId: _id, userId })
     }
 }

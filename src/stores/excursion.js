@@ -15,6 +15,17 @@ export const useExcursion = defineStore('excursion', {
         async getUserExcursions() {
             const user = useAuth().user
             return await ExcursionService.getUserExcursions(user._id)
+        },
+        async getById(_id) {
+            return await ExcursionService.getById(_id)
+        },
+        /** 
+         * dates are from datePlugin.excursions.concatDateAndTime
+         * _id is excursion _id
+        */
+        async createDates(dates, _id) {
+            const userStore = useAuth()
+            return await ExcursionService.createDates(dates, _id, userStore.user._id)
         }
     }
 })

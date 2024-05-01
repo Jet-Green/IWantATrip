@@ -4,6 +4,8 @@ import datePlugin from '../plugins/dates'
 import { ref, watch } from 'vue'
 import '@vuepic/vue-datepicker/dist/main.css'
 
+const emit = defineEmits(['change-dates'])
+
 let activeKey = ref()
 
 let dates = ref([])
@@ -21,6 +23,9 @@ watch(dates, (newValue, oldValue) => {
     }
   }
 })
+watch([dates, times], () => {
+  emit('change-dates', datePlugin.excursions.concatDateAndTime(dates.value, times.value))
+}, { deep: true })
 </script>
 <template>
   <a-row>
@@ -40,8 +45,8 @@ watch(dates, (newValue, oldValue) => {
             <a-collapse-panel :key="i">
               <template #header>
                 {{ (new Date(date)).toLocaleDateString('ru-RU', {
-      year: 'numeric', month: 'long', day: 'numeric'
-    }) }}
+                  year: 'numeric', month: 'long', day: 'numeric'
+                }) }}
               </template>
               <a-row :gutter="[6, 6]" class="mb-16 d-flex justify-center">
                 <a-col v-for="(time, j) of times[i]" :span="24" :md="12" :lg="8">
