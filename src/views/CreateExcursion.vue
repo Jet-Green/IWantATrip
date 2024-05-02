@@ -1,5 +1,5 @@
 <script setup>
-import { watch, nextTick, ref, reactive, onMounted } from "vue";
+import { watch, nextTick, ref, reactive, computed, onMounted } from "vue";
 import BackButton from '../components/BackButton.vue';
 import ImageCropper from "../components/ImageCropper.vue";
 import { Form, Field, ErrorMessage } from "vee-validate";
@@ -7,13 +7,14 @@ import * as yup from "yup";
 
 import { useRouter } from 'vue-router';
 import { useExcursion } from '../stores/excursion'
-
+import excursionTypes from '../db/excursionTypes'
 
 const excursionStore = useExcursion()
 const router = useRouter()
 
 let locationSearchRequest = ref("")
 let possibleLocations = ref([])
+let selectExcursionType = ref("")
 
 let visibleCropperModal = ref(false);
 let previews = ref(localStorage.getItem('createTripImages') ? JSON.parse(localStorage.getItem('createTripImages')) : []);
@@ -74,6 +75,11 @@ let form = reactive({
     phone: '',
     email: ''
   },
+  excursionType: {
+    type: '',
+    directionType: '',
+    directionPlace: ''
+  },
   description: "", // quill ??
   location: {}, //ddata
   duration: "",
@@ -115,6 +121,28 @@ async function submit() {
     router.push('/cabinet/me')
   }
 }
+
+let getExcursionDirections = computed(() => {
+  let type = excursionTypes.filter((type) => {
+    return type.type == form.excursionType.type
+  }
+  )
+  return type[0]?.direction
+})
+let getExcursionPlace = computed(() => {
+
+  if (getExcursionDirections.value) {
+
+    let direction = getExcursionDirections.value.filter((direction) => {
+
+      return direction.directionType == form.excursionType.directionType
+    }
+    )
+    return direction[0]?.directionPlace
+  }
+  return null
+
+})
 
 watch(locationSearchRequest, async (newValue, oldValue) => {
   if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
@@ -170,6 +198,23 @@ watch(locationSearchRequest, async (newValue, oldValue) => {
     }
   }
 })
+
+watch(
+  () => form.excursionType.type,
+  () => {
+    form.excursionType.directionType = ''
+  },
+  { deep: true }
+)
+watch(
+  () => form.excursionType.directionType,
+  () => {
+    form.excursionType.directionPlace = ''
+  },
+  { deep: true }
+)
+
+
 </script>
 
 <template>
@@ -191,12 +236,42 @@ watch(locationSearchRequest, async (newValue, oldValue) => {
                 <ErrorMessage name="name" class="error-message" />
               </Transition>
             </a-col>
+            <a-col :span="12">
+              Тип экскурсии
+              <a-select v-model:value="form.excursionType.type" style="width: 100%;">
+                <!-- <a-select-option value=""></a-select-option> -->
+                <a-select-option placeholder="Tип тура" v-for="excursionType in excursionTypes"
+                  :value="excursionType.type">
+                  {{ excursionType.type }}
+                </a-select-option>
+              </a-select>
+            </a-col>
+            <a-col :span="12" v-if='getExcursionDirections'>
+              Направление
+              <a-select v-model:value="form.excursionType.directionType" style="width: 100%;">
+                <!-- <a-select-option value=""></a-select-option> -->
+                <a-select-option placeholder="Tип тура" v-for="excursionDirection in getExcursionDirections"
+                  :value="excursionDirection.directionType">
+                  {{ excursionDirection.directionType }}
+                </a-select-option>
+              </a-select>
+            </a-col>
+            <a-col :span="12" v-if='getExcursionPlace'>
+              Место
+              <a-select v-model:value="form.excursionType.directionPlace" style="width: 100%;">
+                <!-- <a-select-option value=""></a-select-option> -->
+                <a-select-option placeholder="Tип тура" v-for="directionPlace in getExcursionPlace"
+                  :value="directionPlace">
+                  {{ directionPlace }}
+                </a-select-option>
+              </a-select>
+            </a-col>
             <a-col :xs="24">
               Фотографии
               <div class="d-flex" style="overflow-x: scroll">
                 <img v-for="(pr, i) in previews   " :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
                   @click="delPhotoDialog = true;
-                  targetIndex = i;" @error="handleImgError(i)" />
+      targetIndex = i;" @error="handleImgError(i)" />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
