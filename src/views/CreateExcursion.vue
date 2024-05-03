@@ -2,7 +2,7 @@
 import { watch, nextTick, ref, reactive, computed, onMounted } from "vue";
 import BackButton from '../components/BackButton.vue';
 import ImageCropper from "../components/ImageCropper.vue";
-import { Form, Field, ErrorMessage } from "vee-validate";
+import { Form, Field, FieldArray, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 
 import { useRouter } from 'vue-router';
@@ -90,7 +90,13 @@ let formSchema = yup.object({
   minAge: yup.number().required("заполните поле"),
   deadline: yup.string().required("заполните поле"),
   requirements: yup.string().required("заполните поле"),
-  availability: yup.string().required("заполните поле")
+  availability: yup.string().required("заполните поле"),
+  guides: yup.string().required("заполните поле"),
+  location: yup.string().required("заполните поле"),
+  contacts: yup.object({
+    email: yup.string().email('в формате gorodaivesi@mail.ru').required("заполните поле"),
+    phone: yup.string().required("заполните поле"),
+  })
 })
 async function submit() {
   let excursionCb = await excursionStore.create(form)
@@ -347,7 +353,12 @@ watch(
             </a-col>
             <a-col :span="24">
               Экскурсовод
-              <a-input placeholder="Александр Невский" v-model="form.guides[0].name" />
+              <Field name="guides" v-slot="{ value, handleChange }" v-model="form.guides[0].name">
+                <a-input placeholder="Александр Невский" @update:value="handleChange" :value="value" />
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="guides" class="error-message" />
+              </Transition>
             </a-col>
 
             <a-col :span="24" :md="12">
@@ -372,21 +383,21 @@ watch(
               </Transition>
             </a-col>
             <a-col :span="24" :md="12">
-              <Field name="phone" v-slot="{ value, handleChange }" v-model="form.contacts.phone">
+              <Field name="contacts.phone" v-slot="{ value, handleChange }" v-model="form.contacts.phone">
                 Телефон
                 <a-input placeholder="8909909909" @update:value="handleChange" :value="value" />
               </Field>
               <Transition name="fade">
-                <ErrorMessage name="phone" class="error-message" />
+                <ErrorMessage name="contacts.phone" class="error-message" />
               </Transition>
             </a-col>
             <a-col :span="24" :md="12">
-              <Field name="email" v-slot="{ value, handleChange }" v-model="form.contacts.email">
+              <Field name="contacts.email" v-slot="{ value, handleChange }" v-model="form.contacts.email">
                 E-mail
                 <a-input placeholder="teat@ya.ru" @update:value="handleChange" :value="value" />
               </Field>
               <Transition name="fade">
-                <ErrorMessage name="email" class="error-message" />
+                <ErrorMessage name="contacts.email" class="error-message" />
               </Transition>
             </a-col>
             <!-- кроппер для добавления картинок -->
