@@ -33,6 +33,9 @@ export const useExcursion = defineStore('excursion', {
         // get excursionDate by id
         async getEDateById(_id) {
             return await ExcursionService.getEDateById(_id)
+        },
+        async uploadImages(data) {
+            return await ExcursionService.uploadImages(data)
         }
     }
 })

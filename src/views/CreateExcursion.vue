@@ -17,28 +17,29 @@ let possibleLocations = ref([])
 let selectExcursionType = ref("")
 
 let visibleCropperModal = ref(false);
-let previews = ref(localStorage.getItem('createTripImages') ? JSON.parse(localStorage.getItem('createTripImages')) : []);
-let images = localStorage.getItem('createTripImages') ? JSON.parse(localStorage.getItem('createTripImages')) : []; // type: blob
+let previews = ref(localStorage.getItem('createExcursionImages') ? JSON.parse(localStorage.getItem('createExcursionImages')) : []);
+let images = localStorage.getItem('createExcursionImages') ? JSON.parse(localStorage.getItem('createExcursionImages')) : []; // type: blob
 const delPhotoDialog = ref(false);
 // add img
+let targetIndex = ref()
 
 function addPreview(blob) {
   // imagesFormData.append("image", blob, `product-${previews.value.length}`);
   visibleCropperModal.value = false;
   images.push(blob);
   previews.value.push(URL.createObjectURL(blob));
-  localStorage.setItem('createTripImages', JSON.stringify(previews.value))
+  localStorage.setItem('createExcursionImages', JSON.stringify(previews.value))
 }
 const delPhoto = () => {
   previews.value.splice(targetIndex.value, 1);
   images.splice(targetIndex.value, 1);
   delPhotoDialog.value = false;
-  localStorage.setItem('createTripImages', JSON.stringify(previews.value))
+  localStorage.setItem('createExcursionImages', JSON.stringify(previews.value))
 };
 function handleImgError(i) {
   previews.value.splice(i, 1)
   images.splice(i, 1)
-  localStorage.setItem('createTripImages', JSON.stringify(previews.value))
+  localStorage.setItem('createExcursionImages', JSON.stringify(previews.value))
 }
 
 function selectStartLocation(selected) {
@@ -49,26 +50,6 @@ function selectStartLocation(selected) {
     }
   }
 }
-
-function uploadTripImages(_id) {
-  let imagesFormData = new FormData();
-  for (let i = 0; i < images.length; i++) {
-    imagesFormData.append(
-      "trip-image",
-      new File([images[i]], _id + "_" + i + ".jpg"),
-      _id + "_" + i + ".jpg"
-    );
-  }
-  TripService.uploadCatalogTripImages(imagesFormData).then(() => {
-    console.log('фотографии загружены')
-    localStorage.removeItem('createTripImages')
-  })
-
-}
-// add img
-
-
-
 let form = reactive({
   name: '',
   contacts: {
@@ -91,7 +72,7 @@ let form = reactive({
   excursionType: {},
   startPlace: "",
   prices: [{}],
-  images: [''],
+  images: [],
   minAge: 0,
   deadline: '',
   requirements: '',
@@ -112,8 +93,18 @@ let formSchema = yup.object({
   availability: yup.string().required("заполните поле")
 })
 async function submit() {
-  let response = await excursionStore.create(form)
-  if (response.status == 200) {
+  let excursionCb = await excursionStore.create(form)
+  const _id = excursionCb.data._id
+  let imagesFormData = new FormData();
+  for (let i = 0; i < images.length; i++) {
+    imagesFormData.append(
+      "excursion-image",
+      new File([images[i]], _id + "_" + i + ".jpg"),
+      _id + "_" + i + ".jpg"
+    );
+  }
+  let res = await excursionStore.uploadImages(imagesFormData)
+  if (res.status == 200) {
     router.push('/cabinet/me')
   }
 }
@@ -121,8 +112,7 @@ async function submit() {
 let getExcursionDirections = computed(() => {
   let type = excursionTypes.filter((type) => {
     return type.type == form.excursionType.type
-  }
-  )
+  })
   return type[0]?.direction
 })
 let getExcursionPlace = computed(() => {

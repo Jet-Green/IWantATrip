@@ -18,5 +18,8 @@ export default {
     },
     getEDateById(_id) {
         return $api.get(`/excursion/date?_id=${_id}`)
+    },
+    uploadImages(data) {
+        return $api.post('/excursion/images', data)
     }
 }
