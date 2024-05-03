@@ -101,10 +101,6 @@ let form = reactive({
 
 let formSchema = yup.object({
   name: yup.string().required("заполните поле"),
-  contacts: yup.object({
-    phone: yup.string().required("заполните поле"),
-    email: yup.string().required("заполните поле")
-  }),
   description: yup.string().required("заполните поле"), // quill ??
   duration: yup.string().required("заполните поле"),
   minPeople: yup.number().required("заполните поле"),
