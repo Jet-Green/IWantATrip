@@ -126,8 +126,8 @@ const handleChange = (value) => {
 
 .in-work {
   position: absolute;
-  top: 50%;
-  left: 60%;
+  top: 60%;
+  left: 50%;
   border: solid 1px #ff6600;
   padding: 16px;
   border-radius: 5px;
