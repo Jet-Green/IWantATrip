@@ -6,6 +6,7 @@ import { useRouter } from 'vue-router';
 
 const props = defineProps(['trip'])
 let router = useRouter()
+let emit = defineEmits(['deleteTrip'])
 
 let { trip } = toRefs(props)
 
@@ -13,6 +14,12 @@ function goToCopyCatalog() {
     router.push(`/catalog-to-active?_id=${trip.value._id}`)
 }
 
+async function deleteCatalogTrip(_id) {
+    let response = await TripService.catalogToDelete(_id)
+    if (response.status == 200) {
+        emit('deleteTrip')
+    }
+}
 async function hideTrip(_id) {
     trip.value.isHidden = !trip.value.isHidden;
     TripService.hideCatalogTrip(_id, trip.value.isHidden);
@@ -30,6 +37,9 @@ async function hideTrip(_id) {
         </div>
 
         <div class="actions d-flex justify-center">
+            <a-popconfirm title="В активные?" ok-text="Да" cancel-text="Нет" @confirm="deleteCatalogTrip(trip._id)">
+                <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+            </a-popconfirm>
             <a-popconfirm title="В активные?" ok-text="Да" cancel-text="Нет" @confirm="goToCopyCatalog">
                 <span class="mdi mdi-plus-circle-outline" style="cursor: pointer"></span>
             </a-popconfirm>
