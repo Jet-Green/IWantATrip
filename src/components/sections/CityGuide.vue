@@ -22,17 +22,18 @@ let cards = [
 
   },
   {
-    title: "Еда",
-    icon: "mdi-food-outline",
-    route: "/eat",
-
-  },
-  {
     title: "Экскурсии",
     icon: "mdi-crowd",
     route: "/excursion",
 
   },
+  {
+    title: "Еда",
+    icon: "mdi-food-outline",
+    route: "/eat",
+
+  },
+
   {
     title: "Развлечения",
     icon: "mdi-human-female-dance",
@@ -75,12 +76,13 @@ const handleChange = (value) => {
         <h3 class="in-work">
           В разработке</h3>
         <a-col v-for="(card, index) in cards" :key="index" :xs="12" :md="8">
-          <div class="d-flex" v-if="card.route != '/poster' || card.route != '/transport' || card.route != '/stay'">
+          <div class="d-flex"
+            v-if="card.route != '/poster' || card.route != '/transport' || card.route != '/stay' || card.route != '/excursion'">
           </div>
           <router-link
-            :to="card.route == '/poster' ? card.route : card.route == '/transport' ? card.route : card.route == '/stay' ? card.route : ''">
+            :to="card.route == '/poster' ? card.route : card.route == '/transport' ? card.route : card.route == '/stay' ? card.route : card.route == '/excursion' ? card.route : ''">
             <a-card hoverable class="guide-card"
-              :class="{ opacity: card.route != '/poster' && card.route != '/transport' && card.route != '/stay' }">
+              :class="{ opacity: card.route != '/poster' && card.route != '/transport' && card.route != '/stay' && card.route != '/excursion' }">
               <div>
                 <span class="mdi" :class="card.icon"> </span>
                 <span>
@@ -125,7 +127,7 @@ const handleChange = (value) => {
 .in-work {
   position: absolute;
   top: 50%;
-  left: 40%;
+  left: 60%;
   border: solid 1px #ff6600;
   padding: 16px;
   border-radius: 5px;
