@@ -1,10 +1,12 @@
 <script setup>
+import { useAuth } from "../stores/auth";
 import { EContainer, EHeading, EHead, EHtml, ESection, EText } from 'vue-email';
 
 let props = defineProps({
     form: Object,
 })
 let booking = props.form
+const userStore = useAuth();
 
 const clearData = (dateNumber) => {
   let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
@@ -38,6 +40,8 @@ const clearData = (dateNumber) => {
                 <e-text> Пожелания: <b>{{ booking.wishes }}</b> </e-text>
                 <e-text> Начало: <b>{{ clearData(booking.start) }} </b></e-text>
                 <e-text> Конец: <b>{{ clearData( booking.end) }}</b> </e-text>
+                <e-text> Имя: <b>{{userStore.user.fullinfo.fullname }}</b> </e-text>
+                <e-text> Телефон: <b>{{userStore.user.fullinfo.phone }}</b> </e-text>
         </e-section>
     </e-html>
 </template>

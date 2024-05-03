@@ -67,6 +67,7 @@ async function submit() {
     .catch((err) => {
       console.log(err);
     });
+  
   bookingStore.bookingTrip(toSend).then(async (res) => {
     if (res.status == 200) {
       message.config({ duration: 1.5, top: "70vh" });
@@ -160,7 +161,7 @@ onMounted(() => {
 
                   <a-select @update:value="handleChange" :value="value" style="width: 100%">
                     <a-select-option v-for=" tripType  in  appStore.appState[0].tripType " :value="tripType">{{ tripType
-                    }}</a-select-option>
+                      }}</a-select-option>
                   </a-select>
                 </Field>
                 <Transition name="fade">
