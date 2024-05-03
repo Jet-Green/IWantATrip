@@ -119,13 +119,7 @@ onMounted(async () => {
             <a-menu-item key="/calc">Калькулятор</a-menu-item>
             <a-menu-item key="/cabinet/find-buyer">Найти покупателя</a-menu-item>
           </a-sub-menu>
-          <a-sub-menu key="excursions-submenu">
-            <template #title>
-              <span v-if=!sm>Экскурсии</span>
-              <span v-else class="mdi mdi-24px mdi-map-marker-path" style="color: #245159; cursor: pointer"></span>
-            </template>
-          <a-menu-item key="/cabinet/excursions">Добавить расписание</a-menu-item>
-          </a-sub-menu>
+          <a-menu-item key="/cabinet/excursions">Экскурсии</a-menu-item>
           <a-menu-item key="/cabinet/my-companions">
             <span ref='companions' v-if=!sm>Попутчики</span>
             <span v-else class="mdi mdi-24px mdi-human-capacity-decrease"
