@@ -76,7 +76,7 @@ let form = reactive({
   minAge: 0,
   deadline: '',
   requirements: '',
-  availability: ''
+  availability: true
 
 })
 
@@ -90,7 +90,6 @@ let formSchema = yup.object({
   minAge: yup.number().required("заполните поле"),
   deadline: yup.string().required("заполните поле"),
   requirements: yup.string().required("заполните поле"),
-  availability: yup.string().required("заполните поле"),
   guides: yup.string().required("заполните поле"),
   location: yup.string().required("заполните поле"),
   contacts: yup.object({
@@ -374,13 +373,11 @@ watch(
 
 
             <a-col :span="24" :md="12">
-              <Field name="availability" v-slot="{ value, handleChange }" v-model="form.availability">
-                <div>ОВЗ доступность</div>
-                <a-input placeholder="да/нет" @update:value="handleChange" :value="value" />
-              </Field>
-              <Transition name="fade">
-                <ErrorMessage name="availability" class="error-message" />
-              </Transition>
+              <div>ОВЗ доступность</div>
+              <a-radio-group v-model:value="form.availability" type="horizontal">
+                <a-radio :value="true">да</a-radio>
+                <a-radio :value="false">нет</a-radio>
+              </a-radio-group>
             </a-col>
             <a-col :span="24" :md="12">
               <Field name="contacts.phone" v-slot="{ value, handleChange }" v-model="form.contacts.phone">
