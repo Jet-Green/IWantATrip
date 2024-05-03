@@ -1,5 +1,5 @@
 <script setup>
-import { computed, watch } from 'vue';
+import { computed, watch, toRefs } from 'vue';
 
 let props = defineProps({
     bus: {
@@ -23,10 +23,9 @@ let props = defineProps({
 })
 let emit = defineEmits(['update:bus', 'update:selected_seats'])
 
-let bus = props.bus
+let { bus, free_seats, max_count } = toRefs(props)
 let preview = props.preview
-let max_count = props.max_count
-let free_seats = props.all_free ? bus.seats.map(seat => seat.number).filter(seat => !bus.stuff.includes(seat)) : props.free_seats
+free_seats.value = props.all_free ? bus.value.seats.map(seat => seat.number).filter(seat => !bus.value.stuff.includes(seat)) : props.free_seats
 let selected_seats = computed({
     get() {
         return props.selected_seats
@@ -37,12 +36,12 @@ let selected_seats = computed({
 })
 
 function select(num) {
-    if (bus.stuff.includes(num) || !free_seats.includes(num) || preview) return
+    if (bus.value.stuff.includes(num) || !free_seats.value.includes(num) || preview) return
 
     if (selected_seats.value.includes(num)) {
         selected_seats.value = selected_seats.value.filter(item => item !== num)
     }
-    else if (selected_seats.value.length >= max_count) {
+    else if (selected_seats.value.length >= max_count.value) {
         return
     } 
     else {

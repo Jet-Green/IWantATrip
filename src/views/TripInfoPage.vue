@@ -33,11 +33,23 @@ const userStore = useAuth();
 const locationStore = useLocations();
 
 let bus = ref()
+let selected_seats = ref([])
 let selected_bus = ref()
-watch(selected_bus, value => {
-    if (value.transportType.bus_id)
-        bus.value = await useBus().getById(value.transportType.bus_id)
+let waiting_bus = ref()
+let free_seats = ref([])
+watch([selected_bus, waiting_bus], async ([selected, waiting]) => {
+    let bus_id = _.isEmpty(selected) ? waiting.transportType.bus_id : selected.transportType.bus_id
+    if (!bus_id) return
+
+    bus.value = await useBus().getById(bus_id)
+    updateSeats()
 })
+
+async function updateSeats() {
+    if (!bus.value) return
+    let bought_seats = await tripStore.getBoughtSeats(_id)
+    free_seats.value = bus.value.seats.map(seat => seat.number).filter(seat => !bought_seats.includes(seat) && !bus.value.stuff.includes(seat))
+}
 
 const backRoute = { name: 'TripsPage', hash: `#${_id}` };
 
@@ -259,6 +271,7 @@ async function buyTrip() {
                 cart: selectedDate.value.selectedCosts,
                 tripId: selectedDate.value._id,
                 selectedStartLocation: selectedStartLocation.value,
+                seats: selected_seats.value,
                 userInfo: {
                     _id: userStore.user._id,
                     fullname: userStore.user.fullinfo.fullname,
@@ -270,6 +283,8 @@ async function buyTrip() {
                     phone: userStore.user.fullinfo.phone,
                 }]
             };
+            selected_seats.value = []
+            updateSeats()
             let tinkoffUrl = ''
             if (buyNow.value) {
                 const orderId = Date.now().toString()
@@ -636,7 +651,7 @@ onMounted(async () => {
                         </div>
                     </a-col>
                     <a-col :span="24" v-if="trip.transports?.length">
-                        <WaitingList v-model:selected="selected_bus" :tripsCount="getCurrentCustomerNumber" :transport="trip.transports ?? []"
+                        <WaitingList v-model:selected="selected_bus" v-model:waiting="waiting_bus" :tripsCount="getCurrentCustomerNumber" :transport="trip.transports ?? []"
                             @isUserWaiting="detectIsWaiting" />
                     </a-col>
                     <a-col :span="24" class="d-flex justify-end">
@@ -646,6 +661,17 @@ onMounted(async () => {
                     <div v-if="trip.partner">
                         <h4 class="warning">Наличие мест требует уточнения!</h4>
                     </div>
+
+                    <a-col :span="24">
+                        <Bus 
+                            v-if="bus && selectedDate.selectedCosts.map(cost => cost.count).reduce((partialSum, a) => partialSum + a, 0) > 0"
+                            v-model:selected_seats="selected_seats"
+                            :free_seats="free_seats"
+                            :max_count="selectedDate.selectedCosts.map(cost => cost.count).reduce((partialSum, a) => partialSum + a, 0)"
+                            :bus="bus"
+                            style="width: 150px;"
+                        />
+                    </a-col>
 
                     <a-col :span="24">
                         <div class="d-flex space-around">
@@ -664,9 +690,6 @@ onMounted(async () => {
                                 </div>
                             </div>
                         </div>
-                    </a-col>
-
-                    <a-col :span="24">
                     </a-col>
                 </a-row>
             </Form>
