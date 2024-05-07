@@ -314,6 +314,10 @@ onMounted(async () => {
 
                             </div>
 
+                            <div v-if="BILL.seats && BILL.seats.length">
+                                Места: {{ BILL.seats.join(', ') }}
+                            </div>
+
                             <div class="d-flex justify-end">
                                 <span>Итого: </span>
                                 {{
