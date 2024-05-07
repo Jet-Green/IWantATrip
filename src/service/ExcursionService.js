@@ -16,8 +16,8 @@ export default {
     getAll() {
         return $api.post('/excursion/all')
     },
-    getEDateById(_id) {
-        return $api.get(`/excursion/date?_id=${_id}`)
+    getExcursionById(_id) {
+        return $api.get(`/excursion/one?_id=${_id}`)
     },
     uploadImages(data) {
         return $api.post('/excursion/images', data)

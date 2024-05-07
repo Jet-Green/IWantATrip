@@ -1,8 +1,8 @@
 <script setup>
 const props = defineProps({
-  edate: Object
+  excursion: Object
 })
-const excursion = props.edate.excursion
+const excursion = props.excursion
 </script>
 <template>
   <div class="card">

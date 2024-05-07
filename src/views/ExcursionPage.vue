@@ -1,7 +1,7 @@
 <script setup>
 import BackButton from "../components/BackButton.vue";
 
-import { ref, computed, onMounted, getCurrentInstance } from "vue";
+import { ref, onMounted } from "vue";
 
 import { useRoute } from "vue-router";
 import { useExcursion } from "../stores/excursion.js";
@@ -15,7 +15,7 @@ const excursionStore = useExcursion();
 const userStore = useAuth();
 const locationStore = useLocations();
 
-let edate = ref({});
+let excursion = ref({});
 
 function getImg(index) {
   return trip.value.images[index];
@@ -31,32 +31,32 @@ if (userStore.user.email) {
     buyDialog.value = true;
 } else {
     router.push("/reg");
-}
-
-};
+}};
 
 function startDate(index){
-  let day = edate.value.date.day
-  let month = edate.value.date.month
-  let year = edate.value.date.year
-  let time= `${edate.value.times[index].hours}:${edate.value.times[index].minutes}`
-  return `${day}.${month}.${year} в ${time}`
+  // let day = excursion.value.date.day
+  // let month = excursion.value.date.month
+  // let year = excursion.value.date.year
+  // let time= `${excursion.value.times[index].hours}:${excursion.value.times[index].minutes}`
+  // return `${day}.${month}.${year} в ${time}`
+  return 'index: ' + index
 }
 
 
 onMounted(async () => {
-  let response = await excursionStore.getEDateById(_id);
-  edate.value = response.data;
+  let response = await excursionStore.getExcursionById(_id);
+  excursion.value = response.data;
+  console.log(response.data);
 });
 </script>
 <template>
   <div style="overflow-x: hidden">
     <BackButton :backRoute="{ path: '/excursions' }" />
     <a-row class="justify-center d-flex">
-      <a-spin v-if="!edate._id" size="large"></a-spin>
+      <a-spin v-if="!excursion._id" size="large"></a-spin>
 
       <a-col :xs="22" :xl="16" v-else>
-        <h2 class="ma-0">{{ edate.excursion.name }}</h2>
+        <h2 class="ma-0">{{ excursion.name }}</h2>
 
         <a-row :gutter="[12, 12]" class="text justify-center d-flex">
           <a-col :xs="24" :md="12">
@@ -66,7 +66,7 @@ onMounted(async () => {
                   <img :src="getImg(props.i)" />
                 </a>
               </template>
-              <div v-for="(item, i) in edate.excursion.images" :key="i">
+              <div v-for="(item, i) in excursion.images" :key="i">
                 <img :src="item" alt="" srcset="" />
               </div>
               <template #prevArrow>
@@ -115,24 +115,24 @@ onMounted(async () => {
             </div> -->
 
             <div>
-              Место начала: <b> {{ edate.excursion.startPlace }}</b>
+              Место начала: <b> {{ excursion.startPlace }}</b>
             </div>
 
             <div>
-              Продолжительность: <b>{{ edate.excursion.duration }}</b>
+              Продолжительность: <b>{{ excursion.duration }}</b>
             </div>
             <div>
-              Тип: <b>{{ edate.excursion.excursionType.directionType }} - {{ edate.excursion.excursionType.type }}</b>
+              Тип: <b>{{ excursion.excursionType.directionType }} - {{ excursion.excursionType.type }}</b>
             </div>
             <div>
-              Направление: <b>{{ edate.excursion.excursionType.directionPlace }}</b>
+              Направление: <b>{{ excursion.excursionType.directionPlace }}</b>
             </div>
             Дата старта:
-            <div v-for="(item, index) in edate.times">
+            <div v-for="(item, index) in excursion.dates">
               <b>{{startDate(index)}} </b>
             </div>
             Гиды:
-            <div v-for="guide in edate.excursion.guides">
+            <div v-for="guide in excursion.guides">
               <b>{{ guide.name }}</b>
             </div>
             <!-- <div class="d-flex">
@@ -176,7 +176,7 @@ onMounted(async () => {
             <div class="d-flex">
               Цена:&nbsp
               <div>
-                <div v-for="(item, index) in edate.excursion.prices" :key="index" class="cost">
+                <div v-for="(item, index) in excursion.prices" :key="index" class="cost">
                   {{ item.first }}: <b>{{ item.price }} руб.</b>
                 </div>
               </div>
