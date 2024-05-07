@@ -6,11 +6,12 @@ let props = defineProps({
     tripsCount: Number,
     transport: Array,
     selected: Object,
-    waiting: Object
+    waiting: Object,
+    show_old_bus: Boolean,
 });
 let emit = defineEmits(['isUserWaiting', 'update:selected', 'update:waiting'])
 
-const { tripsCount } = toRefs(props);
+const { tripsCount, show_old_bus, selected_seats } = toRefs(props);
 // let tripsCount = ref(35)
 // сортированнный по capacity
 let transports = reactive(props.transport)
@@ -86,7 +87,7 @@ watch(tripsCount, () => {
 
 
 
-                    <div class="transport">
+                    <div class="transport" v-if="show_old_bus">
                         <img src="../assets/images/back.png" style="height: 100%" alt="">
 
                         <div v-for="seat, i in selectTransport.selected?.capacity" class="passenger-seat"
@@ -116,7 +117,7 @@ watch(tripsCount, () => {
                         </div>
 
                     </template>
-                    <div class="transport">
+                    <div class="transport" v-if="show_old_bus">
                      
                         <img src="../assets/images/back.png" style="height: 100%" alt="">
 

@@ -37,9 +37,11 @@ let selected_seats = ref([])
 let selected_bus = ref()
 let waiting_bus = ref()
 let free_seats = ref([])
+let show_old_bus = ref(true)
 watch([selected_bus, waiting_bus], async ([selected, waiting]) => {
     let bus_id = _.isEmpty(selected) ? waiting.transportType.bus_id : selected.transportType.bus_id
-    if (!bus_id) return
+    if (!bus_id) return show_old_bus.value = true
+    show_old_bus.value = false
 
     bus.value = await useBus().getById(bus_id)
     updateSeats()
@@ -652,10 +654,6 @@ onMounted(async () => {
                             </div>
                         </div>
                     </a-col>
-                    <a-col :span="24" v-if="trip.transports?.length">
-                        <WaitingList v-model:selected="selected_bus" v-model:waiting="waiting_bus" :tripsCount="getCurrentCustomerNumber" :transport="trip.transports ?? []"
-                            @isUserWaiting="detectIsWaiting" />
-                    </a-col>
                     <a-col :span="24" class="d-flex justify-end">
                         <b>Итого: {{ finalCost }} руб.</b>
                     </a-col>
@@ -665,6 +663,18 @@ onMounted(async () => {
                     </div>
 
                     <a-col :span="24">
+                        <WaitingList 
+                            v-if="people_amount > 0 || show_old_bus"
+                            v-model:selected="selected_bus" 
+                            v-model:waiting="waiting_bus"
+                            :selected_seats="selected_seats" 
+                            :show_old_bus="trip.transports?.length && show_old_bus" 
+                            :tripsCount="getCurrentCustomerNumber" 
+                            :transport="trip.transports ?? []"
+                            @isUserWaiting="detectIsWaiting" />
+                    </a-col>
+
+                    <a-col :span="24" class="mb-8">
                         <Bus 
                             v-if="bus && people_amount > 0"
                             v-model:selected_seats="selected_seats"
