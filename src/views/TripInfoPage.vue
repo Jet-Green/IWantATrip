@@ -265,6 +265,12 @@ async function buyTrip() {
         //     }
         // }
 
+        if (people_amount.value !== selected_seats.value.length) {
+            message.config({ duration: 3, top: "90vh" });
+            message.error({ content: "Укажите места" });
+            return
+        }
+
         if (selectedDate.value.selected && finalCost.value > 0) {
             let bill = {
                 isWaitingList: isInWaitingList.value,
