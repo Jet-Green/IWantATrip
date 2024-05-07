@@ -8,6 +8,7 @@ let props = defineProps({
     selected: Object,
     waiting: Object,
     show_old_bus: Boolean,
+    selected_seats: Array
 });
 let emit = defineEmits(['isUserWaiting', 'update:selected', 'update:waiting'])
 
@@ -67,6 +68,7 @@ watch(tripsCount, () => {
         <a-row :gutter="[16]">
             <a-col v-if="!_.isEmpty(selectTransport.selected)">
                 <div>Едет: <b>{{ selectTransport.selected?.transportType.name }}</b> </div>
+                <div v-if="!show_old_bus"><strong>{{ selected_seats && selected_seats.length ? `Вы выбрали ${selected_seats.join(', ')}` : 'Выберите места' }}</strong></div>
 
                 <a-popover v-model:open="visible" @click="visible = !visible">
                     <template #content>
@@ -101,6 +103,8 @@ watch(tripsCount, () => {
             </a-col>
             <a-col v-if="!_.isEmpty(selectTransport.wait)">
                 <div>Заполняется: {{ selectTransport.wait?.transportType.name }}</div>
+                <div v-if="!show_old_bus"><strong>{{ selected_seats && selected_seats.length ? `Вы выбрали ${selected_seats.join(', ')}` : 'Выберите места' }}</strong></div>
+
                 <a-popover v-model:open="visible2" @click="visible2 = !visible2">
                     <template #content>
                         <div class="d-flex align-center">
