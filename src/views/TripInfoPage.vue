@@ -370,6 +370,8 @@ let isNoPlaces = computed(() => {
     return false;
 });
 
+let people_amount = computed(() => selectedDate.value.selectedCosts.map(cost => cost.count).reduce((partialSum, a) => partialSum + a, 0))
+
 onMounted(async () => {
     await refreshDates();
 });
@@ -664,10 +666,10 @@ onMounted(async () => {
 
                     <a-col :span="24">
                         <Bus 
-                            v-if="bus && selectedDate.selectedCosts.map(cost => cost.count).reduce((partialSum, a) => partialSum + a, 0) > 0"
+                            v-if="bus && people_amount > 0"
                             v-model:selected_seats="selected_seats"
                             :free_seats="free_seats"
-                            :max_count="selectedDate.selectedCosts.map(cost => cost.count).reduce((partialSum, a) => partialSum + a, 0)"
+                            :max_count="people_amount"
                             :bus="bus"
                             style="width: 150px;"
                         />
