@@ -186,10 +186,7 @@ onMounted(() => {
           </a-col>
 
           <a-col v-if="!sm" :span="10" class="top_menu">
-            <div>
-              <a href="https://vk.com/gorodaivesi_udm" target="_blank"><img
-                  src="../assets/icons/vk.svg" alt=""></a>
-            </div>
+       
            
             <div ref='find' @click="toComponentFromMenu('TripsPage')" class="route">найти</div>
             <div ref='order' @click="toComponentFromMenu('CreateTripWithHelp')" class="route">
@@ -201,17 +198,16 @@ onMounted(() => {
             <div ref='companion' @click="toComponentFromMenu('CompanionsPage')" class="route">
               попутчики
             </div>
-            
-
-           
-
-
-
+            <div>
+              <a href="https://vk.com/gorodaivesi_udm" target="_blank"><img
+                  src="../assets/icons/vk.svg" alt=""></a>
+            </div>
             <span class="mdi mdi-18px mdi-information-variant"
               style="color: #245159; cursor: pointer; margin-top: -10px;" @click="open = !open"></span>
             <span ref='auth' v-if="userStore.isAuth" class="mdi mdi-24px mdi-home" @click="toComponentFromMenu('Me')"
               style="cursor: pointer" cancelText="отмена">
             </span>
+          
             <span ref='auth' v-if="!userStore.isAuth" class="mdi mdi-24px mdi-login"
               @click="toComponentFromMenu('RegForm')" style="cursor: pointer">
             </span>
