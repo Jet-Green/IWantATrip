@@ -186,6 +186,11 @@ onMounted(() => {
           </a-col>
 
           <a-col v-if="!sm" :span="10" class="top_menu">
+            <div>
+              <a href="https://vk.com/gorodaivesi_udm" target="_blank"><img
+                  src="../assets/icons/vk.svg" alt=""></a>
+            </div>
+           
             <div ref='find' @click="toComponentFromMenu('TripsPage')" class="route">найти</div>
             <div ref='order' @click="toComponentFromMenu('CreateTripWithHelp')" class="route">
               заказать
@@ -196,6 +201,12 @@ onMounted(() => {
             <div ref='companion' @click="toComponentFromMenu('CompanionsPage')" class="route">
               попутчики
             </div>
+            
+
+           
+
+
+
             <span class="mdi mdi-18px mdi-information-variant"
               style="color: #245159; cursor: pointer; margin-top: -10px;" @click="open = !open"></span>
             <span ref='auth' v-if="userStore.isAuth" class="mdi mdi-24px mdi-home" @click="toComponentFromMenu('Me')"
@@ -230,9 +241,16 @@ onMounted(() => {
         попутчики
       </div>
       <div @click="toComponentFromMenu('Me')" class="route ma-8">кабинет</div>
+      
       <a href="https://doc.gorodaivesi.ru/" target="_blank">
         <div class="route ma-8">о проекте</div>
       </a>
+      <div style="text-align:center;">
+     
+        <a href="https://vk.com/gorodaivesi_udm" target="_blank"><img class="ma-2" src="../assets/icons/vk.svg"
+            alt=""></a>
+
+      </div>
     </a-drawer>
   </a-layout-header>
 </template>
@@ -244,7 +262,9 @@ onMounted(() => {
   .top_menu {
     display: flex;
     justify-content: space-around;
+    font-size: clamp(0.625rem, -2.625rem + 4vw, 0.875rem);
   }
+
 }
 
 .location {
