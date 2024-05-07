@@ -1,5 +1,6 @@
 <script setup>
 import BackButton from "../components/BackButton.vue";
+import BuyExcursionDates from "../components/BuyExcursionDates.vue";
 
 import { ref, onMounted } from "vue";
 
@@ -23,17 +24,18 @@ function getImg(index) {
 
 let buyTripDialog = () => {
 
-if (userStore.user.email) {
+  if (userStore.user.email) {
     // if (!selectedDate.value.selected) {
     //     tripDates.value[0].selected = true;
     //     selectedDate.value = tripDates.value[0];
     // }
     buyDialog.value = true;
-} else {
+  } else {
     router.push("/reg");
-}};
+  }
+};
 
-function startDate(index){
+function startDate(index) {
   // let day = excursion.value.date.day
   // let month = excursion.value.date.month
   // let year = excursion.value.date.year
@@ -127,10 +129,6 @@ onMounted(async () => {
             <div>
               Направление: <b>{{ excursion.excursionType.directionPlace }}</b>
             </div>
-            Дата старта:
-            <div v-for="(item, index) in excursion.dates">
-              <b>{{startDate(index)}} </b>
-            </div>
             Гиды:
             <div v-for="guide in excursion.guides">
               <b>{{ guide.name }}</b>
@@ -181,65 +179,14 @@ onMounted(async () => {
                 </div>
               </div>
             </div>
-            <!-- <div v-if="trip.bonuses.length" class="d-flex">
-              Бонусы:&nbsp
-              <div>
-                <div v-for="(item, index) in trip.bonuses" :key="index">
-                  <i>
-                    {{ item.type }} <b>{{ item.bonus }}</b>
-                  </i>
-                </div>
-              </div>
-            </div> -->
-            <!-- <div v-if="trip.transports?.length">
-              <WaitingList
-                :tripsCount="getCustomersCount(selectedDate.billsList)"
-                :transport="trip.transports ?? []"
-              />
-            </div> -->
-            <!-- <div
-              class="d-flex justify-center ma-8"
-              v-if="
-                trip.maxPeople -
-                  getCustomersCount(selectedDate.billsList) -
-                  selectedDate.selectedCosts.reduce((acc, cost) => {
-                    return acc + cost.count;
-                  }, 0) >
-                0
-              "
-            >
-              <a-button
-                type="primary"
-                class="lets_go_btn"
-                style="display: flex; justify-content: center"
-                @click="buyTripDialog()"
-              >
-                Купить
-              </a-button>
-            </div> -->
-            <a-button
-                type="primary"
-                class="lets_go_btn"
-                style="display: flex; justify-content: center"
-                @click="buyTripDialog()"
-              >
-                Купить
-              </a-button>
-
-            <!-- <div>
-              <b
-                v-if="
-                  trip.maxPeople -
-                    getCustomersCount(selectedDate.billsList) -
-                    selectedDate.selectedCosts.reduce((acc, cost) => {
-                      return acc + cost.count;
-                    }, 0) <=
-                  0
-                "
-              >
-                мест больше нет
-              </b>
-            </div> -->
+          </a-col>
+        </a-row>
+        <a-row>
+          <a-col :span="24">
+            <h3>Расписание</h3>
+          </a-col>
+          <a-col :span="24">
+            <BuyExcursionDates :dates="excursion.dates" :excursionId="excursion._id" />
           </a-col>
         </a-row>
       </a-col>
