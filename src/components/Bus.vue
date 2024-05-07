@@ -18,14 +18,13 @@ let props = defineProps({
         type: Number,
         default: 1
     },
-    all_free: Boolean,
     preview: Boolean
 })
 let emit = defineEmits(['update:bus', 'update:selected_seats'])
 
 let { bus, free_seats, max_count } = toRefs(props)
 let preview = props.preview
-free_seats.value = props.all_free ? bus.value.seats.map(seat => seat.number).filter(seat => !bus.value.stuff.includes(seat)) : props.free_seats
+
 let selected_seats = computed({
     get() {
         return props.selected_seats
