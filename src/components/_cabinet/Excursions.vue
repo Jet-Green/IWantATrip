@@ -9,10 +9,13 @@ let excursions = ref([])
 const router = useRouter()
 
 const excursionStore = useExcursion()
-
-onMounted(async () => {
+async function updateExcursion() {
   let response = await excursionStore.getUserExcursions()
   excursions.value = response.data
+}
+
+onMounted(async () => {
+  await updateExcursion()
 })
 </script>
 <template>
@@ -21,7 +24,7 @@ onMounted(async () => {
       <h3></h3>
     </a-col> -->
     <a-col v-for="excursion in excursions" :span="24" :sm="12" :lg="8">
-      <ExcursionCard :excursion="excursion" />
+      <ExcursionCard :excursion="excursion" @updateExcursion="updateExcursion" />
     </a-col>
   </a-row>
 </template>

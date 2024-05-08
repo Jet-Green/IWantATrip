@@ -1,15 +1,26 @@
 <script setup>
 import { useRouter } from 'vue-router';
+import { useExcursion } from "../../stores/excursion";
 let props = defineProps(['excursion'])
+let emit = defineEmits(['updateExcursion'])
 
+
+
+const excursionStore = useExcursion()
 const router = useRouter()
 
 let excursion = props.excursion
-
+// delete-by-id
 function openAddDates(_id) {
   router.push(`/cabinet/add-excursion-dates?_id=${_id}`)
 }
 
+async function excursionToDelete(_id) {
+  let response = await excursionStore.deleteById(_id);
+  if (response.status == 200) {
+    emit('updateExcursion')
+  }
+}
 </script>
 <template>
   <a-card class="card">
@@ -29,6 +40,14 @@ function openAddDates(_id) {
       <a-popconfirm title="Добавить расписание?" ok-text="Да" cancel-text="Нет" @confirm="openAddDates(excursion._id)">
         <span class="mdi mdi-calendar-month-outline" style="cursor: pointer"></span>
       </a-popconfirm>
+
+      <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="excursionToDelete(excursion._id)">
+        <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+      </a-popconfirm>
+      <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="hideExcursion(excursion._id)">
+        <span v-if="!excursion.isHidden" class="mdi mdi-eye-outline" style="cursor: pointer"></span>
+        <span v-else class="mdi mdi-eye-off-outline" style="cursor: pointer"></span>
+      </a-popconfirm>
     </div>
   </a-card>
 </template>
@@ -43,9 +62,11 @@ function openAddDates(_id) {
     cursor: pointer;
   }
 }
+
 .type {
-  display: flex; 
+  display: flex;
   align-items: center;
+
   span {
     font-size: 20px;
   }

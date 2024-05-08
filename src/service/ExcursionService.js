@@ -21,5 +21,9 @@ export default {
     },
     uploadImages(data) {
         return $api.post('/excursion/images', data)
+    },
+    deleteById(_id){
+       return $api.post('/excursion/delete-by-id', {_id : _id}) 
     }
+    
 }
