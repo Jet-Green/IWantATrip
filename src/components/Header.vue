@@ -186,8 +186,8 @@ onMounted(() => {
           </a-col>
 
           <a-col v-if="!sm" :span="10" class="top_menu">
-       
-           
+
+
             <div ref='find' @click="toComponentFromMenu('TripsPage')" class="route">найти</div>
             <div ref='order' @click="toComponentFromMenu('CreateTripWithHelp')" class="route">
               заказать
@@ -198,16 +198,19 @@ onMounted(() => {
             <div ref='companion' @click="toComponentFromMenu('CompanionsPage')" class="route">
               попутчики
             </div>
-            <div>
-              <a href="https://vk.com/gorodaivesi_udm" target="_blank"><img
-                  src="../assets/icons/vk.svg" alt=""></a>
+            <!-- <span class="mdi mdi-18px mdi-information-variant"
+              style="color: #245159; cursor: pointer; margin-top: -10px;" @click="open = !open"></span> -->
+            <div class="social">
+              <a href="https://vk.com/gorodaivesi_udm" target="_blank"><img src="../assets/icons/vk.svg" alt=""></a>
             </div>
-            <span class="mdi mdi-18px mdi-information-variant"
-              style="color: #245159; cursor: pointer; margin-top: -10px;" @click="open = !open"></span>
+            <div class="social">
+              <a href="https://t.me/gorodaivesi_ru" target="_blank"><img src="../assets/icons/telegram.svg" alt=""></a>
+            </div>
+
             <span ref='auth' v-if="userStore.isAuth" class="mdi mdi-24px mdi-home" @click="toComponentFromMenu('Me')"
               style="cursor: pointer" cancelText="отмена">
             </span>
-          
+
             <span ref='auth' v-if="!userStore.isAuth" class="mdi mdi-24px mdi-login"
               @click="toComponentFromMenu('RegForm')" style="cursor: pointer">
             </span>
@@ -224,28 +227,38 @@ onMounted(() => {
 
 
     <a-drawer placement="right" :closable="false" :open="visibleDrawer" @close="visibleDrawer = !visibleDrawer"
-      width="200">
-      <div @click="toComponentFromMenu('Landing')" class="route ma-8">главная</div>
-      <div @click="toComponentFromMenu('TripsPage')" class="route ma-8">найти тур</div>
-      <div @click="toComponentFromMenu('CreateTripWithHelp')" class="route ma-8">
-        заказать тур
-      </div>
-      <div @click="toComponentFromMenu('CatalogPage')" class="route ma-8">
-        каталог
-      </div>
-      <div @click="toComponentFromMenu('CompanionsPage')" class="route ma-8">
-        попутчики
-      </div>
-      <div @click="toComponentFromMenu('Me')" class="route ma-8">кабинет</div>
-      
-      <a href="https://doc.gorodaivesi.ru/" target="_blank">
-        <div class="route ma-8">о проекте</div>
-      </a>
-      <div style="text-align:center;">
-     
-        <a href="https://vk.com/gorodaivesi_udm" target="_blank"><img class="ma-2" src="../assets/icons/vk.svg"
-            alt=""></a>
+      width="100%">
+      <div style="text-align: right;">
+        <span class="mdi mdi-24px mdi-close" style="color: #245159; cursor: pointer"
+          @click="visibleDrawer = !visibleDrawer"></span>
+        </div>
+      <div class="right-drawer">
+        <div @click="toComponentFromMenu('Landing')" class="route ma-8">главная</div>
+        <div @click="toComponentFromMenu('TripsPage')" class="route ma-8">найти тур</div>
+        <div @click="toComponentFromMenu('CreateTripWithHelp')" class="route ma-8">
+          заказать тур
+        </div>
+        <div @click="toComponentFromMenu('CatalogPage')" class="route ma-8">
+          каталог
+        </div>
+        <div @click="toComponentFromMenu('CompanionsPage')" class="route ma-8">
+          попутчики
+        </div>
+        <div @click="toComponentFromMenu('Me')" class="route ma-8">кабинет</div>
 
+        <a href="https://doc.gorodaivesi.ru/" target="_blank">
+          <div class="route ma-8">о проекте</div>
+        </a>
+        <div style="text-align:center;">
+
+          <a href="https://vk.com/gorodaivesi_udm" target="_blank"><img class="ma-4" src="../assets/icons/vk.svg"
+              alt=""></a>
+
+          <a href="https://t.me/gorodaivesi_ru" target="_blank"><img class="ma-4" src="../assets/icons/telegram.svg"
+              alt=""></a>
+        </div>
+        <img src="../assets/images/logo.webp" class="ma-8" style="height: 60px; cursor: pointer" alt=""
+          @click="toComponentFromMenu('Landing')" />
       </div>
     </a-drawer>
   </a-layout-header>
@@ -259,6 +272,7 @@ onMounted(() => {
     display: flex;
     justify-content: space-around;
     font-size: clamp(0.625rem, -2.625rem + 4vw, 0.875rem);
+    position: relative;
   }
 
 }
@@ -274,21 +288,14 @@ onMounted(() => {
   text-transform: uppercase;
 }
 
-// .full-modal {
-//   .ant-modal {
-//     max-width: 100%;
-//     top: 0;
-//     padding-bottom: 0;
-//     margin: 0;
-//   }
+.social {
+  transform: translateY(20px);
+}
 
-//   .ant-modal-content {
-//     display: flex;
-//     flex-direction: column;
-//     height: calc(100vh);
-//   }
-
-//   .ant-modal-body {
-//     flex: 1;
-//   }
-// }</style>
+.right-drawer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: bold;
+}
+</style>
