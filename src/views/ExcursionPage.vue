@@ -59,7 +59,10 @@ onMounted(async () => {
 
       <a-col :xs="22" :xl="16" v-else>
         <h2 class="ma-0">{{ excursion.name }}</h2>
-
+        <div>
+        {{ excursion.excursionType.type }} | {{ excursion.excursionType.directionType }} | {{
+      excursion.excursionType.directionPlace }}
+        </div>
         <a-row :gutter="[12, 12]" class="text justify-center d-flex">
           <a-col :xs="24" :md="12">
             <a-carousel arrows dots-class="slick-dots slick-thumb">
@@ -123,12 +126,8 @@ onMounted(async () => {
             <div>
               Продолжительность: <b>{{ excursion.duration }}</b>
             </div>
-            <div>
-              Тип: <b>{{ excursion.excursionType.directionType }} - {{ excursion.excursionType.type }}</b>
-            </div>
-            <div>
-              Направление: <b>{{ excursion.excursionType.directionPlace }}</b>
-            </div>
+
+
             Гиды:
             <div v-for="guide in excursion.guides">
               <b>{{ guide.name }}</b>
@@ -172,10 +171,10 @@ onMounted(async () => {
             </div> -->
 
             <div class="d-flex">
-              Цена:&nbsp
+              Цены:&nbsp
               <div>
                 <div v-for="(item, index) in excursion.prices" :key="index" class="cost">
-                  {{ item.first }}: <b>{{ item.price }} руб.</b>
+                  {{ item.type }}: <b>{{ item.price }} руб</b>
                 </div>
               </div>
             </div>

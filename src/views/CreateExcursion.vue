@@ -23,6 +23,54 @@ const delPhotoDialog = ref(false);
 // add img
 let targetIndex = ref()
 
+let form = reactive({
+  name: '',
+  contacts: {
+    phone: '',
+    email: ''
+  },
+  excursionType: {
+    type: '',
+    directionType: '',
+    directionPlace: ''
+  },
+  description: "", // quill ??
+  location: {}, //ddata
+  duration: "",
+  minPeople: 0,
+  maxPeople: 0,
+  guides: [{
+    name: ''
+  }],
+  excursionType: {},
+  startPlace: "",
+  prices: [],
+  images: [],
+  minAge: 0,
+  deadline: '',
+  requirements: '',
+  availability: true
+
+})
+
+let formSchema = yup.object({
+  name: yup.string().required("заполните поле"),
+  description: yup.string().required("заполните поле"), // quill ??
+  duration: yup.string().required("заполните поле"),
+  minPeople: yup.number().required("заполните поле"),
+  maxPeople: yup.number().required("заполните поле"),
+  startPlace: yup.string().required("заполните поле"),
+  minAge: yup.number().required("заполните поле"),
+  deadline: yup.string().required("заполните поле"),
+  requirements: yup.string().required("заполните поле"),
+  guides: yup.string().required("заполните поле"),
+  location: yup.string().required("заполните поле"),
+  contacts: yup.object({
+    email: yup.string().email('в формате gorodaivesi@mail.ru').required("заполните поле"),
+    phone: yup.string().required("заполните поле"),
+  })
+})
+
 function addPreview(blob) {
   // imagesFormData.append("image", blob, `product-${previews.value.length}`);
   visibleCropperModal.value = false;
@@ -50,53 +98,20 @@ function selectStartLocation(selected) {
     }
   }
 }
-let form = reactive({
-  name: '',
-  contacts: {
-    phone: '',
-    email: ''
-  },
-  excursionType: {
-    type: '',
-    directionType: '',
-    directionPlace: ''
-  },
-  description: "", // quill ??
-  location: {}, //ddata
-  duration: "",
-  minPeople: 0,
-  maxPeople: 0,
-  guides: [{
-    name: ''
-  }],
-  excursionType: {},
-  startPlace: "",
-  prices: [{}],
-  images: [],
-  minAge: 0,
-  deadline: '',
-  requirements: '',
-  availability: true
+const removeCost = (item) => {
+  let index = form.cost.indexOf(item);
+  if (index !== -1) {
+    form.cost.splice(index, 1);
+  }
+};
 
-})
+const addCost = () => {
+  form.prices.push({
+    type: "",
+    price: "",
+  });
+};
 
-let formSchema = yup.object({
-  name: yup.string().required("заполните поле"),
-  description: yup.string().required("заполните поле"), // quill ??
-  duration: yup.string().required("заполните поле"),
-  minPeople: yup.number().required("заполните поле"),
-  maxPeople: yup.number().required("заполните поле"),
-  startPlace: yup.string().required("заполните поле"),
-  minAge: yup.number().required("заполните поле"),
-  deadline: yup.string().required("заполните поле"),
-  requirements: yup.string().required("заполните поле"),
-  guides: yup.string().required("заполните поле"),
-  location: yup.string().required("заполните поле"),
-  contacts: yup.object({
-    email: yup.string().email('в формате gorodaivesi@mail.ru').required("заполните поле"),
-    phone: yup.string().required("заполните поле"),
-  })
-})
 async function submit() {
   let excursionCb = await excursionStore.create(form)
   const _id = excursionCb.data._id
@@ -281,6 +296,31 @@ watch(
                 <ErrorMessage name="description" class="error-message" />
               </Transition>
             </a-col>
+
+            <a-col :span="24">
+              <div class="d-flex space-between ">Цены
+             
+              </div>
+
+
+              <div v-for="   item,index    in    form.prices   " :key="index" style="display: flex" align="baseline"
+                class="mb-16">
+                <a-input v-model:value="item.type" placeholder="Взрослый" />
+
+                <a-input-number v-model:value="item.price" style="width: 100%" placeholder="1000" type="number" :min="0"
+                  :step="1" class="ml-16 mr-16" />
+
+                <a-button @click="removeCost(item)" shape="circle">
+                  <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                </a-button>
+              </div>
+
+              <a-button type="dashed" block @click="addCost" class="ma-8">
+                <span class="mdi mdi-12px mdi-plus"></span>
+                Добавить цены
+              </a-button>
+            </a-col>
+
             <a-col :span="24">
               <Field name="requirements" v-slot="{ value, handleChange }" v-model="form.requirements">
                 Особые требования
