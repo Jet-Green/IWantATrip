@@ -19,13 +19,20 @@ export default {
     getExcursionById(_id) {
         return $api.get(`/excursion/one?_id=${_id}`)
     },
+    deleteTime( dateId,timeId) {
+        return $api.post('/excursion/delete-time', { dateId:dateId,timeId:timeId })
+    },
+    deleteDate( dateId) {
+        return $api.post('/excursion/delete-date', { dateId:dateId})
+    },
+    
     uploadImages(data) {
         return $api.post('/excursion/images', data)
     },
-    deleteById(_id){
-       return $api.post('/excursion/delete-by-id', {_id : _id}) 
+    deleteById(_id) {
+        return $api.post('/excursion/delete-by-id', { _id: _id })
     },
-    hideExcursion (_id,isHide){
-        return $api.post('/excursion/hide-by-id', {_id : _id, isHide : isHide}) 
-     }
+    hideExcursion(_id, isHide) {
+        return $api.post('/excursion/hide-by-id', { _id: _id, isHide: isHide })
+    }
 }

@@ -16,9 +16,7 @@ export const useExcursion = defineStore('excursion', {
             const user = useAuth().user
             return await ExcursionService.getUserExcursions(user._id)
         },
-        async getById(_id) {
-            return await ExcursionService.getById(_id)
-        },
+
         /** 
          * dates are from datePlugin.excursions.concatDateAndTime
          * _id is excursion _id
@@ -34,6 +32,16 @@ export const useExcursion = defineStore('excursion', {
         async getExcursionById(_id) {
             return await ExcursionService.getExcursionById(_id)
         },
+        async deleteTime(dateId,timeId) {
+            return await ExcursionService.deleteTime(dateId,timeId)
+        },
+        async deleteDate(dateId) {
+            return await ExcursionService.deleteDate(dateId)
+        },
+
+
+        
+
         async uploadImages(data) {
             return await ExcursionService.uploadImages(data)
         },
