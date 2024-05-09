@@ -1,6 +1,7 @@
 <script setup>
 import BackButton from "../components/BackButton.vue";
 import BuyExcursionDates from "../components/BuyExcursionDates.vue";
+import BuyExcursionDialog from "../components/BuyExcursionDialog.vue";
 import _ from "lodash"
 import { ref, onMounted } from "vue";
 
@@ -17,38 +18,32 @@ const userStore = useAuth();
 const locationStore = useLocations();
 
 let excursion = ref({});
+let selectedDate = ref({})
 
 function getImg(index) {
   return trip.value.images[index];
 }
-
-let buyTripDialog = () => {
-
-  if (userStore.user.email) {
-    // if (!selectedDate.value.selected) {
-    //     tripDates.value[0].selected = true;
-    //     selectedDate.value = tripDates.value[0];
-    // }
-    buyDialog.value = true;
-  } else {
-    router.push("/reg");
+function openBuyDialog(time) {
+  if (selectedDate.value._id) return
+  for (let date of excursion.value.dates) {
+    for(let t of date.times) {
+      if (t._id == time._id) {
+        selectedDate.value = {
+          date: date.date,
+          time
+        }
+        break
+      }
+    }
   }
-};
-
-function startDate(index) {
-  // let day = excursion.value.date.day
-  // let month = excursion.value.date.month
-  // let year = excursion.value.date.year
-  // let time= `${excursion.value.times[index].hours}:${excursion.value.times[index].minutes}`
-  // return `${day}.${month}.${year} в ${time}`
-  return 'index: ' + index
 }
-
+function closeBuyDialog() {
+  selectedDate.value = {}
+}
 
 onMounted(async () => {
   let response = await excursionStore.getExcursionById(_id);
   excursion.value = response.data;
-
 });
 </script>
 <template>
@@ -88,19 +83,9 @@ onMounted(async () => {
           </a-col>
 
           <a-col :xs="24" :md="12" class="pa-8">
-            <!-- <div style="float: right">
-              <span
-                style="opacity: 0.7; cursor: pointer"
-                class="mdi mdi-24px mdi-printer ma-8"
-                @click="print()"
-              ></span>
-
-            </div> -->
-
             <div>
               Место начала: <b> {{ excursion.startPlace }}</b>
             </div>
-
             <div>
               Продолжительность: <b>{{ excursion.duration }}</b>
             </div>
@@ -112,8 +97,6 @@ onMounted(async () => {
               </div>
             </div>
 
-
-
             <div class="d-flex">
               Цены:&nbsp
               <div>
@@ -123,20 +106,20 @@ onMounted(async () => {
               </div>
             </div>
             <div>
-              От <b>{{ excursion.minPeople }}</b>  до <b>{{ excursion.maxPeople }} чел.</b>  
+              От <b>{{ excursion.minPeople }}</b> до <b>{{ excursion.maxPeople }} чел.</b>
             </div>
             <div>
-              Мин. возраст:  <b>{{ excursion.minAge }}  </b>  
+              Мин. возраст: <b>{{ excursion.minAge }} </b>
             </div>
-            <div v-if = "_.isEmpty(excursion.dates)">
-              Заявка за:  <b>{{ excursion.deadline }} дн.</b>  
+            <div v-if="_.isEmpty(excursion.dates)">
+              Заявка за: <b>{{ excursion.deadline }} дн.</b>
             </div>
             <div>
-              Доступность:  <b> 
+              Доступность: <b>
                 <span v-if="excursion.availability" class="mdi mdi-24px mdi-wheelchair-accessibility"></span>
                 <span v-else class="mdi mdi-24px mdi-minus-circle-outline"></span>
-             
-              </b>  
+
+              </b>
             </div>
           </a-col>
         </a-row>
@@ -145,8 +128,10 @@ onMounted(async () => {
             <h3>Расписание</h3>
           </a-col>
           <a-col :span="24">
-            <div v-if = "_.isEmpty(excursion.dates)" class="month">По заявкам</div>
-            <BuyExcursionDates v-else :dates="excursion.dates" :excursionId="excursion._id" />
+            <div v-if="_.isEmpty(excursion.dates)" class="month">По заявкам</div>
+            <BuyExcursionDates v-else :dates="excursion.dates" :excursionId="excursion._id"
+              @buy-excursion="openBuyDialog" />
+            <BuyExcursionDialog :selectedDate="selectedDate" :excursion="excursion" @close="closeBuyDialog" />
           </a-col>
         </a-row>
         <a-row>
@@ -160,9 +145,8 @@ onMounted(async () => {
 </template>
 
 <style lang="scss" scoped>
- .month {
-    font-weight: 600;
-    font-size: clamp(0.9375rem, 0.6889rem + 0.7102vw, 1.25rem);
-  }
-
+.month {
+  font-weight: 600;
+  font-size: clamp(0.9375rem, 0.6889rem + 0.7102vw, 1.25rem);
+}
 </style>

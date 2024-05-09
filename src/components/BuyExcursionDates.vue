@@ -1,7 +1,5 @@
 <script setup>
-import dayjs from 'dayjs';
-import objectSupport from 'dayjs/plugin/objectSupport'
-dayjs.extend(objectSupport);
+import datePlugin from '../plugins/dates'
 
 const props = defineProps({
   dates: {
@@ -12,19 +10,13 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['buy-excursion'])
+
 const dates = props.dates
 const excursionId = props.excursionId
 
 function getDate(dateObj) {
-  const dayjsDate = dayjs({ years: dateObj.year, months: dateObj.month, date: dateObj.day })
-  if (!dayjsDate.$d) return ''
-  let russianDate = (new Date(dayjsDate.$d)).toLocaleDateString('ru-RU', {
-    month: 'long',
-    day: 'numeric',
-    weekday: 'long',
-  }).replaceAll(',', '').split(' ')
-
-  return { weekday: russianDate[0], day: russianDate[1], month: russianDate[2] }
+  return datePlugin.excursions.getPrettyDate(dateObj)
 }
 function getTime(timeObj) {
   let result = timeObj.hours + ':'
@@ -34,6 +26,9 @@ function getTime(timeObj) {
     result += timeObj.minutes
   }
   return result
+}
+function buyExcursion(time) {
+  emit('buy-excursion', time)
 }
 </script>
 <template>
@@ -48,12 +43,12 @@ function getTime(timeObj) {
           <div class="weekday">{{ getDate(date.date).weekday }}</div>
         </div>
         <div v-for="time in date.times" class="time-container">
-          <a-button shape="round" class="time">
+          <a-button shape="round" class="time" @click="buyExcursion(time)">
             {{ getTime(time) }}
           </a-button>
         </div>
       </div>
-      <a-divider v-if="index < date.times.length" />
+      <a-divider />
     </a-col>
   </a-row>
 </template>

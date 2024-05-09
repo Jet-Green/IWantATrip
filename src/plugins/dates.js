@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
-
+import objectSupport from 'dayjs/plugin/objectSupport'
+dayjs.extend(objectSupport);
 export default {
     excursions: {
         /**
@@ -21,6 +22,18 @@ export default {
             }
 
             return res
-        }
+        },
+        // for ExcursionPage
+        getPrettyDate(dateObj) {
+            const dayjsDate = dayjs({ years: dateObj.year, months: dateObj.month, date: dateObj.day })
+            if (!dayjsDate.$d) return ''
+            let russianDate = (new Date(dayjsDate.$d)).toLocaleDateString('ru-RU', {
+              month: 'long',
+              day: 'numeric',
+              weekday: 'long',
+            }).replaceAll(',', '').split(' ')
+          
+            return { weekday: russianDate[0], day: russianDate[1], month: russianDate[2] }
+          }
     }
 }
