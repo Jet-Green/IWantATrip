@@ -140,12 +140,12 @@ onMounted(async () => {
             </div>
           </a-col>
         </a-row>
-        <a-row>
+        <a-row style="margin-top: 30px;">
           <a-col :span="24">
             <h3>Расписание</h3>
           </a-col>
           <a-col :span="24">
-            <div v-if = "_.isEmpty(excursion.dates)" class="month" > По заявкам</div>
+            <div v-if = "_.isEmpty(excursion.dates)" class="month">По заявкам</div>
             <BuyExcursionDates v-else :dates="excursion.dates" :excursionId="excursion._id" />
           </a-col>
         </a-row>
