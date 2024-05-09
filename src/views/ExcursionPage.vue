@@ -1,7 +1,7 @@
 <script setup>
 import BackButton from "../components/BackButton.vue";
 import BuyExcursionDates from "../components/BuyExcursionDates.vue";
-
+import _ from "lodash"
 import { ref, onMounted } from "vue";
 
 import { useRoute } from "vue-router";
@@ -48,7 +48,7 @@ function startDate(index) {
 onMounted(async () => {
   let response = await excursionStore.getExcursionById(_id);
   excursion.value = response.data;
-  console.log(response.data);
+
 });
 </script>
 <template>
@@ -60,7 +60,7 @@ onMounted(async () => {
       <a-col :xs="22" :xl="16" v-else>
         <h2 class="ma-0">{{ excursion.name }}</h2>
         <div>
-        {{ excursion.excursionType.type }} | {{ excursion.excursionType.directionType }} | {{
+          {{ excursion.excursionType.type }} | {{ excursion.excursionType.directionType }} | {{
       excursion.excursionType.directionPlace }}
         </div>
         <a-row :gutter="[12, 12]" class="text justify-center d-flex">
@@ -95,28 +95,6 @@ onMounted(async () => {
                 @click="print()"
               ></span>
 
-              <a-dropdown :trigger="['click']">
-                <a class="ant-dropdown-link" @click.prevent>
-                  <span
-                    style="opacity: 0.7"
-                    class="mdi mdi-24px mdi-share-variant-outline ma-8"
-                  ></span>
-                </a>
-                <template #overlay>
-                  <a-menu>
-                    <a-menu-item v-for="(link, index) of ShareLogo" :key="index">
-                      <ShareNetwork
-                        :network="link.network"
-                        :url="getLink()"
-                        :title="trip.name"
-                        :description="edate.offer"
-                      >
-                        <span>{{ link.network }}</span>
-                      </ShareNetwork>
-                    </a-menu-item>
-                  </a-menu>
-                </template>
-              </a-dropdown>
             </div> -->
 
             <div>
@@ -127,56 +105,38 @@ onMounted(async () => {
               Продолжительность: <b>{{ excursion.duration }}</b>
             </div>
 
-
-            Гиды:
-            <div v-for="guide in excursion.guides">
-              <b>{{ guide.name }}</b>
+            <div class="d-flex">
+              Гиды: &nbsp
+              <div v-for="guide in excursion.guides">
+                <b>{{ guide.name }} </b>
+              </div>
             </div>
-            <!-- <div class="d-flex">
-              Дата начала тура: &nbsp
-              <div>
-                <a-checkable-tag
-                  class="pretty-tag"
-                  v-for="(date, index) of tripDates"
-                  :checked="date.selected"
-                  @change="selectDate(index)"
-                >
-                  <b>
-                    {{ clearData(date.start) }} -
-                    {{ clearData(date.end) }}
-                  </b>
-                  ({{ getCustomersCount(date.billsList) + "/" + trip.maxPeople }} чел.)
-                </a-checkable-tag>
-              </div>
-            </div> -->
 
-            <!-- <div v-if="tripDates.length < 2">
-              <div>Количество человек:</div>
-              <div style="width: 50%">
-                <b>
-                  <a-progress
-                    :percent="
-                      (getCustomersCount(selectedDate.billsList) / trip.maxPeople) * 100
-                    "
-                    :format="
-                      () =>
-                        `${getCustomersCount(selectedDate.billsList)}/${
-                          trip.maxPeople
-                        } чел`
-                    "
-                  >
-                  </a-progress
-                ></b>
-              </div>
-            </div> -->
+
 
             <div class="d-flex">
               Цены:&nbsp
               <div>
-                <div v-for="(item, index) in excursion.prices" :key="index" class="cost">
-                  {{ item.type }}: <b>{{ item.price }} руб</b>
+                <div v-for="(item, index) in excursion.prices" :key="index">
+                  {{ item.type }} - <b>{{ item.price }} руб</b>
                 </div>
               </div>
+            </div>
+            <div>
+              От <b>{{ excursion.minPeople }}</b>  до <b>{{ excursion.maxPeople }} чел.</b>  
+            </div>
+            <div>
+              Мин. возраст:  <b>{{ excursion.minAge }}  </b>  
+            </div>
+            <div v-if = "_.isEmpty(excursion.dates)">
+              Заявка за:  <b>{{ excursion.deadline }} дн.</b>  
+            </div>
+            <div>
+              Доступность:  <b> 
+                <span v-if="excursion.availability" class="mdi mdi-24px mdi-wheelchair-accessibility"></span>
+                <span v-else class="mdi mdi-24px mdi-minus-circle-outline"></span>
+             
+              </b>  
             </div>
           </a-col>
         </a-row>
@@ -185,10 +145,24 @@ onMounted(async () => {
             <h3>Расписание</h3>
           </a-col>
           <a-col :span="24">
-            <BuyExcursionDates :dates="excursion.dates" :excursionId="excursion._id" />
+            <div v-if = "_.isEmpty(excursion.dates)" class="month" > По заявкам</div>
+            <BuyExcursionDates v-else :dates="excursion.dates" :excursionId="excursion._id" />
+          </a-col>
+        </a-row>
+        <a-row>
+          <a-col :span="24">
+            {{ excursion.description }}
           </a-col>
         </a-row>
       </a-col>
     </a-row>
   </div>
 </template>
+
+<style lang="scss" scoped>
+ .month {
+    font-weight: 600;
+    font-size: clamp(0.9375rem, 0.6889rem + 0.7102vw, 1.25rem);
+  }
+
+</style>
