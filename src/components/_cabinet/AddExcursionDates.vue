@@ -28,7 +28,8 @@ async function submit() {
   let res = await excursionStore.createDates(dates.value, _id)
   if (res.status == 200) {
     dontSubmit = true
-    router.push('/cabinet/excursions')
+    updateExcursion(_id)
+    // router.push('/cabinet/excursions')
   }
 }
 function getDate(dateObj) {
