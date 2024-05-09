@@ -106,12 +106,12 @@ onMounted(async () => {
         <a-menu v-model:selectedKeys="current" mode="horizontal">
           <a-menu-item key="/cabinet/me">
             <span ref='cab' v-if=!sm>О пользователе</span>
-            <span v-else class="mdi mdi-24px mdi-account-outline" style="color: #245159; cursor: pointer"></span>
+            <span v-else class="mdi mdi-24px mdi-account-outline" style="color: #245159; "></span>
           </a-menu-item>
           <a-sub-menu key="sub1">
             <template #title>
               <span ref='tur' v-if=!sm>Туры</span>
-              <span v-else class="mdi mdi-24px mdi-map-outline" style="color: #245159; cursor: pointer"></span>
+              <span v-else class="mdi mdi-24px mdi-map-outline" style="color: #245159; "></span>
             </template>
             <a-menu-item key="/cabinet/created-trips">Созданные</a-menu-item>
             <a-menu-item key="/cabinet/bought-trips">Купленные</a-menu-item>
@@ -119,15 +119,19 @@ onMounted(async () => {
             <a-menu-item key="/calc">Калькулятор</a-menu-item>
             <a-menu-item key="/cabinet/find-buyer">Найти покупателя</a-menu-item>
           </a-sub-menu>
-          <a-menu-item key="/cabinet/excursions">Экскурсии</a-menu-item>
+          <a-menu-item key="/cabinet/excursions">
+            <span v-if=!sm>Экскурсии</span>
+            <span v-else class="mdi mdi-24px mdi-account-group"
+              style="color: #245159;"></span>
+          </a-menu-item>
           <a-menu-item key="/cabinet/my-companions">
             <span ref='companions' v-if=!sm>Попутчики</span>
             <span v-else class="mdi mdi-24px mdi-human-capacity-decrease"
-              style="color: #245159; cursor: pointer"></span>
+              style="color: #245159; "></span>
           </a-menu-item>
           <a-menu-item key="/cabinet/booking-notifications" v-if="showBookingNotifications">
             <span v-if=!sm>Заказы</span>
-            <span v-else class="mdi mdi-24px mdi-hand-wave-outline" style="color: #245159; cursor: pointer"></span>
+            <span v-else class="mdi mdi-24px mdi-hand-wave-outline" style="color: #245159; "></span>
           </a-menu-item>
           <a-sub-menu key="sub2" v-if="userStore.user.roles.includes('manager')">
 

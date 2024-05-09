@@ -49,7 +49,7 @@ let form = reactive({
   minAge: 0,
   deadline: '',
   requirements: '',
-  availability: true
+  availability: true,
 
 })
 

@@ -24,6 +24,8 @@ export default {
     },
     deleteById(_id){
        return $api.post('/excursion/delete-by-id', {_id : _id}) 
-    }
-    
+    },
+    hideExcursion (_id,isHide){
+        return $api.post('/excursion/hide-by-id', {_id : _id, isHide : isHide}) 
+     }
 }

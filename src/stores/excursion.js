@@ -39,6 +39,10 @@ export const useExcursion = defineStore('excursion', {
         },
         async deleteById (_id) {
             return await ExcursionService.deleteById(_id)
+        },
+        async hideExcursion (_id,isHide) {
+            return await ExcursionService.hideExcursion(_id, isHide)
         }
+        
     }
 })
