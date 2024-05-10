@@ -51,7 +51,10 @@ export const useExcursion = defineStore('excursion', {
         },
         async hideExcursion (_id,isHide) {
             return await ExcursionService.hideExcursion(_id, isHide)
-        }
-        
+        },
+        async buy(timeId, toSend) {
+            let userStore = useAuth()
+            return await ExcursionService.buy(timeId, userStore.user._id, toSend)
+        }    
     }
 })

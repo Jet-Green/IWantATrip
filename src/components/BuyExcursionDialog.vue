@@ -2,6 +2,9 @@
 import { ref, toRefs, watch, onMounted } from "vue"
 import _ from "lodash"
 import datePlugin from '../plugins/dates'
+import { useExcursion } from "../stores/excursion";
+
+const excursionStore = useExcursion()
 
 let props = defineProps({
   selectedDate: Object,
@@ -28,8 +31,33 @@ watch(selectedDate, (newValue) => {
     prettyTime.value = tmpTime
   }
 })
+let pricesForm = ref([])
+async function buy() {
+  let toSend = []
+  // pricesForm.value
+  for (let p of pricesForm.value) {
+    if (p.count > 1) {
+      toSend.push({
+        type: p.type,
+        price: p.price,
+        count: p.count
+      })
+    }
+  }
+  await excursionStore.buy(selectedDate.value.time._id, toSend)
+}
 
-
+onMounted(() => {
+  let result = []
+  for (let p of props.excursion.prices) {
+    result.push({
+      count: 0,
+      price: p.price,
+      type: p.type,
+    })
+  }
+  pricesForm.value = result
+})
 </script>
 <template>
   <a-modal v-model:open="open" @cancel="emit('close')" :footer="null">
@@ -50,14 +78,18 @@ watch(selectedDate, (newValue) => {
     <div class="large-date">
       {{ prettyTime }}
     </div>
-    <div v-for="price of excursion.prices">
+    <div v-for="price of pricesForm">
       <div class="price-container">
         <div class="price">{{ price.type }} x <span style="color: #ff6600;">{{ price.price }}₽</span></div>
         <div>
-          <a-input-number :min="0" :max="excursion.maxPeople" style="border-radius: 12px;" :controls="false">
+          <a-input-number v-model:value="price.count" :min="0" :max="excursion.maxPeople" style="border-radius: 12px;"
+            :controls="false">
           </a-input-number>
         </div>
       </div>
+    </div>
+    <div class="d-flex justify-center mt-16">
+      <a-button type="primary" class="lets_go_btn" @click="buy">отправить</a-button>
     </div>
   </a-modal>
 </template>
@@ -112,6 +144,7 @@ watch(selectedDate, (newValue) => {
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
+
   .price {
     font-weight: 600;
     font-size: clamp(0.875rem, 0.6761rem + 0.5682vw, 1.125rem);

@@ -23,7 +23,7 @@ export default {
         return $api.post('/excursion/delete-time', { dateId: dateId, timeId: timeId })
     },
     deleteDate(dateId, userId) {
-       
+
         return $api.post('/excursion/delete-date', { dateId: dateId, userId: userId })
     },
 
@@ -35,5 +35,8 @@ export default {
     },
     hideExcursion(_id, isHide) {
         return $api.post('/excursion/hide-by-id', { _id: _id, isHide: isHide })
+    },
+    buy(timeId, userId, toSend) {
+        return $api.post('/excursion/buy', { timeId, userId, bill: toSend })
     }
 }
