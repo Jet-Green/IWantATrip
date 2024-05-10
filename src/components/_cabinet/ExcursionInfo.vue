@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useExcursion } from '../../stores/excursion';
 import dayjs from 'dayjs';
 import objectSupport from 'dayjs/plugin/objectSupport'
-import ExcursionInfoCard from './ExcursionInfoCard.vue'
+import ExcursionCustomerList from './ExcursionCustomerList.vue'
 dayjs.extend(objectSupport);
 
 const excursionStore = useExcursion()
@@ -48,16 +48,16 @@ onMounted(async () => {
         <a-breadcrumb-item>даты, время, покупатели</a-breadcrumb-item>
     </a-breadcrumb>
     <h3 class="mt-8 mb-8">Информация о "{{ excursion.name }}"</h3>
-    <v-container>
-        <v-row>
-            <v-col :span="24">
+
+        <a-row>
+            <a-col :span="24">
                 <a-collapse v-model:activeKey="activeKey" class="mt-32 mb-32">
                     <a-collapse-panel :header="`${getDate(d.date)}`" v-for="d, i in excursion.dates" :key="i">
                     
 
                             <a-collapse>
                                 <a-collapse-panel :header="`${t.hours}:${t.minutes}`" v-for="t, j in d.times" :key="j">
-                                    <ExcursionInfoCard :t="t"/>
+                                    <ExcursionCustomerList :customers="t"/>
                                 </a-collapse-panel>
 
                             </a-collapse>
@@ -65,10 +65,10 @@ onMounted(async () => {
                     </a-collapse-panel>
 
                 </a-collapse>
-            </v-col>
+            </a-col>
 
-        </v-row>
-    </v-container>
+        </a-row>
+
 
 </template>
 <style lang="scss" scopes>
