@@ -687,7 +687,7 @@ onMounted(async () => {
                             v-if="bus && people_amount > 0"
                             v-model:selected_seats="selected_seats"
                             :free_seats="free_seats"
-                            :max_count="getCurrentCustomerNumber"
+                            :max_count="trip.maxPeople - getCustomersCount(selectedDate.billsList)"
                             :bus="bus"
                             style="width: 150px;"
                         />
