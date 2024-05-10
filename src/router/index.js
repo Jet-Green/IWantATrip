@@ -216,9 +216,14 @@ const router = createRouter({
       component: () => import('../components/_guide/Poster.vue')
     },
     {
-      path: '/excurs',
-      name: 'Excursions',
+      path: '/excursions',
+      name: 'ExcursionsPage',
       component: () => import('../components/_guide/Excursions.vue')
+    },
+    {
+      path: '/excursion',
+      name: 'ExcursionPage',
+      component: () => import('../views/ExcursionPage.vue')
     },
     {
       path: '/enter',
@@ -281,6 +286,7 @@ const router = createRouter({
           path: 'booking-trips',
           component: () => import('../components/_cabinet/BookingTrips.vue'),
         },
+
         {
           path: 'created-trips',
           component: () => import('../components/_cabinet/CreatedTrips.vue'),
@@ -303,6 +309,22 @@ const router = createRouter({
             },
 
           ]
+        },
+        {
+          path: 'excursions',
+          name: 'Excursions',
+          component: () => import('../components/_cabinet/Excursions.vue')
+        },
+        
+        {
+          path: 'excursion-info',
+          name: 'ExcursionsInfo',
+          component: () => import('../components/_cabinet/ExcursionInfo.vue')
+        },
+        {
+          path: 'add-excursion-dates',
+          name: 'AddExcursionDates',
+          component: () => import('../components/_cabinet/AddExcursionDates.vue')
         },
         {
           path: 'find-buyer',
@@ -576,9 +598,12 @@ const router = createRouter({
       path: "/contract-create",
       name: 'ContractCreate',
       component: () => import('../components/forms/ContractCreate.vue'),
-
     },
-
+    {
+      path: "/create-excursion",
+      name: "CreateExcursion",
+      component: () => import('../views/CreateExcursion.vue')
+    }
   ],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
