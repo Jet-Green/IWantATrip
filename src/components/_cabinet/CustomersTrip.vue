@@ -292,21 +292,21 @@ onMounted(async () => {
             clearData(BILL?.date)
         }}</b>
                             </div>
-                            <div> </div>
-                            <div>
-                                <span class="mdi mdi-account-outline" style=""></span>
-                                {{ BILL.userInfo.fullname }}
 
-                            </div>
-                            <div v-if="BILL.selectedStartLocation">
-                                <span class="mdi mdi-map-marker-outline" style=""></span>
-                                {{ BILL.selectedStartLocation }}
-                            </div>
-                            <div>
-                                <span class="mdi mdi-phone-outline" style=""></span>
-                                <a :href="getPhoneNumber(BILL.userInfo.phone)">
-                                    {{ BILL.userInfo.phone }}</a>
-                            </div>
+                                <div>
+                                    <span class="mdi mdi-account-outline" style=""></span>
+                                    {{ BILL.userInfo.fullname }}
+
+                                </div>
+                                <div v-if="BILL.selectedStartLocation">
+                                    <span class="mdi mdi-map-marker-outline" style=""></span>
+                                    {{ BILL.selectedStartLocation }}
+                                </div>
+                                <div>
+                                    <span class="mdi mdi-phone-outline" style=""></span>
+                                    <a :href="getPhoneNumber(BILL.userInfo.phone)">
+                                        {{ BILL.userInfo.phone }}</a>
+                                </div>
                             
                             <div v-for="cartItem of BILL.cart">
                                 <div v-if="cartItem.count">
