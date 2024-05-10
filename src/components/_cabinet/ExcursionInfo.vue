@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useExcursion } from '../../stores/excursion';
 import dayjs from 'dayjs';
 import objectSupport from 'dayjs/plugin/objectSupport'
+import ExcursionInfoCard from './ExcursionInfoCard.vue'
 dayjs.extend(objectSupport);
 
 const excursionStore = useExcursion()
@@ -54,9 +55,9 @@ onMounted(async () => {
                     <a-collapse-panel :header="`${getDate(d.date)}`" v-for="d, i in excursion.dates" :key="i">
                     
 
-                            <a-collapse v-model:activeKey="activeKey2">
+                            <a-collapse>
                                 <a-collapse-panel :header="`${t.hours}:${t.minutes}`" v-for="t, j in d.times" :key="j">
-                                    {{ t }}
+                                    <ExcursionInfoCard :t="t"/>
                                 </a-collapse-panel>
 
                             </a-collapse>
