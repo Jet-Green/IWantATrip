@@ -52,6 +52,7 @@ let sortCustomersByStartLocation = computed(() => {
             <th style="border-bottom: 1px solid black;">Место посадки</th>
             <th style="border-bottom: 1px solid black;">Телефон</th>
             <th style="border-bottom: 1px solid black;">Количество</th>
+            <th style="border-bottom: 1px solid black;">Места</th>
         </tr>
 
         <tr v-for="customer, i in sortCustomersByStartLocation" :key="i">
@@ -76,6 +77,9 @@ let sortCustomersByStartLocation = computed(() => {
                     <span v-if="customer.cart.length > j + 1">+</span>
                 </span> -->
 
+            </td>
+            <td style="border-bottom: 1px solid black;">
+                {{ customer.seats ? customer.seats.join(', ') : '' }}
             </td>
         </tr>
         <!-- <tr v-for="customer, i in customers" :key="i">

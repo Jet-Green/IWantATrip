@@ -4,11 +4,16 @@ import _ from 'lodash'
 
 let props = defineProps({
     tripsCount: Number,
-    transport: Array
+    transport: Array,
+    selected: Object,
+    waiting: Object,
+    show_old_bus: Boolean,
+    selected_seats: Array,
+    choise: Boolean
 });
-let emit = defineEmits(['isUserWaiting'])
+let emit = defineEmits(['isUserWaiting', 'update:selected', 'update:waiting'])
 
-const { tripsCount } = toRefs(props);
+const { tripsCount, show_old_bus, selected_seats } = toRefs(props);
 // let tripsCount = ref(35)
 // сортированнный по capacity
 let transports = reactive(props.transport)
@@ -54,7 +59,9 @@ let selectTransport = computed(() => {
 
 watch(tripsCount, () => { 
     emit('isUserWaiting', selectTransport.value.isWaiting)
-})
+    emit('update:selected', selectTransport.value.selected)
+    emit('update:waiting', selectTransport.value.wait)
+}, { immediate: true })
 </script>
 
 <template>
@@ -62,6 +69,7 @@ watch(tripsCount, () => {
         <a-row :gutter="[16]">
             <a-col v-if="!_.isEmpty(selectTransport.selected)">
                 <div>Едет: <b>{{ selectTransport.selected?.transportType.name }}</b> </div>
+                <div v-if="!show_old_bus && choise"><strong>{{ selected_seats && selected_seats.length ? `Вы выбрали ${selected_seats.join(', ')}` : 'Выберите места' }}</strong></div>
 
                 <a-popover v-model:open="visible" @click="visible = !visible">
                     <template #content>
@@ -82,7 +90,7 @@ watch(tripsCount, () => {
 
 
 
-                    <div class="transport">
+                    <div class="transport" v-if="show_old_bus">
                         <img src="../assets/images/back.png" style="height: 100%" alt="">
 
                         <div v-for="seat, i in selectTransport.selected?.capacity" class="passenger-seat"
@@ -96,6 +104,8 @@ watch(tripsCount, () => {
             </a-col>
             <a-col v-if="!_.isEmpty(selectTransport.wait)">
                 <div>Заполняется: {{ selectTransport.wait?.transportType.name }}</div>
+                <div v-if="!show_old_bus && choise"><strong>{{ selected_seats && selected_seats.length ? `Вы выбрали ${selected_seats.join(', ')}` : 'Выберите места' }}</strong></div>
+
                 <a-popover v-model:open="visible2" @click="visible2 = !visible2">
                     <template #content>
                         <div class="d-flex align-center">
@@ -112,7 +122,7 @@ watch(tripsCount, () => {
                         </div>
 
                     </template>
-                    <div class="transport">
+                    <div class="transport" v-if="show_old_bus">
                      
                         <img src="../assets/images/back.png" style="height: 100%" alt="">
 

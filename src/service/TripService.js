@@ -105,7 +105,9 @@ export default {
     getFullCatalogById(_id) {
         return $api.get(`/catalog/get-full-catalog?_id=${_id}`)
     },
-
+    getBoughtSeats(_id) {
+        return $api.get('/trips/get-bought-seats', { params: { _id } })
+    },
     setPayment(bill) {
         return $api.post(`/trips/set-payment`, bill)
     },

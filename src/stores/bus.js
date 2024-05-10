@@ -7,10 +7,15 @@ export const useBus = defineStore('bus', () => {
         return res.data
     }
 
+    async function getById(_id) {
+        let res = await BusService.getById(_id)
+        return res.data
+    }
+
     async function createBus(bus) {
         let res = await BusService.createBus(bus)
         return res
     }
 
-    return { get, createBus }
+    return { get, getById, createBus }
 })
