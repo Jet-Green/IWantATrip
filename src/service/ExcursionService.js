@@ -23,7 +23,7 @@ export default {
         return $api.post('/excursion/delete-time', { dateId: dateId, timeId: timeId })
     },
     deleteDate(dateId, userId) {
-        console.log(userId)
+       
         return $api.post('/excursion/delete-date', { dateId: dateId, userId: userId })
     },
 

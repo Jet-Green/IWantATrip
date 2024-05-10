@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, nextTick } from "vue"
+import { onMounted, ref } from "vue"
 
 import dayjs from 'dayjs';
 import objectSupport from 'dayjs/plugin/objectSupport'
@@ -17,18 +17,22 @@ const _id = route.query._id
 
 let excursion = ref({})
 let dates = ref([])
+let clearDateForm = ref(false)
 
 function setDates(d) {
+  clearDateForm.value = false
   dates.value = d
 }
 
 let dontSubmit = false;
 async function submit() {
   if (dontSubmit) return
+  dontSubmit = true
   let res = await excursionStore.createDates(dates.value, _id)
-  if (res.status == 200) {
-    dontSubmit = true
+  if (res.status == 200) {  
     updateExcursion(_id)
+    clearDateForm.value = true
+    dontSubmit = false
     // router.push('/cabinet/excursions')
   }
 }
@@ -100,7 +104,7 @@ onMounted(async () => {
       <h3>Добавить даты в <span style="color: #ff6600;">{{ excursion.name }}</span></h3>
     </a-col>
     <a-col :span="24">
-      <ExcursionDates @change-dates="setDates" />
+      <ExcursionDates @change-dates="setDates" :clearDateForm="clearDateForm" />
 
     </a-col>
     <a-col :span="24" class="d-flex justify-center mt-16 mb-16">

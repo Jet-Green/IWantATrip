@@ -132,9 +132,9 @@ onMounted(async () => {
               Заявка за:  <b>{{ excursion.deadline }} дн.</b>  
             </div>
             <div>
-              Доступность:  <b> 
-                <span v-if="excursion.availability" class="mdi mdi-24px mdi-wheelchair-accessibility"></span>
-                <span v-else class="mdi mdi-24px mdi-minus-circle-outline"></span>
+              ОВЗ доступность:  <b> 
+                <span v-if="excursion.availability"> доступно</span>
+                <span v-else >не доступно</span>
              
               </b>  
             </div>
@@ -150,7 +150,7 @@ onMounted(async () => {
           </a-col>
         </a-row>
         <a-row>
-          <a-col :span="24">
+          <a-col :span="24" class="ma-32">
             {{ excursion.description }}
           </a-col>
         </a-row>

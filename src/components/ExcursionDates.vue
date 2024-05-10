@@ -1,11 +1,13 @@
 <script setup>
 import VueDatePicker from '@vuepic/vue-datepicker';
 import datePlugin from '../plugins/dates'
-import { ref, watch } from 'vue'
+import { ref, watch, toRefs } from 'vue'
 import '@vuepic/vue-datepicker/dist/main.css'
 
 const emit = defineEmits(['change-dates'])
+const props = defineProps(['clearDateForm'])
 
+let { clearDateForm } = toRefs(props)
 let activeKey = ref()
 
 let dates = ref([])
@@ -24,12 +26,27 @@ watch(dates, (newValue, oldValue) => {
   }
 })
 
+watch(clearDateForm, () => {
+  if (clearDateForm) {
+    dates.value = []
+    times.value = []
+  }
+
+})
+
 watch([dates, times], () => {
-  emit('change-dates', datePlugin.excursions.concatDateAndTime(dates.value, times.value))
+ 
+  let timesWithoutNull = times.value.map((time) => {
+    return time.filter((item) => { 
+     return  item != null
+    })
+  })
+  emit('change-dates', datePlugin.excursions.concatDateAndTime(dates.value, timesWithoutNull))
 }, { deep: true })
 </script>
 <template>
   <a-row>
+   
     <a-col :span="24">
       <VueDatePicker v-model="dates" multi-dates locale="ru-Ru" calendar-class-name="dp-custom-calendar"
         calendar-cell-class-name="dp-custom-cell" cancel-text="отмена" select-text="выбрать" :min-date="new Date()"
@@ -46,8 +63,8 @@ watch([dates, times], () => {
             <a-collapse-panel :key="i">
               <template #header>
                 {{ (new Date(date)).toLocaleDateString('ru-RU', {
-                  year: 'numeric', month: 'long', day: 'numeric'
-                }) }} {{ times[i].length == 0 ? 'по запросу' : '' }}
+      year: 'numeric', month: 'long', day: 'numeric'
+    }) }} {{ times[i].length == 0 ? 'по запросу' : '' }}
               </template>
               <a-row :gutter="[6, 6]" class="mb-16 d-flex justify-center">
                 <a-col v-for="(time, j) of times[i]" :span="24" :md="12" :lg="8" v-if="times[i].length > 0">
