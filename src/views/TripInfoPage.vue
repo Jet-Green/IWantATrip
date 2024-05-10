@@ -38,14 +38,15 @@ let selected_bus = ref()
 let waiting_bus = ref()
 let free_seats = ref([])
 let show_old_bus = ref(true)
-watch([selected_bus, waiting_bus], async ([selected, waiting]) => {
-    let bus_id = _.isEmpty(selected) ? waiting.transportType.bus_id : selected.transportType.bus_id
-    if (!bus_id) return show_old_bus.value = true
-    show_old_bus.value = false
+// watch([selected_bus, waiting_bus], async ([selected, waiting]) => {
+//     let bus_id = _.isEmpty(selected) ? waiting.transportType.bus_id : selected.transportType.bus_id
+//     if (!bus_id) return show_old_bus.value = true
+//     show_old_bus.value = false
 
-    bus.value = await useBus().getById(bus_id)
-    updateSeats()
-})
+//     bus.value = await useBus().getById(bus_id)
+//     updateSeats()
+// })
+
 
 async function updateSeats() {
     if (!bus.value) return
@@ -380,8 +381,22 @@ let isNoPlaces = computed(() => {
 
 let people_amount = computed(() => selectedDate.value.selectedCosts.map(cost => cost.count).reduce((partialSum, a) => partialSum + a, 0))
 
+async function updateBus() {
+    let transports = trip.value.transports.filter(bus => bus.capacity >= getCurrentCustomerNumber.value)
+    transports = _.sortBy(transports, [o => o.capacity])
+    let transport = transports[0]
+
+    let bus_id = transport.transportType.bus_id
+    if (!bus_id) return show_old_bus.value = true
+    show_old_bus.value = false
+
+    bus.value = await useBus().getById(bus_id)
+    updateSeats()
+}
+
 onMounted(async () => {
     await refreshDates();
+    watch(getCurrentCustomerNumber, updateBus, { immediate: true })
 });
 </script>
 <template>
