@@ -673,11 +673,13 @@ onMounted(async () => {
                             v-if="people_amount > 0 || show_old_bus"
                             v-model:selected="selected_bus" 
                             v-model:waiting="waiting_bus"
+                            @isUserWaiting="detectIsWaiting" 
                             :selected_seats="selected_seats" 
                             :show_old_bus="trip.transports?.length && show_old_bus" 
                             :tripsCount="getCurrentCustomerNumber" 
                             :transport="trip.transports ?? []"
-                            @isUserWaiting="detectIsWaiting" />
+                            choise
+                        />
                     </a-col>
 
                     <a-col :span="24" class="mb-8">
