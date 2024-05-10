@@ -35,18 +35,22 @@ function buyExcursion(time) {
   <a-row v-if="dates.length > 0">
     <a-col :span="24" v-for="(date, index) in dates">
       <div class="date">
-        <div class="large-date">
-          {{ getDate(date.date).day }}
-        </div>
-        <div class="column">
-          <div class="month">{{ getDate(date.date).month }}</div>
-          <div class="weekday">{{ getDate(date.date).weekday }}</div>
-        </div>
-        <div v-for="time in date.times" class="time-container">
-          <a-button shape="round" class="time" @click="buyExcursion(time)">
-            {{ getTime(time) }}
-          </a-button>
-        </div>
+        <a-col class="d-flex" :xs="6" :md="4">
+          <div class="large-date">
+            {{ getDate(date.date).day }}
+          </div>
+          <div class="column">
+            <div class="month">{{ getDate(date.date).month }}</div>
+            <div class="weekday">{{ getDate(date.date).weekday }}</div>
+          </div>
+        </a-col>
+        <a-col :xs="18" :md="20" class="d-flex" style="gap: 10px 20px; flex-wrap: wrap;">
+          <a-col v-for="time in date.times" class="time-container">
+            <a-button shape="round" class="time" @click="buyExcursion(time)">
+              {{ getTime(time) }}
+            </a-button>
+          </a-col>
+        </a-col>
       </div>
       <a-divider />
     </a-col>
@@ -67,7 +71,6 @@ function buyExcursion(time) {
   }
 
   .time-container {
-    min-width: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -76,7 +79,6 @@ function buyExcursion(time) {
 
 .column {
   flex-direction: column;
-  margin-left: 4px;
 
   .month {
     font-weight: 600;

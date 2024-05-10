@@ -27,7 +27,7 @@ export default {
         return $api.post('/trips/delete-by-id', _id)
     },
     async catalogToDelete(_id) {
-        return $api.post('/catalog/delete-catalog-by-id', _id)
+        return $api.post('/catalog/delete-catalog-by-id', {'_id': _id})
     },
 
     async createTrip(emailHtml, trip, authorEmail, fullinfo) {
