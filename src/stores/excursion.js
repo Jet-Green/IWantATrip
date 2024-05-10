@@ -35,8 +35,9 @@ export const useExcursion = defineStore('excursion', {
         async deleteTime(dateId,timeId) {
             return await ExcursionService.deleteTime(dateId,timeId)
         },
-        async deleteDate(dateId) {
-            return await ExcursionService.deleteDate(dateId)
+        async deleteDate(dateId ) {
+            const userStore = useAuth()
+            return await ExcursionService.deleteDate(dateId, userStore.user._id)
         },
 
 
