@@ -53,15 +53,14 @@ onMounted(async () => {
             <v-col :span="24">
                 <a-collapse v-model:activeKey="activeKey" class="mt-32 mb-32">
                     <a-collapse-panel :header="`${getDate(d.date)}`" v-for="d, i in excursion.dates" :key="i">
-                    
 
-                            <a-collapse>
-                                <a-collapse-panel :header="`${t.hours}:${t.minutes}`" v-for="t, j in d.times" :key="j">
-                                    <ExcursionInfoCard :t="t"/>
-                                </a-collapse-panel>
+                        <a-collapse>
+                            <a-collapse-panel :header="`${t.hours}:${t.minutes}`" v-for="t, j in d.times" :key="j">
+                                <ExcursionInfoCard :t="t" />
+                            </a-collapse-panel>
 
-                            </a-collapse>
-                      
+                        </a-collapse>
+
                     </a-collapse-panel>
 
                 </a-collapse>
