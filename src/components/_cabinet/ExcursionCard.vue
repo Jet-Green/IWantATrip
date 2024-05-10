@@ -29,6 +29,9 @@ async function hideExcursion(_id,isHide ) {
     emit('updateExcursion')
   }
 }
+function excursionInfo (_id) {
+  router.push(`/cabinet/excursion-info?_id=${_id}`)
+}
 </script>
 <template>
   <a-card class="card" :class="[excursion.isHidden ? 'overlay' : '']">
@@ -45,23 +48,25 @@ async function hideExcursion(_id,isHide ) {
     </div>
     <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
     <div class="actions">
-      <a-popconfirm title="Добавить расписание?" ok-text="Да" cancel-text="Нет" @confirm="openAddDates(excursion._id)">
-        <span class="mdi mdi-calendar-month-outline" style="cursor: pointer"></span>
-      </a-popconfirm>
+      
+        <span class="mdi mdi-calendar-month-outline" @click="openAddDates(excursion._id)"></span>
+ 
 
       <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="excursionToDelete(excursion._id)">
-        <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+        <span class="mdi mdi-delete" style="color: #ff6600;"></span>
       </a-popconfirm>
       <a-popconfirm title="Скрыть?" ok-text="Да" cancel-text="Нет" @confirm="hideExcursion(excursion._id, !excursion.isHidden)">
-        <span v-if="!excursion.isHidden" class="mdi mdi-eye-outline" style="cursor: pointer"></span>
-        <span v-else class="mdi mdi-eye-off-outline" style="cursor: pointer"></span>
+        <span v-if="!excursion.isHidden" class="mdi mdi-eye-outline" ></span>
+        <span v-else class="mdi mdi-eye-off-outline" ></span>
       </a-popconfirm>
+      <span class="mdi mdi-information-outline" @click="excursionInfo(excursion._id)"></span>
     </div>
   </a-card>
 </template>
 <style scoped lang="scss">
 .actions {
   font-size: 20px;
+  cursor: pointer;
   position: relative;
   color: #245159;
 

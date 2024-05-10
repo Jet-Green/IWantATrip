@@ -25,39 +25,39 @@ let tur = ref(null);
 let companions = ref(null);
 
 
-const steps = [
-  {
-    title: 'О пользователе',
-    description: 'контактные данные, создание тура, экскурсии, идеи',
-    placement: 'bottom',
-    target: () => cab.value,
-  },
-  {
-    title: 'Туры',
-    description: 'управление купленными и созданными турами, заказами',
-    placement: 'bottom',
-    target: () => tur.value,
-  },
-  {
-    title: 'Попутчики',
-    description: 'отклики на ваши анкеты и управление анкетами',
-    placement: 'bottom',
-    target: () => companions.value,
-  }
-];
-function openCabinetTour(state) {
-  if (state) {
-    open.value = state
-    localStorage.setItem('cabinetTour', true)
-  } else {
-    currentStep.value = 0
-    open.value = false
-    localStorage.setItem('cabinetTour', false)
-  }
-}
-const next = () => {
-  currentStep.value++;
-};
+// const steps = [
+//   {
+//     title: 'О пользователе',
+//     description: 'контактные данные, создание тура, экскурсии, идеи',
+//     placement: 'bottom',
+//     target: () => cab.value,
+//   },
+//   {
+//     title: 'Туры',
+//     description: 'управление купленными и созданными турами, заказами',
+//     placement: 'bottom',
+//     target: () => tur.value,
+//   },
+//   {
+//     title: 'Попутчики',
+//     description: 'отклики на ваши анкеты и управление анкетами',
+//     placement: 'bottom',
+//     target: () => companions.value,
+//   }
+// ];
+// function openCabinetTour(state) {
+//   if (state) {
+//     open.value = state
+//     localStorage.setItem('cabinetTour', true)
+//   } else {
+//     currentStep.value = 0
+//     open.value = false
+//     localStorage.setItem('cabinetTour', false)
+//   }
+// }
+// const next = () => {
+//   currentStep.value++;
+// };
 
 const logOut = () => {
   userStore.logout();
@@ -68,9 +68,9 @@ watch(current, (newRout, oldRout) => {
 })
 
 onMounted(async () => {
-  if (localStorage.getItem('cabinetTour') == 'false' || !sm.value) {
-    open.value = JSON.parse(localStorage?.getItem('cabinetTour'))
-  }
+  // if (localStorage.getItem('cabinetTour') == 'false' || !sm.value) {
+  //   open.value = JSON.parse(localStorage?.getItem('cabinetTour'))
+  // }
 
   // for (let n of userStore.user?.notifications) {
   //   if (n.type == 'BookingTrip' && n.send == true) {
@@ -84,20 +84,20 @@ onMounted(async () => {
 <template>
   <div>
     <BackButton></BackButton>
-    <a-config-provider :locale="ruRU" v-if="!sm">
+    <!-- <a-config-provider :locale="ruRU" v-if="!sm">
       <a-tour :open="open" v-model:current="currentStep" :steps="steps" @finish='openCabinetTour(false)' @click="next"
         @close='openCabinetTour(false)'>
       </a-tour>
-    </a-config-provider>
+    </a-config-provider> -->
 
     <a-row type="flex" justify="center">
       <a-col :xs="22" :sm="16">
         <h2>
           Кабинет
-          <span v-if="!sm" class="mdi mdi-18px mdi-information-variant"
+          <!-- <span v-if="!sm" class="mdi mdi-18px mdi-information-variant"
             style="color: #245159; cursor: pointer; vertical-align: super;" @click="open = !open"></span>
           <span @click="logOut()" class="mdi mdi-24px mdi-logout" style="cursor: pointer; float: right">
-          </span>
+          </span> -->
         </h2>
       </a-col>
     </a-row>

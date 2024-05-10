@@ -97,9 +97,5 @@ watch([dates, times], () => {
 </template>
 <!-- GLOBAL STYLES -->
 <style lang="scss">
-.dp-custom-calendar {
-  .dp__calendar_item {
-    padding: 2px;
-  }
-}
+
 </style>

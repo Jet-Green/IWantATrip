@@ -78,6 +78,23 @@ onMounted(async () => {
 </script>
 <template>
   <a-row>
+
+    <a-col :span="24">
+      <a-breadcrumb style="cursor: pointer;">
+        <a-breadcrumb-item @click="router.push('/cabinet/excursions')" >
+            К экскурсиям
+        </a-breadcrumb-item>
+        <a-breadcrumb-item>даты, время</a-breadcrumb-item>
+    </a-breadcrumb>
+      <h3 class="mt-8 mb-8">Добавить даты в "{{ excursion.name }}"</h3>
+    </a-col>
+    <a-col :span="24">
+      <ExcursionDates @change-dates="setDates" :clearDateForm="clearDateForm" />
+
+    </a-col>
+    <a-col :span="24" class="d-flex justify-center mt-16 mb-16">
+      <a-button @click="submit" type="primary" class="lets_go_btn">отправить</a-button>
+    </a-col>
     <a-col :span="24" v-for="(date, index) in excursion.dates">
       <div class="date">
         <a-popconfirm title="Удалить дату?" ok-text="Да" cancel-text="Нет" @confirm="deleteDate(date._id)">
@@ -97,19 +114,10 @@ onMounted(async () => {
           </a-popconfirm>
         </div>
       </div>
-      <a-divider v-if="index < date.times.length" />
+      <a-divider  />
     </a-col>
 
-    <a-col :span="24">
-      <h3>Добавить даты в <span style="color: #ff6600;">{{ excursion.name }}</span></h3>
-    </a-col>
-    <a-col :span="24">
-      <ExcursionDates @change-dates="setDates" :clearDateForm="clearDateForm" />
-
-    </a-col>
-    <a-col :span="24" class="d-flex justify-center mt-16 mb-16">
-      <a-button @click="submit" type="primary" class="lets_go_btn">отправить</a-button>
-    </a-col>
+  
   </a-row>
 </template>
 <style scoped lang="scss">

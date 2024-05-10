@@ -286,6 +286,7 @@ const router = createRouter({
           path: 'booking-trips',
           component: () => import('../components/_cabinet/BookingTrips.vue'),
         },
+
         {
           path: 'created-trips',
           component: () => import('../components/_cabinet/CreatedTrips.vue'),
@@ -313,6 +314,12 @@ const router = createRouter({
           path: 'excursions',
           name: 'Excursions',
           component: () => import('../components/_cabinet/Excursions.vue')
+        },
+        
+        {
+          path: 'excursion-info',
+          name: 'ExcursionsInfo',
+          component: () => import('../components/_cabinet/ExcursionInfo.vue')
         },
         {
           path: 'add-excursion-dates',

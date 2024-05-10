@@ -19,11 +19,11 @@ onMounted(async () => {
 })
 </script>
 <template>
-  <a-row>
+  <a-row :gutter="[8,8]">
     <!-- <a-col :span="24">
       <h3></h3>
     </a-col> -->
-    <a-col v-for="excursion in excursions" :span="24" :sm="12" :lg="8">
+    <a-col  v-for="excursion in excursions" :span="24" :sm="12" :lg="8">
       <ExcursionCard :excursion="excursion" @updateExcursion="updateExcursion" />
     </a-col>
   </a-row>
