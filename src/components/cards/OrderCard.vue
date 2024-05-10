@@ -73,7 +73,7 @@ function getOrderNumber(str) {
             Тур: {{ booking.type.toString().toLowerCase() }}
         </div>
         <div>
-            Направление: {{ booking.location.toString().toLowerCase() }}
+            Направление: {{ booking.location?.toString().toLowerCase() }}
         </div>
         <div>
             C {{ clearData(booking.start) }} по {{ clearData(booking.end) }}

@@ -5,6 +5,10 @@ import { useRoute } from "vue-router";
 import BackButton from "../components/BackButton.vue";
 import { useTrips } from "../stores/trips";
 import { useLocations } from "../stores/locations";
+import { message } from "ant-design-vue";
+import { useAuth } from "../stores/auth";
+import { useBooking } from '../stores/booking'
+
 const API_URL = import.meta.env.VITE_API_URL
 
 const app = getCurrentInstance();
@@ -14,8 +18,9 @@ const route = useRoute();
 
 const _id = route.query._id;
 
+const bookingStore = useBooking()
 const tripStore = useTrips();
-
+const userStore = useAuth();
 const locationStore = useLocations();
 
 const backRoute = { name: 'CatalogPage', hash: `#${_id}` };
@@ -60,8 +65,26 @@ const print = async () => {
     await htmlToPaper('printMe');
 };
 
-function orderCatalogDialog() {
+function orderCatalog() {
+    let toSend = {}
+    toSend.wishes = trip.value.name
+    toSend.type = trip.value.tripType
+    toSend.location = trip.value.tripRoute
+    toSend.dateOfBooking = new Date().getTime()
 
+    toSend.creatorId = userStore.user._id
+
+    bookingStore.bookingTrip(toSend).then(async (res) => {
+        if (res.status == 200) {
+            message.config({ duration: 1.5, top: "70vh" });
+            message.success({
+                content: "Успешно!",
+                onClose: () => {
+                    close()
+                },
+            });
+        }
+    });
 }
 
 onMounted(async () => {
@@ -140,11 +163,13 @@ onMounted(async () => {
                         <div>
                             Ключевые точки: <b>{{ trip.tripRoute }}</b>
                         </div>
-                        
-                        <!-- <a-button type="primary" class="lets_go_btn" style="display: flex; justify-content: center"
-                            @click="orderCatalogDialog()">
-                            Заказать
-                        </a-button> -->
+                        <div class="mt-4" style="display: flex; justify-content: center">
+                            <a-button type="primary" class="lets_go_btn" style="display: flex; justify-content: center"
+                                @click="orderCatalog()">
+                                Заказать
+                            </a-button>
+                        </div>
+
                     </a-col>
 
                     <a-col :xs="24">

@@ -29,7 +29,7 @@ async function submit() {
   if (dontSubmit) return
   dontSubmit = true
   let res = await excursionStore.createDates(dates.value, _id)
-  if (res.status == 200) {  
+  if (res.status == 200) {
     updateExcursion(_id)
     clearDateForm.value = true
     dontSubmit = false
@@ -81,11 +81,11 @@ onMounted(async () => {
 
     <a-col :span="24">
       <a-breadcrumb style="cursor: pointer;">
-        <a-breadcrumb-item @click="router.push('/cabinet/excursions')" >
-            К экскурсиям
+        <a-breadcrumb-item @click="router.push('/cabinet/excursions')">
+          К экскурсиям
         </a-breadcrumb-item>
         <a-breadcrumb-item>даты, время</a-breadcrumb-item>
-    </a-breadcrumb>
+      </a-breadcrumb>
       <h3 class="mt-8 mb-8">Добавить даты в "{{ excursion.name }}"</h3>
     </a-col>
     <a-col :span="24">
@@ -97,27 +97,32 @@ onMounted(async () => {
     </a-col>
     <a-col :span="24" v-for="(date, index) in excursion.dates">
       <div class="date">
-        <a-popconfirm title="Удалить дату?" ok-text="Да" cancel-text="Нет" @confirm="deleteDate(date._id)">
-          <div class="large-date">
-            {{ getDate(date.date).day }}
-          </div>
-        </a-popconfirm>
-        <div class="column">
-          <div class="month">{{ getDate(date.date).month }}</div>
-          <div class="weekday">{{ getDate(date.date).weekday }}</div>
-        </div>
-        <div v-for="time in date.times" class="time-container">
-          <a-popconfirm title="Удалить время?" ok-text="Да" cancel-text="Нет" @confirm="deleteTime(date._id, time._id)">
-          <a-button shape="round" class="time" >
-            {{ getTime(time) }}
-          </a-button>
+        <a-col class="d-flex" :xs="6" :md="3">
+          <a-popconfirm title="Удалить дату?" ok-text="Да" cancel-text="Нет" @confirm="deleteDate(date._id)">
+            <div class="large-date">
+              {{ getDate(date.date).day }}
+            </div>
           </a-popconfirm>
-        </div>
+          <div class="column">
+            <div class="month">{{ getDate(date.date).month }}</div>
+            <div class="weekday">{{ getDate(date.date).weekday }}</div>
+          </div>
+        </a-col>
+        <a-col class="d-flex" style="gap: 10px 20px; flex-wrap: wrap;">
+          <a-col v-for="time in date.times" class="time-container">
+            <a-popconfirm title="Удалить время?" ok-text="Да" cancel-text="Нет"
+              @confirm="deleteTime(date._id, time._id)">
+              <a-button shape="round" class="time">
+                {{ getTime(time) }}
+              </a-button>
+            </a-popconfirm>
+          </a-col>
+        </a-col>
       </div>
-      <a-divider  />
+      <a-divider />
     </a-col>
 
-  
+
   </a-row>
 </template>
 <style scoped lang="scss">
@@ -135,7 +140,6 @@ onMounted(async () => {
   }
 
   .time-container {
-    min-width: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -144,7 +148,6 @@ onMounted(async () => {
 
 .column {
   flex-direction: column;
-  margin-left: 4px;
 
   .month {
     font-weight: 600;

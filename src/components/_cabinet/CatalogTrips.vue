@@ -52,6 +52,13 @@ let moderatedTrips = computed(() => {
 
 })
 
+async function deleteTrip() {
+    loading.value = true
+    await getAllModeratedTrips()
+    await getAllNotModeratedTrips()
+    loading.value = false
+}
+
 async function getAllModeratedTrips() {
     loading.value = true
     let response = await tripStore.getMyCatalogTrips(userStore.user?._id)
@@ -88,7 +95,7 @@ onMounted(async () => {
                     <a-col :span="24" v-else>
                         <a-row :gutter="[8, 8]" class="mt-8" v-if="moderatedTrips.length > 0">
                             <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of moderatedTrips" :key="index">
-                                <CatalogCabinetTrip :trip="trip" />
+                                <CatalogCabinetTrip @deleteTrip="deleteTrip" :trip="trip" />
                             </a-col>
                         </a-row>
                         <a-row :lg="8" :sm="12" :xs="24" v-else>
@@ -103,7 +110,7 @@ onMounted(async () => {
                     <a-col :span="24" v-else>
                         <a-row :gutter="[8, 8]" class="mt-8" v-if="notModeratedTrips.length > 0">
                             <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of notModeratedTrips" :key="index">
-                                <CatalogCabinetTrip :trip="trip" />
+                                <CatalogCabinetTrip @deleteTrip="deleteTrip" :trip="trip" />
                             </a-col>
                         </a-row>
                         <a-row :lg="8" :sm="12" :xs="24" v-else>

@@ -307,6 +307,7 @@ onMounted(async () => {
                                 <a :href="getPhoneNumber(BILL.userInfo.phone)">
                                     {{ BILL.userInfo.phone }}</a>
                             </div>
+                            
                             <div v-for="cartItem of BILL.cart">
                                 <div v-if="cartItem.count">
                                     {{ cartItem.costType }} {{ cartItem.count }} x {{ cartItem.cost }} руб.
