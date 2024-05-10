@@ -670,7 +670,7 @@ onMounted(async () => {
 
                     <a-col :span="24">
                         <WaitingList 
-                            v-if="people_amount > 0 || show_old_bus"
+                            v-if="show_old_bus"
                             v-model:selected="selected_bus" 
                             v-model:waiting="waiting_bus"
                             @isUserWaiting="detectIsWaiting" 
