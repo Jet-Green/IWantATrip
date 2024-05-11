@@ -227,7 +227,7 @@ const router = createRouter({
     },
     {
       path: '/excursion-moderation',
-      name: 'ExcursionPage',
+      name: 'ExcursionModeration',
       component: () => import('../components/admin/ExcursionModeration.vue')
     },
 
