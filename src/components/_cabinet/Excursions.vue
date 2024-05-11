@@ -2,11 +2,18 @@
 import { ref, onMounted } from 'vue'
 import ExcursionCard from './ExcursionCard.vue';
 
+import ExcursionFilter from "../../components/sections/ExcursionFilter.vue";
+
 import { useExcursion } from '../../stores/excursion'
 import { useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 
 let excursions = ref([])
 const router = useRouter()
+
+
+
+const route = useRoute();
 
 const excursionStore = useExcursion()
 async function updateExcursion() {
@@ -19,10 +26,8 @@ onMounted(async () => {
 })
 </script>
 <template>
+  <ExcursionFilter :search="route.query.search" />
   <a-row :gutter="[8,8]">
-    <!-- <a-col :span="24">
-      <h3></h3>
-    </a-col> -->
     <a-col  v-for="excursion in excursions" :span="24" :sm="12" :lg="8">
       <ExcursionCard :excursion="excursion" @updateExcursion="updateExcursion" />
     </a-col>
