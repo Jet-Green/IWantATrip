@@ -26,7 +26,7 @@ async function approvExcursion(_id) {
 }
 
 function getImg(index) {
-  return trip.value.images[index];
+  return excursion.value.images[index];
 }
 
 
