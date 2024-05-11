@@ -61,11 +61,11 @@ onMounted(async () => {
         <a-row :gutter="[12, 12]" class="text justify-center d-flex">
           <a-col :xs="24" :md="12">
             <a-carousel arrows dots-class="slick-dots slick-thumb">
-              <template #customPaging="props">
+              <!-- <template #customPaging="props">
                 <a>
                   <img :src="getImg(props.i)" />
                 </a>
-              </template>
+              </template> -->
               <div v-for="(item, i) in excursion.images" :key="i">
                 <img :src="item" alt="" srcset="" />
               </div>
