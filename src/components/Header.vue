@@ -289,7 +289,7 @@ onMounted(() => {
 }
 
 .social {
-  transform: translateY(20px);
+  transform: translateY(15px);
 }
 
 .right-drawer {
