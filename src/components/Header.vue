@@ -7,7 +7,8 @@ import { useLocations } from "../stores/locations";
 
 import { useTrips } from '../stores/trips';
 import { useCompanions } from "../stores/companions";
-import ruRU from 'ant-design-vue/es/locale/ru_RU';
+
+
 
 // import TripCreatorReg from "./forms/TripCreatorReg.vue";
 // import LogoSvg from "../components/_explanation/LogoSvg.vue";
@@ -16,6 +17,7 @@ const userStore = useAuth();
 const locationStore = useLocations();
 const companionStore = useCompanions()
 const tripStore = useTrips()
+
 
 let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
@@ -31,65 +33,6 @@ let catalog = ref(null);
 let auth = ref(null);
 
 let locationSearchRequest = ref('Ваш город')
-
-// знакомство с меню
-let open = ref(true);
-let currentStep = ref(0);
-
-const steps = [
-  {
-    title: 'Местоположение',
-    description: 'выберите ваш город',
-    placement: 'bottom',
-    target: () => locationBar.value,
-  },
-  {
-    title: 'Найти',
-    description: 'используйте фильтр, выберите тур который вам понравится',
-    placement: 'bottom',
-    target: () => find.value,
-  },
-  {
-    title: 'Заказать',
-    description: 'заполните форму, и мы поможем с выбором тура',
-    placement: 'bottom',
-    target: () => order.value,
-  },
-  {
-    title: 'Каталог',
-    description: 'варианты туров, которые можно организовать в удобное для вас время',
-    placement: 'bottom',
-    target: () => catalog.value,
-  },
-  {
-    title: 'Попутчики',
-    description: 'найдите попутчиков или присоединитесь к другим',
-    placement: 'bottom',
-    target: () => companion.value,
-  },
-  {
-    title: 'Кабинет',
-    description: 'управление аккаунтом, создание и администрирование туров',
-    placement: 'bottom',
-    target: () => auth.value,
-  },
-];
-
-
-function openHeaderTour(state) {
-  if (state) {
-    open.value = state
-    localStorage.setItem('headerTour', true)
-  } else {
-    currentStep.value = 0
-    open.value = false
-    localStorage.setItem('headerTour', false)
-  }
-}
-const next = () => {
-  currentStep.value++;
-};
-
 
 
 function toComponentFromMenu(routName) {
@@ -109,7 +52,6 @@ const handleChange = async () => {
     selectLocationDialog.value = false
     await tripStore.fetchTrips()
     await companionStore.fetchCompanions()
-
 
   }
   else {
@@ -133,9 +75,7 @@ const handleChange = async () => {
 
 onMounted(() => {
 
-  if (localStorage.getItem('headerTour') == 'false' || !sm.value) {
-    open.value = JSON.parse(localStorage?.getItem('headerTour'))
-  }
+
 
   if (localStorage.getItem("location")) {
     try {
@@ -151,10 +91,7 @@ onMounted(() => {
 
 <template>
   <a-layout-header :style="{ position: 'fixed', zIndex: 999, width: '100%', background: 'white' }">
-    <a-config-provider :locale="ruRU" v-if="!sm">
-      <a-tour :open="open" v-model:current="currentStep" :steps="steps" @finish='openHeaderTour(false)' @click="next"
-        @close='openHeaderTour(false)' />
-    </a-config-provider>
+  
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
         <a-row type="flex" justify="space-between">

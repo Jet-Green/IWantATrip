@@ -21,7 +21,7 @@ let getPrice = computed(() => {
   <div class="card">
     <div class=" d-flex direction-column space-between">
 
-      <p class="ma-0 pr-4" style="font-size:8px; text-align:right; text-transform: uppercase; ">{{
+      <p class="ma-0 pr-4" style="font-size:10px; text-align:right; text-transform: uppercase; ">{{
         excursion.excursionType.type }} {{ excursion.excursionType.directionType }}</p>
       <p class="ma-0 pr-4" style="font-size:8px; text-align:right; text-transform: uppercase; ">{{ excursion.duration }}
       </p>

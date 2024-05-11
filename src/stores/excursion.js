@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import ExcursionService from '../service/ExcursionService.js'
 
 import { useAuth } from './auth.js'
+import { useLocations } from './locations.js'
 
 export const useExcursion = defineStore('excursion', {
     state: () => ({
@@ -26,7 +27,7 @@ export const useExcursion = defineStore('excursion', {
             return await ExcursionService.createDates(dates, _id, userStore.user._id)
         },
         async getAll() {
-            return await ExcursionService.getAll()
+            return await ExcursionService.getAll(useLocations().location._id)
         },
         // get excursionDate by id
         async getExcursionById(_id) {
