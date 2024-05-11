@@ -266,9 +266,9 @@ async function buyTrip() {
         //     }
         // }
 
-        if (people_amount.value !== selected_seats.value.length) {
+        if (trip.value.transports.length && people_amount.value !== selected_seats.value.length) {
             message.config({ duration: 3, top: "90vh" });
-            message.error({ content: "Укажите места" });
+            message.error({ content: `Выбирите места в количестве ${people_amount.value} шт.` });
             return
         }
 
@@ -514,10 +514,10 @@ onMounted(async () => {
                             </div>
 
                         </div>
-                        <div v-if="trip.transports?.length">
+                        <!-- <div v-if="trip.transports?.length">
                             <WaitingList :tripsCount="getCustomersCount(selectedDate.billsList)"
                                 :transport="trip.transports ?? []" />
-                        </div>
+                        </div> -->
                         <div class="d-flex justify-center ma-8" v-if="trip.maxPeople -
             getCustomersCount(selectedDate.billsList) -
             selectedDate.selectedCosts.reduce((acc, cost) => {
@@ -654,7 +654,7 @@ onMounted(async () => {
                     </a-col>
                     <a-col :span="24">
                         <div>Цены:</div>
-                        <div v-if="isInWaitingList" style="color: #ff6600">
+                        <div v-if="isInWaitingList &&  trip?.transports?.length" style="color: #ff6600">
                             Вы в листе ожидания
                         </div>
                         <div class="d-flex space-between align-center" v-for="cost of selectedDate.selectedCosts">
@@ -683,29 +683,19 @@ onMounted(async () => {
                         <h4 class="warning">Наличие мест требует уточнения!</h4>
                     </div>
 
-                    <a-col :span="24">
-                        <WaitingList 
-                            v-if="people_amount > 0 || show_old_bus"
-                            v-model:selected="selected_bus" 
-                            v-model:waiting="waiting_bus"
-                            @isUserWaiting="detectIsWaiting" 
-                            :selected_seats="selected_seats" 
-                            :show_old_bus="trip.transports?.length && show_old_bus" 
-                            :tripsCount="getCurrentCustomerNumber" 
-                            :transport="trip.transports ?? []"
-                            choise
-                        />
-                    </a-col>
+                    <!-- <a-col :span="24">
+                        <WaitingList v-if="people_amount > 0 || show_old_bus" v-model:selected="selected_bus"
+                            v-model:waiting="waiting_bus" @isUserWaiting="detectIsWaiting"
+                            :selected_seats="selected_seats" :show_old_bus="trip.transports?.length && show_old_bus"
+                            :tripsCount="getCurrentCustomerNumber" :transport="trip.transports ?? []" choise />
+                    </a-col> -->
 
-                    <a-col :span="24" class="mb-8">
-                        <Bus 
-                            v-if="bus && people_amount > 0"
-                            v-model:selected_seats="selected_seats"
+                    <a-col v-if="bus && people_amount > 0" :span="24" class="mb-8">
+                        <div>Выберите места</div>
+                        <Bus  v-model:selected_seats="selected_seats"
                             :free_seats="free_seats"
-                            :max_count="trip.maxPeople - getCustomersCount(selectedDate.billsList)"
-                            :bus="bus"
-                            style="width: 150px;"
-                        />
+                            :max_count="trip.maxPeople - getCustomersCount(selectedDate.billsList) " :bus="bus"
+                            style="width: 150px;" />
                     </a-col>
 
                     <a-col :span="24">

@@ -55,6 +55,16 @@ export const useExcursion = defineStore('excursion', {
         async buy(timeId, toSend) {
             let userStore = useAuth()
             return await ExcursionService.buy(timeId, userStore.user._id, toSend)
-        }    
+        },
+        async getExcursionsOnModeration () {
+            return await ExcursionService.getExcursionsOnModeration()
+        },
+        async deleteExcursion (_id) {
+            return await ExcursionService.deleteExcursion(_id)
+        },
+        async approvExcursion (_id) {
+            return await ExcursionService.approvExcursion(_id)
+        }      
+        
     }
 })

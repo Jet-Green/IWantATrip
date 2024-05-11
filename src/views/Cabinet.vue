@@ -147,6 +147,7 @@ onMounted(async () => {
               <a-menu-item key="/cabinet/moderation-trips/not-moderated-trips">Туры</a-menu-item>
               <a-menu-item key="/cabinet/catalog-trips-moderation/on-moderation">Каталог</a-menu-item>
               <a-menu-item key="/cabinet/moderation-companions">Попутчики</a-menu-item>
+              <a-menu-item key="/cabinet/moderation-excursions">Экскурсии</a-menu-item>
             </a-sub-menu>
             <a-menu-item key="/cabinet/orders">Заказы</a-menu-item>
             <a-menu-item v-if="userStore.user.roles.includes('admin')" key="/cabinet/interface">Интерфейс</a-menu-item>

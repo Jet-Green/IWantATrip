@@ -226,6 +226,13 @@ const router = createRouter({
       component: () => import('../views/ExcursionPage.vue')
     },
     {
+      path: '/excursion-moderation',
+      name: 'ExcursionPage',
+      component: () => import('../components/admin/ExcursionModeration.vue')
+    },
+
+    
+    {
       path: '/enter',
       name: 'Entertainment',
       component: () => import('../components/_guide/Entertainment.vue')
@@ -404,6 +411,17 @@ const router = createRouter({
           path: 'moderation-companions',
           name: 'CompanionsOnModeration',
           component: () => import('../components/admin/CompanionsOnModeration.vue'),
+          beforeEnter: () => {
+            let userStore = useAuth()
+            if (!userStore.user?.roles.includes('admin')) {
+              return false
+            }
+          }
+        },
+        {
+          path: 'moderation-excursions',
+          name: 'ExcursionOnModeration',
+          component: () => import('../components/admin/ExcursionOnModeration.vue'),
           beforeEnter: () => {
             let userStore = useAuth()
             if (!userStore.user?.roles.includes('admin')) {
