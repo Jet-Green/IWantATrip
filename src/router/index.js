@@ -293,7 +293,11 @@ const router = createRouter({
           path: 'booking-trips',
           component: () => import('../components/_cabinet/BookingTrips.vue'),
         },
-
+        {
+          path: 'excursion-customers',
+          name: 'ExcursionCustomers',
+          component: () => import('../components/_cabinet/ExcursionCustomers.vue'),
+        },
         {
           path: 'created-trips',
           component: () => import('../components/_cabinet/CreatedTrips.vue'),

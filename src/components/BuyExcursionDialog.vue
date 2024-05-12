@@ -3,8 +3,11 @@ import { ref, toRefs, watch, onMounted } from "vue"
 import _ from "lodash"
 import datePlugin from '../plugins/dates'
 import { useExcursion } from "../stores/excursion";
+import { useRouter } from "vue-router";
+import { message } from "ant-design-vue";
 
 const excursionStore = useExcursion()
+const router = useRouter()
 
 let props = defineProps({
   selectedDate: Object,
@@ -44,7 +47,24 @@ async function buy() {
       })
     }
   }
-  await excursionStore.buy(selectedDate.value.time._id, toSend)
+  let res = await excursionStore.buy(selectedDate.value.time._id, toSend)
+  if (res.status == 200) {
+    message.config({ duration: 0.5, top: "70vh" });
+    message.success({
+      content: "Успешно!",
+      onClose: () => {
+        router.push('/cabinet/me')
+      },
+    });
+  } else {
+    message.config({ duration: 0.5, top: "70vh" });
+    message.error({
+      content: "Ошибка покупки!",
+      onClose: () => {
+        console.log(res);
+      },
+    });
+  }
 }
 
 onMounted(() => {

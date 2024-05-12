@@ -14,10 +14,16 @@ export default {
         return $api.post(`/excursion/dates`, { dates, excursionId: _id, userId })
     },
     getAll(locationId) {
-        return $api.post('/excursion/all', {locationId:locationId})
+        return $api.post('/excursion/all', { locationId: locationId })
     },
     getExcursionById(_id) {
         return $api.get(`/excursion/one?_id=${_id}`)
+    },
+    getExcursionBillsById(_id) {
+        return $api.get(`/excursion/with-bills?_id=${_id}`)
+    },
+    getTimeCustomers(excursionId, timeId) {
+        return $api.post('/excursion/time-customers', { excursionId, timeId })
     },
     deleteTime(dateId, timeId) {
         return $api.post('/excursion/delete-time', { dateId: dateId, timeId: timeId })
@@ -45,7 +51,7 @@ export default {
     deleteExcursion(_id) {
         return $api.post('/excursion/delete-excursion', { _id: _id })
     },
-    approvExcursion (_id) {
+    approvExcursion(_id) {
         return $api.post('/excursion/approv-excursion', { _id: _id })
     }
 }
