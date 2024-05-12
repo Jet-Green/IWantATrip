@@ -29,9 +29,17 @@ export const useExcursion = defineStore('excursion', {
         async getAll() {
             return await ExcursionService.getAll(useLocations().location._id)
         },
-        // get excursionDate by id
         async getExcursionById(_id) {
             return await ExcursionService.getExcursionById(_id)
+        },
+        /**
+         * _id is excursion _id
+         */
+        async getExcursionBillsById(_id) {
+            return await ExcursionService.getExcursionBillsById(_id)
+        },
+        async getTimeCustomers(excursionId, timeId) {
+            return await ExcursionService.getTimeCustomers(excursionId, timeId)
         },
         async deleteTime(dateId,timeId) {
             return await ExcursionService.deleteTime(dateId,timeId)
