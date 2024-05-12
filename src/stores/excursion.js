@@ -5,6 +5,17 @@ import { useAuth } from './auth.js'
 
 export const useExcursion = defineStore('excursion', {
     state: () => ({
+        excursion: [],
+        cursor: 1,
+        catalogCursor: 1,
+        searchCursor: 1,
+        isFetching: false,
+        excursionFilter: {
+            query: "",
+            start: "",
+            end: "",
+            type: ""
+        }
     }),
     getters: {
     },
@@ -39,10 +50,30 @@ export const useExcursion = defineStore('excursion', {
             const userStore = useAuth()
             return await ExcursionService.deleteDate(dateId, userStore.user._id)
         },
-
-
-        
-
+        async fetchExcursions() {
+            try {
+                if (!this.isFetching) {
+                    this.isFetching = true
+                    let response;
+                    let location = localStorage.getItem('location')
+                    if (location) {
+                        location = JSON.parse(location)
+                    }
+                    if (location?.name) {
+                        response = await ExcursionService.fetchExcursions(this.cursor, ...location.coordinates, this.excursionFilter.query, this.excursionFilter.start, this.excursionFilter.end, this.excursionFilter.type);
+                        this.isFetching = false
+                    } else {
+                        response = await ExcursionService.fetchExcursions(this.cursor, '', '', this.excursionFilter.query, this.excursionFilter.start, this.excursionFilter.end, this.excursionFilter.type);
+                        this.isFetching = false
+                    }
+                    this.excursion.push(...response.data);
+                    this.excursion = _.uniqBy(this.excursion, '_id')
+                    this.cursor++
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        },
         async uploadImages(data) {
             return await ExcursionService.uploadImages(data)
         },

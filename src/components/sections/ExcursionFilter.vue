@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
-import { useTrips } from '../../stores/trips.js';
+import { useExcursion } from '../../stores/excursion.js';
 import { useAppState } from "../../stores/appState";
 
 import dayjs from "dayjs";
@@ -16,7 +16,7 @@ let props = defineProps({
 });
 
 
-const tripStore = useTrips();
+const ExcursionStore = useExcursion();
 const appStore = useAppState();
 
 let time = ref([]);
@@ -35,13 +35,13 @@ watch(time, (newTime) => {
     let start = new Date(newTime[0].$d)
     let end = new Date(newTime[1].$d)
 
-    localStorage.setItem("TripTimeStart", start)
-    localStorage.setItem("TripTimeEnd", end)
+    localStorage.setItem("ExcursionTimeStart", start)
+    localStorage.setItem("ExcursionTimeEnd", end)
     find()
   }
   else {
-    localStorage.setItem("TripTimeStart", '')
-    localStorage.setItem("TripTimeEnd", '')
+    localStorage.setItem("ExcursionTimeStart", '')
+    localStorage.setItem("ExcursionTimeEnd", '')
     find()
   }
 });
@@ -49,17 +49,17 @@ watch(time, (newTime) => {
 
 function find() {
   query.value = query.value.trim()
-  localStorage.setItem("TripQuery", query.value)
-  localStorage.setItem("TripType", type.value)
-  tripStore.searchCursor = 1
-  tripStore.cursor = 1
-  tripStore.trips = []
+  localStorage.setItem("ExcursionQuery", query.value)
+  localStorage.setItem("ExcursionType", type.value)
+  ExcursionStore.searchCursor = 1
+  ExcursionStore.cursor = 1
+  ExcursionStore.excursions = []
   if (time.value[0] ?? time.value[1]) {
     let start = new Date(time.value[0].$d)
     let end = new Date(time.value[1].$d)
 
-    localStorage.setItem("TripTimeStart", start)
-    localStorage.setItem("TripTimeEnd", end)
+    localStorage.setItem("ExcursionTimeStart", start)
+    localStorage.setItem("ExcursionTimeEnd", end)
 
     start.setHours(0)
     start.setMinutes(0)
@@ -74,44 +74,44 @@ function find() {
     end.setMilliseconds(999)
 
     end = Number(Date.parse(end.toString()));
-    tripStore.tripFilter.query = query.value
-    tripStore.tripFilter.start = start
-    tripStore.tripFilter.end = end
-    tripStore.tripFilter.type = type.value
-    tripStore.fetchTrips();
+    ExcursionStore.excursionFilter.query = query.value
+    ExcursionStore.excursionFilter.start = start
+    ExcursionStore.excursionFilter.end = end
+    ExcursionStore.excursionFilter.type = type.value
+    ExcursionStore.fetchExcursions();
   } else {
-    tripStore.tripFilter.query = query.value
-    tripStore.tripFilter.start = ""
-    tripStore.tripFilter.end = ""
-    tripStore.tripFilter.type = type.value
-    tripStore.fetchTrips();
+    ExcursionStore.excursionFilter.query = query.value
+    ExcursionStore.excursionFilter.start = ""
+    ExcursionStore.excursionFilter.end = ""
+    ExcursionStore.excursionFilter.type = type.value
+    ExcursionStore.fetchExcursions();
   }
 }
 
 function resetForm() {
-  tripStore.tripFilter.query = ""
-  tripStore.tripFilter.start = ""
-  tripStore.tripFilter.end = ""
-  tripStore.tripFilter.type = ""
+  ExcursionStore.excursionFilter.query = ""
+  ExcursionStore.excursionFilter.start = ""
+  ExcursionStore.excursionFilter.end = ""
+  ExcursionStore.excursionFilter.type = ""
   type.value = ""
   time.value = [];
   query.value = '';
 
-  localStorage.setItem("TripTimeStart", "")
-  localStorage.setItem("TripTimeEnd", "")
-  localStorage.setItem("TripQuery", "")
-  localStorage.setItem("TripType", "")
+  localStorage.setItem("ExcursionTimeStart", "")
+  localStorage.setItem("ExcursionTimeEnd", "")
+  localStorage.setItem("ExcursionQuery", "")
+  localStorage.setItem("ExcursionType", "")
 
   find()
 }
 
 onMounted(() => {
-  query.value = localStorage.getItem("TripQuery") ?? '';
-  type.value = localStorage.getItem("TripType") ?? '';
+  query.value = localStorage.getItem("ExcursionQuery") ?? '';
+  type.value = localStorage.getItem("ExcursionType") ?? '';
 
-  if (localStorage.getItem("TripTimeStart")) {
-    time.value[0] = dayjs(localStorage.getItem("TripTimeStart"))
-    time.value[1] = dayjs(localStorage.getItem("TripTimeEnd"))
+  if (localStorage.getItem("ExcursionTimeStart")) {
+    time.value[0] = dayjs(localStorage.getItem("ExcursionTimeStart"))
+    time.value[1] = dayjs(localStorage.getItem("ExcursionTimeEnd"))
   }
 
   if (props.search) {

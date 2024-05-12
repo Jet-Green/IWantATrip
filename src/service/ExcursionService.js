@@ -16,6 +16,9 @@ export default {
     getAll() {
         return $api.post('/excursion/all')
     },
+    fetchExcursions(cursor, lon, lat, query, start, end, type) {
+        return $api.get(`/excursion/get-all?cursor=${cursor}&lon=${lon}&lat=${lat}&query=${query}&start=${start}&end=${end}&type=${type}`)
+    },
     getExcursionById(_id) {
         return $api.get(`/excursion/one?_id=${_id}`)
     },
