@@ -38,42 +38,52 @@ export const useExcursion = defineStore('excursion', {
         async getExcursionBillsById(_id) {
             return await ExcursionService.getExcursionBillsById(_id)
         },
+        async getExcursionBookingsById(_id) {
+            return await ExcursionService.getExcursionBookingsById(_id)
+        },
         async getTimeCustomers(excursionId, timeId) {
             return await ExcursionService.getTimeCustomers(excursionId, timeId)
         },
-        async deleteTime(dateId,timeId) {
-            return await ExcursionService.deleteTime(dateId,timeId)
+        async getTimeBookings(excursionId, timeId) {
+            return await ExcursionService.getTimeBookings(excursionId, timeId)
         },
-        async deleteDate(dateId ) {
+        async deleteTime(dateId, timeId) {
+            return await ExcursionService.deleteTime(dateId, timeId)
+        },
+        async deleteDate(dateId) {
             const userStore = useAuth()
             return await ExcursionService.deleteDate(dateId, userStore.user._id)
         },
 
 
-        
+
 
         async uploadImages(data) {
             return await ExcursionService.uploadImages(data)
         },
-        async deleteById (_id) {
+        async deleteById(_id) {
             return await ExcursionService.deleteById(_id)
         },
-        async hideExcursion (_id,isHide) {
+        async hideExcursion(_id, isHide) {
             return await ExcursionService.hideExcursion(_id, isHide)
         },
         async buy(timeId, toSend) {
             let userStore = useAuth()
             return await ExcursionService.buy(timeId, userStore.user._id, toSend)
         },
-        async getExcursionsOnModeration () {
+        async book(count, timeId, excursionId) {
+            let userStore = useAuth()
+            return await ExcursionService.book({ time: timeId, excursion: excursionId, user: userStore.user._id, count })
+        },
+        async getExcursionsOnModeration() {
             return await ExcursionService.getExcursionsOnModeration()
         },
-        async deleteExcursion (_id) {
+        async deleteExcursion(_id) {
             return await ExcursionService.deleteExcursion(_id)
         },
-        async approvExcursion (_id) {
+        async approvExcursion(_id) {
             return await ExcursionService.approvExcursion(_id)
-        }      
-        
+        }
+
     }
 })

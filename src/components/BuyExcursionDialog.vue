@@ -66,6 +66,29 @@ async function buy() {
     });
   }
 }
+let bookingCount = ref()
+async function book() {
+  if (bookingCount.value > 0) {
+    let response = await excursionStore.book(bookingCount.value, selectedDate.value.time._id, props.excursion._id)
+    if (response.status == 200) {
+      message.config({ duration: 0.5, top: "70vh" });
+      message.success({
+        content: "Успешно!",
+        onClose: () => {
+          router.push('/cabinet/me')
+        },
+      });
+    } else {
+      message.config({ duration: 0.5, top: "70vh" });
+      message.error({
+        content: "Ошибка заказа!",
+        onClose: () => {
+          console.log(response);
+        },
+      });
+    }
+  }
+}
 
 onMounted(() => {
   let result = []
@@ -95,8 +118,15 @@ onMounted(() => {
         {{ excursion.name }}
       </div>
     </div>
-    <div class="large-date">
-      {{ prettyTime }}
+    <div style="display: flex; justify-content: space-between">
+      <div class="large-date">
+        {{ prettyTime }}
+      </div>
+      <div class="d-flex align-center" style="justify-content: end;" v-if="pricesForm.length == 0">
+        <a-input-number v-model:value="bookingCount" :min="0" :max="excursion.maxPeople" style="border-radius: 12px;"
+          :controls="false" class="ml-8 mr-8">
+        </a-input-number> чел.
+      </div>
     </div>
     <div v-for="price of pricesForm">
       <div class="price-container">
@@ -108,8 +138,12 @@ onMounted(() => {
         </div>
       </div>
     </div>
+    <div class="d-flex justify-center">
+      <a-button type="primary" class="lets_go_btn" @click="book" v-if="pricesForm.length == 0">заказать</a-button>
+    </div>
+
     <div class="d-flex justify-center mt-16">
-      <a-button type="primary" class="lets_go_btn" @click="buy">отправить</a-button>
+      <a-button type="primary" class="lets_go_btn" @click="buy" v-if="pricesForm.length > 0">купить</a-button>
     </div>
   </a-modal>
 </template>
