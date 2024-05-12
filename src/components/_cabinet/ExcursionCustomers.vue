@@ -48,7 +48,17 @@ onMounted(async () => {
     </a-breadcrumb>
     <h3 class="mt-8 mb-8">Покупатели <span style="color: #ff6600;">{{ excursion.name }}</span></h3>
     <a-row :gutter="[16, 16]" v-if="time?.bills?.length > 0">
-      <a-col :span="8" v-for="bill of time.bills">
+      <a-col :span="12" class="d-flex justify-center">
+        <a-card hoverable class="button-card ">
+          информация
+        </a-card>
+      </a-col>
+      <a-col :span="12" class="d-flex justify-center">
+        <a-card hoverable class="button-card d-flex justify-center align-center" style="border-color: #ff6600;  cursor: pointer;" >
+          Записать на <br> экскурсию
+        </a-card>
+      </a-col>
+      <a-col :span="24" :md="12" :xl="8" v-for="bill of time.bills">
         <ExcursionCustomerCard :bill="bill" />
       </a-col>
     </a-row>
@@ -59,4 +69,13 @@ onMounted(async () => {
     </a-row>
   </div>
 </template>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.button-card {
+  border: 1px solid #E0E0E0;
+  border-radius: 12px;
+  padding: 8px 12px;
+ 
+  width: 100%;
+  height: 100%;
+}
+</style>

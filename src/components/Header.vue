@@ -172,6 +172,7 @@ onMounted(() => {
       </div>
       <div class="right-drawer">
         <div @click="toComponentFromMenu('Me')" class="route ma-8">
+          <span class="mr-4">кабинет</span>
           <span ref='auth' v-if="userStore.isAuth" class="mdi mdi-24px mdi-home" @click="toComponentFromMenu('Me')"
             style="cursor: pointer" cancelText="отмена">
           </span>
@@ -179,7 +180,6 @@ onMounted(() => {
           <span ref='auth' v-if="!userStore.isAuth" class="mdi mdi-24px mdi-login "
             @click="toComponentFromMenu('RegForm')" style="cursor: pointer">
           </span>
-          <span class="ml-4">кабинет</span>
         </div>
         <div style="width: 50%;">
           <a-divider class="ma-0"></a-divider>

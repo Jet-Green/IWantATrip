@@ -41,6 +41,7 @@ function getBillSum(bill) {
   border-radius: 12px;
   padding: 8px 12px;
   cursor: pointer;
+  height: 100%;
 
   .cart-container {
     display: flex;
