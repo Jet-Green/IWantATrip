@@ -29,8 +29,12 @@ async function hideExcursion(_id,isHide ) {
     emit('updateExcursion')
   }
 }
-function excursionInfo (_id) {
-  router.push(`/cabinet/excursion-info?_id=${_id}`)
+function excursionInfo(_id) {
+  if (excursion.value.prices.length == 0) {
+    router.push(`/cabinet/excursion-bookings?_id=${_id}`)
+  } else {
+    router.push(`/cabinet/excursion-info?_id=${_id}`)
+  }
 }
 </script>
 <template>
