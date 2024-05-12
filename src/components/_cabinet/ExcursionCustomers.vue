@@ -48,7 +48,7 @@ onMounted(async () => {
     </a-breadcrumb>
     <h3 class="mt-8 mb-8">Покупатели <span style="color: #ff6600;">{{ excursion.name }}</span></h3>
     <a-row :gutter="[16, 16]" v-if="time?.bills?.length > 0">
-      <a-col :span="8" v-for="bill of time.bills">
+      <a-col :span="24" :md="12" :lg="8" v-for="bill of time.bills">
         <ExcursionCustomerCard :bill="bill" />
       </a-col>
     </a-row>

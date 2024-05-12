@@ -22,8 +22,14 @@ export default {
     getExcursionBillsById(_id) {
         return $api.get(`/excursion/with-bills?_id=${_id}`)
     },
+    getExcursionBookingsById(_id) {
+        return $api.get(`/excursion/with-bookings?_id=${_id}`)
+    },
     getTimeCustomers(excursionId, timeId) {
         return $api.post('/excursion/time-customers', { excursionId, timeId })
+    },
+    getTimeBookings(excursionId, timeId) {
+        return $api.post('/excursion/time-bookings', { excursionId, timeId })
     },
     deleteTime(dateId, timeId) {
         return $api.post('/excursion/delete-time', { dateId: dateId, timeId: timeId })

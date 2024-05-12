@@ -38,8 +38,14 @@ export const useExcursion = defineStore('excursion', {
         async getExcursionBillsById(_id) {
             return await ExcursionService.getExcursionBillsById(_id)
         },
+        async getExcursionBookingsById(_id) {
+            return await ExcursionService.getExcursionBookingsById(_id)
+        },
         async getTimeCustomers(excursionId, timeId) {
             return await ExcursionService.getTimeCustomers(excursionId, timeId)
+        },
+        async getTimeBookings(excursionId, timeId) {
+            return await ExcursionService.getTimeBookings(excursionId, timeId)
         },
         async deleteTime(dateId, timeId) {
             return await ExcursionService.deleteTime(dateId, timeId)

@@ -299,6 +299,11 @@ const router = createRouter({
           component: () => import('../components/_cabinet/ExcursionCustomers.vue'),
         },
         {
+          path: 'excursion-booking-info',
+          name: 'ExcursionBookingInfo',
+          component: () => import('../components/_cabinet/ExcursionBookingInfo.vue'),
+        },
+        {
           path: 'excursion-bookings',
           name: 'ExcursionBookings',
           component: () => import('../components/_cabinet/ExcursionBookings.vue'),
