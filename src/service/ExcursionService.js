@@ -45,6 +45,9 @@ export default {
     buy(timeId, userId, toSend) {
         return $api.post('/excursion/buy', { timeId, userId, bill: toSend })
     },
+    book(body) {
+        return $api.post('/excursion/book', body)
+    },
     getExcursionsOnModeration() {
         return $api.get('/excursion/get-on-moderation')
     },
