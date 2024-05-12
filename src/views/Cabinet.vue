@@ -95,9 +95,9 @@ onMounted(async () => {
         <h2>
           Кабинет
           <!-- <span v-if="!sm" class="mdi mdi-18px mdi-information-variant"
-            style="color: #245159; cursor: pointer; vertical-align: super;" @click="open = !open"></span>
+            style="color: #245159; cursor: pointer; vertical-align: super;" @click="open = !open"></span> -->
           <span @click="logOut()" class="mdi mdi-24px mdi-logout" style="cursor: pointer; float: right">
-          </span> -->
+          </span>
         </h2>
       </a-col>
     </a-row>

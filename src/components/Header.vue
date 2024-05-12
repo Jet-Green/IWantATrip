@@ -1,6 +1,6 @@
 <script setup>
 import { useRouter } from "vue-router";
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, computed } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useAuth } from "../stores/auth";
 import { useLocations } from "../stores/locations";
@@ -42,7 +42,9 @@ function toComponentFromMenu(routName) {
   visibleDrawer.value = false;
 }
 
-
+let drawerWidth = computed(() => {
+  return sm.value ? '100%' : '30%'
+})
 const handleChange = async () => {
 
   if (locationSearchRequest.value == 'Ваш город') {
@@ -91,7 +93,7 @@ onMounted(() => {
 
 <template>
   <a-layout-header :style="{ position: 'fixed', zIndex: 999, width: '100%', background: 'white' }">
-  
+
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
         <a-row type="flex" justify="space-between">
@@ -122,10 +124,10 @@ onMounted(() => {
             </a-modal>
           </a-col>
 
-          <a-col v-if="!sm" :span="10" class="top_menu">
+          <a-col class="top_menu">
 
 
-            <div ref='find' @click="toComponentFromMenu('TripsPage')" class="route">найти</div>
+            <!-- <div ref='find' @click="toComponentFromMenu('TripsPage')" class="route">найти</div>
             <div ref='order' @click="toComponentFromMenu('CreateTripWithHelp')" class="route">
               заказать
             </div>
@@ -134,26 +136,25 @@ onMounted(() => {
             </div>
             <div ref='companion' @click="toComponentFromMenu('CompanionsPage')" class="route">
               попутчики
-            </div>
-            <!-- <span class="mdi mdi-18px mdi-information-variant"
-              style="color: #245159; cursor: pointer; margin-top: -10px;" @click="open = !open"></span> -->
-            <div class="social">
+            </div> -->
+
+            <div class="ma-4">
               <a href="https://vk.com/gorodaivesi_udm" target="_blank"><img src="../assets/icons/vk.svg" alt=""></a>
             </div>
-            <div class="social">
+            <div class="ma-4">
               <a href="https://t.me/gorodaivesi_ru" target="_blank"><img src="../assets/icons/telegram.svg" alt=""></a>
             </div>
 
-            <span ref='auth' v-if="userStore.isAuth" class="mdi mdi-24px mdi-home" @click="toComponentFromMenu('Me')"
+            <!-- <span ref='auth' v-if="userStore.isAuth" class="mdi mdi-24px mdi-home" @click="toComponentFromMenu('Me')"
               style="cursor: pointer" cancelText="отмена">
             </span>
 
             <span ref='auth' v-if="!userStore.isAuth" class="mdi mdi-24px mdi-login"
               @click="toComponentFromMenu('RegForm')" style="cursor: pointer">
-            </span>
+            </span> -->
 
           </a-col>
-          <a-col v-else>
+          <a-col>
             <span class="mdi mdi-24px mdi-menu" style="color: #245159; cursor: pointer"
               @click="visibleDrawer = !visibleDrawer"></span>
           </a-col>
@@ -164,12 +165,26 @@ onMounted(() => {
 
 
     <a-drawer placement="right" :closable="false" :open="visibleDrawer" @close="visibleDrawer = !visibleDrawer"
-      width="100%">
+      :width="drawerWidth">
       <div style="text-align: right;">
         <span class="mdi mdi-24px mdi-close" style="color: #245159; cursor: pointer"
           @click="visibleDrawer = !visibleDrawer"></span>
-        </div>
+      </div>
       <div class="right-drawer">
+        <div @click="toComponentFromMenu('Me')" class="route ma-8">
+          <span ref='auth' v-if="userStore.isAuth" class="mdi mdi-24px mdi-home" @click="toComponentFromMenu('Me')"
+            style="cursor: pointer" cancelText="отмена">
+          </span>
+
+          <span ref='auth' v-if="!userStore.isAuth" class="mdi mdi-24px mdi-login "
+            @click="toComponentFromMenu('RegForm')" style="cursor: pointer">
+          </span>
+          <span class="ml-4">кабинет</span>
+        </div>
+        <div style="width: 50%;">
+          <a-divider class="ma-0"></a-divider>
+        </div>
+
         <div @click="toComponentFromMenu('Landing')" class="route ma-8">главная</div>
         <div @click="toComponentFromMenu('TripsPage')" class="route ma-8">найти тур</div>
         <div @click="toComponentFromMenu('CreateTripWithHelp')" class="route ma-8">
@@ -178,11 +193,37 @@ onMounted(() => {
         <div @click="toComponentFromMenu('CatalogPage')" class="route ma-8">
           каталог
         </div>
+        <div @click="toComponentFromMenu('CreateTripNoHelp')" class="route ma-8">
+          создать тур
+        </div>
         <div @click="toComponentFromMenu('CompanionsPage')" class="route ma-8">
           попутчики
         </div>
-        <div @click="toComponentFromMenu('Me')" class="route ma-8">кабинет</div>
+        <div style="width: 50%;">
+          <a-divider class="ma-0"></a-divider>
+        </div>
+        <h4 style="text-transform: uppercase;">Гид по городу <span>
+            {{ locationSearchRequest ? locationSearchRequest : "Ваш город" }}
+          </span></h4>
 
+        <div @click="toComponentFromMenu('ExcursionsPage')" class="route ma-8">
+          экскурсии
+        </div>
+        <div @click="toComponentFromMenu('Poster')" class="route ma-8">
+          афиши
+        </div>
+        <div @click="toComponentFromMenu('Transport')" class="route ma-8">
+          транспорт
+        </div>
+        <div @click="toComponentFromMenu('ToStay')" class="route ma-8">
+          гостиницы
+        </div>
+        <div style="width: 50%;">
+          <a-divider class="ma-0"></a-divider>
+        </div>
+        <div @click="toComponentFromMenu('Contacts')" class="route ma-8">
+          контакты
+        </div>
         <a href="https://doc.gorodaivesi.ru/" target="_blank">
           <div class="route ma-8">о проекте</div>
         </a>
@@ -225,9 +266,9 @@ onMounted(() => {
   text-transform: uppercase;
 }
 
-.social {
-  transform: translateY(15px);
-}
+// .social {
+//   transform: translateY(15px);
+// }
 
 .right-drawer {
   display: flex;
