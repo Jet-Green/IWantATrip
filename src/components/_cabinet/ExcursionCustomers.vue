@@ -51,11 +51,11 @@ onMounted(async () => {
         }}</a-breadcrumb-item>
       <a-breadcrumb-item style="cursor: pointer;">{{ getTime(time) }}</a-breadcrumb-item>
     </a-breadcrumb>
-    <h3 class="mt-8 mb-8">Покупатели <span style="color: #ff6600;">{{ excursion.name }}</span></h3>
+    <h3 class="mt-8 mb-8"><span style="color: #ff6600;">{{ excursion.name }} {{ getTime(time) }}</span></h3>
     <a-row :gutter="[16, 16]" v-if="time?.bills?.length > 0">
       <a-col :span="12" class="d-flex justify-center">
         <a-card hoverable class="button-card ">
-          информация
+         {{time}}
         </a-card>
       </a-col>
       <a-col :span="12" class="d-flex justify-center">
