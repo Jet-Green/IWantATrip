@@ -22,13 +22,18 @@ function getTime(timeObj) {
   return result
 }
 let loading = ref(true)
-onMounted(async () => {
+
+let updateExcursion = async () => {
   let response = await excursionStore.getTimeCustomers(route.query.excursion_id, route.query.time_id)
   if (response.status == 200 && response.data.time?._id) {
     excursion.value = response.data.excursion
     time.value = response.data.time
   }
   loading.value = false
+}
+
+onMounted(async () => {
+  await updateExcursion()
 })
 </script>
 
@@ -54,12 +59,13 @@ onMounted(async () => {
         </a-card>
       </a-col>
       <a-col :span="12" class="d-flex justify-center">
-        <a-card hoverable class="button-card d-flex justify-center align-center" style="border-color: #ff6600;  cursor: pointer;" >
+        <a-card hoverable class="button-card d-flex justify-center align-center"
+          style="border-color: #ff6600;  cursor: pointer;">
           Записать на <br> экскурсию
         </a-card>
       </a-col>
       <a-col :span="24" :md="12" :xl="8" v-for="bill of time.bills">
-        <ExcursionCustomerCard :bill="bill" />
+        <ExcursionCustomerCard :bill="bill"  @updateExcursion="updateExcursion"/>
       </a-col>
     </a-row>
     <a-row v-else>
@@ -74,7 +80,7 @@ onMounted(async () => {
   border: 1px solid #E0E0E0;
   border-radius: 12px;
   padding: 8px 12px;
- 
+
   width: 100%;
   height: 100%;
 }

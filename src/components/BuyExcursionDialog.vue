@@ -39,7 +39,8 @@ async function buy() {
   let toSend = []
   // pricesForm.value
   for (let p of pricesForm.value) {
-    if (p.count > 1) {
+
+    if (p.count > 0) {     
       toSend.push({
         type: p.type,
         price: p.price,
@@ -47,13 +48,14 @@ async function buy() {
       })
     }
   }
+console.log(toSend)
   let res = await excursionStore.buy(selectedDate.value.time._id, toSend)
   if (res.status == 200) {
     message.config({ duration: 0.5, top: "70vh" });
     message.success({
       content: "Успешно!",
       onClose: () => {
-        router.push('/cabinet/me')
+        router.push('/excursions')
       },
     });
   } else {
@@ -143,7 +145,7 @@ onMounted(() => {
     </div>
 
     <div class="d-flex justify-center mt-16">
-      <a-button type="primary" class="lets_go_btn" @click="buy" v-if="pricesForm.length > 0">купить</a-button>
+      <a-button type="primary" class="lets_go_btn" @click="buy" v-if="pricesForm.length > 0">заказать</a-button>
     </div>
   </a-modal>
 </template>

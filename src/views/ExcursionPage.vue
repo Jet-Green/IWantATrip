@@ -135,8 +135,9 @@ onMounted(async () => {
           </a-col>
         </a-row>
         <a-row>
-          <a-col :span="24" class="ma-32">
-            {{ excursion.description }}
+          <a-col :span="24" class="mb-32">
+           <div  class="text"> {{ excursion.description }}</div>
+            
           </a-col>
         </a-row>
       </a-col>

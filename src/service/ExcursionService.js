@@ -22,6 +22,10 @@ export default {
     getExcursionBillsById(_id) {
         return $api.get(`/excursion/with-bills?_id=${_id}`)
     },
+    deleteExcursionBill(_id) {
+        return $api.get(`/excursion/delete-bill?_id=${_id}`)
+    },
+    
     getExcursionBookingsById(_id) {
         return $api.get(`/excursion/with-bookings?_id=${_id}`)
     },
