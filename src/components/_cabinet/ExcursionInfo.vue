@@ -32,6 +32,10 @@ function getDate(dateObj) {
     return `${russianDate[1]} ${russianDate[2]} ${dateObj.year}`
 }
 
+function print(){
+    console.log('asdasdda');
+}
+
 onMounted(async () => {
     updateExcursion(_id)
 
@@ -56,6 +60,10 @@ onMounted(async () => {
                     <a-collapse>
                         <a-collapse-panel :header="`${t.hours}:${t.minutes}`" v-for="t, j in d.times" :key="j">
                             <ExcursionCustomerList :customers="t" />
+                            <template #extra> <a-button type="primary" shape="circle" @click="print()"
+                                    class="lets_go_btn">
+                                    <span class="mdi mdi-printer-outline"></span>
+                                </a-button></template>
                         </a-collapse-panel>
                     </a-collapse>
                 </a-collapse-panel>
