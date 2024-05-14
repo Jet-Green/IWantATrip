@@ -16,7 +16,7 @@ let props = defineProps({
 });
 
 
-const ExcursionStore = useExcursion();
+const excursionStore = useExcursion();
 const appStore = useAppState();
 
 let time = ref([]);
@@ -24,10 +24,6 @@ let query = ref("");
 let type = ref("");
 
 let router = useRouter();
-
-function toCatalog() {
-  router.push(`/catalog`);
-}
 
 watch(time, (newTime) => {
   if (!newTime) return
@@ -51,9 +47,9 @@ function find() {
   query.value = query.value.trim()
   localStorage.setItem("ExcursionQuery", query.value)
   localStorage.setItem("ExcursionType", type.value)
-  ExcursionStore.searchCursor = 1
-  ExcursionStore.cursor = 1
-  ExcursionStore.excursions = []
+  excursionStore.searchCursor = 1
+  excursionStore.cursor = 1
+  excursionStore.excursion = []
   if (time.value[0] ?? time.value[1]) {
     let start = new Date(time.value[0].$d)
     let end = new Date(time.value[1].$d)
@@ -74,25 +70,25 @@ function find() {
     end.setMilliseconds(999)
 
     end = Number(Date.parse(end.toString()));
-    ExcursionStore.excursionFilter.query = query.value
-    ExcursionStore.excursionFilter.start = start
-    ExcursionStore.excursionFilter.end = end
-    ExcursionStore.excursionFilter.type = type.value
-    ExcursionStore.fetchExcursions();
+    excursionStore.excursionFilter.query = query.value
+    excursionStore.excursionFilter.start = start
+    excursionStore.excursionFilter.end = end
+    excursionStore.excursionFilter.type = type.value
+    excursionStore.getAll();
   } else {
-    ExcursionStore.excursionFilter.query = query.value
-    ExcursionStore.excursionFilter.start = ""
-    ExcursionStore.excursionFilter.end = ""
-    ExcursionStore.excursionFilter.type = type.value
-    ExcursionStore.fetchExcursions();
+    excursionStore.excursionFilter.query = query.value
+    excursionStore.excursionFilter.start = ""
+    excursionStore.excursionFilter.end = ""
+    excursionStore.excursionFilter.type = type.value
+    excursionStore.getAll();
   }
 }
 
 function resetForm() {
-  ExcursionStore.excursionFilter.query = ""
-  ExcursionStore.excursionFilter.start = ""
-  ExcursionStore.excursionFilter.end = ""
-  ExcursionStore.excursionFilter.type = ""
+  excursionStore.excursionFilter.query = ""
+  excursionStore.excursionFilter.start = ""
+  excursionStore.excursionFilter.end = ""
+  excursionStore.excursionFilter.type = ""
   type.value = ""
   time.value = [];
   query.value = '';

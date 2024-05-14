@@ -1,5 +1,4 @@
 import $api from "../plugins/axios";
-
 export default {
     create(body) {
         return $api.post('/excursion/create', body)
@@ -13,11 +12,8 @@ export default {
     createDates(dates, _id, userId) {
         return $api.post(`/excursion/dates`, { dates, excursionId: _id, userId })
     },
-    getAll(locationId) {
-        return $api.post('/excursion/all', { locationId: locationId })
-    },
-    fetchExcursions(cursor, lon, lat, query, start, end, type) {
-        return $api.get(`/excursion/get-all?cursor=${cursor}&lon=${lon}&lat=${lat}&query=${query}&start=${start}&end=${end}&type=${type}`)
+    getAll(locationId,query) {
+        return $api.post('/excursion/all', { locationId: locationId, query: query })
     },
     getExcursionById(_id) {
         return $api.get(`/excursion/one?_id=${_id}`)
@@ -42,7 +38,6 @@ export default {
         return $api.post('/excursion/delete-time', { dateId: dateId, timeId: timeId })
     },
     deleteDate(dateId, userId) {
-
         return $api.post('/excursion/delete-date', { dateId: dateId, userId: userId })
     },
 
