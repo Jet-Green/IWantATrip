@@ -1,5 +1,6 @@
 <script setup>
 import ExcursionCustomerCard from './ExcursionCustomerCard.vue';
+import AddExcursionCustomerDialog from './AddExcursionCustomerDialog.vue';
 
 import { onMounted, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
@@ -11,6 +12,29 @@ const excursionStore = useExcursion()
 
 let excursion = ref({})
 let time = ref({})
+let showAddPopup = ref(false)
+let selectedDate = ref({})
+
+function getImg(index) {
+  return trip.value.images[index];
+}
+function openAddDialog(time) {
+  if (selectedDate.value._id) return
+  for (let date of excursion.value.dates) {
+    for(let t of date.times) {
+      if (t._id == time._id) {
+        selectedDate.value = {
+          date: date.date,
+          time
+        }
+        break
+      }
+    }
+  }
+}
+function closeAddDialog() {
+  selectedDate.value = {}
+}
 
 function getTime(timeObj) {
   let result = timeObj.hours + ':'
@@ -27,6 +51,7 @@ let updateExcursion = async () => {
   let response = await excursionStore.getTimeCustomers(route.query.excursion_id, route.query.time_id)
   if (response.status == 200 && response.data.time?._id) {
     excursion.value = response.data.excursion
+    console.log(response.data)
     time.value = response.data.time
   }
   loading.value = false
@@ -52,20 +77,23 @@ onMounted(async () => {
       <a-breadcrumb-item style="cursor: pointer;">{{ getTime(time) }}</a-breadcrumb-item>
     </a-breadcrumb>
     <h3 class="mt-8 mb-8"><span style="color: #ff6600;">{{ excursion.name }} {{ getTime(time) }}</span></h3>
-    <a-row :gutter="[16, 16]" v-if="time?.bills?.length > 0">
+    <a-row :gutter="[16, 16]">
       <a-col :span="12" class="d-flex justify-center">
         <a-card hoverable class="button-card ">
-         {{time}}
+          <!-- {{ time }} -->
+          {{ excursion }}
         </a-card>
       </a-col>
       <a-col :span="12" class="d-flex justify-center">
         <a-card hoverable class="button-card d-flex justify-center align-center"
-          style="border-color: #ff6600;  cursor: pointer;">
+          style="border-color: #ff6600;  cursor: pointer;" @click="openAddDialog">
           Записать на <br> экскурсию
         </a-card>
       </a-col>
+    </a-row>
+    <a-row :gutter="[16, 16]" v-if="time?.bills?.length > 0">
       <a-col :span="24" :md="12" :xl="8" v-for="bill of time.bills">
-        <ExcursionCustomerCard :bill="bill"  @updateExcursion="updateExcursion"/>
+        <ExcursionCustomerCard :bill="bill" @updateExcursion="updateExcursion" />
       </a-col>
     </a-row>
     <a-row v-else>
@@ -73,6 +101,7 @@ onMounted(async () => {
         пусто
       </a-col>
     </a-row>
+    <AddExcursionCustomerDialog :selectedDate="selectedDate" :excursion="excursion" @close="closeAddDialog" />
   </div>
 </template>
 <style lang="scss" scoped>
