@@ -58,7 +58,9 @@ export const useExcursion = defineStore('excursion', {
             return await ExcursionService.deleteDate(dateId, userStore.user._id)
         },
 
-
+        async timeHasBills(timeId) {
+            return (await ExcursionService.timeHasBills(timeId)).data
+        },
 
 
         async uploadImages(data) {

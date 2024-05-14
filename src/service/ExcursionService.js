@@ -42,7 +42,9 @@ export default {
 
         return $api.post('/excursion/delete-date', { dateId: dateId, userId: userId })
     },
-
+    timeHasBills(timeId) {
+        return $api.get('/excursion/time-has-bills', { params: { timeId } })
+    },
     uploadImages(data) {
         return $api.post('/excursion/images', data)
     },

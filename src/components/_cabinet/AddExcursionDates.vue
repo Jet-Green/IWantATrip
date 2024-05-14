@@ -9,6 +9,7 @@ import BuyExcursionDates from '../BuyExcursionDates.vue'
 import { useRoute } from 'vue-router';
 import { useRouter } from "vue-router";
 import { useExcursion } from '../../stores/excursion';
+import { message } from "ant-design-vue";
 
 const route = useRoute()
 const router = useRouter()
@@ -58,8 +59,18 @@ function getTime(timeObj) {
 }
 
 let deleteTime = async (dateId, timeId) => {
-  await excursionStore.deleteTime(dateId, timeId)
-  await updateExcursion(_id)
+  let time_has_bills = await excursionStore.timeHasBills(timeId)
+  console.log(time_has_bills)
+  if (!time_has_bills) {
+    await excursionStore.deleteTime(dateId, timeId)
+    await updateExcursion(_id)
+  }
+  else {
+    message.config({ duration: 1.5, top: "70vh" });
+    message.error({
+      content: "Имеются счета"
+    })
+  }
 }
 let deleteDate = async (dateId) => {
   await excursionStore.deleteDate(dateId)
