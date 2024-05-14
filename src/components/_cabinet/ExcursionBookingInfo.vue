@@ -46,7 +46,7 @@ onMounted(() => {
     <a-breadcrumb-item @click="router.push('/cabinet/excursions')" style="cursor: pointer;">
       К экскурсиям
     </a-breadcrumb-item>
-    <a-breadcrumb-item style="cursor: pointer;">даты, время, покупатели</a-breadcrumb-item>
+    <a-breadcrumb-item style="cursor: pointer;">даты, время, заказчики</a-breadcrumb-item>
   </a-breadcrumb>
 
   <h3 class="mt-8 mb-8">Информация о <span style="color: #ff6600;">{{ excursion.name }}</span></h3>
