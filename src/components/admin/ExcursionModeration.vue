@@ -1,45 +1,34 @@
 <script setup>
-import BackButton from "../components/BackButton.vue";
-import BuyExcursionDates from "../components/BuyExcursionDates.vue";
-import BuyExcursionDialog from "../components/BuyExcursionDialog.vue";
-import _ from "lodash"
 import { ref, onMounted } from "vue";
+import BackButton from "../BackButton.vue";
+import BuyExcursionDates from "../BuyExcursionDates.vue";
+import _ from "lodash"
 
-import { useRoute } from "vue-router";
-import { useExcursion } from "../stores/excursion.js";
-import { useAuth } from "../stores/auth";
-import { useLocations } from "../stores/locations";
+
+import { useRoute, useRouter } from "vue-router";
+import { useExcursion } from "../../stores/excursion";
+
 
 const route = useRoute();
+const router = useRouter();
 const _id = route.query._id;
 
 const excursionStore = useExcursion();
-const userStore = useAuth();
-const locationStore = useLocations();
+
 
 let excursion = ref({});
-let selectedDate = ref({})
 
-function getImg(index) {
-  return trip.value.images[index];
-}
-function openBuyDialog(time) {
-  if (selectedDate.value._id) return
-  for (let date of excursion.value.dates) {
-    for(let t of date.times) {
-      if (t._id == time._id) {
-        selectedDate.value = {
-          date: date.date,
-          time
-        }
-        break
-      }
-    }
+async function approvExcursion(_id) {
+  let res = await excursionStore.approvExcursion(_id)
+  if(res.status == "200") {
+    router.push ("/cabinet/moderation-excursions")
   }
 }
-function closeBuyDialog() {
-  selectedDate.value = {}
+
+function getImg(index) {
+  return excursion.value.images[index];
 }
+
 
 onMounted(async () => {
   let response = await excursionStore.getExcursionById(_id);
@@ -48,15 +37,16 @@ onMounted(async () => {
 </script>
 <template>
   <div style="overflow-x: hidden">
-    <BackButton :backRoute="{ path: '/excursions' }" />
+    <BackButton />
     <a-row class="justify-center d-flex">
       <a-spin v-if="!excursion._id" size="large"></a-spin>
 
       <a-col :xs="22" :xl="16" v-else>
-        <h2 class="ma-0">{{ excursion.name }}</h2>
+        <h2 style="color:#ff6600">модерация</h2>
+        <h2 class="ma-0">{{ excursion.name }}   </h2>
         <div>
           {{ excursion.excursionType.type }} | {{ excursion.excursionType.directionType }} | {{
-      excursion.excursionType.directionPlace }}
+        excursion.excursionType.directionPlace }}
         </div>
         <a-row :gutter="[12, 12]" class="text justify-center d-flex">
           <a-col :xs="24" :md="12">
@@ -115,12 +105,16 @@ onMounted(async () => {
               Заявка за: <b>{{ excursion.deadline }} дн.</b>
             </div>
             <div>
-              ОВЗ доступность:  <b> 
+              ОВЗ доступность: <b>
                 <span v-if="excursion.availability"> доступно</span>
-                <span v-else >не доступно</span>
-             
-              </b>  
+                <span v-else>не доступно</span>
+
+              </b>
             </div>
+            <div style="display: flex; justify-content: center; margin: 20px"> <a-button type="primary" class="lets_go_btn" 
+                @click="approvExcursion(excursion._id)">
+                Принять
+              </a-button></div>
           </a-col>
         </a-row>
         <a-row style="margin-top: 30px;">
@@ -129,15 +123,13 @@ onMounted(async () => {
           </a-col>
           <a-col :span="24">
             <div v-if="_.isEmpty(excursion.dates)" class="month">По заявкам</div>
-            <BuyExcursionDates v-else :dates="excursion.dates" :excursionId="excursion._id"
-              @buy-excursion="openBuyDialog" />
-            <BuyExcursionDialog :selectedDate="selectedDate" :excursion="excursion" @close="closeBuyDialog" />
+            <BuyExcursionDates v-else :dates="excursion.dates" :excursionId="excursion._id" />
+
           </a-col>
         </a-row>
         <a-row>
-          <a-col :span="24" class="mb-32">
-           <div  class="text"> {{ excursion.description }}</div>
-            
+          <a-col :span="24" class="ma-32">
+            {{ excursion.description }}
           </a-col>
         </a-row>
       </a-col>

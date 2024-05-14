@@ -13,6 +13,9 @@ export const useLocations = defineStore('locations', {
         getLocations(state) {
             return state.locations
         },
+        getLocation(state) {
+            return state.location
+        },
     },
     actions: {
         async fetchLocations() {

@@ -2,6 +2,12 @@
 import { ref, toRefs, watch, onMounted } from "vue"
 import _ from "lodash"
 import datePlugin from '../plugins/dates'
+import { useExcursion } from "../stores/excursion";
+import { useRouter } from "vue-router";
+import { message } from "ant-design-vue";
+
+const excursionStore = useExcursion()
+const router = useRouter()
 
 let props = defineProps({
   selectedDate: Object,
@@ -28,8 +34,75 @@ watch(selectedDate, (newValue) => {
     prettyTime.value = tmpTime
   }
 })
+let pricesForm = ref([])
+async function buy() {
+  let toSend = []
+  // pricesForm.value
+  for (let p of pricesForm.value) {
 
+    if (p.count > 0) {     
+      toSend.push({
+        type: p.type,
+        price: p.price,
+        count: p.count
+      })
+    }
+  }
+console.log(toSend)
+  let res = await excursionStore.buy(selectedDate.value.time._id, toSend)
+  if (res.status == 200) {
+    message.config({ duration: 0.5, top: "70vh" });
+    message.success({
+      content: "Успешно!",
+      onClose: () => {
+        router.push('/excursions')
+      },
+    });
+  } else {
+    message.config({ duration: 0.5, top: "70vh" });
+    message.error({
+      content: "Ошибка покупки!",
+      onClose: () => {
+        console.log(res);
+      },
+    });
+  }
+}
+let bookingCount = ref()
+async function book() {
+  if (bookingCount.value > 0) {
+    let response = await excursionStore.book(bookingCount.value, selectedDate.value.time._id, props.excursion._id)
+    if (response.status == 200) {
+      message.config({ duration: 0.5, top: "70vh" });
+      message.success({
+        content: "Успешно!",
+        onClose: () => {
+          router.push('/cabinet/me')
+        },
+      });
+    } else {
+      message.config({ duration: 0.5, top: "70vh" });
+      message.error({
+        content: "Ошибка заказа!",
+        onClose: () => {
+          console.log(response);
+        },
+      });
+    }
+  }
+}
 
+onMounted(() => {
+  let result = []
+  for (let p of props.excursion.prices) {
+    result.push({
+      count: 0,
+      price: p.price,
+      type: p.type,
+    })
+  }
+  pricesForm.value = result
+})
 </script>
 <template>
   <a-modal v-model:open="open" @cancel="emit('close')" :footer="null">
@@ -47,17 +120,32 @@ watch(selectedDate, (newValue) => {
         {{ excursion.name }}
       </div>
     </div>
-    <div class="large-date">
-      {{ prettyTime }}
+    <div style="display: flex; justify-content: space-between">
+      <div class="large-date">
+        {{ prettyTime }}
+      </div>
+      <div class="d-flex align-center" style="justify-content: end;" v-if="pricesForm.length == 0">
+        <a-input-number v-model:value="bookingCount" :min="0" :max="excursion.maxPeople" style="border-radius: 12px;"
+          :controls="false" class="ml-8 mr-8">
+        </a-input-number> чел.
+      </div>
     </div>
-    <div v-for="price of excursion.prices">
+    <div v-for="price of pricesForm">
       <div class="price-container">
         <div class="price">{{ price.type }} x <span style="color: #ff6600;">{{ price.price }}₽</span></div>
         <div>
-          <a-input-number :min="0" :max="excursion.maxPeople" style="border-radius: 12px;" :controls="false">
+          <a-input-number v-model:value="price.count" :min="0" :max="excursion.maxPeople" style="border-radius: 12px;"
+            :controls="false">
           </a-input-number>
         </div>
       </div>
+    </div>
+    <div class="d-flex justify-center">
+      <a-button type="primary" class="lets_go_btn" @click="book" v-if="pricesForm.length == 0">заказать</a-button>
+    </div>
+
+    <div class="d-flex justify-center mt-16">
+      <a-button type="primary" class="lets_go_btn" @click="buy" v-if="pricesForm.length > 0">заказать</a-button>
     </div>
   </a-modal>
 </template>
@@ -112,6 +200,7 @@ watch(selectedDate, (newValue) => {
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
+
   .price {
     font-weight: 600;
     font-size: clamp(0.875rem, 0.6761rem + 0.5682vw, 1.125rem);

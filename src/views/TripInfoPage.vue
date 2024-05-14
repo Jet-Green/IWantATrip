@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, getCurrentInstance } from "vue";
+import { ref, computed, onMounted, getCurrentInstance, watch } from "vue";
 import _ from 'lodash'
 import tinkoffPlugin from '../plugins/tinkoff'
 
@@ -15,6 +15,8 @@ import { useRouter } from "vue-router";
 import { useLocations } from "../stores/locations";
 import * as yup from "yup";
 import { Form, Field, ErrorMessage } from 'vee-validate';
+import Bus from "../components/Bus.vue";
+import { useBus } from "../stores/bus";
 const API_URL = import.meta.env.VITE_API_URL
 
 const app = getCurrentInstance();
@@ -29,6 +31,28 @@ const _id = route.query._id;
 const tripStore = useTrips();
 const userStore = useAuth();
 const locationStore = useLocations();
+
+let bus = ref()
+let selected_seats = ref([])
+let selected_bus = ref()
+let waiting_bus = ref()
+let free_seats = ref([])
+let show_old_bus = ref(true)
+// watch([selected_bus, waiting_bus], async ([selected, waiting]) => {
+//     let bus_id = _.isEmpty(selected) ? waiting.transportType.bus_id : selected.transportType.bus_id
+//     if (!bus_id) return show_old_bus.value = true
+//     show_old_bus.value = false
+
+//     bus.value = await useBus().getById(bus_id)
+//     updateSeats()
+// })
+
+
+async function updateSeats() {
+    if (!bus.value) return
+    let bought_seats = await tripStore.getBoughtSeats(_id)
+    free_seats.value = bus.value.seats.map(seat => seat.number).filter(seat => !bought_seats.includes(seat) && !bus.value.stuff.includes(seat))
+}
 
 const backRoute = { name: 'TripsPage', hash: `#${_id}` };
 
@@ -242,6 +266,12 @@ async function buyTrip() {
         //     }
         // }
 
+        if (trip.value.transports.length && people_amount.value !== selected_seats.value.length) {
+            message.config({ duration: 3, top: "90vh" });
+            message.error({ content: `Выбирите места в количестве ${people_amount.value} шт.` });
+            return
+        }
+
         if (selectedDate.value.selected && finalCost.value > 0) {
             let bill = {
                 isWaitingList: isInWaitingList.value,
@@ -250,6 +280,7 @@ async function buyTrip() {
                 cart: selectedDate.value.selectedCosts,
                 tripId: selectedDate.value._id,
                 selectedStartLocation: selectedStartLocation.value,
+                seats: selected_seats.value,
                 userInfo: {
                     _id: userStore.user._id,
                     fullname: userStore.user.fullinfo.fullname,
@@ -261,6 +292,8 @@ async function buyTrip() {
                     phone: userStore.user.fullinfo.phone,
                 }]
             };
+            selected_seats.value = []
+            updateSeats()
             let tinkoffUrl = ''
             if (buyNow.value) {
                 const orderId = Date.now().toString()
@@ -346,8 +379,24 @@ let isNoPlaces = computed(() => {
     return false;
 });
 
+let people_amount = computed(() => selectedDate.value.selectedCosts.map(cost => cost.count).reduce((partialSum, a) => partialSum + a, 0))
+
+async function updateBus() {
+    let transports = trip.value.transports.filter(bus => bus.capacity >= getCurrentCustomerNumber.value)
+    transports = _.sortBy(transports, [o => o.capacity])
+    let transport = transports[0]
+
+    let bus_id = transport?.transportType.bus_id
+    if (!bus_id) return show_old_bus.value = true
+    show_old_bus.value = false
+
+    bus.value = await useBus().getById(bus_id)
+    updateSeats()
+}
+
 onMounted(async () => {
     await refreshDates();
+    watch(getCurrentCustomerNumber, updateBus, { immediate: true })
 });
 </script>
 <template>
@@ -465,10 +514,10 @@ onMounted(async () => {
                             </div>
 
                         </div>
-                        <div v-if="trip.transports?.length">
+                        <!-- <div v-if="trip.transports?.length">
                             <WaitingList :tripsCount="getCustomersCount(selectedDate.billsList)"
                                 :transport="trip.transports ?? []" />
-                        </div>
+                        </div> -->
                         <div class="d-flex justify-center ma-8" v-if="trip.maxPeople -
             getCustomersCount(selectedDate.billsList) -
             selectedDate.selectedCosts.reduce((acc, cost) => {
@@ -605,7 +654,7 @@ onMounted(async () => {
                     </a-col>
                     <a-col :span="24">
                         <div>Цены:</div>
-                        <div v-if="isInWaitingList" style="color: #ff6600">
+                        <div v-if="isInWaitingList &&  trip?.transports?.length" style="color: #ff6600">
                             Вы в листе ожидания
                         </div>
                         <div class="d-flex space-between align-center" v-for="cost of selectedDate.selectedCosts">
@@ -626,10 +675,6 @@ onMounted(async () => {
                             </div>
                         </div>
                     </a-col>
-                    <a-col :span="24" v-if="trip.transports?.length">
-                        <WaitingList :tripsCount="getCurrentCustomerNumber" :transport="trip.transports ?? []"
-                            @isUserWaiting="detectIsWaiting" />
-                    </a-col>
                     <a-col :span="24" class="d-flex justify-end">
                         <b>Итого: {{ finalCost }} руб.</b>
                     </a-col>
@@ -637,6 +682,21 @@ onMounted(async () => {
                     <div v-if="trip.partner">
                         <h4 class="warning">Наличие мест требует уточнения!</h4>
                     </div>
+
+                    <!-- <a-col :span="24">
+                        <WaitingList v-if="people_amount > 0 || show_old_bus" v-model:selected="selected_bus"
+                            v-model:waiting="waiting_bus" @isUserWaiting="detectIsWaiting"
+                            :selected_seats="selected_seats" :show_old_bus="trip.transports?.length && show_old_bus"
+                            :tripsCount="getCurrentCustomerNumber" :transport="trip.transports ?? []" choise />
+                    </a-col> -->
+
+                    <a-col v-if="bus && people_amount > 0" :span="24" class="mb-8">
+                        <div>Выберите места</div>
+                        <Bus  v-model:selected_seats="selected_seats"
+                            :free_seats="free_seats"
+                            :max_count="trip.maxPeople - getCustomersCount(selectedDate.billsList) " :bus="bus"
+                            style="width: 150px;" />
+                    </a-col>
 
                     <a-col :span="24">
                         <div class="d-flex space-around">

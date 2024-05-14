@@ -7,9 +7,12 @@ import * as yup from "yup";
 
 import { useRouter } from 'vue-router';
 import { useExcursion } from '../stores/excursion'
+import { useAuth } from '../stores/auth'
 import excursionTypes from '../db/excursionTypes'
 
 const excursionStore = useExcursion()
+const user_id = useAuth().user._id
+console.log(user_id)
 const router = useRouter()
 
 let locationSearchRequest = ref("")
@@ -99,9 +102,9 @@ function selectStartLocation(selected) {
   }
 }
 const removeCost = (item) => {
-  let index = form.cost.indexOf(item);
+  let index = form.prices.indexOf(item);
   if (index !== -1) {
-    form.cost.splice(index, 1);
+    form.prices.splice(index, 1);
   }
 };
 
@@ -113,6 +116,7 @@ const addCost = () => {
 };
 
 async function submit() {
+  form.author = user_id
   let excursionCb = await excursionStore.create(form)
   const _id = excursionCb.data._id
   let imagesFormData = new FormData();
@@ -299,11 +303,11 @@ watch(
 
             <a-col :span="24">
               <div class="d-flex space-between ">Цены
-             
+
               </div>
 
 
-              <div v-for="   item,index    in    form.prices   " :key="index" style="display: flex" align="baseline"
+              <div v-for="   item, index    in    form.prices   " :key="index" style="display: flex" align="baseline"
                 class="mb-16">
                 <a-input v-model:value="item.type" placeholder="Взрослый" />
 

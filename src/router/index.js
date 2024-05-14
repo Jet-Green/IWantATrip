@@ -226,6 +226,13 @@ const router = createRouter({
       component: () => import('../views/ExcursionPage.vue')
     },
     {
+      path: '/excursion-moderation',
+      name: 'ExcursionModeration',
+      component: () => import('../components/admin/ExcursionModeration.vue')
+    },
+
+    
+    {
       path: '/enter',
       name: 'Entertainment',
       component: () => import('../components/_guide/Entertainment.vue')
@@ -286,7 +293,21 @@ const router = createRouter({
           path: 'booking-trips',
           component: () => import('../components/_cabinet/BookingTrips.vue'),
         },
-
+        {
+          path: 'excursion-customers',
+          name: 'ExcursionCustomers',
+          component: () => import('../components/_cabinet/ExcursionCustomers.vue'),
+        },
+        {
+          path: 'excursion-booking-info',
+          name: 'ExcursionBookingInfo',
+          component: () => import('../components/_cabinet/ExcursionBookingInfo.vue'),
+        },
+        {
+          path: 'excursion-bookings',
+          name: 'ExcursionBookings',
+          component: () => import('../components/_cabinet/ExcursionBookings.vue'),
+        },
         {
           path: 'created-trips',
           component: () => import('../components/_cabinet/CreatedTrips.vue'),
@@ -404,6 +425,17 @@ const router = createRouter({
           path: 'moderation-companions',
           name: 'CompanionsOnModeration',
           component: () => import('../components/admin/CompanionsOnModeration.vue'),
+          beforeEnter: () => {
+            let userStore = useAuth()
+            if (!userStore.user?.roles.includes('admin')) {
+              return false
+            }
+          }
+        },
+        {
+          path: 'moderation-excursions',
+          name: 'ExcursionOnModeration',
+          component: () => import('../components/admin/ExcursionOnModeration.vue'),
           beforeEnter: () => {
             let userStore = useAuth()
             if (!userStore.user?.roles.includes('admin')) {

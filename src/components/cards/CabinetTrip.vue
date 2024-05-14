@@ -4,13 +4,18 @@ import { useRouter } from "vue-router";
 import TripService from "../../service/TripService";
 import { useTrips } from '../../stores/trips';
 import { useAuth } from '../../stores/auth';
+import { useBus } from '../../stores/bus'
 import { useAppState } from '../../stores/appState';
+import Bus from '../../components/Bus.vue'
 
 import dayjs from 'dayjs'
 
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 const dateFormatList = ["DD.MM.YY", "DD.MM.YY"];
 const ruLocale = locale;
+
+let buses = ref([])
+let selected_bus = ref()
 
 let props = defineProps(['trip', 'actions'])
 let emit = defineEmits(['deleteTrip', 'updateTrip'])
@@ -317,6 +322,7 @@ onMounted(async () => {
     for (let t of appStateStore.appState[0].transport) {
         possibleTransport.value.push({ value: t.name })
     }
+    buses.value = await useBus().get()
     // addTransportForm.value.price = trip.value.transports[0]?.price ?? null
 })
 </script>
@@ -474,10 +480,42 @@ onMounted(async () => {
         <a-modal v-model:open="updateTransportDialog" title="Изменить транспорт" okText="Отправить" cancelText="Отмена"
             @ok="updateTrasports">
             <a-row :gutter="[16, 16]">
-                <a-col :span="24" :md="24">
+                <!-- <a-col :span="24" :md="24">
                     Тип
                     <a-auto-complete style="width: 100%" :options="possibleTransport" placeholder="Минивен"
                         @select="(value) => { addTransportForm.transportType = { name: value } }"></a-auto-complete>
+                </a-col> -->
+                <a-col :span="24" :md="24">
+                    <a-select
+                        v-model="selected_bus"
+                        @select="bus => {
+                            bus = JSON.parse(bus);
+                            addTransportForm.transportType = { name: bus.name, bus_id: bus._id };
+                            addTransportForm.capacity = bus.seats.length - bus.stuff.length;
+                        }"
+                        style="width: 100%"
+                        placeholder="Выбрать автобус"
+                        option-label-prop="label"
+                    >
+                        <a-select-option v-for="bus in buses" :value="JSON.stringify(bus)" :label="`${bus.name} (${bus.author}) — ${bus.seats.length} мест`" >
+                            <div style="display: flex; flex-direction: row; gap: 10px">
+                                <Bus :bus="bus" preview style="width: max(4cqw, 90px);" />
+
+                                <div style="line-height: 1.45;">
+                                    <div>Название: {{ bus.name }}</div>
+                                    <div>Автор: {{ bus.author }}</div>
+                                    <div>Всего мест: {{ bus.seats.length }}</div>
+                                    <div>Служ. мест: {{ bus.stuff.length }}</div>
+                                </div>
+                            </div>
+                        </a-select-option>
+                    </a-select>
+                </a-col>
+                
+                <a-col :span="24" :md="24">
+                    <a-button @click="router.push('/create-bus')">
+                        Добавить свой
+                    </a-button>
                 </a-col>
                 <!-- <a-col :span="24" :md="12">
                     Цена для ожидающих

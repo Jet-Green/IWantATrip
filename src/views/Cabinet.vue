@@ -95,9 +95,9 @@ onMounted(async () => {
         <h2>
           Кабинет
           <!-- <span v-if="!sm" class="mdi mdi-18px mdi-information-variant"
-            style="color: #245159; cursor: pointer; vertical-align: super;" @click="open = !open"></span>
+            style="color: #245159; cursor: pointer; vertical-align: super;" @click="open = !open"></span> -->
           <span @click="logOut()" class="mdi mdi-24px mdi-logout" style="cursor: pointer; float: right">
-          </span> -->
+          </span>
         </h2>
       </a-col>
     </a-row>
@@ -147,6 +147,7 @@ onMounted(async () => {
               <a-menu-item key="/cabinet/moderation-trips/not-moderated-trips">Туры</a-menu-item>
               <a-menu-item key="/cabinet/catalog-trips-moderation/on-moderation">Каталог</a-menu-item>
               <a-menu-item key="/cabinet/moderation-companions">Попутчики</a-menu-item>
+              <a-menu-item key="/cabinet/moderation-excursions">Экскурсии</a-menu-item>
             </a-sub-menu>
             <a-menu-item key="/cabinet/orders">Заказы</a-menu-item>
             <a-menu-item v-if="userStore.user.roles.includes('admin')" key="/cabinet/interface">Интерфейс</a-menu-item>

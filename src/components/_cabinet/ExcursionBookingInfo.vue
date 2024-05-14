@@ -10,11 +10,11 @@ const router = useRouter()
 const _id = route.query._id
 
 let excursion = ref({})
+
 let updateExcursion = async (_id) => {
-  const response = await excursionStore.getExcursionBillsById(_id)
+  const response = await excursionStore.getExcursionBookingsById(_id)
   excursion.value = response.data
 }
-
 function getDate(dateObj) {
   return datePlugin.excursions.getPrettyDate(dateObj)
 }
@@ -27,29 +27,20 @@ function getTime(timeObj) {
   }
   return result
 }
-function getBillsSum(bills) {
+function getPeopleCount(timeId) {
   let sum = 0
-  for (let b of bills) {
-    for (let p of b.cart) {
-      sum += p.price * p.count
+  for(let book of excursion.value.bookings) {
+    if (book.time == timeId) {
+      sum += book.count;
     }
   }
   return sum
 }
-function getPeopleCount(bills) {
-  let sum = 0
-  for (let b of bills) {
-    for (let p of b.cart) {
-      sum += p.count
-    }
-  }
-  return sum
-}
-onMounted(async () => {
+
+onMounted(() => {
   updateExcursion(_id)
 })
 </script>
-
 <template>
   <a-breadcrumb class="mb-16">
     <a-breadcrumb-item @click="router.push('/cabinet/excursions')" style="cursor: pointer;">
@@ -73,7 +64,7 @@ onMounted(async () => {
         </a-col>
         <a-col :xs="18" :md="20" class="d-flex" style="gap: 10px 20px; flex-wrap: wrap;">
           <a-col v-for="time in date.times" class="time-container">
-            <div class="time-card" @click="router.push(`/cabinet/excursion-customers?excursion_id=${excursion._id}&time_id=${time._id}`)">
+            <div class="time-card" @click="router.push(`/cabinet/excursion-bookings?excursion_id=${excursion._id}&time_id=${time._id}&time=${getTime(time)}`)">
               <div class="row">
                 <span class="mdi mdi-clock-outline mr-4 icon"></span>
                 <b>
@@ -82,11 +73,7 @@ onMounted(async () => {
               </div>
               <div class="row">
                 <span class="mdi mdi-account-multiple-outline mr-4 icon"></span>
-                <b>{{ getPeopleCount(time.bills) }}</b>&nbsp;чел.
-              </div>
-              <div class="row">
-                <span class="mdi mdi-cash-multiple mr-4 icon"></span>
-                <b>{{ getBillsSum(time.bills) }}₽</b>
+                <b>{{ getPeopleCount(time._id) }}</b>&nbsp;чел.
               </div>
             </div>
           </a-col>
