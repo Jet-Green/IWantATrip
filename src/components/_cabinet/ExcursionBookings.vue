@@ -20,7 +20,7 @@ let selectedDate = ref({})
 function openAddDialog(time) {
   if (selectedDate.value._id) return
   for (let date of excursion.value.dates) {
-    for(let t of date.times) {
+    for (let t of date.times) {
       if (t._id == time._id) {
         selectedDate.value = {
           date: date.date,
@@ -29,7 +29,7 @@ function openAddDialog(time) {
         break
       }
     }
-  }  
+  }
 }
 function closeAddDialog() {
   selectedDate.value = {}
@@ -43,6 +43,15 @@ function getTime(timeObj) {
   }
   return result
 }
+function getPeopleCount(timeId) {
+  let sum = 0
+  for (let book of excursion.value.bookings) {
+    if (book.time == timeId) {
+      sum += book.count;
+    }
+  }
+  return sum
+}
 onMounted(async () => {
   let response = await excursionStore.getTimeBookings(route.query.excursion_id, route.query.time_id)
   if (response.status == 200) {
@@ -54,7 +63,7 @@ onMounted(async () => {
 })
 </script>
 <template>
-<div v-if="loading" class="d-flex justify-center">
+  <div v-if="loading" class="d-flex justify-center">
     <img src="../../assets/images/founddog.webp" alt="" style="height: 150px; margin-top: 50px;">
   </div>
   <div v-else>
@@ -70,8 +79,19 @@ onMounted(async () => {
     <a-row :gutter="[16, 16]" class="mb-16">
       <a-col :span="12" class="d-flex justify-center">
         <a-card hoverable class="button-card ">
-          <!-- {{ time }} -->
-          статы
+          <div class="row">
+            <span class="mdi mdi-clock-outline mr-4 icon"></span>
+            <b>
+              {{ getTime(time) }}
+            </b>&nbsp;
+            <b>
+              {{ route.query.date.split('_').join(' ') }}
+            </b>
+          </div>
+          <div class="row">
+            <span class="mdi mdi-account-multiple-outline mr-4 icon"></span>
+            <b>{{ getPeopleCount(time._id) }}</b>&nbsp;чел.
+          </div>
         </a-card>
       </a-col>
       <a-col :span="12" class="d-flex justify-center">
@@ -81,10 +101,10 @@ onMounted(async () => {
         </a-card>
       </a-col>
     </a-row>
-    <h3 class="mt-8 mb-8"><span style="color: #ff6600;">{{ excursion.name }}</span> {{ getTime(time) }}</h3>
+    <h3 class="mt-8 mb-8"><span style="color: #ff6600;">{{ excursion.name }}</span></h3>
     <a-row :gutter="[16, 16]" v-if="bookings.length > 0" class="mb-16">
       <a-col :span="24" :md="12" :lg="8" v-for="booking of bookings">
-        <ExcursionBookingCard :booking="booking"/>
+        <ExcursionBookingCard :booking="booking" />
       </a-col>
     </a-row>
     <a-row v-else>
@@ -103,5 +123,14 @@ onMounted(async () => {
 
   width: 100%;
   height: 100%;
+}
+
+.icon {
+  font-size: 18px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
 }
 </style>

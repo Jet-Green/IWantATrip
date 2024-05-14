@@ -17,7 +17,7 @@ let selectedDate = ref({})
 function openAddDialog(time) {
   if (selectedDate.value._id) return
   for (let date of excursion.value.dates) {
-    for(let t of date.times) {
+    for (let t of date.times) {
       if (t._id == time._id) {
         selectedDate.value = {
           date: date.date,
@@ -26,7 +26,7 @@ function openAddDialog(time) {
         break
       }
     }
-  }  
+  }
 }
 function closeAddDialog() {
   selectedDate.value = {}
@@ -51,7 +51,24 @@ let updateExcursion = async () => {
   }
   loading.value = false
 }
-
+function getBillsSum(bills) {
+  let sum = 0
+  for (let b of bills) {
+    for (let p of b.cart) {
+      sum += p.price * p.count
+    }
+  }
+  return sum
+}
+function getPeopleCount(bills) {
+  let sum = 0
+  for (let b of bills) {
+    for (let p of b.cart) {
+      sum += p.count
+    }
+  }
+  return sum
+}
 onMounted(async () => {
   await updateExcursion()
 })
@@ -71,12 +88,26 @@ onMounted(async () => {
         }}</a-breadcrumb-item>
       <a-breadcrumb-item style="cursor: pointer;">{{ getTime(time) }}</a-breadcrumb-item>
     </a-breadcrumb>
-    <h3 class="mt-8 mb-8"><span style="color: #ff6600;">{{ excursion.name }}</span> {{ getTime(time) }}</h3>
     <a-row :gutter="[16, 16]" class="mb-16">
       <a-col :span="12" class="d-flex justify-center">
         <a-card hoverable class="button-card ">
-          <!-- {{ time }} -->
-          статы
+          <div class="row">
+            <span class="mdi mdi-clock-outline mr-4 icon"></span>
+            <b>
+              {{ getTime(time) }}
+            </b>&nbsp;
+            <b>
+              {{ route.query.date.split('_').join(' ') }}
+            </b>
+          </div>
+          <div class="row">
+            <span class="mdi mdi-account-multiple-outline mr-4 icon"></span>
+            <b>{{ getPeopleCount(time.bills) }}</b>&nbsp;чел.
+          </div>
+          <div class="row">
+            <span class="mdi mdi-cash-multiple mr-4 icon"></span>
+            <b>{{ getBillsSum(time.bills) }}₽</b>
+          </div>
         </a-card>
       </a-col>
       <a-col :span="12" class="d-flex justify-center">
@@ -86,6 +117,7 @@ onMounted(async () => {
         </a-card>
       </a-col>
     </a-row>
+    <h3 class="mt-8 mb-8"><span style="color: #ff6600;">{{ excursion.name }}</span></h3>
     <a-row :gutter="[16, 16]" v-if="time?.bills?.length > 0" class="mb-16">
       <a-col :span="24" :md="12" :xl="8" v-for="bill of time.bills">
         <ExcursionCustomerCard :bill="bill" @updateExcursion="updateExcursion" />
