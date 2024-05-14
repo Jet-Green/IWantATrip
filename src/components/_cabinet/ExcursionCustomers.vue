@@ -12,12 +12,8 @@ const excursionStore = useExcursion()
 
 let excursion = ref({})
 let time = ref({})
-let showAddPopup = ref(false)
 let selectedDate = ref({})
 
-function getImg(index) {
-  return trip.value.images[index];
-}
 function openAddDialog(time) {
   if (selectedDate.value._id) return
   for (let date of excursion.value.dates) {
@@ -30,7 +26,7 @@ function openAddDialog(time) {
         break
       }
     }
-  }
+  }  
 }
 function closeAddDialog() {
   selectedDate.value = {}
@@ -51,7 +47,6 @@ let updateExcursion = async () => {
   let response = await excursionStore.getTimeCustomers(route.query.excursion_id, route.query.time_id)
   if (response.status == 200 && response.data.time?._id) {
     excursion.value = response.data.excursion
-    console.log(response.data)
     time.value = response.data.time
   }
   loading.value = false
@@ -77,16 +72,16 @@ onMounted(async () => {
       <a-breadcrumb-item style="cursor: pointer;">{{ getTime(time) }}</a-breadcrumb-item>
     </a-breadcrumb>
     <h3 class="mt-8 mb-8"><span style="color: #ff6600;">{{ excursion.name }} {{ getTime(time) }}</span></h3>
-    <a-row :gutter="[16, 16]">
+    <a-row :gutter="[16, 16]" class="mb-16">
       <a-col :span="12" class="d-flex justify-center">
         <a-card hoverable class="button-card ">
           <!-- {{ time }} -->
-          {{ excursion }}
+          статы
         </a-card>
       </a-col>
       <a-col :span="12" class="d-flex justify-center">
         <a-card hoverable class="button-card d-flex justify-center align-center"
-          style="border-color: #ff6600;  cursor: pointer;" @click="openAddDialog">
+          style="border-color: #ff6600;  cursor: pointer;" @click="openAddDialog(time)">
           Записать на <br> экскурсию
         </a-card>
       </a-col>

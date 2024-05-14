@@ -1,5 +1,5 @@
 <script setup>
-import { ref, toRefs, watch, onMounted } from "vue"
+import { ref, toRefs, watch, onMounted, reactive } from "vue"
 import _ from "lodash"
 import datePlugin from '../../plugins/dates'
 import { useExcursion } from "../../stores/excursion";
@@ -14,6 +14,11 @@ let props = defineProps({
   excursion: Object,
 })
 const emit = defineEmits(['close'])
+
+let fullinfo = reactive({
+  fullname: "",
+  phone: ""
+})
 
 let open = ref(false)
 
@@ -40,7 +45,7 @@ async function buy() {
   // pricesForm.value
   for (let p of pricesForm.value) {
 
-    if (p.count > 0) {     
+    if (p.count > 0) {
       toSend.push({
         type: p.type,
         price: p.price,
@@ -48,14 +53,14 @@ async function buy() {
       })
     }
   }
-console.log(toSend)
-  let res = await excursionStore.buy(selectedDate.value.time._id, toSend)
+  let res = await excursionStore.buyFromCabinet(selectedDate.value.time._id, toSend, fullinfo)
   if (res.status == 200) {
     message.config({ duration: 0.5, top: "70vh" });
     message.success({
       content: "Успешно!",
       onClose: () => {
-        router.push('/excursions')
+        open.value = false
+        emit('close')
       },
     });
   } else {
@@ -106,6 +111,16 @@ onMounted(() => {
 </script>
 <template>
   <a-modal v-model:open="open" @cancel="emit('close')" :footer="null">
+    <div class="mt-16 mb-16">
+      <div>
+        ФИО
+        <a-input v-model:value="fullinfo.fullname" style="border-radius: 12px;"></a-input>
+      </div>
+      <div>
+        Телефон
+        <a-input v-model:value="fullinfo.phone" style="border-radius: 12px;"></a-input>
+      </div>
+    </div>
     <div class="date">
       <div class="d-flex">
         <div class="large-date">
