@@ -29,6 +29,11 @@ async function addTransportName() {
     }
 }
 
+async function deleteBus(_id) {
+    let res = await useBus().deleteBus(_id)
+    buses.value = await useBus().get()
+}
+
 onMounted(async () => {
     if (!appStateStore.appState) {
         await appStateStore.refreshState();
@@ -87,11 +92,12 @@ onMounted(async () => {
                 <a-col :span="24">
                     <a-row :gutter=[4,4]>
                         <a-col :span="4" v-for="bus in buses">
-                            <Bus :bus="bus" preview />
+                            <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="() => deleteBus(bus._id)">
+                                <Bus :bus="bus" preview />
+                            </a-popconfirm>                            
                         </a-col>
                     </a-row>
                 </a-col>
-              
             </a-row>
         </a-col>
     </a-row>

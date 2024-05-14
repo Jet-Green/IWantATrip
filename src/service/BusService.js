@@ -9,5 +9,8 @@ export default {
     },
     createBus(bus) {
         return $api.post('/bus/create', bus)
+    },
+    deleteBus(_id) {
+        return $api.delete('/bus/delete', { params: { _id } })
     }
 }
