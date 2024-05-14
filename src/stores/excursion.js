@@ -89,7 +89,9 @@ export const useExcursion = defineStore('excursion', {
         },
         async buyFromCabinet(timeId, toSend, fullinfo) {
             return await ExcursionService.buyFromCabinet(timeId, toSend, fullinfo)
-        }
-
+        },
+        async bookFromCabinet(bookingCount, timeId, excursionId, fullinfo) {
+            return await ExcursionService.bookFromCabinet({ count: bookingCount, time: timeId, excursion: excursionId, userInfo: fullinfo })
+        },
     }
 })

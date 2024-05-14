@@ -58,6 +58,9 @@ export default {
     buyFromCabinet(timeId, toSend, fullinfo) {
         return $api.post('/excursion/buy-from-cabinet', { timeId, fullinfo, bill: toSend })
     },
+    bookFromCabinet(body) {
+        return $api.post('/excursion/book-from-cabinet', body)
+    },
     book(body) {
         return $api.post('/excursion/book', body)
     },

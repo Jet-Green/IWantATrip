@@ -3,11 +3,9 @@ import { ref, toRefs, watch, onMounted, reactive } from "vue"
 import _ from "lodash"
 import datePlugin from '../../plugins/dates'
 import { useExcursion } from "../../stores/excursion";
-import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
 
 const excursionStore = useExcursion()
-const router = useRouter()
 
 let props = defineProps({
   selectedDate: Object,
@@ -76,13 +74,14 @@ async function buy() {
 let bookingCount = ref()
 async function book() {
   if (bookingCount.value > 0) {
-    let response = await excursionStore.book(bookingCount.value, selectedDate.value.time._id, props.excursion._id)
+    let response = await excursionStore.bookFromCabinet(bookingCount.value, selectedDate.value.time._id, props.excursion._id, fullinfo)
     if (response.status == 200) {
       message.config({ duration: 0.5, top: "70vh" });
       message.success({
         content: "Успешно!",
         onClose: () => {
-          router.push('/cabinet/me')
+          open.value = false
+          emit('close')
         },
       });
     } else {
@@ -99,12 +98,14 @@ async function book() {
 
 onMounted(() => {
   let result = []
-  for (let p of props.excursion.prices) {
-    result.push({
-      count: 0,
-      price: p.price,
-      type: p.type,
-    })
+  if (props.excursion.prices) {
+    for (let p of props.excursion.prices) {
+      result.push({
+        count: 0,
+        price: p.price,
+        type: p.type,
+      })
+    }
   }
   pricesForm.value = result
 })
