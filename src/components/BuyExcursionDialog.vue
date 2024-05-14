@@ -43,6 +43,7 @@ watch(selectedDate, (newValue) => {
 })
 let pricesForm = ref([])
 async function buy() {
+  
   if (!userStore.user.fullinfo?.fullname) {
     await userStore.updateFullinfo(userStore.user._id, fullinfo)
   }
@@ -57,6 +58,8 @@ async function buy() {
         price: p.price,
         count: p.count
       })
+    } else {
+      return
     }
   }
 

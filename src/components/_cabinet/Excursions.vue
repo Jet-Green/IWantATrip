@@ -15,19 +15,19 @@ const excursionStore = useExcursion()
 let excursions = ref([])
 let query = ref('')
 let filteredExcursion = computed(() => {
-if (query.value.length > 2) {
+  if (query.value.length > 2) {
     localStorage.setItem("excursionQuery", query.value);
     return excursions.value.filter((excursion) => excursion.name.toLowerCase().includes(query.value.toLowerCase())
-        || excursion.description.toLowerCase().includes(query.value.toLowerCase())
-        || excursion.excursionType.type.toLowerCase().includes(query.value.toLowerCase())
-        || excursion.excursionType.directionType.toLowerCase().includes(query.value.toLowerCase())
-        || excursion.excursionType.directionPlace.toLowerCase().includes(query.value.toLowerCase())
-    
+      || excursion.description.toLowerCase().includes(query.value.toLowerCase())
+      || excursion.excursionType.type.toLowerCase().includes(query.value.toLowerCase())
+      || excursion.excursionType.directionType.toLowerCase().includes(query.value.toLowerCase())
+      || excursion.excursionType.directionPlace.toLowerCase().includes(query.value.toLowerCase())
+
     )
-} else {
+  } else {
     localStorage.setItem("excursionQuery", '');
     return excursions.value
-}
+  }
 
 })
 
@@ -45,8 +45,17 @@ onMounted(async () => {
 </script>
 <template>
   <div>
-    <div style="display: flex; justify-content:flex-end">
-      <a-input v-model:value="query" placeholder="поиск" style="width:180px" />
+
+    <div style="display: flex; justify-content:space-between">
+      <div>
+        <a-button class="btn_light ma-8" @click="router.push('/create-excursion')">
+          создать экскурсию
+        </a-button>
+      </div>
+      <div>
+        <a-input v-model:value="query" placeholder="поиск" style="width:180px" />
+      </div>
+      
     </div>
     <a-row :gutter="[8, 8]">
       <a-col v-for="excursion in filteredExcursion" :span="24" :sm="12" :lg="8">
