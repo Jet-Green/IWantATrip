@@ -55,6 +55,9 @@ async function hideTrip(_id) {
 </template>
 
 <style scoped lang="scss">
+.card{
+    height: 100%;
+}
 .actions {
     font-size: 20px;
     position: relative;

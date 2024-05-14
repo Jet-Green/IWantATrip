@@ -386,7 +386,7 @@ async function updateBus() {
     transports = _.sortBy(transports, [o => o.capacity])
     let transport = transports[0]
 
-    let bus_id = transport.transportType.bus_id
+    let bus_id = transport?.transportType.bus_id
     if (!bus_id) return show_old_bus.value = true
     show_old_bus.value = false
 
