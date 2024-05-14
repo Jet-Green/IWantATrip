@@ -1,12 +1,14 @@
 <script setup>
-import { ref, toRefs, watch, onMounted } from "vue"
+import { ref, toRefs, watch, onMounted, reactive } from "vue"
 import _ from "lodash"
 import datePlugin from '../plugins/dates'
 import { useExcursion } from "../stores/excursion";
+import { useAuth } from "../stores/auth";
 import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
 
 const excursionStore = useExcursion()
+const userStore = useAuth()
 const router = useRouter()
 
 let props = defineProps({
@@ -14,6 +16,11 @@ let props = defineProps({
   excursion: Object,
 })
 const emit = defineEmits(['close'])
+
+let fullinfo = reactive({
+  fullname: "",
+  phone: ""
+})
 
 let open = ref(false)
 
@@ -36,11 +43,15 @@ watch(selectedDate, (newValue) => {
 })
 let pricesForm = ref([])
 async function buy() {
+  if (!userStore.user.fullinfo?.fullname) {
+    await userStore.updateFullinfo(userStore.user._id, fullinfo)
+  }
+  
   let toSend = []
   // pricesForm.value
   for (let p of pricesForm.value) {
 
-    if (p.count > 0) {     
+    if (p.count > 0) {
       toSend.push({
         type: p.type,
         price: p.price,
@@ -48,7 +59,7 @@ async function buy() {
       })
     }
   }
-console.log(toSend)
+
   let res = await excursionStore.buy(selectedDate.value.time._id, toSend)
   if (res.status == 200) {
     message.config({ duration: 0.5, top: "70vh" });
@@ -71,6 +82,10 @@ console.log(toSend)
 let bookingCount = ref()
 async function book() {
   if (bookingCount.value > 0) {
+    if (!userStore.user.fullinfo?.fullname) {
+      await userStore.updateFullinfo(userStore.user._id, fullinfo)
+    }
+
     let response = await excursionStore.book(bookingCount.value, selectedDate.value.time._id, props.excursion._id)
     if (response.status == 200) {
       message.config({ duration: 0.5, top: "70vh" });
@@ -106,6 +121,16 @@ onMounted(() => {
 </script>
 <template>
   <a-modal v-model:open="open" @cancel="emit('close')" :footer="null">
+    <div v-if="!userStore.user.fullinfo?.fullname" class="mt-16 mb-16">
+      <div>
+        ФИО
+        <a-input v-model:value="fullinfo.fullname" style="border-radius: 12px;"></a-input>
+      </div>
+      <div>
+        Телефон
+        <a-input v-model:value="fullinfo.phone" style="border-radius: 12px;"></a-input>
+      </div>
+    </div>
     <div class="date">
       <div class="d-flex">
         <div class="large-date">

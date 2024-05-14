@@ -207,6 +207,14 @@ export const useAuth = defineStore('auth', {
             } catch (error) {
                 console.log(error);
             }
+        },
+        async updateFullinfo(userId, fullinfo) {
+            try {
+                let res = await UserService.updateFullinfo(userId, fullinfo)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
         }
     },
 })
