@@ -26,7 +26,7 @@ function getImg(index) {
 function openBuyDialog(time) {
   if (selectedDate.value._id) return
   for (let date of excursion.value.dates) {
-    for(let t of date.times) {
+    for (let t of date.times) {
       if (t._id == time._id) {
         selectedDate.value = {
           date: date.date,
@@ -99,10 +99,13 @@ onMounted(async () => {
 
             <div class="d-flex">
               Цены:&nbsp
-              <div>
+              <div v-if="excursion.prices?.lenght">
                 <div v-for="(item, index) in excursion.prices" :key="index">
                   {{ item.type }} - <b>{{ item.price }} руб</b>
                 </div>
+              </div>
+              <div v-else>
+                <b>бесплатно</b>
               </div>
             </div>
             <div>
@@ -115,11 +118,11 @@ onMounted(async () => {
               Заявка за: <b>{{ excursion.deadline }} дн.</b>
             </div>
             <div>
-              ОВЗ доступность:  <b> 
+              ОВЗ доступность: <b>
                 <span v-if="excursion.availability"> доступно</span>
-                <span v-else >не доступно</span>
-             
-              </b>  
+                <span v-else>не доступно</span>
+
+              </b>
             </div>
           </a-col>
         </a-row>
@@ -136,8 +139,8 @@ onMounted(async () => {
         </a-row>
         <a-row>
           <a-col :span="24" class="mb-32">
-           <div  class="text"> {{ excursion.description }}</div>
-            
+            <div class="text"> {{ excursion.description }}</div>
+
           </a-col>
         </a-row>
       </a-col>

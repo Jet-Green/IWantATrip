@@ -28,7 +28,8 @@ function openAddDialog(time) {
     }
   }
 }
-function closeAddDialog() {
+async function closeAddDialog() {
+  await updateExcursion()
   selectedDate.value = {}
 }
 

@@ -92,7 +92,7 @@ async function book() {
       message.success({
         content: "Успешно!",
         onClose: () => {
-          router.push('/cabinet/me')
+          router.push('/excursions')
         },
       });
     } else {
