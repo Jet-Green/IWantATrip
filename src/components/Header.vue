@@ -174,15 +174,15 @@ onMounted(() => {
         <div @click="toComponentFromMenu('Me')" class="route ma-8" style="text-align:center; font-weight: bold; ">
           <div>
             <span ref='auth' v-if="userStore.isAuth" class="mdi mdi-24px mdi-home" @click="toComponentFromMenu('Me')"
-            style="cursor: pointer" cancelText="отмена">
-          </span>
+              style="cursor: pointer" cancelText="отмена">
+            </span>
 
-          <span ref='auth' v-if="!userStore.isAuth" class="mdi mdi-24px mdi-login "
-            @click="toComponentFromMenu('RegForm')" style="cursor: pointer">
-          </span>
+            <span ref='auth' v-if="!userStore.isAuth" class="mdi mdi-24px mdi-login "
+              @click="toComponentFromMenu('RegForm')" style="cursor: pointer">
+            </span>
           </div>
           <div class="mr-4">кабинет</div>
-         
+
         </div>
         <div style="width: 50%;">
           <a-divider class="ma-0"></a-divider>
@@ -257,6 +257,7 @@ onMounted(() => {
     justify-content: space-around;
     font-size: clamp(0.625rem, -2.625rem + 4vw, 0.875rem);
     position: relative;
+
   }
 
 }
@@ -270,6 +271,16 @@ onMounted(() => {
 .route {
   cursor: pointer;
   text-transform: uppercase;
+
+
+
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+    color: #ff6600;
+  }
+
 }
 
 // .social {
@@ -284,10 +295,10 @@ onMounted(() => {
 }
 
 .guide {
- 
+
   text-align: center;
   background-color: rgb(235, 234, 234);
-width: 100%;
+  width: 100%;
 
 }
 </style>

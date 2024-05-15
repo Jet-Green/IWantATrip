@@ -1,9 +1,10 @@
 <script setup>
 import { computed } from 'vue'
+import _ from "lodash"
 const props = defineProps({
   excursion: Object
 })
-import _ from "lodash"
+
 const excursion = props.excursion
 
 let getPrice = computed(() => {

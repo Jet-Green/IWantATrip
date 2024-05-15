@@ -61,6 +61,7 @@ onMounted(async () => {
       <a-col v-for="excursion in filteredExcursion" :span="24" :sm="12" :lg="8">
         <ExcursionCard :excursion="excursion" @updateExcursion="updateExcursion" />
       </a-col>
+     
     </a-row>
   </div>
 </template>

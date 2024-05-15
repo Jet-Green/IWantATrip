@@ -115,11 +115,11 @@ onMounted(() => {
     <div class="mt-16 mb-16">
       <div>
         ФИО
-        <a-input v-model:value="fullinfo.fullname" style="border-radius: 12px;"></a-input>
+        <a-input v-model:value="fullinfo.fullname"></a-input>
       </div>
       <div>
         Телефон
-        <a-input v-model:value="fullinfo.phone" style="border-radius: 12px;"></a-input>
+        <a-input v-model:value="fullinfo.phone"></a-input>
       </div>
     </div>
     <div class="date">
@@ -141,8 +141,8 @@ onMounted(() => {
         {{ prettyTime }}
       </div>
       <div class="d-flex align-center" style="justify-content: end;" v-if="pricesForm.length == 0">
-        <a-input-number v-model:value="bookingCount" :min="0" :max="excursion.maxPeople" style="border-radius: 12px;"
-          :controls="false" class="ml-8 mr-8">
+        <a-input-number v-model:value="bookingCount" :min="0" :max="excursion.maxPeople" :controls="false"
+          class="ml-8 mr-8">
         </a-input-number> чел.
       </div>
     </div>
@@ -150,8 +150,9 @@ onMounted(() => {
       <div class="price-container">
         <div class="price">{{ price.type }} x <span style="color: #ff6600;">{{ price.price }}₽</span></div>
         <div>
-          <a-input-number v-model:value="price.count" :min="0" :max="excursion.maxPeople" style="border-radius: 12px;"
-            :controls="false">
+          <a-input-number v-model:value="price.count" :min="0"
+           
+            :max="excursion.maxPeople" :controls="false">
           </a-input-number>
         </div>
       </div>

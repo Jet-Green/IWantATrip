@@ -2,11 +2,12 @@
 import { useRouter } from "vue-router";
 import BackButton from "../BackButton.vue";
 // let loc_name = JSON.parse(localStorage.getItem("location")).name
+const backRoute = { name: 'Landing', hash: '#guide' };
 let src = `https://plpo.ru/frame`
 </script>
 <template>
   <div>
-    <BackButton />
+    <BackButton :backRoute="backRoute" />
     <a-row class="d-flex justify-center">
       <a-col :xs="22" :lg="16">
         <h2>
