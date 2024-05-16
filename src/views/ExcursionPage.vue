@@ -99,7 +99,7 @@ onMounted(async () => {
 
             <div class="d-flex">
               Цены:&nbsp
-              <div v-if="excursion.prices?.lenght">
+              <div v-if="excursion.prices">
                 <div v-for="(item, index) in excursion.prices" :key="index">
                   {{ item.type }} - <b>{{ item.price }} руб</b>
                 </div>
