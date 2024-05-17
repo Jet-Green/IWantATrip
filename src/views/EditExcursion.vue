@@ -130,8 +130,7 @@ let getExcursionPlace = computed(() => {
 
 })
 async function submit() {
-  form.author = user_id
-  let excursionCb = await excursionStore.create(form)
+  let excursionCb = await excursionStore.edit(form)
   const _id = excursionCb.data._id
   let imagesFormData = new FormData();
   for (let i = 0; i < images.length; i++) {

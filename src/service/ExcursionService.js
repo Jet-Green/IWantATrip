@@ -4,6 +4,9 @@ export default {
     create(body) {
         return $api.post('/excursion/create', body)
     },
+    edit(excursion) {
+        return $api.post('/excursion/edit', { excursion })
+    },
     getUserExcursions(userId) {
         return $api.get(`/excursion/get-excursions?user_id=${userId}`)
     },
