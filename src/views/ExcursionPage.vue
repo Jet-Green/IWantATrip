@@ -90,12 +90,12 @@ onMounted(async () => {
               Продолжительность: <b>{{ excursion.duration }}</b>
             </div>
 
-            <div class="d-flex">
+            <!-- <div class="d-flex">
               Гиды: &nbsp
               <div v-for="guide in excursion.guides">
                 <b>{{ guide.name }} </b>
               </div>
-            </div>
+            </div> -->
 
             <div class="d-flex">
               Цены:&nbsp
