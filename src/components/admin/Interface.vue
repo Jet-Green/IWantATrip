@@ -61,7 +61,7 @@ onMounted(async () => {
             </a-row>
         </a-col>
     </a-row>
-    <a-row>
+    <!-- <a-row>
         <a-col :span="24">
             <a-row>
                 <a-col :span="24">
@@ -79,7 +79,7 @@ onMounted(async () => {
                 </a-col>
             </a-row>
         </a-col>
-    </a-row>
+    </a-row> -->
     <a-row>
         <a-col :span="24">
             <a-row>

@@ -65,6 +65,7 @@ onMounted(async () => {
         <a-col class="d-flex" :xs="6" :md="4">
           <div class="large-date">
             {{ getDate(date.date).day }}
+          
           </div>
           <div class="column">
             <div class="month">{{ getDate(date.date).month }}</div>
@@ -73,7 +74,7 @@ onMounted(async () => {
         </a-col>
         <a-col :xs="18" :md="20" class="d-flex" style="gap: 10px 20px; flex-wrap: wrap;">
           <a-col v-for="time in date.times" class="time-container">
-            <div class="time-card" @click="router.push(`/cabinet/excursion-customers?excursion_id=${excursion._id}&time_id=${time._id}`)">
+            <div class="time-card" @click="router.push(`/cabinet/excursion-customers?excursion_id=${excursion._id}&time_id=${time._id}&date=${getDate(date.date).day+'_'+getDate(date.date).month+'_'+getDate(date.date).weekday}`)">
               <div class="row">
                 <span class="mdi mdi-clock-outline mr-4 icon"></span>
                 <b>

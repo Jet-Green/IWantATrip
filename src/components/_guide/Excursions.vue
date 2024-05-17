@@ -8,10 +8,11 @@ import { useRouter } from 'vue-router';
 import { useExcursion } from "../../stores/excursion";
 import { useLocations } from "../../stores/locations";
 
+const backRoute = { name: 'Landing', hash: '#guide' };
 const router = useRouter()
 const excursionStore = useExcursion()
 
-
+let locationStore = useLocations()
 let excursions = ref([])
 
 async function updateExcursion() {
@@ -24,19 +25,30 @@ watch(() => useLocations().location._id, async () => {
 })
 
 onMounted(async () => {
+
+  if (localStorage.getItem("location")) {
+    const locationData = localStorage.getItem("location");
+    try {
+      locationStore.location = JSON.parse(locationData);
+    } catch (error) {
+      console.log("Ошибка при парсинге 'location':", locationData);  
+      console.log(error);
+    }
+  }
   await updateExcursion()
 })
 </script>
 <template>
   <div>
-    <BackButton />
+    <BackButton :backRoute="backRoute" />
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
-        <h3>Экскурсии</h3>
+        <h2>Экскурсии</h2>
         <a-row :gutter="[12, 16]">
-          <a-col :span="24" :sm="12" :md="8" v-for="ex of excursions">
+          <a-col :span="24" :sm="12" :md="8" v-for="(ex, index) of excursions" :key="ex._id">
             <ExcursionCard :excursion="ex" @click="router.push(`/excursion?_id=${ex._id}`)" />
           </a-col>
+
         </a-row>
       </a-col>
     </a-row>

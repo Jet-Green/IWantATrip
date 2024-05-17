@@ -8,7 +8,7 @@ const emit = defineEmits(['change-dates'])
 const props = defineProps(['clearDateForm'])
 
 let { clearDateForm } = toRefs(props)
-let activeKey = ref()
+let activeKey = ref(0)
 
 let dates = ref([])
 // нужно валидировать так, чтобы не было null в times
@@ -47,8 +47,8 @@ watch([dates, times], () => {
 <template>
   <a-row>
    
-    <a-col :span="24">
-      <VueDatePicker v-model="dates" multi-dates locale="ru-Ru" calendar-class-name="dp-custom-calendar"
+    <a-col :span="24" :md="12" >
+      <VueDatePicker v-model="dates" multi-dates locale="ru-Ru" calendar-class-name="dp-custom-calendar" placeholder="выберите дату"
         calendar-cell-class-name="dp-custom-cell" cancel-text="отмена" select-text="выбрать" :min-date="new Date()"
         :enable-time-picker="false" format="dd/MM/yyyy">
         <template #input-icon>

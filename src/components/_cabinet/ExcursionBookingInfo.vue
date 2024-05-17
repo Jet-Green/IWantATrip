@@ -46,7 +46,7 @@ onMounted(() => {
     <a-breadcrumb-item @click="router.push('/cabinet/excursions')" style="cursor: pointer;">
       К экскурсиям
     </a-breadcrumb-item>
-    <a-breadcrumb-item style="cursor: pointer;">даты, время, покупатели</a-breadcrumb-item>
+    <a-breadcrumb-item style="cursor: pointer;">даты, время, заказчики</a-breadcrumb-item>
   </a-breadcrumb>
 
   <h3 class="mt-8 mb-8">Информация о <span style="color: #ff6600;">{{ excursion.name }}</span></h3>
@@ -64,7 +64,7 @@ onMounted(() => {
         </a-col>
         <a-col :xs="18" :md="20" class="d-flex" style="gap: 10px 20px; flex-wrap: wrap;">
           <a-col v-for="time in date.times" class="time-container">
-            <div class="time-card" @click="router.push(`/cabinet/excursion-bookings?excursion_id=${excursion._id}&time_id=${time._id}&time=${getTime(time)}`)">
+            <div class="time-card" @click="router.push(`/cabinet/excursion-bookings?excursion_id=${excursion._id}&time_id=${time._id}&date=${getDate(date.date).day+'_'+getDate(date.date).month+'_'+getDate(date.date).weekday}`)">
               <div class="row">
                 <span class="mdi mdi-clock-outline mr-4 icon"></span>
                 <b>
