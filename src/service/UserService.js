@@ -44,7 +44,9 @@ export default {
     determineWinner() {
         return $api.get('/auth/determine-winner')
     },
- 
+    updateFullinfo(userId, fullinfo) {
+        return $api.put('/auth/fullinfo', { userId, fullinfo })
+    },
     setTripCalculator(body) {
         return $api.put('/auth/set-trip-calculator', body)
     }

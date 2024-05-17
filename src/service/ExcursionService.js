@@ -24,7 +24,7 @@ export default {
     deleteExcursionBill(_id) {
         return $api.get(`/excursion/delete-bill?_id=${_id}`)
     },
-    
+
     getExcursionBookingsById(_id) {
         return $api.get(`/excursion/with-bookings?_id=${_id}`)
     },
@@ -52,6 +52,12 @@ export default {
     },
     buy(timeId, userId, toSend) {
         return $api.post('/excursion/buy', { timeId, userId, bill: toSend })
+    },
+    buyFromCabinet(timeId, toSend, fullinfo) {
+        return $api.post('/excursion/buy-from-cabinet', { timeId, fullinfo, bill: toSend })
+    },
+    bookFromCabinet(body) {
+        return $api.post('/excursion/book-from-cabinet', body)
     },
     book(body) {
         return $api.post('/excursion/book', body)
