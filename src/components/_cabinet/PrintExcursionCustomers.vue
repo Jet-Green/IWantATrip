@@ -9,11 +9,6 @@ let props = defineProps({
     date: String
 })
 
-onMounted(() => {
-    console.log( props.date );
-
-
-})
 </script>
 <template>
     <h2 style="text-align:center">{{ excursion.name }}</h2>
