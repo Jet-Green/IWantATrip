@@ -1,10 +1,13 @@
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useExcursion } from '../../stores/excursion.js';
 import { useAppState } from "../../stores/appState";
+import excursionTypes from '../../db/excursionTypes.js'
 
 import dayjs from "dayjs";
+import objectSupport from 'dayjs/plugin/objectSupport'
+dayjs.extend(objectSupport);
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import 'dayjs/locale/ru';
 dayjs.locale('ru');
@@ -42,6 +45,17 @@ watch(time, (newTime) => {
   }
 });
 
+function getDate(dateObj) {
+  const dayjsDate = dayjs({ years: dateObj.year, months: dateObj.month, date: dateObj.day })
+  if (!dayjsDate.$d) return ''
+  let russianDate = (new Date(dayjsDate.$d)).toLocaleDateString('ru-RU', {
+    month: 'long',
+    day: 'numeric',
+    weekday: 'long',
+  }).replaceAll(',', '').split(' ')
+
+  return { weekday: russianDate[0], day: russianDate[1], month: russianDate[2] }
+}
 
 function find() {
   query.value = query.value.trim()
@@ -71,8 +85,8 @@ function find() {
 
     end = Number(Date.parse(end.toString()));
     excursionStore.excursionFilter.query = query.value
-    excursionStore.excursionFilter.start = start
-    excursionStore.excursionFilter.end = end
+    excursionStore.excursionFilter.start = getDate(start)
+    excursionStore.excursionFilter.end = getDate(end)
     excursionStore.excursionFilter.type = type.value
     excursionStore.getAll();
   } else {
@@ -137,9 +151,8 @@ onMounted(() => {
           <div style="font-size:10px; line-height:10px">вид тура</div>
           <a-select v-model:value="type">
             <a-select-option value=""></a-select-option>
-            <a-select-option placeholder="Tип тура" v-for="tripType in appStore.appState[0]?.tripType"
-              :value="tripType">
-              {{ tripType }}
+            <a-select-option placeholder="Tип тура" v-for="excursionType in excursionTypes" :value="excursionType.type">
+              {{ excursionType.type }}
             </a-select-option>
           </a-select>
         </a-col>

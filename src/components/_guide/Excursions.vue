@@ -2,8 +2,8 @@
 import BackButton from "../BackButton.vue";
 import ExcursionCard from "./ExcursionCard.vue";
 import ExcursionFilter from '../sections/ExcursionFilter.vue'
-
 import { onMounted, ref, toRefs, watch } from "vue"
+
 
 import { useRouter } from 'vue-router';
 import { useRoute } from 'vue-router';
@@ -15,26 +15,16 @@ const router = useRouter()
 const route = useRoute();
 const excursionStore = useExcursion()
 
-
-let excursions = ref([])
-
-async function updateExcursion() {
-  let response = await excursionStore.getAll()
-  // excursions.value = response.data
-  excursions.value = excursionStore.excursion
-}
-
 watch(() => useLocations().location._id, async () => {
-  await updateExcursion()
-})
-
-watch(excursionStore.excursionFilter, async () => {
-  await updateExcursion()
+  excursionStore.getAll()
 })
 
 onMounted(async () => {
-  await updateExcursion()
-})
+if (excursionStore.excursion.length == 0) {
+  await excursionStore.getAll()
+}
+});
+
 </script>
 <template>
   <div>
@@ -44,7 +34,7 @@ onMounted(async () => {
         <h3>Экскурсии</h3>
         <ExcursionFilter :search="route.query.search"/>
         <a-row :gutter="[12, 16]">
-          <a-col :span="24" :sm="12" :md="8" v-for="ex of excursions">
+          <a-col :span="24" :sm="12" :md="8" v-for="ex of excursionStore.excursion">
             <ExcursionCard :excursion="ex" @click="router.push(`/excursion?_id=${ex._id}`)" />
           </a-col>
         

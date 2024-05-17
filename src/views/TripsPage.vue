@@ -9,7 +9,6 @@ import { useRoute } from "vue-router";
 const tripStore = useTrips();
 
 const route = useRoute();
-
 </script>
 <template>
   <div>

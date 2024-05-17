@@ -37,22 +37,18 @@ export const useExcursion = defineStore('excursion', {
             const userStore = useAuth()
             return await ExcursionService.createDates(dates, _id, userStore.user._id)
         },
-        async getAll() {
-            // try {
-            //     if (!this.isFetching) {
-            //         this.isFetching = true
-            //         let response;
-            //         response = await ExcursionService.getAll(useLocations().location._id,this.excursionFilter.query)
-            //         this.isFetching = false
-            //         this.excursion.push(...response.data);
-            //         this.excursion = _.uniqBy(this.excursion, '_id')
-            //         this.cursor++
-            //         return response
-            //     }
-            // } catch (err) {
-            //     console.log(err);
-            // }
-            return await ExcursionService.getAll(useLocations().location._id,this.excursionFilter.query)
+        async getAll(requestTime) {
+            try {
+                let response;
+                response = await ExcursionService.getAll(useLocations().location._id,this.excursionFilter.query,this.excursionFilter.start, this.excursionFilter.end, requestTime, this.excursionFilter.type)
+                this.excursion.push(...response.data);
+                this.excursion = _.uniqBy(this.excursion, '_id')
+                // this.cursor++
+                
+            } catch (err) {
+                console.log(err);
+            }
+            // return await ExcursionService.getAll(useLocations().location._id,this.excursionFilter.query)
         },
         async getExcursionById(_id) {
             return await ExcursionService.getExcursionById(_id)
