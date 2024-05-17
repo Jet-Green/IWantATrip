@@ -166,20 +166,23 @@ onMounted(() => {
 
     <a-drawer placement="right" :closable="false" :open="visibleDrawer" @close="visibleDrawer = !visibleDrawer"
       :width="drawerWidth">
-      <div style="text-align: right;">
+      <div style="text-align: right; ">
         <span class="mdi mdi-24px mdi-close" style="color: #245159; cursor: pointer"
           @click="visibleDrawer = !visibleDrawer"></span>
       </div>
       <div class="right-drawer">
-        <div @click="toComponentFromMenu('Me')" class="route ma-8">
-          <span class="mr-4">кабинет</span>
-          <span ref='auth' v-if="userStore.isAuth" class="mdi mdi-24px mdi-home" @click="toComponentFromMenu('Me')"
-            style="cursor: pointer" cancelText="отмена">
-          </span>
+        <div @click="toComponentFromMenu('Me')" class="route ma-8" style="text-align:center; font-weight: bold; ">
+          <div>
+            <span ref='auth' v-if="userStore.isAuth" class="mdi mdi-24px mdi-home" @click="toComponentFromMenu('Me')"
+              style="cursor: pointer" cancelText="отмена">
+            </span>
 
-          <span ref='auth' v-if="!userStore.isAuth" class="mdi mdi-24px mdi-login "
-            @click="toComponentFromMenu('RegForm')" style="cursor: pointer">
-          </span>
+            <span ref='auth' v-if="!userStore.isAuth" class="mdi mdi-24px mdi-login "
+              @click="toComponentFromMenu('RegForm')" style="cursor: pointer">
+            </span>
+          </div>
+          <div class="mr-4">кабинет</div>
+
         </div>
         <div style="width: 50%;">
           <a-divider class="ma-0"></a-divider>
@@ -202,22 +205,25 @@ onMounted(() => {
         <div style="width: 50%;">
           <a-divider class="ma-0"></a-divider>
         </div>
-        <h4 style="text-transform: uppercase;">Гид по городу <span>
-            {{ locationSearchRequest ? locationSearchRequest : "Ваш город" }}
-          </span></h4>
+        <div class="guide">
+          <!-- <h4 class="rotated-text">Гид по городу <br> <span>
+              {{ locationSearchRequest ? locationSearchRequest : "Ваш город" }}
+            </span></h4> -->
 
-        <div @click="toComponentFromMenu('ExcursionsPage')" class="route ma-8">
-          экскурсии
+          <div @click="toComponentFromMenu('ExcursionsPage')" class="route ma-8">
+            экскурсии
+          </div>
+          <div @click="toComponentFromMenu('Poster')" class="route ma-8">
+            афиши
+          </div>
+          <div @click="toComponentFromMenu('Transport')" class="route ma-8">
+            транспорт
+          </div>
+          <div @click="toComponentFromMenu('ToStay')" class="route ma-8">
+            гостиницы
+          </div>
         </div>
-        <div @click="toComponentFromMenu('Poster')" class="route ma-8">
-          афиши
-        </div>
-        <div @click="toComponentFromMenu('Transport')" class="route ma-8">
-          транспорт
-        </div>
-        <div @click="toComponentFromMenu('ToStay')" class="route ma-8">
-          гостиницы
-        </div>
+
         <div style="width: 50%;">
           <a-divider class="ma-0"></a-divider>
         </div>
@@ -251,6 +257,7 @@ onMounted(() => {
     justify-content: space-around;
     font-size: clamp(0.625rem, -2.625rem + 4vw, 0.875rem);
     position: relative;
+
   }
 
 }
@@ -264,6 +271,16 @@ onMounted(() => {
 .route {
   cursor: pointer;
   text-transform: uppercase;
+
+
+
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+    color: #ff6600;
+  }
+
 }
 
 // .social {
@@ -274,6 +291,14 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-weight: bold;
+  font-weight: 600;
+}
+
+.guide {
+
+  text-align: center;
+  background-color: rgb(235, 234, 234);
+  width: 100%;
+
 }
 </style>

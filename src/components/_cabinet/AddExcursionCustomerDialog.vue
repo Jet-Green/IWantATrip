@@ -1,15 +1,11 @@
 <script setup>
 import { ref, toRefs, watch, onMounted, reactive } from "vue"
 import _ from "lodash"
-import datePlugin from '../plugins/dates'
-import { useExcursion } from "../stores/excursion";
-import { useAuth } from "../stores/auth";
-import { useRouter } from "vue-router";
+import datePlugin from '../../plugins/dates'
+import { useExcursion } from "../../stores/excursion";
 import { message } from "ant-design-vue";
 
 const excursionStore = useExcursion()
-const userStore = useAuth()
-const router = useRouter()
 
 let props = defineProps({
   selectedDate: Object,
@@ -28,8 +24,6 @@ let { selectedDate } = toRefs(props)
 
 let prettyDate = ref()
 let prettyTime = ref()
-
-
 watch(selectedDate, (newValue) => {
   if (!_.isEmpty(newValue)) {
     open.value = true
@@ -45,11 +39,6 @@ watch(selectedDate, (newValue) => {
 })
 let pricesForm = ref([])
 async function buy() {
-  
-  if (!userStore.user.fullinfo?.fullname) {
-    await userStore.updateFullinfo(userStore.user._id, fullinfo)
-  }
-  
   let toSend = []
   // pricesForm.value
   for (let p of pricesForm.value) {
@@ -60,18 +49,16 @@ async function buy() {
         price: p.price,
         count: p.count
       })
-    } else {
-      return
     }
   }
-
-  let res = await excursionStore.buy(selectedDate.value.time._id, toSend)
+  let res = await excursionStore.buyFromCabinet(selectedDate.value.time._id, toSend, fullinfo)
   if (res.status == 200) {
     message.config({ duration: 0.5, top: "70vh" });
     message.success({
       content: "Успешно!",
       onClose: () => {
-        router.push('/excursions')
+        open.value = false
+        emit('close')
       },
     });
   } else {
@@ -87,17 +74,14 @@ async function buy() {
 let bookingCount = ref()
 async function book() {
   if (bookingCount.value > 0) {
-    if (!userStore.user.fullinfo?.fullname) {
-      await userStore.updateFullinfo(userStore.user._id, fullinfo)
-    }
-
-    let response = await excursionStore.book(bookingCount.value, selectedDate.value.time._id, props.excursion._id)
+    let response = await excursionStore.bookFromCabinet(bookingCount.value, selectedDate.value.time._id, props.excursion._id, fullinfo)
     if (response.status == 200) {
       message.config({ duration: 0.5, top: "70vh" });
       message.success({
         content: "Успешно!",
         onClose: () => {
-          router.push('/excursions')
+          open.value = false
+          emit('close')
         },
       });
     } else {
@@ -114,26 +98,28 @@ async function book() {
 
 onMounted(() => {
   let result = []
-  for (let p of props.excursion.prices) {
-    result.push({
-      count: 0,
-      price: p.price,
-      type: p.type,
-    })
+  if (props.excursion.prices) {
+    for (let p of props.excursion.prices) {
+      result.push({
+        count: 0,
+        price: p.price,
+        type: p.type,
+      })
+    }
   }
   pricesForm.value = result
 })
 </script>
 <template>
   <a-modal v-model:open="open" @cancel="emit('close')" :footer="null">
-    <div v-if="!userStore.user.fullinfo?.fullname" class="mt-16 mb-16">
+    <div class="mt-16 mb-16">
       <div>
         ФИО
-        <a-input v-model:value="fullinfo.fullname" style="border-radius: 12px;"></a-input>
+        <a-input v-model:value="fullinfo.fullname"></a-input>
       </div>
       <div>
         Телефон
-        <a-input v-model:value="fullinfo.phone" style="border-radius: 12px;"></a-input>
+        <a-input v-model:value="fullinfo.phone"></a-input>
       </div>
     </div>
     <div class="date">
@@ -155,9 +141,8 @@ onMounted(() => {
         {{ prettyTime }}
       </div>
       <div class="d-flex align-center" style="justify-content: end;" v-if="pricesForm.length == 0">
-        <a-input-number v-model:value="bookingCount" :min="0" :max="excursion.maxPeople" 
- 
-            :controls="false" class="ml-8 mr-8">
+        <a-input-number v-model:value="bookingCount" :min="0" :max="excursion.maxPeople" :controls="false"
+          class="ml-8 mr-8">
         </a-input-number> чел.
       </div>
     </div>
@@ -165,10 +150,9 @@ onMounted(() => {
       <div class="price-container">
         <div class="price">{{ price.type }} x <span style="color: #ff6600;">{{ price.price }}₽</span></div>
         <div>
-          <a-input-number v-model:value="price.count" :min="0" 
-          :max="excursion.maxPeople" 
-          :controls="false"
-          >
+          <a-input-number v-model:value="price.count" :min="0"
+           
+            :max="excursion.maxPeople" :controls="false">
           </a-input-number>
         </div>
       </div>

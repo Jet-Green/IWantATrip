@@ -1,5 +1,6 @@
 <script setup>
 import ExcursionCustomerCard from './ExcursionCustomerCard.vue';
+import AddExcursionCustomerDialog from './AddExcursionCustomerDialog.vue';
 
 import { onMounted, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
@@ -11,6 +12,26 @@ const excursionStore = useExcursion()
 
 let excursion = ref({})
 let time = ref({})
+let selectedDate = ref({})
+
+function openAddDialog(time) {
+  if (selectedDate.value._id) return
+  for (let date of excursion.value.dates) {
+    for (let t of date.times) {
+      if (t._id == time._id) {
+        selectedDate.value = {
+          date: date.date,
+          time
+        }
+        break
+      }
+    }
+  }
+}
+async function closeAddDialog() {
+  await updateExcursion()
+  selectedDate.value = {}
+}
 
 function getTime(timeObj) {
   let result = timeObj.hours + ':'
@@ -31,7 +52,24 @@ let updateExcursion = async () => {
   }
   loading.value = false
 }
-
+function getBillsSum(bills) {
+  let sum = 0
+  for (let b of bills) {
+    for (let p of b.cart) {
+      sum += p.price * p.count
+    }
+  }
+  return sum
+}
+function getPeopleCount(bills) {
+  let sum = 0
+  for (let b of bills) {
+    for (let p of b.cart) {
+      sum += p.count
+    }
+  }
+  return sum
+}
 onMounted(async () => {
   await updateExcursion()
 })
@@ -51,21 +89,39 @@ onMounted(async () => {
         }}</a-breadcrumb-item>
       <a-breadcrumb-item style="cursor: pointer;">{{ getTime(time) }}</a-breadcrumb-item>
     </a-breadcrumb>
-    <h3 class="mt-8 mb-8"><span style="color: #ff6600;">{{ excursion.name }} {{ getTime(time) }}</span></h3>
-    <a-row :gutter="[16, 16]" v-if="time?.bills?.length > 0">
+    <a-row :gutter="[16, 16]" class="mb-16">
       <a-col :span="12" class="d-flex justify-center">
         <a-card hoverable class="button-card ">
-         {{time}}
+          <div class="row">
+            <span class="mdi mdi-clock-outline mr-4 icon"></span>
+            <b>
+              {{ getTime(time) }}
+            </b>&nbsp;
+            <b>
+              {{ route.query.date.split('_').join(' ') }}
+            </b>
+          </div>
+          <div class="row">
+            <span class="mdi mdi-account-multiple-outline mr-4 icon"></span>
+            <b>{{ getPeopleCount(time.bills) }}</b>&nbsp;чел.
+          </div>
+          <div class="row">
+            <span class="mdi mdi-cash-multiple mr-4 icon"></span>
+            <b>{{ getBillsSum(time.bills) }}₽</b>
+          </div>
         </a-card>
       </a-col>
       <a-col :span="12" class="d-flex justify-center">
         <a-card hoverable class="button-card d-flex justify-center align-center"
-          style="border-color: #ff6600;  cursor: pointer;">
+          style="border-color: #ff6600;  cursor: pointer;" @click="openAddDialog(time)">
           Записать на <br> экскурсию
         </a-card>
       </a-col>
+    </a-row>
+    <h3 class="mt-8 mb-8"><span style="color: #ff6600;">{{ excursion.name }}</span></h3>
+    <a-row :gutter="[16, 16]" v-if="time?.bills?.length > 0" class="mb-16">
       <a-col :span="24" :md="12" :xl="8" v-for="bill of time.bills">
-        <ExcursionCustomerCard :bill="bill"  @updateExcursion="updateExcursion"/>
+        <ExcursionCustomerCard :bill="bill" @updateExcursion="updateExcursion" />
       </a-col>
     </a-row>
     <a-row v-else>
@@ -73,6 +129,7 @@ onMounted(async () => {
         пусто
       </a-col>
     </a-row>
+    <AddExcursionCustomerDialog :selectedDate="selectedDate" :excursion="excursion" @close="closeAddDialog" />
   </div>
 </template>
 <style lang="scss" scoped>

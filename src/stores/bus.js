@@ -17,5 +17,10 @@ export const useBus = defineStore('bus', () => {
         return res
     }
 
-    return { get, getById, createBus }
+    async function deleteBus(_id) {
+        let res = await BusService.deleteBus(_id)
+        return res.status
+    }
+
+    return { get, getById, createBus, deleteBus }
 })

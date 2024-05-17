@@ -512,11 +512,11 @@ onMounted(async () => {
                     </a-select>
                 </a-col>
                 
-                <a-col :span="24" :md="24">
+                <!-- <a-col :span="24" :md="24">
                     <a-button @click="router.push('/create-bus')">
                         Добавить свой
                     </a-button>
-                </a-col>
+                </a-col> -->
                 <!-- <a-col :span="24" :md="12">
                     Цена для ожидающих
                     <a-input-number :min="1" style="width: 100%" v-model:value="addTransportForm.price"></a-input-number>
