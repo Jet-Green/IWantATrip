@@ -4,6 +4,8 @@ import ExcursionService from '../service/ExcursionService.js'
 import { useAuth } from './auth.js'
 import { useLocations } from './locations.js'
 
+
+
 export const useExcursion = defineStore('excursion', {
     state: () => ({
     }),
@@ -27,7 +29,8 @@ export const useExcursion = defineStore('excursion', {
             return await ExcursionService.createDates(dates, _id, userStore.user._id)
         },
         async getAll() {
-            return await ExcursionService.getAll(useLocations().location._id)
+            let locationId = useLocations().location._id
+            return await ExcursionService.getAll(locationId)
         },
         async getExcursionById(_id) {
             return await ExcursionService.getExcursionById(_id)
