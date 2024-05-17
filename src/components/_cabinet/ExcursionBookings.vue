@@ -18,6 +18,10 @@ let excursion = ref({})
 let bookings = ref([])
 let loading = ref(true)
 
+const print = async () => {
+  await htmlToPaper('printMe');
+};
+
 let time = ref({})
 let selectedDate = ref({})
 
