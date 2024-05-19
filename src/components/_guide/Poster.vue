@@ -1,9 +1,16 @@
 <script setup>
-import { useRouter } from "vue-router";
+import { useRouter } from "vue-router"; 
+import { ref, computed } from "vue";
+import { useLocations } from "../../stores/locations";
 import BackButton from "../BackButton.vue";
 // let loc_name = JSON.parse(localStorage.getItem("location")).name
 const backRoute = { name: 'Landing', hash: '#guide' };
-let src = `https://plpo.ru/frame`
+
+const locationStore = useLocations();
+const src = computed(() => {
+  const locationName = locationStore?.location?.name;
+  return `https://plpo.ru/frame?location=${encodeURIComponent(locationName)}`;
+});
 </script>
 <template>
   <div>
