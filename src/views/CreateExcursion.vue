@@ -250,6 +250,10 @@ watch(
               Тип экскурсии
               <a-select v-model:value="form.excursionType.type" style="width: 100%;">
                 <!-- <a-select-option value=""></a-select-option> -->
+                <a-select-option placeholder="Tип тура" 
+                  :value="''">
+                 
+                </a-select-option>
                 <a-select-option placeholder="Tип тура" v-for="excursionType in excursionTypes"
                   :value="excursionType.type">
                   {{ excursionType.type }}
@@ -259,7 +263,10 @@ watch(
             <a-col :span="12" v-if='getExcursionDirections'>
               Направление
               <a-select v-model:value="form.excursionType.directionType" style="width: 100%;">
-                <!-- <a-select-option value=""></a-select-option> -->
+                <a-select-option placeholder="Tип тура" 
+                  :value="''">
+                 
+                </a-select-option>
                 <a-select-option placeholder="Tип тура" v-for="excursionDirection in getExcursionDirections"
                   :value="excursionDirection.directionType">
                   {{ excursionDirection.directionType }}
@@ -269,7 +276,10 @@ watch(
             <a-col :span="12" v-if='getExcursionPlace'>
               Место
               <a-select v-model:value="form.excursionType.directionPlace" style="width: 100%;">
-                <!-- <a-select-option value=""></a-select-option> -->
+                <a-select-option placeholder="Tип тура" 
+                  :value="''">
+                 
+                </a-select-option>
                 <a-select-option placeholder="Tип тура" v-for="directionPlace in getExcursionPlace"
                   :value="directionPlace">
                   {{ directionPlace }}
