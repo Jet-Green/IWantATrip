@@ -157,13 +157,13 @@ onMounted(() => {
           </a-select>
         </a-col>
 
-        <a-col :span="24" :md="12" class="d-flex align-center space-between">
+        <!-- <a-col :span="24" :md="12" class="d-flex align-center space-between">
           <div class="d-flex direction-column" style="width: 100%">
             <div style="font-size:10px; line-height:10px">даты</div>
             <a-range-picker v-model:value="time" :locale="ruLocale" :placeholder="['начало', 'конец']"
               inputmode='none' />
           </div>
-        </a-col>
+        </a-col> -->
         <a-col :span="24" class="d-flex justify-center mt-16 mb-16">
           <a-button type="primary" shape="round" @click="find" class="mr-4">
             <!-- <span class=" mdi mdi-magnify">

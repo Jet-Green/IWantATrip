@@ -37,7 +37,6 @@ if (excursionStore.excursion.length == 0) {
           <a-col :span="24" :sm="12" :md="8" v-for="ex of excursionStore.excursion">
             <ExcursionCard :excursion="ex" @click="router.push(`/excursion?_id=${ex._id}`)" />
           </a-col>
-        
         </a-row>
       </a-col>
     </a-row>

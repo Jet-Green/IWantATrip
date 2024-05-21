@@ -4,6 +4,8 @@ import _ from 'lodash'
 import { useAuth } from './auth.js'
 import { useLocations } from './locations.js'
 
+
+
 export const useExcursion = defineStore('excursion', {
     state: () => ({
         excursion: [],
