@@ -1,10 +1,9 @@
 <script setup>
 import datePlugin from '../plugins/dates'
+import { ref, onMounted } from "vue";
+import { useExcursion } from '../stores/excursion';
 
 const props = defineProps({
-  dates: {
-    type: Array
-  },
   excursionId: {
     type: String
   }
@@ -12,8 +11,9 @@ const props = defineProps({
 
 const emit = defineEmits(['buy-excursion'])
 
-const dates = props.dates
+let excursion = ref({})
 const excursionId = props.excursionId
+const excursionStore = useExcursion()
 
 function getDate(dateObj) {
   return datePlugin.excursions.getPrettyDate(dateObj)
@@ -27,13 +27,29 @@ function getTime(timeObj) {
   }
   return result
 }
+
+function getPeopleCount(bills) {
+  let sum = 0
+  for (let b of bills) {
+    for (let p of b.cart) {
+      sum += p.count
+    }
+  }
+  return sum
+}
+
 function buyExcursion(time) {
   emit('buy-excursion', time)
 }
+
+onMounted(async () => {
+  let response = await excursionStore.getExcursionBillsById(excursionId)
+  excursion.value = response.data;
+});
 </script>
 <template>
-  <a-row v-if="dates.length > 0">
-    <a-col :span="24" v-for="(date, index) in dates">
+  <a-row v-if="excursion?.dates?.length > 0">
+    <a-col :span="24" v-for="(date, index) in excursion.dates">
       <div class="date">
         <a-col class="d-flex" :xs="6" :md="4">
           <div class="large-date">
@@ -49,6 +65,7 @@ function buyExcursion(time) {
             <a-button shape="round" class="time" @click="buyExcursion(time)">
               {{ getTime(time) }}
             </a-button>
+            {{ getPeopleCount(time.bills) }}
           </a-col>
         </a-col>
       </div>
