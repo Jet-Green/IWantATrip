@@ -40,10 +40,7 @@ function select(num) {
     if (selected_seats.value.includes(num)) {
         selected_seats.value = selected_seats.value.filter(item => item !== num)
     }
-    else if (selected_seats.value.length >= max_count.value) {
-        return
-    } 
-    else {
+    else if (selected_seats.value.length < max_count.value) {
         selected_seats.value.push(num)
     }
 }
