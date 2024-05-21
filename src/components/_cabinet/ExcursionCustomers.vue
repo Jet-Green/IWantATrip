@@ -1,10 +1,12 @@
 <script setup>
 import ExcursionCustomerCard from './ExcursionCustomerCard.vue';
 import AddExcursionCustomerDialog from './AddExcursionCustomerDialog.vue';
+import PrintExcursionCustomers from '../../components/_cabinet/PrintExcursionCustomers.vue'
 
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, getCurrentInstance } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useExcursion } from '../../stores/excursion';
+
 
 const router = useRouter()
 const route = useRoute()
@@ -13,6 +15,13 @@ const excursionStore = useExcursion()
 let excursion = ref({})
 let time = ref({})
 let selectedDate = ref({})
+
+const app = getCurrentInstance();
+const htmlToPaper = app.appContext.config.globalProperties.$htmlToPaper;
+
+const print = async () => {
+  await htmlToPaper('printMe');
+};
 
 function openAddDialog(time) {
   if (selectedDate.value._id) return
@@ -105,10 +114,21 @@ onMounted(async () => {
             <span class="mdi mdi-account-multiple-outline mr-4 icon"></span>
             <b>{{ getPeopleCount(time.bills) }}</b>&nbsp;чел.
           </div>
-          <div class="row">
-            <span class="mdi mdi-cash-multiple mr-4 icon"></span>
-            <b>{{ getBillsSum(time.bills) }}₽</b>
+          <div class="row space-between">
+            <div>
+              <span class="mdi mdi-cash-multiple mr-4 icon"></span>
+              <b>{{ getBillsSum(time.bills) }}₽</b>
+            </div>
+            <div>
+              <div id="printMe" style="display: none">
+                <PrintExcursionCustomers :date='route.query.date' :excursion='excursion' :bills="time.bills" :time="getTime(time)"/>
+              </div>
+              <a-button class="d-flex justify-center align-center" type="primary" shape="circle">
+                <span style="font-size:18px" @click="print()" class="mdi mdi-printer-outline"></span>
+              </a-button>
+            </div>
           </div>
+
         </a-card>
       </a-col>
       <a-col :span="12" class="d-flex justify-center">
@@ -140,5 +160,9 @@ onMounted(async () => {
 
   width: 100%;
   height: 100%;
+}
+.row {
+  display: flex;
+  align-items: center;
 }
 </style>
