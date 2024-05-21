@@ -1,6 +1,6 @@
 <script setup>
-import { onMounted, ref } from "vue"
-
+import { onMounted, ref, h } from "vue"
+import { PlusOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
 import objectSupport from 'dayjs/plugin/objectSupport'
 dayjs.extend(objectSupport);
@@ -87,9 +87,9 @@ onMounted(async () => {
 
 })
 </script>
+
 <template>
   <a-row>
-
     <a-col :span="24">
       <a-breadcrumb style="cursor: pointer;">
         <a-breadcrumb-item @click="router.push('/cabinet/excursions')">
@@ -99,27 +99,31 @@ onMounted(async () => {
       </a-breadcrumb>
       <h3 class="mt-8 mb-8">Добавить даты в "{{ excursion.name }}"</h3>
     </a-col>
+
     <a-col :span="24">
       <ExcursionDates @change-dates="setDates" :clearDateForm="clearDateForm" />
-
     </a-col>
+
     <a-col :span="24" class="d-flex justify-center mt-16 mb-16">
       <a-button @click="submit" type="primary" class="lets_go_btn">отправить</a-button>
     </a-col>
-    <a-col :span="24" v-for="(date, index) in excursion.dates">
+
+    <a-col :span="24" v-for="(date, index) in excursion.dates" class="d-flex justify-space-between">
       <div class="date">
-        <a-col class="d-flex" :xs="6" :md="3">
+        <div class="d-flex" style="width: clamp(6.5625rem, 4.5536rem + 6.4286vw, 9.375rem);">
           <a-popconfirm title="Удалить дату?" ok-text="Да" cancel-text="Нет" @confirm="deleteDate(date._id)">
             <div class="large-date">
               {{ getDate(date.date).day }}
             </div>
           </a-popconfirm>
+
           <div class="column">
             <div class="month">{{ getDate(date.date).month }}</div>
             <div class="weekday">{{ getDate(date.date).weekday }}</div>
           </div>
-        </a-col>
-        <a-col class="d-flex" style="gap: 10px 20px; flex-wrap: wrap;">
+        </div>
+
+        <div class="d-flex ml-16" style="gap: 10px 20px; flex-wrap: wrap;">
           <a-col v-for="time in date.times" class="time-container">
             <a-popconfirm title="Удалить время?" ok-text="Да" cancel-text="Нет"
               @confirm="deleteTime(date._id, time._id)">
@@ -128,12 +132,15 @@ onMounted(async () => {
               </a-button>
             </a-popconfirm>
           </a-col>
-        </a-col>
+        </div>
       </div>
-      <a-divider />
+
+      <a-col class="d-flex mt-8">
+        <a-button shape="round" class="time" :icon="h(PlusOutlined)">
+          Добавить
+        </a-button>
+      </a-col>
     </a-col>
-
-
   </a-row>
 </template>
 <style scoped lang="scss">
@@ -162,11 +169,13 @@ onMounted(async () => {
 
   .month {
     font-weight: 600;
+    line-height: 1.6;
     font-size: clamp(0.9375rem, 0.6889rem + 0.7102vw, 1.25rem);
   }
 
   .weekday {
     font-weight: 300;
+    line-height: 1.4;
     font-size: clamp(0.625rem, 0.4261rem + 0.5682vw, 0.875rem);
   }
 }
