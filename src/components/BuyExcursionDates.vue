@@ -6,6 +6,9 @@ import { useExcursion } from '../stores/excursion';
 const props = defineProps({
   excursionId: {
     type: String
+  },
+  maxPeople: {
+    type: Number
   }
 })
 
@@ -65,7 +68,7 @@ onMounted(async () => {
             <a-button shape="round" class="time" @click="buyExcursion(time)">
               {{ getTime(time) }}
             </a-button>
-            {{ getPeopleCount(time.bills) }}
+            {{ getPeopleCount(time.bills) +'/'+ props.maxPeople }}
           </a-col>
         </a-col>
       </div>

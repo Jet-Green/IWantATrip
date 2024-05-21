@@ -138,7 +138,7 @@ onMounted(async () => {
           </a-col>
           <a-col :span="24">
             <div v-if="_.isEmpty(excursion.dates)" class="month">По заявкам</div>
-            <BuyExcursionDates v-else :excursionId="excursion._id"
+            <BuyExcursionDates v-else :max-people="excursion.maxPeople" :excursionId="excursion._id"
               @buy-excursion="openBuyDialog" />
             <BuyExcursionDialog :selectedDate="selectedDate" :excursion="excursion" @close="closeBuyDialog" />
           </a-col>
