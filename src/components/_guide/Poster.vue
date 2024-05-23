@@ -9,8 +9,8 @@ const backRoute = { name: 'Landing', hash: '#guide' };
 const locationStore = useLocations();
 const src = computed(() => {
   let locationName = locationStore?.location?.name;
-  return `http://localhost:3030/frame?location=${encodeURIComponent(locationName)}`;
-  // return `https://plpo.ru/frame?location=${encodeURIComponent(locationName)}`;
+  // return `http://localhost:3030/frame?location=${encodeURIComponent(locationName)}`;
+  return `https://plpo.ru/frame?location=${encodeURIComponent(locationName)}`;
 });
 </script>
 <template>
