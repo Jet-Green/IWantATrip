@@ -602,7 +602,7 @@ onMounted(async () => {
             <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="buyTrip" class="mt-16">
                 <a-row :gutter="[4, 8]">
 
-                    <a-col :span="12">
+                    <a-col :span="24" :md="12">
                         <Field name="fullname" v-slot="{ value, handleChange }"
                             v-model="userStore.user.fullinfo.fullname">
                             <a-input @change="handleChange" :value="value" placeholder="Иванов Иван Иванович"></a-input>
@@ -612,9 +612,9 @@ onMounted(async () => {
                             <ErrorMessage name="fullname" class="error-message" />
                         </Transition>
                     </a-col>
-                    <a-col :span="12">
+                    <a-col :span="24" :md="12">
                         <Field name="phone" v-slot="{ value, handleChange }" v-model="userStore.user.fullinfo.phone">
-                            <a-input @change="handleChange" :value="value" placeholder="79127528874" size="medium"
+                            <a-input @change="handleChange" :value="value" placeholder="791275288874" size="medium"
                                 :controls="false" style="width:100%"></a-input>
                         </Field>
 

@@ -381,7 +381,7 @@ let formSchema = yup.object({
               <div class="d-flex" style="overflow-x: scroll">
                 <img v-for="(pr, i) in    previews   " :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
                   @click="delPhotoDialog = true;
-                  targetIndex = i;" @error="handleImgError(i)" />
+      targetIndex = i;" @error="handleImgError(i)" />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
@@ -487,8 +487,8 @@ let formSchema = yup.object({
                 <div>
                   <a-select @update:value="handleChange" :value="value" style="width: 100%">
                     <a-select-option v-for="   tripType    in    appStore.appState[0].tripType   " :value="tripType">{{
-                      tripType
-                    }}</a-select-option>
+        tripType
+      }}</a-select-option>
                   </a-select>
                 </div>
               </Field>
@@ -500,8 +500,8 @@ let formSchema = yup.object({
             <a-col :xs="24" :md="12">
               <Field name="fromAge" v-slot="{ value, handleChange }" v-model="form.fromAge">
                 Мин. возраст, лет
-                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" placeholder="10" :min="0"
-                  :max="100" />
+                <a-input-number @update:value="handleChange" :value="value" style="width: 100%" placeholder="10"
+                  :min="0" :max="100" />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="fromAge" class="error-message" />
@@ -525,8 +525,8 @@ let formSchema = yup.object({
             <a-col :span="24">
               <Field name="offer" v-slot="{ value, handleChange }" v-model="form.offer">
                 Краткое описание
-                <a-textarea @update:value="handleChange" :value="value" placeholder="Едем в Татарстан за новыми эмоциями!"
-                  size="large">
+                <a-textarea @update:value="handleChange" :value="value"
+                  placeholder="Едем в Татарстан за новыми эмоциями!" size="large">
                 </a-textarea>
               </Field>
               <Transition name="fade">
@@ -548,14 +548,15 @@ let formSchema = yup.object({
             <a-col :span="24" style="display: flex; flex-direction: column">
               Описание программы
 
-              <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html" :toolbar="[
-                ['bold', 'italic', 'underline',{ color: ['#000000', '#ff6600', '#3daff5'] }],
-             
-                [{ list: 'ordered' }, { list: 'bullet' },{ align: [] }],
-           
-                ['link']
-              ]
-                " />
+              <QuillEditor class="ql-editor" theme="snow" ref="quill" v-model:content="description" contentType="html"
+                :toolbar="[
+        ['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }],
+
+        [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
+
+        ['link']
+      ]
+        " />
             </a-col>
             <a-col :span="24">
               <Field name="returnConditions" v-slot="{ value, handleChange }" v-model="form.returnConditions">
@@ -596,3 +597,9 @@ let formSchema = yup.object({
     </a-row>
   </div>
 </template>
+<style lang="scss">
+.ql-editor {
+  max-height: 500px;
+  overflow-y: auto;
+}
+</style>
