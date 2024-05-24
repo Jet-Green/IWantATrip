@@ -65,10 +65,16 @@ onMounted(async () => {
         </a-col>
         <a-col :xs="18" :md="20" class="d-flex" style="gap: 10px 20px; flex-wrap: wrap;">
           <a-col v-for="time in date.times" class="time-container">
-            <a-button shape="round" class="time" @click="buyExcursion(time)">
+            <a-button 
+              :class="{'primary_color': getPeopleCount(time.bills)>=props.maxPeople}"
+              :disabled="getPeopleCount(time.bills)>=props.maxPeople"
+              class="time"
+               shape="round" @click="buyExcursion(time)">
               {{ getTime(time) }}
             </a-button>
-            {{ getPeopleCount(time.bills) +'/'+ props.maxPeople }}
+            <span :class="{'primary_color': getPeopleCount(time.bills)>=props.maxPeople}">
+              {{ getPeopleCount(time.bills) +' из '+ props.maxPeople }}
+            </span>
           </a-col>
         </a-col>
       </div>
@@ -94,6 +100,7 @@ onMounted(async () => {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
   }
 }
 
@@ -110,4 +117,8 @@ onMounted(async () => {
     font-size: clamp(0.625rem, 0.4261rem + 0.5682vw, 0.875rem);
   }
 }
+.primary_color {
+  color: #ff6600;
+}
 </style>
+
