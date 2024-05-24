@@ -34,10 +34,10 @@ let availablePlaces = computed(() => {
   let maxPeople = 0
   for(let bill of selectedDate.value.time.bills){
 
-      maxPeople=maxPeople+bill.cart[0].type
+      maxPeople=maxPeople+bill.cart[0].count
     
   }
-  return maxPeople-props.excursion.maxPeople
+  return props.excursion.maxPeople-maxPeople
 });
 
 watch(selectedDate, (newValue) => {
@@ -58,10 +58,10 @@ async function buy() {
   if (!userStore.user.fullinfo?.fullname) {
     await userStore.updateFullinfo(userStore.user._id, fullinfo)
   }
-  if (availablePlaces.value>=pricesForm.value[0].count) {
+  if (!(availablePlaces.value>=pricesForm.value[0].count)) {
     message.config({ duration: 0.5, top: "70vh" });
     message.error({
-      content: "Не более "+props.excursion.maxPeople+" человек",
+      content: "Свободных мест всего "+availablePlaces.value,
     });
     return
   }
@@ -183,7 +183,7 @@ onMounted(() => {
       <div class="price-container">
         <div class="price">{{ price.type }} x <span style="color: #ff6600;">{{ price.price }}₽</span></div>
         <div>
-          <a-input-number v-model:value="price.count" :min="0" :max="excursion.maxPeople" :controls="false">
+          <a-input-number v-model:value="price.count" :min="0" :controls="false">
           </a-input-number>
         </div>
       </div>
