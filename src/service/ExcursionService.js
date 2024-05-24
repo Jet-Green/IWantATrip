@@ -25,7 +25,9 @@ export default {
     deleteExcursionBill(_id) {
         return $api.get(`/excursion/delete-bill?_id=${_id}`)
     },
-
+    addTime(excursionId, date, time) {
+        return $api.post('/excursion/add-time', { excursionId, date, time })
+    },
     getExcursionBookingsById(_id) {
         return $api.get(`/excursion/with-bookings?_id=${_id}`)
     },
