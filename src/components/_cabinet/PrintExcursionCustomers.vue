@@ -1,6 +1,4 @@
 <script setup>
-import { onMounted } from 'vue';
-
 
 let props = defineProps({
     excursion: Object,
@@ -9,10 +7,6 @@ let props = defineProps({
     date: String,
     bills: Object,
 })
-
-onMounted(() => {
-    console.log(props.bills);
-});
 
 </script>
 <template>
