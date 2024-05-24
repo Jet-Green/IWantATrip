@@ -100,6 +100,7 @@ async function buy() {
       });
     }
   }
+  }
 }
 let bookingCount = ref()
 async function book() {
@@ -126,6 +127,7 @@ async function book() {
         },
       });
     }
+    
   }
 }
 
