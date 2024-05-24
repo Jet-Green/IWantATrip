@@ -1,11 +1,12 @@
 <script setup>
-import { ref, toRefs, watch, onMounted, reactive } from "vue"
+import { ref, toRefs, watch, onMounted, reactive,computed } from "vue"
 import _ from "lodash"
 import datePlugin from '../plugins/dates'
 import { useExcursion } from "../stores/excursion";
 import { useAuth } from "../stores/auth";
 import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
+import { cardMetaProps } from "ant-design-vue/es/card/Meta";
 
 const excursionStore = useExcursion()
 const userStore = useAuth()
@@ -29,6 +30,15 @@ let { selectedDate } = toRefs(props)
 let prettyDate = ref()
 let prettyTime = ref()
 
+let availablePlaces = computed(() => {
+  let maxPeople = 0
+  for(let bill of selectedDate.value.time.bills){
+
+      maxPeople=maxPeople+bill.cart[0].type
+    
+  }
+  return maxPeople-props.excursion.maxPeople
+});
 
 watch(selectedDate, (newValue) => {
   if (!_.isEmpty(newValue)) {
@@ -49,39 +59,47 @@ async function buy() {
   if (!userStore.user.fullinfo?.fullname) {
     await userStore.updateFullinfo(userStore.user._id, fullinfo)
   }
-  
-  let toSend = []
-  // pricesForm.value
-  for (let p of pricesForm.value) {
-
-    if (p.count > 0) {
-      toSend.push({
-        type: p.type,
-        price: p.price,
-        count: p.count
-      })
-    } else {
-      return
-    }
-  }
-
-  let res = await excursionStore.buy(selectedDate.value.time._id, toSend)
-  if (res.status == 200) {
-    message.config({ duration: 0.5, top: "70vh" });
-    message.success({
-      content: "Успешно!",
-      onClose: () => {
-        router.push('/excursions')
-      },
-    });
-  } else {
+  if (availablePlaces.value>=pricesForm.value[0].count) {
     message.config({ duration: 0.5, top: "70vh" });
     message.error({
-      content: "Ошибка покупки!",
-      onClose: () => {
-        console.log(res);
-      },
+      content: "Не более "+props.excursion.maxPeople+" человек",
     });
+    return
+  }
+  else{
+    let toSend = []
+    for (let p of pricesForm.value) {
+
+      if (p.count > 0) {
+        toSend.push({
+          type: p.type,
+          price: p.price,
+          count: p.count
+        })
+      } else {
+        return
+      }
+    }
+
+    let res = await excursionStore.buy(selectedDate.value.time._id, toSend)
+
+    if (res.status == 200) {
+      message.config({ duration: 0.5, top: "70vh" });
+      message.success({
+        content: "Успешно!",
+        onClose: () => {
+          router.push('/excursions')
+        },
+      });
+    } else {
+      message.config({ duration: 0.5, top: "70vh" });
+      message.error({
+        content: "Ошибка покупки!",
+        onClose: () => {
+          console.log(res);
+        },
+      });
+    }
   }
 }
 let bookingCount = ref()

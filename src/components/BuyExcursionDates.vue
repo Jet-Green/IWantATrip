@@ -67,10 +67,10 @@ onMounted(async () => {
           <a-col v-for="time in date.times" class="time-container">
             <a-button 
               :class="{'primary_color': getPeopleCount(time.bills)>=props.maxPeople}"
-              :disabled="getPeopleCount(time.bills)>=props.maxPeople"
               class="time"
                shape="round" @click="buyExcursion(time)">
               {{ getTime(time) }}
+              <!-- :disabled="getPeopleCount(time.bills)>=props.maxPeople" -->
             </a-button>
             <span :class="{'primary_color': getPeopleCount(time.bills)>=props.maxPeople}">
               {{ getPeopleCount(time.bills) +' из '+ props.maxPeople }}
