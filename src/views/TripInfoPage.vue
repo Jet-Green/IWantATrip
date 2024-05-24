@@ -379,7 +379,7 @@ let isNoPlaces = computed(() => {
     return false;
 });
 
-let people_amount = computed(() => selectedDate.value.selectedCosts.map(cost => cost.count).reduce((partialSum, a) => partialSum + a, 0))
+let people_amount = computed(() => selectedDate.value.selectedCosts.reduce((acc, cost) => acc + cost.count, 0))
 
 async function updateBus() {
     let transports = trip.value.transports.filter(bus => bus.capacity >= getCurrentCustomerNumber.value)
@@ -602,7 +602,7 @@ onMounted(async () => {
             <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="buyTrip" class="mt-16">
                 <a-row :gutter="[4, 8]">
 
-                    <a-col :span="12">
+                    <a-col :span="24" :md="12">
                         <Field name="fullname" v-slot="{ value, handleChange }"
                             v-model="userStore.user.fullinfo.fullname">
                             <a-input @change="handleChange" :value="value" placeholder="Иванов Иван Иванович"></a-input>
@@ -612,9 +612,9 @@ onMounted(async () => {
                             <ErrorMessage name="fullname" class="error-message" />
                         </Transition>
                     </a-col>
-                    <a-col :span="12">
+                    <a-col :span="24" :md="12">
                         <Field name="phone" v-slot="{ value, handleChange }" v-model="userStore.user.fullinfo.phone">
-                            <a-input @change="handleChange" :value="value" placeholder="79127528874" size="medium"
+                            <a-input @change="handleChange" :value="value" placeholder="791275288874" size="medium"
                                 :controls="false" style="width:100%"></a-input>
                         </Field>
 
@@ -692,10 +692,13 @@ onMounted(async () => {
 
                     <a-col v-if="bus && people_amount > 0" :span="24" class="mb-8">
                         <div>Выберите места</div>
-                        <Bus  v-model:selected_seats="selected_seats"
+                        <Bus 
+                            v-model:selected_seats="selected_seats"
                             :free_seats="free_seats"
-                            :max_count="trip.maxPeople - getCustomersCount(selectedDate.billsList) " :bus="bus"
-                            style="width: 150px;" />
+                            :max_count="people_amount" 
+                            :bus="bus"
+                            style="width: 150px;" 
+                        />
                     </a-col>
 
                     <a-col :span="24">
