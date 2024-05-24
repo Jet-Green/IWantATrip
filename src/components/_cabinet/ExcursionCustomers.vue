@@ -121,10 +121,11 @@ onMounted(async () => {
             </div>
             <div>
               <div id="printMe" style="display: none">
-                <PrintExcursionCustomers :date='route.query.date' :excursion='excursion' :bills="time.bills" :time="getTime(time)"/>
+                <PrintExcursionCustomers :date='route.query.date' :excursion='excursion' :bills="time.bills"
+                  :time="getTime(time)" />
               </div>
-              <a-button class="d-flex justify-center align-center" type="primary" shape="circle">
-                <span style="font-size:18px" @click="print()" class="mdi mdi-printer-outline"></span>
+              <a-button @click="print()" class="d-flex justify-center align-center" type="primary" shape="circle">
+                <span style="font-size:18px" class="mdi mdi-printer-outline"></span>
               </a-button>
             </div>
           </div>
@@ -161,6 +162,7 @@ onMounted(async () => {
   width: 100%;
   height: 100%;
 }
+
 .row {
   display: flex;
   align-items: center;

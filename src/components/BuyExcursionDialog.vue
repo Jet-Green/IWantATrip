@@ -45,13 +45,12 @@ watch(selectedDate, (newValue) => {
 })
 let pricesForm = ref([])
 async function buy() {
-  
   if (!userStore.user.fullinfo?.fullname) {
     await userStore.updateFullinfo(userStore.user._id, fullinfo)
   }
-  
+
   let toSend = []
-  // pricesForm.value
+
   for (let p of pricesForm.value) {
 
     if (p.count > 0) {
@@ -61,27 +60,29 @@ async function buy() {
         count: p.count
       })
     } else {
-      return
+      continue
     }
   }
 
-  let res = await excursionStore.buy(selectedDate.value.time._id, toSend)
-  if (res.status == 200) {
-    message.config({ duration: 0.5, top: "70vh" });
-    message.success({
-      content: "Успешно!",
-      onClose: () => {
-        router.push('/excursions')
-      },
-    });
-  } else {
-    message.config({ duration: 0.5, top: "70vh" });
-    message.error({
-      content: "Ошибка покупки!",
-      onClose: () => {
-        console.log(res);
-      },
-    });
+  if (toSend.length) {
+    let res = await excursionStore.buy(selectedDate.value.time._id, toSend)
+    if (res.status == 200) {
+      message.config({ duration: 0.5, top: "70vh" });
+      message.success({
+        content: "Успешно!",
+        onClose: () => {
+          router.push('/excursions')
+        },
+      });
+    } else {
+      message.config({ duration: 0.5, top: "70vh" });
+      message.error({
+        content: "Ошибка покупки!",
+        onClose: () => {
+          console.log(res);
+        },
+      });
+    }
   }
 }
 let bookingCount = ref()
@@ -116,7 +117,7 @@ onMounted(() => {
   let result = []
   for (let p of props.excursion.prices) {
     result.push({
-      count: 0,
+      count: '',
       price: p.price,
       type: p.type,
     })
@@ -155,9 +156,8 @@ onMounted(() => {
         {{ prettyTime }}
       </div>
       <div class="d-flex align-center" style="justify-content: end;" v-if="pricesForm.length == 0">
-        <a-input-number v-model:value="bookingCount" :min="0" :max="excursion.maxPeople" 
- 
-            :controls="false" class="ml-8 mr-8">
+        <a-input-number v-model:value="bookingCount" :min="0" :max="excursion.maxPeople" :controls="false"
+          class="ml-8 mr-8">
         </a-input-number> чел.
       </div>
     </div>
@@ -165,10 +165,7 @@ onMounted(() => {
       <div class="price-container">
         <div class="price">{{ price.type }} x <span style="color: #ff6600;">{{ price.price }}₽</span></div>
         <div>
-          <a-input-number v-model:value="price.count" :min="0" 
-          :max="excursion.maxPeople" 
-          :controls="false"
-          >
+          <a-input-number v-model:value="price.count" :min="0" :max="excursion.maxPeople" :controls="false">
           </a-input-number>
         </div>
       </div>
