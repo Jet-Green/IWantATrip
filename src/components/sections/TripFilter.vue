@@ -25,10 +25,6 @@ let type = ref("");
 
 let router = useRouter();
 
-function toCatalog() {
-  router.push(`/catalog`);
-}
-
 watch(time, (newTime) => {
   if (!newTime) return
   if (newTime[0] && newTime[1]) {
