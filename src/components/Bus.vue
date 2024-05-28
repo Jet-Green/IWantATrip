@@ -20,7 +20,7 @@ let props = defineProps({
     },
     preview: Boolean
 })
-let emit = defineEmits(['update:bus', 'update:selected_seats'])
+let emit = defineEmits(['update:bus', 'update:selected_seats', 'select'])
 
 let { bus, free_seats, max_count } = toRefs(props)
 let preview = props.preview
@@ -39,9 +39,11 @@ function select(num) {
 
     if (selected_seats.value.includes(num)) {
         selected_seats.value = selected_seats.value.filter(item => item !== num)
+        emit('select')
     }
     else if (selected_seats.value.length < max_count.value) {
         selected_seats.value.push(num)
+        emit('select')
     }
 }
 </script>

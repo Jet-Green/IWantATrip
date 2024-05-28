@@ -52,6 +52,7 @@ async function updateSeats() {
     if (!bus.value) return
     let bought_seats = await tripStore.getBoughtSeats(_id)
     free_seats.value = bus.value.seats.map(seat => seat.number).filter(seat => !bought_seats.includes(seat) && !bus.value.stuff.includes(seat))
+	selected_seats.value = selected_seats.value.filter(seat => free_seats.value.includes(seat))
 }
 
 const backRoute = { name: 'TripsPage', hash: `#${_id}` };
@@ -693,6 +694,7 @@ onMounted(async () => {
                     <a-col v-if="bus && people_amount > 0" :span="24" class="mb-8">
                         <div>Выберите места</div>
                         <Bus 
+							@select="updateSeats"
                             v-model:selected_seats="selected_seats"
                             :free_seats="free_seats"
                             :max_count="people_amount" 
