@@ -85,7 +85,7 @@ const removeCost = (item) => {
 let targetIndex = ref()
 const delPhoto = () => {
   let targetImage = images[targetIndex.value]
-  for(let i = 0; form.images.length; i++) {
+  for (let i = 0; form.images.length; i++) {
     if (form.images[i] == targetImage) {
       form.images.splice(i, 1)
     }
@@ -130,6 +130,8 @@ let getExcursionPlace = computed(() => {
 
 })
 async function submit() {
+  // console.log(images);
+  // return
   let excursionCb = await excursionStore.edit(form)
   const _id = excursionCb.data._id
   let imagesFormData = new FormData();
@@ -140,6 +142,7 @@ async function submit() {
       _id + "_" + i + ".jpg"
     );
   }
+
   let res = await excursionStore.uploadImages(imagesFormData)
   if (res.status == 200) {
     router.push('/cabinet/me')
@@ -207,9 +210,9 @@ onMounted(async () => {
             <a-col :xs="24">
               Фотографии
               <div class="d-flex" style="overflow-x: scroll">
-                <img v-for="(pr, i) in previews   " :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
+                <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
                   @click="delPhotoDialog = true;
-      targetIndex = i;" @error="handleImgError(i)" />
+      targetIndex = i;" />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
@@ -375,7 +378,7 @@ onMounted(async () => {
             </a-col>
           </a-row>
         </Form>
-        <a-modal v-model:open="visibleCropperModal" :footer="null" :destroyOnClose="true">
+        <a-modal v-model:open="visibleCropperModal" :footer="null">
           <ImageCropper @addImage="addPreview" />
         </a-modal>
         <a-modal v-model:open="delPhotoDialog" :footer="null">

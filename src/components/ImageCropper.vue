@@ -70,9 +70,6 @@ watch(preview, () => {
         //     console.log('ready');
         //     cropperReady.value = true;
         // },
-        cropend(cropper) {
-            cropper.destroy();
-        }
     });
 });
 </script>
