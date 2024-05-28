@@ -63,7 +63,7 @@ function find() {
   localStorage.setItem("ExcursionType", type.value)
   excursionStore.searchCursor = 1
   excursionStore.cursor = 1
-  excursionStore.excursion = []
+  excursionStore.excursions = []
   if (time.value[0] ?? time.value[1]) {
     let start = new Date(time.value[0].$d)
     let end = new Date(time.value[1].$d)

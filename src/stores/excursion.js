@@ -8,7 +8,7 @@ import { useLocations } from './locations.js'
 
 export const useExcursion = defineStore('excursion', {
     state: () => ({
-        excursion: [],
+        excursions: [],
         cursor: 1,
         catalogCursor: 1,
         searchCursor: 1,
@@ -43,8 +43,8 @@ export const useExcursion = defineStore('excursion', {
             try {
                 let response;
                 response = await ExcursionService.getAll(useLocations().location._id,this.excursionFilter.query,this.excursionFilter.start, this.excursionFilter.end, requestTime, this.excursionFilter.type)
-                this.excursion.push(...response.data);
-                this.excursion = _.uniqBy(this.excursion, '_id')
+                this.excursions.push(...response.data);
+                this.excursions = _.uniqBy(this.excursions, '_id')
                 // this.cursor++
                 
             } catch (err) {

@@ -20,7 +20,7 @@ watch(() => useLocations().location._id, async () => {
 })
 
 onMounted(async () => {
-if (excursionStore.excursion.length == 0) {
+if (excursionStore.excursions.length == 0) {
   await excursionStore.getAll()
 }
 });
@@ -34,7 +34,7 @@ if (excursionStore.excursion.length == 0) {
         <h3>Экскурсии</h3>
         <ExcursionFilter :search="route.query.search"/>
         <a-row :gutter="[12, 16]">
-          <a-col :span="24" :sm="12" :md="8" v-for="ex of excursionStore.excursion">
+          <a-col :span="24" :sm="12" :md="8" v-for="ex of excursionStore.excursions">
             <ExcursionCard :excursion="ex" @click="router.push(`/excursion?_id=${ex._id}`)" />
           </a-col>
         </a-row>
