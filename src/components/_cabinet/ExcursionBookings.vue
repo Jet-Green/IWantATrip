@@ -2,17 +2,25 @@
 import ExcursionBookingCard from './ExcursionBookingCard.vue'
 import AddExcursionCustomerDialog from './AddExcursionCustomerDialog.vue';
 
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, getCurrentInstance } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useExcursion } from '../../stores/excursion';
+import PrintExcursionCustomers from '../../components/_cabinet/PrintExcursionCustomers.vue'
 
 const router = useRouter()
 const route = useRoute()
 const excursionStore = useExcursion()
 
+const app = getCurrentInstance();
+const htmlToPaper = app.appContext.config.globalProperties.$htmlToPaper;
+
 let excursion = ref({})
 let bookings = ref([])
 let loading = ref(true)
+
+const print = async () => {
+  await htmlToPaper('printMe');
+};
 
 let time = ref({})
 let selectedDate = ref({})
@@ -88,9 +96,19 @@ onMounted(async () => {
               {{ route.query.date.split('_').join(' ') }}
             </b>
           </div>
-          <div class="row">
-            <span class="mdi mdi-account-multiple-outline mr-4 icon"></span>
-            <b>{{ getPeopleCount(time._id) }}</b>&nbsp;чел.
+          <div class="row space-between">
+            <div>
+              <span class="mdi mdi-account-multiple-outline mr-4 icon"></span>
+              <b>{{ getPeopleCount(time._id) }}</b>&nbsp;чел.
+            </div>
+            <div>
+              <div id="printMe" style="display: none">
+                <PrintExcursionCustomers :date='route.query.date' :excursion="excursion" :time="getTime(time)" :bookings="bookings"/>
+              </div>
+              <a-button @click="print()" class="d-flex justify-center align-center" type="primary" shape="circle">
+                <span style="font-size:18px" class="mdi mdi-printer-outline"></span>
+              </a-button>
+            </div>
           </div>
         </a-card>
       </a-col>

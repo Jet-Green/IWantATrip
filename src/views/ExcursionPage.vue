@@ -18,6 +18,7 @@ const userStore = useAuth();
 const locationStore = useLocations();
 
 let excursion = ref({});
+let billsInfo = ref({});
 let selectedDate = ref({})
 
 function getImg(index) {
@@ -126,21 +127,20 @@ onMounted(async () => {
             </div>
           </a-col>
         </a-row>
+        <a-row class="mt-16">
+          <a-col :span="24">
+            <div class="text"> {{ excursion.description }}</div>
+          </a-col>
+        </a-row>
         <a-row style="margin-top: 30px;">
           <a-col :span="24">
             <h3>Расписание</h3>
           </a-col>
           <a-col :span="24">
             <div v-if="_.isEmpty(excursion.dates)" class="month">По заявкам</div>
-            <BuyExcursionDates v-else :dates="excursion.dates" :excursionId="excursion._id"
+            <BuyExcursionDates v-else :max-people="excursion.maxPeople" :excursionId="excursion._id"
               @buy-excursion="openBuyDialog" />
             <BuyExcursionDialog :selectedDate="selectedDate" :excursion="excursion" @close="closeBuyDialog" />
-          </a-col>
-        </a-row>
-        <a-row>
-          <a-col :span="24" class="mb-32">
-            <div class="text"> {{ excursion.description }}</div>
-
           </a-col>
         </a-row>
       </a-col>

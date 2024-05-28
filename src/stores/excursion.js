@@ -1,11 +1,24 @@
 import { defineStore } from 'pinia'
 import ExcursionService from '../service/ExcursionService.js'
-
+import _ from 'lodash'
 import { useAuth } from './auth.js'
 import { useLocations } from './locations.js'
 
+
+
 export const useExcursion = defineStore('excursion', {
     state: () => ({
+        excursion: [],
+        cursor: 1,
+        catalogCursor: 1,
+        searchCursor: 1,
+        isFetching: false,
+        excursionFilter: {
+            query: "",
+            start: "",
+            end: "",
+            type: ""
+        }
     }),
     getters: {
     },
@@ -29,8 +42,18 @@ export const useExcursion = defineStore('excursion', {
             const userStore = useAuth()
             return await ExcursionService.createDates(dates, _id, userStore.user._id)
         },
-        async getAll() {
-            return await ExcursionService.getAll(useLocations().location._id)
+        async getAll(requestTime) {
+            try {
+                let response;
+                response = await ExcursionService.getAll(useLocations().location._id,this.excursionFilter.query,this.excursionFilter.start, this.excursionFilter.end, requestTime, this.excursionFilter.type)
+                this.excursion.push(...response.data);
+                this.excursion = _.uniqBy(this.excursion, '_id')
+                // this.cursor++
+                
+            } catch (err) {
+                console.log(err);
+            }
+            // return await ExcursionService.getAll(useLocations().location._id,this.excursionFilter.query)
         },
         async getExcursionById(_id) {
             return await ExcursionService.getExcursionById(_id)
@@ -60,8 +83,12 @@ export const useExcursion = defineStore('excursion', {
             const userStore = useAuth()
             return await ExcursionService.deleteDate(dateId, userStore.user._id)
         },
-
-
+        async addTime(excursionId, date, time) {
+            return (await ExcursionService.addTime(excursionId, date, time)).data
+        },
+        async timeHasBills(timeId) {
+            return (await ExcursionService.timeHasBills(timeId)).data
+        },
 
 
         async uploadImages(data) {
