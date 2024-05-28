@@ -50,7 +50,7 @@ let show_old_bus = ref(true)
 
 async function updateSeats() {
     if (!bus.value) return
-    let bought_seats = await tripStore.getBoughtSeats(_id)
+    let bought_seats = await tripStore.getBoughtSeats(selectedDate.value._id)
     free_seats.value = bus.value.seats.map(seat => seat.number).filter(seat => !bought_seats.includes(seat) && !bus.value.stuff.includes(seat))
 	selected_seats.value = selected_seats.value.filter(seat => free_seats.value.includes(seat))
 }
@@ -397,7 +397,13 @@ async function updateBus() {
 
 onMounted(async () => {
     await refreshDates();
-    watch(getCurrentCustomerNumber, updateBus, { immediate: true })
+    watch(selectedDate, updateBus, { immediate: true })
+	watch(getCurrentCustomerNumber, updateSeats)
+	watch(people_amount, (newValue, oldValue) => {
+		if (newValue >= oldValue || selected_seats.value.length <= newValue) return
+		
+		selected_seats.value.pop()
+	})
 });
 </script>
 <template>
