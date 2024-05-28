@@ -80,6 +80,14 @@ export const useExcursion = defineStore('excursion', {
             const userStore = useAuth()
             return await ExcursionService.deleteDate(dateId, userStore.user._id)
         },
+        async addTime(excursionId, date, time) {
+            return (await ExcursionService.addTime(excursionId, date, time)).data
+        },
+        async timeHasBills(timeId) {
+            return (await ExcursionService.timeHasBills(timeId)).data
+        },
+
+
         async uploadImages(data) {
             return await ExcursionService.uploadImages(data)
         },

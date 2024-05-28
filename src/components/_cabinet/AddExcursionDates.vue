@@ -1,28 +1,40 @@
 <script setup>
-import { onMounted, ref } from "vue"
-
+import { onMounted, ref, h } from "vue"
+import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
 import objectSupport from 'dayjs/plugin/objectSupport'
 dayjs.extend(objectSupport);
 import ExcursionDates from '../ExcursionDates.vue'
 import BuyExcursionDates from '../BuyExcursionDates.vue'
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useRoute } from 'vue-router';
 import { useRouter } from "vue-router";
 import { useExcursion } from '../../stores/excursion';
+import { message } from "ant-design-vue";
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
+import _ from "lodash";
 
 const route = useRoute()
 const router = useRouter()
 const excursionStore = useExcursion()
 const _id = route.query._id
+let breakpoints = useBreakpoints(breakpointsTailwind)
 
 let excursion = ref({})
 let dates = ref([])
+let addTime = ref()
 let clearDateForm = ref(false)
 
 function setDates(d) {
   clearDateForm.value = false
   dates.value = d
 }
+
+async function sendTime(date) {
+  let res = await excursionStore.addTime(excursion.value._id, date, addTime.value)
+  excursion.value.dates[excursion.value.dates.findIndex(ex_date => _.isEqual(date, ex_date.date))] = res
+} 
 
 let dontSubmit = false;
 async function submit() {
@@ -58,8 +70,18 @@ function getTime(timeObj) {
 }
 
 let deleteTime = async (dateId, timeId) => {
-  await excursionStore.deleteTime(dateId, timeId)
-  await updateExcursion(_id)
+  let time_has_bills = await excursionStore.timeHasBills(timeId)
+  console.log(time_has_bills)
+  if (!time_has_bills) {
+    await excursionStore.deleteTime(dateId, timeId)
+    await updateExcursion(_id)
+  }
+  else {
+    message.config({ duration: 1.5, top: "70vh" });
+    message.error({
+      content: "Имеются счета"
+    })
+  }
 }
 let deleteDate = async (dateId) => {
   await excursionStore.deleteDate(dateId)
@@ -69,6 +91,7 @@ let deleteDate = async (dateId) => {
 let updateExcursion = async (_id) => {
   const response = await excursionStore.getExcursionById(_id)
   excursion.value = response.data
+  console.log(excursion.value)
 }
 
 onMounted(async () => {
@@ -76,9 +99,9 @@ onMounted(async () => {
 
 })
 </script>
+
 <template>
   <a-row>
-
     <a-col :span="24">
       <a-breadcrumb style="cursor: pointer;">
         <a-breadcrumb-item @click="router.push('/cabinet/excursions')">
@@ -88,27 +111,31 @@ onMounted(async () => {
       </a-breadcrumb>
       <h3 class="mt-8 mb-8">Добавить даты в "{{ excursion.name }}"</h3>
     </a-col>
+
     <a-col :span="24">
       <ExcursionDates @change-dates="setDates" :clearDateForm="clearDateForm" />
-
     </a-col>
+
     <a-col :span="24" class="d-flex justify-center mt-16 mb-16">
       <a-button @click="submit" type="primary" class="lets_go_btn">отправить</a-button>
     </a-col>
-    <a-col :span="24" v-for="(date, index) in excursion.dates">
-      <div class="date">
-        <a-col class="d-flex" :xs="6" :md="3">
+
+    <a-col :span="24" v-for="date in excursion.dates" class="date-container" style="padding: 10px 0;">
+      <div class="date" :style="{ flexDirection: breakpoints.greaterOrEqual('md').value ? 'row' : 'column', gap: '16px' }">
+        <div class="d-flex align-center" style="min-width: clamp(6.5625rem, 4.5536rem + 6.4286vw, 9.375rem);">
           <a-popconfirm title="Удалить дату?" ok-text="Да" cancel-text="Нет" @confirm="deleteDate(date._id)">
             <div class="large-date">
               {{ getDate(date.date).day }}
             </div>
           </a-popconfirm>
-          <div class="column">
+
+          <div class="column ml-4">
             <div class="month">{{ getDate(date.date).month }}</div>
             <div class="weekday">{{ getDate(date.date).weekday }}</div>
           </div>
-        </a-col>
-        <a-col class="d-flex" style="gap: 10px 20px; flex-wrap: wrap;">
+        </div>
+
+        <div class="d-flex" style="gap: 10px 20px; flex-wrap: wrap;">
           <a-col v-for="time in date.times" class="time-container">
             <a-popconfirm title="Удалить время?" ok-text="Да" cancel-text="Нет"
               @confirm="deleteTime(date._id, time._id)">
@@ -117,20 +144,46 @@ onMounted(async () => {
               </a-button>
             </a-popconfirm>
           </a-col>
-        </a-col>
+        </div>
       </div>
-      <a-divider />
+
+      <a-col class="d-flex pt-8">
+        <VueDatePicker 
+          v-model="addTime" 
+          @update:model-value="sendTime(date.date)"
+          placeholder="Время" 
+          time-picker 
+          :clearable="false"
+          cancel-text="отмена"
+          select-text="добавить" 
+        >
+          <template #dp-input>
+            <a-button class="d-flex justify-center align-center text-center ml-8" shape="circle">
+              <span style="font-size: 18px" class="mdi mdi-plus"></span>
+            </a-button>
+          </template>
+        </VueDatePicker>
+
+        <a-button class="d-flex justify-center align-center text-center ml-8" type="primary" shape="circle">
+          <span style="font-size: 18px" class="mdi mdi-delete-outline"></span>
+        </a-button>
+      </a-col>
     </a-col>
-
-
   </a-row>
 </template>
 <style scoped lang="scss">
 .date {
   display: flex;
 
+  &-container {
+    display: flex; 
+    justify-content: space-between; 
+    flex-direction: row;
+  }
+
   .large-date {
     font-weight: 600;
+    line-height: 1;
     font-size: clamp(1.875rem, 1.3778rem + 1.4205vw, 2.5rem);
   }
 
@@ -147,15 +200,19 @@ onMounted(async () => {
 }
 
 .column {
+  display: flex;
   flex-direction: column;
+  gap: 6px;
 
   .month {
     font-weight: 600;
+    line-height: 1;
     font-size: clamp(0.9375rem, 0.6889rem + 0.7102vw, 1.25rem);
   }
 
   .weekday {
     font-weight: 300;
+    line-height: 1;
     font-size: clamp(0.625rem, 0.4261rem + 0.5682vw, 0.875rem);
   }
 }
