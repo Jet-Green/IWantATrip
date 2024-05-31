@@ -1,5 +1,8 @@
 <script setup>
 import { ref, onMounted, watch, computed } from "vue";
+import VueDatePicker from '@vuepic/vue-datepicker';
+import datePlugin from '../../plugins/dates'
+import '@vuepic/vue-datepicker/dist/main.css'
 import { useRouter } from "vue-router";
 import { useExcursion } from '../../stores/excursion.js';
 import { useAppState } from "../../stores/appState";
@@ -32,15 +35,12 @@ watch(time, (newTime) => {
   if (!newTime) return
   if (newTime[0] && newTime[1]) {
     let start = new Date(newTime[0].$d)
-    let end = new Date(newTime[1].$d)
 
     localStorage.setItem("ExcursionTimeStart", start)
-    localStorage.setItem("ExcursionTimeEnd", end)
     find()
   }
   else {
     localStorage.setItem("ExcursionTimeStart", '')
-    localStorage.setItem("ExcursionTimeEnd", '')
     find()
   }
 });
@@ -66,10 +66,8 @@ function find() {
   excursionStore.excursions = []
   if (time.value[0] ?? time.value[1]) {
     let start = new Date(time.value[0].$d)
-    let end = new Date(time.value[1].$d)
 
     localStorage.setItem("ExcursionTimeStart", start)
-    localStorage.setItem("ExcursionTimeEnd", end)
 
     start.setHours(0)
     start.setMinutes(0)
@@ -78,21 +76,13 @@ function find() {
 
     start = Number(Date.parse(start.toString()));
 
-    end.setHours(23)
-    end.setMinutes(59)
-    end.setSeconds(59)
-    end.setMilliseconds(999)
-
-    end = Number(Date.parse(end.toString()));
     excursionStore.excursionFilter.query = query.value
     excursionStore.excursionFilter.start = getDate(start)
-    excursionStore.excursionFilter.end = getDate(end)
     excursionStore.excursionFilter.type = type.value
     excursionStore.getAll();
   } else {
     excursionStore.excursionFilter.query = query.value
     excursionStore.excursionFilter.start = ""
-    excursionStore.excursionFilter.end = ""
     excursionStore.excursionFilter.type = type.value
     excursionStore.getAll();
   }
@@ -101,14 +91,12 @@ function find() {
 function resetForm() {
   excursionStore.excursionFilter.query = ""
   excursionStore.excursionFilter.start = ""
-  excursionStore.excursionFilter.end = ""
   excursionStore.excursionFilter.type = ""
   type.value = ""
   time.value = [];
   query.value = '';
 
   localStorage.setItem("ExcursionTimeStart", "")
-  localStorage.setItem("ExcursionTimeEnd", "")
   localStorage.setItem("ExcursionQuery", "")
   localStorage.setItem("ExcursionType", "")
 
@@ -121,7 +109,6 @@ onMounted(() => {
 
   if (localStorage.getItem("ExcursionTimeStart")) {
     time.value[0] = dayjs(localStorage.getItem("ExcursionTimeStart"))
-    time.value[1] = dayjs(localStorage.getItem("ExcursionTimeEnd"))
   }
 
   if (props.search) {
@@ -157,13 +144,21 @@ onMounted(() => {
           </a-select>
         </a-col>
 
-        <!-- <a-col :span="24" :md="12" class="d-flex align-center space-between">
+        <a-col :span="24" :md="12" class="d-flex align-center space-between">
           <div class="d-flex direction-column" style="width: 100%">
             <div style="font-size:10px; line-height:10px">даты</div>
-            <a-range-picker v-model:value="time" :locale="ruLocale" :placeholder="['начало', 'конец']"
-              inputmode='none' />
+            <VueDatePicker v-model="time" locale="ru-Ru" calendar-class-name="dp-custom-calendar"
+              placeholder="выберите дату" calendar-cell-class-name="dp-custom-cell" cancel-text="отмена"
+              select-text="выбрать" :min-date="new Date()" :enable-time-picker="false" format="dd/MM/yyyy">
+              <template #input-icon>
+                <span style="font-size: 20px; color: rgba(95, 95, 95, 0.65);"
+                  class="mdi mdi-calendar-outline ml-8"></span>
+              </template>
+            </VueDatePicker>
           </div>
-        </a-col> -->
+        </a-col>
+
+
         <a-col :span="24" class="d-flex justify-center mt-16 mb-16">
           <a-button type="primary" shape="round" @click="find" class="mr-4">
             <!-- <span class=" mdi mdi-magnify">

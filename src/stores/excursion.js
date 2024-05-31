@@ -39,10 +39,10 @@ export const useExcursion = defineStore('excursion', {
             const userStore = useAuth()
             return await ExcursionService.createDates(dates, _id, userStore.user._id)
         },
-        async getAll(requestTime) {
+        async getAll() {
             try {
                 let response;
-                response = await ExcursionService.getAll(useLocations().location._id,this.excursionFilter.query,this.excursionFilter.start, this.excursionFilter.end, requestTime, this.excursionFilter.type)
+                response = await ExcursionService.getAll(useLocations().location._id,this.excursionFilter.query,this.excursionFilter.start, Date.now(), this.excursionFilter.type)
                 this.excursions.push(...response.data);
                 this.excursions = _.uniqBy(this.excursions, '_id')
                 // this.cursor++
