@@ -66,8 +66,8 @@ let tripStat = computed(() => {
             })
 
         });
-        return statistic
     }
+    return statistic
 })
 
 let finalCost = computed(() => {
