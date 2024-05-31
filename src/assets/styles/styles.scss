@@ -232,3 +232,33 @@ a {
     padding: 2px;
   }
 }
+
+.dp__theme_light {
+  --dp-background-color: #fff !important;
+  --dp-text-color: #212121 !important;
+  --dp-hover-color: #f3f3f3 !important;
+  --dp-hover-text-color: #212121 !important;
+  --dp-hover-icon-color: #959595 !important;
+  --dp-primary-color: #ff6600 !important;
+  --dp-primary-disabled-color: #6bacea !important;
+  --dp-primary-text-color: #f8f5f5 !important;
+  --dp-secondary-color: #c0c4cc !important;
+  --dp-border-color: #ddd !important;
+  --dp-menu-border-color: #ddd !important;
+  --dp-border-color-hover: #aaaeb7 !important;
+  --dp-border-color-focus: #aaaeb7 !important;
+  --dp-disabled-color: #f6f6f6 !important;
+  --dp-scroll-bar-background: #f3f3f3 !important;
+  --dp-scroll-bar-color: #959595 !important;
+  --dp-success-color: #76d275 !important;
+  --dp-success-color-disabled: #a3d9b1 !important;
+  --dp-icon-color: #959595 !important;
+  --dp-danger-color: #ff6f60 !important;
+  --dp-marker-color: #ff6f60 !important;
+  --dp-tooltip-color: #fafafa !important;
+  --dp-disabled-color-text: #8e8e8e !important;
+  --dp-highlight-color: rgb(25 118 210 / 10%) !important;
+  --dp-range-between-dates-background-color: var(--dp-hover-color, #f3f3f3) !important;
+  --dp-range-between-dates-text-color: var(--dp-hover-text-color, #212121) !important;
+  --dp-range-between-border-color: var(--dp-hover-color, #f3f3f3) !important;
+}
