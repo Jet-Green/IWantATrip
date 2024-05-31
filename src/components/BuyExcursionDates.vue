@@ -24,6 +24,7 @@ const excursionStore = useExcursion()
 watch(props,()=>{
   updateDates()
 })
+
 function getDate(dateObj) {
   return datePlugin.excursions.getPrettyDate(dateObj)
 }
@@ -80,7 +81,6 @@ onMounted(async () => {
               class="time"
                shape="round" @click="buyExcursion(time)">
               {{ getTime(time) }}
-              <!-- :disabled="getPeopleCount(time.bills)>=props.maxPeople" -->
             </a-button>
             <span :class="{'primary_color': getPeopleCount(time.bills)>=props.maxPeople}">
               {{ getPeopleCount(time.bills) +' из '+ props.maxPeople }}

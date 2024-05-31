@@ -7,18 +7,13 @@ import { ref, onMounted } from "vue";
 
 import { useRoute } from "vue-router";
 import { useExcursion } from "../stores/excursion.js";
-import { useAuth } from "../stores/auth";
-import { useLocations } from "../stores/locations";
 
 const route = useRoute();
 const _id = route.query._id;
 
 const excursionStore = useExcursion();
-// const userStore = useAuth();
-// const locationStore = useLocations();
 
 let excursion = ref({});
-let billsInfo = ref({});
 let selectedDate = ref({})
 let buy=ref(false)
 
@@ -40,11 +35,6 @@ function openBuyDialog(time) {
   }
 }
 function closeBuyDialog() {
-  // for (let date of excursion.value.dates) {
-  //   for (let t of date.times) {
-  //     if (t._id == time._id) {
-
-  //     }}}
   selectedDate.value = {}
   buy.value=!buy.value
 }
