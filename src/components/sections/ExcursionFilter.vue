@@ -1,10 +1,13 @@
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import { useRouter } from "vue-router";
-import { useTrips } from '../../stores/trips.js';
+import { useExcursion } from '../../stores/excursion.js';
 import { useAppState } from "../../stores/appState";
+import excursionTypes from '../../db/excursionTypes.js'
 
 import dayjs from "dayjs";
+import objectSupport from 'dayjs/plugin/objectSupport'
+dayjs.extend(objectSupport);
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import 'dayjs/locale/ru';
 dayjs.locale('ru');
@@ -16,7 +19,7 @@ let props = defineProps({
 });
 
 
-const tripStore = useTrips();
+const excursionStore = useExcursion();
 const appStore = useAppState();
 
 let time = ref([]);
@@ -25,41 +28,48 @@ let type = ref("");
 
 let router = useRouter();
 
-function toCatalog() {
-  router.push(`/catalog`);
-}
-
 watch(time, (newTime) => {
   if (!newTime) return
   if (newTime[0] && newTime[1]) {
     let start = new Date(newTime[0].$d)
     let end = new Date(newTime[1].$d)
 
-    localStorage.setItem("TripTimeStart", start)
-    localStorage.setItem("TripTimeEnd", end)
+    localStorage.setItem("ExcursionTimeStart", start)
+    localStorage.setItem("ExcursionTimeEnd", end)
     find()
   }
   else {
-    localStorage.setItem("TripTimeStart", '')
-    localStorage.setItem("TripTimeEnd", '')
+    localStorage.setItem("ExcursionTimeStart", '')
+    localStorage.setItem("ExcursionTimeEnd", '')
     find()
   }
 });
 
+function getDate(dateObj) {
+  const dayjsDate = dayjs({ years: dateObj.year, months: dateObj.month, date: dateObj.day })
+  if (!dayjsDate.$d) return ''
+  let russianDate = (new Date(dayjsDate.$d)).toLocaleDateString('ru-RU', {
+    month: 'long',
+    day: 'numeric',
+    weekday: 'long',
+  }).replaceAll(',', '').split(' ')
+
+  return { weekday: russianDate[0], day: russianDate[1], month: russianDate[2] }
+}
 
 function find() {
   query.value = query.value.trim()
-  localStorage.setItem("TripQuery", query.value)
-  localStorage.setItem("TripType", type.value)
-  tripStore.searchCursor = 1
-  tripStore.cursor = 1
-  tripStore.trips = []
+  localStorage.setItem("ExcursionQuery", query.value)
+  localStorage.setItem("ExcursionType", type.value)
+  excursionStore.searchCursor = 1
+  excursionStore.cursor = 1
+  excursionStore.excursion = []
   if (time.value[0] ?? time.value[1]) {
     let start = new Date(time.value[0].$d)
     let end = new Date(time.value[1].$d)
 
-    localStorage.setItem("TripTimeStart", start)
-    localStorage.setItem("TripTimeEnd", end)
+    localStorage.setItem("ExcursionTimeStart", start)
+    localStorage.setItem("ExcursionTimeEnd", end)
 
     start.setHours(0)
     start.setMinutes(0)
@@ -74,44 +84,44 @@ function find() {
     end.setMilliseconds(999)
 
     end = Number(Date.parse(end.toString()));
-    tripStore.tripFilter.query = query.value
-    tripStore.tripFilter.start = start
-    tripStore.tripFilter.end = end
-    tripStore.tripFilter.type = type.value
-    tripStore.fetchTrips();
+    excursionStore.excursionFilter.query = query.value
+    excursionStore.excursionFilter.start = getDate(start)
+    excursionStore.excursionFilter.end = getDate(end)
+    excursionStore.excursionFilter.type = type.value
+    excursionStore.getAll();
   } else {
-    tripStore.tripFilter.query = query.value
-    tripStore.tripFilter.start = ""
-    tripStore.tripFilter.end = ""
-    tripStore.tripFilter.type = type.value
-    tripStore.fetchTrips();
+    excursionStore.excursionFilter.query = query.value
+    excursionStore.excursionFilter.start = ""
+    excursionStore.excursionFilter.end = ""
+    excursionStore.excursionFilter.type = type.value
+    excursionStore.getAll();
   }
 }
 
 function resetForm() {
-  tripStore.tripFilter.query = ""
-  tripStore.tripFilter.start = ""
-  tripStore.tripFilter.end = ""
-  tripStore.tripFilter.type = ""
+  excursionStore.excursionFilter.query = ""
+  excursionStore.excursionFilter.start = ""
+  excursionStore.excursionFilter.end = ""
+  excursionStore.excursionFilter.type = ""
   type.value = ""
   time.value = [];
   query.value = '';
 
-  localStorage.setItem("TripTimeStart", "")
-  localStorage.setItem("TripTimeEnd", "")
-  localStorage.setItem("TripQuery", "")
-  localStorage.setItem("TripType", "")
+  localStorage.setItem("ExcursionTimeStart", "")
+  localStorage.setItem("ExcursionTimeEnd", "")
+  localStorage.setItem("ExcursionQuery", "")
+  localStorage.setItem("ExcursionType", "")
 
   find()
 }
 
 onMounted(() => {
-  query.value = localStorage.getItem("TripQuery") ?? '';
-  type.value = localStorage.getItem("TripType") ?? '';
+  query.value = localStorage.getItem("ExcursionQuery") ?? '';
+  type.value = localStorage.getItem("ExcursionType") ?? '';
 
-  if (localStorage.getItem("TripTimeStart")) {
-    time.value[0] = dayjs(localStorage.getItem("TripTimeStart"))
-    time.value[1] = dayjs(localStorage.getItem("TripTimeEnd"))
+  if (localStorage.getItem("ExcursionTimeStart")) {
+    time.value[0] = dayjs(localStorage.getItem("ExcursionTimeStart"))
+    time.value[1] = dayjs(localStorage.getItem("ExcursionTimeEnd"))
   }
 
   if (props.search) {
@@ -141,20 +151,19 @@ onMounted(() => {
           <div style="font-size:10px; line-height:10px">вид тура</div>
           <a-select v-model:value="type">
             <a-select-option value=""></a-select-option>
-            <a-select-option placeholder="Tип тура" v-for="tripType in appStore.appState[0]?.tripType"
-              :value="tripType">
-              {{ tripType }}
+            <a-select-option placeholder="Tип тура" v-for="excursionType in excursionTypes" :value="excursionType.type">
+              {{ excursionType.type }}
             </a-select-option>
           </a-select>
         </a-col>
 
-        <a-col :span="24" :md="12" class="d-flex align-center space-between">
+        <!-- <a-col :span="24" :md="12" class="d-flex align-center space-between">
           <div class="d-flex direction-column" style="width: 100%">
             <div style="font-size:10px; line-height:10px">даты</div>
             <a-range-picker v-model:value="time" :locale="ruLocale" :placeholder="['начало', 'конец']"
               inputmode='none' />
           </div>
-        </a-col>
+        </a-col> -->
         <a-col :span="24" class="d-flex justify-center mt-16 mb-16">
           <a-button type="primary" shape="round" @click="find" class="mr-4">
             <!-- <span class=" mdi mdi-magnify">

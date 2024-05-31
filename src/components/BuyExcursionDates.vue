@@ -1,19 +1,22 @@
 <script setup>
 import datePlugin from '../plugins/dates'
+import { ref, onMounted } from "vue";
+import { useExcursion } from '../stores/excursion';
 
 const props = defineProps({
-  dates: {
-    type: Array
-  },
   excursionId: {
     type: String
+  },
+  maxPeople: {
+    type: Number
   }
 })
 
 const emit = defineEmits(['buy-excursion'])
 
-const dates = props.dates
+let excursion = ref({})
 const excursionId = props.excursionId
+const excursionStore = useExcursion()
 
 function getDate(dateObj) {
   return datePlugin.excursions.getPrettyDate(dateObj)
@@ -27,13 +30,29 @@ function getTime(timeObj) {
   }
   return result
 }
+
+function getPeopleCount(bills) {
+  let sum = 0
+  for (let b of bills) {
+    for (let p of b.cart) {
+      sum += p.count
+    }
+  }
+  return sum
+}
+
 function buyExcursion(time) {
   emit('buy-excursion', time)
 }
+
+onMounted(async () => {
+  let response = await excursionStore.getExcursionBillsById(excursionId)
+  excursion.value = response.data;
+});
 </script>
 <template>
-  <a-row v-if="dates.length > 0">
-    <a-col :span="24" v-for="(date, index) in dates">
+  <a-row v-if="excursion?.dates?.length > 0">
+    <a-col :span="24" v-for="(date, index) in excursion.dates">
       <div class="date">
         <a-col class="d-flex" :xs="6" :md="4">
           <div class="large-date">
@@ -46,9 +65,16 @@ function buyExcursion(time) {
         </a-col>
         <a-col :xs="18" :md="20" class="d-flex" style="gap: 10px 20px; flex-wrap: wrap;">
           <a-col v-for="time in date.times" class="time-container">
-            <a-button shape="round" class="time" @click="buyExcursion(time)">
+            <a-button 
+              :class="{'primary_color': getPeopleCount(time.bills)>=props.maxPeople}"
+              :disabled="getPeopleCount(time.bills)>=props.maxPeople"
+              class="time"
+               shape="round" @click="buyExcursion(time)">
               {{ getTime(time) }}
             </a-button>
+            <span :class="{'primary_color': getPeopleCount(time.bills)>=props.maxPeople}">
+              {{ getPeopleCount(time.bills) +' из '+ props.maxPeople }}
+            </span>
           </a-col>
         </a-col>
       </div>
@@ -74,6 +100,7 @@ function buyExcursion(time) {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
   }
 }
 
@@ -90,4 +117,8 @@ function buyExcursion(time) {
     font-size: clamp(0.625rem, 0.4261rem + 0.5682vw, 0.875rem);
   }
 }
+.primary_color {
+  color: #ff6600;
+}
 </style>
+

@@ -36,6 +36,7 @@ let filteredTrips = computed(() => {
             || (trip.partner ? trip.partner.toLowerCase().includes(query.value.toLowerCase()) : false)
             || trip.offer.toLowerCase().includes(query.value.toLowerCase())
             || trip.userComment?.toLowerCase().includes(query.value.toLowerCase())
+            || clearData(trip.start).includes(query.value.toLowerCase()) 
         )
     } else {
         localStorage.setItem("cabinetQuery", '');
@@ -48,6 +49,7 @@ async function deleteTrip() {
     await getAllTrips()
 }
 
+
 async function getAllTrips() {
     loading.value = true
     let userId = userStore.user._id
@@ -56,7 +58,22 @@ async function getAllTrips() {
     allTrips.value = response.data
     loading.value = false
 }
+const clearData = (dataString) => {
+    let date = 0
+    if (dataString.length == 13) {
+        const dataFromString = new Date(Number(dataString));
+        date = dataFromString
 
+    } else {
+        date = new Date(dataString)
+    };
+    return date.toLocaleDateString("ru-Ru", {
+        year: "2-digit",
+        month: "2-digit",
+        day: "2-digit",
+
+    })
+}
 onMounted(async () => {
     query.value = localStorage.getItem("cabinetQuery") ?? '';
     await getAllTrips()
