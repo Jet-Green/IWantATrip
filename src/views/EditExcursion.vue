@@ -14,7 +14,7 @@ let locationSearchRequest = ref("")
 let possibleLocations = ref([])
 
 let previews = ref([]);
-let images = []; // type: blob
+let images = ref([]); // type: blob
 let delPhotoDialog = ref(false);
 let visibleCropperModal = ref(false);
 
@@ -84,16 +84,9 @@ const removeCost = (item) => {
 };
 let targetIndex = ref()
 const delPhoto = () => {
-  let targetImage = images[targetIndex.value]
-  for (let i = 0; form.images.length; i++) {
-    if (form.images[i] == targetImage) {
-      form.images.splice(i, 1)
-    }
-  }
   previews.value.splice(targetIndex.value, 1);
-  images.splice(targetIndex.value, 1);
+  images.value.splice(targetIndex.value, 1);
   delPhotoDialog.value = false;
-  localStorage.setItem('createExcursionImages', JSON.stringify(previews.value))
 };
 const addCost = () => {
   form.prices.push({
@@ -102,16 +95,9 @@ const addCost = () => {
   });
 };
 function addPreview(blob) {
-  // imagesFormData.append("image", blob, `product-${previews.value.length}`);
   visibleCropperModal.value = false;
-  images.push(blob);
+  images.value.push(blob);
   previews.value.push(URL.createObjectURL(blob));
-  localStorage.setItem('createExcursionImages', JSON.stringify(previews.value))
-}
-function handleImgError(i) {
-  previews.value.splice(i, 1)
-  images.splice(i, 1)
-  localStorage.setItem('createExcursionImages', JSON.stringify(previews.value))
 }
 let getExcursionDirections = computed(() => {
   let type = excursionTypes.filter((type) => {
@@ -130,17 +116,18 @@ let getExcursionPlace = computed(() => {
 
 })
 async function submit() {
-  // console.log(images);
-  // return
   let excursionCb = await excursionStore.edit(form)
   const _id = excursionCb.data._id
   let imagesFormData = new FormData();
-  for (let i = 0; i < images.length; i++) {
-    imagesFormData.append(
-      "excursion-image",
-      new File([images[i]], _id + "_" + i + ".jpg"),
-      _id + "_" + i + ".jpg"
-    );
+  for (let i = 0; i < images.value.length; i++) {
+    let imgType = typeof images.value[i]
+    if (imgType == 'object') {
+      imagesFormData.append(
+        "excursion-image",
+        new File([images.value[i]], _id + '_' + i + '_' + Date.now() + ".jpg"),
+        _id + "_" + i + '_' + Date.now() + ".jpg"
+      );
+    }
   }
 
   let res = await excursionStore.uploadImages(imagesFormData)
@@ -148,13 +135,12 @@ async function submit() {
     router.push('/cabinet/me')
   }
 }
-
 onMounted(async () => {
   let excursionId = route.query._id
   let response = await excursionStore.getExcursionById(excursionId)
   form = response.data
   previews.value = response.data.images
-  images = response.data.images
+  images.value = response.data.images
   locationSearchRequest.value = response.data.location.name
 })
 </script>
@@ -166,7 +152,7 @@ onMounted(async () => {
         <Form :validation-schema="formSchema" @submit="submit">
           <a-row :gutter="[16, 16]">
             <a-col :span="24">
-              <h2>Создать экскурсию</h2>
+              <h2>Редактировать экскурсию</h2>
             </a-col>
             <a-col :span="24">
               <Field name="name" v-slot="{ value, handleChange }" v-model="form.name">
@@ -211,8 +197,7 @@ onMounted(async () => {
               Фотографии
               <div class="d-flex" style="overflow-x: scroll">
                 <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
-                  @click="delPhotoDialog = true;
-      targetIndex = i;" />
+                  @click="delPhotoDialog = true; targetIndex = i;" />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
