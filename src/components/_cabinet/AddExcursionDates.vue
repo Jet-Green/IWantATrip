@@ -185,6 +185,7 @@ onMounted(async () => {
     font-weight: 600;
     line-height: 1;
     font-size: clamp(1.875rem, 1.3778rem + 1.4205vw, 2.5rem);
+    cursor: pointer;
   }
 
   .time {
