@@ -11,6 +11,9 @@ import { message } from "ant-design-vue";
 import { useAuth } from "../../stores/auth";
 import { useTrips } from "../../stores/trips";
 import PrintCustomers from '../../print/PrintCustomers.vue'
+import Bus from "../Bus.vue";
+import _ from 'lodash'
+import { useBus } from "../../stores/bus";
 
 const app = getCurrentInstance();
 const htmlToPaper = app.appContext.config.globalProperties.$htmlToPaper;
@@ -20,7 +23,6 @@ const route = useRoute();
 
 const userStore = useAuth()
 const tripStore = useTrips();
-
 
 let trip = ref({});
 let userInfo = ref({
@@ -112,6 +114,7 @@ async function deletePayment(bill) {
     }
 }
 async function buyTrip(isBoughtNow) {
+    updateSeats()
     if (userInfo.value.phone) {
         let cart = [...selectedByUser.value, supervisor.value]
         let bill = {
@@ -123,6 +126,7 @@ async function buyTrip(isBoughtNow) {
             },
             selectedStartLocation: selectedStartLocation.value,
             cart,
+            seats: selected_seats.value,
             tripId: trip.value._id,
             userInfo: {
                 _id: null,
@@ -143,7 +147,8 @@ async function buyTrip(isBoughtNow) {
         }
         await userStore
             .buyTrip(trip.value._id, bill)
-            .then(() => {
+            .then((response) => {
+                if (response.status !== 200) return
                 updateTripInfo()
                 message.config({ duration: 3, top: "90vh" });
                 message.success({ content: "Тур заказан!" });
@@ -231,6 +236,34 @@ async function editUserComment() {
     }
 }
 
+
+let bus = ref()
+let selected_seats = ref([])
+let free_seats = ref([])
+let show_old_bus = ref(true)
+let people_amount = computed(() => selectedByUser.value.reduce((acc, cost) => acc + cost.count, 0) + supervisor.value.count)
+let getCurrentCustomerNumber = computed(() => tripStat.value.amount + people_amount.value)
+
+async function updateSeats() {
+    if (!bus.value) return
+    let bought_seats = await tripStore.getBoughtSeats(trip.value._id)
+    free_seats.value = bus.value.seats.map(seat => seat.number).filter(seat => !bought_seats.includes(seat) && !bus.value.stuff.includes(seat))
+	selected_seats.value = selected_seats.value.filter(seat => free_seats.value.includes(seat))
+}
+
+async function updateBus() {
+    let transports = trip.value.transports.filter(bus => bus.capacity >= getCurrentCustomerNumber.value)
+    transports = _.sortBy(transports, [o => o.capacity])
+    let transport = transports[0]
+
+    let bus_id = transport?.transportType.bus_id
+    if (!bus_id) return show_old_bus.value = true
+    show_old_bus.value = false
+
+    bus.value = await useBus().getById(bus_id)
+    updateSeats()
+}
+
 watch(isSupervisor, (sup) => {
     if (sup == false) {
         supervisor.value.count = 0
@@ -248,6 +281,13 @@ onMounted(async () => {
         });
     }
     loading.value = false
+    updateBus()
+    watch(people_amount, updateSeats)
+	watch(people_amount, (newValue, oldValue) => {
+		if (newValue >= oldValue || selected_seats.value.length <= newValue) return
+		
+		selected_seats.value.pop()
+	})
 });
 </script>
 
@@ -544,6 +584,18 @@ onMounted(async () => {
                 </a-col>
                 <a-col :span="24">
                     <b>Итого: {{ finalCost }} руб.</b>
+                </a-col>
+
+                <a-col v-if="bus && people_amount > 0" :span="24" class="mb-8">
+                    <div>Выберите места</div>
+                    <Bus 
+                        @select="updateSeats"
+                        v-model:selected_seats="selected_seats"
+                        :free_seats="free_seats"
+                        :max_count="people_amount" 
+                        :bus="bus"
+                        style="width: 150px;" 
+                    />
                 </a-col>
 
                 <a-col :span="24">
