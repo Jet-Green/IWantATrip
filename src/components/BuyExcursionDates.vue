@@ -1,6 +1,6 @@
 <script setup>
 import datePlugin from '../plugins/dates'
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useExcursion } from '../stores/excursion';
 
 const props = defineProps({
@@ -9,6 +9,9 @@ const props = defineProps({
   },
   maxPeople: {
     type: Number
+  },
+  buy: {
+    type:Boolean
   }
 })
 
@@ -17,6 +20,10 @@ const emit = defineEmits(['buy-excursion'])
 let excursion = ref({})
 const excursionId = props.excursionId
 const excursionStore = useExcursion()
+
+watch(props,()=>{
+  updateDates()
+})
 
 function getDate(dateObj) {
   return datePlugin.excursions.getPrettyDate(dateObj)
@@ -41,13 +48,16 @@ function getPeopleCount(bills) {
   return sum
 }
 
-function buyExcursion(time) {
+async function buyExcursion(time) {
   emit('buy-excursion', time)
 }
 
-onMounted(async () => {
+async function updateDates(){
   let response = await excursionStore.getExcursionBillsById(excursionId)
   excursion.value = response.data;
+}
+onMounted(async () => {
+  updateDates()
 });
 </script>
 <template>

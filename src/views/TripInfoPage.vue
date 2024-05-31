@@ -269,7 +269,7 @@ async function buyTrip() {
 
         if (trip.value.transports.length && people_amount.value !== selected_seats.value.length) {
             message.config({ duration: 3, top: "90vh" });
-            message.error({ content: `Выбирите места в количестве ${people_amount.value} шт.` });
+            message.error({ content: `Выберите места в количестве ${people_amount.value} шт.` });
             return
         }
 

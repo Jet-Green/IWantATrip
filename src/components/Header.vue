@@ -199,6 +199,9 @@ onMounted(() => {
         <div @click="toComponentFromMenu('CreateTripNoHelp')" class="route ma-8">
           создать тур
         </div>
+        <div @click="toComponentFromMenu('SendIdea')" class="route ma-8">
+          подать идею
+        </div>
         <div @click="toComponentFromMenu('CompanionsPage')" class="route ma-8">
           попутчики
         </div>
@@ -207,11 +210,14 @@ onMounted(() => {
         </div>
         <div class="guide">
           <!-- <h4 class="rotated-text">Гид по городу <br> <span>
-              {{ locationSearchRequest ? locationSearchRequest : "Ваш город" }}
-            </span></h4> -->
-
+            {{ locationSearchRequest ? locationSearchRequest : "Ваш город" }}
+          </span></h4> -->
+          
           <div @click="toComponentFromMenu('ExcursionsPage')" class="route ma-8">
             экскурсии
+          </div>
+          <div @click="toComponentFromMenu('CreateExcursion')" class="route ma-8">
+            создать экскурсию
           </div>
           <div @click="toComponentFromMenu('Poster')" class="route ma-8">
             афиши

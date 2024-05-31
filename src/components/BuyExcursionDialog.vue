@@ -1,5 +1,5 @@
 <script setup>
-import { ref, toRefs, watch, onMounted, reactive } from "vue"
+import { ref, toRefs, watch, onMounted, reactive,computed } from "vue"
 import _ from "lodash"
 import datePlugin from '../plugins/dates'
 import { useExcursion } from "../stores/excursion";
@@ -29,6 +29,15 @@ let { selectedDate } = toRefs(props)
 let prettyDate = ref()
 let prettyTime = ref()
 
+let availablePlaces = computed(() => {
+  let maxPeople = 0
+  for(let bill of selectedDate.value.time.bills){
+
+      maxPeople=maxPeople+bill.cart[0].count
+    
+  }
+  return props.excursion.maxPeople-maxPeople
+});
 
 watch(selectedDate, (newValue) => {
   if (!_.isEmpty(newValue)) {
@@ -48,10 +57,16 @@ async function buy() {
   if (!userStore.user.fullinfo?.fullname) {
     await userStore.updateFullinfo(userStore.user._id, fullinfo)
   }
-
-  let toSend = []
-
-  for (let p of pricesForm.value) {
+  if (!(availablePlaces.value>=pricesForm.value[0].count)) {
+    message.config({ duration: 0.5, top: "70vh" });
+    message.error({
+      content: "Свободных мест всего "+availablePlaces.value,
+    });
+    return
+  }
+  else{
+    let toSend = []
+    for (let p of pricesForm.value) {
 
     if (p.count > 0) {
       toSend.push({
@@ -71,7 +86,8 @@ async function buy() {
       message.success({
         content: "Успешно!",
         onClose: () => {
-          router.push('/excursions')
+          open.value=false
+          emit('close')
         },
       });
     } else {
@@ -83,6 +99,7 @@ async function buy() {
         },
       });
     }
+  }
   }
 }
 let bookingCount = ref()
@@ -98,7 +115,8 @@ async function book() {
       message.success({
         content: "Успешно!",
         onClose: () => {
-          router.push('/excursions')
+          open.value=false
+          emit('close')
         },
       });
     } else {
@@ -110,6 +128,7 @@ async function book() {
         },
       });
     }
+    
   }
 }
 
@@ -165,7 +184,7 @@ onMounted(() => {
       <div class="price-container">
         <div class="price">{{ price.type }} x <span style="color: #ff6600;">{{ price.price }}₽</span></div>
         <div>
-          <a-input-number v-model:value="price.count" :min="0" :max="excursion.maxPeople" :controls="false">
+          <a-input-number v-model:value="price.count" :min="0" :controls="false">
           </a-input-number>
         </div>
       </div>
