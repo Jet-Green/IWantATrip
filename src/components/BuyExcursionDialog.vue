@@ -6,7 +6,6 @@ import { useExcursion } from "../stores/excursion";
 import { useAuth } from "../stores/auth";
 import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
-import { cardMetaProps } from "ant-design-vue/es/card/Meta";
 
 const excursionStore = useExcursion()
 const userStore = useAuth()
@@ -87,7 +86,8 @@ async function buy() {
       message.success({
         content: "Успешно!",
         onClose: () => {
-          router.push('/excursions')
+          open.value=false
+          emit('close')
         },
       });
     } else {
@@ -115,7 +115,8 @@ async function book() {
       message.success({
         content: "Успешно!",
         onClose: () => {
-          router.push('/excursions')
+          open.value=false
+          emit('close')
         },
       });
     } else {
