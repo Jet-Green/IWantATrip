@@ -326,9 +326,9 @@ async function buyTrip() {
                         if (response.status == 200) {
                             message.config({ duration: 3, top: "90vh" });
                             message.success({ content: "Тур заказан!" });
+                            await refreshDates();
+                            buyDialog.value = false;
                         }
-                        await refreshDates();
-                        buyDialog.value = false;
                     })
                     .catch((err) => {
                         console.log(err);
