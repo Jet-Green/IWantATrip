@@ -14,7 +14,9 @@ let locationSearchRequest = ref("")
 let possibleLocations = ref([])
 
 let previews = ref([]);
-let images = ref([]); // type: blob
+let newBlobImages = ref([]); // type: blob
+let oldImages = ref([])
+
 let delPhotoDialog = ref(false);
 let visibleCropperModal = ref(false);
 
@@ -44,7 +46,6 @@ let form = reactive({
   excursionType: {},
   startPlace: "",
   prices: [],
-  images: [],
   minAge: 0,
   deadline: '',
   requirements: '',
@@ -84,8 +85,12 @@ const removeCost = (item) => {
 };
 let targetIndex = ref()
 const delPhoto = () => {
-  previews.value.splice(targetIndex.value, 1);
-  images.value.splice(targetIndex.value, 1);
+  if (targetIndex.value.type == 'new') {
+    previews.value.splice(targetIndex.value.index, 1);
+    newBlobImages.value.splice(targetIndex.value.index, 1);
+  } else {
+    oldImages.value.splice(targetIndex.value.index, 1)
+  }
   delPhotoDialog.value = false;
 };
 const addCost = () => {
@@ -96,7 +101,7 @@ const addCost = () => {
 };
 function addPreview(blob) {
   visibleCropperModal.value = false;
-  images.value.push(blob);
+  newBlobImages.value.push(blob);
   previews.value.push(URL.createObjectURL(blob));
 }
 let getExcursionDirections = computed(() => {
@@ -119,15 +124,12 @@ async function submit() {
   let excursionCb = await excursionStore.edit(form)
   const _id = excursionCb.data._id
   let imagesFormData = new FormData();
-  for (let i = 0; i < images.value.length; i++) {
-    let imgType = typeof images.value[i]
-    if (imgType == 'object') {
-      imagesFormData.append(
-        "excursion-image",
-        new File([images.value[i]], _id + '_' + i + '_' + Date.now() + ".jpg"),
-        _id + "_" + i + '_' + Date.now() + ".jpg"
-      );
-    }
+  for (let i = 0; i < newBlobImages.value.length; i++) {
+    imagesFormData.append(
+      "excursion-image",
+      new File([newBlobImages.value[i]], _id + '_' + i + '_' + Date.now() + ".jpg"),
+      _id + "_" + i + '_' + Date.now() + ".jpg"
+    );
   }
 
   let res = await excursionStore.uploadImages(imagesFormData)
@@ -139,8 +141,7 @@ onMounted(async () => {
   let excursionId = route.query._id
   let response = await excursionStore.getExcursionById(excursionId)
   form = response.data
-  previews.value = response.data.images
-  images.value = response.data.images
+  oldImages.value = response.data.images
   locationSearchRequest.value = response.data.location.name
 })
 </script>
@@ -196,8 +197,10 @@ onMounted(async () => {
             <a-col :xs="24">
               Фотографии
               <div class="d-flex" style="overflow-x: scroll">
-                <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
-                  @click="delPhotoDialog = true; targetIndex = i;" />
+                <img v-for="(pr, index) in oldImages" :key="index" :src="pr" alt="" class="ma-4"
+                  style="max-width: 200px;" @click="delPhotoDialog = true; targetIndex = { index, type: 'old' };" />
+                <img v-for="(pr, index) in previews" :key="index" :src="pr" alt="" class="ma-4"
+                  style="max-width: 200px;" @click="delPhotoDialog = true; targetIndex = { index, type: 'new' };;" />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
