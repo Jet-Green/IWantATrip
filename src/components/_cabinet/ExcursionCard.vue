@@ -64,6 +64,10 @@ function excursionInfo(_id) {
         <span v-if="!excursion.isHidden" class="mdi mdi-eye-outline"></span>
         <span v-else class="mdi mdi-eye-off-outline"></span>
       </a-popconfirm>
+      <a-popconfirm title="Редактировать?" ok-text="Да" cancel-text="Нет"
+        @confirm="router.push(`/edit-excursion?_id=${excursion._id}`)">
+        <span class="mdi mdi-pen"></span>
+      </a-popconfirm>
       <span class="mdi mdi-information-outline" @click="excursionInfo(excursion._id)"></span>
     </div>
   </a-card>

@@ -26,6 +26,9 @@ export const useExcursion = defineStore('excursion', {
         async create(excursion) {
             return await ExcursionService.create({ excursion, userId: useAuth().user._id })
         },
+        async edit(excursion) {
+            return await ExcursionService.edit(excursion)
+        } ,
         async getUserExcursions() {
             const user = useAuth().user
             return await ExcursionService.getUserExcursions(user._id)

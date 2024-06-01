@@ -7,6 +7,11 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/edit-excursion',
+      name: 'EditExcursion',
+      component: () => import('../views/EditExcursion.vue')
+    },
+    {
       path: '/payment',
       name: 'Payment',
       component: () => import('../views/Payment.vue')
