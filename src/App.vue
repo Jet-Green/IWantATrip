@@ -20,6 +20,9 @@ onMounted(async () => {
   }
   // вся логика локации тут
   await locationStore.fetchLocations()
+  if (localStorage.getItem('location')) {
+    locationStore.location = JSON.parse(localStorage.getItem('location'))
+  }
 
 
   // function notify() {
@@ -63,7 +66,7 @@ onMounted(async () => {
       colorBgBody: 'rgba(0, 0, 0, 0)',
       cardPaddingBase: ' 0px',
       lineHeight: 1.5714285714285714,
-  
+
 
 
     },

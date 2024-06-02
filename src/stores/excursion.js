@@ -44,8 +44,10 @@ export const useExcursion = defineStore('excursion', {
         },
         async getAll() {
             try {
+                this.excursions = []
                 let response;
                 response = await ExcursionService.getAll(useLocations().location._id,this.excursionFilter.query,this.excursionFilter.start, Date.now(), this.excursionFilter.type)
+               
                 this.excursions.push(...response.data);
                 this.excursions = _.uniqBy(this.excursions, '_id')
                 // this.cursor++
@@ -66,6 +68,9 @@ export const useExcursion = defineStore('excursion', {
         },
         async deleteExcursionBill(_id) {
             return await ExcursionService.deleteExcursionBill(_id)
+        },
+        async deleteExcursionBooking(_id) {
+            return await ExcursionService.deleteExcursionBooking(_id)
         },
         async getExcursionBookingsById(_id) {
             return await ExcursionService.getExcursionBookingsById(_id)

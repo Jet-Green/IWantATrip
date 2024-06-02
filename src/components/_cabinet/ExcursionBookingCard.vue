@@ -1,7 +1,19 @@
 <script setup>
+import { useExcursion } from '../../stores/excursion';
+const excursionStore = useExcursion()
+
+
+let emit = defineEmits(['updateExcursion'])
 defineProps({
   booking: Object
 })
+
+async function deleteExcursionBooking(_id) {
+  let response = await excursionStore.deleteExcursionBooking(_id);
+  if (response.status == 200) {
+    emit('updateExcursion')
+  }
+}
 </script>
 <template>
   <a-card hoverable class="customer-card">
@@ -25,8 +37,14 @@ defineProps({
         {{ booking.userInfo.phone }}
       </a>
     </div>
-    <div style="position: absolute; bottom: 8px; right: 12px;">
+    <div>
       <b>{{ booking.count }}&nbsp;чел.</b>
+    </div>
+    <div class="actions d-flex">
+      <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deleteExcursionBooking(booking._id)">
+        <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+      </a-popconfirm>
+
     </div>
   </a-card>
 </template>
@@ -45,6 +63,15 @@ defineProps({
   .sum {
     display: flex;
     justify-content: end;
+  }
+}
+.actions {
+  font-size: 20px;
+  color: #245159;
+
+  * {
+    margin: 4px;
+    cursor: pointer;
   }
 }
 </style>

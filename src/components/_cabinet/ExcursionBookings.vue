@@ -123,7 +123,7 @@ onMounted(async () => {
     <h3 class="mt-8 mb-8"><span style="color: #ff6600;">{{ excursion.name }}</span></h3>
     <a-row :gutter="[16, 16]" v-if="bookings.length > 0" class="mb-16">
       <a-col :span="24" :md="12" :lg="8" v-for="booking of bookings">
-        <ExcursionBookingCard :booking="booking" />
+        <ExcursionBookingCard :booking="booking" @updateExcursion="updateExcursion" />
       </a-col>
     </a-row>
     <a-row v-else>

@@ -17,9 +17,6 @@ let excursion = ref({});
 let selectedDate = ref({})
 let buy=ref(false)
 
-function getImg(index) {
-  return trip.value.images[index];
-}
 function openBuyDialog(time) {
   if (selectedDate.value._id) return
   for (let date of excursion.value.dates) {
@@ -97,7 +94,7 @@ onMounted(async () => {
 
             <div class="d-flex">
               Цены:&nbsp
-              <div v-if="excursion.prices">
+              <div v-if="excursion.prices.length > 0">
                 <div v-for="(item, index) in excursion.prices" :key="index">
                   {{ item.type }} - <b>{{ item.price }} руб</b>
                 </div>

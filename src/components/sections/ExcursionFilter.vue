@@ -126,25 +126,25 @@ onMounted(() => {
   </span> -->
 
   <a-row type="flex" justify="center" class="section_bg ">
-    <a-col :xs="22" :lg="16">
+    <a-col :xs="24" >
 
       <a-row :gutter="[8, 4]" class="d-flex justify-center align-center flex-wrap">
-        <a-col :span="12" :md="6" class="d-flex direction-column">
+        <a-col :span="12" :md="8" class="d-flex direction-column">
           <div for="search" style="font-size:10px; line-height:10px; ">искать</div>
           <a-input v-model:value="query" placeholder="сочи" name="search" style="z-index: 0; width:100%" />
         </a-col>
 
-        <a-col :span="12" :md="6" class="d-flex direction-column" v-if="appStore.appState">
-          <div style="font-size:10px; line-height:10px">вид тура</div>
+        <a-col :span="12" :md="8" class="d-flex direction-column" v-if="appStore.appState">
+          <div style="font-size:10px; line-height:10px">вид экскурсии</div>
           <a-select v-model:value="type">
             <a-select-option value=""></a-select-option>
-            <a-select-option placeholder="Tип тура" v-for="excursionType in excursionTypes" :value="excursionType.type">
+            <a-select-option placeholder="Вид экскурсии" v-for="excursionType in excursionTypes" :value="excursionType.type">
               {{ excursionType.type }}
             </a-select-option>
           </a-select>
         </a-col>
 
-        <a-col :span="24" :md="12" class="d-flex align-center space-between">
+        <a-col :span="24" :md="8" class="d-flex align-center space-between">
           <div class="d-flex direction-column" style="width: 100%">
             <div style="font-size:10px; line-height:10px">даты</div>
             <VueDatePicker v-model="time" locale="ru-Ru" calendar-class-name="dp-custom-calendar"

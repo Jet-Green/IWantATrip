@@ -16,13 +16,13 @@ const route = useRoute();
 const excursionStore = useExcursion()
 
 watch(() => useLocations().location._id, async () => {
-  excursionStore.getAll()
+  await excursionStore.getAll()
 })
 
 onMounted(async () => {
-if (excursionStore.excursions.length == 0) {
+
   await excursionStore.getAll()
-}
+
 });
 
 </script>
@@ -34,7 +34,8 @@ if (excursionStore.excursions.length == 0) {
         <h3>Экскурсии</h3>
         <ExcursionFilter :search="route.query.search"/>
         <a-row :gutter="[12, 16]">
-          <a-col :span="24" :sm="12" :md="8" v-for="ex of excursionStore.excursions">
+          <a-col :span="24" :sm="12" :md="8" v-for="ex of excursionStore.excursions" :key="ex._id">
+
             <ExcursionCard :excursion="ex" @click="router.push(`/excursion?_id=${ex._id}`)" />
           </a-col>
         </a-row>
