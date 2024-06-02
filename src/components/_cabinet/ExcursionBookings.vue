@@ -5,7 +5,7 @@ import AddExcursionCustomerDialog from './AddExcursionCustomerDialog.vue';
 import { onMounted, ref, getCurrentInstance } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useExcursion } from '../../stores/excursion';
-import PrintExcursionCustomers from '../../components/_cabinet/PrintExcursionCustomers.vue'
+import PrintExcursionCustomers from '../../print/PrintExcursionCustomers.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -105,10 +105,7 @@ onMounted(async () => {
               <span class="mdi mdi-account-multiple-outline mr-4 icon"></span>
               <b>{{ getPeopleCount(time._id) }}</b>&nbsp;чел.
             </div>
-
             <div>
-
-
               <a-button @click="print()" class="d-flex justify-center align-center" type="primary" shape="circle">
                 <span style="font-size:18px" class="mdi mdi-printer-outline"></span>
               </a-button>
@@ -125,7 +122,6 @@ onMounted(async () => {
     </a-row>
     <h3 class="mt-8 mb-8"><span style="color: #ff6600;">{{ excursion.name }}</span></h3>
     <a-row :gutter="[16, 16]" v-if="bookings.length > 0" class="mb-16">
-      {{ excursion.bookings }}
       <a-col :span="24" :md="12" :lg="8" v-for="booking of bookings">
         <ExcursionBookingCard :booking="booking" />
       </a-col>

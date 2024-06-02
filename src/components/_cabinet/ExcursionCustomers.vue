@@ -1,7 +1,7 @@
 <script setup>
 import ExcursionCustomerCard from './ExcursionCustomerCard.vue';
 import AddExcursionCustomerDialog from './AddExcursionCustomerDialog.vue';
-import PrintExcursionCustomers from '../../components/_cabinet/PrintExcursionCustomers.vue'
+import PrintExcursionCustomers from '../../print/PrintExcursionCustomers.vue'
 
 import { onMounted, ref, getCurrentInstance } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
