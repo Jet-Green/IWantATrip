@@ -40,6 +40,7 @@ function openAddDialog(time) {
   }
 }
 function closeAddDialog() {
+  updateExcursion()
   selectedDate.value = {}
 }
 function getTime(timeObj) {
@@ -60,7 +61,7 @@ function getPeopleCount(timeId) {
   }
   return sum
 }
-onMounted(async () => {
+async function updateExcursion() {
   let response = await excursionStore.getTimeBookings(route.query.excursion_id, route.query.time_id)
   if (response.status == 200) {
     excursion.value = response.data.excursion
@@ -68,6 +69,9 @@ onMounted(async () => {
     time.value = response.data.time
   }
   loading.value = false
+}
+onMounted(async () => {
+  await  updateExcursion()
 })
 </script>
 <template>
@@ -101,10 +105,10 @@ onMounted(async () => {
               <span class="mdi mdi-account-multiple-outline mr-4 icon"></span>
               <b>{{ getPeopleCount(time._id) }}</b>&nbsp;чел.
             </div>
+
             <div>
-              <div id="printMe" style="display: none">
-                <PrintExcursionCustomers :date='route.query.date' :excursion="excursion" :time="getTime(time)" :bookings="bookings"/>
-              </div>
+
+
               <a-button @click="print()" class="d-flex justify-center align-center" type="primary" shape="circle">
                 <span style="font-size:18px" class="mdi mdi-printer-outline"></span>
               </a-button>
@@ -121,6 +125,7 @@ onMounted(async () => {
     </a-row>
     <h3 class="mt-8 mb-8"><span style="color: #ff6600;">{{ excursion.name }}</span></h3>
     <a-row :gutter="[16, 16]" v-if="bookings.length > 0" class="mb-16">
+      {{ excursion.bookings }}
       <a-col :span="24" :md="12" :lg="8" v-for="booking of bookings">
         <ExcursionBookingCard :booking="booking" />
       </a-col>
@@ -131,7 +136,12 @@ onMounted(async () => {
       </a-col>
     </a-row>
     <AddExcursionCustomerDialog :selectedDate="selectedDate" :excursion="excursion" @close="closeAddDialog" />
+    <div id="printMe" style="display: none">
+      <PrintExcursionCustomers :date='route.query.date' :excursion="excursion" :time="getTime(time)"
+        :bookings="bookings" />
+    </div>
   </div>
+
 </template>
 <style lang="scss" scoped>
 .button-card {

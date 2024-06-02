@@ -22,12 +22,12 @@ let props = defineProps({
             </tr>
 
             <tr v-for="booking, i in bookings" :key="i">
-                <td style="border-bottom: 1px solid black;">{{ booking.user.fullinfo.fullname }}</td>
-                <td style="border-bottom: 1px solid black;">{{ booking.user.fullinfo.phone }}</td>
-                <td style="border-bottom: 1px solid black;">{{ booking.count }} чел</td>
+                <td style="border-bottom: 1px solid black;">{{ booking?.user?.fullinfo?.fullname }}</td>
+                <td style="border-bottom: 1px solid black;">{{ booking?.user?.fullinfo?.phone }}</td>
+                <td style="border-bottom: 1px solid black;">{{ booking?.count }} чел</td>
             </tr>
         </div>
-        <div v-else>
+        <div v-if="bills">
             <tr style="text-align:left; ">
                 <th style="border-bottom: 1px solid black;">ФИО</th>
                 <th style="border-bottom: 1px solid black;">Телефон</th>
@@ -38,8 +38,8 @@ let props = defineProps({
 
             <div v-for="bill in bills">
                 <tr v-for="cart in bill.cart">
-                    <td style="border-bottom: 1px solid black;">{{ bill.user.fullinfo.fullname }}</td>
-                    <td style="border-bottom: 1px solid black;">{{ bill.user.fullinfo.phone }}</td>
+                    <td style="border-bottom: 1px solid black;">{{ bill?.user?.fullinfo?.fullname }}</td>
+                    <td style="border-bottom: 1px solid black;">{{ bill?.user?.fullinfo?.phone }}</td>
                     <td style="border-bottom: 1px solid black;">{{ cart.type }}</td>
                     <td style="border-bottom: 1px solid black;">{{ cart.count }} чел</td>
                     <td style="border-bottom: 1px solid black;">{{ cart.price }} руб</td>

@@ -52,7 +52,7 @@ async function updateSeats() {
     if (!bus.value) return
     let bought_seats = await tripStore.getBoughtSeats(selectedDate.value._id)
     free_seats.value = bus.value.seats.map(seat => seat.number).filter(seat => !bought_seats.includes(seat) && !bus.value.stuff.includes(seat))
-	selected_seats.value = selected_seats.value.filter(seat => free_seats.value.includes(seat))
+    selected_seats.value = selected_seats.value.filter(seat => free_seats.value.includes(seat))
 }
 
 const backRoute = { name: 'TripsPage', hash: `#${_id}` };
@@ -266,7 +266,11 @@ async function buyTrip() {
         //         c.costType = 'в листе ожидания'
         //     }
         // }
-
+        if (getCurrentCustomerNumber.value > trip.value.maxPeople) {
+            message.config({ duration: 3, top: "90vh" });
+            message.success({ content: `Осталось всего ${trip.value.maxPeople - tripStat.value.amount} мест` });
+            return
+        }
         if (trip.value.transports.length && people_amount.value !== selected_seats.value.length) {
             message.config({ duration: 3, top: "90vh" });
             message.error({ content: `Выберите места в количестве ${people_amount.value} шт.` });
@@ -396,14 +400,19 @@ async function updateBus() {
 }
 
 onMounted(async () => {
+
     await refreshDates();
     watch(selectedDate, updateBus, { immediate: true })
-	watch(getCurrentCustomerNumber, updateSeats)
-	watch(people_amount, (newValue, oldValue) => {
-		if (newValue >= oldValue || selected_seats.value.length <= newValue) return
-		
-		selected_seats.value.pop()
-	})
+    watch(getCurrentCustomerNumber, updateSeats)
+    watch(people_amount, (newValue, oldValue) => {
+        updateBus()
+        updateSeats()
+        if (getCurrentCustomerNumber.value > trip.value.maxPeople) {
+            message.config({ duration: 3, top: "90vh" });
+            message.success({ content: `Осталось всего ${trip.value.maxPeople - tripStat.value.amount} мест` });
+        }
+        selected_seats.value = []
+    })
 });
 </script>
 <template>
@@ -661,7 +670,7 @@ onMounted(async () => {
                     </a-col>
                     <a-col :span="24">
                         <div>Цены:</div>
-                        <div v-if="isInWaitingList &&  trip?.transports?.length" style="color: #ff6600">
+                        <div v-if="isInWaitingList && trip?.transports?.length" style="color: #ff6600">
                             Вы в листе ожидания
                         </div>
                         <div class="d-flex space-between align-center" v-for="cost of selectedDate.selectedCosts">
@@ -699,14 +708,9 @@ onMounted(async () => {
 
                     <a-col v-if="bus && people_amount > 0" :span="24" class="mb-8">
                         <div>Выберите места</div>
-                        <Bus 
-							@select="updateSeats"
-                            v-model:selected_seats="selected_seats"
-                            :free_seats="free_seats"
-                            :max_count="people_amount" 
-                            :bus="bus"
-                            style="width: 150px;" 
-                        />
+                        <div style="font-size:0.8em; opacity: 0.8;">{{ bus.name }}</div>
+                        <Bus @select="updateSeats" v-model:selected_seats="selected_seats" :free_seats="free_seats"
+                            :max_count="people_amount" :bus="bus" style="width: 150px;" />
                     </a-col>
 
                     <a-col :span="24">

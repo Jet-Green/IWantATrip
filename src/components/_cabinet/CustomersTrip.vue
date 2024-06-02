@@ -42,7 +42,7 @@ let currentBill = ref(null)
 let userComment = ref('')
 
 let isSupervisor = ref(false);
-let supervisor = ref({});
+let supervisor = ref({ cost: 0, count: 0, costType: 'руководитель' });
 
 let sumOfPay = ref(0)
 let documentNumber = ref('')
@@ -241,14 +241,15 @@ let bus = ref()
 let selected_seats = ref([])
 let free_seats = ref([])
 let show_old_bus = ref(true)
-let people_amount = computed(() => selectedByUser.value.reduce((acc, cost) => acc + cost.count, 0) + supervisor.value.count)
-let getCurrentCustomerNumber = computed(() => tripStat.value.amount + people_amount.value)
+
+let peopleAmount = computed(() => selectedByUser.value.reduce((acc, cost) => acc + cost.count, 0) + supervisor.value.count)
+let getCurrentCustomerNumber = computed(() => tripStat.value.amount + peopleAmount.value)
 
 async function updateSeats() {
     if (!bus.value) return
     let bought_seats = await tripStore.getBoughtSeats(trip.value._id)
     free_seats.value = bus.value.seats.map(seat => seat.number).filter(seat => !bought_seats.includes(seat) && !bus.value.stuff.includes(seat))
-	selected_seats.value = selected_seats.value.filter(seat => free_seats.value.includes(seat))
+    selected_seats.value = selected_seats.value.filter(seat => free_seats.value.includes(seat))
 }
 
 async function updateBus() {
@@ -269,10 +270,23 @@ watch(isSupervisor, (sup) => {
         supervisor.value.count = 0
     }
 })
+
+
+watch(peopleAmount, (newValue, oldValue) => {
+    updateBus()
+    updateSeats()
+    if (getCurrentCustomerNumber.value > trip.value.maxPeople) {
+        message.config({ duration: 3, top: "90vh" });
+        message.success({ content: `Осталось всего ${trip.value.maxPeople - tripStat.value.amount} мест` });
+    }
+
+    selected_seats.value = []
+})
+
 onMounted(async () => {
     loading.value = true
     await updateTripInfo()
-    supervisor.value = ({ cost: 0, count: 0, costType: 'руководитель' })
+
     for (let cost of trip.value.cost) {
         selectedByUser.value.push({
             cost: cost.price,
@@ -281,13 +295,7 @@ onMounted(async () => {
         });
     }
     loading.value = false
-    updateBus()
-    watch(people_amount, updateSeats)
-	watch(people_amount, (newValue, oldValue) => {
-		if (newValue >= oldValue || selected_seats.value.length <= newValue) return
-		
-		selected_seats.value.pop()
-	})
+
 });
 </script>
 
@@ -333,21 +341,21 @@ onMounted(async () => {
         }}</b>
                             </div>
 
-                                <div>
-                                    <span class="mdi mdi-account-outline" style=""></span>
-                                    {{ BILL.userInfo.fullname }}
+                            <div>
+                                <span class="mdi mdi-account-outline" style=""></span>
+                                {{ BILL.userInfo.fullname }}
 
-                                </div>
-                                <div v-if="BILL.selectedStartLocation">
-                                    <span class="mdi mdi-map-marker-outline" style=""></span>
-                                    {{ BILL.selectedStartLocation }}
-                                </div>
-                                <div>
-                                    <span class="mdi mdi-phone-outline" style=""></span>
-                                    <a :href="getPhoneNumber(BILL.userInfo.phone)">
-                                        {{ BILL.userInfo.phone }}</a>
-                                </div>
-                            
+                            </div>
+                            <div v-if="BILL.selectedStartLocation">
+                                <span class="mdi mdi-map-marker-outline" style=""></span>
+                                {{ BILL.selectedStartLocation }}
+                            </div>
+                            <div>
+                                <span class="mdi mdi-phone-outline" style=""></span>
+                                <a :href="getPhoneNumber(BILL.userInfo.phone)">
+                                    {{ BILL.userInfo.phone }}</a>
+                            </div>
+
                             <div v-for="cartItem of BILL.cart">
                                 <div v-if="cartItem.count">
                                     {{ cartItem.costType }} {{ cartItem.count }} x {{ cartItem.cost }} руб.
@@ -586,16 +594,11 @@ onMounted(async () => {
                     <b>Итого: {{ finalCost }} руб.</b>
                 </a-col>
 
-                <a-col v-if="bus && people_amount > 0" :span="24" class="mb-8">
+                <a-col v-if="bus && peopleAmount > 0" :span="24" class="mb-8">
                     <div>Выберите места</div>
-                    <Bus 
-                        @select="updateSeats"
-                        v-model:selected_seats="selected_seats"
-                        :free_seats="free_seats"
-                        :max_count="people_amount" 
-                        :bus="bus"
-                        style="width: 150px;" 
-                    />
+                    <div style="font-size:0.8em; opacity: 0.8;">{{ bus.name }}</div>
+                    <Bus @select="updateSeats" v-model:selected_seats="selected_seats" :free_seats="free_seats"
+                        :max_count="peopleAmount" :bus="bus" style="width: 150px;" />
                 </a-col>
 
                 <a-col :span="24">
