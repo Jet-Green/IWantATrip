@@ -123,11 +123,9 @@ onMounted(async () => {
     <a-col :span="24" v-for="date in excursion.dates" class="date-container" style="padding: 10px 0;">
       <div class="date" :style="{ flexDirection: breakpoints.greaterOrEqual('md').value ? 'row' : 'column', gap: '16px' }">
         <div class="d-flex align-center" style="min-width: clamp(6.5625rem, 4.5536rem + 6.4286vw, 9.375rem);">
-          <a-popconfirm title="Удалить дату?" ok-text="Да" cancel-text="Нет" @confirm="deleteDate(date._id)">
-            <div class="large-date">
-              {{ getDate(date.date).day }}
-            </div>
-          </a-popconfirm>
+          <div class="large-date">
+            {{ getDate(date.date).day }}
+          </div>
 
           <div class="column ml-4">
             <div class="month">{{ getDate(date.date).month }}</div>
@@ -164,7 +162,7 @@ onMounted(async () => {
           </template>
         </VueDatePicker>
 
-        <a-button class="d-flex justify-center align-center text-center ml-8" type="primary" shape="circle">
+        <a-button @click="deleteDate(date._id)" class="d-flex justify-center align-center text-center ml-8" type="primary" shape="circle">
           <span style="font-size: 18px" class="mdi mdi-delete-outline"></span>
         </a-button>
       </a-col>
