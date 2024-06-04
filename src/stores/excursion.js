@@ -113,6 +113,10 @@ export const useExcursion = defineStore('excursion', {
             let userStore = useAuth()
             return await ExcursionService.book({ time: timeId, excursion: excursionId, user: userStore.user._id, count })
         },
+        async order(fullinfo) {
+            // let userStore = useAuth()
+            return await ExcursionService.book({ fullinfo: fullinfo })
+        },
         async getExcursionsOnModeration() {
             return await ExcursionService.getExcursionsOnModeration()
         },

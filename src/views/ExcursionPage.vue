@@ -1,12 +1,16 @@
 <script setup>
+import VueDatePicker from '@vuepic/vue-datepicker';
+import datePlugin from '../plugins/dates'
+import '@vuepic/vue-datepicker/dist/main.css'
 import BackButton from "../components/BackButton.vue";
 import BuyExcursionDates from "../components/BuyExcursionDates.vue";
 import BuyExcursionDialog from "../components/BuyExcursionDialog.vue";
 import _ from "lodash"
-import { ref, onMounted } from "vue";
+import { ref, onMounted, reactive } from "vue";
 
 import { useRoute } from "vue-router";
 import { useExcursion } from "../stores/excursion.js";
+import { object } from 'yup';
 
 const route = useRoute();
 const _id = route.query._id;
@@ -16,6 +20,14 @@ const excursionStore = useExcursion();
 let excursion = ref({});
 let selectedDate = ref({})
 let buy = ref(false)
+let open = ref(false)
+
+let fullinfo = reactive({
+  fullname: "",
+  phone: "",
+  date: "",
+  maxPeople: ""
+})
 
 function openBuyDialog(time) {
   if (selectedDate.value._id) return
@@ -36,8 +48,26 @@ function closeBuyDialog() {
   buy.value = !buy.value
 }
 
-function order() {
-  1
+async function order() {
+  let response = await excursionStore.order(fullinfo)
+  Object.assign(fullinfo,{})
+    if (response.status == 200) {
+      message.config({ duration: 0.5, top: "70vh" });
+      message.success({
+        content: "Успешно!",
+        onClose: () => {
+          open.value = false
+        },
+      });
+    } else {
+      message.config({ duration: 0.5, top: "70vh" });
+      message.error({
+        content: "Ошибка заказа!",
+        onClose: () => {
+          console.log(response);
+        },
+      });
+    }
 }
 
 onMounted(async () => {
@@ -134,18 +164,49 @@ onMounted(async () => {
           <a-col :span="24">
             <h3>Расписание</h3>
           </a-col>
-          <a-col :span="24" v-if="_.isEmpty(excursion.dates)" class="month">
+          <a-col :span="24">
+            <div v-if="_.isEmpty(excursion.dates)" class="month">
               По заявкам
-              <div class="d-flex justify-center">
-                <a-button type="primary" class="lets_go_btn" @click="order">заказать</a-button>
+              <div class="d-flex justify-center ma-8">
+                <a-button type="primary" class="lets_go_btn" @click="open = !open">заказать</a-button>
               </div>
-          </a-col>
-          <a-col :span="24" v-else>
-            <BuyExcursionDates :max-people="excursion.maxPeople" :excursionId="excursion._id" :buy="buy"
+            </div>
+            <BuyExcursionDates v-else :max-people="excursion.maxPeople" :excursionId="excursion._id" :buy="buy"
               @buy-excursion="openBuyDialog" />
             <BuyExcursionDialog :selectedDate="selectedDate" :excursion="excursion" @close="closeBuyDialog" />
           </a-col>
         </a-row>
+        <a-modal v-model:open="open" :footer="null">
+          <div class="mt-16 mb-16">
+            <div>
+              ФИО
+              <a-input v-model:value="fullinfo.fullname"></a-input>
+            </div>
+            <div>
+              Телефон
+              <a-input v-model:value="fullinfo.phone"></a-input>
+            </div>
+            <div>
+              Время экскурсии
+              <VueDatePicker v-model="fullinfo.date" locale="ru-Ru" calendar-class-name="dp-custom-calendar"
+                placeholder="выберите дату" calendar-cell-class-name="dp-custom-cell" cancel-text="отмена"
+                select-text="выбрать" :min-date="new Date()" :enable-time-picker="false" format="dd/MM/yyyy">
+                <template #input-icon>
+                  <span style="font-size: 20px; color: rgba(95, 95, 95, 0.65);"
+                    class="mdi mdi-calendar-outline ml-8"></span>
+                </template>
+              </VueDatePicker>
+            </div>
+            <div>
+              Количество человек
+              <a-input v-model:value="fullinfo.maxPeople"></a-input>
+            </div>
+            <div class="d-flex justify-center mt-8">
+              <a-button type="primary" class="lets_go_btn"
+                @click="order">Отправить</a-button>
+            </div>
+          </div>
+        </a-modal>
       </a-col>
     </a-row>
   </div>
