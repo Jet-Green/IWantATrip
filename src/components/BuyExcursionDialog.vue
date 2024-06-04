@@ -189,12 +189,9 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <div class="d-flex justify-center">
-      <a-button type="primary" class="lets_go_btn" @click="book" v-if="pricesForm.length == 0">заказать</a-button>
-    </div>
 
     <div class="d-flex justify-center mt-16">
-      <a-button type="primary" class="lets_go_btn" @click="buy" v-if="pricesForm.length > 0">заказать</a-button>
+      <a-button type="primary" class="lets_go_btn" @click="pricesForm.length == 0 ? book() : buy()">заказать</a-button>
     </div>
   </a-modal>
 </template>
