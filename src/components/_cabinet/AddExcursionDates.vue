@@ -91,7 +91,6 @@ let deleteDate = async (dateId) => {
 let updateExcursion = async (_id) => {
   const response = await excursionStore.getExcursionById(_id)
   excursion.value = response.data
-  console.log(excursion.value)
 }
 
 onMounted(async () => {
