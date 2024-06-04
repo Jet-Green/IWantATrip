@@ -15,7 +15,7 @@ const excursionStore = useExcursion();
 
 let excursion = ref({});
 let selectedDate = ref({})
-let buy=ref(false)
+let buy = ref(false)
 
 function openBuyDialog(time) {
   if (selectedDate.value._id) return
@@ -33,7 +33,11 @@ function openBuyDialog(time) {
 }
 function closeBuyDialog() {
   selectedDate.value = {}
-  buy.value=!buy.value
+  buy.value = !buy.value
+}
+
+function order() {
+  1
 }
 
 onMounted(async () => {
@@ -130,9 +134,14 @@ onMounted(async () => {
           <a-col :span="24">
             <h3>Расписание</h3>
           </a-col>
-          <a-col :span="24">
-            <div v-if="_.isEmpty(excursion.dates)" class="month">По заявкам</div>
-            <BuyExcursionDates v-else :max-people="excursion.maxPeople" :excursionId="excursion._id" :buy="buy"
+          <a-col :span="24" v-if="_.isEmpty(excursion.dates)" class="month">
+              По заявкам
+              <div class="d-flex justify-center">
+                <a-button type="primary" class="lets_go_btn" @click="order">заказать</a-button>
+              </div>
+          </a-col>
+          <a-col :span="24" v-else>
+            <BuyExcursionDates :max-people="excursion.maxPeople" :excursionId="excursion._id" :buy="buy"
               @buy-excursion="openBuyDialog" />
             <BuyExcursionDialog :selectedDate="selectedDate" :excursion="excursion" @close="closeBuyDialog" />
           </a-col>
@@ -147,4 +156,8 @@ onMounted(async () => {
   font-weight: 600;
   font-size: clamp(0.9375rem, 0.6889rem + 0.7102vw, 1.25rem);
 }
-</style>
+
+// .order_container{
+//   display: flex;
+//   justify-content: center;
+// }</style>

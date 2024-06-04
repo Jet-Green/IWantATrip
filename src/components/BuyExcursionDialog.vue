@@ -1,5 +1,5 @@
 <script setup>
-import { ref, toRefs, watch, onMounted, reactive,computed } from "vue"
+import { ref, toRefs, watch, onMounted, reactive, computed } from "vue"
 import _ from "lodash"
 import datePlugin from '../plugins/dates'
 import { useExcursion } from "../stores/excursion";
@@ -34,8 +34,8 @@ let availablePlaces = computed(() => {
   for(let bill of selectedDate.value.time.bills){
 
       maxPeople=maxPeople+bill.cart[0].count
-    
-  }
+
+    }
   return props.excursion.maxPeople-maxPeople
 });
 
@@ -57,49 +57,49 @@ async function buy() {
   if (!userStore.user.fullinfo?.fullname) {
     await userStore.updateFullinfo(userStore.user._id, fullinfo)
   }
-  if (!(availablePlaces.value>=pricesForm.value[0].count)) {
+  if (!(availablePlaces.value >= pricesForm.value[0].count)) {
     message.config({ duration: 0.5, top: "70vh" });
     message.error({
-      content: "Свободных мест всего "+availablePlaces.value,
+      content: "Свободных мест всего " + availablePlaces.value,
     });
     return
   }
-  else{
+  else {
     let toSend = []
     for (let p of pricesForm.value) {
 
-    if (p.count > 0) {
-      toSend.push({
-        type: p.type,
-        price: p.price,
-        count: p.count
-      })
-    } else {
-      continue
+      if (p.count > 0) {
+        toSend.push({
+          type: p.type,
+          price: p.price,
+          count: p.count
+        })
+      } else {
+        continue
+      }
     }
-  }
 
-  if (toSend.length) {
-    let res = await excursionStore.buy(selectedDate.value.time._id, toSend)
-    if (res.status == 200) {
-      message.config({ duration: 0.5, top: "70vh" });
-      message.success({
-        content: "Успешно!",
-        onClose: () => {
-          open.value=false
-          emit('close')
-        },
-      });
-    } else {
-      message.config({ duration: 0.5, top: "70vh" });
-      message.error({
-        content: "Ошибка покупки!",
-        onClose: () => {
-          console.log(res);
-        },
-      });
+    if (toSend.length) {
+      let res = await excursionStore.buy(selectedDate.value.time._id, toSend)
+      if (res.status == 200) {
+        message.config({ duration: 0.5, top: "70vh" });
+        message.success({
+          content: "Успешно!",
+          onClose: () => {
+            open.value = false
+            emit('close')
+          },
+        });
+      } else {
+        message.config({ duration: 0.5, top: "70vh" });
+        message.error({
+          content: "Ошибка покупки!",
+          onClose: () => {
+            console.log(res);
+          },
+        });
+      }
     }
-  }
   }
 }
 let bookingCount = ref()
@@ -115,7 +115,7 @@ async function book() {
       message.success({
         content: "Успешно!",
         onClose: () => {
-          open.value=false
+          open.value = false
           emit('close')
         },
       });
@@ -128,7 +128,7 @@ async function book() {
         },
       });
     }
-    
+
   }
 }
 
@@ -194,7 +194,7 @@ onMounted(() => {
     </div>
 
     <div class="d-flex justify-center mt-16">
-      <a-button type="primary" class="lets_go_btn" @click="buy" v-if="pricesForm.length > 0">заказать</a-button>
+      <a-button type="primary" class="lets_go_btn" @click="buy" v-if="pricesForm.length > 0">купить</a-button>
     </div>
   </a-modal>
 </template>
