@@ -403,13 +403,12 @@ onMounted(async () => {
 
     await refreshDates();
     watch(selectedDate, updateBus, { immediate: true })
-    watch(getCurrentCustomerNumber, updateSeats)
     watch(people_amount, (newValue, oldValue) => {
         updateBus()
         updateSeats()
         if (getCurrentCustomerNumber.value > trip.value.maxPeople) {
             message.config({ duration: 3, top: "90vh" });
-            message.success({ content: `Осталось всего ${trip.value.maxPeople - tripStat.value.amount} мест` });
+            message.success({ content: `Осталось всего ${trip.value.maxPeople - getCustomersCount(selectedDate.value.billsList)} мест` });
         }
         selected_seats.value = []
     })
