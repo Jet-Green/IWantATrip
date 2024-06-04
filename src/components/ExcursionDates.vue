@@ -77,7 +77,7 @@ watch([dates, times], () => {
       >
         <template #dp-input>
             <a-button class="d-flex lets_go_btn justify-center align-center text-center ml-8" type="primary">
-              <span style="font-size: 18px" class="mdi mdi-plus"></span> добавить
+              <span style="font-size: 18px; padding-right: 4px;" class="mdi mdi-plus"></span> добавить
             </a-button>
           </template>
       </VueDatePicker>
