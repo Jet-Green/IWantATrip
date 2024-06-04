@@ -4,7 +4,7 @@ import datePlugin from '../plugins/dates'
 import { ref, watch, toRefs } from 'vue'
 import '@vuepic/vue-datepicker/dist/main.css'
 
-const emit = defineEmits(['change-dates'])
+const emit = defineEmits(['change-dates', 'select'])
 const props = defineProps(['clearDateForm'])
 
 let { clearDateForm } = toRefs(props)
@@ -34,6 +34,8 @@ watch(clearDateForm, () => {
 
 })
 
+let selected = ref(false)
+
 watch([dates, times], () => {
  
   let timesWithoutNull = times.value.map((time) => {
@@ -42,21 +44,45 @@ watch([dates, times], () => {
     })
   })
   emit('change-dates', datePlugin.excursions.concatDateAndTime(dates.value, timesWithoutNull))
+  if (selected.value && datePlugin.excursions.concatDateAndTime(dates.value, timesWithoutNull).length) {
+    emit('select')
+    selected.value = false
+  }
 }, { deep: true })
 </script>
 <template>
   <a-row>
    
-    <a-col :span="24" :md="12" >
-      <VueDatePicker v-model="dates" multi-dates locale="ru-Ru" calendar-class-name="dp-custom-calendar" placeholder="выберите дату"
+    <a-col>
+      <!-- <VueDatePicker v-model="dates" multi-dates locale="ru-Ru" calendar-class-name="dp-custom-calendar" placeholder="выберите дату"
         calendar-cell-class-name="dp-custom-cell" cancel-text="отмена" select-text="выбрать" :min-date="new Date()"
         :enable-time-picker="false" format="dd/MM/yyyy">
         <template #input-icon>
           <span style="font-size: 20px; color: rgba(95, 95, 95, 0.65);" class="mdi mdi-calendar-outline ml-8"></span>
         </template>
+      </VueDatePicker> -->
+      <VueDatePicker 
+        v-model="dates"
+        @update:model-value="selected = true" 
+        multi-dates 
+        locale="ru-Ru" 
+        calendar-class-name="dp-custom-calendar" 
+        placeholder="выберите дату"
+        calendar-cell-class-name="dp-custom-cell" 
+        cancel-text="отмена" 
+        select-text="выбрать" 
+        :min-date="new Date()"
+        :enable-time-picker="false" 
+        format="dd/MM/yyyy"
+      >
+        <template #dp-input>
+            <a-button class="d-flex lets_go_btn justify-center align-center text-center ml-8" type="primary">
+              <span style="font-size: 18px" class="mdi mdi-plus"></span> добавить
+            </a-button>
+          </template>
       </VueDatePicker>
     </a-col>
-    <a-col :span="24">
+    <!-- <a-col :span="24">
       <a-row v-for="(date, i) of dates">
         <a-col :span="24">
           <a-collapse v-model:activeKey="activeKey" ghost>
@@ -92,7 +118,7 @@ watch([dates, times], () => {
           </a-collapse>
         </a-col>
       </a-row>
-    </a-col>
+    </a-col> -->
   </a-row>
 </template>
 <!-- GLOBAL STYLES -->

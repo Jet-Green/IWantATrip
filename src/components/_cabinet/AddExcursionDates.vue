@@ -112,13 +112,13 @@ onMounted(async () => {
       <h3 class="mt-8 mb-8">Добавить даты в "{{ excursion.name }}"</h3>
     </a-col>
 
-    <a-col :span="24">
-      <ExcursionDates @change-dates="setDates" :clearDateForm="clearDateForm" />
+    <a-col :span="24" class="mb-16">
+      <ExcursionDates @select="submit" @change-dates="setDates" :clearDateForm="clearDateForm" />
     </a-col>
 
-    <a-col :span="24" class="d-flex justify-center mt-16 mb-16">
+    <!-- <a-col :span="24" class="d-flex justify-center mt-16 mb-16">
       <a-button @click="submit" type="primary" class="lets_go_btn">отправить</a-button>
-    </a-col>
+    </a-col> -->
 
     <a-col :span="24" v-for="date in excursion.dates" class="date-container" style="padding: 10px 0;">
       <div class="date" :style="{ flexDirection: breakpoints.greaterOrEqual('md').value ? 'row' : 'column', gap: '16px' }">
