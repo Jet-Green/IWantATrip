@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import {useRouter} from "vue-router"
+import { useRouter } from "vue-router"
 
 import { useExcursion } from '../../stores/excursion';
 
@@ -15,7 +15,7 @@ async function updateExcursion() {
     excursions.value = response.data
 }
 
-function look (_id) {
+function look(_id) {
     router.push(`/excursion-moderation?_id=${_id}`)
 }
 async function deleteExcursion(_id) {
@@ -55,15 +55,18 @@ onMounted(async () => {
                             <a-popconfirm title="Проверить?" ok-text="Да" cancel-text="Нет"
                                 @confirm="look(excursion._id)">
                                 <span class="mdi mdi-check-decagram-outline"></span>
-                                
+
+                            </a-popconfirm>
+
+                            <a-popconfirm title="Редактировать?" ok-text="Да" cancel-text="Нет"
+                                @confirm="router.push(`/edit-excursion?_id=${excursion._id}`)">
+                                <span class="mdi mdi-pen"></span>
                             </a-popconfirm>
 
                             <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет"
                                 @confirm="deleteExcursion(excursion._id)">
                                 <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
                             </a-popconfirm>
-
-
                         </div>
                     </a-card>
                 </a-col>

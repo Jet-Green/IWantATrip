@@ -2,11 +2,12 @@
 import BackButton from "../components/BackButton.vue";
 import ImageCropper from "../components/ImageCropper.vue";
 
-import { ref, reactive, onMounted, computed } from "vue";
+import { ref, reactive, onMounted, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useExcursion } from "../stores/excursion"
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
+import { message } from 'ant-design-vue';
 
 import excursionTypes from '../db/excursionTypes'
 
@@ -23,7 +24,7 @@ let visibleCropperModal = ref(false);
 const router = useRouter()
 const route = useRoute()
 const excursionStore = useExcursion()
-
+let excursionType = ref({ type: '', directionType: '', directionPlace: '' })
 let form = reactive({
   name: '',
   contacts: {
@@ -31,9 +32,6 @@ let form = reactive({
     email: ''
   },
   excursionType: {
-    type: '',
-    directionType: '',
-    directionPlace: ''
   },
   description: "",
   location: {},
@@ -43,7 +41,6 @@ let form = reactive({
   guides: [{
     name: ''
   }],
-  excursionType: {},
   startPlace: "",
   prices: [],
   minAge: 0,
@@ -106,21 +103,25 @@ function addPreview(blob) {
 }
 let getExcursionDirections = computed(() => {
   let type = excursionTypes.filter((type) => {
-    return type.type == form.excursionType.type
+    return type.type == excursionType.value.type
   })
   return type[0]?.direction
 })
 let getExcursionPlace = computed(() => {
   if (getExcursionDirections.value) {
     let direction = getExcursionDirections.value.filter((direction) => {
-      return direction.directionType == form.excursionType.directionType
+      return direction.directionType == excursionType.value.directionType
     })
     return direction[0]?.directionPlace
   }
   return null
 
 })
+let submitCount = ref(0)
 async function submit() {
+  submitCount.value += 1
+  if (submitCount.value > 1) return
+  form.excursionType = excursionType.value
   let excursionCb = await excursionStore.edit(form)
   const _id = excursionCb.data._id
   let imagesFormData = new FormData();
@@ -134,13 +135,18 @@ async function submit() {
 
   let res = await excursionStore.uploadImages(imagesFormData)
   if (res.status == 200) {
-    router.push('/cabinet/me')
+    let close = () => {
+      router.push('/cabinet/me')
+    }
+    message.config({ duration: 3, top: '90vh' })
+    message.success({ content: 'Успешно! Экскурсия на модерации', onClose: close })
   }
 }
 onMounted(async () => {
   let excursionId = route.query._id
   let response = await excursionStore.getExcursionById(excursionId)
   form = response.data
+  excursionType.value = response.data.excursionType
   oldImages.value = response.data.images
   locationSearchRequest.value = response.data.location.name
 })
@@ -166,28 +172,27 @@ onMounted(async () => {
             </a-col>
             <a-col :span="12">
               Тип экскурсии
-              <a-select v-model:value="form.excursionType.type" style="width: 100%;">
-                <!-- <a-select-option value=""></a-select-option> -->
+              <a-select v-model:value="excursionType.type" style="width: 100%;"
+                @change="excursionType.directionType = ''">
                 <a-select-option placeholder="Tип тура" v-for="excursionType in excursionTypes"
                   :value="excursionType.type">
                   {{ excursionType.type }}
                 </a-select-option>
               </a-select>
             </a-col>
-            <a-col :span="12" v-if="getExcursionDirections">
+            <a-col :span="12" v-if="getExcursionDirections?.length > 0">
               Направление
-              <a-select v-model:value="form.excursionType.directionType" style="width: 100%;">
-                <!-- <a-select-option value=""></a-select-option> -->
+              <a-select v-model:value="excursionType.directionType" style="width: 100%;"
+                @change="excursionType.directionPlace = ''">
                 <a-select-option placeholder="Tип тура" v-for="excursionDirection in getExcursionDirections"
                   :value="excursionDirection.directionType">
                   {{ excursionDirection.directionType }}
                 </a-select-option>
               </a-select>
             </a-col>
-            <a-col :span="12" v-if="getExcursionPlace">
+            <a-col :span="12" v-if="getExcursionPlace?.length > 0">
               Место
-              <a-select v-model:value="form.excursionType.directionPlace" style="width: 100%;">
-                <!-- <a-select-option value=""></a-select-option> -->
+              <a-select v-model:value="excursionType.directionPlace" style="width: 100%;">
                 <a-select-option placeholder="Tип тура" v-for="directionPlace in getExcursionPlace"
                   :value="directionPlace">
                   {{ directionPlace }}
