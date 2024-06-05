@@ -1,6 +1,7 @@
 <script setup>
 import VueDatePicker from '@vuepic/vue-datepicker';
 import datePlugin from '../plugins/dates'
+import { message } from "ant-design-vue";
 import '@vuepic/vue-datepicker/dist/main.css'
 import BackButton from "../components/BackButton.vue";
 import BuyExcursionDates from "../components/BuyExcursionDates.vue";
@@ -10,12 +11,14 @@ import { ref, onMounted, reactive } from "vue";
 
 import { useRoute } from "vue-router";
 import { useExcursion } from "../stores/excursion.js";
+import { useAuth } from "../stores/auth";
 import { object } from 'yup';
 
 const route = useRoute();
 const _id = route.query._id;
 
 const excursionStore = useExcursion();
+const userStore = useAuth()
 
 let excursion = ref({});
 let selectedDate = ref({})
@@ -23,8 +26,8 @@ let buy = ref(false)
 let open = ref(false)
 
 let fullinfo = reactive({
-  fullname: "",
-  phone: "",
+  fullname: userStore.user.fullinfo?.fullname,
+  phone: userStore.user.fullinfo?.phone,
   date: "",
   maxPeople: ""
 })
@@ -49,7 +52,13 @@ function closeBuyDialog() {
 }
 
 async function order() {
-  let response = await excursionStore.order(fullinfo)
+  if (!userStore.user.fullinfo?.fullname) {
+      await userStore.updateFullinfo(userStore.user._id, {
+        fullname:fullinfo.fullname,
+        phone:fullinfo.phone
+      })
+    }
+  let response = await excursionStore.order(fullinfo,excursion.value._id,)
   Object.assign(fullinfo,{})
     if (response.status == 200) {
       message.config({ duration: 0.5, top: "70vh" });
