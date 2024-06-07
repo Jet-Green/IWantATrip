@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import { useAppState } from '../../stores/appState';
 import Bus from '../Bus.vue';
 import { useBus } from '../../stores/bus';
+import ExcursionTypes from './ExcursionTypes.vue';
 
 let router = useRouter()
 let appStateStore = useAppState()
@@ -42,6 +43,14 @@ onMounted(async () => {
 })
 </script>
 <template>
+    <a-row class="mb-8">
+        <a-col :span=24>
+            <h3>Типы экскурсии</h3>
+        </a-col>
+        <a-col :span="24">
+            <ExcursionTypes />
+        </a-col>
+    </a-row>
     <a-row>
         <a-col :span="24">
             <a-row>
