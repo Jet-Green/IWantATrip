@@ -72,6 +72,9 @@ export default {
     book(body) {
         return $api.post('/excursion/book', body)
     },
+    order(body) {
+        return $api.post('/excursion/order', body)
+    },
     getExcursionsOnModeration() {
         return $api.get('/excursion/get-on-moderation')
     },
