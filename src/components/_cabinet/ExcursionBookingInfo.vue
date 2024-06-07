@@ -29,7 +29,7 @@ function getTime(timeObj) {
 }
 function getPeopleCount(timeId) {
   let sum = 0
-  for(let book of excursion.value.bookings) {
+  for (let book of excursion.value.bookings) {
     if (book.time == timeId) {
       sum += book.count;
     }
@@ -62,9 +62,10 @@ onMounted(() => {
             <div class="weekday">{{ getDate(date.date).weekday }}</div>
           </div>
         </a-col>
-        <a-col :xs="18" :md="20" class="d-flex" style="gap: 10px 20px; flex-wrap: wrap;">
+        <a-col :xs="18" :md="20" class="d-flex" style="gap: 10px 20px">
           <a-col v-for="time in date.times" class="time-container">
-            <div class="time-card" @click="router.push(`/cabinet/excursion-bookings?excursion_id=${excursion._id}&time_id=${time._id}&date=${getDate(date.date).day+'_'+getDate(date.date).month+'_'+getDate(date.date).weekday}`)">
+            <div class="time-card"
+              @click="router.push(`/cabinet/excursion-bookings?excursion_id=${excursion._id}&time_id=${time._id}&date=${getDate(date.date).day + '_' + getDate(date.date).month + '_' + getDate(date.date).weekday}`)">
               <div class="row">
                 <span class="mdi mdi-clock-outline mr-4 icon"></span>
                 <b>
@@ -81,6 +82,49 @@ onMounted(() => {
       </div>
       <a-divider />
     </a-col>
+
+
+  </a-row>
+  <a-row v-if="excursion?.orders?.length > 0" :gutter="[5, 5]">
+    <a-col :span="24">
+      <h3  class="mt-8 mb-8">Заявки</h3>
+    </a-col>
+    
+    <a-col  v-for="(order, index) in excursion.orders" class="date" >
+      <a-col class="time-container">
+        <div class="time-card"> 
+          <a :href="`tel:${order.phone}`">
+            <div class="row">
+              <span class="mdi mdi-account-outline mr-4 icon"></span>
+              <b>
+                {{ order.fullname }} sdsksdhjkhdsjkdhs
+              </b>
+            </div>
+            <div class="row">
+              <span class="mdi mdi-phone mr-4 icon"></span>
+              <b>
+                {{ order.phone }}
+              </b>
+            </div>
+            <div class="row">
+              <span class="mdi mdi-clock-outline mr-4 icon"></span>
+              <b>
+                {{ datePlugin.excursions.getDateFromIsoDate(order.date) }}
+              </b>
+            </div>
+            <div class="row">
+              <span class="mdi mdi-account-multiple-outline mr-4 icon"></span>
+              <b>{{ order.maxPeople }}</b>&nbsp;чел.
+            </div>
+          </a>
+        </div>
+      </a-col>
+
+
+
+    </a-col>
+
+
   </a-row>
 </template>
 <style lang="scss" scoped>
@@ -102,6 +146,7 @@ onMounted(() => {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-wrap: wrap;
 
     .time-card {
       border: 1px solid #E0E0E0;

@@ -28,12 +28,28 @@ export default {
             const dayjsDate = dayjs({ years: dateObj.year, months: dateObj.month, date: dateObj.day })
             if (!dayjsDate.$d) return ''
             let russianDate = (new Date(dayjsDate.$d)).toLocaleDateString('ru-RU', {
-              month: 'long',
-              day: 'numeric',
-              weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long',
             }).replaceAll(',', '').split(' ')
-          
+
             return { weekday: russianDate[0], day: russianDate[1], month: russianDate[2] }
-          }
+        },
+        getDateFromIsoDate(isoDate) {
+            // Преобразуем строку в объект Date
+            const date = new Date(isoDate);
+            // Определяем массивы для названий месяцев и дней недели
+            const months = [
+                "января", "февраля", "марта", "апреля", "мая", "июня",
+                "июля", "августа", "сентября", "октября", "ноября", "декабря"
+            ];
+            // Получаем день, месяц и год из объекта Date
+            const day = date.getUTCDate();
+            const month = months[date.getUTCMonth()];
+            const year = date.getUTCFullYear();
+
+            // Формируем строку в нужном формате
+            return `${day} ${month} ${year}`;
+        }
     }
 }
