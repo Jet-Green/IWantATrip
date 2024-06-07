@@ -3,6 +3,8 @@ import ExcursionService from '../service/ExcursionService.js'
 import _ from 'lodash'
 import { useAuth } from './auth.js'
 import { useLocations } from './locations.js'
+import { render } from 'vue-email';
+import OrderExcursionTemplate from '../email-templates/OrderExcursionTemplate.vue';
 
 
 
@@ -113,9 +115,10 @@ export const useExcursion = defineStore('excursion', {
             let userStore = useAuth()
             return await ExcursionService.book({ time: timeId, excursion: excursionId, user: userStore.user._id, count })
         },
-        async order(fullinfo,excursionId) {
+        async order(fullinfo,excursionId,excursionName,author) {
             let userStore = useAuth()
-            return await ExcursionService.order({ fullinfo: fullinfo, excursionId:excursionId, user: userStore.user._id })
+            const emailHtml = await render(OrderExcursionTemplate, { fullinfo:fullinfo , excursionName });
+            return await ExcursionService.order({ emailHtml: emailHtml, fullinfo: fullinfo, excursionId:excursionId, author:author, user: userStore.user._id })
         },
         async getExcursionsOnModeration() {
             return await ExcursionService.getExcursionsOnModeration()

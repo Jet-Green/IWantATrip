@@ -12,7 +12,6 @@ import { ref, onMounted, reactive } from "vue";
 import { useRoute } from "vue-router";
 import { useExcursion } from "../stores/excursion.js";
 import { useAuth } from "../stores/auth";
-import { object } from 'yup';
 
 const route = useRoute();
 const _id = route.query._id;
@@ -58,7 +57,7 @@ async function order() {
         phone:fullinfo.phone
       })
     }
-  let response = await excursionStore.order(fullinfo,excursion.value._id,)
+  let response = await excursionStore.order(fullinfo,excursion.value._id,excursion.value.name,excursion.value.author)
   Object.assign(fullinfo,{
     fullname: userStore.user.fullinfo?.fullname,
     phone: userStore.user.fullinfo?.phone,
