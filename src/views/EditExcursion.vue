@@ -2,7 +2,7 @@
 import BackButton from "../components/BackButton.vue";
 import ImageCropper from "../components/ImageCropper.vue";
 
-import { ref, reactive, onMounted, computed, watch } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useExcursion } from "../stores/excursion"
 import { Form, Field, ErrorMessage } from "vee-validate";
@@ -25,7 +25,7 @@ const router = useRouter()
 const route = useRoute()
 const excursionStore = useExcursion()
 let excursionType = ref({ type: '', directionType: '', directionPlace: '' })
-let form = reactive({
+let form = ref({
   name: '',
   contacts: {
     phone: '',
@@ -70,14 +70,14 @@ function selectStartLocation(selected) {
   for (let l of possibleLocations.value) {
     // l.value - name
     if (l.value == selected) {
-      form.location = l.location
+      form.value.location = l.location
     }
   }
 }
 const removeCost = (item) => {
-  let index = form.prices.indexOf(item);
-  if (index !== -1) {
-    form.prices.splice(index, 1);
+  let index = form.value.prices.indexOf(item);
+  if (index != -1) {
+    form.value.prices.splice(index, 1);
   }
 };
 let targetIndex = ref()
@@ -91,7 +91,7 @@ const delPhoto = () => {
   delPhotoDialog.value = false;
 };
 const addCost = () => {
-  form.prices.push({
+  form.value.prices.push({
     type: "",
     price: "",
   });
@@ -121,8 +121,8 @@ let submitCount = ref(0)
 async function submit() {
   submitCount.value += 1
   if (submitCount.value > 1) return
-  form.excursionType = excursionType.value
-  let excursionCb = await excursionStore.edit(form)
+  form.value.excursionType = excursionType.value
+  let excursionCb = await excursionStore.edit(form.value)
   const _id = excursionCb.data._id
   let imagesFormData = new FormData();
   for (let i = 0; i < newBlobImages.value.length; i++) {
@@ -145,7 +145,7 @@ async function submit() {
 onMounted(async () => {
   let excursionId = route.query._id
   let response = await excursionStore.getExcursionById(excursionId)
-  form = response.data
+  form.value = response.data
   excursionType.value = response.data.excursionType
   oldImages.value = response.data.images
   locationSearchRequest.value = response.data.location.name
