@@ -97,7 +97,7 @@ onMounted(() => {
             <div class="row">
               <span class="mdi mdi-account-outline mr-4 icon"></span>
               <b>
-                {{ order.fullname }} sdsksdhjkhdsjkdhs
+                {{ order.fullname }}
               </b>
             </div>
             <div class="row">
