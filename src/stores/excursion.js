@@ -117,7 +117,7 @@ export const useExcursion = defineStore('excursion', {
         },
         async order(fullinfo,excursionId,excursionName,author) {
             let userStore = useAuth()
-            const emailHtml = await render(OrderExcursionTemplate, { fullinfo:fullinfo , excursionName });
+            const emailHtml = await render(OrderExcursionTemplate, { fullinfo:fullinfo , name: excursionName });
             return await ExcursionService.order({ emailHtml: emailHtml, fullinfo: fullinfo, excursionId:excursionId, author:author, user: userStore.user._id })
         },
         async getExcursionsOnModeration() {

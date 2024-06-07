@@ -7,7 +7,6 @@ let props = defineProps({
 })
 let form = props.fullinfo
 let name = props.name
-console.log(name)
 
 const clearData = (dateNumber) => {
     let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
