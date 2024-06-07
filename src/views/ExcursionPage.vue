@@ -59,7 +59,12 @@ async function order() {
       })
     }
   let response = await excursionStore.order(fullinfo,excursion.value._id,)
-  Object.assign(fullinfo,{})
+  Object.assign(fullinfo,{
+    fullname: userStore.user.fullinfo?.fullname,
+    phone: userStore.user.fullinfo?.phone,
+    date: "",
+    maxPeople: ""
+  })
     if (response.status == 200) {
       message.config({ duration: 0.5, top: "70vh" });
       message.success({
