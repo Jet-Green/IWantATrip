@@ -5,6 +5,8 @@ import { useAuth } from './auth.js'
 import { useLocations } from './locations.js'
 import { render } from 'vue-email';
 import OrderExcursionTemplate from '../email-templates/OrderExcursionTemplate.vue';
+import BuyExcursionTemplate from '../email-templates/BuyExcursionTemplate.vue';
+import BookingExcursionTemplate from '../email-templates/BookingExcursionTemplate.vue';
 
 
 
@@ -107,13 +109,16 @@ export const useExcursion = defineStore('excursion', {
         async hideExcursion(_id, isHide) {
             return await ExcursionService.hideExcursion(_id, isHide)
         },
-        async buy(timeId, toSend) {
+        async buy(timeId, toSend, toEmail) {
             let userStore = useAuth()
-            return await ExcursionService.buy(timeId, userStore.user._id, toSend)
+            // console.log(toEmail)
+            const emailHtml = await render(BuyExcursionTemplate, { toSend:toSend, toEmail: toEmail });
+            return await ExcursionService.buy(emailHtml,timeId, userStore.user._id, toSend, toEmail.author)
         },
-        async book(count, timeId, excursionId) {
+        async book(count, timeId, excursionId, toEmail) {
             let userStore = useAuth()
-            return await ExcursionService.book({ time: timeId, excursion: excursionId, user: userStore.user._id, count })
+            const emailHtml = await render(BookingExcursionTemplate, { count:count, toEmail: toEmail });
+            return await ExcursionService.book({ emailHtml:emailHtml , time: timeId, excursion: excursionId, user: userStore.user._id, count:count, author:toEmail.author })
         },
         async order(fullinfo,excursionId,excursionName,author) {
             let userStore = useAuth()

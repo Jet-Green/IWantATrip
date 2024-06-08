@@ -2,21 +2,23 @@
 import { EContainer, EHeading, EHead, EHtml, ESection, EText } from 'vue-email';
 
 let props = defineProps({
-    fullinfo: Object,
+    count: Number,
+    toEmail: Object
 })
-let form = props.fullinfo
+let form = props.toEmail
 
-const clearData = (dateNumber) => {
-    let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
-        year: "2-digit",
-        month: "2-digit",
-        day: "2-digit",
-    });
-    if (date !== "Invalid Date" && date) {
-        return date;
-    }
-    return "";
+function getDate(dateNumber){
+    return `${String(dateNumber.day).padStart(2,"0")}.${String(dateNumber.month).padStart(2,"0")}.${dateNumber.year}`
 };
+function getTime(timeObj) {
+  let result = timeObj.hours + ':'
+  if (timeObj.minutes < 10) {
+    result += '0' + timeObj.minutes
+  } else {
+    result += timeObj.minutes
+  }
+  return result
+}
 </script>
 <template>
     <e-html>
@@ -33,19 +35,12 @@ const clearData = (dateNumber) => {
         </e-head>
 
         <e-section>
-            <e-heading as="h3">Куплена поездка</e-heading>
-            <e-text>Тур: <b>{{ trip.name }}</b> </e-text>
-            <e-text>C: <b>{{ clearData(trip.start) }}</b> По: <b>{{ clearData(trip.end) }}</b></e-text>
-            <e-text>Покупатель: <b>{{ bought.userInfo.fullname }}</b></e-text>
-            <e-text>Телефон: <a :href="`tel:${bought.userInfo.phone}`"> <b>{{ bought.userInfo.phone }}</b></a></e-text>
-            <e-text>Заказ:</e-text>
-            <e-text v-for="price in bought.cart">
-                <b>{{ price.count }} x {{ price.cost }}руб.</b>
-            </e-text>
-            <e-text>
-                Оплачен: <b>{{ bought.tinkoff ? "да" : "нет" }}</b>
-            </e-text>
-
+            <e-heading as="h3">Заказана экскурсия</e-heading>
+            <e-text>Экскурсия: <b>{{ form.name}}</b> </e-text>
+            <e-text>Покупатель: <b>{{ form.fullname }}</b></e-text>
+            <e-text>Телефон: <a :href="`tel:${form.phone}`"> <b>{{ form.phone}}</b></a></e-text>
+            <e-text>Дата: <b>{{ getDate(form.date) }} - {{ getTime(form.time) }}</b></e-text>
+            <e-text>Количество: <b>{{ props.count }}</b></e-text>
         </e-section>
     </e-html>
 </template>
