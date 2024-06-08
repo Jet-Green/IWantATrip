@@ -1,7 +1,5 @@
 import { defineStore } from 'pinia'
 import AppService from '../service/AppService';
-import { number } from 'yup';
-// import { message } from 'ant-design-vue';
 
 export const useAppState = defineStore('app-state', {
     state: () => ({
@@ -61,6 +59,12 @@ export const useAppState = defineStore('app-state', {
                 console.log(error);
             }
         },
-     
+        async addExcursionType(body) {
+            try {
+                return await AppService.addExcursionType(body)
+            } catch (error) {
+                console.log(error);
+            }
+        }
     },
 })

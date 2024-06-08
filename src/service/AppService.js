@@ -17,5 +17,7 @@ export default {
     deleteTransportName(name) {
         return $api.post('/app-state/delete-transport-name', { name })
     },
- 
+    addExcursionType(body) {
+        return $api.put('/app-state/excursion-types', body)
+    }
 }
