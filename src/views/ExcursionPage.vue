@@ -31,14 +31,15 @@ let fullinfo = reactive({
   maxPeople: ""
 })
 
-function openBuyDialog(time) {
+function openBuyDialog(timeInfo) {
   if (selectedDate.value._id) return
   for (let date of excursion.value.dates) {
     for (let t of date.times) {
-      if (t._id == time._id) {
+      if (t._id == timeInfo.time._id) {
         selectedDate.value = {
           date: date.date,
-          time
+          time: timeInfo.time,
+          bookingsCount: timeInfo.bookingsCount      
         }
         break
       }
@@ -46,7 +47,7 @@ function openBuyDialog(time) {
   }
 }
 function closeBuyDialog() {
-  selectedDate.value = {}
+  // selectedDate.value = {}
   buy.value = !buy.value
 }
 

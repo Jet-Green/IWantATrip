@@ -16,58 +16,57 @@ let props = defineProps({
   excursion: Object,
 })
 const emit = defineEmits(['close'])
-
 let open = ref(false)
-
 let { selectedDate } = toRefs(props)
 
 let prettyDate = ref()
 let prettyTime = ref()
+let bookingCount = ref(null)
+let pricesForm = ref([])
 
 let fullinfo = reactive({
   fullname: userStore.user.fullinfo?.fullname,
   phone: userStore.user.fullinfo?.phone,
-  date:"",
-  time:"",
+  date: "",
+  time: "",
   name: props.excursion.name,
   author: props.excursion.author
 })
 
-let availablePlaces = computed(() => {
-  let maxPeople = 0
-  for(let bill of selectedDate.value.time.bills){
-
-      maxPeople=maxPeople+bill.cart[0].count
-
-    }
-  return props.excursion.maxPeople-maxPeople
+let places = computed(() => {
+  let exist = 0
+  for (let bill of selectedDate.value.time.bills) {
+    exist = exist + bill.cart[0].count
+  }
+  return {
+    available: props.excursion.maxPeople - exist,
+    exist: exist
+  }
 });
 
-watch(selectedDate, (newValue) => {
-  if (!_.isEmpty(newValue)) {
-    open.value = true
-    prettyDate.value = datePlugin.excursions.getPrettyDate(newValue.date)
-    let tmpTime = newValue.time.hours + ':'
-    if (newValue.time.minutes < 10) {
-      tmpTime += '0' + newValue.time.minutes
-    } else {
-      tmpTime += newValue.time.minutes
-    }
-    prettyTime.value = tmpTime
-  }
+let selectedPlaces = computed(() => {
+  return pricesForm.value.reduce((total, item) => {
+    return total = total + (item.count);
+  }, 0)
 })
-let pricesForm = ref([])
+
+let availableBooking = computed(() => {
+  return props.excursion.maxPeople - selectedDate.value.bookingsCount
+})
+
+
+
 async function buy() {
   if (!userStore.user.fullinfo?.fullname) {
     await userStore.updateFullinfo(userStore.user._id, {
-      fullname:fullinfo.fullname,
-      phone:fullinfo.phone,
+      fullname: fullinfo.fullname,
+      phone: fullinfo.phone,
     })
   }
-  if (!(availablePlaces.value >= pricesForm.value[0].count)) {
-    message.config({ duration: 0.5, top: "70vh" });
+  if (places.value.available < selectedPlaces.value) {
+    message.config({ duration: 1, top: "70vh" });
     message.error({
-      content: "Свободных мест всего " + availablePlaces.value,
+      content: "Свободных мест всего " + places.value.available,
     });
     return
   }
@@ -87,11 +86,12 @@ async function buy() {
     }
 
     if (toSend.length) {
-      fullinfo.date=selectedDate.value.date
-      fullinfo.time=selectedDate.value.time
-      let res = await excursionStore.buy(selectedDate.value.time._id, toSend,fullinfo)
+      fullinfo.date = selectedDate.value.date
+      fullinfo.time = selectedDate.value.time
+      let res = await excursionStore.buy(selectedDate.value.time._id, toSend, fullinfo)
       if (res.status == 200) {
-        message.config({ duration: 0.5, top: "70vh" });
+        createPriceForm()
+        message.config({ duration: 1, top: "70vh" });
         message.success({
           content: "Успешно!",
           onClose: () => {
@@ -100,7 +100,7 @@ async function buy() {
           },
         });
       } else {
-        message.config({ duration: 0.5, top: "70vh" });
+        message.config({ duration: 1, top: "70vh" });
         message.error({
           content: "Ошибка покупки!",
           onClose: () => {
@@ -111,38 +111,53 @@ async function buy() {
     }
   }
 }
-let bookingCount = ref()
+
 async function book() {
-  if (bookingCount.value > 0) {
-    if (!userStore.user.fullinfo?.fullname) {
-      await userStore.updateFullinfo(userStore.user._id, fullinfo)
-    }
-    fullinfo.date=selectedDate.value.date
-    fullinfo.time=selectedDate.value.time
-    let response = await excursionStore.book(bookingCount.value, selectedDate.value.time._id, props.excursion._id, fullinfo)
-    if (response.status == 200) {
-      message.config({ duration: 0.5, top: "70vh" });
-      message.success({
-        content: "Успешно!",
-        onClose: () => {
-          open.value = false
-          emit('close')
-        },
-      });
-    } else {
-      message.config({ duration: 0.5, top: "70vh" });
-      message.error({
-        content: "Ошибка заказа!",
-        onClose: () => {
-          console.log(response);
-        },
-      });
-    }
-
+  if (!bookingCount.value) {
+    message.config({ duration: 1, top: "70vh" });
+    message.success({
+      content: "Введите количество",
+    });
+    return
   }
-}
+  if (availableBooking.value < bookingCount.value) {
+    message.config({ duration: 1, top: "70vh" });
+    message.error({
+      content: "Свободных мест всего " + availableBooking.value,
+    });
+    return
+  }
 
-onMounted(() => {
+  if (!userStore.user.fullinfo?.fullname) {
+    await userStore.updateFullinfo(userStore.user._id, fullinfo)
+  }
+
+  fullinfo.date = selectedDate.value.date
+  fullinfo.time = selectedDate.value.time
+  let response = await excursionStore.book(bookingCount.value, selectedDate.value.time._id, props.excursion._id, fullinfo)
+  if (response.status == 200) {
+    bookingCount.value = null
+    message.config({ duration: 1, top: "70vh" });
+    message.success({
+      content: "Успешно!",
+      onClose: () => {
+        open.value = false
+        emit('close')
+      },
+    });
+  } else {
+    message.config({ duration: 1, top: "70vh" });
+    message.error({
+      content: "Ошибка заказа!",
+      onClose: () => {
+        console.log(response);
+      },
+    });
+  }
+
+
+}
+let createPriceForm = () => {
   let result = []
   for (let p of props.excursion.prices) {
     result.push({
@@ -152,6 +167,22 @@ onMounted(() => {
     })
   }
   pricesForm.value = result
+}
+watch(selectedDate, (newValue) => {
+  if (!_.isEmpty(newValue)) {
+    open.value = true
+    prettyDate.value = datePlugin.excursions.getPrettyDate(newValue.date)
+    let tmpTime = newValue.time.hours + ':'
+    if (newValue.time.minutes < 10) {
+      tmpTime += '0' + newValue.time.minutes
+    } else {
+      tmpTime += newValue.time.minutes
+    }
+    prettyTime.value = tmpTime
+  }
+})
+onMounted(() => {
+  createPriceForm()
 })
 </script>
 <template>
@@ -184,8 +215,8 @@ onMounted(() => {
       <div class="large-date">
         {{ prettyTime }}
       </div>
-      <div class="d-flex align-center" style="justify-content: end;" v-if="pricesForm.length == 0">
-        <a-input-number v-model:value="bookingCount" :min="0" :max="excursion.maxPeople" :controls="false"
+      <div class="d-flex align-center" style="justify-content: end;" v-if="excursion.prices.length == 0">
+        <a-input-number v-model:value="bookingCount" :min="0"  :controls="false"
           class="ml-8 mr-8">
         </a-input-number> чел.
       </div>
@@ -199,12 +230,13 @@ onMounted(() => {
         </div>
       </div>
     </div>
-
-    <div class="d-flex justify-center mt-16">
-
-      <a-button type="primary" class="lets_go_btn" @click="pricesForm.length == 0 ? book() : buy()">заказать</a-button>
-
+    <div class="d-flex justify-center">
+      <a-button type="primary" class="lets_go_btn" @click="book" v-if="excursion.prices.length == 0">заказать</a-button>
+      <a-button type="primary" class="lets_go_btn" @click="buy" v-if="excursion.prices.length > 0">купить</a-button>
     </div>
+
+
+
   </a-modal>
 </template>
 <style scoped lang="scss">

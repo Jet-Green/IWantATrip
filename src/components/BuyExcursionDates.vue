@@ -24,7 +24,7 @@ const excursionStore = useExcursion()
 async function updateDates() {
   let response = await excursionStore.getExcursionBillsById(excursionId)
   excursion.value = response.data;
-  console.log(excursion.value)
+ 
 }
 await updateDates()
 
@@ -44,10 +44,12 @@ function getTime(timeObj) {
   return result
 }
 
-function getPeopleCount(time_id) {
+function getPeopleCount(bills) {
   let sum = 0
-  for (let count of excursion.value.bookings.filter(booking => booking.time === time_id).map(booking => booking.count)) {
-    sum += count
+  for (let b of bills) {
+    for (let p of b.cart) {
+      sum += p.count
+    }
   }
   return sum
 }
@@ -60,8 +62,8 @@ function getBookingCount(timeId) {
   }, 0);
 }
 
-async function buyExcursion(time) {
-  emit('buy-excursion', time)
+async function buyExcursion(time, bookingsCount) {
+  emit('buy-excursion', {time, bookingsCount})
 }
 </script>
 <template>
@@ -79,15 +81,16 @@ async function buyExcursion(time) {
         </a-col>
         <a-col :xs="18" :md="20" class="d-flex" style="gap: 10px 20px; flex-wrap: wrap;">
           <a-col v-for="time in date.times" class="time-container">
-            <a-button :class="{ 'primary_color': getPeopleCount(time._id) >= props.maxPeople }"
-              :disabled="getPeopleCount(time._id) >= props.maxPeople" class="time" shape="round"
-              @click="buyExcursion(time)">
+            <a-button :class="{ 'primary_color': getPeopleCount(time.bills) >= props.maxPeople }"
+              :disabled="getPeopleCount(time.bills) >= props.maxPeople" class="time" shape="round"
+              @click="buyExcursion(time, getBookingCount(time._id))">
+             
               {{ getTime(time) }}
             </a-button>
-            <span v-if="!excursion.bookings.length" :class="{ 'primary_color': getPeopleCount(time._id) >= props.maxPeople }">
-              {{ getPeopleCount(time._id) + ' из ' + props.maxPeople }}
+            <span v-if="getPeopleCount(time.bills)" :class="{ 'primary_color': getPeopleCount(time.bills) >= props.maxPeople }">
+              {{ getPeopleCount(time.bills) + ' из ' + props.maxPeople }}
             </span>
-            <span v-if="excursion.bookings.length"  :class="{ 'primary_color': getBookingCount(time._id) >= props.maxPeople }">
+            <span v-if="getBookingCount(time._id)"  :class="{ 'primary_color': getBookingCount(time._id) >= props.maxPeople }">
               {{ getBookingCount(time._id) + ' из ' + props.maxPeople  }}
             </span>
           </a-col>

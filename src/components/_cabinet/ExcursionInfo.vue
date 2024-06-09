@@ -13,7 +13,6 @@ let excursion = ref({})
 let updateExcursion = async (_id) => {
   const response = await excursionStore.getExcursionBillsById(_id)
   excursion.value = response.data
-  console.log(excursion.value)
 }
 
 function getDate(dateObj) {
@@ -58,7 +57,6 @@ onMounted(async () => {
     </a-breadcrumb-item>
     <a-breadcrumb-item style="cursor: pointer;">даты, время, покупатели</a-breadcrumb-item>
   </a-breadcrumb>
-
   <h3 class="mt-8 mb-8">Информация о <span style="color: #ff6600;">{{ excursion.name }}</span></h3>
   <a-row v-if="excursion?.dates?.length > 0">
     <a-col :span="24" v-for="(date, index) in excursion.dates">
