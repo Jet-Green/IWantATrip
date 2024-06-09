@@ -60,8 +60,8 @@ export default {
     hideExcursion(_id, isHide) {
         return $api.post('/excursion/hide-by-id', { _id: _id, isHide: isHide })
     },
-    buy(timeId, userId, toSend) {
-        return $api.post('/excursion/buy', { timeId, userId, bill: toSend })
+    buy(emailHtml, timeId, userId, toSend, author) {
+        return $api.post('/excursion/buy', { emailHtml,timeId, userId, bill: toSend, author: author })
     },
     buyFromCabinet(timeId, toSend, fullinfo) {
         return $api.post('/excursion/buy-from-cabinet', { timeId, fullinfo, bill: toSend })

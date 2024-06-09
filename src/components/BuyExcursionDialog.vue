@@ -17,17 +17,21 @@ let props = defineProps({
 })
 const emit = defineEmits(['close'])
 
-let fullinfo = reactive({
-  fullname: "",
-  phone: ""
-})
-
 let open = ref(false)
 
 let { selectedDate } = toRefs(props)
 
 let prettyDate = ref()
 let prettyTime = ref()
+
+let fullinfo = reactive({
+  fullname: userStore.user.fullinfo?.fullname,
+  phone: userStore.user.fullinfo?.phone,
+  date:"",
+  time:"",
+  name: props.excursion.name,
+  author: props.excursion.author
+})
 
 let availablePlaces = computed(() => {
   let maxPeople = 0
@@ -55,7 +59,10 @@ watch(selectedDate, (newValue) => {
 let pricesForm = ref([])
 async function buy() {
   if (!userStore.user.fullinfo?.fullname) {
-    await userStore.updateFullinfo(userStore.user._id, fullinfo)
+    await userStore.updateFullinfo(userStore.user._id, {
+      fullname:fullinfo.fullname,
+      phone:fullinfo.phone,
+    })
   }
   if (!(availablePlaces.value >= pricesForm.value[0].count)) {
     message.config({ duration: 0.5, top: "70vh" });
@@ -80,7 +87,9 @@ async function buy() {
     }
 
     if (toSend.length) {
-      let res = await excursionStore.buy(selectedDate.value.time._id, toSend)
+      fullinfo.date=selectedDate.value.date
+      fullinfo.time=selectedDate.value.time
+      let res = await excursionStore.buy(selectedDate.value.time._id, toSend,fullinfo)
       if (res.status == 200) {
         message.config({ duration: 0.5, top: "70vh" });
         message.success({
@@ -108,8 +117,9 @@ async function book() {
     if (!userStore.user.fullinfo?.fullname) {
       await userStore.updateFullinfo(userStore.user._id, fullinfo)
     }
-
-    let response = await excursionStore.book(bookingCount.value, selectedDate.value.time._id, props.excursion._id)
+    fullinfo.date=selectedDate.value.date
+    fullinfo.time=selectedDate.value.time
+    let response = await excursionStore.book(bookingCount.value, selectedDate.value.time._id, props.excursion._id, fullinfo)
     if (response.status == 200) {
       message.config({ duration: 0.5, top: "70vh" });
       message.success({
