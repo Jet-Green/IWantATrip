@@ -24,6 +24,8 @@ let selectedDate = ref({})
 let buy = ref(false)
 let open = ref(false)
 
+const backRoute = { name: 'ExcursionsPage', hash: `#${_id}` };
+
 let fullinfo = reactive({
   fullname: userStore.user.fullinfo?.fullname,
   phone: userStore.user.fullinfo?.phone,
@@ -91,7 +93,7 @@ onMounted(async () => {
 </script>
 <template>
   <div style="overflow-x: hidden">
-    <BackButton :backRoute="{ path: '/excursions' }" />
+    <BackButton :backRoute="backRoute" />
     <a-row class="justify-center d-flex">
       <a-spin v-if="!excursion._id" size="large"></a-spin>
 

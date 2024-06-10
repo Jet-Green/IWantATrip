@@ -20,8 +20,12 @@ watch(() => useLocations().location._id, async () => {
 })
 
 onMounted(async () => {
-
   await excursionStore.getAll()
+  if (route.hash) {
+    let id = route.hash.slice(1)
+    document.getElementById(id)?.scrollIntoView()
+    window.scrollBy(0, -100);
+  }
 
 });
 
@@ -36,7 +40,7 @@ onMounted(async () => {
         <a-row :gutter="[12, 16]">
           <a-col :span="24" :sm="12" :md="8" v-for="ex of excursionStore.excursions" :key="ex._id">
 
-            <ExcursionCard :excursion="ex" @click="router.push(`/excursion?_id=${ex._id}`)" />
+            <ExcursionCard :excursion="ex" @click="router.push(`/excursion?_id=${ex._id}`)" :id ="ex._id" />
           </a-col>
         </a-row>
       </a-col>
