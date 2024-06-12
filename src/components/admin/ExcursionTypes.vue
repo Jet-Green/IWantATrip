@@ -17,7 +17,6 @@ async function refreshTypes() {
 
 async function addType() {
   let res = await appStateStore.addExcursionType({ type: typeStr.value, directionType: directionTypeStr.value, directionPlace: directionPlace.value });
-  console.log(res);
   if (res.status==200) {
     refreshTypes()
   }
