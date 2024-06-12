@@ -9,11 +9,20 @@ let directionTypeStr = ref("")
 let directionPlace = ref("")
 
 let types = ref([])
+async function refreshTypes() {
+  await appStateStore.refreshState()
+  let typesFromDb = appStateStore.appState[0].excursionTypes
+  types.value = typesFromDb
+}
 
 async function addType() {
   let res = await appStateStore.addExcursionType({ type: typeStr.value, directionType: directionTypeStr.value, directionPlace: directionPlace.value });
   console.log(res);
+  if (res.status==200) {
+    refreshTypes()
+  }
 }
+
 onMounted(() => {
   let typesFromDb = appStateStore.appState[0].excursionTypes
   types.value = typesFromDb
