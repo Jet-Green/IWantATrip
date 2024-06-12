@@ -44,9 +44,6 @@ onMounted(async () => {
 </script>
 <template>
     <a-row class="mb-8">
-        <a-col :span=24>
-            <h3>Типы экскурсии</h3>
-        </a-col>
         <a-col :span="24">
             <ExcursionTypes />
         </a-col>
