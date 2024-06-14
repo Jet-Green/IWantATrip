@@ -32,7 +32,7 @@ export const useExcursion = defineStore('excursion', {
         },
         async edit(excursion) {
             return await ExcursionService.edit(excursion)
-        } ,
+        },
         async getUserExcursions() {
             const user = useAuth().user
             return await ExcursionService.getUserExcursions(user._id)
@@ -50,12 +50,12 @@ export const useExcursion = defineStore('excursion', {
             try {
                 this.excursions = []
                 let response;
-                response = await ExcursionService.getAll(useLocations().location._id,this.excursionFilter.query,this.excursionFilter.start, this.excursionFilter.end, this.excursionFilter.type)
-               
+                response = await ExcursionService.getAll(useLocations().location._id, this.excursionFilter.query, this.excursionFilter.start, this.excursionFilter.end, this.excursionFilter.type)
+
                 this.excursions.push(...response.data);
                 this.excursions = _.uniqBy(this.excursions, '_id')
                 // this.cursor++
-                
+
             } catch (err) {
                 console.log(err);
             }
@@ -112,18 +112,18 @@ export const useExcursion = defineStore('excursion', {
         async buy(timeId, toSend, toEmail) {
             let userStore = useAuth()
             // console.log(toEmail)
-            const emailHtml = await render(BuyExcursionTemplate, { toSend:toSend, toEmail: toEmail });
-            return await ExcursionService.buy(emailHtml,timeId, userStore.user._id, toSend, toEmail.author)
+            const emailHtml = await render(BuyExcursionTemplate, { toSend: toSend, toEmail: toEmail });
+            return await ExcursionService.buy(emailHtml, timeId, userStore.user._id, toSend, toEmail.author)
         },
         async book(count, timeId, excursionId, toEmail) {
             let userStore = useAuth()
-            const emailHtml = await render(BookingExcursionTemplate, { count:count, toEmail: toEmail });
-            return await ExcursionService.book({ emailHtml:emailHtml , time: timeId, excursion: excursionId, user: userStore.user._id, count:count, author:toEmail.author })
+            const emailHtml = await render(BookingExcursionTemplate, { count: count, toEmail: toEmail });
+            return await ExcursionService.book({ emailHtml: emailHtml, time: timeId, excursion: excursionId, user: userStore.user._id, count: count, author: toEmail.author })
         },
-        async order(fullinfo,excursionId,excursionName,author) {
+        async order(fullinfo, excursionId, excursionName, author) {
             let userStore = useAuth()
-            const emailHtml = await render(OrderExcursionTemplate, { fullinfo:fullinfo , name: excursionName });
-            return await ExcursionService.order({ emailHtml: emailHtml, fullinfo: fullinfo, excursionId:excursionId, author:author, user: userStore.user._id })
+            const emailHtml = await render(OrderExcursionTemplate, { fullinfo: fullinfo, name: excursionName });
+            return await ExcursionService.order({ emailHtml: emailHtml, fullinfo: fullinfo, excursionId: excursionId, author: author, user: userStore.user._id })
         },
         async getExcursionsOnModeration() {
             return await ExcursionService.getExcursionsOnModeration()
