@@ -127,7 +127,6 @@ async function book() {
     });
     return
   }
-
   if (!userStore.user.fullinfo?.fullname) {
     await userStore.updateFullinfo(userStore.user._id, fullinfo)
   }
@@ -216,8 +215,7 @@ onMounted(() => {
         {{ prettyTime }}
       </div>
       <div class="d-flex align-center" style="justify-content: end;" v-if="excursion.prices.length == 0">
-        <a-input-number v-model:value="bookingCount" :min="0"  :controls="false"
-          class="ml-8 mr-8">
+        <a-input-number v-model:value="bookingCount" :min="0" :controls="false" class="ml-8 mr-8">
         </a-input-number> чел.
       </div>
     </div>
@@ -234,7 +232,9 @@ onMounted(() => {
       <a-button type="primary" class="lets_go_btn" @click="book" v-if="excursion.prices.length == 0">заказать</a-button>
       <a-button type="primary" class="lets_go_btn" @click="buy" v-if="excursion.prices.length > 0">купить</a-button>
     </div>
-
+    <span>
+      Необходимо {{props.excursion.minPeople}} человек минимум для заполнения экскурсии.
+    </span>
 
 
   </a-modal>
