@@ -65,6 +65,13 @@ export const useAppState = defineStore('app-state', {
             } catch (error) {
                 console.log(error);
             }
+        },
+        async deleteExcursionType(body) {
+            try {
+                return await AppService.deleteExcursionType(body)
+            } catch (error) {
+                console.log(error);
+            }
         }
     },
 })
