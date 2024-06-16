@@ -99,17 +99,17 @@ onMounted(async () => {
   <a-row :gutter="[8, 8]">
     <a-col :span="24" :lg="8">
       Тип экскурсии
-      <a-input placeholder="Профориентация" size="large" v-model:value="typeStr" class="w-100">
+      <a-input placeholder="профориентация" size="large" v-model:value="typeStr" class="w-100">
       </a-input>
     </a-col>
     <a-col :span="24" :lg="8">
       Тип места
-      <a-input placeholder="Медицина" size="large" v-model:value="directionTypeStr" class="w-100">
+      <a-input placeholder="медицина" size="large" v-model:value="directionTypeStr" class="w-100">
       </a-input>
     </a-col>
     <a-col :span="24" :lg="8">
       Место
-      <a-input placeholder="Поликлиника" size="large" v-model:value="directionPlace" class="w-100"></a-input>
+      <a-input placeholder="поликлиника" size="large" v-model:value="directionPlace" class="w-100"></a-input>
     </a-col>
     <a-col :span="24" class="d-flex justify-center">
       <a-button @click="addType" type="primary" class="lets_go_btn">отправить</a-button>
