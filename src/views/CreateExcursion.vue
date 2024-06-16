@@ -4,6 +4,7 @@ import BackButton from '../components/BackButton.vue';
 import ImageCropper from "../components/ImageCropper.vue";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
+import _ from 'lodash';
 
 import { useRouter } from 'vue-router';
 import { useExcursion } from '../stores/excursion'
@@ -118,7 +119,7 @@ const addCost = () => {
 };
 function clearForm() {
   localStorage.removeItem('createExcursionImages')
-} 
+}
 async function submit() {
   form.author = user_id
   let excursionCb = await excursionStore.create(form)
@@ -228,6 +229,15 @@ watch(
   },
   { deep: true }
 )
+watch(form, (newValue) => {
+  localStorage.setItem('createExcursionForm', JSON.stringify(newValue))
+}, { deep: true })
+onMounted(() => {
+  let formFromLS = JSON.parse(localStorage.getItem('createExcursionForm'))
+  if (formFromLS != {} || !formFromLS) {
+    form = formFromLS
+  }
+})
 </script>
 <template>
   <div>
