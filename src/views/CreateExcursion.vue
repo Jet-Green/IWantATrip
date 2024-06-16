@@ -20,7 +20,6 @@ const router = useRouter()
 let excursionTypes = appStateStore?.appState[0]?.excursionTypes || []
 let locationSearchRequest = ref("")
 let possibleLocations = ref([])
-let selectExcursionType = ref("")
 
 let visibleCropperModal = ref(false);
 let previews = ref(localStorage.getItem('createExcursionImages') ? JSON.parse(localStorage.getItem('createExcursionImages')) : []);
@@ -29,7 +28,7 @@ const delPhotoDialog = ref(false);
 // add img
 let targetIndex = ref()
 
-let form = reactive({
+let form = reactive(JSON.parse(localStorage.getItem('createExcursionForm')) || {
   name: '',
   contacts: {
     phone: '',
@@ -119,6 +118,7 @@ const addCost = () => {
 };
 function clearForm() {
   localStorage.removeItem('createExcursionImages')
+  localStorage.removeItem('createExcursionForm')
 }
 async function submit() {
   form.author = user_id
@@ -146,14 +146,10 @@ let getExcursionDirections = computed(() => {
   return type[0]?.direction
 })
 let getExcursionPlace = computed(() => {
-
   if (getExcursionDirections.value) {
-
     let direction = getExcursionDirections.value.filter((direction) => {
-
       return direction.directionType == form.excursionType.directionType
-    }
-    )
+    })
     return direction[0]?.directionPlace
   }
   return null
@@ -232,12 +228,6 @@ watch(
 watch(form, (newValue) => {
   localStorage.setItem('createExcursionForm', JSON.stringify(newValue))
 }, { deep: true })
-onMounted(() => {
-  let formFromLS = JSON.parse(localStorage.getItem('createExcursionForm'))
-  if (formFromLS != {} || !formFromLS) {
-    form = formFromLS
-  }
-})
 </script>
 <template>
   <div>
