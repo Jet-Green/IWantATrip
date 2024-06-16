@@ -61,7 +61,9 @@ export const useAppState = defineStore('app-state', {
         },
         async addExcursionType(body) {
             try {
-                return await AppService.addExcursionType(body)
+                let res =  await AppService.addExcursionType(body)
+                this.appState = [res.data]
+                return res
             } catch (error) {
                 console.log(error);
             }
