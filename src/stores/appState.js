@@ -70,7 +70,9 @@ export const useAppState = defineStore('app-state', {
         },
         async deleteExcursionType(body) {
             try {
-                return await AppService.deleteExcursionType(body)
+                let res = await AppService.deleteExcursionType(body)
+                this.appState = [res.data]
+                return res
             } catch (error) {
                 console.log(error);
             }

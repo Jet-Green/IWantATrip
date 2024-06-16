@@ -12,7 +12,7 @@ let types = ref([])
 async function refreshTypes() {
   if (!appStateStore.appState[0].excursionTypes)
     await appStateStore.refreshState()
-  
+
   let typesFromDb = appStateStore.appState[0].excursionTypes
   let treeData = []
 
@@ -43,16 +43,25 @@ async function deleteType(keyToDelete) {
   for (let i = 0; i < t.length; i++) {
     if (t[i].key == keyToDelete) {
       let res = await appStateStore.deleteExcursionType({ type: t[i].title })
+      if (res.status == 200) {
+        refreshTypes()
+      }
       return
     }
     for (let j = 0; j < t[i].children.length; j++) {
       if (t[i].children[j].key == keyToDelete) {
         let res = await appStateStore.deleteExcursionType({ directionType: t[i].children[j].title })
+        if (res.status == 200) {
+          refreshTypes()
+        }
         return
       }
       for (let k = 0; k < t[i].children[j].children.length; k++) {
         if (t[i].children[j].children[k].key == keyToDelete) {
           let res = await appStateStore.deleteExcursionType({ directionPlace: t[i].children[j].children[k].title })
+          if (res.status == 200) {
+            refreshTypes()
+          }
           return
         }
       }
