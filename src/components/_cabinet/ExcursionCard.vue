@@ -36,7 +36,7 @@ function excursionInfo(_id) {
 }
 </script>
 <template>
-  <a-card class="card" :class="[excursion.isHidden ? 'overlay' : '']">
+  <a-card class="card" :class="[excursion.isHidden ? 'overlay' : '']" v-if="excursion._id">
     <div v-if="excursion.prices.length > 0" class="money-indicator">
       <a-tooltip placement="top" title="Платная">
         <span class="mdi mdi-cash"></span>
@@ -45,10 +45,10 @@ function excursionInfo(_id) {
     <div style="width: 100%; text-align: center;">
       {{ excursion.name }}
     </div>
-    <div>
-      {{ excursion.excursionType.type }}
+    <div v-if="excursion?.excursionType">
+      {{ excursion?.excursionType?.type }}
     </div>
-    <div class="type">
+    <div v-if="excursion?.excursionType?.directionType" class="type">
       <span class="mdi mdi-directions-fork"></span>{{ excursion.excursionType.directionType }}
 
       <span class="mdi mdi-map-marker-outline"></span>{{ excursion.excursionType.directionPlace }}
