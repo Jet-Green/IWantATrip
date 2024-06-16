@@ -116,7 +116,9 @@ const addCost = () => {
     price: "",
   });
 };
-
+function clearForm() {
+  localStorage.removeItem('createExcursionImages')
+} 
 async function submit() {
   form.author = user_id
   let excursionCb = await excursionStore.create(form)
@@ -132,6 +134,7 @@ async function submit() {
   let res = await excursionStore.uploadImages(imagesFormData)
   if (res.status == 200) {
     router.push('/cabinet/me')
+    clearForm()
   }
 }
 
