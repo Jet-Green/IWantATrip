@@ -124,7 +124,7 @@ function clearForm() {
 }
 async function submit() {
   form.author = user_id
-  if (userStore.user?.tinkoffContract?.shopCode) {
+  if (userStore.user?.tinkoffContract?.shopInfo) {
     let t = userStore.user.tinkoffContract
     form.tinkoffContract = {
       ShopCode: t.shopInfo.shopCode,

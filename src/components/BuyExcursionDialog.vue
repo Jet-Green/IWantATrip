@@ -6,6 +6,9 @@ import { useExcursion } from "../stores/excursion";
 import { useAuth } from "../stores/auth";
 import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
+import tinkoffPlugin from '../plugins/tinkoff'
+
+import TinkoffLogo from "../assets/images/tinkofflogo.svg"
 
 const excursionStore = useExcursion()
 const userStore = useAuth()
@@ -53,8 +56,70 @@ let selectedPlaces = computed(() => {
 let availableBooking = computed(() => {
   return props.excursion.maxPeople - selectedDate.value.bookingsCount
 })
+/**
+ * purchase with tinkoff
+ */
+async function buyWithTinkoff() {
+  // return undefined if no places
+  if (places.value.available < selectedPlaces.value) {
+    message.config({ duration: 1, top: "70vh" });
+    message.error({
+      content: "Свободных мест всего " + places.value.available,
+    });
+    return
+  }
+  // toSend is a bill's cart
+  let toSend = []
+  for (let p of pricesForm.value) {
+    if (p.count > 0) {
+      toSend.push({
+        type: p.type,
+        price: p.price,
+        count: p.count
+      })
+    }
+  }
 
-
+  if (toSend.length > 0) {
+    let bill = {
+      time: selectedDate.value.time._id,
+      user: userStore.user._id,
+      cart: toSend,
+      tinkoff: {}
+    }
+    // init payment and get data for tinkoff field of bill
+    const orderId = 'ex' + Date.now().toString()
+    let { data, token, success } = await tinkoffPlugin.initExcursionPayment(orderId, toSend, userStore.user.email, props.excursion.tinkoffContract, props.excursion.name)
+    let tinkoffUrl = data.PaymentURL
+    bill.tinkoff = {
+      orderId: data.OrderId,
+      amount: data.Amount,
+      token,
+      paymentId: data.PaymentId
+    }
+    if (!success) {
+      message.config({ duration: 3, top: "70vh" });
+      message.error({ content: "Ошибка при оплате" });
+      return
+    }
+    if (tinkoffUrl) {
+      router.push({ name: 'TinkoffPayment', query: { url: tinkoffUrl } })
+    }
+    // create bill with tinkoff and update time's billsList
+    let res = await excursionStore.buyWithTinkoff(bill)
+    if (res.status == 200) {
+      message.config({ duration: 3, top: "70vh" });
+      message.success({
+        content: "Экскурсия куплена",
+        onClose: () => {
+          open.value = false
+          emit('close')
+        },
+      });
+      return
+    }
+  }
+}
 
 async function buy() {
   if (!userStore.user.fullinfo?.fullname) {
@@ -168,6 +233,14 @@ let createPriceForm = () => {
   }
   pricesForm.value = result
 }
+let totalAmount = computed(() => {
+  let res = 0
+  for (let p of pricesForm.value) {
+    res += Number(p.count) * p.price
+  }
+  return res
+})
+
 watch(selectedDate, (newValue) => {
   if (!_.isEmpty(newValue)) {
     open.value = true
@@ -216,8 +289,7 @@ onMounted(() => {
         {{ prettyTime }}
       </div>
       <div class="d-flex align-center" style="justify-content: end;" v-if="excursion.prices.length == 0">
-        <a-input-number v-model:value="bookingCount" :min="0"  :controls="false"
-          class="ml-8 mr-8">
+        <a-input-number v-model:value="bookingCount" :min="0" :controls="false" class="ml-8 mr-8">
         </a-input-number> чел.
       </div>
     </div>
@@ -230,16 +302,49 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <div class="d-flex justify-center">
-      <a-button type="primary" class="lets_go_btn" @click="book" v-if="excursion.prices.length == 0">заказать</a-button>
-      <a-button type="primary" class="lets_go_btn" @click="buy" v-if="excursion.prices.length > 0">купить</a-button>
+    <!-- заказ -->
+    <div class="d-flex justify-center" v-if="excursion.prices.length == 0">
+      <a-button type="primary" class="lets_go_btn" @click="book">заказать</a-button>
     </div>
-
-
-
+    <!-- оплата -->
+    <div class="d-flex justify-end">
+      <b>Итого: {{ totalAmount }} руб.</b>
+    </div>
+    <div class="d-flex space-around mt-8" v-if="excursion.prices.length > 0">
+      <a-button style="border-radius: 15px;" @click="buy">заказать</a-button>
+      <div class="buy-btn">
+        <div>
+          <a-button type="primary" class="lets_go_btn" @click="buyWithTinkoff">
+            оплатить
+          </a-button>
+        </div>
+        <div class="d-flex justify-center">
+          <img :src="TinkoffLogo" class="tinkoff-logo">
+        </div>
+      </div>
+    </div>
   </a-modal>
 </template>
 <style scoped lang="scss">
+.buy-btn {
+  display: flex;
+  flex-direction: column;
+
+  .tinkoff-logo {
+    height: 20px;
+    width: 90px;
+  }
+
+  img {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+  }
+
+}
+
 .large-date {
   font-weight: 600;
   font-size: clamp(1.875rem, 1.3778rem + 1.4205vw, 2.5rem);

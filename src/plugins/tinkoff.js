@@ -119,6 +119,78 @@ async function initPayment(orderId, cart, clientEmail, shopInfo, tripName) {
     return { data: res.data, token: Token, success: res.data.Success }
 }
 
+async function initExcursionPayment(orderId, cart, clientEmail, shopInfo, excursionName) {
+    let Items = []
+    let totalAmount = 0
+    for (let cartItem of cart) {
+        if (cartItem.count) {
+            Items.push(
+                {
+                    // Платформа Союз
+                    "AgentData": {
+                        "AgentSign": "another",
+                        "OperationName": `"${cartItem.type}":${excursionName}`.slice(0, 24),
+                        "Phones": ["+79128523316"],
+                        "ReceiverPhones": ["+79128523316"],
+                    },
+                    // Поставщик тура
+                    "SupplierInfo": {
+                        "Phones": shopInfo.Phones,
+                        "Name": shopInfo.Name,
+                        "Inn": shopInfo.Inn
+                    },
+                    "PaymentMethod": "full_payment",
+                    "PaymentObject": "service",
+                    "Name": cartItem.type,
+                    "Price": cartItem.price * 100,
+                    "Quantity": cartItem.count,
+                    "Amount": cartItem.price * 100 * cartItem.count,
+                    "Tax": "none",
+                    "ShopCode": String(shopInfo.ShopCode),
+                    "MeasurementUnit": "шт"
+                },
+            )
+        }
+        totalAmount += cartItem.price * 100 * cartItem.count
+    }
+    let payload =
+    {
+        "Amount": totalAmount,
+        "Password": VITE_TINKOFF_TERMINAL_PASS,
+        "OrderId": orderId,
+        "TerminalKey": VITE_TINKOFF_TERMINAL_ID
+    }
+
+    let stringPayload = ''
+    for (let key of Object.keys(payload)) {
+        stringPayload += payload[key]
+    }
+
+    const Token = sha256(stringPayload)
+
+    let config = {
+        "TerminalKey": VITE_TINKOFF_TERMINAL_ID,
+        "Amount": totalAmount,
+        "OrderId": orderId,
+        "Description": `Покупка "${excursionName}"`,
+        "Token": Token,
+        "Receipt": {
+            "Email": clientEmail,
+            "Taxation": 'usn_income',
+            "FfdVersion": "1.05",
+            "Items": Items,
+        },
+        "Shops": [
+            {
+                "ShopCode": String(shopInfo.ShopCode),
+                "Name": "Тур",
+                "Amount": totalAmount,
+            }
+        ]
+    }
+    let res = await axios.post('https://securepay.tinkoff.ru/v2/Init', config)
+    return { data: res.data, token: Token, success: res.data.Success }
+}
 async function sendClosingReceipt(PaymentId, Amount) {
     let payload =
     {
@@ -194,4 +266,4 @@ async function checkAuth() {
     return false
 }
 
-export default { initPayment, checkPayment, cancelPayment, sendClosingReceipt, registerShop, updateContract, checkAuth }
+export default { initExcursionPayment, initPayment, checkPayment, cancelPayment, sendClosingReceipt, registerShop, updateContract, checkAuth }
