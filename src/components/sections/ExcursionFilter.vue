@@ -41,22 +41,22 @@ function find() {
   excursionStore.cursor = 1;
   excursionStore.excursions = [];
   if (time.start) {
-    localStorage.setItem("ExcursionTimeStart", time.start);
-
-    time.start.setHours(0);
-    time.start.setMinutes(0);
-    time.start.setSeconds(0);
-    time.start.setMilliseconds(0);
-    excursionStore.excursionFilter.start = time.start;
+    let start=time.start
+    localStorage.setItem("ExcursionTimeStart", start);
+    start.setHours(0);
+    start.setMinutes(0);
+    start.setSeconds(0);
+    start.setMilliseconds(0);
+    excursionStore.excursionFilter.start = start;
   }
   if (time.end) {
-    localStorage.setItem("ExcursionTimeEnd", time.end);
-
-    time.end.setHours(0);
-    time.end.setMinutes(0);
-    time.end.setSeconds(0);
-    time.end.setMilliseconds(0);
-    excursionStore.excursionFilter.end = time.end;
+    let end = time.end
+    localStorage.setItem("ExcursionTimeEnd", end);
+    end.setHours(0);
+    end.setMinutes(0);
+    end.setSeconds(0);
+    end.setMilliseconds(0);
+    excursionStore.excursionFilter.end = end;
   }
   excursionStore.excursionFilter.query = query.value;
   excursionStore.excursionFilter.type = type.value;
@@ -88,10 +88,9 @@ onMounted(() => {
   type.value = localStorage.getItem("ExcursionType") ?? "";
 
   if (localStorage.getItem("ExcursionTimeStart")) {
-    time.start = dayjs(localStorage.getItem("ExcursionTimeStart"));
-    time.end = dayjs(localStorage.getItem("ExcursionTimeEnd"));
+    time.start =  new Date(localStorage.getItem("ExcursionTimeStart"))
+    time.end = new Date(localStorage.getItem("ExcursionTimeEnd"))
   }
-
   if (props.search) {
     query.value = props.search;
   }
