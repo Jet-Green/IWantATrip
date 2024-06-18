@@ -1,23 +1,25 @@
 <script setup>
-import { watch, nextTick, ref, reactive, computed, onMounted } from "vue";
+import { watch, ref, reactive, computed, onMounted } from "vue";
 import BackButton from '../components/BackButton.vue';
 import ImageCropper from "../components/ImageCropper.vue";
-import { Form, Field, FieldArray, ErrorMessage } from "vee-validate";
+import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
+import _ from 'lodash';
 
 import { useRouter } from 'vue-router';
 import { useExcursion } from '../stores/excursion'
+import { useAppState } from '../stores/appState'
 import { useAuth } from '../stores/auth'
-import excursionTypes from '../db/excursionTypes'
+
 
 const excursionStore = useExcursion()
+const appStateStore = useAppState()
 const user_id = useAuth().user._id
-console.log(user_id)
 const router = useRouter()
 
+let excursionTypes = appStateStore?.appState[0]?.excursionTypes || []
 let locationSearchRequest = ref("")
 let possibleLocations = ref([])
-let selectExcursionType = ref("")
 
 let visibleCropperModal = ref(false);
 let previews = ref(localStorage.getItem('createExcursionImages') ? JSON.parse(localStorage.getItem('createExcursionImages')) : []);
@@ -26,7 +28,7 @@ const delPhotoDialog = ref(false);
 // add img
 let targetIndex = ref()
 
-let form = reactive({
+let form = reactive(JSON.parse(localStorage.getItem('createExcursionForm')) || {
   name: '',
   contacts: {
     phone: '',
@@ -114,7 +116,10 @@ const addCost = () => {
     price: "",
   });
 };
-
+function clearForm() {
+  localStorage.removeItem('createExcursionImages')
+  localStorage.removeItem('createExcursionForm')
+}
 async function submit() {
   form.author = user_id
   let excursionCb = await excursionStore.create(form)
@@ -130,6 +135,7 @@ async function submit() {
   let res = await excursionStore.uploadImages(imagesFormData)
   if (res.status == 200) {
     router.push('/cabinet/me')
+    clearForm()
   }
 }
 
@@ -140,14 +146,10 @@ let getExcursionDirections = computed(() => {
   return type[0]?.direction
 })
 let getExcursionPlace = computed(() => {
-
   if (getExcursionDirections.value) {
-
     let direction = getExcursionDirections.value.filter((direction) => {
-
       return direction.directionType == form.excursionType.directionType
-    }
-    )
+    })
     return direction[0]?.directionPlace
   }
   return null
@@ -223,10 +225,10 @@ watch(
   },
   { deep: true }
 )
-
-
+watch(form, (newValue) => {
+  localStorage.setItem('createExcursionForm', JSON.stringify(newValue))
+}, { deep: true })
 </script>
-
 <template>
   <div>
     <BackButton />
@@ -250,9 +252,8 @@ watch(
               Тип экскурсии
               <a-select v-model:value="form.excursionType.type" style="width: 100%;">
                 <!-- <a-select-option value=""></a-select-option> -->
-                <a-select-option placeholder="Tип тура" 
-                  :value="''">
-                 
+                <a-select-option placeholder="Tип тура" :value="''">
+
                 </a-select-option>
                 <a-select-option placeholder="Tип тура" v-for="excursionType in excursionTypes"
                   :value="excursionType.type">
@@ -263,9 +264,8 @@ watch(
             <a-col :span="12" v-if='getExcursionDirections'>
               Направление
               <a-select v-model:value="form.excursionType.directionType" style="width: 100%;">
-                <a-select-option placeholder="Tип тура" 
-                  :value="''">
-                 
+                <a-select-option placeholder="Tип тура" :value="''">
+
                 </a-select-option>
                 <a-select-option placeholder="Tип тура" v-for="excursionDirection in getExcursionDirections"
                   :value="excursionDirection.directionType">
@@ -276,9 +276,8 @@ watch(
             <a-col :span="12" v-if='getExcursionPlace'>
               Место
               <a-select v-model:value="form.excursionType.directionPlace" style="width: 100%;">
-                <a-select-option placeholder="Tип тура" 
-                  :value="''">
-                 
+                <a-select-option placeholder="Tип тура" :value="''">
+
                 </a-select-option>
                 <a-select-option placeholder="Tип тура" v-for="directionPlace in getExcursionPlace"
                   :value="directionPlace">
@@ -291,7 +290,7 @@ watch(
               <div class="d-flex" style="overflow-x: scroll">
                 <img v-for="(pr, i) in previews   " :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
                   @click="delPhotoDialog = true;
-      targetIndex = i;" @error="handleImgError(i)" />
+                  targetIndex = i;" @error="handleImgError(i)" />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
@@ -317,7 +316,7 @@ watch(
               </div>
 
 
-              <div v-for="   item, index    in    form.prices   " :key="index" style="display: flex" align="baseline"
+              <div v-for="   item, index in form.prices   " :key="index" style="display: flex" align="baseline"
                 class="mb-16">
                 <a-input v-model:value="item.type" placeholder="Взрослый" />
 

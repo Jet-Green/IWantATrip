@@ -19,5 +19,8 @@ export default {
     },
     addExcursionType(body) {
         return $api.put('/app-state/excursion-types', body)
+    },
+    async deleteExcursionType(body) {
+        return $api.patch('/app-state/excursion-types', body)
     }
 }

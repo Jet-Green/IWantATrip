@@ -2,12 +2,11 @@
 import { ref, computed, onMounted, getCurrentInstance, watch } from "vue";
 import _ from 'lodash'
 import tinkoffPlugin from '../plugins/tinkoff'
-
 import TinkoffLogo from "../assets/images/tinkofflogo.svg"
 
 import { useRoute } from "vue-router";
 import BackButton from "../components/BackButton.vue";
-import WaitingList from "../components/WaitingList.vue";
+
 import { useTrips } from "../stores/trips";
 import { useAuth } from "../stores/auth";
 import { message } from "ant-design-vue";
@@ -17,6 +16,7 @@ import * as yup from "yup";
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import Bus from "../components/Bus.vue";
 import { useBus } from "../stores/bus";
+import { useShare } from '@vueuse/core'
 const API_URL = import.meta.env.VITE_API_URL
 
 const app = getCurrentInstance();
@@ -38,6 +38,13 @@ let selected_bus = ref()
 let waiting_bus = ref()
 let free_seats = ref([])
 let show_old_bus = ref(true)
+let tripDates = ref([]);
+let trip = ref({});
+let buyDialog = ref(false);
+let buyNow = ref(false)
+let selectedDate = ref({});
+let selectedStartLocation = ref();
+let isInWaitingList = ref(false)
 // watch([selected_bus, waiting_bus], async ([selected, waiting]) => {
 //     let bus_id = _.isEmpty(selected) ? waiting.transportType.bus_id : selected.transportType.bus_id
 //     if (!bus_id) return show_old_bus.value = true
@@ -47,6 +54,23 @@ let show_old_bus = ref(true)
 //     updateSeats()
 // })
 
+let link = computed(() => {
+  return API_URL + route.fullPath
+})
+const options = ref({
+  url: link.value,
+  title: trip.value.name,
+  text: trip.value.description,
+})
+
+const { isSupported } = useShare(options)
+
+function startShare() {
+  const { share } = useShare(options)
+  return share().catch(err => {
+    console.log(err);
+  })
+}
 
 async function updateSeats() {
     if (!bus.value) return
@@ -65,38 +89,8 @@ const creatorsType = computed(() => {
             : "турагенство";
 });
 
-let tripDates = ref([]);
-let trip = ref({});
-let buyDialog = ref(false);
-let buyNow = ref(false)
-let selectedDate = ref({});
-let selectedStartLocation = ref();
-let isInWaitingList = ref(false)
-
-let ShareLogo = ref([
-    {
-        network: "VK",
-
-    },
-    {
-        network: "WhatsApp",
-
-    },
-    {
-        network: "Telegram",
-
-    },
-    {
-        network: "Email",
-
-    },
-    {
-        network: "Viber",
-
-    },
 
 
-])
 
 // let tripsCount = computed(() => {
 //     let sum = 0;
@@ -456,25 +450,12 @@ onMounted(async () => {
                             <span style="opacity: 0.7; cursor: pointer;" class="mdi mdi-24px mdi-printer ma-8 "
                                 @click="print()"></span>
 
-                            <a-dropdown :trigger="['click']">
-                                <a class="ant-dropdown-link" @click.prevent>
+                          
+                             
                                     <span style="opacity: 0.7;"
-                                        class="mdi mdi-24px mdi-share-variant-outline ma-8"></span>
-                                </a>
-                                <template #overlay>
-                                    <a-menu>
-                                        <a-menu-item v-for="link, index of  ShareLogo" :key="index">
-                                            <ShareNetwork :network="link.network" :url='getLink()' :title="trip.name"
-                                                :description="trip.offer">
-                                                <span>{{ link.network }}</span>
-
-                                            </ShareNetwork>
-                                        </a-menu-item>
-                                    </a-menu>
-                                </template>
-                            </a-dropdown>
+                                        class="mdi mdi-24px mdi-share-variant-outline ma-8" @click="startShare()"></span>
+                        
                         </div>
-
 
                         <div>
                             Старт: <b> {{ getStartLocationNames }}</b>

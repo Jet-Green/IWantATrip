@@ -139,7 +139,7 @@ onMounted(() => {
 
         <a-col :span="24" :md="12" class="d-flex align-center space-between">
           <div class="d-flex direction-column" style="width: 100%">
-            <div style="font-size: 10px; line-height: 10px">даты</div>
+            <div style="font-size: 10px; line-height: 10px">от и до</div>
             <div style="display: flex; flex-direction: row">
               <VueDatePicker
                 v-model="time.start"

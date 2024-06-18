@@ -1,13 +1,15 @@
 <script setup>
+import { ref, onMounted, reactive, computed } from "vue";
 import VueDatePicker from '@vuepic/vue-datepicker';
-import datePlugin from '../plugins/dates'
+import { useShare } from '@vueuse/core'
 import { message } from "ant-design-vue";
 import '@vuepic/vue-datepicker/dist/main.css'
 import BackButton from "../components/BackButton.vue";
 import BuyExcursionDates from "../components/BuyExcursionDates.vue";
 import BuyExcursionDialog from "../components/BuyExcursionDialog.vue";
 import _ from "lodash"
-import { ref, onMounted, reactive } from "vue";
+
+
 
 import { useRoute } from "vue-router";
 import { useExcursion } from "../stores/excursion.js";
@@ -15,6 +17,7 @@ import { useAuth } from "../stores/auth";
 
 const route = useRoute();
 const _id = route.query._id;
+const API_URL = import.meta.env.VITE_API_URL
 
 const excursionStore = useExcursion();
 const userStore = useAuth()
@@ -33,6 +36,24 @@ let fullinfo = reactive({
   maxPeople: ""
 })
 
+let link = computed(() => {
+  return API_URL + route.fullPath
+})
+const options = ref({
+  url: link.value,
+  title: excursion.value.name,
+ 
+})
+
+const { isSupported } = useShare(options)
+
+function startShare() {
+  const { share } = useShare(options)
+  return share().catch(err => {
+    console.log(err);
+  })
+}
+
 function openBuyDialog(timeInfo) {
   if (selectedDate.value._id) return
   for (let date of excursion.value.dates) {
@@ -41,7 +62,7 @@ function openBuyDialog(timeInfo) {
         selectedDate.value = {
           date: date.date,
           time: timeInfo.time,
-          bookingsCount: timeInfo.bookingsCount      
+          bookingsCount: timeInfo.bookingsCount
         }
         break
       }
@@ -55,35 +76,35 @@ function closeBuyDialog() {
 
 async function order() {
   if (!userStore.user.fullinfo?.fullname) {
-      await userStore.updateFullinfo(userStore.user._id, {
-        fullname:fullinfo.fullname,
-        phone:fullinfo.phone
-      })
-    }
-  let response = await excursionStore.order(fullinfo,excursion.value._id,excursion.value.name,excursion.value.author)
-  Object.assign(fullinfo,{
+    await userStore.updateFullinfo(userStore.user._id, {
+      fullname: fullinfo.fullname,
+      phone: fullinfo.phone
+    })
+  }
+  let response = await excursionStore.order(fullinfo, excursion.value._id, excursion.value.name, excursion.value.author)
+  Object.assign(fullinfo, {
     fullname: userStore.user.fullinfo?.fullname,
     phone: userStore.user.fullinfo?.phone,
     date: "",
     maxPeople: ""
   })
-    if (response.status == 200) {
-      message.config({ duration: 0.5, top: "70vh" });
-      message.success({
-        content: "Успешно!",
-        onClose: () => {
-          open.value = false
-        },
-      });
-    } else {
-      message.config({ duration: 0.5, top: "70vh" });
-      message.error({
-        content: "Ошибка заказа!",
-        onClose: () => {
-          console.log(response);
-        },
-      });
-    }
+  if (response.status == 200) {
+    message.config({ duration: 0.5, top: "70vh" });
+    message.success({
+      content: "Успешно!",
+      onClose: () => {
+        open.value = false
+      },
+    });
+  } else {
+    message.config({ duration: 0.5, top: "70vh" });
+    message.error({
+      content: "Ошибка заказа!",
+      onClose: () => {
+        console.log(response);
+      },
+    });
+  }
 }
 
 onMounted(async () => {
@@ -128,6 +149,9 @@ onMounted(async () => {
           </a-col>
 
           <a-col :xs="24" :md="12" class="pa-8">
+            <div style="float: right;">
+              <span style="opacity: 0.7; cursor: pointer;" class="mdi mdi-24px mdi-share-variant-outline ma-8" @click="startShare()"></span>
+            </div>
             <div>
               Место начала: <b> {{ excursion.startPlace }}</b>
             </div>
@@ -218,8 +242,7 @@ onMounted(async () => {
               <a-input v-model:value="fullinfo.maxPeople"></a-input>
             </div>
             <div class="d-flex justify-center mt-8">
-              <a-button type="primary" class="lets_go_btn"
-                @click="order">Отправить</a-button>
+              <a-button type="primary" class="lets_go_btn" @click="order">Отправить</a-button>
             </div>
           </div>
         </a-modal>
