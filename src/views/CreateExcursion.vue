@@ -14,8 +14,10 @@ import { useAuth } from '../stores/auth'
 
 const excursionStore = useExcursion()
 const appStateStore = useAppState()
-const user_id = useAuth().user._id
+const userStore = useAuth()
 const router = useRouter()
+
+const user_id = userStore.user._id
 
 let excursionTypes = appStateStore?.appState[0]?.excursionTypes || []
 let locationSearchRequest = ref("")
@@ -122,6 +124,15 @@ function clearForm() {
 }
 async function submit() {
   form.author = user_id
+  if (userStore.user?.tinkoffContract?.shopInfo) {
+    let t = userStore.user.tinkoffContract
+    form.tinkoffContract = {
+      ShopCode: t.shopInfo.shopCode,
+      Name: t.fullName,
+      Phones: t.ceo.phone,
+      Inn: t.inn
+    }
+  }
   let excursionCb = await excursionStore.create(form)
   const _id = excursionCb.data._id
   let imagesFormData = new FormData();
@@ -290,7 +301,7 @@ watch(form, (newValue) => {
               <div class="d-flex" style="overflow-x: scroll">
                 <img v-for="(pr, i) in previews   " :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
                   @click="delPhotoDialog = true;
-                  targetIndex = i;" @error="handleImgError(i)" />
+      targetIndex = i;" @error="handleImgError(i)" />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
@@ -332,6 +343,9 @@ watch(form, (newValue) => {
                 <span class="mdi mdi-12px mdi-plus"></span>
                 Добавить цены
               </a-button>
+              <div v-if="!userStore.user?.tinkoffContract?.shopInfo" class="payment-caption">
+                *У вас нет договора с "Города и Веси", поэтому оплата на сайте будет недоступна
+              </div>
             </a-col>
 
             <a-col :span="24">
@@ -470,3 +484,9 @@ watch(form, (newValue) => {
     </a-row>
   </div>
 </template>
+<style scoped lang="scss">
+.payment-caption {
+  font-weight: 400;
+  font-style: italic;
+}
+</style>

@@ -1,10 +1,13 @@
 <script setup>
+import { ref } from 'vue';
 import { useExcursion } from '../../stores/excursion';
+import tinkoffPlugin from '../../plugins/tinkoff'
+import TinkoffLogo from "../../assets/images/tinkofflogo.svg"
 
 const excursionStore = useExcursion()
 
 let emit = defineEmits(['updateExcursion'])
-defineProps({
+let props = defineProps({
   bill: Object
 })
 function getBillSum(bill) {
@@ -15,13 +18,20 @@ function getBillSum(bill) {
   return sum
 }
 
+let payedByTinkoff = ref(false)
+if (props.bill.tinkoff) {
+  let res = await tinkoffPlugin.checkPayment(props.bill.tinkoff.paymentId, props.bill.tinkoff.token)
+  if (res.data.Status == "CONFIRMED") {
+    payedByTinkoff.value = true
+  }
+}
+
 async function deleteExcursionBill(_id) {
   let response = await excursionStore.deleteExcursionBill(_id);
   if (response.status == 200) {
     emit('updateExcursion')
   }
 }
-
 </script>
 <template>
   <a-card hoverable class="customer-card">
@@ -54,15 +64,16 @@ async function deleteExcursionBill(_id) {
       <div class="sum">
         Итого: {{ getBillSum(bill) }}₽
       </div>
+      <div v-if="payedByTinkoff" class="d-flex justify-end">
+        <img :src="TinkoffLogo" class="tinkoff-logo">
+      </div>
     </div>
-
     <div class="actions d-flex">
-      <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deleteExcursionBill(bill._id)">
+      <a-popconfirm v-if="!bill.tinkoff" title="Удалить?" ok-text="Да" cancel-text="Нет"
+        @confirm="deleteExcursionBill(bill._id)">
         <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
       </a-popconfirm>
-
     </div>
-
   </a-card>
 </template>
 <style lang="scss" scoped>
@@ -79,6 +90,18 @@ async function deleteExcursionBill(_id) {
   .sum {
     display: flex;
     justify-content: end;
+  }
+  .tinkoff-logo {
+    height: 20px;
+    width: 90px;
+  }
+
+  img {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none;
   }
 }
 

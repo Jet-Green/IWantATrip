@@ -60,6 +60,12 @@ export default {
     hideExcursion(_id, isHide) {
         return $api.post('/excursion/hide-by-id', { _id: _id, isHide: isHide })
     },
+    buyWithTinkoff(body) {
+        return $api.post('/excursion/buy-with-tinkoff', body)
+    },
+    updateBill(body) {
+        return $api.patch('/excursion/bill', body)
+    },
     buy(emailHtml, timeId, userId, toSend, author) {
         return $api.post('/excursion/buy', { emailHtml,timeId, userId, bill: toSend, author: author })
     },

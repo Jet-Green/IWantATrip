@@ -109,6 +109,19 @@ export const useExcursion = defineStore('excursion', {
         async hideExcursion(_id, isHide) {
             return await ExcursionService.hideExcursion(_id, isHide)
         },
+        /**
+         * for more params see ExcursionModel
+         * @param {Object} bill 
+         * @returns 
+         */
+        async buyWithTinkoff(bill) {
+            let userStore = useAuth()
+            const emailHtml = 'Куплено через T-bank'
+            return await ExcursionService.buyWithTinkoff({ emailHtml, bill })
+        },
+        async updateBill(billId, tinkoff) {
+            return await ExcursionService.updateBill({ billId, tinkoff })
+        },
         async buy(timeId, toSend, toEmail) {
             let userStore = useAuth()
             // console.log(toEmail)
