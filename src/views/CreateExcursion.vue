@@ -248,7 +248,7 @@ watch(form, (newValue) => {
                 <ErrorMessage name="name" class="error-message" />
               </Transition>
             </a-col>
-            <a-col :span="12">
+            <a-col :span="24" :md="12">
               Тип экскурсии
               <a-select v-model:value="form.excursionType.type" style="width: 100%;">
                 <!-- <a-select-option value=""></a-select-option> -->
@@ -261,7 +261,7 @@ watch(form, (newValue) => {
                 </a-select-option>
               </a-select>
             </a-col>
-            <a-col :span="12" v-if='getExcursionDirections'>
+            <a-col :span="24" :md="12" v-if='getExcursionDirections'>
               Направление
               <a-select v-model:value="form.excursionType.directionType" style="width: 100%;">
                 <a-select-option placeholder="Tип тура" :value="''">
@@ -273,7 +273,7 @@ watch(form, (newValue) => {
                 </a-select-option>
               </a-select>
             </a-col>
-            <a-col :span="12" v-if='getExcursionPlace'>
+            <a-col :span="24" :md="12" v-if='getExcursionPlace'>
               Место
               <a-select v-model:value="form.excursionType.directionPlace" style="width: 100%;">
                 <a-select-option placeholder="Tип тура" :value="''">

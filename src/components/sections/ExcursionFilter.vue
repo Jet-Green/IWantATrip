@@ -41,7 +41,7 @@ function find() {
   excursionStore.cursor = 1;
   excursionStore.excursions = [];
   if (time.start) {
-    let start=time.start
+    let start = time.start
     localStorage.setItem("ExcursionTimeStart", start);
     start.setHours(0);
     start.setMinutes(0);
@@ -88,7 +88,7 @@ onMounted(() => {
   type.value = localStorage.getItem("ExcursionType") ?? "";
 
   if (localStorage.getItem("ExcursionTimeStart")) {
-    time.start =  new Date(localStorage.getItem("ExcursionTimeStart"))
+    time.start = new Date(localStorage.getItem("ExcursionTimeStart"))
     time.end = new Date(localStorage.getItem("ExcursionTimeEnd"))
   }
   if (props.search) {
@@ -107,75 +107,47 @@ onMounted(() => {
   <a-row type="flex" justify="center" class="section_bg">
     <a-col :xs="24">
       <a-row :gutter="[8, 4]" class="d-flex justify-center align-center flex-wrap">
-        <a-col :span="12" :md="6" class="d-flex direction-column">
+        <a-col :span="24" :md="6" class="d-flex direction-column">
           <div for="search" style="font-size: 10px; line-height: 10px">искать</div>
-          <a-input
-            v-model:value="query"
-            placeholder="сочи"
-            name="search"
-            style="z-index: 0; width: 100%"
-          />
+          <a-input v-model:value="query" placeholder="сочи" name="search" style="z-index: 0; width: 100%" />
         </a-col>
 
-        <a-col
-          :span="12"
-          :md="6"
-          class="d-flex direction-column"
-          v-if="appStore.appState"
-        >
+        <a-col :span="24" :md="6" class="d-flex direction-column" v-if="appStore.appState">
           <div style="font-size: 10px; line-height: 10px">вид экскурсии</div>
           <a-select v-model:value="type">
             <a-select-option value=""></a-select-option>
-            <a-select-option
-              placeholder="Вид экскурсии"
-              v-for="excursionType in excursionTypes"
-              :value="excursionType.type"
-            >
+            <a-select-option placeholder="Вид экскурсии" v-for="excursionType in excursionTypes"
+              :value="excursionType.type">
               {{ excursionType.type }}
             </a-select-option>
           </a-select>
         </a-col>
 
-        <a-col :span="24" :md="12" class="d-flex align-center space-between">
+        <a-col :span="24" :md="6" class="d-flex align-center space-between">
           <div class="d-flex direction-column" style="width: 100%">
-            <div style="font-size: 10px; line-height: 10px">от и до</div>
+            <div style="font-size: 10px; line-height: 10px">от</div>
             <div style="display: flex; flex-direction: row">
-              <VueDatePicker
-                v-model="time.start"
-                locale="ru-Ru"
-                calendar-class-name="dp-custom-calendar"
-                placeholder="выберите дату"
-                calendar-cell-class-name="dp-custom-cell"
-                cancel-text="отмена"
-                select-text="выбрать"
-                :min-date="new Date()"
-                :enable-time-picker="false"
-                format="dd/MM/yyyy"
-              >
+              <VueDatePicker v-model="time.start" locale="ru-Ru" calendar-class-name="dp-custom-calendar"
+                placeholder="выберите дату" calendar-cell-class-name="dp-custom-cell" cancel-text="отмена"
+                select-text="выбрать" :min-date="new Date()" :enable-time-picker="false" format="dd/MM/yyyy">
                 <template #input-icon>
-                  <span
-                    style="font-size: 20px; color: rgba(95, 95, 95, 0.65)"
-                    class="mdi mdi-calendar-outline ml-8"
-                  ></span>
+                  <span style="font-size: 20px; color: rgba(95, 95, 95, 0.65)"
+                    class="mdi mdi-calendar-outline ml-8"></span>
                 </template>
               </VueDatePicker>
-              <VueDatePicker
-                v-model="time.end"
-                locale="ru-Ru"
-                calendar-class-name="dp-custom-calendar"
-                placeholder="выберите дату"
-                calendar-cell-class-name="dp-custom-cell"
-                cancel-text="отмена"
-                select-text="выбрать"
-                :min-date="new Date()"
-                :enable-time-picker="false"
-                format="dd/MM/yyyy"
-              >
+            </div>
+          </div>
+        </a-col>
+        <a-col :span="24" :md="6" class="d-flex align-center space-between">
+          <div class="d-flex direction-column" style="width: 100%">
+            <div style="font-size: 10px; line-height: 10px">до</div>
+            <div style="display: flex; flex-direction: row">
+              <VueDatePicker v-model="time.end" locale="ru-Ru" calendar-class-name="dp-custom-calendar"
+                placeholder="выберите дату" calendar-cell-class-name="dp-custom-cell" cancel-text="отмена"
+                select-text="выбрать" :min-date="new Date()" :enable-time-picker="false" format="dd/MM/yyyy">
                 <template #input-icon>
-                  <span
-                    style="font-size: 20px; color: rgba(95, 95, 95, 0.65)"
-                    class="mdi mdi-calendar-outline ml-8"
-                  ></span>
+                  <span style="font-size: 20px; color: rgba(95, 95, 95, 0.65)"
+                    class="mdi mdi-calendar-outline ml-8"></span>
                 </template>
               </VueDatePicker>
             </div>
