@@ -232,9 +232,9 @@ onMounted(() => {
       <a-button type="primary" class="lets_go_btn" @click="book" v-if="excursion.prices.length == 0">заказать</a-button>
       <a-button type="primary" class="lets_go_btn" @click="buy" v-if="excursion.prices.length > 0">купить</a-button>
     </div>
-    <span>
+    <h5 style="color:crimson;" class="mt-8">
       Необходимо {{props.excursion.minPeople}} человек минимум для заполнения экскурсии.
-    </span>
+    </h5>
 
 
   </a-modal>
