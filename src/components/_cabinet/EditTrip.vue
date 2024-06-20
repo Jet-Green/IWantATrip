@@ -117,7 +117,7 @@ function submit() {
 
         for (let i = 0; i < images.length; i++) {
             let index = i + form.value.images.length
-            imagesFormData.append('trip-image', images[i], _id + '_' + index + '.img')
+            imagesFormData.append('trip-image', images[i], _id + '_' + Date.now() + '_' + index + '.img')
         }
         function close() {
             router.push('/cabinet/me')

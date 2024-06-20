@@ -152,8 +152,8 @@ function submit() {
     for (let i = 0; i < images.length; i++) {
       imagesFormData.append(
         "trip-image",
-        new File([images[i]], _id + "_" + i + ".jpg"),
-        _id + "_" + i + ".jpg"
+        new File([images[i]], _id + '_' + Date.now() + "_" + i + ".jpg"),
+        _id + '_' + Date.now() + "_" + i + ".jpg"
       );
     }
     TripService.uploadTripImages(imagesFormData).then(() => {
@@ -379,9 +379,9 @@ let formSchema = yup.object({
             <a-col :xs="24">
               Фотографии
               <div class="d-flex" style="overflow-x: scroll">
-                <img v-for="(pr, i) in    previews   " :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
+                <img v-for="(pr, i) in previews   " :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
                   @click="delPhotoDialog = true;
-      targetIndex = i;" @error="handleImgError(i)" />
+                  targetIndex = i;" @error="handleImgError(i)" />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
@@ -444,7 +444,7 @@ let formSchema = yup.object({
               </div>
 
 
-              <div v-for="   item    in    form.cost   " :key="item.type" style="display: flex" align="baseline"
+              <div v-for="   item in form.cost   " :key="item.type" style="display: flex" align="baseline"
                 class="mb-16">
                 <a-input v-model:value="item.first" placeholder="Для кого" />
 
@@ -464,7 +464,7 @@ let formSchema = yup.object({
 
             <a-col :span="24">
 
-              <div v-for="   item    in    form.bonuses   " style="display: flex" align="baseline" class="mb-16">
+              <div v-for="   item in form.bonuses   " style="display: flex" align="baseline" class="mb-16">
                 <a-input v-model:value="item.type" placeholder="Количество человек" />
 
                 <a-input v-model:value="item.bonus" style="width: 100%" placeholder="Бонусы или скидки"
@@ -486,9 +486,9 @@ let formSchema = yup.object({
                 Тип тура
                 <div>
                   <a-select @update:value="handleChange" :value="value" style="width: 100%">
-                    <a-select-option v-for="   tripType    in    appStore.appState[0].tripType   " :value="tripType">{{
-        tripType
-      }}</a-select-option>
+                    <a-select-option v-for="   tripType in appStore.appState[0].tripType   " :value="tripType">{{
+                      tripType
+                    }}</a-select-option>
                   </a-select>
                 </div>
               </Field>
@@ -550,13 +550,13 @@ let formSchema = yup.object({
 
               <QuillEditor class="ql-editor" theme="snow" ref="quill" v-model:content="description" contentType="html"
                 :toolbar="[
-        ['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }],
+                  ['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }],
 
-        [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
+                  [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
 
-        ['link']
-      ]
-        " />
+                  ['link']
+                ]
+                  " />
             </a-col>
             <a-col :span="24">
               <Field name="returnConditions" v-slot="{ value, handleChange }" v-model="form.returnConditions">
