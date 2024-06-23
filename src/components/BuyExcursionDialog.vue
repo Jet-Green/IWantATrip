@@ -52,6 +52,9 @@ let selectedPlaces = computed(() => {
     return total = total + (item.count);
   }, 0)
 })
+let minPeople = computed(() => {
+  return places.value.exist + selectedPlaces.value
+})
 
 let availableBooking = computed(() => {
   return props.excursion.maxPeople - selectedDate.value.bookingsCount
@@ -302,18 +305,25 @@ onMounted(() => {
       </div>
     </div>
     <!-- заказ -->
-    <div class="d-flex justify-center" v-if="excursion.prices.length == 0">
-      <a-button type="primary" class="lets_go_btn" @click="book">заказать</a-button>
+    <div class="d-flex justify-center " v-if="excursion.prices.length == 0">
+      <a-button type="primary" class="lets_go_btn" @click="book" :disabled="bookingCount + selectedDate.bookingsCount < props.excursion.minPeople">заказать</a-button>
+
     </div>
+    <h5 style="color:#ff6600;" class="mt-8"
+      v-if="bookingCount + selectedDate.bookingsCount < props.excursion.minPeople && excursion.prices.length == 0">
+      Необходимо еще {{ props.excursion.minPeople - (bookingCount + selectedDate.bookingsCount) }} чел. для проведения экскурсии.
+    </h5>
     <!-- оплата -->
-    <div class="d-flex justify-end">
+    <div class="d-flex justify-end" v-if="excursion.prices.length > 0">
       <b>Итого: {{ totalAmount }} руб.</b>
     </div>
     <div class="d-flex space-around mt-8" v-if="excursion.prices.length > 0">
-      <a-button style="border-radius: 15px;" @click="buy">заказать</a-button>
-      <div class="buy-btn">
+      <a-button style="border-radius: 15px;" @click="buy"
+        :disabled="minPeople < props.excursion.minPeople">заказать</a-button>
+      <div class="buy-btn" v-if="excursion.tinkoffContract.ShopCode">
         <div>
-          <a-button type="primary" class="lets_go_btn" @click="buyWithTinkoff">
+          <a-button type="primary" class="lets_go_btn" @click="buyWithTinkoff"
+            :disabled="minPeople < props.excursion.minPeople">
             оплатить
           </a-button>
         </div>
@@ -322,9 +332,10 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <h5 style="color:crimson;" class="mt-8">
-      Необходимо {{props.excursion.minPeople}} человек минимум для заполнения экскурсии.
+    <h5 style="color:#ff6600;" class="mt-8" v-if="minPeople < props.excursion.minPeople && excursion.prices.length > 0">
+      Необходимо еще {{ props.excursion.minPeople - minPeople }} чел. для проведения экскурсии.
     </h5>
+
 
 
   </a-modal>

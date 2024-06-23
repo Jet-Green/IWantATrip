@@ -412,7 +412,7 @@ onMounted(async () => {
     <div style="overflow-x: hidden">
         <BackButton :backRoute="backRoute" />
         <a-row class="justify-center d-flex">
-            <a-col :xs="22" :xl="16">
+            <a-col :xs="22" :xl="16" class="mb-32">
                 <h2 class="ma-0">{{ trip.name }}</h2>
 
                 <p><i> {{ trip.offer }}</i> </p>
@@ -515,7 +515,7 @@ onMounted(async () => {
                                 :transport="trip.transports ?? []" />
                         </div> -->
                         <div class="d-flex justify-center ma-8" v-if="trip.maxPeople -
-            getCustomersCount(selectedDate.billsList) -
+             getCustomersCount(selectedDate.billsList) -
             selectedDate.selectedCosts.reduce((acc, cost) => {
                 return acc + cost.count;
             }, 0) >

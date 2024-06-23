@@ -42,7 +42,7 @@ let link = computed(() => {
 const options = ref({
   url: link.value,
   title: excursion.value.name,
- 
+
 })
 
 const { isSupported } = useShare(options)
@@ -118,11 +118,11 @@ onMounted(async () => {
     <a-row class="justify-center d-flex">
       <a-spin v-if="!excursion._id" size="large"></a-spin>
 
-      <a-col :xs="22" :xl="16" v-else>
+      <a-col :xs="22" :xl="16" class="mb-32" v-else>
         <h2 class="ma-0">{{ excursion.name }}</h2>
         <div>
           {{ excursion.excursionType.type }} | {{ excursion.excursionType.directionType }} | {{
-      excursion.excursionType.directionPlace }}
+        excursion.excursionType.directionPlace }}
         </div>
         <a-row :gutter="[12, 12]" class="text justify-center d-flex">
           <a-col :xs="24" :md="12">
@@ -150,7 +150,8 @@ onMounted(async () => {
 
           <a-col :xs="24" :md="12" class="pa-8">
             <div style="float: right;">
-              <span style="opacity: 0.7; cursor: pointer;" class="mdi mdi-24px mdi-share-variant-outline ma-8" @click="startShare()"></span>
+              <span style="opacity: 0.7; cursor: pointer;" class="mdi mdi-24px mdi-share-variant-outline ma-8"
+                @click="startShare()"></span>
             </div>
             <div>
               Место начала: <b> {{ excursion.startPlace }}</b>
@@ -214,6 +215,7 @@ onMounted(async () => {
             <BuyExcursionDates v-else :max-people="excursion.maxPeople" :excursionId="excursion._id" :buy="buy"
               @buy-excursion="openBuyDialog" />
             <BuyExcursionDialog :selectedDate="selectedDate" :excursion="excursion" @close="closeBuyDialog" />
+
           </a-col>
         </a-row>
         <a-modal v-model:open="open" :footer="null">
@@ -256,8 +258,14 @@ onMounted(async () => {
   font-weight: 600;
   font-size: clamp(0.9375rem, 0.6889rem + 0.7102vw, 1.25rem);
 }
+img {
+    width: 100%;
+    aspect-ratio: 270/175;
+    object-fit: cover;
+}
 
 // .order_container{
 //   display: flex;
 //   justify-content: center;
-// }</style>
+// }
+</style>
