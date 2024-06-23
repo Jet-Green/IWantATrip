@@ -33,8 +33,9 @@ onMounted(() => {
         </h2>
       </a-col>
     </a-row>
-    <a-row class="mt-16" type="flex" justify="center" id="contain">
+    <a-row class="mt-16" type="flex" justify="center" >
       <a-col :xs="22" :lg="16">
+        <div id="contain"></div>
       </a-col>
     </a-row>
   </div>
