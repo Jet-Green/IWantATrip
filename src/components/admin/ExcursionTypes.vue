@@ -70,7 +70,7 @@ async function deleteType(keyToDelete) {
 }
 
 async function addType() {
-  if (typeStr.value.trim().length == 0 || directionTypeStr.value.trim().length == 0) return
+  if (typeStr.value.trim().length == 0) return
   let res = await appStateStore.addExcursionType({ type: typeStr.value.trim(), directionType: directionTypeStr.value.trim(), directionPlace: directionPlace.value.trim() });
   if (res.status == 200) {
     await refreshTypes()
