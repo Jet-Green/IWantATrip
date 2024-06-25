@@ -15,8 +15,8 @@ export default {
     createDates(dates, _id, userId) {
         return $api.post(`/excursion/dates`, { dates, excursionId: _id, userId })
     },
-    getAll(locationId,query,start,end,type,directionType,directionPlace) {
-        return $api.post('/excursion/all', { locationId: locationId, query: query, start: start, end: end, type: type, directionType: directionType, directionPlace: directionPlace})
+    getAll(locationId, query, start, end, type, directionType, directionPlace, minAge, havePrices) {
+        return $api.post('/excursion/all', { locationId: locationId, query: query, start: start, end: end, type: type, directionType: directionType, directionPlace: directionPlace, minAge: minAge, havePrices: havePrices })
     },
     getExcursionById(_id) {
         return $api.get(`/excursion/one?_id=${_id}`)
@@ -67,7 +67,7 @@ export default {
         return $api.patch('/excursion/bill', body)
     },
     buy(emailHtml, timeId, userId, toSend, author) {
-        return $api.post('/excursion/buy', { emailHtml,timeId, userId, bill: toSend, author: author })
+        return $api.post('/excursion/buy', { emailHtml, timeId, userId, bill: toSend, author: author })
     },
     buyFromCabinet(timeId, toSend, fullinfo) {
         return $api.post('/excursion/buy-from-cabinet', { timeId, fullinfo, bill: toSend })
