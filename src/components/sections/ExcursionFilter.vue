@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, watch, computed, reactive } from "vue";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import datePlugin from "../../plugins/dates";
 import "@vuepic/vue-datepicker/dist/main.css";
@@ -14,6 +15,9 @@ dayjs.extend(objectSupport);
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import "dayjs/locale/ru";
 dayjs.locale("ru");
+let breakpoints = useBreakpoints(breakpointsTailwind);
+
+let sm = breakpoints.smaller("md");
 
 const ruLocale = locale;
 
@@ -31,10 +35,10 @@ let time = reactive({
 });
 let query = ref("");
 let excursionType = reactive({
-    type: '',
-    directionType: '',
-    directionPlace: ''
-  })
+  type: '',
+  directionType: '',
+  directionPlace: ''
+})
 
 
 function find() {
@@ -83,8 +87,8 @@ function resetForm() {
   excursionStore.excursionFilter.directionType = "";
   excursionStore.excursionFilter.directionPlace = "";
   excursionType.type = "";
-  excursionType.directionType=""
-  excursionType.directionPlace=""
+  excursionType.directionType = ""
+  excursionType.directionPlace = ""
   query.value = "";
 
   localStorage.setItem("ExcursionTimeStart", "");
@@ -119,7 +123,7 @@ onMounted(() => {
   excursionType.type = localStorage.getItem("ExcursionType") ?? "";
   excursionType.directionType = localStorage.getItem("ExcursionDirectionType") ?? "";
   excursionType.directionPlace = localStorage.getItem("ExcursionDirectionPlace") ?? "";
-  
+
 
   if (localStorage.getItem("ExcursionTimeStart")) {
     time.start = new Date(localStorage.getItem("ExcursionTimeStart"))
@@ -142,42 +146,23 @@ onMounted(() => {
   <a-row type="flex" justify="center" class="section_bg">
     <a-col :xs="24">
       <a-row :gutter="[8, 4]" class="d-flex justify-center flex-wrap">
-        <a-col :span="24" :md="6" class="d-flex direction-column">
-          <div for="search" style="font-size: 10px; line-height: 10px">искать</div>
-          <a-input v-model:value="query" placeholder="сочи" name="search" style="z-index: 0; width: 100%" />
-        </a-col>
+        <a-col :span="24" :md="8" class="d-flex direction-column">
 
-        <a-col :span="24" :md="6" class="d-flex direction-column">
+          <div for="search" style="font-size: 10px; line-height: 10px">искать</div>
+          <a-input v-model:value="query" placeholder="сочи" name="search" style="z-index: 0; width: 100%; margin-bottom: 6px" />
 
           <div style="font-size: 10px; line-height: 10px">вид экскурсии</div>
-
-          <a-select v-model:value="excursionType.type">
+          <a-select v-model:value="excursionType.type" v-if="!(sm.value)">
             <a-select-option value=""></a-select-option>
             <a-select-option placeholder="Вид экскурсии" v-for="excursionType in excursionTypes"
               :value="excursionType.type">
               {{ excursionType.type }}
             </a-select-option>
           </a-select>
-          <div style="font-size: 10px; line-height: 10px">Направление</div>
-          <a-select v-model:value="excursionType.directionType" style="width: 100%;" v-if="excursionType.type">
-            <a-select-option value=""></a-select-option>
-            <a-select-option placeholder="Tип тура" v-for="excursionDirection in getExcursionDirections"
-              :value="excursionDirection.directionType">
-              {{ excursionDirection.directionType }}
-            </a-select-option>
-          </a-select>
-          <div style="font-size: 10px; line-height: 10px">Место</div>
-          <a-select v-model:value="excursionType.directionPlace" style="width: 100%;" v-if="excursionType.directionType">
-            <a-select-option value=""></a-select-option>
-            <a-select-option placeholder="Tип тура" v-for="directionPlace in getExcursionPlace" :value="directionPlace">
-              {{ directionPlace }}
-            </a-select-option>
-          </a-select>
-
-
         </a-col>
 
-        <a-col :span="24" :md="6" class="d-flex  space-between">
+        <a-col :span="24" :md="8" class="d-flex  space-between">
+
           <div class="d-flex direction-column" style="width: 100%">
             <div style="font-size: 10px; line-height: 10px">от</div>
             <div style="display: flex; flex-direction: row">
@@ -190,9 +175,21 @@ onMounted(() => {
                 </template>
               </VueDatePicker>
             </div>
-          </div>
+            
+            <div style="font-size: 10px; line-height: 10px">Направление</div>
+            <a-select v-model:value="excursionType.directionType" style="width: 100%;" v-if="excursionType.type && !(sm.value)">
+            <a-select-option value=""></a-select-option>
+            <a-select-option placeholder="Tип тура" v-for="excursionDirection in getExcursionDirections"
+              :value="excursionDirection.directionType">
+              {{ excursionDirection.directionType }}
+            </a-select-option>
+          </a-select>
+          
+        </div>
         </a-col>
-        <a-col :span="24" :md="6" class="d-flex space-between">
+
+        <a-col :span="24" :md="8" class="d-flex space-between">
+
           <div class="d-flex direction-column" style="width: 100%">
             <div style="font-size: 10px; line-height: 10px">до</div>
             <div style="display: flex; flex-direction: row">
@@ -205,7 +202,17 @@ onMounted(() => {
                 </template>
               </VueDatePicker>
             </div>
-          </div>
+            
+            <div style="font-size: 10px; line-height: 10px">Место</div>
+          <a-select v-model:value="excursionType.directionPlace" style="width: 100%;"
+            v-if="excursionType.directionType && !(sm.value)">
+            <a-select-option value=""></a-select-option>
+            <a-select-option placeholder="Tип тура" v-for="directionPlace in getExcursionPlace" :value="directionPlace">
+              {{ directionPlace }}
+            </a-select-option>
+          </a-select>
+          
+        </div>
         </a-col>
 
         <a-col :span="24" class="d-flex justify-center mt-16 mb-16">
