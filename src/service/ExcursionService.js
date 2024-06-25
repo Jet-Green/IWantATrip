@@ -15,8 +15,8 @@ export default {
     createDates(dates, _id, userId) {
         return $api.post(`/excursion/dates`, { dates, excursionId: _id, userId })
     },
-    getAll(locationId,query,start,end,type) {
-        return $api.post('/excursion/all', { locationId: locationId, query: query, start: start, end: end, type: type})
+    getAll(locationId,query,start,end,type,directionType,directionPlace) {
+        return $api.post('/excursion/all', { locationId: locationId, query: query, start: start, end: end, type: type, directionType: directionType, directionPlace: directionPlace})
     },
     getExcursionById(_id) {
         return $api.get(`/excursion/one?_id=${_id}`)

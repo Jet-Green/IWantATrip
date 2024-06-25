@@ -30,13 +30,19 @@ let time = reactive({
   end: "",
 });
 let query = ref("");
-let type = ref("");
+let excursionType = reactive({
+    type: '',
+    directionType: '',
+    directionPlace: ''
+  })
 
 
 function find() {
   query.value = query.value.trim();
   localStorage.setItem("ExcursionQuery", query.value);
-  localStorage.setItem("ExcursionType", type.value);
+  localStorage.setItem("ExcursionType", excursionType.type);
+  localStorage.setItem("ExcursionDirectionType", excursionType.directionType);
+  localStorage.setItem("ExcursionDirectionPlace", excursionType.directionPlace);
   excursionStore.searchCursor = 1;
   excursionStore.cursor = 1;
   excursionStore.excursions = [];
@@ -59,7 +65,9 @@ function find() {
     excursionStore.excursionFilter.end = end;
   }
   excursionStore.excursionFilter.query = query.value;
-  excursionStore.excursionFilter.type = type.value;
+  excursionStore.excursionFilter.type = excursionType.type
+  excursionStore.excursionFilter.directionType = excursionType.directionType
+  excursionStore.excursionFilter.directionPlace = excursionType.directionPlace
   excursionStore.getAll();
 }
 
@@ -72,20 +80,46 @@ function resetForm() {
   excursionStore.excursionFilter.start = "";
   excursionStore.excursionFilter.end = "";
   excursionStore.excursionFilter.type = "";
-  type.value = "";
+  excursionStore.excursionFilter.directionType = "";
+  excursionStore.excursionFilter.directionPlace = "";
+  excursionType.type = "";
+  excursionType.directionType=""
+  excursionType.directionPlace=""
   query.value = "";
 
   localStorage.setItem("ExcursionTimeStart", "");
   localStorage.setItem("ExcursionTimeEnd", "");
   localStorage.setItem("ExcursionQuery", "");
   localStorage.setItem("ExcursionType", "");
+  localStorage.setItem("ExcursionDirectionType", "");
+  localStorage.setItem("ExcursionDirectionPlace", "");
 
   find();
 }
 
+let getExcursionDirections = computed(() => {
+  let type = excursionTypes.filter((type) => {
+    return type.type == excursionType.type
+  })
+  return type[0]?.direction
+})
+let getExcursionPlace = computed(() => {
+  if (getExcursionDirections.value) {
+    let direction = getExcursionDirections.value.filter((direction) => {
+      return direction.directionType == excursionType.directionType
+    })
+    return direction[0]?.directionPlace
+  }
+  return null
+
+})
+
 onMounted(() => {
   query.value = localStorage.getItem("ExcursionQuery") ?? "";
-  type.value = localStorage.getItem("ExcursionType") ?? "";
+  excursionType.type = localStorage.getItem("ExcursionType") ?? "";
+  excursionType.directionType = localStorage.getItem("ExcursionDirectionType") ?? "";
+  excursionType.directionPlace = localStorage.getItem("ExcursionDirectionPlace") ?? "";
+  
 
   if (localStorage.getItem("ExcursionTimeStart")) {
     time.start = new Date(localStorage.getItem("ExcursionTimeStart"))
@@ -94,7 +128,8 @@ onMounted(() => {
   if (props.search) {
     query.value = props.search;
   }
-  query.value || type.value ? find() : null;
+  query.value ? find() : null;
+  query.value || excursionType.type ? find() : null;
   //Надо обязательно вводить дату, иначе ошибка
 });
 </script>
@@ -113,16 +148,32 @@ onMounted(() => {
         </a-col>
 
         <a-col :span="24" :md="6" class="d-flex direction-column">
-     
-            <div style="font-size: 10px; line-height: 10px">вид экскурсии</div>
-            <a-select v-model:value="type">
-              <a-select-option value=""></a-select-option>
-              <a-select-option placeholder="Вид экскурсии" v-for="excursionType in excursionTypes"
-                :value="excursionType.type">
-                {{ excursionType.type }}
-              </a-select-option>
-            </a-select>
-  
+
+          <div style="font-size: 10px; line-height: 10px">вид экскурсии</div>
+
+          <a-select v-model:value="excursionType.type">
+            <a-select-option value=""></a-select-option>
+            <a-select-option placeholder="Вид экскурсии" v-for="excursionType in excursionTypes"
+              :value="excursionType.type">
+              {{ excursionType.type }}
+            </a-select-option>
+          </a-select>
+          <div style="font-size: 10px; line-height: 10px">Направление</div>
+          <a-select v-model:value="excursionType.directionType" style="width: 100%;" v-if="excursionType.type">
+            <a-select-option value=""></a-select-option>
+            <a-select-option placeholder="Tип тура" v-for="excursionDirection in getExcursionDirections"
+              :value="excursionDirection.directionType">
+              {{ excursionDirection.directionType }}
+            </a-select-option>
+          </a-select>
+          <div style="font-size: 10px; line-height: 10px">Место</div>
+          <a-select v-model:value="excursionType.directionPlace" style="width: 100%;" v-if="excursionType.directionType">
+            <a-select-option value=""></a-select-option>
+            <a-select-option placeholder="Tип тура" v-for="directionPlace in getExcursionPlace" :value="directionPlace">
+              {{ directionPlace }}
+            </a-select-option>
+          </a-select>
+
 
         </a-col>
 
