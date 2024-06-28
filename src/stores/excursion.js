@@ -25,7 +25,7 @@ export const useExcursion = defineStore('excursion', {
             directionType: "",
             directionPlace: "",
             minAge: "",
-            havePrices: "",
+            havePrices: false,
         }
     }),
     getters: {

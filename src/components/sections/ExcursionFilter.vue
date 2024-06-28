@@ -14,6 +14,7 @@ import objectSupport from "dayjs/plugin/objectSupport";
 dayjs.extend(objectSupport);
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import "dayjs/locale/ru";
+import { boolean } from "yup";
 dayjs.locale("ru");
 let breakpoints = useBreakpoints(breakpointsTailwind);
 
@@ -40,12 +41,14 @@ let excursionType = reactive({
   directionPlace: ''
 })
 let minAge = ref("")
-let havePrices = ref("")
+let havePrices = ref(false)
 
 
 function find() {
   query.value = query.value.trim();
   localStorage.setItem("ExcursionQuery", query.value);
+  localStorage.setItem("ExcursionMinAge", minAge.value);
+  localStorage.setItem("ExcursionHavePrices", havePrices.value);
   localStorage.setItem("ExcursionType", excursionType.type);
   localStorage.setItem("ExcursionDirectionType", excursionType.directionType);
   localStorage.setItem("ExcursionDirectionPlace", excursionType.directionPlace);
@@ -96,10 +99,10 @@ function resetForm() {
   excursionStore.excursionFilter.directionType = "";
   excursionStore.excursionFilter.directionPlace = "";
   excursionStore.excursionFilter.minAge = ""
-  excursionStore.excursionFilter.havePrices = ""
+  excursionStore.excursionFilter.havePrices = false
   query.value = "";
   minAge.value = "";
-  havePrices.value = "";
+  havePrices.value = false;
 
   localStorage.setItem("ExcursionTimeStart", "");
   localStorage.setItem("ExcursionTimeEnd", "");
@@ -108,7 +111,7 @@ function resetForm() {
   localStorage.setItem("ExcursionDirectionType", "");
   localStorage.setItem("ExcursionDirectionPlace", "");
   localStorage.setItem("ExcursionMinAge", "");
-  localStorage.setItem("ExcursionHavePrices", "");
+  localStorage.setItem("ExcursionHavePrices", false);
 
   find();
 }
@@ -137,8 +140,7 @@ onMounted(() => {
   excursionType.directionType = localStorage.getItem("ExcursionDirectionType") ?? "";
   excursionType.directionPlace = localStorage.getItem("ExcursionDirectionPlace") ?? "";
   minAge.value = localStorage.getItem("ExcursionMinAge") ?? "";
-  havePrices.value = localStorage.getItem("ExcursionHavePrices") ?? "";
-
+  havePrices.value = (localStorage.getItem("ExcursionHavePrices") === 'true') ?? false;
 
   if (localStorage.getItem("ExcursionTimeStart")) {
     time.start = new Date(localStorage.getItem("ExcursionTimeStart"))
@@ -148,7 +150,7 @@ onMounted(() => {
     query.value = props.search;
   }
   query.value ? find() : null;
-  query.value || excursionType.type ? find() : null;
+  (query.value || excursionType.type || minAge.value || havePrices.value) ? find() : null;
   //Надо обязательно вводить дату, иначе ошибка
 });
 </script>
@@ -206,108 +208,113 @@ onMounted(() => {
         <a-col :span="24" :md="6" class="d-flex direction-column">
 
           <div style="font-size: 10px; line-height: 10px">мин. возраст</div>
-          <a-input v-model:value="minAge" placeholder="12" style="z-index: 0; width: 100%; margin-bottom: 6px" />
+          <a-input v-model:value="minAge" placeholder="12" style="z-index: 0; width: 100%;" />
 
-        </a-col>
-
-        <!--         
-        <a-col :span="24" class="d-flex space-between" v-if="sm">
-          <div class="d-flex direction-column" style="width: 100%">
-
-            <div style="font-size: 10px; line-height: 10px">вид экскурсии</div>
-            <a-select v-model:value="excursionType.type">
-              <a-select-option value=""></a-select-option>
-              <a-select-option placeholder="Вид экскурсии" v-for="excursionType in excursionTypes"
-                :value="excursionType.type">
-                {{ excursionType.type }}
-              </a-select-option>
-            </a-select>
-
-
-            <div style="font-size: 10px; line-height: 10px">Направление</div>
-            <a-select v-model:value="excursionType.directionType" style="width: 100%;" v-if="excursionType.type">
-              <a-select-option value=""></a-select-option>
-              <a-select-option placeholder="Tип тура" v-for="excursionDirection in getExcursionDirections"
-                :value="excursionDirection.directionType">
-                {{ excursionDirection.directionType }}
-              </a-select-option>
-            </a-select>
-
-            <div style="font-size: 10px; line-height: 10px">Место</div>
-            <a-select v-model:value="excursionType.directionPlace" style="width: 100%;"
-              v-if="excursionType.directionType">
-              <a-select-option value=""></a-select-option>
-              <a-select-option placeholder="Tип тура" v-for="directionPlace in getExcursionPlace"
-                :value="directionPlace">
-                {{ directionPlace }}
-              </a-select-option>
-            </a-select>
-          </div>
-        </a-col> -->
-      </a-row>
-      <a-row :gutter="[8, 4]" class="d-flex justify-center flex-wrap">
-
-        <a-col :span="24" :md="6" class="d-flex direction-column">
-
-          <div style="font-size: 10px; line-height: 10px">наличие цен</div>
-          <a-select v-model:value="havePrices" style="width: 100%;">
-            <a-select-option value=""></a-select-option>
-            <a-select-option value="order">Нет дат</a-select-option>
-            <a-select-option value="buy">Да</a-select-option>
-            <a-select-option value="book">Нет</a-select-option>
-          </a-select>
-
-        </a-col>
-
-        <a-col :span="24" :md="6" class="d-flex direction-column">
-          <div style="font-size: 10px; line-height: 10px">вид экскурсии</div>
-          <a-select v-model:value="excursionType.type">
-            <a-select-option value=""></a-select-option>
-            <a-select-option placeholder="Вид экскурсии" v-for="excursionType in excursionTypes"
-              :value="excursionType.type">
-              {{ excursionType.type }}
-            </a-select-option>
-          </a-select>
-        </a-col>
-
-        <a-col :span="24" :md="6" class="d-flex direction-column">
-          <div style="font-size: 10px; line-height: 10px" v-if="!sm">Направление</div>
-          <a-select v-model:value="excursionType.directionType" style="width: 100%;"
-            v-if="(excursionType.type && !(sm))">
-            <a-select-option value=""></a-select-option>
-            <a-select-option placeholder="Tип тура" v-for="excursionDirection in getExcursionDirections"
-              :value="excursionDirection.directionType">
-              {{ excursionDirection.directionType }}
-            </a-select-option>
-          </a-select>
-        </a-col>
-
-        <a-col :span="24" :md="6" class="d-flex direction-column">
-          <div style="font-size: 10px; line-height: 10px" v-if="!sm">Место</div>
-          <a-select v-model:value="excursionType.directionPlace" style="width: 100%;"
-            v-if="(excursionType.directionType && !(sm))">
-            <a-select-option value=""></a-select-option>
-            <a-select-option placeholder="Tип тура" v-for="directionPlace in getExcursionPlace" :value="directionPlace">
-              {{ directionPlace }}
-            </a-select-option>
-          </a-select>
-        </a-col>
-
-        <a-col :span="24" class="d-flex justify-center mt-16 mb-16">
-          <a-button type="primary" shape="round" @click="find" class="mr-4">
-            <!-- <span class=" mdi mdi-magnify">
-              </span> -->
-            найти
-          </a-button>
-          <a-button shape="round" @click="resetForm">
-            <!-- <span class=" mdi mdi-close">
-              </span> -->
-            очистить
-          </a-button>
         </a-col>
 
       </a-row>
     </a-col>
+  </a-row>
+
+
+  <a-row :gutter="[8, 4]" class="d-flex justify-center flex-wrap">
+
+    <a-col :span="24" :md="6" class="d-flex direction-column">
+
+      <div style="font-size: 10px; line-height: 10px">наличие цен</div>
+      <a-checkbox v-model:checked="havePrices"> {{ !havePrices ? 'Бесплатно - Нет' : 'Бесплатно - Да' }}</a-checkbox>
+      
+    </a-col>
+
+    <a-col :span="24" :md="6" class="d-flex direction-column" v-if="!sm">
+      <div style="font-size: 10px; line-height: 10px">вид экскурсии</div>
+      <a-select v-model:value="excursionType.type">
+        <a-select-option value=""></a-select-option>
+        <a-select-option placeholder="Вид экскурсии" v-for="excursionType in excursionTypes"
+          :value="excursionType.type">
+          {{ excursionType.type }}
+        </a-select-option>
+      </a-select>
+    </a-col>
+
+    <a-col :span="24" :md="6" class="d-flex direction-column" v-if="!sm">
+      <div style="font-size: 10px; line-height: 10px" v-if="!sm">Направление</div>
+      <a-select v-model:value="excursionType.directionType" style="width: 100%;" v-if="(excursionType.type)">
+        <a-select-option value=""></a-select-option>
+        <a-select-option placeholder="Tип тура" v-for="excursionDirection in getExcursionDirections"
+          :value="excursionDirection.directionType">
+          {{ excursionDirection.directionType }}
+        </a-select-option>
+      </a-select>
+    </a-col>
+
+    <a-col :span="24" :md="6" class="d-flex direction-column" v-if="!sm">
+      <div style="font-size: 10px; line-height: 10px" v-if="!sm">Место</div>
+      <a-select v-model:value="excursionType.directionPlace" style="width: 100%;" v-if="(excursionType.directionType)">
+        <a-select-option value=""></a-select-option>
+        <a-select-option placeholder="Tип тура" v-for="directionPlace in getExcursionPlace" :value="directionPlace">
+          {{ directionPlace }}
+        </a-select-option>
+      </a-select>
+    </a-col>
+
+
+
+
+    <a-col :span="24" class="d-flex direction-column" v-if="sm">
+
+      <div style="font-size: 10px; line-height: 10px">вид экскурсии</div>
+      <a-select v-model:value="excursionType.type" style="width: 100%;">
+        <a-select-option value=""></a-select-option>
+        <a-select-option placeholder="Вид экскурсии" v-for="excursionType in excursionTypes"
+          :value="excursionType.type">
+          {{ excursionType.type }}
+        </a-select-option>
+      </a-select>
+
+    </a-col>
+
+    <a-col :span="24" class="d-flex direction-column" v-if="(sm && excursionType.type)">
+      <div style="font-size: 10px; line-height: 10px">Направление</div>
+      <a-select v-model:value="excursionType.directionType" style="width: 100%;">
+        <a-select-option value=""></a-select-option>
+        <a-select-option placeholder="Tип тура" v-for="excursionDirection in getExcursionDirections"
+          :value="excursionDirection.directionType">
+          {{ excursionDirection.directionType }}
+        </a-select-option>
+      </a-select>
+    </a-col>
+
+    <a-col :span="24" class="d-flex direction-column" v-if="(sm && excursionType.directionType)">
+      <div style=" font-size: 10px; line-height: 10px">Место</div>
+      <a-select v-model:value="excursionType.directionPlace" style="width: 100%;">
+        <a-select-option value=""></a-select-option>
+        <a-select-option placeholder="Tип тура" v-for="directionPlace in getExcursionPlace" :value="directionPlace">
+          {{ directionPlace }}
+        </a-select-option>
+      </a-select>
+
+    </a-col>
+
+
+
+
+
+    <a-col :span="24" class="d-flex justify-center mt-16 mb-16">
+      <a-button type="primary" shape="round" @click="find" class="mr-4">
+        <!-- <span class=" mdi mdi-magnify">
+              </span> -->
+        найти
+      </a-button>
+      <a-button shape="round" @click="resetForm">
+        <!-- <span class=" mdi mdi-close">
+              </span> -->
+        очистить
+      </a-button>
+    </a-col>
+
+
+
   </a-row>
 </template>
 
