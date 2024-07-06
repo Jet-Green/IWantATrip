@@ -28,7 +28,7 @@ let props = defineProps({
 
 const excursionStore = useExcursion();
 
-let excursionTypes = appStateStore?.appState[0]?.excursionTypes || [];
+const excursionTypes = ref([]);
 
 let time = reactive({
   start: "",
@@ -117,7 +117,7 @@ function resetForm() {
 }
 
 let getExcursionDirections = computed(() => {
-  let type = excursionTypes.filter((type) => {
+  let type = excursionTypes.value.filter((type) => {
     return type.type == excursionType.type
   })
   return type[0]?.direction
@@ -132,6 +132,7 @@ let getExcursionPlace = computed(() => {
   return null
 
 })
+
 watch(() => excursionType.type, () => {
   excursionType.directionType = ''
   excursionType.directionPlace = ''
@@ -139,8 +140,15 @@ watch(() => excursionType.type, () => {
 watch(() => excursionType.directionType, () => {
   excursionType.directionPlace = ''
 })
+watch(havePrices, () => {
+  find()
+})
 onMounted(async () => {
-  await appStateStore.refreshState()
+
+  await appStateStore.refreshState();
+
+  excursionTypes.value = appStateStore.appState[0]?.excursionTypes || [];
+
   query.value = localStorage.getItem("ExcursionQuery") ?? "";
   minAge.value = localStorage.getItem("ExcursionMinAge") ?? "";
   excursionType.type = localStorage.getItem("ExcursionType") ?? "";
@@ -173,8 +181,14 @@ onMounted(async () => {
         <a-col :span="24" :md="6" class="d-flex direction-column">
 
           <div for="search" style="font-size: 10px; line-height: 10px">искать</div>
-          <a-input v-model:value="query" placeholder="сочи" name="search"
+          <a-input v-model:value="query" placeholder="обзорная" name="search"
             style="z-index: 0; width: 100%; margin-bottom: 6px" />
+
+        </a-col>
+        <a-col :span="24" :md="6" class="d-flex direction-column">
+
+          <div style="font-size: 10px; line-height: 10px">мин. возраст</div>
+          <a-input v-model:value="minAge" placeholder="12" style="z-index: 0; width: 100%;" />
 
         </a-col>
 
@@ -212,13 +226,6 @@ onMounted(async () => {
 
           </div>
         </a-col>
-        <a-col :span="24" :md="6" class="d-flex direction-column">
-
-          <div style="font-size: 10px; line-height: 10px">мин. возраст</div>
-          <a-input v-model:value="minAge" placeholder="12" style="z-index: 0; width: 100%;" />
-
-        </a-col>
-
       </a-row>
     </a-col>
   </a-row>
@@ -226,9 +233,9 @@ onMounted(async () => {
 
   <a-row :gutter="[8, 8]" class="d-flex flex-wrap">
 
-    <a-col :span="24" :md="6" class="d-flex direction-column">
+    <a-col :span="24" :md="6" class="d-flex justify-center align-center">
 
-      <div style="font-size: 10px; line-height: 10px"></div>
+      
       <a-checkbox v-model:checked="havePrices"> Бесплатно</a-checkbox>
 
     </a-col>
