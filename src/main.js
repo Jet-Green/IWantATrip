@@ -7,6 +7,7 @@ import ANTD from 'ant-design-vue';
 import './assets/styles/styles.scss'
 import VueHtmlToPaper from './plugins/VueHtmlToPaper'
 import VueSocialSharing from 'vue-social-sharing'
+import MasonryWall from '@yeger/vue-masonry-wall'
 import 'ant-design-vue/dist/reset.css';
 
 
@@ -19,4 +20,5 @@ createApp(App)
     .use(ANTD)
     .use(VueSocialSharing)
     .use(VueHtmlToPaper)
+    .use(MasonryWall)
     .mount('#app')

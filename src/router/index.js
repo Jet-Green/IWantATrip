@@ -221,6 +221,11 @@ const router = createRouter({
       component: () => import('../components/_guide/Poster.vue')
     },
     {
+      path: '/photos',
+      name: 'Photos',
+      component: () => import('../components/_guide/Photos.vue')
+    },
+    {
       path: '/excursions',
       name: 'ExcursionsPage',
       component: () => import('../components/_guide/Excursions.vue')
