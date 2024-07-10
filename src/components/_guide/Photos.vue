@@ -32,14 +32,14 @@ onMounted(async () => {
                 <masonry-wall :items="getLocalImages" :ssr-columns="1" :column-width="200" :gap="8">
                     <template #default="{ item, index }">
                         <div>
-                            <a-image :preview="{ visible: false }" :src="item" @click="show(index)"
-                                loading="lazy" />
+                            <img :preview="{ visible: false }" :src="item" @click="show(index)"
+                            loading="lazy"  />
                         </div>
                     </template>
                 </masonry-wall>
                 <div style="display: none; ">
                     <a-image-preview-group :preview="{ visible, onVisibleChange: vis => (visible = vis) }">
-                        <a-image :src="activePhoto" />
+                        <a-image :src="activePhoto"  />
                     </a-image-preview-group>
                 </div>
             </a-col>
