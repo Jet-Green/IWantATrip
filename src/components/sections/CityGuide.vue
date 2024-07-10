@@ -8,35 +8,42 @@ let cards = [
     title: "Афиша",
     icon: "mdi-movie-roll",
     route: "/poster",
+    isShow: true,
+    
   },
   {
     title: "Транспорт",
     icon: "mdi mdi-train-car",
     route: "/transport",
+    isShow: true,
 
   },
   {
     title: "Гостиницы",
     icon: "mdi-home-city-outline",
     route: "/stay",
+    isShow: true,
 
   },
   {
     title: "Экскурсии",
     icon: "mdi-crowd",
     route: "/excursions",
+    isShow: true,
 
   },
   {
     title: "Фотографии",
-    icon: "mdi-crowd",
+    icon: "mdi-camera",
     route: "/photos",
+    isShow: true,
 
   },
   {
     title: "Еда",
     icon: "mdi-food-outline",
     route: "/eat",
+    isShow: false,
 
   },
 
@@ -44,18 +51,21 @@ let cards = [
     title: "Развлечения",
     icon: "mdi-human-female-dance",
     route: "/enter",
+    isShow: false,
 
   },
   {
     title: "Гиды",
     icon: "mdi-human-greeting-proximity",
     route: "/guides",
+    isShow: false,
 
   },
   {
     title: "Сувениры",
     icon: "mdi-gift-outline",
     route: "/souvenirs",
+    isShow: false,
 
   },
 ];
@@ -83,12 +93,12 @@ const handleChange = (value) => {
           В разработке</h3>
         <a-col v-for="(card, index) in cards" :key="index" :xs="12" :md="8">
           <div class="d-flex"
-            v-if="card.route != '/poster' || card.route != '/transport' || card.route != '/stay' || card.route != '/excursions' | card.route != '/photos'">
+            v-if="!card.isShow">
           </div>
           <router-link
-            :to="card.route == '/poster' ? card.route : card.route == '/transport' ? card.route : card.route == '/stay' ? card.route : card.route == '/excursions' ? card.route : card.route == '/photos'? card.route : ''">
+            :to="card.isShow?  card.route : ''">
             <a-card hoverable class="guide-card"
-              :class="{ opacity: card.route != '/poster' && card.route != '/transport' && card.route != '/stay' && card.route != '/excursions' && card.route != '/photos' }">
+              :class="{ opacity: !card.isShow }">
               <div>
                 <span class="mdi" :class="card.icon"> </span>
                 <span>
