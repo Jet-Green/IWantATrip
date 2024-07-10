@@ -1,15 +1,15 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useLocations } from '../../stores/locations'
 
 const locationStore = useLocations()
-let cards = [
+let cards = ref([
   {
     title: "Афиша",
     icon: "mdi-movie-roll",
     route: "/poster",
     isShow: true,
-    
+
   },
   {
     title: "Транспорт",
@@ -68,16 +68,13 @@ let cards = [
     isShow: false,
 
   },
-];
-const city = ref("Глазов");
+]);
 
-const focus = () => {
-  console.log("focus");
-};
 
-const handleChange = (value) => {
-  console.log(`selected ${value}`);
-};
+watch(locationStore, () => {
+
+  locationStore.location.shortName == 'Глазов' ? cards.value[4].isShow = true : cards.value[4].isShow = false
+})
 </script>
 
 <template>
@@ -92,13 +89,10 @@ const handleChange = (value) => {
         <h3 class="in-work">
           В разработке</h3>
         <a-col v-for="(card, index) in cards" :key="index" :xs="12" :md="8">
-          <div class="d-flex"
-            v-if="!card.isShow">
+          <div class="d-flex" v-if="!card.isShow">
           </div>
-          <router-link
-            :to="card.isShow?  card.route : ''">
-            <a-card hoverable class="guide-card"
-              :class="{ opacity: !card.isShow }">
+          <router-link :to="card.isShow ? card.route : ''">
+            <a-card hoverable class="guide-card" :class="{ opacity: !card.isShow }">
               <div>
                 <span class="mdi" :class="card.icon"> </span>
                 <span>
