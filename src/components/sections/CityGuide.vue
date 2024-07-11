@@ -33,7 +33,7 @@ let cards = ref([
 
   },
   {
-    title: "Фотографии",
+    title: "Фотобанк",
     icon: "mdi-camera",
     route: "/photos",
     isShow: true,
