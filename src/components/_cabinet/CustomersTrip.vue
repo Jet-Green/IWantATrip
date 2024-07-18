@@ -499,14 +499,15 @@ onMounted(async () => {
                 <a-col :span="12">
                     Телефон
                 </a-col>
-                <a-col :span="24" v-for="tourist of currentBill.touristsList">
+                <a-col :span="24" v-for="tourist, index of currentBill.touristsList">
                     <a-row :gutter="[8, 8]">
                         <a-col :span="12">
                             <a-input style="width: 100%" v-model:value="tourist.fullname"
                                 placeholder="Иванов Иван Иванович" />
                         </a-col>
-                        <a-col :span="12">
+                        <a-col :span="12" class="d-flex">
                             <a-input style="width: 100%" v-model:value="tourist.phone" placeholder="89127528877" />
+                            <span class="mdi mdi-close" style="font-size: 20px; color: #ff6600 "  @click="currentBill.touristsList.splice(index, 1)"></span>
                         </a-col>
                     </a-row>
                 </a-col>
@@ -517,10 +518,10 @@ onMounted(async () => {
         }, 0) == currentBill.touristsList.length">+
                         добавить</a-button>
                 </a-col>
-                <a-col :span="24">
+                <!-- <a-col :span="24">
                     <a-button type="dashed" style="color: red" block @click="currentBill.touristsList.pop()">
                         удалить</a-button>
-                </a-col>
+                </a-col> -->
                 <a-col :span="24" class="d-flex justify-center mt-8">
                     <a-button @click="addTouristsDialog = false">отмена</a-button>
                     <a-button type="primary" class="lets_go_btn ml-8"
