@@ -55,21 +55,21 @@ let isInWaitingList = ref(false)
 // })
 
 let link = computed(() => {
-  return API_URL + route.fullPath
+    return API_URL + route.fullPath
 })
 const options = ref({
-  url: link.value,
-  title: trip.value.name,
-  text: trip.value.description,
+    url: link.value,
+    title: trip.value.name,
+    text: trip.value.description,
 })
 
 const { isSupported } = useShare(options)
 
 function startShare() {
-  const { share } = useShare(options)
-  return share().catch(err => {
-    console.log(err);
-  })
+    const { share } = useShare(options)
+    return share().catch(err => {
+        console.log(err);
+    })
 }
 
 async function updateSeats() {
@@ -450,11 +450,11 @@ onMounted(async () => {
                             <span style="opacity: 0.7; cursor: pointer;" class="mdi mdi-24px mdi-printer ma-8 "
                                 @click="print()"></span>
 
-                          
-                             
-                                    <span style="opacity: 0.7;"
-                                        class="mdi mdi-24px mdi-share-variant-outline ma-8" @click="startShare()"></span>
-                        
+
+
+                            <span style="opacity: 0.7;" class="mdi mdi-24px mdi-share-variant-outline ma-8"
+                                @click="startShare()"></span>
+
                         </div>
 
                         <div>
@@ -515,7 +515,7 @@ onMounted(async () => {
                                 :transport="trip.transports ?? []" />
                         </div> -->
                         <div class="d-flex justify-center ma-8" v-if="trip.maxPeople -
-             getCustomersCount(selectedDate.billsList) -
+            getCustomersCount(selectedDate.billsList) -
             selectedDate.selectedCosts.reduce((acc, cost) => {
                 return acc + cost.count;
             }, 0) >
@@ -545,13 +545,13 @@ onMounted(async () => {
                         <span v-html="trip.description"></span>
                     </a-col>
                     <a-divider class="ma-0"></a-divider>
-                    <a-col :xs="24" v-if="trip.includedInPrice" class="mb-16">
+                    <a-col :xs="24" v-if="trip.includedInPrice" class="mb-4">
                         <b>В стоимость включено:</b> {{ trip.includedInPrice }}
                     </a-col>
-                    <a-col :xs="24" v-if="trip.paidExtra" class="mb-16">
+                    <a-col :xs="24" v-if="trip.paidExtra" class="mb-4">
                         <b>Дополнительно оплачивается:</b> {{ trip.paidExtra }}
                     </a-col>
-                    <a-col :xs="24" v-if="trip.travelRequirement" class="mb-16">
+                    <a-col :xs="24" v-if="trip.travelRequirement" class="mb-4">
                         <b>Требование к поездке:</b> {{ trip.travelRequirement }}
                     </a-col>
 
@@ -598,7 +598,19 @@ onMounted(async () => {
                             </div>
                         </div>
                         <span v-html="trip.description"></span>
+                        <div  v-if="trip.includedInPrice" >
+                            <b>В стоимость включено:</b> {{ trip.includedInPrice }}
+                        </div>
+                        <div v-if="trip.paidExtra">
+                            <b>Дополнительно оплачивается:</b> {{ trip.paidExtra }}
+                        </div>
+                        <div v-if="trip.travelRequirement" >
+                            <b>Требование к поездке:</b> {{ trip.travelRequirement }}
+                        </div>
 
+                        <div v-if="trip.returnConditions">
+                            <b>Условия возврата:</b> {{ trip.returnConditions }}
+                        </div>
                     </div>
 
                 </a-row>
