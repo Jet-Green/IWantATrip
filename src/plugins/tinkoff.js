@@ -59,6 +59,10 @@ async function initPayment(orderId, cart, clientEmail, shopInfo, tripName) {
                         "OperationName": `"${cartItem.costType}":${tripName}`.slice(0, 24),
                         "Phones": ["+79128523316"],
                         "ReceiverPhones": ["+79128523316"],
+                        "OperatorName": "Платформа Союз",
+                        "OperatorAddress": "г.Глазов",
+                        "OperatorInn": "1837013960"
+
                     },
                     // Поставщик тура
                     "SupplierInfo": {
