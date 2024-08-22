@@ -64,6 +64,9 @@ let form = ref({
     fromAge: "",
     startLocation: null,
     bonuses: [],
+    includedInPrice: "",
+    paidExtra: "",
+    travelRequirement: "",
     returnConditions: '',
     rejected: false,
 });
@@ -264,6 +267,7 @@ let formSchema = yup.object({
     tripRoute: yup.string().required("заполните поле"),
     duration: yup.string().required("заполните поле"),
     returnConditions: yup.string().required("заполните поле"),
+    notNecessarily: yup.string()
 })
 </script>
 <template>
@@ -451,6 +455,41 @@ let formSchema = yup.object({
 
                             <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html"
                                 :toolbar="[['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }], [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }], ['link']]" />
+                        </a-col>
+                        <a-col :span="24">
+                            <Field name="includedInPrice" v-slot="{ value, handleChange }"
+                                v-model="form.includedInPrice">
+                                В стоимость включено
+                                <a-textarea autosize @update:value="handleChange" :value="value" placeholder=""
+                                    size="large">
+                                </a-textarea>
+                            </Field>
+                            <Transition name="fade">
+                                <ErrorMessage name="notNecessarily" class="error-message" />
+                            </Transition>
+                        </a-col>
+                        <a-col :span="24">
+                            <Field name="paidExtra" v-slot="{ value, handleChange }" v-model="form.paidExtra">
+                                Дополнительно оплачивается
+                                <a-textarea autosize @update:value="handleChange" :value="value" placeholder=""
+                                    size="large">
+                                </a-textarea>
+                            </Field>
+                            <Transition name="fade">
+                                <ErrorMessage name="notNecessarily" class="error-message" />
+                            </Transition>
+                        </a-col>
+                        <a-col :span="24">
+                            <Field name="travelRequirement" v-slot="{ value, handleChange }"
+                                v-model="form.travelRequirement">
+                                Требование к поездке
+                                <a-textarea autosize @update:value="handleChange" :value="value" placeholder=""
+                                    size="large">
+                                </a-textarea>
+                            </Field>
+                            <Transition name="fade">
+                                <ErrorMessage name="notNecessarily" class="error-message" />
+                            </Transition>
                         </a-col>
                         <a-col :span="24">
                             <Field name="returnConditions" v-slot="{ value, handleChange }"

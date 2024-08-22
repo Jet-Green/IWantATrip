@@ -545,6 +545,16 @@ onMounted(async () => {
                         <span v-html="trip.description"></span>
                     </a-col>
                     <a-divider class="ma-0"></a-divider>
+                    <a-col :xs="24" v-if="trip.includedInPrice" class="mb-16">
+                        <b>В стоимость включено:</b> {{ trip.includedInPrice }}
+                    </a-col>
+                    <a-col :xs="24" v-if="trip.paidExtra" class="mb-16">
+                        <b>Дополнительно оплачивается:</b> {{ trip.paidExtra }}
+                    </a-col>
+                    <a-col :xs="24" v-if="trip.travelRequirement" class="mb-16">
+                        <b>Требование к поездке:</b> {{ trip.travelRequirement }}
+                    </a-col>
+
                     <a-col :xs="24" v-if="trip.returnConditions" class="mb-16">
                         <b>Условия возврата:</b> {{ trip.returnConditions }}
                     </a-col>

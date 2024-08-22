@@ -71,6 +71,9 @@ let form = reactive({
     author: "",
     startLocation: "",
     bonuses: [],
+    includedInPrice: "",
+    paidExtra: "",
+    travelRequirement: "",
     returnConditions: "",
     isModerated: false,
 });
@@ -144,6 +147,9 @@ function submit() {
             author: "",
             startLocation: "",
             bonuses: [],
+            includedInPrice: "",
+            paidExtra: "",
+            travelRequirement: "",
             returnConditions: "",
             isModerated: false,
         });
@@ -374,6 +380,9 @@ onMounted(async () => {
             form.includedLocations = d.includedLocations
             form.locationNames = d.locationNames
             form.returnConditions = d.returnConditions
+            form.includedInPrice = d.includedInPrice
+            form.paidExtra = d.paidExtra
+            form.travelRequirement = d.travelRequirement
             locationSearchRequest.value = d.startLocation.name;
         });
     }
@@ -391,6 +400,7 @@ let formSchema = yup.object({
     tripRoute: yup.string().required("заполните поле"),
     startLocation: yup.string().required("заполните поле"),
     returnConditions: yup.string().required("заполните поле"),
+    notNecessarily: yup.string()
     // distance: yup.string().required("заполните поле"),
     // cost: yup.string().required("заполните поле"),
     // https://vee-validate.logaretm.com/v4/examples/array-fields/
@@ -592,6 +602,41 @@ let formSchema = yup.object({
 
                             <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html"
                                 :toolbar="[['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }], [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }], ['link']]" />
+                        </a-col>
+                        <a-col :span="24">
+                            <Field name="includedInPrice" v-slot="{ value, handleChange }"
+                                v-model="form.includedInPrice">
+                                В стоимость включено
+                                <a-textarea autosize @update:value="handleChange" :value="value" placeholder=""
+                                    size="large">
+                                </a-textarea>
+                            </Field>
+                            <Transition name="fade">
+                                <ErrorMessage name="notNecessarily" class="error-message" />
+                            </Transition>
+                        </a-col>
+                        <a-col :span="24">
+                            <Field name="paidExtra" v-slot="{ value, handleChange }" v-model="form.paidExtra">
+                                Дополнительно оплачивается
+                                <a-textarea autosize @update:value="handleChange" :value="value" placeholder=""
+                                    size="large">
+                                </a-textarea>
+                            </Field>
+                            <Transition name="fade">
+                                <ErrorMessage name="notNecessarily" class="error-message" />
+                            </Transition>
+                        </a-col>
+                        <a-col :span="24">
+                            <Field name="travelRequirement" v-slot="{ value, handleChange }"
+                                v-model="form.travelRequirement">
+                                Требование к поездке
+                                <a-textarea autosize @update:value="handleChange" :value="value" placeholder=""
+                                    size="large">
+                                </a-textarea>
+                            </Field>
+                            <Transition name="fade">
+                                <ErrorMessage name="notNecessarily" class="error-message" />
+                            </Transition>
                         </a-col>
                         <a-col :span="24">
                             <Field name="returnConditions" v-slot="{ value, handleChange }"

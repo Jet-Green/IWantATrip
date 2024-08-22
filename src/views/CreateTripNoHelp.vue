@@ -68,7 +68,12 @@ let form = reactive({
   author: "",
   startLocation: null,
   bonuses: [],
-  returnConditions: '',
+  returnConditions: "",
+
+  includedInPrice: "",
+  paidExtra: "",
+  travelRequirement: ""
+
 });
 
 const removeCost = (item) => {
@@ -139,6 +144,9 @@ function submit() {
       startLocation: "",
       bonuses: [],
       returnConditions: "",
+      includedInPrice: "",
+      paidExtra: "",
+      travelRequirement: "",
       isModerated: false,
 
     });
@@ -354,7 +362,8 @@ let formSchema = yup.object({
   offer: yup.string().required("заполните поле"),
   tripRoute: yup.string().required("заполните поле"),
   startLocation: yup.string().required("заполните поле"),
-  returnConditions: yup.string().required("заполните поле")
+  returnConditions: yup.string().required("заполните поле"),
+  notNecessarily: yup.string()
   // https://vee-validate.logaretm.com/v4/examples/array-fields/
 });
 </script>
@@ -381,7 +390,7 @@ let formSchema = yup.object({
               <div class="d-flex" style="overflow-x: scroll">
                 <img v-for="(pr, i) in previews   " :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
                   @click="delPhotoDialog = true;
-                  targetIndex = i;" @error="handleImgError(i)" />
+      targetIndex = i;" @error="handleImgError(i)" />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
@@ -487,8 +496,8 @@ let formSchema = yup.object({
                 <div>
                   <a-select @update:value="handleChange" :value="value" style="width: 100%">
                     <a-select-option v-for="   tripType in appStore.appState[0].tripType   " :value="tripType">{{
-                      tripType
-                    }}</a-select-option>
+        tripType
+      }}</a-select-option>
                   </a-select>
                 </div>
               </Field>
@@ -525,7 +534,7 @@ let formSchema = yup.object({
             <a-col :span="24">
               <Field name="offer" v-slot="{ value, handleChange }" v-model="form.offer">
                 Краткое описание
-                <a-textarea @update:value="handleChange" :value="value"
+                <a-textarea autosize @update:value="handleChange" :value="value"
                   placeholder="Едем в Татарстан за новыми эмоциями!" size="large">
                 </a-textarea>
               </Field>
@@ -537,7 +546,7 @@ let formSchema = yup.object({
             <a-col :span="24">
               <Field name="tripRoute" v-slot="{ value, handleChange }" v-model="form.tripRoute">
                 Ключевые точки:
-                <a-textarea @update:value="handleChange" :value="value" placeholder="Глазов-Пермь-Кама" size="large">
+                <a-textarea autosize @update:value="handleChange" :value="value" placeholder="Глазов-Пермь-Кама" size="large">
                 </a-textarea>
               </Field>
               <Transition name="fade">
@@ -550,33 +559,57 @@ let formSchema = yup.object({
 
               <QuillEditor class="ql-editor" theme="snow" ref="quill" v-model:content="description" contentType="html"
                 :toolbar="[
-                  ['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }],
+        ['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }],
 
-                  [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
+        [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
 
-                  ['link']
-                ]
-                  " />
+        ['link']
+      ]
+        " />
             </a-col>
             <a-col :span="24">
-              <Field name="returnConditions" v-slot="{ value, handleChange }" v-model="form.returnConditions">
+              <Field name="includedInPrice" v-slot="{ value, handleChange }" v-model="form.includedInPrice">
+                В стоимость включено
+                <a-textarea autosize @update:value="handleChange" :value="value" placeholder="" size="large">
+                </a-textarea>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="notNecessarily" class="error-message" />
+              </Transition>
+            </a-col>
+            <a-col :span="24">
+              <Field  name="paidExtra" v-slot="{ value, handleChange }" v-model="form.paidExtra">
+                Дополнительно оплачивается
+                <a-textarea autosize @update:value="handleChange" :value="value" placeholder="" size="large">
+                </a-textarea>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="notNecessarily" class="error-message" />
+              </Transition>
+            </a-col>
+            <a-col :span="24">
+              <Field  name="travelRequirement" v-slot="{ value, handleChange }" v-model="form.travelRequirement">
+                Требование к поездке
+                <a-textarea autosize @update:value="handleChange" :value="value" placeholder="" size="large">
+                </a-textarea>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="notNecessarily" class="error-message" />
+              </Transition>
+            </a-col>
+
+
+            <a-col :span="24">
+              <Field  name="returnConditions" v-slot="{ value, handleChange }" v-model="form.returnConditions">
                 Условия возврата
-                <a-textarea @update:value="handleChange" :value="value" placeholder="" size="large">
+                <a-textarea autosize @update:value="handleChange" :value="value" placeholder="" size="large">
                 </a-textarea>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="offer" class="error-message" />
               </Transition>
             </a-col>
-            <!-- <a-col :span="24">
-              :file-list="fileList"
-              <a-upload action="" :multiple="true">
-                <a-button type="dashed" block>
-                  <span class="mdi mdi-12px mdi-plus"></span>
-                  Загрузить pdf описание
-                </a-button>
-              </a-upload>
-            </a-col> -->
+       
             <a-col :span="24" class="d-flex justify-center">
               <a-button class="lets_go_btn ma-36" type="primary" html-type="submit">Отправить
               </a-button>
