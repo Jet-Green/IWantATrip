@@ -45,6 +45,13 @@ let buyNow = ref(false)
 let selectedDate = ref({});
 let selectedStartLocation = ref();
 let isInWaitingList = ref(false)
+let touristsList = ref([
+    {
+        _id: userStore.user._id,
+        fullname: userStore?.user.fullinfo.fullname,
+        phone: userStore?.user.fullinfo.phone,
+    }
+]);
 // watch([selected_bus, waiting_bus], async ([selected, waiting]) => {
 //     let bus_id = _.isEmpty(selected) ? waiting.transportType.bus_id : selected.transportType.bus_id
 //     if (!bus_id) return show_old_bus.value = true
@@ -78,6 +85,30 @@ async function updateSeats() {
     free_seats.value = bus.value.seats.map(seat => seat.number).filter(seat => !bought_seats.includes(seat) && !bus.value.stuff.includes(seat))
     selected_seats.value = selected_seats.value.filter(seat => free_seats.value.includes(seat))
 }
+
+async function changeTouristsField(tourists) {
+    if (people_amount.value == 1) return
+    // Check if tourists is positive or negative
+    if (tourists > 0) {
+
+        // If positive, add objects to the array
+        for (let i = 0; i < tourists; i++) {
+            touristsList.value.push({
+                fullname: "",
+                phone: "",
+            });
+        }
+    } else if (tourists < 0) {
+        // If negative, remove objects from the end of the array
+        for (let i = 0; i < Math.abs(tourists); i++) {
+            if (touristsList.value.length > 0) {
+                touristsList.value.pop();
+            }
+        }
+    }
+    // If touristsNumber is 0, do nothing
+}
+
 
 const backRoute = { name: 'TripsPage', hash: `#${_id}` };
 
@@ -260,6 +291,14 @@ async function buyTrip() {
         //         c.costType = 'в листе ожидания'
         //     }
         // }
+
+
+
+        if (!isTouristsListInfo.value.result) {
+            message.config({ duration: 3, top: "90vh" });
+            message.success({ content: `${isTouristsListInfo.value.message}` });
+            return
+        }
         if (getCurrentCustomerNumber.value > trip.value.maxPeople) {
             message.config({ duration: 3, top: "90vh" });
             message.success({ content: `Осталось всего ${trip.value.maxPeople - tripStat.value.amount} мест` });
@@ -285,11 +324,7 @@ async function buyTrip() {
                     fullname: userStore.user.fullinfo.fullname,
                     phone: userStore.user.fullinfo.phone,
                 },
-                touristsList: [{
-                    _id: userStore.user._id,
-                    fullname: userStore.user.fullinfo.fullname,
-                    phone: userStore.user.fullinfo.phone,
-                }]
+                touristsList: touristsList.value
             };
             selected_seats.value = []
             updateSeats()
@@ -350,12 +385,12 @@ function detectIsWaiting(isWaiting) {
     isInWaitingList.value = isWaiting
 }
 
-const phoneRegex = /^((8|7|\+7|\+8)[\- ]?)?[\d\- ]{5,10}$/gm
+const phoneRegex = /^(?:\d{5}|\d{10}|\d{11})$/
+
 const formSchema = yup.object({
     fullname: yup
-        .string("неверный формат")
-        .required("заполните поле")
-        .min(5, "минимум 5 символов"),
+        .string()
+        .required("заполните поле"),
     phone: yup
         .string().matches(phoneRegex, "введите № телефона"),
 
@@ -363,6 +398,25 @@ const formSchema = yup.object({
 });
 
 
+let isTouristsListInfo = computed(() => {
+
+    for (let tourist of touristsList.value) {
+        const cleaned = tourist.phone.replace(/\D/g, '');
+
+        if (
+            !phoneRegex.test(cleaned)
+        ) {
+            return { result: false, message: "Проверьте телефоны" };
+        }
+        if (
+            !tourist.fullname
+        ) {
+            return { result: false, message: "Заполните имена туристов" };
+        }
+    }
+    return {result:true};
+
+})
 
 let isNoPlaces = computed(() => {
     if (selectedDate.value.billsList) {
@@ -396,10 +450,11 @@ async function updateBus() {
 onMounted(async () => {
 
     await refreshDates();
-    watch(selectedDate, updateBus, { immediate: true })
+
     watch(people_amount, (newValue, oldValue) => {
         updateBus()
         updateSeats()
+        changeTouristsField(newValue - oldValue)
         if (getCurrentCustomerNumber.value > trip.value.maxPeople) {
             message.config({ duration: 3, top: "90vh" });
             message.success({ content: `Осталось всего ${trip.value.maxPeople - getCustomersCount(selectedDate.value.billsList)} мест` });
@@ -598,13 +653,13 @@ onMounted(async () => {
                             </div>
                         </div>
                         <span v-html="trip.description"></span>
-                        <div  v-if="trip.includedInPrice" >
+                        <div v-if="trip.includedInPrice">
                             <b>В стоимость включено:</b> {{ trip.includedInPrice }}
                         </div>
                         <div v-if="trip.paidExtra">
                             <b>Дополнительно оплачивается:</b> {{ trip.paidExtra }}
                         </div>
-                        <div v-if="trip.travelRequirement" >
+                        <div v-if="trip.travelRequirement">
                             <b>Требование к поездке:</b> {{ trip.travelRequirement }}
                         </div>
 
@@ -617,29 +672,24 @@ onMounted(async () => {
             </a-col>
         </a-row>
         <a-modal v-model:open="buyDialog" :footer="null" @cancel="refreshDates(trip)">
-            <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="buyTrip" class="mt-16">
-                <a-row :gutter="[4, 8]">
-
+            <Form @submit="buyTrip" class="mt-16">
+                {{ touristsList }}
+                {{ isTouristsListInfo }}
+                <a-row :gutter="[4, 8]" class="mb-8" v-for="(tourist, index) in touristsList" :key="index">
                     <a-col :span="24" :md="12">
-                        <Field name="fullname" v-slot="{ value, handleChange }"
-                            v-model="userStore.user.fullinfo.fullname">
-                            <a-input @change="handleChange" :value="value" placeholder="Иванов Иван Иванович"></a-input>
+                        <Field name="fullname">
+                            <a-input v-model:value="touristsList[index].fullname"
+                                placeholder="Иванов Иван Иванович"></a-input>
                         </Field>
-
-                        <Transition name="fade">
-                            <ErrorMessage name="fullname" class="error-message" />
-                        </Transition>
                     </a-col>
                     <a-col :span="24" :md="12">
-                        <Field name="phone" v-slot="{ value, handleChange }" v-model="userStore.user.fullinfo.phone">
-                            <a-input @change="handleChange" :value="value" placeholder="791275288874" size="medium"
+                        <Field name="phone">
+                            <a-input v-model:value="touristsList[index].phone" placeholder="791275288874" size="medium"
                                 :controls="false" style="width:100%"></a-input>
                         </Field>
-
-                        <Transition name="fade">
-                            <ErrorMessage name="phone" class="error-message" />
-                        </Transition>
                     </a-col>
+                </a-row>
+                <a-row :gutter="[4, 8]">
                     <a-col :span="24" v-if="trip.locationNames.length > 1">
                         <div class="d-flex direction-column">
                             Место посадки
