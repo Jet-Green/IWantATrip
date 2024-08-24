@@ -673,8 +673,7 @@ onMounted(async () => {
         </a-row>
         <a-modal v-model:open="buyDialog" :footer="null" @cancel="refreshDates(trip)">
             <Form @submit="buyTrip" class="mt-16">
-                {{ touristsList }}
-                {{ isTouristsListInfo }}
+        
                 <a-row :gutter="[4, 8]" class="mb-8" v-for="(tourist, index) in touristsList" :key="index">
                     <a-col :span="24" :md="12">
                         <Field name="fullname">
