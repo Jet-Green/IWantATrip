@@ -8,9 +8,14 @@ const router = useRouter();
 const backRoute = "/"
 
 onMounted(()=>{
-    if(!route.query.url) {
-        router.push("/")
-    }
+  // Проверяем, есть ли параметр `url` в строке запроса, если нет, перенаправляем на корень
+  if (!route.query.url) {
+    router.push("/");
+  }
+  // Проверяем, загружен ли сайт внутри iframe, если да, перенаправляем на корень
+  if (window.self !== window.top) {
+    window.top.location.href = "/";
+  }
 })
 </script>
 <template>
