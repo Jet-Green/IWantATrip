@@ -4,13 +4,6 @@ import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 
-onMounted(()=>{
-
-  // Проверяем, загружен ли сайт внутри iframe, если да, перенаправляем на корень
-  if (window.self !== window.top) {
-    window.top.location.href = "/";
-  }
-})
 </script>
 <template>
     <div style="height: 80vh; width: 100%">
