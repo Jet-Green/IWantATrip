@@ -7,7 +7,6 @@ let props = defineProps({
 })
 let bought = props.form
 let trip = props.trip
-console.log(trip)
 const clearData = (dateNumber) => {
     let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
         year: "2-digit",

@@ -46,11 +46,7 @@ let selectedDate = ref({});
 let selectedStartLocation = ref();
 let isInWaitingList = ref(false)
 let touristsList = ref([
-    {
-        _id: userStore.user._id,
-        fullname: userStore?.user.fullinfo.fullname,
-        phone: userStore?.user.fullinfo.phone,
-    }
+
 ]);
 // watch([selected_bus, waiting_bus], async ([selected, waiting]) => {
 //     let bus_id = _.isEmpty(selected) ? waiting.transportType.bus_id : selected.transportType.bus_id
@@ -86,17 +82,21 @@ async function updateSeats() {
     selected_seats.value = selected_seats.value.filter(seat => free_seats.value.includes(seat))
 }
 
-async function changeTouristsField(tourists) {
-    if (people_amount.value == 1) return
+async function changeTouristsField() {
+    let tourists = people_amount.value - touristsList.value.length
+
+    // if (people_amount.value == 1) return
     // Check if tourists is positive or negative
     if (tourists > 0) {
 
         // If positive, add objects to the array
         for (let i = 0; i < tourists; i++) {
+
             touristsList.value.push({
                 fullname: "",
                 phone: "",
             });
+
         }
     } else if (tourists < 0) {
         // If negative, remove objects from the end of the array
@@ -368,7 +368,8 @@ async function buyTrip() {
                     });
             }
             if (tinkoffUrl) {
-                router.push({ name: 'TinkoffPayment', query: { url: tinkoffUrl } })
+                // router.push({ name: 'TinkoffPayment', query: { url: tinkoffUrl } })
+                window.open(tinkoffUrl, '_blank');
             }
         } else {
             message.config({ duration: 3, top: "90vh" });
@@ -414,7 +415,7 @@ let isTouristsListInfo = computed(() => {
             return { result: false, message: "Заполните имена туристов" };
         }
     }
-    return {result:true};
+    return { result: true };
 
 })
 
@@ -454,7 +455,7 @@ onMounted(async () => {
     watch(people_amount, (newValue, oldValue) => {
         updateBus()
         updateSeats()
-        changeTouristsField(newValue - oldValue)
+        changeTouristsField()
         if (getCurrentCustomerNumber.value > trip.value.maxPeople) {
             message.config({ duration: 3, top: "90vh" });
             message.success({ content: `Осталось всего ${trip.value.maxPeople - getCustomersCount(selectedDate.value.billsList)} мест` });
@@ -673,8 +674,8 @@ onMounted(async () => {
         </a-row>
         <a-modal v-model:open="buyDialog" :footer="null" @cancel="refreshDates(trip)">
             <Form @submit="buyTrip" class="mt-16">
-        
                 <a-row :gutter="[4, 8]" class="mb-8" v-for="(tourist, index) in touristsList" :key="index">
+                    <a-col :span="24"> {{index+1}} турист </a-col>
                     <a-col :span="24" :md="12">
                         <Field name="fullname">
                             <a-input v-model:value="touristsList[index].fullname"
