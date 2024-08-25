@@ -368,8 +368,8 @@ async function buyTrip() {
                     });
             }
             if (tinkoffUrl) {
-                // router.push({ name: 'TinkoffPayment', query: { url: tinkoffUrl } })
-                window.open(tinkoffUrl, '_blank');
+                router.push({ name: 'TinkoffPayment', query: { url: tinkoffUrl } })
+                // window.open(tinkoffUrl, '_blank');
             }
         } else {
             message.config({ duration: 3, top: "90vh" });
