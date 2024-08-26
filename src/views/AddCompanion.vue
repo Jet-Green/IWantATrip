@@ -28,7 +28,6 @@ const companionStore = useCompanions()
 let router = useRouter();
 const userStore = useAuth();
 const ruLocale = locale;
-const backRoute = "/companions";
 let date = ref(null)
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YYYY"];
 const form = reactive({
@@ -187,7 +186,7 @@ const formSchema = yup.object({
 </script>
 <template>
   <div>
-    <BackButton :backRoute="backRoute" />
+    <BackButton />
     <img v-if="!sm" src="../assets/images/companion_left.webp"
       style="position: fixed; left: 0px; bottom: 0px;  width: 20%;" />
 

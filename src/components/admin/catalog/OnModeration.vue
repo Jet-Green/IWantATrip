@@ -14,6 +14,7 @@ async function catalogToDelete(_id) {
 
 async function refreshCatalogTripsOnModeration() {
     let { data } = await tripStore.findCatalogForModeration()
+    console.log(data)
     catalogTripsOnMod.value = data
 }
 
@@ -23,17 +24,20 @@ onMounted(async () => {
 </script>
 <template>
     <a-row :gutter="[8, 8]" class="mt-8">
+
         <a-col :lg="8" :sm="12" :xs="24" v-if="catalogTripsOnMod.length > 0"
+       
             v-for="(catalog, index) of catalogTripsOnMod" :key="index">
+     
             <a-card class="card" hoverable>
                 <div style="text-align:center">
-                    {{ catalog.name }}
+                    {{ catalog?.name }}
                 </div>
                 <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
                 <div>
-                    <span class="mdi mdi-compass-outline"></span> {{ catalog.startLocation.name }}
+                    <span class="mdi mdi-compass-outline"></span> {{ catalog?.startLocation.name }}
                 </div>
-                <div class="mt-8">Автор: {{ catalog.author.fullinfo.fullname }}</div>
+                <div class="mt-8">Автор: {{ catalog?.author.fullinfo.fullname }}</div>
                 <div class="actions d-flex justify-center">
                     <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет"
                         @confirm="catalogToDelete(catalog._id)">
