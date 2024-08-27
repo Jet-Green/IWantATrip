@@ -319,13 +319,18 @@ async function buyTrip() {
                 tripId: selectedDate.value._id,
                 selectedStartLocation: selectedStartLocation.value,
                 seats: selected_seats.value,
+                touristsList: touristsList.value,
                 userInfo: {
                     _id: userStore.user._id,
                     fullname: userStore.user.fullinfo.fullname,
                     phone: userStore.user.fullinfo.phone,
                 },
-                touristsList: touristsList.value
             };
+            console.log(bill)
+            if (bill.userInfo.phone == "") {        
+                bill.userInfo.fullname = touristsList.value[0].fullname
+                bill.userInfo.phone = touristsList.value[0].phone
+            }
             selected_seats.value = []
             updateSeats()
             let tinkoffUrl = ''
@@ -571,12 +576,12 @@ onMounted(async () => {
                                 :transport="trip.transports ?? []" />
                         </div> -->
                         <div class="d-flex justify-center ma-8" v-if="trip.maxPeople -
-            getCustomersCount(selectedDate.billsList) -
-            selectedDate.selectedCosts.reduce((acc, cost) => {
-                return acc + cost.count;
-            }, 0) >
-            0
-            ">
+                            getCustomersCount(selectedDate.billsList) -
+                            selectedDate.selectedCosts.reduce((acc, cost) => {
+                                return acc + cost.count;
+                            }, 0) >
+                            0
+                        ">
                             <a-button type="primary" class="lets_go_btn" style="display: flex; justify-content: center"
                                 @click="buyTripDialog()">
                                 Купить
@@ -585,12 +590,12 @@ onMounted(async () => {
 
                         <div>
                             <b v-if="trip.maxPeople -
-            getCustomersCount(selectedDate.billsList) -
-            selectedDate.selectedCosts.reduce((acc, cost) => {
-                return acc + cost.count;
-            }, 0) <=
-            0
-            ">
+                                getCustomersCount(selectedDate.billsList) -
+                                selectedDate.selectedCosts.reduce((acc, cost) => {
+                                    return acc + cost.count;
+                                }, 0) <=
+                                0
+                            ">
                                 мест больше нет
                             </b>
                         </div>
@@ -675,7 +680,7 @@ onMounted(async () => {
         <a-modal v-model:open="buyDialog" :footer="null" @cancel="refreshDates(trip)">
             <Form @submit="buyTrip" class="mt-16">
                 <a-row :gutter="[4, 8]" class="mb-8" v-for="(tourist, index) in touristsList" :key="index">
-                    <a-col :span="24"> {{index+1}} турист </a-col>
+                    <a-col :span="24"> {{ index + 1 }} турист </a-col>
                     <a-col :span="24" :md="12">
                         <Field name="fullname">
                             <a-input v-model:value="touristsList[index].fullname"
@@ -709,13 +714,13 @@ onMounted(async () => {
                             Туристы:
                             <b :style="isNoPlaces ? 'color: red' : ''">
                                 {{
-            getCustomersCount(selectedDate.billsList) +
-            selectedDate.selectedCosts.reduce((acc, cost) => {
-                return acc + cost.count;
-            }, 0) +
-            "/" +
-            trip.maxPeople
-        }}
+                                    getCustomersCount(selectedDate.billsList) +
+                                    selectedDate.selectedCosts.reduce((acc, cost) => {
+                                        return acc + cost.count;
+                                    }, 0) +
+                                    "/" +
+                                    trip.maxPeople
+                                }}
                                 чел.
                             </b>
                         </div>
