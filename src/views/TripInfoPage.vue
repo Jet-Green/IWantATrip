@@ -326,7 +326,6 @@ async function buyTrip() {
                     phone: userStore.user.fullinfo.phone,
                 },
             };
-            console.log(bill)
             if (bill.userInfo.phone == "") {        
                 bill.userInfo.fullname = touristsList.value[0].fullname
                 bill.userInfo.phone = touristsList.value[0].phone
