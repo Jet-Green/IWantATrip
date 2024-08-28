@@ -301,7 +301,7 @@ onMounted(() => {
         </a-input-number> чел.
       </div>
     </div>
-    {{ places }}
+
     <div v-for="price of pricesForm">
       <div class="price-container">
         <div class="price">{{ price.type }} x <span style="color: #ff6600;">{{ price.price }}₽</span></div>
