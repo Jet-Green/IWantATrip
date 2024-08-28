@@ -29,8 +29,6 @@ let getPrice = computed(() => {
     </div>
 
     <img :src="excursion.images[0]" alt="картинка">
-    <!-- <div> <a-avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" /> {{
-        excursion.guides[0].name }}</div> -->
     <div class="title"> {{ excursion.name }}</div>
     <div class="price"> {{ getPrice }}</div>
   </div>

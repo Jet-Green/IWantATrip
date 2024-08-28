@@ -29,7 +29,7 @@ async function updateDates() {
 await updateDates()
 
 
-watch(props, updateDates)
+watch(props, () => updateDates())
 
 function getDate(dateObj) {
   return datePlugin.excursions.getPrettyDate(dateObj)

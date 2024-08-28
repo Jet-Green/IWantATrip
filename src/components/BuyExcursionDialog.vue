@@ -38,8 +38,14 @@ let fullinfo = reactive({
 
 let places = computed(() => {
   let exist = 0
+
   for (let bill of selectedDate.value.time.bills) {
-    exist = exist + bill.cart[0].count
+    let sum = 0
+      for (let item of bill.cart) {
+        sum += item.count
+      }
+   
+    exist = exist + sum
   }
   return {
     available: props.excursion.maxPeople - exist,
@@ -295,6 +301,7 @@ onMounted(() => {
         </a-input-number> чел.
       </div>
     </div>
+    {{ places }}
     <div v-for="price of pricesForm">
       <div class="price-container">
         <div class="price">{{ price.type }} x <span style="color: #ff6600;">{{ price.price }}₽</span></div>
@@ -306,12 +313,14 @@ onMounted(() => {
     </div>
     <!-- заказ -->
     <div class="d-flex justify-center " v-if="excursion.prices.length == 0">
-      <a-button type="primary" class="lets_go_btn" @click="book" :disabled="bookingCount + selectedDate.bookingsCount < props.excursion.minPeople">заказать</a-button>
+      <a-button type="primary" class="lets_go_btn" @click="book"
+        :disabled="bookingCount + selectedDate.bookingsCount < props.excursion.minPeople">заказать</a-button>
 
     </div>
     <h5 style="color:#ff6600;" class="mt-8"
       v-if="bookingCount + selectedDate.bookingsCount < props.excursion.minPeople && excursion.prices.length == 0">
-      Необходимо еще {{ props.excursion.minPeople - (bookingCount + selectedDate.bookingsCount) }} чел. для проведения экскурсии.
+      Необходимо еще {{ props.excursion.minPeople - (bookingCount + selectedDate.bookingsCount) }} чел. для проведения
+      экскурсии.
     </h5>
     <!-- оплата -->
     <div class="d-flex justify-end" v-if="excursion.prices.length > 0">
