@@ -212,7 +212,7 @@ onMounted(() => {
           <!-- <h4 class="rotated-text">Гид по городу <br> <span>
             {{ locationSearchRequest ? locationSearchRequest : "Ваш город" }}
           </span></h4> -->
-          
+
           <div @click="toComponentFromMenu('ExcursionsPage')" class="route ma-8">
             экскурсии
           </div>
@@ -236,9 +236,9 @@ onMounted(() => {
         <div @click="toComponentFromMenu('Contacts')" class="route ma-8">
           контакты
         </div>
-        <a href="https://doc.gorodaivesi.ru/" target="_blank">
-          <div class="route ma-8">о проекте</div>
-        </a>
+        <div @click="toComponentFromMenu('Documents')" class="route ma-8">
+          документы
+        </div>
         <div style="text-align:center;">
 
           <a href="https://vk.com/gorodaivesi_udm" target="_blank"><img class="ma-4" src="../assets/icons/vk.svg"

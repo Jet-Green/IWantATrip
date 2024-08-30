@@ -326,7 +326,7 @@ async function buyTrip() {
                     phone: userStore.user.fullinfo.phone,
                 },
             };
-            if (bill.userInfo.phone == "") {        
+            if (bill.userInfo.phone == "") {
                 bill.userInfo.fullname = touristsList.value[0].fullname
                 bill.userInfo.phone = touristsList.value[0].phone
             }
@@ -785,6 +785,14 @@ onMounted(async () => {
                                     <img :src="TinkoffLogo" class="tinkoff-logo">
                                 </div>
                             </div>
+                        </div>
+                        <div style="font-size:0.8em">
+                            Выполняя покупки на данном сервисе вы соглашаетесь с
+                            <b><router-link to="/documents" style="color:#ff6600">офертой</router-link></b>
+                            и<b>
+                                <router-link to="/documents" style="color:#ff6600"> согласием об обработке персональных
+                                    данных</router-link>
+                            </b>
                         </div>
                     </a-col>
                 </a-row>

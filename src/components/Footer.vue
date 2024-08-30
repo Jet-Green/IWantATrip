@@ -11,15 +11,15 @@
         <a-col :xs="24" :md="18">
           <a-row class="bottom_menu d-flex space-around">
             <a-col class="d-flex align-center direction-column">
-                <router-link to="/document">
-                  <b> Документы </b>
-                </router-link>
+              <router-link to="/documents">
+                <b> Документы </b>
+              </router-link>
             </a-col>
 
             <a-col class="d-flex align-center direction-column">
-                <router-link to="/contacts">
-                  <b> Контакты </b>
-                </router-link>
+              <router-link to="/contacts">
+                <b> Контакты </b>
+              </router-link>
             </a-col>
             <!-- <a-col :xs="8" class="d-flex align-center direction-column">
               <div>
