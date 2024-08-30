@@ -15,6 +15,11 @@ const router = createRouter({
           name: 'TinkoffPayment',
           component: () => import('../views/TinkoffPayment.vue')
         },
+          {
+            path: '/document',
+            name: 'Document',
+            component: () => import('../views/Document.vue')
+          },
       ]
     },
     {

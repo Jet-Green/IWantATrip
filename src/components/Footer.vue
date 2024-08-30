@@ -11,42 +11,15 @@
         <a-col :xs="24" :md="18">
           <a-row class="bottom_menu d-flex space-around">
             <a-col class="d-flex align-center direction-column">
-              <div>
-                <a href="https://doc.gorodaivesi.ru/privacy/main.html" target="_blank"><b>Документы</b> </a>
-              </div>
-              <div>
-                <div>
-                  <a href="https://doc.gorodaivesi.ru/privacy/oferta.html" target="_blank">Оферта</a>
-                </div>
-
-                <div>
-                  <a href="https://doc.gorodaivesi.ru/privacy/agentDocs.html" target="_blank">Агентский договор</a>
-                </div>
-                <div>
-                  <a href="https://doc.gorodaivesi.ru/privacy/agreement.html" target="_blank">Согласие на обработку
-                    персональных данных</a>
-                </div>
-              </div>
-            </a-col>
-            <a-col class="d-flex align-center direction-column">
-              <div>
-                <a href="https://doc.gorodaivesi.ru" target="_blank"><b>О проекте</b> </a>
-              </div>
-
-              <div>
-                <div>
-                  <a href="https://doc.gorodaivesi.ru/questions.html" target="_blank">Вопросы</a>
-                </div>
-                <div>
-                  <a href="https://doc.gorodaivesi.ru/support.html" target="_blank">Поддержка</a>
-                </div>
-                <!-- ! -->
-                <router-link to="/contacts">
-                  <div> Контакты </div>
+                <router-link to="/document">
+                  <b> Документы </b>
                 </router-link>
+            </a-col>
 
-                <!-- ! -->
-              </div>
+            <a-col class="d-flex align-center direction-column">
+                <router-link to="/contacts">
+                  <b> Контакты </b>
+                </router-link>
             </a-col>
             <!-- <a-col :xs="8" class="d-flex align-center direction-column">
               <div>
