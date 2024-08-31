@@ -14,7 +14,7 @@ function routeTo(buttonRoute) {
 <template>
   <a-row class="justify-center ma-16">
     <a-col :xs="24" :md="16">
-      <a-row :gutter="[12, 12]">
+      <a-row :gutter="[12, 12]" class="d-flex justify-center">
         <a-col :xs="10">
           <div class="big-button order" @click="routeTo('/create-with-help')">
             <div>Заказать</div>
@@ -23,11 +23,7 @@ function routeTo(buttonRoute) {
               мы поможем c выбором
             </div>
           </div>
-          <div class="catalog-container">
-            <span class="catalog-text" @click="routeTo('/catalog')">
-              заказать из каталога
-            </span>
-          </div>
+         
         </a-col>
         <a-col :xs="4" class="img"><img src="../../assets/images/ship.webp" alt="" style="height: 30%" /></a-col>
         <a-col :xs="10" class="big-button find" @click="routeTo('/trips')">
@@ -37,7 +33,19 @@ function routeTo(buttonRoute) {
             выберите что нравится
           </div>
         </a-col>
-        <a-col :xs="7" class="img"><img src="../../assets/images/house.webp" alt="" style="height: 30%" /></a-col>
+
+        <a-col :xs="10">
+          <div class="big-button catalog" @click="routeTo('/catalog')">
+            <div>Заказать из каталога</div>
+            <div class="help-text">
+              готовые туры<br />
+              без установленной даты
+            </div>
+          </div>
+         
+        </a-col>
+      
+        <!-- <a-col :xs="4" class="img"><img src="../../assets/images/house.webp" alt="" style="height: 30%" /></a-col> -->
         <a-col :xs="10" class="big-button create" @click="routeTo('/create-no-help')">
           <div>Создать</div>
           <div class="help-text">
