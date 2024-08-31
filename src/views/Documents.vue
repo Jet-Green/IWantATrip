@@ -1,5 +1,14 @@
 <script setup>
 import BackButton from "../components/BackButton.vue";
+import { useAppState } from '../stores/appState'
+import { useRouter } from "vue-router";
+const appStateStore = useAppState()
+
+const router = useRouter()
+let setDocLink = (link) => {
+    appStateStore.docLink = link
+    router.push('document')
+}
 </script>
 <template>
     <div style="margin-top: 69px">
@@ -9,11 +18,11 @@ import BackButton from "../components/BackButton.vue";
                 <h2>Документы</h2>
                 <div class="d-flex align-center">
                     <div class="circle"></div>
-                    <div>
-                        <a download href="../assets/documents/Оферта.pdf" target="_blank" style="font-weight: 700;">
-                            Пользовательское соглашение (оферта)
-                        </a>
+                    <div style="font-weight: 700; cursor: pointer;"
+                        @click="setDocLink('../assets/documents/Оферта.pdf')">
+                        Пользовательское соглашение (оферта)
                     </div>
+
                 </div>
                 <div class="description">
                     Правила использования цифровой туристической платформы «Города и веси»
@@ -21,11 +30,9 @@ import BackButton from "../components/BackButton.vue";
                 <a-divider></a-divider>
                 <div class="d-flex align-center">
                     <div class="circle"></div>
-                    <div>
-                        <a download href="../assets/documents/Согласие на обработку персональных данных.pdf" target="_blank"
-                            style="font-weight: 700;">
-                            Правила обработки персональных данных
-                        </a>
+                    <div style="font-weight: 700; cursor: pointer;"
+                        @click="setDocLink('../assets/documents/Правила обработки перональных данных.pdf')">
+                        Правила обработки персональных данных
                     </div>
                 </div>
                 <div class="description">
@@ -34,11 +41,10 @@ import BackButton from "../components/BackButton.vue";
                 <a-divider></a-divider>
                 <div class="d-flex align-center">
                     <div class="circle"></div>
-                    <div>
-                        <a download href="../assets/documents/Политика конфиденциальности.pdf" target="_blank"
-                            style="font-weight: 700;">
-                            Политика конфиденциальности
-                        </a>
+                    
+                    <div style="font-weight: 700; cursor: pointer;"
+                        @click="setDocLink('../assets/documents/Политика конфиденциальности.pdf')">
+                        Политика конфиденциальности
                     </div>
                 </div>
                 <div class="description">
@@ -47,24 +53,21 @@ import BackButton from "../components/BackButton.vue";
                 <a-divider></a-divider>
                 <div class="d-flex align-center">
                     <div class="circle"></div>
-                    <div>
-                        <a  download href="../assets/documents/Договор турпродукт+конс.услуги.pdf" target="_blank"
-                            style="font-weight: 700;">
-                            Договор о реализации туристского продукта и об оказании консультационных услуг
-                        </a>
+                    <div style="font-weight: 700; cursor: pointer;"
+                        @click="setDocLink('../assets/documents/Договор турпродукт+конс.услуги.pdf')">
+                        Договор о реализации туристского продукта и об оказании консультационных услуг
                     </div>
                 </div>
                 <div class="description">
-                    Договор о реализации туристского продукта и об оказании консультационных услуг платформы «Города и веси»
+                    Договор о реализации туристского продукта и об оказании консультационных услуг платформы «Города и
+                    веси»
                 </div>
                 <a-divider></a-divider>
                 <div class="d-flex align-center">
                     <div class="circle"></div>
-                    <div>
-                        <a download href="../assets/documents/Условия возврата оплаты.pdf" target="_blank"
-                            style="font-weight: 700;">
-                            Условия возврата оплаты на платформе «Города и веси»
-                        </a>
+                    <div style="font-weight: 700; cursor: pointer;"
+                        @click="setDocLink('../assets/documents/Условия возврата оплаты.pdf')">
+                        Условия возврата оплаты на платформе «Города и веси»
                     </div>
                 </div>
                 <div class="description">
@@ -73,11 +76,9 @@ import BackButton from "../components/BackButton.vue";
                 <a-divider></a-divider>
                 <div class="d-flex align-center">
                     <div class="circle"></div>
-                    <div>
-                        <a download href="../assets/documents/Аннуляция группового тура.pdf" target="_blank"
-                            style="font-weight: 700;">
-                            Заявление на аннуляцию группового тура
-                        </a>
+                    <div style="font-weight: 700; cursor: pointer;"
+                        @click="setDocLink('../assets/documents/Аннуляция группового тура.pdf')">
+                        Заявление на аннуляцию группового тура
                     </div>
 
                 </div>
@@ -90,31 +91,20 @@ import BackButton from "../components/BackButton.vue";
 
                 <div class="d-flex align-center">
                     <div class="circle"></div>
-                    <div>
-                        <a download href="../assets/documents/Аннуляция тура.pdf" target="_blank" style="font-weight: 700;">
-                            Заявление на аннуляцию тура
-                        </a>
+                    <div style="font-weight: 700; cursor: pointer;"
+                        @click="setDocLink('../assets/documents/Аннуляция тура.pdf')">
+                        Заявление на аннуляцию тура
                     </div>
                 </div>
                 <div class="description">
                     Документ для аннуляции индивидуального тура
                 </div>
                 <a-divider></a-divider>
-
-               
-
-               
-
-
-
-
                 <div class="d-flex align-center">
-                    <div class="circle"></div>
-                    <div>
-                        <a download href="../assets/documents/Согласие на размещение фото  видео в интернете.pdf"
-                            target="_blank" style="font-weight: 700;">
-                            Согласие на размещение фото и видео в интернете
-                        </a>
+                    <div class="circle"></div> 
+                    <div style="font-weight: 700; cursor: pointer;"
+                        @click="setDocLink('../assets/documents/Согласие на размещение фото  видео в интернете.pdf')">
+                        Согласие на размещение фото и видео в интернете
                     </div>
                 </div>
                 <div class="description">
@@ -123,11 +113,10 @@ import BackButton from "../components/BackButton.vue";
                 <a-divider></a-divider>
                 <div class="d-flex align-center">
                     <div class="circle"></div>
-                    <div>
-                        <a download href="../assets/documents/Согласие родителей  на размещение фото  видео в интернете.pdf"
-                            target="_blank" style="font-weight: 700;">
-                            Согласие родителей на размещение фото и видео в интернете
-                        </a>
+                    
+                    <div style="font-weight: 700; cursor: pointer;"
+                        @click="setDocLink('../assets/documents/Согласие родителей  на размещение фото  видео в интернете.pdf')">
+                        Согласие родителей на размещение фото и видео в интернете
                     </div>
                 </div>
                 <div class="description">
@@ -135,12 +124,10 @@ import BackButton from "../components/BackButton.vue";
                 </div>
                 <a-divider></a-divider>
                 <div class="d-flex align-center">
-                    <div class="circle"></div>
-                    <div>
-                        <a download href="../assets/documents/Сопровождение ребенка от агентства.pdf" target="_blank"
-                            style="font-weight: 700;">
-                            Сопровождение ребенка от агентства
-                        </a>
+                    <div class="circle"></div>   
+                    <div style="font-weight: 700; cursor: pointer;"
+                        @click="setDocLink('../assets/documents/Сопровождение ребенка от агентства.pdf')">
+                        Сопровождение ребенка от агентства
                     </div>
                 </div>
                 <div class="description">
@@ -156,7 +143,7 @@ import BackButton from "../components/BackButton.vue";
         </a-row>
     </div>
 </template>
-<style>
+<style scoped>
 .circle {
     height: 20px;
     aspect-ratio: 1;

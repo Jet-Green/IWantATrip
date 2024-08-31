@@ -5,6 +5,7 @@ export const useAppState = defineStore('app-state', {
     state: () => ({
         appState: null,
         widgetIsMount: true,
+        docLink:'',
     }),
     getters: {
     },
