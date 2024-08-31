@@ -53,20 +53,29 @@ const handleChange = async () => {
     tripStore.trips = []
     selectLocationDialog.value = false
     await tripStore.fetchTrips()
-    await companionStore.fetchCompanions()
 
+    tripStore.catalogCursor = 1
+    tripStore.catalog = []
+
+    await tripStore.fetchCatalogTrips()
+    await companionStore.fetchCompanions()
   }
   else {
     for (let loc of locationStore.locations) {
       if (loc.shortName == locationSearchRequest.value) {
-        // start pagiantion again to update location
+        // start pagination again to update location
 
         tripStore.cursor = 1
         tripStore.trips = []
-
+        
         locationStore.setLocation(loc)
         selectLocationDialog.value = false
         await tripStore.fetchTrips()
+
+        tripStore.catalogCursor = 1
+        tripStore.catalog = []
+        
+        await tripStore.fetchCatalogTrips()
         await companionStore.fetchCompanions()
 
         break
