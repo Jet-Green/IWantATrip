@@ -10,7 +10,7 @@ import BackButton from "../components/BackButton.vue";
                 <div class="d-flex align-center">
                     <div class="circle"></div>
                     <div>
-                        <a href="../../public/documents/Оферта.pdf" target="_blank" style="font-weight: 700;">
+                        <a download href="../assets/documents/Оферта.pdf" target="_blank" style="font-weight: 700;">
                             Пользовательское соглашение (оферта)
                         </a>
                     </div>
@@ -22,7 +22,7 @@ import BackButton from "../components/BackButton.vue";
                 <div class="d-flex align-center">
                     <div class="circle"></div>
                     <div>
-                        <a href="../../public/documents/Согласие на обработку персональных данных.pdf" target="_blank"
+                        <a download href="../assets/documents/Согласие на обработку персональных данных.pdf" target="_blank"
                             style="font-weight: 700;">
                             Правила обработки персональных данных
                         </a>
@@ -35,7 +35,7 @@ import BackButton from "../components/BackButton.vue";
                 <div class="d-flex align-center">
                     <div class="circle"></div>
                     <div>
-                        <a href="../../public/documents/Политика конфиденциальности.pdf" target="_blank"
+                        <a download href="../assets/documents/Политика конфиденциальности.pdf" target="_blank"
                             style="font-weight: 700;">
                             Политика конфиденциальности
                         </a>
@@ -48,7 +48,7 @@ import BackButton from "../components/BackButton.vue";
                 <div class="d-flex align-center">
                     <div class="circle"></div>
                     <div>
-                        <a href="../../public/documents/Договор турпродукт+конс.услуги.pdf" target="_blank"
+                        <a  download href="../assets/documents/Договор турпродукт+конс.услуги.pdf" target="_blank"
                             style="font-weight: 700;">
                             Договор о реализации туристского продукта и об оказании консультационных услуг
                         </a>
@@ -61,7 +61,7 @@ import BackButton from "../components/BackButton.vue";
                 <div class="d-flex align-center">
                     <div class="circle"></div>
                     <div>
-                        <a href="../../public/documents/Условия возврата оплаты.pdf" target="_blank"
+                        <a download href="../assets/documents/Условия возврата оплаты.pdf" target="_blank"
                             style="font-weight: 700;">
                             Условия возврата оплаты на платформе «Города и веси»
                         </a>
@@ -74,7 +74,7 @@ import BackButton from "../components/BackButton.vue";
                 <div class="d-flex align-center">
                     <div class="circle"></div>
                     <div>
-                        <a href="../../public/documents/Аннуляция группового тура.pdf" target="_blank"
+                        <a download href="../assets/documents/Аннуляция группового тура.pdf" target="_blank"
                             style="font-weight: 700;">
                             Заявление на аннуляцию группового тура
                         </a>
@@ -91,7 +91,7 @@ import BackButton from "../components/BackButton.vue";
                 <div class="d-flex align-center">
                     <div class="circle"></div>
                     <div>
-                        <a href="../../public/documents/Аннуляция тура.pdf" target="_blank" style="font-weight: 700;">
+                        <a download href="../assets/documents/Аннуляция тура.pdf" target="_blank" style="font-weight: 700;">
                             Заявление на аннуляцию тура
                         </a>
                     </div>
@@ -111,7 +111,7 @@ import BackButton from "../components/BackButton.vue";
                 <div class="d-flex align-center">
                     <div class="circle"></div>
                     <div>
-                        <a href="../../public/documents/Согласие на размещение фото  видео в интернете.pdf"
+                        <a download href="../assets/documents/Согласие на размещение фото  видео в интернете.pdf"
                             target="_blank" style="font-weight: 700;">
                             Согласие на размещение фото и видео в интернете
                         </a>
@@ -124,7 +124,7 @@ import BackButton from "../components/BackButton.vue";
                 <div class="d-flex align-center">
                     <div class="circle"></div>
                     <div>
-                        <a href="../../public/documents/Согласие родителей  на размещение фото  видео в интернете.pdf"
+                        <a download href="../assets/documents/Согласие родителей  на размещение фото  видео в интернете.pdf"
                             target="_blank" style="font-weight: 700;">
                             Согласие родителей на размещение фото и видео в интернете
                         </a>
@@ -137,7 +137,7 @@ import BackButton from "../components/BackButton.vue";
                 <div class="d-flex align-center">
                     <div class="circle"></div>
                     <div>
-                        <a href="../../public/documents/Сопровождение ребенка от агентства.pdf" target="_blank"
+                        <a download href="../assets/documents/Сопровождение ребенка от агентства.pdf" target="_blank"
                             style="font-weight: 700;">
                             Сопровождение ребенка от агентства
                         </a>
