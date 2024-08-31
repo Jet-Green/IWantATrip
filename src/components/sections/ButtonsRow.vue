@@ -15,11 +15,18 @@ function routeTo(buttonRoute) {
   <a-row class="justify-center ma-16">
     <a-col :xs="24" :md="16">
       <a-row :gutter="[12, 12]">
-        <a-col :xs="10" class="big-button order" @click="routeTo('/create-with-help')">
-          <div>Заказать</div>
-          <div class="help-text">
-            заполните форму <br />
-            мы поможем c выбором
+        <a-col :xs="10">
+          <div class="big-button order" @click="routeTo('/create-with-help')">
+            <div>Заказать</div>
+            <div class="help-text">
+              заполните форму <br />
+              мы поможем c выбором
+            </div>
+          </div>
+          <div class="catalog-container">
+            <span class="catalog-text" @click="routeTo('/catalog')">
+              заказать из каталога
+            </span>
           </div>
         </a-col>
         <a-col :xs="4" class="img"><img src="../../assets/images/ship.webp" alt="" style="height: 30%" /></a-col>
@@ -135,5 +142,15 @@ function routeTo(buttonRoute) {
   font-size: clamp(0.75rem, 0.5483rem + 0.4202vw, 1rem);
   text-align: center;
   text-transform: lowercase;
+}
+.catalog-container {
+  width: 100%;
+  margin-top: 18px;
+  text-align: center;
+  .catalog-text {
+    font-size: clamp(0.875rem, 0.7583rem + 0.6224vw, 1.25rem);
+    cursor: pointer;
+    user-select: none;
+  }
 }
 </style>
