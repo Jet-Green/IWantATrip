@@ -783,15 +783,15 @@ onMounted(async () => {
                                 </div>
                                 <div class="d-flex justify-center">
                                     <img :src="TinkoffLogo" class="tinkoff-logo">
-                                </div>
+                                </div> 
                             </div>
                         </div>
-                        <div style="font-size:0.8em">
-                            Выполняя покупки на данном сервисе вы соглашаетесь с
+                        <div style="font-size:0.8em; padding-top:10px">
+                            Выполняя покупки на платформе "Города и веси" вы соглашаетесь с
                             <b><router-link to="/documents" style="color:#ff6600">офертой</router-link></b>
-                            и<b>
-                                <router-link to="/documents" style="color:#ff6600"> согласием об обработке персональных
-                                    данных</router-link>
+                            и <b>
+                                <router-link to="/documents" style="color:#ff6600"> обработкой персональных
+                                    данных по правилам платформы</router-link>
                             </b>
                         </div>
                     </a-col>

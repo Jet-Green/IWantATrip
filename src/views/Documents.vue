@@ -19,7 +19,7 @@ let setDocLink = (link) => {
                 <div class="d-flex align-center">
                     <div class="circle"></div>
                     <div style="font-weight: 700; cursor: pointer;"
-                        @click="setDocLink('../assets/documents/Оферта.pdf')">
+                        @click="setDocLink('/documents/Оферта.pdf')">
                         Пользовательское соглашение (оферта)
                     </div>
 
@@ -31,7 +31,7 @@ let setDocLink = (link) => {
                 <div class="d-flex align-center">
                     <div class="circle"></div>
                     <div style="font-weight: 700; cursor: pointer;"
-                        @click="setDocLink('../assets/documents/Правила обработки перональных данных.pdf')">
+                        @click="setDocLink('/documents/Правила обработки перональных данных.pdf')">
                         Правила обработки персональных данных
                     </div>
                 </div>
@@ -43,7 +43,7 @@ let setDocLink = (link) => {
                     <div class="circle"></div>
                     
                     <div style="font-weight: 700; cursor: pointer;"
-                        @click="setDocLink('../assets/documents/Политика конфиденциальности.pdf')">
+                        @click="setDocLink('/documents/Политика конфиденциальности.pdf')">
                         Политика конфиденциальности
                     </div>
                 </div>
@@ -54,7 +54,7 @@ let setDocLink = (link) => {
                 <div class="d-flex align-center">
                     <div class="circle"></div>
                     <div style="font-weight: 700; cursor: pointer;"
-                        @click="setDocLink('../assets/documents/Договор турпродукт+конс.услуги.pdf')">
+                        @click="setDocLink('/documents/Договор турпродукт+конс.услуги.pdf')">
                         Договор о реализации туристского продукта и об оказании консультационных услуг
                     </div>
                 </div>
@@ -66,7 +66,7 @@ let setDocLink = (link) => {
                 <div class="d-flex align-center">
                     <div class="circle"></div>
                     <div style="font-weight: 700; cursor: pointer;"
-                        @click="setDocLink('../assets/documents/Условия возврата оплаты.pdf')">
+                        @click="setDocLink('/documents/Условия возврата оплаты.pdf')">
                         Условия возврата оплаты на платформе «Города и веси»
                     </div>
                 </div>
@@ -77,7 +77,7 @@ let setDocLink = (link) => {
                 <div class="d-flex align-center">
                     <div class="circle"></div>
                     <div style="font-weight: 700; cursor: pointer;"
-                        @click="setDocLink('../assets/documents/Аннуляция группового тура.pdf')">
+                        @click="setDocLink('/documents/Аннуляция группового тура.pdf')">
                         Заявление на аннуляцию группового тура
                     </div>
 
@@ -92,7 +92,7 @@ let setDocLink = (link) => {
                 <div class="d-flex align-center">
                     <div class="circle"></div>
                     <div style="font-weight: 700; cursor: pointer;"
-                        @click="setDocLink('../assets/documents/Аннуляция тура.pdf')">
+                        @click="setDocLink('/documents/Аннуляция тура.pdf')">
                         Заявление на аннуляцию тура
                     </div>
                 </div>
@@ -103,7 +103,7 @@ let setDocLink = (link) => {
                 <div class="d-flex align-center">
                     <div class="circle"></div> 
                     <div style="font-weight: 700; cursor: pointer;"
-                        @click="setDocLink('../assets/documents/Согласие на размещение фото  видео в интернете.pdf')">
+                        @click="setDocLink('/documents/Согласие на размещение фото  видео в интернете.pdf')">
                         Согласие на размещение фото и видео в интернете
                     </div>
                 </div>
@@ -115,7 +115,7 @@ let setDocLink = (link) => {
                     <div class="circle"></div>
                     
                     <div style="font-weight: 700; cursor: pointer;"
-                        @click="setDocLink('../assets/documents/Согласие родителей  на размещение фото  видео в интернете.pdf')">
+                        @click="setDocLink('/documents/Согласие родителей  на размещение фото  видео в интернете.pdf')">
                         Согласие родителей на размещение фото и видео в интернете
                     </div>
                 </div>
@@ -126,7 +126,7 @@ let setDocLink = (link) => {
                 <div class="d-flex align-center">
                     <div class="circle"></div>   
                     <div style="font-weight: 700; cursor: pointer;"
-                        @click="setDocLink('../assets/documents/Сопровождение ребенка от агентства.pdf')">
+                        @click="setDocLink('/documents/Сопровождение ребенка от агентства.pdf')">
                         Сопровождение ребенка от агентства
                     </div>
                 </div>
