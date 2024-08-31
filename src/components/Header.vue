@@ -63,7 +63,7 @@ const handleChange = async () => {
   else {
     for (let loc of locationStore.locations) {
       if (loc.shortName == locationSearchRequest.value) {
-        // start pagiantion again to update location
+        // start pagination again to update location
 
         tripStore.cursor = 1
         tripStore.trips = []
