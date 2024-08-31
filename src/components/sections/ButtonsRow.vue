@@ -36,7 +36,7 @@ function routeTo(buttonRoute) {
 
         <a-col :xs="10">
           <div class="big-button catalog" @click="routeTo('/catalog')">
-            <div>Заказать из каталога</div>
+            <div>Каталог</div>
             <div class="help-text">
               готовые туры<br />
               без установленной даты
@@ -79,6 +79,7 @@ function routeTo(buttonRoute) {
 <style lang="scss" scoped>
 .big-button {
   width: 100%;
+  height: 100%;
   aspect-ratio: 3/1;
   background: grey;
   opacity: 0.9;
