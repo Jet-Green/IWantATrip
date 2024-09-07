@@ -136,9 +136,7 @@ onMounted(async () => {
                     <div class="d-flex justify-end" v-if="BILL.additionalServices?.length > 0">
                         {{ BILL.cart.reduce((acc, o) => { return acc + o.count * o.cost }, 0) }} руб.
                     </div>
-                    <a-button v-if="BILL.additionalServices?.length > 0 && BILL.showAdditionalServices == undefined" type="dashed" style="text-transform: none;"
-                        block size="x-small" @click="BILL.showAdditionalServices = true">доп. услуги {{ BILL.additionalServices.reduce((acc, o) => { return acc + o.count * o.price }, 0) }} руб.</a-button>
-                    <div v-if="BILL.additionalServices?.length > 0 && BILL.showAdditionalServices">
+                    <div v-if="BILL.additionalServices?.length > 0">
                         <hr>
                         <div v-for="service of BILL.additionalServices">
                             {{ service.name }} {{ service.count }} x {{ service.price }} руб.
