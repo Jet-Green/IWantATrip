@@ -787,7 +787,7 @@ onMounted(async () => {
                             </div>
                         </div>
                         <div style="font-size:0.8em; padding-top:10px">
-                            Выполняя покупки на платформе "Города и веси" вы соглашаетесь с
+                            Выполняя покупки на платформе "Города и веси", вы соглашаетесь с
                             <b><router-link to="/documents" style="color:#ff6600">офертой</router-link></b>
                             и <b>
                                 <router-link to="/documents" style="color:#ff6600"> обработкой персональных

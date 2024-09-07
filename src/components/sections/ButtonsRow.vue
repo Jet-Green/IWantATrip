@@ -14,13 +14,16 @@ function routeTo(buttonRoute) {
 <template>
   <a-row class="justify-center ma-16">
     <a-col :xs="24" :md="16">
-      <a-row :gutter="[12, 12]">
-        <a-col :xs="10" class="big-button order" @click="routeTo('/create-with-help')">
-          <div>Заказать</div>
-          <div class="help-text">
-            заполните форму <br />
-            мы поможем c выбором
+      <a-row :gutter="[12, 12]" class="d-flex justify-center">
+        <a-col :xs="10">
+          <div class="big-button order" @click="routeTo('/create-with-help')">
+            <div>Заказать</div>
+            <div class="help-text">
+              заполните форму <br />
+              мы поможем c выбором
+            </div>
           </div>
+         
         </a-col>
         <a-col :xs="4" class="img"><img src="../../assets/images/ship.webp" alt="" style="height: 30%" /></a-col>
         <a-col :xs="10" class="big-button find" @click="routeTo('/trips')">
@@ -30,7 +33,19 @@ function routeTo(buttonRoute) {
             выберите что нравится
           </div>
         </a-col>
-        <a-col :xs="7" class="img"><img src="../../assets/images/house.webp" alt="" style="height: 30%" /></a-col>
+
+        <a-col :xs="10">
+          <div class="big-button catalog" @click="routeTo('/catalog')">
+            <div>Каталог</div>
+            <div class="help-text">
+              готовые туры<br />
+              без установленной даты
+            </div>
+          </div>
+         
+        </a-col>
+      
+        <!-- <a-col :xs="4" class="img"><img src="../../assets/images/house.webp" alt="" style="height: 30%" /></a-col> -->
         <a-col :xs="10" class="big-button create" @click="routeTo('/create-no-help')">
           <div>Создать</div>
           <div class="help-text">
@@ -64,6 +79,7 @@ function routeTo(buttonRoute) {
 <style lang="scss" scoped>
 .big-button {
   width: 100%;
+  height: 100%;
   aspect-ratio: 3/1;
   background: grey;
   opacity: 0.9;
@@ -135,5 +151,15 @@ function routeTo(buttonRoute) {
   font-size: clamp(0.75rem, 0.5483rem + 0.4202vw, 1rem);
   text-align: center;
   text-transform: lowercase;
+}
+.catalog-container {
+  width: 100%;
+  margin-top: 18px;
+  text-align: center;
+  .catalog-text {
+    font-size: clamp(0.875rem, 0.7583rem + 0.6224vw, 1.25rem);
+    cursor: pointer;
+    user-select: none;
+  }
 }
 </style>
