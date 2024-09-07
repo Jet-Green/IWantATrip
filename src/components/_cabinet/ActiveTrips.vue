@@ -91,7 +91,7 @@ onMounted(async () => {
         <a-row :gutter="[8, 8]" class="mt-8" v-if="getTripsInWork.length > 0">
             <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getTripsInWork" :key="index">
                 <CabinetTrip :trip="trip"
-                    :actions="['delete', 'info', 'copy', 'hide', 'edit', 'addDate', 'addLocation', 'transports', 'editComment']"
+                    :actions="['delete', 'info', 'copy', 'hide', 'edit', 'addDate', 'addLocation', 'transports', 'editComment', 'addAdditionalService']"
                     @deleteTrip="deleteTrip" @updateTrip="getAllTrips" />
             </a-col>
         </a-row>
