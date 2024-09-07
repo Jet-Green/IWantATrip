@@ -367,27 +367,24 @@ onMounted(async () => {
                                     {{ BILL.userInfo.phone }}</a>
                             </div>
 
-                            <div v-for="cartItem of BILL.cart">
+                            <div v-for="cartItem of BILL.cart" class="d-flex justify-end">
                                 <div v-if="cartItem.count">
-                                    {{ cartItem.costType }} {{ cartItem.count }} x {{ cartItem.cost }} руб.
+                                    {{ cartItem.costType }} {{ cartItem.count }} x {{ cartItem.cost }} руб. = {{(cartItem.count*cartItem.cost).toFixed(2) }}
                                 </div>
 
                             </div>
-                            <div v-if="BILL.seats && BILL.seats.length">
+                            <div v-if="BILL.seats && BILL.seats.length" class="d-flex justify-end">
                                 Места: {{ BILL.seats.join(', ') }}
-                            </div>
-                            <div class="d-flex justify-end">
+                        
                                 {{ BILL.cart.reduce((acc, o) => { return acc + o.count * o.cost }, 0) }} руб.
                             </div>
                             
-                            <a-button v-if="BILL.additionalServices?.length > 0 && BILL.showAdditionalServices == undefined" type="dashed" style="text-transform: none;"
-                                 block size="x-small" @click="BILL.showAdditionalServices = true">доп. услуги {{ BILL.additionalServices.reduce((acc, o) => { return acc + o.count * o.price }, 0) }} руб.</a-button>
-                            <div v-if="BILL.additionalServices?.length > 0 && BILL.showAdditionalServices">
+
+                            <div>
                                 <hr>
-                                <div v-for="service of BILL.additionalServices">
-                                    {{ service.name }} {{ service.count }} x {{ service.price }} руб.
-                                </div>
-                                <div class="d-flex justify-end">
+                                <div v-for="service of BILL.additionalServices" class="d-flex justify-end">
+                                    {{ service.name }} {{ service.count }} x {{ service.price }} руб. =
+                               
                                     {{ BILL.additionalServices.reduce((acc, o) => { return acc + o.count * o.price }, 0) }} руб.
                                 </div>
                                 <hr>
