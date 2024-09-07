@@ -36,6 +36,7 @@ let addLocationDialog = ref(false)
 let updateTransportDialog = ref(false)
 let editCommentDialog = ref(false)
 let calculatorDialog = ref(false)
+let addAdditionalServiceDialog = ref(false)
 let possibleTransport = ref([])
 
 let showMessage = ref(false);
@@ -58,6 +59,11 @@ let userComment = ref('')
 let tripCalculator = ref(trip.value.calculator ? { _id: trip.value.calculator._id, name: trip.value.calculator.name } : { _id: '', name: 'пустой калькулятор' })
 
 let checked = ref(false)
+
+let additionalService = ref({
+    name: '',
+    price: 0
+})
 
 const clearData = (dataString) => {
     let date = 0
@@ -248,6 +254,22 @@ function goToTripCalc() {
     router.push('/calc')
 }
 
+async function addAdditionalService() {
+    let res = await tripStore.addAdditionalService(trip.value._id, additionalService.value)
+    
+    if (res.status == 200) {
+        emit('updateTrip')
+        addAdditionalServiceDialog.value = false
+    }
+}
+
+async function deleteAdditionalService(serviceId) {
+    let res = await tripStore.deleteAdditionalService(trip.value._id, serviceId)
+    if (res.status == 200) {
+        emit('updateTrip')
+    }
+}
+
 watch(locationSearchRequest, async (newValue, oldValue) => {
     if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
         var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
@@ -389,6 +411,8 @@ onMounted(async () => {
                     @click="showMessage = !showMessage"></span>
                 <span v-if="actions.includes('editComment') && !trip.parent" class="mdi mdi-comment-edit-outline"
                     @click="editCommentDialog = !editCommentDialog; userComment = trip.userComment"></span>
+                <span v-if="actions.includes('addAdditionalService') && !trip.parent" class="mdi mdi-cash-plus"
+                    @click="addAdditionalServiceDialog = !addAdditionalServiceDialog;"></span>
             </div>
             <div v-if="showMessage">
                 Замечания: {{ trip.moderationMessage }}
@@ -545,6 +569,35 @@ onMounted(async () => {
                     </a-tag>
                 </a-popconfirm>
             </span>
+        </a-modal>
+        <a-modal v-model:open="addAdditionalServiceDialog" title="Дополнительный услуги" okText="Отправить" cancelText="Отмена"
+            @ok="addAdditionalService">
+        
+            <a-row v-for="service of trip.additionalServices" :gutter="[16, 16]">
+                <a-col :span="18">
+                    <b style="font-size: 16px;">
+                        {{ service.name }}
+                    </b>
+                </a-col>
+                <a-col :span="6" class="d-flex align-center" style="justify-content: end;">
+                    {{ service.price }}₽
+                    <a-popconfirm title="Вы уверены?" ok-text="Да"
+                        cancel-text="Нет" @confirm="deleteAdditionalService(service._id)">
+                        <span class="mdi mdi-delete" style="cursor: pointer; color: #ff6600; font-size: 20px; margin: 4px;"></span>
+                    </a-popconfirm>
+                </a-col>
+            </a-row>
+            <hr v-if="trip.additionalServices?.length > 0">
+            <a-row :gutter="[16, 16]">
+                <a-col :span="24">
+                    Название
+                    <a-input placeholder="Прогулка по ферме" v-model:value="additionalService.name"></a-input>
+                </a-col>
+                <a-col :span="24">
+                    Цена
+                    <a-input-number prefix="₽" v-model:value="additionalService.price" style="width: 100%;"></a-input-number>
+                </a-col>
+            </a-row>
         </a-modal>
     </div>
 </template>

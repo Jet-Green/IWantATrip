@@ -318,6 +318,20 @@ export const useTrips = defineStore('trips', {
             } catch (error) {
                 console.log(error);
             }
-        }
+        },
+        async addAdditionalService(tripId, service) {
+            try {
+                return await TripService.addAdditionalService(tripId, service)
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async deleteAdditionalService(tripId, serviceId) {
+            try {
+                return await TripService.deleteAdditionalService(tripId, serviceId)
+            } catch (error) {
+                console.log(error);
+            }
+        },
     },
 })

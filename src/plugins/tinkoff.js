@@ -46,7 +46,7 @@ async function checkPayment(paymentId) {
     return res
 }
 
-async function initPayment(orderId, cart, clientEmail, shopInfo, tripName) {
+async function initPayment(orderId, cart, clientEmail, shopInfo, tripName, additionalServices) {
     let Items = []
     let totalAmount = 0
     for (let cartItem of cart) {
@@ -84,6 +84,38 @@ async function initPayment(orderId, cart, clientEmail, shopInfo, tripName) {
         }
         totalAmount += cartItem.cost * 100 * cartItem.count
     }
+    for(let service of additionalServices) {
+        Items.push(
+            {
+                // Платформа Союз
+                "AgentData": {
+                    "AgentSign": "another",
+                    "OperationName": `"${service.name}":${tripName}`.slice(0, 24),
+                    "Phones": ["+79128523316"],
+                    "ReceiverPhones": ["+79128523316"],
+                    "OperatorName": "Платформа Союз",
+                    "OperatorAddress": "г.Глазов",
+                    "OperatorInn": "1837013960"
+                },
+                // Поставщик тура
+                "SupplierInfo": {
+                    "Phones": shopInfo.Phones,
+                    "Name": shopInfo.Name,
+                    "Inn": shopInfo.Inn
+                },
+                "PaymentMethod": "full_payment",
+                "PaymentObject": "service",
+                "Name": 'Дополнительные услуги',
+                "Price": service.price * 100,
+                "Quantity": 1,
+                "Amount": service.price * 100,
+                "Tax": "none",
+                "ShopCode": String(shopInfo.ShopCode),
+                "MeasurementUnit": "шт"
+            },
+        )
+        totalAmount += service.price * 100
+    }
     let payload =
     {
         "Amount": totalAmount,
@@ -119,6 +151,7 @@ async function initPayment(orderId, cart, clientEmail, shopInfo, tripName) {
             }
         ]
     }
+
     let res = await axios.post('https://securepay.tinkoff.ru/v2/Init', config)
     return { data: res.data, token: Token, success: res.data.Success }
 }

@@ -27,7 +27,7 @@ export default {
         return $api.post('/trips/delete-by-id', _id)
     },
     async catalogToDelete(_id) {
-        return $api.post('/catalog/delete-catalog-by-id', {'_id': _id})
+        return $api.post('/catalog/delete-catalog-by-id', { '_id': _id })
     },
 
     async createTrip(emailHtml, trip, authorEmail, fullinfo) {
@@ -149,5 +149,11 @@ export default {
     },
     getMyCatalogTripsOnModeration(id) {
         return $api.post('/catalog/my-catalog-on-moderation', { id })
-    }
+    },
+    addAdditionalService(tripId, service) {
+        return $api.post('/trips/add-additional-service', { tripId, service })
+    },
+    deleteAdditionalService(tripId, serviceId) {
+        return $api.post('/trips/delete-additional-service', { tripId, serviceId })
+    },
 }
