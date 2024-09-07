@@ -13,6 +13,7 @@ import { useTrips } from "../stores/trips";
 import { useAuth } from "../stores/auth";
 import { useAppState } from "../stores/appState";
 import TripService from "../service/TripService";
+import datePlugin from '../plugins/dates'
 
 import dayjs from "dayjs";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
@@ -63,6 +64,7 @@ let form = reactive({
   cost: [],
   offer: "",
   description: "",
+  dayByDayDescription: [],
   tripType: "",
   fromAge: "",
   author: "",
@@ -89,6 +91,9 @@ const addCost = () => {
     price: "",
   });
 };
+const addDay = () => {
+  form.dayByDayDescription.push('')
+}
 
 const removeBonuses = (item) => {
   let index = form.bonuses.indexOf(item);
@@ -96,6 +101,9 @@ const removeBonuses = (item) => {
     form.bonuses.splice(index, 1);
   }
 };
+const removeDay = (index) => {
+  form.dayByDayDescription.splice(index, 1);
+}
 
 const addBonuses = () => {
   form.bonuses.push({
@@ -138,6 +146,7 @@ function submit() {
       cost: [],
       offer: "",
       description: description.value,
+      dayByDayDescription: [],
       tripType: "",
       fromAge: "",
       author: "",
@@ -546,7 +555,8 @@ let formSchema = yup.object({
             <a-col :span="24">
               <Field name="tripRoute" v-slot="{ value, handleChange }" v-model="form.tripRoute">
                 Ключевые точки:
-                <a-textarea autosize @update:value="handleChange" :value="value" placeholder="Глазов-Пермь-Кама" size="large">
+                <a-textarea autosize @update:value="handleChange" :value="value" placeholder="Глазов-Пермь-Кама"
+                  size="large">
                 </a-textarea>
               </Field>
               <Transition name="fade">
@@ -566,7 +576,37 @@ let formSchema = yup.object({
         ['link']
       ]
         " />
+        
             </a-col>
+            <a-col :span="24">
+              <div>Описание программы по дням </div>
+
+              <a-col :span="24" v-for="day, index in form.dayByDayDescription" :key="index"
+                style="display: flex; flex-direction: column">
+
+                <div><b>День {{ datePlugin.excursions.getNumeralDay(index) }}</b> <a-button @click="removeDay(index)"
+                    shape="circle">
+                    <span class="mdi mdi-minus"></span>
+                  </a-button></div>
+                <QuillEditor class="ql-editor" theme="snow" v-model:content="form.dayByDayDescription[index]"
+                  contentType="html" :toolbar="[
+        ['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }],
+
+        [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
+
+        ['link']
+      ]
+        " />
+                </col>
+
+            
+              </a-col>
+              <a-button type="dashed" block @click="addDay" class="ma-8">
+                  <span class="mdi mdi-12px mdi-plus"></span>
+                  добавить день
+                </a-button>
+            </a-col>
+
             <a-col :span="24">
               <Field name="includedInPrice" v-slot="{ value, handleChange }" v-model="form.includedInPrice">
                 В стоимость включено
@@ -578,7 +618,7 @@ let formSchema = yup.object({
               </Transition>
             </a-col>
             <a-col :span="24">
-              <Field  name="paidExtra" v-slot="{ value, handleChange }" v-model="form.paidExtra">
+              <Field name="paidExtra" v-slot="{ value, handleChange }" v-model="form.paidExtra">
                 Дополнительно оплачивается
                 <a-textarea autosize @update:value="handleChange" :value="value" placeholder="" size="large">
                 </a-textarea>
@@ -588,7 +628,7 @@ let formSchema = yup.object({
               </Transition>
             </a-col>
             <a-col :span="24">
-              <Field  name="travelRequirement" v-slot="{ value, handleChange }" v-model="form.travelRequirement">
+              <Field name="travelRequirement" v-slot="{ value, handleChange }" v-model="form.travelRequirement">
                 Требование к поездке
                 <a-textarea autosize @update:value="handleChange" :value="value" placeholder="" size="large">
                 </a-textarea>
@@ -600,7 +640,7 @@ let formSchema = yup.object({
 
 
             <a-col :span="24">
-              <Field  name="returnConditions" v-slot="{ value, handleChange }" v-model="form.returnConditions">
+              <Field name="returnConditions" v-slot="{ value, handleChange }" v-model="form.returnConditions">
                 Условия возврата
                 <a-textarea autosize @update:value="handleChange" :value="value" placeholder="" size="large">
                 </a-textarea>
@@ -609,7 +649,7 @@ let formSchema = yup.object({
                 <ErrorMessage name="offer" class="error-message" />
               </Transition>
             </a-col>
-       
+
             <a-col :span="24" class="d-flex justify-center">
               <a-button class="lets_go_btn ma-36" type="primary" html-type="submit">Отправить
               </a-button>

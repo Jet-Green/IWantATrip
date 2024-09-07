@@ -12,7 +12,8 @@ let isModerated = ref(false);
 let isLoading = ref(false);
 let moderationMessage = ref("");
 let router = useRouter();
-
+let activeKey = ref(null)
+import datePlugin from '../../plugins/dates'
 async function moderateTrip(_id) {
   if (!isModerated.value) {
     isLoading.value = true;
@@ -141,6 +142,16 @@ function getImg(index) {
           <a-col :xs="24">
             <span v-html="trip.description"></span>
           </a-col>
+          <a-col :xs="24" v-if="trip.dayByDayDescription.length">
+                        <b>Программа по дням:</b>
+                        <a-collapse v-model:activeKey="activeKey">
+                            <a-collapse-panel v-for="day,index in trip.dayByDayDescription" :key="index" key="1" :header="`${ datePlugin.excursions.getNumeralDay(index) } день`">
+                                <span v-html="day"></span>
+                            </a-collapse-panel>
+                         
+                        </a-collapse>
+                    </a-col>
+
           <a-divider class="ma-0"></a-divider>
           <a-col :xs="24" v-if="trip.includedInPrice" class="mb-16">
             <b>В стоимость включено:</b> {{ trip.includedInPrice }}

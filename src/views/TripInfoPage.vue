@@ -6,7 +6,7 @@ import TinkoffLogo from "../assets/images/tinkofflogo.svg"
 
 import { useRoute } from "vue-router";
 import BackButton from "../components/BackButton.vue";
-
+import datePlugin from '../plugins/dates'
 import { useTrips } from "../stores/trips";
 import { useAuth } from "../stores/auth";
 import { message } from "ant-design-vue";
@@ -45,9 +45,8 @@ let buyNow = ref(false)
 let selectedDate = ref({});
 let selectedStartLocation = ref();
 let isInWaitingList = ref(false)
-let touristsList = ref([
-
-]);
+let touristsList = ref([]);
+let activeKey = ref(null)
 // watch([selected_bus, waiting_bus], async ([selected, waiting]) => {
 //     let bus_id = _.isEmpty(selected) ? waiting.transportType.bus_id : selected.transportType.bus_id
 //     if (!bus_id) return show_old_bus.value = true
@@ -570,17 +569,14 @@ onMounted(async () => {
                             </div>
 
                         </div>
-                        <!-- <div v-if="trip.transports?.length">
-                            <WaitingList :tripsCount="getCustomersCount(selectedDate.billsList)"
-                                :transport="trip.transports ?? []" />
-                        </div> -->
+
                         <div class="d-flex justify-center ma-8" v-if="trip.maxPeople -
-                            getCustomersCount(selectedDate.billsList) -
-                            selectedDate.selectedCosts.reduce((acc, cost) => {
-                                return acc + cost.count;
-                            }, 0) >
-                            0
-                        ">
+            getCustomersCount(selectedDate.billsList) -
+            selectedDate.selectedCosts.reduce((acc, cost) => {
+                return acc + cost.count;
+            }, 0) >
+            0
+            ">
                             <a-button type="primary" class="lets_go_btn" style="display: flex; justify-content: center"
                                 @click="buyTripDialog()">
                                 Купить
@@ -589,12 +585,12 @@ onMounted(async () => {
 
                         <div>
                             <b v-if="trip.maxPeople -
-                                getCustomersCount(selectedDate.billsList) -
-                                selectedDate.selectedCosts.reduce((acc, cost) => {
-                                    return acc + cost.count;
-                                }, 0) <=
-                                0
-                            ">
+            getCustomersCount(selectedDate.billsList) -
+            selectedDate.selectedCosts.reduce((acc, cost) => {
+                return acc + cost.count;
+            }, 0) <=
+            0
+            ">
                                 мест больше нет
                             </b>
                         </div>
@@ -603,6 +599,15 @@ onMounted(async () => {
 
                     <a-col :xs="24">
                         <span v-html="trip.description"></span>
+                    </a-col>
+                    <a-col :xs="24" v-if="trip.dayByDayDescription.length">
+                        <b>Программа по дням:</b>
+                        <a-collapse v-model:activeKey="activeKey">
+                            <a-collapse-panel v-for="day,index in trip.dayByDayDescription" :key="index" key="1" :header="`${ datePlugin.excursions.getNumeralDay(index) } день`">
+                                <span v-html="day"></span>
+                            </a-collapse-panel>
+                         
+                        </a-collapse>
                     </a-col>
                     <a-divider class="ma-0"></a-divider>
                     <a-col :xs="24" v-if="trip.includedInPrice" class="mb-4">
@@ -658,6 +663,16 @@ onMounted(async () => {
                             </div>
                         </div>
                         <span v-html="trip.description"></span>
+                   
+                        <a-col :xs="24">        
+                            <div v-for="day,index in trip.dayByDayDescription" :key="index" 
+                             >
+                             <div>
+                             <b>{{ datePlugin.excursions.getNumeralDay(index) }} день</b>  
+                             </div>
+                                <span v-html="day"></span>
+                            </div>
+                    </a-col>
                         <div v-if="trip.includedInPrice">
                             <b>В стоимость включено:</b> {{ trip.includedInPrice }}
                         </div>
@@ -713,13 +728,13 @@ onMounted(async () => {
                             Туристы:
                             <b :style="isNoPlaces ? 'color: red' : ''">
                                 {{
-                                    getCustomersCount(selectedDate.billsList) +
-                                    selectedDate.selectedCosts.reduce((acc, cost) => {
-                                        return acc + cost.count;
-                                    }, 0) +
-                                    "/" +
-                                    trip.maxPeople
-                                }}
+            getCustomersCount(selectedDate.billsList) +
+            selectedDate.selectedCosts.reduce((acc, cost) => {
+                return acc + cost.count;
+            }, 0) +
+            "/" +
+            trip.maxPeople
+        }}
                                 чел.
                             </b>
                         </div>
@@ -783,7 +798,7 @@ onMounted(async () => {
                                 </div>
                                 <div class="d-flex justify-center">
                                     <img :src="TinkoffLogo" class="tinkoff-logo">
-                                </div> 
+                                </div>
                             </div>
                         </div>
                         <div style="font-size:0.8em; padding-top:10px">

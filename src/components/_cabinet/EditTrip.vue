@@ -16,6 +16,7 @@ import { useRouter } from 'vue-router'
 import { useAuth } from '../../stores/auth'
 import { useTrips } from "../../stores/trips.js";
 import { useAppState } from "../../stores/appState";
+import datePlugin from '../../plugins/dates'
 
 import TripService from "../../service/TripService";
 
@@ -60,6 +61,7 @@ let form = ref({
     cost: [],
     offer: "",
     description: description.value,
+    dayByDayDescription: [],
     tripType: "",
     fromAge: "",
     startLocation: null,
@@ -84,6 +86,13 @@ const addCost = () => {
         price: "",
     });
 };
+
+const addDay = () => {
+    form.value.dayByDayDescription.push('')
+}
+const removeDay = (index) => {
+    form.value.dayByDayDescription.splice(index, 1);
+}
 
 const removeBonuses = (item) => {
     let index = form.value.bonuses.indexOf(item);
@@ -456,6 +465,34 @@ let formSchema = yup.object({
                             <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html"
                                 :toolbar="[['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }], [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }], ['link']]" />
                         </a-col>
+                        <a-col :span="24">
+                            <div>Описание программы по дням </div>
+                            <a-col :span="24" v-for="day, index in form.dayByDayDescription" :key="index"
+                                style="display: flex; flex-direction: column">
+
+                                <div><b>День {{ datePlugin.excursions.getNumeralDay(index) }}</b> <a-button
+                                        @click="removeDay(index)" shape="circle">
+                                        <span class="mdi mdi-minus"></span>
+                                    </a-button></div>
+                                <QuillEditor class="ql-editor" theme="snow"
+                                    v-model:content="form.dayByDayDescription[index]" contentType="html" :toolbar="[
+                ['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }],
+
+                [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
+
+                ['link']
+            ]
+                " />
+                                </col>
+
+
+                            </a-col>
+                            <a-button type="dashed" block @click="addDay" class="ma-8">
+                                <span class="mdi mdi-12px mdi-plus"></span>
+                                добавить день
+                            </a-button>
+                        </a-col>
+
                         <a-col :span="24">
                             <Field name="includedInPrice" v-slot="{ value, handleChange }"
                                 v-model="form.includedInPrice">
