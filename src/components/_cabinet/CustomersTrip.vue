@@ -58,13 +58,20 @@ let tripStat = computed(() => {
         received: 0,
         amount: 0,
         totalCost: 0,
+        additionalServicesSum: 0,
     }
     if (trip.value.billsList) {
         trip.value.billsList.forEach(element => {
             statistic.received = statistic.received + element.payment.amount
+            if (element.additionalServices?.length > 0) {
+                element.additionalServices.forEach((service) => {
+                    statistic.additionalServicesSum += service.count * service.price
+                    statistic.totalCost += service.count * service.price
+                })
+            }            
             element.cart.forEach(cart => {
-                statistic.amount = statistic.amount + cart.count
-                statistic.totalCost = statistic.totalCost + cart.count * cart.cost
+                statistic.amount += cart.count
+                statistic.totalCost += cart.count * cart.cost
             })
 
         });
@@ -330,7 +337,9 @@ onMounted(async () => {
                         <div>Максимум: {{ trip.maxPeople }} чел.</div>
                         <div>Забронировало: {{ tripStat ? tripStat.amount : '' }} чел.</div>
                         <div>Сумма полученная: {{ tripStat ? tripStat.received : '' }} руб.</div>
-                        <div>Сумма полная: {{ tripStat ? tripStat.totalCost : '' }} руб.</div>
+                        <div>Сумма доп. услуг {{ tripStat ? tripStat.additionalServicesSum : '' }} руб.</div>
+                        <div>Сумма без доп. услуг {{ tripStat ? tripStat.totalCost - tripStat.additionalServicesSum: '' }} руб.</div>
+                        <div>Сумма полная: <b>{{ tripStat ? tripStat.totalCost : '' }} руб.</b></div>
                     </a-card>
                 </a-col>
 
