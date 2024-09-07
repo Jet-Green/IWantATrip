@@ -87,7 +87,7 @@ let billTotal = (bill) => {
         return accumulator + object.cost * object.count;
     }, 0)
     for (let service of bill.additionalServices) {
-        result += service.price
+        result += service.price * Number(service.count)
     }
     return result
 }
@@ -364,25 +364,34 @@ onMounted(async () => {
                                 </div>
 
                             </div>
-
                             <div v-if="BILL.seats && BILL.seats.length">
                                 Места: {{ BILL.seats.join(', ') }}
                             </div>
-
-                            <div v-if="BILL.additionalServices?.length > 0">
+                            <div class="d-flex justify-end">
+                                {{ BILL.cart.reduce((acc, o) => { return acc + o.count * o.cost }, 0) }} руб.
+                            </div>
+                            
+                            <a-button v-if="BILL.additionalServices?.length > 0 && BILL.showAdditionalServices == undefined" type="dashed" style="text-transform: none;"
+                                 block size="x-small" @click="BILL.showAdditionalServices = true">доп. услуги {{ BILL.additionalServices.reduce((acc, o) => { return acc + o.count * o.price }, 0) }} руб.</a-button>
+                            <div v-if="BILL.additionalServices?.length > 0 && BILL.showAdditionalServices">
                                 <hr>
                                 <div v-for="service of BILL.additionalServices">
-                                    {{ service.name }} x {{ service.price }} руб.
+                                    {{ service.name }} {{ service.count }} x {{ service.price }} руб.
                                 </div>
+                                <div class="d-flex justify-end">
+                                    {{ BILL.additionalServices.reduce((acc, o) => { return acc + o.count * o.price }, 0) }} руб.
+                                </div>
+                                <hr>
                             </div>
 
                             <div class="d-flex justify-end">
-                                <span>Итого: </span>
-                                {{ billTotal(BILL) }} руб.
-
+                                <span>Итого: </span>&nbsp;
+                                <b>
+                                    {{ billTotal(BILL) }} руб.
+                                </b>
                             </div>
                             <div class="d-flex justify-end">
-                                <span>Оплачено: </span>
+                                <span>Оплачено: </span>&nbsp;
                                 {{ BILL.payment.amount }} руб.
                             </div>
                             <div v-for="doc in BILL.payment?.documents" class="d-flex justify-end">
@@ -535,7 +544,7 @@ onMounted(async () => {
         <a-modal v-model:open="setPaymentDialog" :footer="null" title="Поставить оплату">
             <a-row :gutter="[16, 16]">
                 <a-col :span="24">
-                    <div>К отплате: {{ billTotal(currentBill) }} руб.</div>
+                    <div>К оплате: {{ billTotal(currentBill) }} руб.</div>
                     <div>Оплачено: {{ currentBill.payment.amount }} руб.</div>
                     <div>Оплатить: {{ billTotal(currentBill) - currentBill.payment.amount }} руб.</div>
                     <a-row :gutter="[4, 4]">

@@ -84,7 +84,7 @@ async function initPayment(orderId, cart, clientEmail, shopInfo, tripName, addit
         }
         totalAmount += cartItem.cost * 100 * cartItem.count
     }
-    for(let service of additionalServices) {
+    for (let service of additionalServices) {
         Items.push(
             {
                 // Платформа Союз
@@ -106,15 +106,15 @@ async function initPayment(orderId, cart, clientEmail, shopInfo, tripName, addit
                 "PaymentMethod": "full_payment",
                 "PaymentObject": "service",
                 "Name": 'Дополнительные услуги',
-                "Price": service.price * 100,
-                "Quantity": 1,
-                "Amount": service.price * 100,
+                "Price": service.price * service.count * 100,
+                "Quantity": service.count,
+                "Amount": service.price * service.count * 100,
                 "Tax": "none",
                 "ShopCode": String(shopInfo.ShopCode),
                 "MeasurementUnit": "шт"
             },
         )
-        totalAmount += service.price * 100
+        totalAmount += service.price * service.count * 100
     }
     let payload =
     {

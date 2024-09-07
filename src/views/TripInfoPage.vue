@@ -144,9 +144,7 @@ let finalCost = computed(() => {
         }
     }
     for (let service of additionalServices.value) {
-        if (service.selected) {
-            sum += service.price
-        }
+        sum += service.price * service.count
     }
     return sum;
     // } 
@@ -224,7 +222,7 @@ async function refreshDates() {
     let response = await tripStore.getFullTripById(_id);
     let tripFromDb = response.data;
     for (let service of tripFromDb.additionalServices) {
-        additionalServices.value.push({ ...service, selected: false })
+        additionalServices.value.push({ ...service, count: 0 })
     }
 
     tripDates.value = [];
@@ -290,6 +288,16 @@ let getStartLocationNames = computed(() => {
     return results.join(', ')
 })
 
+let getSelectedUsersCount = computed(() => {
+    let result = 0
+    for (let date of tripDates.value) {
+        for (let cost of date.selectedCosts) {
+            result += cost.count
+        }
+    }    
+    return result
+})
+
 async function buyTrip() {
     if (userStore.user.email) {
         // цены нужно поменять
@@ -324,7 +332,7 @@ async function buyTrip() {
                 date: Date.now(),
                 isBoughtNow: buyNow.value,
                 cart: selectedDate.value.selectedCosts,
-                additionalServices: additionalServices.value.filter((el) => el.selected),
+                additionalServices: additionalServices.value.filter((el) => el.count > 0),
                 tripId: selectedDate.value._id,
                 selectedStartLocation: selectedStartLocation.value,
                 seats: selected_seats.value,
@@ -774,16 +782,18 @@ onMounted(async () => {
                     </a-col>
                     <a-col v-if="trip.additionalServices?.length > 0" :span="24">
                         <div>Дополнительные услуги</div>
-                        <a-row  v-for="service of additionalServices" :gutter="[16, 16]">
-                            <a-col :span="12">
-                                <b style="font-size: 16px;">
-                                    {{ service.name }}
-                                </b>
-                            </a-col>
-                            <a-col :span="12" class="d-flex align-center" style="justify-content: end;">
-                                {{ service.price }}₽
-                                <a-checkbox v-model:checked="service.selected" class="ma-8">добавить</a-checkbox>
-                            </a-col>
+                        <a-row  v-for="service of additionalServices" class="d-flex space-between">
+                            <div class="d-flex align-center">
+                                {{ service.name }}
+                            </div>
+                            <div class="d-flex align-center">
+                                {{ service.price }} руб.
+                            </div>
+                            <div class="d-flex direction-column">
+                                <span style="font-size: 8px;">кол-во</span>
+                                <a-input-number v-model:value="service.count" :min="0" :max="getSelectedUsersCount" placeholder="чел"></a-input-number>
+                                <!-- <a-checkbox v-model:checked="service.selected" class="ma-8">добавить</a-checkbox> -->
+                            </div>
                         </a-row>
                     </a-col>
                     <a-col :span="24" class="d-flex justify-end">
