@@ -381,7 +381,7 @@ onMounted(async () => {
                             </div>
                             
 
-                            <div>
+                            <div v-if="BILL.additionalServices?.length > 0">
                                 <hr>
                                 <div v-for="service of BILL.additionalServices" class="d-flex justify-end">
                                     {{ service.name }} {{ service.count }} x {{ service.price }} руб. =
