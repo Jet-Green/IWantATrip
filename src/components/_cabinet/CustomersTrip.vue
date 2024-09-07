@@ -86,6 +86,9 @@ let billTotal = (bill) => {
     let result = bill.cart.reduce((accumulator, object) => {
         return accumulator + object.cost * object.count;
     }, 0)
+    for (let service of bill.additionalServices) {
+        result += service.price
+    }
     return result
 }
 
@@ -340,7 +343,6 @@ onMounted(async () => {
             clearData(BILL?.date)
         }}</b>
                             </div>
-
                             <div>
                                 <span class="mdi mdi-account-outline" style=""></span>
                                 {{ BILL.userInfo.fullname }}
@@ -367,20 +369,21 @@ onMounted(async () => {
                                 Места: {{ BILL.seats.join(', ') }}
                             </div>
 
+                            <div v-if="BILL.additionalServices?.length > 0">
+                                <hr>
+                                <div v-for="service of BILL.additionalServices">
+                                    {{ service.name }} x {{ service.price }} руб.
+                                </div>
+                            </div>
+
                             <div class="d-flex justify-end">
                                 <span>Итого: </span>
-                                {{
-            billTotal(BILL)
-        }}
-                                руб.
+                                {{ billTotal(BILL) }} руб.
 
                             </div>
                             <div class="d-flex justify-end">
                                 <span>Оплачено: </span>
-                                {{
-                BILL.payment.amount
-            }}
-                                руб.
+                                {{ BILL.payment.amount }} руб.
                             </div>
                             <div v-for="doc in BILL.payment?.documents" class="d-flex justify-end">
                                 {{ doc.payDocument }} -- {{ doc.paySum }} руб.
