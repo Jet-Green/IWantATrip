@@ -376,7 +376,7 @@ onMounted(async () => {
                             <div v-if="BILL.seats && BILL.seats.length">
                                 Места: {{ BILL.seats.join(', ') }}
                             </div>
-                            <div class="d-flex justify-end">
+                            <div class="d-flex justify-end" v-if="BILL.additionalServices?.length > 0">
                                 {{ BILL.cart.reduce((acc, o) => { return acc + o.count * o.cost }, 0) }} руб.
                             </div>
                             

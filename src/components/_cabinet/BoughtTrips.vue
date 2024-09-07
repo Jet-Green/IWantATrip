@@ -31,9 +31,13 @@ const clearData = (dateNumber) => {
     return "";
 };
 let billTotal = (bill) => {
-    return bill.cart.reduce((accumulator, object) => {
+    let result = bill.cart.reduce((accumulator, object) => {
         return accumulator + object.cost * object.count;
     }, 0)
+    for (let service of bill.additionalServices) {
+        result += service.count * service.price
+    }
+    return result
 }
 
 async function updateBought() {
@@ -124,21 +128,36 @@ onMounted(async () => {
                         <div v-if="cartItem.count">
                             {{ cartItem.costType }} {{ cartItem.count }} x {{ cartItem.cost }} руб.
                         </div>
-
                     </div>
 
                     <div v-if="BILL.seats && BILL.seats.length">
                         Места: {{ BILL.seats.join(', ') }}
                     </div>
-
+                    <div class="d-flex justify-end" v-if="BILL.additionalServices?.length > 0">
+                        {{ BILL.cart.reduce((acc, o) => { return acc + o.count * o.cost }, 0) }} руб.
+                    </div>
+                    <a-button v-if="BILL.additionalServices?.length > 0 && BILL.showAdditionalServices == undefined" type="dashed" style="text-transform: none;"
+                        block size="x-small" @click="BILL.showAdditionalServices = true">доп. услуги {{ BILL.additionalServices.reduce((acc, o) => { return acc + o.count * o.price }, 0) }} руб.</a-button>
+                    <div v-if="BILL.additionalServices?.length > 0 && BILL.showAdditionalServices">
+                        <hr>
+                        <div v-for="service of BILL.additionalServices">
+                            {{ service.name }} {{ service.count }} x {{ service.price }} руб.
+                        </div>
+                        <div class="d-flex justify-end">
+                            {{ BILL.additionalServices.reduce((acc, o) => { return acc + o.count * o.price }, 0) }} руб.
+                        </div>
+                        <hr>
+                    </div>
                     <div class="d-flex justify-end">
-                        <span>Итого: </span>
-                        {{ billTotal(BILL) }}
-                        руб.
+                        <span>Итого: </span>&nbsp;
+                        <b>
+                            {{ billTotal(BILL) }}
+                            руб.
+                        </b>
 
                     </div>
                     <div class="d-flex justify-end">
-                        <span>Оплачено: </span>
+                        <span>Оплачено: </span>&nbsp;
                         {{ BILL.payment.amount }}
                         руб.
                     </div>
