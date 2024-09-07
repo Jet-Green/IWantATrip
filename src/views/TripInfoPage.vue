@@ -48,6 +48,7 @@ let isInWaitingList = ref(false)
 let touristsList = ref([
 
 ]);
+let additionalServices = ref([])
 // watch([selected_bus, waiting_bus], async ([selected, waiting]) => {
 //     let bus_id = _.isEmpty(selected) ? waiting.transportType.bus_id : selected.transportType.bus_id
 //     if (!bus_id) return show_old_bus.value = true
@@ -143,6 +144,11 @@ let finalCost = computed(() => {
             sum += cost.cost * cost.count;
         }
     }
+    for (let service of additionalServices.value) {
+        if (service.selected) {
+            sum += service.price
+        }
+    }
     return sum;
     // } 
     // else {
@@ -218,6 +224,9 @@ let getCurrentCustomerNumber = computed(() => {
 async function refreshDates() {
     let response = await tripStore.getFullTripById(_id);
     let tripFromDb = response.data;
+    for (let service of tripFromDb.additionalServices) {
+        additionalServices.value.push({ ...service, selected: false })
+    }
 
     tripDates.value = [];
     trip.value = tripFromDb;
@@ -316,6 +325,7 @@ async function buyTrip() {
                 date: Date.now(),
                 isBoughtNow: buyNow.value,
                 cart: selectedDate.value.selectedCosts,
+                additionalServices: additionalServices.value.filter((el) => el.selected),
                 tripId: selectedDate.value._id,
                 selectedStartLocation: selectedStartLocation.value,
                 seats: selected_seats.value,
@@ -335,7 +345,7 @@ async function buyTrip() {
             let tinkoffUrl = ''
             if (buyNow.value) {
                 const orderId = Date.now().toString()
-                let { data, token, success } = await tinkoffPlugin.initPayment(orderId, bill.cart, userStore.user.email, trip.value.tinkoffContract, trip.value.name)
+                let { data, token, success } = await tinkoffPlugin.initPayment(orderId, bill.cart, userStore.user.email, trip.value.tinkoffContract, trip.value.name, bill.additionalServices)
                 if (!success) {
                     message.config({ duration: 3, top: "90vh" });
                     message.error({ content: "Ошибка при оплате" });
@@ -746,6 +756,20 @@ onMounted(async () => {
                                     placeholder="чел"></a-input-number>
                             </div>
                         </div>
+                    </a-col>
+                    <a-col v-if="trip.additionalServices?.length > 0" :span="24">
+                        <div>Дополнительные услуги</div>
+                        <a-row  v-for="service of additionalServices" :gutter="[16, 16]">
+                            <a-col :span="12">
+                                <b style="font-size: 16px;">
+                                    {{ service.name }}
+                                </b>
+                            </a-col>
+                            <a-col :span="12" class="d-flex align-center" style="justify-content: end;">
+                                {{ service.price }}₽
+                                <a-checkbox v-model:checked="service.selected" class="ma-8">добавить</a-checkbox>
+                            </a-col>
+                        </a-row>
                     </a-col>
                     <a-col :span="24" class="d-flex justify-end">
                         <b>Итого: {{ finalCost }} руб.</b>

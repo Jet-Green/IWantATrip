@@ -587,7 +587,7 @@ onMounted(async () => {
                     </a-popconfirm>
                 </a-col>
             </a-row>
-            <hr v-if="trip.additionalServices.length > 0">
+            <hr v-if="trip.additionalServices?.length > 0">
             <a-row :gutter="[16, 16]">
                 <a-col :span="24">
                     Название
