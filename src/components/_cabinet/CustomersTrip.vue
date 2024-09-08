@@ -31,6 +31,7 @@ let userInfo = ref({
 })
 let selectedStartLocation = ref();
 let selectedByUser = ref([])
+let additionalServices = ref([])
 
 let addCustomerDialog = ref(false)
 let setPaymentDialog = ref(false)
@@ -50,7 +51,13 @@ const print = async () => {
     await htmlToPaper('printMe');
 };
 
-
+let getSelectedUsersCount = computed(() => {
+    let result = 0
+    for (let cartItem of selectedByUser.value) {
+        result += cartItem.count
+    }    
+    return result
+})
 
 
 let tripStat = computed(() => {
@@ -85,6 +92,9 @@ let finalCost = computed(() => {
         for (let c of selectedByUser.value) {
             sum += c.cost * c.count;
         }
+    }
+    for (let service of additionalServices.value) {
+        sum += service.price * Number(service.count)
     }
     return sum;
 });
@@ -136,6 +146,7 @@ async function buyTrip(isBoughtNow) {
             },
             selectedStartLocation: selectedStartLocation.value,
             cart,
+            additionalServices: additionalServices.value.filter((el) => el.count > 0),
             seats: selected_seats.value,
             tripId: trip.value._id,
             userInfo: {
@@ -226,6 +237,11 @@ function getPhoneNumber(number) {
 let loading = ref(false)
 async function updateTripInfo() {
     let { data } = await tripStore.getFullTripById(route.query._id)
+
+    for (let service of data.additionalServices) {
+        additionalServices.value.push({ ...service, count: 0 })
+    }
+
     for (let b of data.billsList) {
         if (b.tinkoff) {
             let res = await tinkoffPlugin.checkPayment(b.tinkoff.paymentId, b.tinkoff.token)
@@ -609,6 +625,22 @@ onMounted(async () => {
                         </div>
                     </div>
                     <a-checkbox v-model:checked="isSupervisor">Руководитель</a-checkbox>
+                </a-col>
+                <a-col v-if="trip.additionalServices?.length > 0" :span="24">
+                    <div>Дополнительные услуги</div>
+                    <a-row  v-for="service of additionalServices" class="d-flex space-between">
+                        <div class="d-flex align-center">
+                            {{ service.name }}
+                        </div>
+                        <div class="d-flex align-center">
+                            {{ service.price }} руб.
+                        </div>
+                        <div class="d-flex direction-column">
+                            <span style="font-size: 8px;">кол-во</span>
+                            <a-input-number v-model:value="service.count" :min="0" :max="getSelectedUsersCount" placeholder="чел"></a-input-number>
+                            <!-- <a-checkbox v-model:checked="service.selected" class="ma-8">добавить</a-checkbox> -->
+                        </div>
+                    </a-row>
                 </a-col>
                 <a-col :span="24">
                     <b>Итого: {{ finalCost }} руб.</b>
