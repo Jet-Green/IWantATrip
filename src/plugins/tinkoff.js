@@ -105,7 +105,7 @@ async function initPayment(orderId, cart, clientEmail, shopInfo, tripName, addit
                 },
                 "PaymentMethod": "full_payment",
                 "PaymentObject": "service",
-                "Name": 'Дополнительные услуги',
+                "Name": service.name,
                 "Price": service.price * service.count * 100,
                 "Quantity": service.count,
                 "Amount": service.price * service.count * 100,
