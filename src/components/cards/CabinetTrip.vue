@@ -66,20 +66,18 @@ let additionalService = ref({
 })
 
 const clearData = (dataString) => {
-    let date = 0
-    if (dataString.length == 13) {
-        const dataFromString = new Date(Number(dataString));
-        date = dataFromString
-
-    } else {
-        date = new Date(dataString)
-    };
-    return date.toLocaleDateString("ru-Ru", {
-        year: "2-digit",
-        month: "2-digit",
-        day: "2-digit",
-
-    })
+    dataString = dataString - trip.value?.timezoneOffset
+    const date = new Date(dataString);
+    if (!isNaN(date.getTime())) {
+        return date.toLocaleDateString("ru-RU", {
+            year: "2-digit",
+            month: "2-digit",
+            day: "2-digit",
+            timeZone: 'UTC' // Используем UTC для гарантии, что время будет в формате UTC
+        });
+    }
+   
+    return '';
 }
 function editTrip(_id) {
     router.push(`/edit-trip?_id=${_id}`);

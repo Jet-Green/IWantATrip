@@ -161,15 +161,17 @@ let finalCost = computed(() => {
 });
 
 const clearData = (dateNumber) => {
-    let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
-        year: "2-digit",
-        month: "2-digit",
-        day: "2-digit",
-    });
-    if (date !== "Invalid Date" && date) {
-        return date;
+    dateNumber = dateNumber - trip.value?.timezoneOffset
+    const date = new Date(dateNumber);
+    if (!isNaN(date.getTime())) {
+        return date.toLocaleDateString("ru-RU", {
+            year: "2-digit",
+            month: "2-digit",
+            day: "2-digit",
+            timeZone: 'UTC' // Используем UTC для гарантии, что время будет в формате UTC
+        });
     }
-    return "";
+    return '';
 };
 
 function getImg(index) {
@@ -294,7 +296,7 @@ let getSelectedUsersCount = computed(() => {
         for (let cost of date.selectedCosts) {
             result += cost.count
         }
-    }    
+    }
     return result
 })
 
@@ -621,10 +623,11 @@ onMounted(async () => {
                     <a-col :xs="24" v-if="trip.dayByDayDescription.length">
                         <b>Программа по дням:</b>
                         <a-collapse v-model:activeKey="activeKey">
-                            <a-collapse-panel v-for="day,index in trip.dayByDayDescription" :key="index" key="1" :header="`${ datePlugin.excursions.getNumeralDay(index) } день`">
+                            <a-collapse-panel v-for="day, index in trip.dayByDayDescription" :key="index" key="1"
+                                :header="`${datePlugin.excursions.getNumeralDay(index)} день`">
                                 <span v-html="day"></span>
                             </a-collapse-panel>
-                         
+
                         </a-collapse>
                     </a-col>
                     <a-divider class="ma-0"></a-divider>
@@ -681,16 +684,15 @@ onMounted(async () => {
                             </div>
                         </div>
                         <span v-html="trip.description"></span>
-                   
-                        <a-col :xs="24">        
-                            <div v-for="day,index in trip.dayByDayDescription" :key="index" 
-                             >
-                             <div>
-                             <b>{{ datePlugin.excursions.getNumeralDay(index) }} день</b>  
-                             </div>
+
+                        <a-col :xs="24">
+                            <div v-for="day, index in trip.dayByDayDescription" :key="index">
+                                <div>
+                                    <b>{{ datePlugin.excursions.getNumeralDay(index) }} день</b>
+                                </div>
                                 <span v-html="day"></span>
                             </div>
-                    </a-col>
+                        </a-col>
                         <div v-if="trip.includedInPrice">
                             <b>В стоимость включено:</b> {{ trip.includedInPrice }}
                         </div>
@@ -782,7 +784,7 @@ onMounted(async () => {
                     </a-col>
                     <a-col v-if="trip.additionalServices?.length > 0" :span="24">
                         <div>Дополнительные услуги</div>
-                        <a-row  v-for="service of additionalServices" class="d-flex space-between">
+                        <a-row v-for="service of additionalServices" class="d-flex space-between">
                             <div class="d-flex align-center">
                                 {{ service.name }}
                             </div>
@@ -791,7 +793,8 @@ onMounted(async () => {
                             </div>
                             <div class="d-flex direction-column">
                                 <span style="font-size: 8px;">кол-во</span>
-                                <a-input-number v-model:value="service.count" :min="0" :max="getSelectedUsersCount" placeholder="чел"></a-input-number>
+                                <a-input-number v-model:value="service.count" :min="0" :max="getSelectedUsersCount"
+                                    placeholder="чел"></a-input-number>
                                 <!-- <a-checkbox v-model:checked="service.selected" class="ma-8">добавить</a-checkbox> -->
                             </div>
                         </a-row>

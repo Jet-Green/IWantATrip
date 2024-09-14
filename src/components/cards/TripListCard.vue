@@ -11,15 +11,19 @@ function goToTripPage() {
   router.push(`/trip?_id=${props.trip._id}`);
 }
 const clearData = (dateNumber) => {
-  let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
-    year: "2-digit",
-    month: "2-digit",
-    day: "2-digit",
-  })
-  if (date !== 'Invalid Date' && date) {
-    return date
+ 
+dateNumber  = dateNumber - props.trip?.timezoneOffset
+  const date = new Date(dateNumber);
+  if (!isNaN(date.getTime())) {
+    return date.toLocaleDateString("ru-RU", {
+      year: "2-digit",
+      month: "2-digit",
+      day: "2-digit",
+      timeZone: 'UTC' // Используем UTC для гарантии, что время будет в формате UTC
+    });
   }
-  return ''
+   console.log(date)
+  return '';
 }
 function getDate() {
   let start = clearData(props.trip.start)
