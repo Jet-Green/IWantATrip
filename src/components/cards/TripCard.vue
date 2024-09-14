@@ -12,7 +12,7 @@ function goToTripPage() {
   router.push(`/trip?_id=${props.trip._id}`)
 }
 const clearData = (dateNumber) => {
-  dateNumber = dateNumber - trip.value?.timezoneOffset
+  dateNumber = dateNumber - props.trip.timezoneOffset
     const date = new Date(dateNumber);
     if (!isNaN(date.getTime())) {
         return date.toLocaleDateString("ru-RU", {
