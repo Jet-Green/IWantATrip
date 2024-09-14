@@ -55,6 +55,7 @@ let form = reactive({
   name: "",
   start: null,
   end: null,
+  timezoneOffset: null,
   maxPeople: null,
   duration: "",
   images: [],
@@ -138,6 +139,7 @@ function submit() {
       name: "",
       start: null,
       end: null,
+      timezoneOffset:null,
       maxPeople: null,
       duration: "",
       images: [],
@@ -312,13 +314,14 @@ watch(description, (newValue) => {
 watch(start, () => {
   // округлить, чтобы при поиске мы точно попадали
   if (start.value) {
-    let startDate = new Date(start.value.$d);
-    startDate.setHours(0)
-    startDate.setMinutes(0)
-    startDate.setSeconds(0)
-    startDate.setMilliseconds(0)
 
-    form.start = Number(Date.parse(startDate.toString()));
+    let startDate = new Date(start.value.$d);
+    form.timezoneOffset = startDate.getTimezoneOffset()* 60 * 1000
+    startDate.setHours(0, 0, 0, 0); // Сброс времени до начала дня
+    form.start = startDate.getTime(); // Преобразуем дату в число и сохраняем в form.start
+
+
+
     if (!end.value) {
       end.value = start.value
     }
@@ -332,12 +335,8 @@ watch(end, () => {
   // округлить, чтобы при поиске мы точно попадали
   if (end.value) {
     let endDate = new Date(end.value.$d);
-    endDate.setHours(23)
-    endDate.setMinutes(59)
-    endDate.setSeconds(59)
-    endDate.setMilliseconds(999)
-
-    form.end = Date.parse(endDate);
+    endDate.setHours(23, 59, 59, 999); // Установка времени до конца дня
+    form.end = endDate.getTime(); // Преобразуем дату в число и сохраняем в form.end
     if (form.start > form.end) {
       end.value = dayjs(form.start)
     }
@@ -576,7 +575,7 @@ let formSchema = yup.object({
         ['link']
       ]
         " />
-        
+
             </a-col>
             <a-col :span="24">
               <div>Описание программы по дням </div>
@@ -599,12 +598,12 @@ let formSchema = yup.object({
         " />
                 </col>
 
-            
+
               </a-col>
               <a-button type="dashed" block @click="addDay" class="ma-8">
-                  <span class="mdi mdi-12px mdi-plus"></span>
-                  добавить день
-                </a-button>
+                <span class="mdi mdi-12px mdi-plus"></span>
+                добавить день
+              </a-button>
             </a-col>
 
             <a-col :span="24">
