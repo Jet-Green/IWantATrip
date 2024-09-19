@@ -52,6 +52,18 @@ export default defineConfig(
         vue(),
         VitePWA({
           registerType: 'autoUpdate',
+          workbox: {
+            // Контролируем кэширование файлов, чтобы обновлять их только при изменениях
+            clientsClaim: true,
+            skipWaiting: true,
+            runtimeCaching: [{
+              urlPattern: ({ request }) => request.destination === 'document',
+              handler: 'NetworkFirst', // Получаем данные из сети, если возможно
+              options: {
+                cacheName: 'html-cache',
+              }
+            }]
+          },
           includeAssets: ['favicon.svg', 'favicon.ico', 'robots.txt', 'images/apple-touch-icon.png'],
           manifest: {
             name: 'Города и веси',
@@ -59,6 +71,7 @@ export default defineConfig(
             description: 'Description of your app',
             theme_color: '#ffffff',
             background_color: "#ffffff",
+            version: "1.1.1",
             display: "standalone",
             icons: [
               {
