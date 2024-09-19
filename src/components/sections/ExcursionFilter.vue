@@ -180,8 +180,8 @@ onMounted(async () => {
       <a-row :gutter="[8, 8]" class="d-flex justify-center flex-wrap">
         <a-col :span="24" :md="6" class="d-flex direction-column">
 
-          <div for="search" style="font-size: 10px; line-height: 10px">искать</div>
-          <a-input v-model:value="query" placeholder="обзорная" name="search"
+          <div for="search" style="font-size: 10px; line-height: 10px">поиск</div>
+          <a-input v-model:value="query" placeholder="по названию, содержанию" name="search"
             style="z-index: 0; width: 100%; margin-bottom: 6px" />
 
         </a-col>
@@ -235,7 +235,7 @@ onMounted(async () => {
 
     <a-col :span="24" :md="6" class="d-flex justify-center align-center">
 
-      
+
       <a-checkbox v-model:checked="havePrices"> Бесплатно</a-checkbox>
 
     </a-col>
