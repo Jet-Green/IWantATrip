@@ -666,7 +666,14 @@ const router = createRouter({
         {
           path: "/create-excursion",
           name: "CreateExcursion",
-          component: () => import('../views/CreateExcursion.vue')
+          component: () => import('../views/CreateExcursion.vue'),
+          beforeEnter: async (to, from) => {
+            let userStore = useAuth()
+            if (!localStorage.getItem('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+            if (!userStore.isAuth)
+              return '/auth'
+          }
         }
       ]
     },

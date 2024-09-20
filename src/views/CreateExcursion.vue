@@ -17,7 +17,7 @@ const appStateStore = useAppState()
 const userStore = useAuth()
 const router = useRouter()
 
-const user_id = userStore.user._id
+const user_id = userStore?.user._id
 
 let excursionTypes = appStateStore?.appState[0]?.excursionTypes || []
 let locationSearchRequest = ref("")
