@@ -117,8 +117,8 @@ export default {
     updateTourists(bill) {
         return $api.post('/trips/update-bills-tourists', { _id: bill, touristsList: bill.touristsList })
     },
-    updatePartner(partner, trip_id) {
-        return $api.post('/trips/update-partner', { partner: partner, _id: trip_id })
+    updatePartner(partner, trip_id, canSellPartnerTour) {
+        return $api.post('/trips/update-partner', { partner: partner, _id: trip_id, canSellPartnerTour:canSellPartnerTour })
     },
     updateCatalogTrip(_id, trip) {
         return $api.post('/catalog/update-catalog-trip', { _id, trip })

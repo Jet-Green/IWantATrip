@@ -72,7 +72,8 @@ let form = reactive({
   startLocation: null,
   bonuses: [],
   returnConditions: "",
-
+  partner: "",
+  canSellPartnerTour: null,
   includedInPrice: "",
   paidExtra: "",
   travelRequirement: ""
@@ -139,7 +140,7 @@ function submit() {
       name: "",
       start: null,
       end: null,
-      timezoneOffset:null,
+      timezoneOffset: null,
       maxPeople: null,
       duration: "",
       images: [],
@@ -159,6 +160,8 @@ function submit() {
       paidExtra: "",
       travelRequirement: "",
       isModerated: false,
+      partner: "",
+      canSellPartnerTour: null,
 
     });
     images = [];
@@ -316,7 +319,7 @@ watch(start, () => {
   if (start.value) {
 
     let startDate = new Date(start.value.$d);
-    form.timezoneOffset = startDate.getTimezoneOffset()* 60 * 1000
+    form.timezoneOffset = startDate.getTimezoneOffset() * 60 * 1000
     startDate.setHours(0, 0, 0, 0); // Сброс времени до начала дня
     form.start = startDate.getTime(); // Преобразуем дату в число и сохраняем в form.start
 
@@ -398,7 +401,7 @@ let formSchema = yup.object({
               <div class="d-flex" style="overflow-x: scroll">
                 <img v-for="(pr, i) in previews   " :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
                   @click="delPhotoDialog = true;
-      targetIndex = i;" @error="handleImgError(i)" />
+                  targetIndex = i;" @error="handleImgError(i)" />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
@@ -504,8 +507,8 @@ let formSchema = yup.object({
                 <div>
                   <a-select @update:value="handleChange" :value="value" style="width: 100%">
                     <a-select-option v-for="   tripType in appStore.appState[0].tripType   " :value="tripType">{{
-        tripType
-      }}</a-select-option>
+                      tripType
+                    }}</a-select-option>
                   </a-select>
                 </div>
               </Field>
@@ -542,7 +545,7 @@ let formSchema = yup.object({
             <a-col :span="24">
               <Field name="offer" v-slot="{ value, handleChange }" v-model="form.offer">
                 Краткое описание
-                <a-textarea autosize @update:value="handleChange" :value="value"
+                <a-textarea autoSize @update:value="handleChange" :value="value"
                   placeholder="Едем в Татарстан за новыми эмоциями!" size="large">
                 </a-textarea>
               </Field>
@@ -554,7 +557,7 @@ let formSchema = yup.object({
             <a-col :span="24">
               <Field name="tripRoute" v-slot="{ value, handleChange }" v-model="form.tripRoute">
                 Ключевые точки:
-                <a-textarea autosize @update:value="handleChange" :value="value" placeholder="Глазов-Пермь-Кама"
+                <a-textarea autoSize @update:value="handleChange" :value="value" placeholder="Глазов-Пермь-Кама"
                   size="large">
                 </a-textarea>
               </Field>
@@ -568,13 +571,13 @@ let formSchema = yup.object({
 
               <QuillEditor class="ql-editor" theme="snow" ref="quill" v-model:content="description" contentType="html"
                 :toolbar="[
-        ['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }],
+                  ['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }],
 
-        [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
+                  [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
 
-        ['link']
-      ]
-        " />
+                  ['link']
+                ]
+                  " />
 
             </a-col>
             <a-col :span="24">
@@ -589,13 +592,13 @@ let formSchema = yup.object({
                   </a-button></div>
                 <QuillEditor class="ql-editor" theme="snow" v-model:content="form.dayByDayDescription[index]"
                   contentType="html" :toolbar="[
-        ['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }],
+                    ['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }],
 
-        [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
+                    [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
 
-        ['link']
-      ]
-        " />
+                    ['link']
+                  ]
+                    " />
                 </col>
 
 
@@ -609,7 +612,7 @@ let formSchema = yup.object({
             <a-col :span="24">
               <Field name="includedInPrice" v-slot="{ value, handleChange }" v-model="form.includedInPrice">
                 В стоимость включено
-                <a-textarea autosize @update:value="handleChange" :value="value" placeholder="" size="large">
+                <a-textarea autoSize @update:value="handleChange" :value="value" placeholder="" size="large">
                 </a-textarea>
               </Field>
               <Transition name="fade">
@@ -619,7 +622,7 @@ let formSchema = yup.object({
             <a-col :span="24">
               <Field name="paidExtra" v-slot="{ value, handleChange }" v-model="form.paidExtra">
                 Дополнительно оплачивается
-                <a-textarea autosize @update:value="handleChange" :value="value" placeholder="" size="large">
+                <a-textarea autoSize @update:value="handleChange" :value="value" placeholder="" size="large">
                 </a-textarea>
               </Field>
               <Transition name="fade">
@@ -629,7 +632,7 @@ let formSchema = yup.object({
             <a-col :span="24">
               <Field name="travelRequirement" v-slot="{ value, handleChange }" v-model="form.travelRequirement">
                 Требование к поездке
-                <a-textarea autosize @update:value="handleChange" :value="value" placeholder="" size="large">
+                <a-textarea autoSize @update:value="handleChange" :value="value" placeholder="" size="large">
                 </a-textarea>
               </Field>
               <Transition name="fade">
@@ -641,15 +644,30 @@ let formSchema = yup.object({
             <a-col :span="24">
               <Field name="returnConditions" v-slot="{ value, handleChange }" v-model="form.returnConditions">
                 Условия возврата
-                <a-textarea autosize @update:value="handleChange" :value="value" placeholder="" size="large">
+                <a-textarea autoSize @update:value="handleChange" :value="value" placeholder="" size="large">
                 </a-textarea>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="offer" class="error-message" />
               </Transition>
             </a-col>
+            <a-col :span="24" :md="12">
+              <Field name="partner" v-slot="{ value, handleChange }" v-model="form.partner">
+                Это тур партнера
+                <a-textarea autoSize @update:value="handleChange" :value="value" placeholder="" size="large">
+                </a-textarea>
+              </Field>
+            </a-col>
+            <a-col :span="24" :md="12" v-if="form.partner.length">
+              Принимать оплату в приложении?
+              <div class="d-flex align-center justify-center" style="height:100%">
+                <a-checkbox v-model:checked="form.canSellPartnerTour">{{ form.canSellPartnerTour? "ДА": "НЕТ" }}</a-checkbox>
+              </div>
 
-            <a-col :span="24" class="d-flex justify-center">
+            </a-col>
+
+
+            <a-col :span="24" class="d-flex justify-center ">
               <a-button class="lets_go_btn ma-36" type="primary" html-type="submit">Отправить
               </a-button>
             </a-col>

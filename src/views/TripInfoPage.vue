@@ -591,12 +591,12 @@ onMounted(async () => {
                         </div>
 
                         <div class="d-flex justify-center ma-8" v-if="trip.maxPeople -
-            getCustomersCount(selectedDate.billsList) -
-            selectedDate.selectedCosts.reduce((acc, cost) => {
-                return acc + cost.count;
-            }, 0) >
-            0
-            ">
+                            getCustomersCount(selectedDate.billsList) -
+                            selectedDate.selectedCosts.reduce((acc, cost) => {
+                                return acc + cost.count;
+                            }, 0) >
+                            0
+                        ">
                             <a-button type="primary" class="lets_go_btn" style="display: flex; justify-content: center"
                                 @click="buyTripDialog()">
                                 Купить
@@ -605,12 +605,12 @@ onMounted(async () => {
 
                         <div>
                             <b v-if="trip.maxPeople -
-            getCustomersCount(selectedDate.billsList) -
-            selectedDate.selectedCosts.reduce((acc, cost) => {
-                return acc + cost.count;
-            }, 0) <=
-            0
-            ">
+                                getCustomersCount(selectedDate.billsList) -
+                                selectedDate.selectedCosts.reduce((acc, cost) => {
+                                    return acc + cost.count;
+                                }, 0) <=
+                                0
+                            ">
                                 мест больше нет
                             </b>
                         </div>
@@ -748,13 +748,13 @@ onMounted(async () => {
                             Туристы:
                             <b :style="isNoPlaces ? 'color: red' : ''">
                                 {{
-            getCustomersCount(selectedDate.billsList) +
-            selectedDate.selectedCosts.reduce((acc, cost) => {
-                return acc + cost.count;
-            }, 0) +
-            "/" +
-            trip.maxPeople
-        }}
+                                    getCustomersCount(selectedDate.billsList) +
+                                    selectedDate.selectedCosts.reduce((acc, cost) => {
+                                        return acc + cost.count;
+                                    }, 0) +
+                                    "/" +
+                                    trip.maxPeople
+                                }}
                                 чел.
                             </b>
                         </div>
@@ -803,9 +803,10 @@ onMounted(async () => {
                         <b>Итого: {{ finalCost }} руб.</b>
                     </a-col>
 
-                    <div v-if="trip.partner">
+                    <div v-if="!trip?.canSellPartnerTour && trip.partner">
                         <h4 class="warning">Наличие мест требует уточнения!</h4>
                     </div>
+
 
                     <!-- <a-col :span="24">
                         <WaitingList v-if="people_amount > 0 || show_old_bus" v-model:selected="selected_bus"
@@ -826,7 +827,7 @@ onMounted(async () => {
                             <a-button html-type="submit" class="btn" @click="buyNow = false" :disabled="isNoPlaces">
                                 Заказать
                             </a-button>
-                            <div class="buy-btn" v-if="!trip.partner">
+                            <div class="buy-btn" v-if="!trip.partner || trip?.canSellPartnerTour">
                                 <div>
                                     <a-button html-type="submit" :disabled="isNoPlaces" @click="buyNow = true"
                                         type="primary" class="lets_go_btn">

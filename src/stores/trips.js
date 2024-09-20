@@ -238,9 +238,9 @@ export const useTrips = defineStore('trips', {
                 console.log(error);
             }
         },
-        async updatePartner(partner, trip_id) {
+        async updatePartner(partner, trip_id, canSellPartnerTour) {
             try {
-                let res = await TripService.updatePartner(partner, trip_id)
+                let res = await TripService.updatePartner(partner, trip_id, canSellPartnerTour)
                 return res
             } catch (error) {
                 console.log(error);

@@ -11,6 +11,7 @@ import Bus from '../../components/Bus.vue'
 import dayjs from 'dayjs'
 
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
+import { boolean } from 'yup';
 const dateFormatList = ["DD.MM.YY", "DD.MM.YY"];
 const ruLocale = locale;
 
@@ -25,7 +26,8 @@ let router = useRouter()
 let tripStore = useTrips()
 let userStore = useAuth()
 let appStateStore = useAppState()
-let partner = ref(trip.value.partner ?? '')
+let partner = ref(trip.value.partner??"" )
+let canSellPartnerTour = ref(boolean)
 let dates = ref([{ start: null, end: null }])
 
 const userTripCalc = ref([{ _id: '', name: 'пустой калькулятор' }, ...userStore.user?.tripCalc])
@@ -76,7 +78,7 @@ const clearData = (dataString) => {
             timeZone: 'UTC' // Используем UTC для гарантии, что время будет в формате UTC
         });
     }
-   
+
     return '';
 }
 function editTrip(_id) {
@@ -166,7 +168,7 @@ async function submit() {
     }
 }
 async function addPartner() {
-    tripStore.updatePartner(partner.value, trip.value._id)
+    tripStore.updatePartner(partner.value,  trip.value._id, canSellPartnerTour.value,)
         .then(() => { addPartnerDialog.value = false; emit('updateTrip') })
         .catch(error => console.log(error))
 }
@@ -254,7 +256,7 @@ function goToTripCalc() {
 
 async function addAdditionalService() {
     let res = await tripStore.addAdditionalService(trip.value._id, additionalService.value)
-    
+
     if (res.status == 200) {
         emit('updateTrip')
         addAdditionalServiceDialog.value = false
@@ -335,6 +337,7 @@ watch(dates, () => {
     }
 }, { deep: true })
 onMounted(async () => {
+    canSellPartnerTour.value = trip.value.canSellPartnerTour??false
     checked.value = trip.value.isCatalog
     if (!appStateStore.appState[0]?.transport) {
         await appStateStore.refreshState()
@@ -479,6 +482,13 @@ onMounted(async () => {
                 <a-input placeholder="ООО Ласточка" v-model:value="partner"></a-input>
 
             </a-col>
+            <a-col :span="24">
+                Принимать оплату в приложении?
+                <div class="d-flex align-center justify-center" style="height:100%">
+                    <a-checkbox v-model:checked="canSellPartnerTour">{{ canSellPartnerTour ? "ДА" : "НЕТ" }}</a-checkbox>
+                </div>
+
+            </a-col>
         </a-modal>
         <a-modal v-model:open="addLocationDialog" title="Изменить локации" okText="Отправить" cancelText="Отмена"
             @ok="updateIncludedLocations">
@@ -508,18 +518,13 @@ onMounted(async () => {
                         @select="(value) => { addTransportForm.transportType = { name: value } }"></a-auto-complete>
                 </a-col> -->
                 <a-col :span="24" :md="24">
-                    <a-select
-                        v-model="selected_bus"
-                        @select="bus => {
-                            bus = JSON.parse(bus);
-                            addTransportForm.transportType = { name: bus.name, bus_id: bus._id };
-                            addTransportForm.capacity = bus.seats.length - bus.stuff.length;
-                        }"
-                        style="width: 100%"
-                        placeholder="Выбрать автобус"
-                        option-label-prop="label"
-                    >
-                        <a-select-option v-for="bus in buses" :value="JSON.stringify(bus)" :label="`${bus.name} (${bus.author}) — ${bus.seats.length} мест`" >
+                    <a-select v-model="selected_bus" @select="bus => {
+                        bus = JSON.parse(bus);
+                        addTransportForm.transportType = { name: bus.name, bus_id: bus._id };
+                        addTransportForm.capacity = bus.seats.length - bus.stuff.length;
+                    }" style="width: 100%" placeholder="Выбрать автобус" option-label-prop="label">
+                        <a-select-option v-for="bus in buses" :value="JSON.stringify(bus)"
+                            :label="`${bus.name} (${bus.author}) — ${bus.seats.length} мест`">
                             <div style="display: flex; flex-direction: row; gap: 10px">
                                 <Bus :bus="bus" preview style="width: max(4cqw, 90px);" />
 
@@ -533,7 +538,7 @@ onMounted(async () => {
                         </a-select-option>
                     </a-select>
                 </a-col>
-                
+
                 <!-- <a-col :span="24" :md="24">
                     <a-button @click="router.push('/create-bus')">
                         Добавить свой
@@ -568,9 +573,9 @@ onMounted(async () => {
                 </a-popconfirm>
             </span>
         </a-modal>
-        <a-modal v-model:open="addAdditionalServiceDialog" title="Дополнительный услуги" okText="Отправить" cancelText="Отмена"
-            @ok="addAdditionalService">
-        
+        <a-modal v-model:open="addAdditionalServiceDialog" title="Дополнительный услуги" okText="Отправить"
+            cancelText="Отмена" @ok="addAdditionalService">
+
             <a-row v-for="service of trip.additionalServices" :gutter="[16, 16]">
                 <a-col :span="18">
                     <b style="font-size: 16px;">
@@ -579,9 +584,10 @@ onMounted(async () => {
                 </a-col>
                 <a-col :span="6" class="d-flex align-center" style="justify-content: end;">
                     {{ service.price }}₽
-                    <a-popconfirm title="Вы уверены?" ok-text="Да"
-                        cancel-text="Нет" @confirm="deleteAdditionalService(service._id)">
-                        <span class="mdi mdi-delete" style="cursor: pointer; color: #ff6600; font-size: 20px; margin: 4px;"></span>
+                    <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет"
+                        @confirm="deleteAdditionalService(service._id)">
+                        <span class="mdi mdi-delete"
+                            style="cursor: pointer; color: #ff6600; font-size: 20px; margin: 4px;"></span>
                     </a-popconfirm>
                 </a-col>
             </a-row>
@@ -593,7 +599,8 @@ onMounted(async () => {
                 </a-col>
                 <a-col :span="24">
                     Цена
-                    <a-input-number prefix="₽" v-model:value="additionalService.price" style="width: 100%;"></a-input-number>
+                    <a-input-number prefix="₽" v-model:value="additionalService.price"
+                        style="width: 100%;"></a-input-number>
                 </a-col>
             </a-row>
         </a-modal>
