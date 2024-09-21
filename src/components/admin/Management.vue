@@ -13,10 +13,12 @@ let emailCreateTrip = ref('')
 let emailBookingTrip = ref('')
 let emailCreateCompanion = ref('')
 let emailBuyTrip = ref('')
+let emailCreateExcurtion = ref('')
 
 let createTripEmails = ref([])
 let bookingTripEmails = ref([])
 let createCompanionEmails = ref([])
+let createExcurtionEmails = ref([])
 let buyTripEmails = ref([])
 
 // notifications
@@ -40,6 +42,9 @@ async function addEmail(event, email) {
                 case 'CreateCompanion':
                     createCompanionEmails.value.push(email)
                     break
+                case 'CreateExcurtion':
+                    createExcurtionEmails.value.push(email)
+                    break
                 case 'BuyTrip':
                     buyTripEmails.value.push(email)
                     break
@@ -54,42 +59,11 @@ async function addCabinetNotifications(event, email) {
     email = email.trim()
     if (email.length > 2) {
         let res = await adminStore.addCabinetNotifications(event, email)
-     
+
         // await getNotifications('BookingTrip')
     }
 }
-// async function getNotifications(event) {
-//     let res = await adminStore.getNotifications(event)
 
-//     switch (event) {
-//         case 'CreateTrip':
-//             break
-//         case 'BookingTrip':
-//             bookingTripNotifications.value = res.data
-//             break
-//         case 'CreateCompanion':
-//             break
-//         case 'BuyTrip':
-//             break
-//     }
-// }
-
-// async function deleteNotfications(event, email) {
-//     let res = await adminStore.deleteNotfications(event, email)
-//     if (res.status == 200) {
-//         switch (event) {
-//             case 'CreateTrip':
-//                 break
-//             case 'BookingTrip':
-//                 await getNotifications('BookingTrip')
-//                 break
-//             case 'CreateCompanion':
-//                 break
-//             case 'BuyTrip':
-//                 break
-//         }
-//     }
-// }
 
 async function getEmails(event) {
     let res = await adminStore.getEmails(event)
@@ -104,6 +78,9 @@ async function getEmails(event) {
             break
         case 'CreateCompanion':
             createCompanionEmails.value = emails
+            break
+        case 'CreateExcurtion':
+            createExcurtionEmails.value = emails
             break
         case 'BuyTrip':
             buyTripEmails.value = emails
@@ -137,6 +114,14 @@ async function deleteEmail(event, email) {
                     }
                 }
                 break
+            case 'CreateExcurtion':
+                for (let i = 0; i < createExcurtionEmails.value.length; i++) {
+                    if (createExcurtionEmails.value[i] == email) {
+                        createExcurtionEmails.value.splice(i, 1)
+                    }
+                }
+                break
+                
             case 'BuyTrip':
                 for (let i = 0; i < buyTripEmails.value.length; i++) {
                     if (buyTripEmails.value[i] == email) {
@@ -164,6 +149,7 @@ onMounted(async () => {
     await getEmails('CreateTrip')
     await getEmails('BookingTrip')
     await getEmails('CreateCompanion')
+    await getEmails('CreateExcurtion')
     await getEmails('BuyTrip')
 
     // await getNotifications('BookingTrip')
@@ -245,7 +231,28 @@ onMounted(async () => {
         </a-col>
         <a-col v-if="createCompanionEmails.length != 0" v-for="email of createCompanionEmails" class="ma-4"
             style="cursor: pointer; font-size: 12px;">
-            <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deleteEmail('CreateCompanion', email)">
+            <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"
+                @confirm="deleteEmail('CreateCompanion', email)">
+                {{ email }}
+            </a-popconfirm>
+        </a-col>
+        <a-col v-else>
+            пусто
+        </a-col>
+    </a-row>
+    <a-row :gutter="[16, 0]" class="mt-16">
+        <a-col :span="24">
+            Создание экскурсии
+        </a-col>
+        <a-col :span="24" class="d-flex align-center">
+            <a-input v-model:value="emailCreateExcurtion" placeholder="email" />
+            <a-button type="primary" class="ml-12 lets_go_btn"
+                @click="addEmail('CreateExcurtion', emailCreateExcurtion)">добавить</a-button>
+        </a-col>
+        <a-col v-if="createExcurtionEmails.length != 0" v-for="email of createExcurtionEmails" class="ma-4"
+            style="cursor: pointer; font-size: 12px;">
+            <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"
+                @confirm="deleteEmail('CreateExcurtion', email)">
                 {{ email }}
             </a-popconfirm>
         </a-col>

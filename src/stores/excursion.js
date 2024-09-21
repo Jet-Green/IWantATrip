@@ -7,6 +7,7 @@ import { render } from 'vue-email';
 import OrderExcursionTemplate from '../email-templates/OrderExcursionTemplate.vue';
 import BuyExcursionTemplate from '../email-templates/BuyExcursionTemplate.vue';
 import BookingExcursionTemplate from '../email-templates/BookingExcursionTemplate.vue';
+import CreateExcursionTemplate from '../email-templates/CreateExcursionTemplate.vue';
 
 
 
@@ -31,8 +32,10 @@ export const useExcursion = defineStore('excursion', {
     getters: {
     },
     actions: {
-        async create(excursion) {
-            return await ExcursionService.create({ excursion, userId: useAuth().user._id })
+        async create(excursion) { 
+            const user = useAuth().user
+            const emailHtml = await render(CreateExcursionTemplate, { excursion });
+            return await ExcursionService.create({ excursion, userId: user._id, emailHtml, email:user.email})
         },
         async edit(excursion) {
             return await ExcursionService.edit(excursion)

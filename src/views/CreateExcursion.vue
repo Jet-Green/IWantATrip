@@ -134,6 +134,7 @@ async function submit() {
     }
   }
   let excursionCb = await excursionStore.create(form)
+  console.log(excursionCb)
   const _id = excursionCb.data._id
   let imagesFormData = new FormData();
   for (let i = 0; i < images.length; i++) {
