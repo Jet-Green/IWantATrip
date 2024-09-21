@@ -46,7 +46,7 @@ onMounted(async () => {
 <template>
   <div>
 
-    <div style="display: flex; justify-content:space-between">
+    <div style="display: flex; justify-content:space-between; flex-wrap:wrap" class="pa-8">
       <div>
         <a-button class="btn_light ma-8" @click="router.push('/create-excursion')">
           создать экскурсию
