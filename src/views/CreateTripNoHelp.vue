@@ -549,6 +549,9 @@ let formSchema = yup.object({
                 <a-select :value="value" @update:value="handleChange" style="width: 100%"
                   :options="tripRegions" placeholder="На море, Кавказ, Урал, Заполярье, Кунгурские пещеры">
                 </a-select>
+                <span class="text-caption">
+                  *пользователь будет искать ваш тур по этому ключевому слову
+                </span>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="tripRegion" class="error-message" />
