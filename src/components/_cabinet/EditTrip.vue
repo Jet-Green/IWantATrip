@@ -9,7 +9,7 @@ import * as yup from 'yup';
 
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
-import { watch, nextTick, ref, reactive, onMounted } from "vue";
+import { watch, nextTick, ref, computed, onMounted } from "vue";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router'
@@ -71,7 +71,10 @@ let form = ref({
     travelRequirement: "",
     returnConditions: '',
     rejected: false,
+    tripRegion: "",
 });
+// для a-select с регионами тура
+let tripRegions = computed(() => appStore.appState[0]?.tripRegions.map((name) => { return { value: name } }) ?? [])
 
 const removeCost = (item) => {
     let index = form.value.cost.indexOf(item);
@@ -276,7 +279,8 @@ let formSchema = yup.object({
     tripRoute: yup.string().required("заполните поле"),
     duration: yup.string().required("заполните поле"),
     returnConditions: yup.string().required("заполните поле"),
-    notNecessarily: yup.string()
+    notNecessarily: yup.string(),
+    tripRegion: yup.string().required("заполните поле"),
 })
 </script>
 <template>
@@ -432,7 +436,18 @@ let formSchema = yup.object({
                             <Transition name="fade">
                                 <ErrorMessage name="location" class="error-message" />
                             </Transition>
+                        </a-col>
 
+                        <a-col :span="24">
+                            <Field name="tripRegion" v-slot="{ value, handleChange }" v-model="form.tripRegion">
+                                Регион тура
+                                <a-select :value="value" @update:value="handleChange" style="width: 100%"
+                                    :options="tripRegions" placeholder="На море, Кавказ, Урал, Заполярье, Кунгурские пещеры">
+                                </a-select>
+                            </Field>
+                            <Transition name="fade">
+                                <ErrorMessage name="tripRegion" class="error-message" />
+                            </Transition>
                         </a-col>
 
                         <a-col :span="24">
@@ -497,7 +512,7 @@ let formSchema = yup.object({
                             <Field name="includedInPrice" v-slot="{ value, handleChange }"
                                 v-model="form.includedInPrice">
                                 В стоимость включено
-                                <a-textarea autosize @update:value="handleChange" :value="value" placeholder=""
+                                <a-textarea autoSize @update:value="handleChange" :value="value" placeholder=""
                                     size="large">
                                 </a-textarea>
                             </Field>
@@ -508,7 +523,7 @@ let formSchema = yup.object({
                         <a-col :span="24">
                             <Field name="paidExtra" v-slot="{ value, handleChange }" v-model="form.paidExtra">
                                 Дополнительно оплачивается
-                                <a-textarea autosize @update:value="handleChange" :value="value" placeholder=""
+                                <a-textarea autoSize @update:value="handleChange" :value="value" placeholder=""
                                     size="large">
                                 </a-textarea>
                             </Field>
@@ -520,7 +535,7 @@ let formSchema = yup.object({
                             <Field name="travelRequirement" v-slot="{ value, handleChange }"
                                 v-model="form.travelRequirement">
                                 Требование к поездке
-                                <a-textarea autosize @update:value="handleChange" :value="value" placeholder=""
+                                <a-textarea autoSize @update:value="handleChange" :value="value" placeholder=""
                                     size="large">
                                 </a-textarea>
                             </Field>
