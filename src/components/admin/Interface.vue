@@ -6,12 +6,17 @@ import Bus from '../Bus.vue';
 import { useBus } from '../../stores/bus';
 import ExcursionTypes from './ExcursionTypes.vue';
 
+import { message } from 'ant-design-vue';
+
 let router = useRouter()
 let appStateStore = useAppState()
 let tripType = ref('')
 let transport = ref({})
 let taxi = ref({})
 let buses = ref()
+// Регион тура, выбирается при создании тура (На море, Кавказ, Урал, Кунгурские пещеры). 
+// Нужен для более удобного поиска по турам.
+let tripRegion = ref('')
 
 async function addTripType() {
     if (tripType.value.length > 2) {
@@ -19,6 +24,9 @@ async function addTripType() {
         if (res.status == 200) {
             await appStateStore.refreshState();
         }
+    } else {
+        message.config({ duration: 2 });
+        message.error({ content: 'Слишком короткое название типа тура' });
     }
 }
 async function addTransportName() {
@@ -35,6 +43,35 @@ async function deleteBus(_id) {
     buses.value = await useBus().get()
 }
 
+async function addTripRegion() {
+    if (tripRegion.value.length > 2 && tripRegion.value.length <= 35) {
+        let res = await appStateStore.addTripRegion(tripRegion.value)
+        if (res.status == 200) {
+            message.config({ duration: 3 });
+            message.success({ content: `Регион "${tripRegion.value}" создан` });         
+            await appStateStore.refreshState();
+            tripRegion.value = ''
+        } else {
+            message.config({ duration: 3 });
+            message.error({ content: 'Ошибка при создании региона' });
+        }
+    } else if (tripRegion.value.length > 35) {
+        message.config({ duration: 2 });
+        message.error({ content: 'Слишком длинное название региона' });
+    } else {
+        message.config({ duration: 2 });
+        message.error({ content: 'Слишком короткое название региона' });
+    }
+}
+
+async function deleteTripRegion(tripRegionName) {
+    let res = await appStateStore.deleteTripRegion(tripRegionName)
+    
+    if (res.status == 200) {
+        await appStateStore.refreshState();
+    }
+}
+
 onMounted(async () => {
     if (!appStateStore.appState) {
         await appStateStore.refreshState();
@@ -43,12 +80,12 @@ onMounted(async () => {
 })
 </script>
 <template>
-    <a-row class="mb-8">
+    <a-row class="mb-16">
         <a-col :span="24">
             <ExcursionTypes />
         </a-col>
     </a-row>
-    <a-row>
+    <a-row class="mb-16">
         <a-col :span="24">
             <a-row>
                 <a-col :span="24">
@@ -65,6 +102,21 @@ onMounted(async () => {
                     </a-popconfirm>
                 </a-col>
             </a-row>
+        </a-col>
+    </a-row>
+    <a-row class="mb-24">
+        <a-col :span="24">
+            <h3>Регионы</h3>
+        </a-col>
+        <a-col :span="24" class="d-flex align-center">
+            <a-input placeholder="На море, Кавказ, Урал, Кунгурские пещеры" size="large" v-model:value="tripRegion"></a-input>
+            <a-button type="primary" class="ml-12 lets_go_btn" @click="addTripRegion">добавить</a-button>
+        </a-col>
+        <a-col v-for="region of appStateStore.appState[0].tripRegions" class="ma-8" style="cursor: pointer">
+            <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"
+                @confirm="() => { deleteTripRegion(region) }">
+                <div class="name-wrapper">{{ region }}</div>
+            </a-popconfirm>
         </a-col>
     </a-row>
     <!-- <a-row>
@@ -86,7 +138,7 @@ onMounted(async () => {
             </a-row>
         </a-col>
     </a-row> -->
-    <a-row>
+    <a-row class="mb-24">
         <a-col :span="24">
             <a-row>
                 <a-col :span="24">

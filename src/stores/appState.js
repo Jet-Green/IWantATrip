@@ -77,6 +77,22 @@ export const useAppState = defineStore('app-state', {
             } catch (error) {
                 console.log(error);
             }
-        }
+        },
+        async addTripRegion(tripRegion) {
+            try {
+                let res = await AppService.addTripRegion(tripRegion)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async deleteTripRegion(tripRegion) {
+            try {
+                let res = await AppService.deleteTripRegion(tripRegion)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
+        },
     },
 })
