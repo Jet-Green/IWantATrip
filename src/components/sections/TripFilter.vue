@@ -150,11 +150,11 @@ onMounted(() => {
         <a-col :span="12" :md="6" class="d-flex direction-column query-container">
           <div for="search" style="font-size: 10px; line-height: 10px">искать</div>
           <a-input v-model:value="query" placeholder="сочи" name="search" style="width: 100%" />
-          
+
           <Transition name="fade">
             <div class="query-suggestions" v-if="querySuggestionsVisible">
               <div class="card">
-                <div>
+                <div class="region-query" @click="querySuggestionsVisible = false">
                   <b>{{ query }}</b>
                 </div>
                 <hr />
@@ -253,6 +253,12 @@ onMounted(() => {
   }
   .region-container:hover {
     color: #ff6600;
+  }
+  .region-query:hover {
+    color: #ff6600;
+  }
+  .region-query {
+    cursor: pointer;
   }
 }
 .active_filter {
