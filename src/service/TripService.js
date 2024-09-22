@@ -123,6 +123,9 @@ export default {
     updateCatalogTrip(_id, trip) {
         return $api.post('/catalog/update-catalog-trip', { _id, trip })
     },
+    editCatalogTrip(_id, trip){
+        return $api.post('/catalog/edit-catalog-trip', { _id, trip })
+    },
     updateIncludedLocations(updateObject) {
         return $api.post('/trips/update-included-locations', updateObject)
     },

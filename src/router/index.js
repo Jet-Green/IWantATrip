@@ -118,6 +118,20 @@ const router = createRouter({
           }
         },
         {
+          path: '/edit-catalog-trip',
+          name: 'EditCatalogTrip',
+          component: () => import('../views/EditCatalogTrip.vue'),
+          beforeEnter: async (to, from) => {
+            let userStore = useAuth()
+            if (!localStorage.getItem('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+
+            if (!userStore.isAuth)
+              return '/auth'
+
+          }
+        },
+        {
           path: '/copy-trip',
           name: 'CopyTrip',
           component: () => import('../views/CopyTrip.vue'),

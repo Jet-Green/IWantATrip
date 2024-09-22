@@ -37,15 +37,17 @@ async function hideTrip(_id) {
         </div>
 
         <div class="actions d-flex justify-center">
-            <a-popconfirm title="В активные?" ok-text="Да" cancel-text="Нет" @confirm="deleteCatalogTrip(trip._id)">
-                <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
-            </a-popconfirm>
+
+            <span class="mdi mdi-pencil" style="cursor: pointer" @click="router.push({ name: 'EditCatalogTrip',query: { id: trip._id }})"></span>
             <a-popconfirm title="В активные?" ok-text="Да" cancel-text="Нет" @confirm="goToCopyCatalog">
                 <span class="mdi mdi-plus-circle-outline" style="cursor: pointer"></span>
             </a-popconfirm>
             <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="hideTrip(trip._id)">
                 <span v-if="!trip.isHidden" class="mdi mdi-eye-outline" style="cursor: pointer"></span>
                 <span v-else class="mdi mdi-eye-off-outline" style="cursor: pointer"></span>
+            </a-popconfirm>
+            <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deleteCatalogTrip(trip._id)">
+                <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
             </a-popconfirm>
         </div>
         <div v-if="trip.moderationMessage && trip.rejected && !trip.isModerated">

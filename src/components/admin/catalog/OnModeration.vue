@@ -14,7 +14,6 @@ async function catalogToDelete(_id) {
 
 async function refreshCatalogTripsOnModeration() {
     let { data } = await tripStore.findCatalogForModeration()
-    console.log(data)
     catalogTripsOnMod.value = data
 }
 
