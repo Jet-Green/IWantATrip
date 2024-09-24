@@ -25,6 +25,11 @@ const router = createRouter({
           name: 'Document',
           component: () => import('../views/Document.vue')
       },
+      {
+        path: '/print-contract',
+        name: 'PrintContract',
+        component: () => import('../print/PrintContract.vue')
+    },
       ]
     },
     {
