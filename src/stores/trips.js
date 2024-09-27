@@ -25,7 +25,8 @@ export const useTrips = defineStore('trips', {
         catalogFilter: {
             query: "",
             type: ""
-        }
+        },
+        printContractTour:{}
     }),
     getters: {
         getTrips(state) {
