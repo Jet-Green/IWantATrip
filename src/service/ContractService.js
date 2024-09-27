@@ -21,5 +21,8 @@ export default {
     },
     getContractById(_id) {
         return $api.get(`/contract?_id=${_id}`)
+    },
+    getContractByShopCode(shopCode) {
+        return $api.get(`/contract/byShopCode?shopCode=${shopCode}`)
     }
 }
