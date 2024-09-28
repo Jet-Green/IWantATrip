@@ -355,8 +355,8 @@ let formSchema = yup.object({
 
                         <a-col :span="24">
                             Цены
-                            <div v-for="       item in form.cost       " :key="item.type"
-                                style="display: flex" align="baseline" class="mb-16">
+                            <div v-for="       item in form.cost       " :key="item.type" style="display: flex"
+                                align="baseline" class="mb-16">
                                 <a-input v-model:value="item.first" placeholder="Для кого" />
 
                                 <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена"
@@ -375,8 +375,8 @@ let formSchema = yup.object({
 
                         <a-col :span="24">
                             Бонусы и скидки
-                            <div v-for="       item in form.bonuses       " :key="item"
-                                style="display: flex" align="baseline" class="mb-16">
+                            <div v-for="       item in form.bonuses       " :key="item" style="display: flex"
+                                align="baseline" class="mb-16">
                                 <a-input v-model:value="item.type" placeholder="Количество человек" />
 
                                 <a-input v-model:value="item.bonus" style="width: 100%" placeholder="Бонусы или скидки"
@@ -398,8 +398,7 @@ let formSchema = yup.object({
                                 Тип тура
                                 <div>
                                     <a-select @update:value="handleChange" :value="value" style="width: 100%">
-                                        <a-select-option
-                                            v-for="       tripType in appStore.appState[0].tripType       "
+                                        <a-select-option v-for="       tripType in appStore.appState[0].tripType       "
                                             :value="tripType">{{ tripType
                                             }}</a-select-option>
                                     </a-select>
@@ -463,7 +462,7 @@ let formSchema = yup.object({
                             Описание программы
 
                             <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html"
-                                :toolbar="[['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }], [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }], ['link']], ['clean']" />
+                                :toolbar="[['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }], [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }], ['link'], ['clean']]" />
                         </a-col>
                         <a-col :span="24">
                             <div>Описание программы по дням </div>
