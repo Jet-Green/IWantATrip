@@ -146,6 +146,7 @@ async function buyTrip(isBoughtNow) {
                         object.count;
                 }, 0) : 0
             },
+            date: Date.now(),
             selectedStartLocation: selectedStartLocation.value,
             cart,
             additionalServices: additionalServices.value.filter((el) => el.count > 0),
