@@ -575,7 +575,7 @@ let formSchema = yup.object({
 
                   [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
 
-                  ['link']
+                  ['link'], ['clean'] 
                 ]
                   " />
 
@@ -596,7 +596,7 @@ let formSchema = yup.object({
 
                     [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
 
-                    ['link']
+                    ['link'],  ['clean']   
                   ]
                     " />
                 </col>
