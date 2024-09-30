@@ -20,13 +20,15 @@ export const useTrips = defineStore('trips', {
             query: "",
             start: "",
             end: "",
-            type: ""
+            type: "",
+            tripRegion: "",
+            locationRadius: 100
         },
         catalogFilter: {
             query: "",
             type: ""
         },
-        printContractTour:{}
+        printContractTour: {}
     }),
     getters: {
         getTrips(state) {
@@ -61,10 +63,28 @@ export const useTrips = defineStore('trips', {
                         location = JSON.parse(location)
                     }
                     if (location?.name) {
-                        response = await TripService.fetchTrips(this.cursor, ...location.coordinates, this.tripFilter.query, this.tripFilter.start, this.tripFilter.end, this.tripFilter.type);
+                        response = await TripService.fetchTrips(
+                            this.cursor,
+                            ...location.coordinates,
+                            this.tripFilter.query,
+                            this.tripFilter.start,
+                            this.tripFilter.end,
+                            this.tripFilter.type,
+                            this.tripFilter.tripRegion,
+                            this.tripFilter.locationRadius
+                        );
                         this.isFetching = false
                     } else {
-                        response = await TripService.fetchTrips(this.cursor, '', '', this.tripFilter.query, this.tripFilter.start, this.tripFilter.end, this.tripFilter.type);
+                        response = await TripService.fetchTrips(
+                            this.cursor,
+                            '', '',
+                            this.tripFilter.query,
+                            this.tripFilter.start,
+                            this.tripFilter.end,
+                            this.tripFilter.type,
+                            this.tripFilter.tripRegion,
+                            this.tripFilter.locationRadius
+                        );
                         this.isFetching = false
                     }
                     this.trips.push(...response.data);
@@ -232,14 +252,14 @@ export const useTrips = defineStore('trips', {
             }
         },
 
-        async editCatalogTrip (_id, trip) {
+        async editCatalogTrip(_id, trip) {
             try {
                 return await TripService.editCatalogTrip(_id, trip)
-    
+
             } catch (error) {
                 console.error(error)
             }
-        }, 
+        },
         async updateTourists(bill) {
             try {
                 let res = await TripService.updateTourists(bill)
@@ -311,7 +331,7 @@ export const useTrips = defineStore('trips', {
         async getBoughtSeats(_id) {
             try {
                 return (await TripService.getBoughtSeats(_id)).data
-            } catch(error) {
+            } catch (error) {
                 console.log(error);
             }
         },

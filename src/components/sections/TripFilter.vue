@@ -22,7 +22,10 @@ let time = ref([])
 let query = ref("")
 let tripRegion = ref("")
 let type = ref("")
+let locationRadius = ref(100)
+
 let querySuggestionsVisible = ref(false)
+let nearMeSuggestionsVisible = ref(false)
 
 let router = useRouter()
 
@@ -50,13 +53,18 @@ watch(time, (newTime) => {
   }
 })
 
-watch(query, (newVal) => {
-  if (newVal.length > 2) {
-    querySuggestionsVisible.value = true
-  } else {
-    querySuggestionsVisible.value = false
-  }
-})
+function hideQuerySuggestions() {
+  querySuggestionsVisible.value = false
+}
+function showQuerySuggestions() {
+  querySuggestionsVisible.value = true
+}
+
+function selectRegion(regionName) {
+  tripRegion.value = regionName
+  query.value = regionName
+  hideQuerySuggestions()
+}
 
 function find() {
   query.value = query.value.trim()
@@ -65,6 +73,9 @@ function find() {
   tripStore.searchCursor = 1
   tripStore.cursor = 1
   tripStore.trips = []
+  
+  tripStore.tripFilter.tripRegion = tripRegion.value
+  tripStore.tripFilter.locationRadius = locationRadius.value
   if (time.value[0] ?? time.value[1]) {
     let start = new Date(time.value[0].$d)
     let end = new Date(time.value[1].$d)
@@ -116,12 +127,6 @@ function resetForm() {
   find()
 }
 
-function selectRegion(regionName) {
-  tripRegion.value = regionName
-  query.value = regionName
-  querySuggestionsVisible.value = false
-}
-
 onMounted(() => {
   query.value = localStorage.getItem("TripQuery") ?? ""
   type.value = localStorage.getItem("TripType") ?? ""
@@ -149,15 +154,30 @@ onMounted(() => {
       <a-row :gutter="[8, 4]" class="d-flex justify-center align-center flex-wrap">
         <a-col :span="12" :md="6" class="d-flex direction-column query-container">
           <div for="search" style="font-size: 10px; line-height: 10px">искать</div>
-          <a-input v-model:value="query" placeholder="сочи" name="search" style="width: 100%" />
+          <a-input
+            v-model:value="query"
+            placeholder="сочи"
+            name="search"
+            style="width: 100%"
+            @click="showQuerySuggestions"
+            allowClear
+            autocomplete="off"
+          />
 
           <Transition name="fade">
             <div class="query-suggestions" v-if="querySuggestionsVisible">
-              <div class="card">
-                <div class="region-query" @click="querySuggestionsVisible = false">
+              <div class="card" v-if="!nearMeSuggestionsVisible">
+                <div class="region-query" @click="hideQuerySuggestions">
                   <b>{{ query }}</b>
                 </div>
-                <hr />
+
+                <span class="mdi mdi-close" @click="hideQuerySuggestions"></span>
+
+                <a-button variant="outlined" class="location-btn" @click="nearMeSuggestionsVisible = true">
+                  <span class="mdi mdi-map-marker-radius-outline"></span>
+                  туры рядом со мной</a-button
+                >
+                <hr class="mt-16 mb-16" />
                 <div>
                   <div v-if="suggestedRegions.length > 0" v-for="region of suggestedRegions">
                     <div class="region-container" @click="selectRegion(region)">
@@ -172,6 +192,22 @@ onMounted(() => {
                   <div v-else>Ничего не нашлось</div>
                 </div>
               </div>
+              <!-- near me -->
+              <div v-else class="card">
+                <b> Радиус поиска {{ locationRadius }} км. </b>
+                <a-slider
+                  v-model:value="locationRadius"
+                  :step="100"
+                  :min="100"
+                  :max="1800"
+                  tooltipPlacement="bottom"
+                  :tipFormatter="(s) => s + ' км'"
+                  class="mt-32"
+                />
+                <span class="mdi mdi-close" @click="nearMeSuggestionsVisible = false"></span>
+                <a-button style="border-radius: 18px" @click="hideQuerySuggestions">готово</a-button>
+              </div>
+              <!-- near me -->
             </div>
           </Transition>
         </a-col>
@@ -225,15 +261,31 @@ onMounted(() => {
 .query-container {
   position: relative;
 }
+
+.mdi-close {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  font-size: 20px;
+  padding: 4px;
+  cursor: pointer;
+}
+.mdi-close:active {
+  transform: scale(1.2);
+}
+.mdi-close:hover {
+  transform: scale(1.2);
+}
 .query-suggestions {
   position: absolute;
-  z-index: 9999;
+  z-index: 1;
   top: 40px;
   left: 4px;
-  width: 100%;
+  width: 140%;
   max-height: 400px;
   overflow-y: scroll;
   padding: 6px;
+
   // overflow-x: hidden;
   .card {
     // background-color: #ff6600;
@@ -259,6 +311,12 @@ onMounted(() => {
   }
   .region-query {
     cursor: pointer;
+    width: fit-content;
+  }
+}
+@media (max-width: 767px) {
+  .query-suggestions {
+    top: 90px;
   }
 }
 .active_filter {
@@ -269,5 +327,15 @@ onMounted(() => {
 .filter {
   color: #227597;
   cursor: pointer;
+}
+.location-btn {
+  text-transform: none;
+  border-radius: 4px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  .mdi {
+    font-size: 20px;
+  }
 }
 </style>
