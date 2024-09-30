@@ -304,9 +304,9 @@ let formSchema = yup.object({
                         <a-col :xs="24">
                             Фотографии
                             <div class="d-flex" style="overflow-x: scroll">
-                                <img v-for="(pr, i) in        previews       " :key="i" :src="pr" alt="" class="ma-4"
+                                <img v-for="(pr, i) in previews       " :key="i" :src="pr" alt="" class="ma-4"
                                     style="max-width: 200px; min-width: 50px; background:#ccc" @click="delPhotoDialog = true;
-            targetIndex = i;" />
+                                    targetIndex = i;" />
                             </div>
                             <a-button type="dashed" block @click=" visibleCropperModal = true" class="ma-8">
                                 <span class="mdi mdi-12px mdi-plus"></span>
@@ -359,8 +359,8 @@ let formSchema = yup.object({
 
                         <a-col :span="24">
                             Цены
-                            <div v-for="       item        in        form.cost       " :key="item.type"
-                                style="display: flex" align="baseline" class="mb-16">
+                            <div v-for="       item in form.cost       " :key="item.type" style="display: flex"
+                                align="baseline" class="mb-16">
                                 <a-input v-model:value="item.first" placeholder="Для кого" />
 
                                 <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена"
@@ -379,8 +379,8 @@ let formSchema = yup.object({
 
                         <a-col :span="24">
                             Бонусы и скидки
-                            <div v-for="       item        in        form.bonuses       " :key="item"
-                                style="display: flex" align="baseline" class="mb-16">
+                            <div v-for="       item in form.bonuses       " :key="item" style="display: flex"
+                                align="baseline" class="mb-16">
                                 <a-input v-model:value="item.type" placeholder="Количество человек" />
 
                                 <a-input v-model:value="item.bonus" style="width: 100%" placeholder="Бонусы или скидки"
@@ -402,8 +402,7 @@ let formSchema = yup.object({
                                 Тип тура
                                 <div>
                                     <a-select @update:value="handleChange" :value="value" style="width: 100%">
-                                        <a-select-option
-                                            v-for="       tripType        in        appStore.appState[0].tripType       "
+                                        <a-select-option v-for="       tripType in appStore.appState[0].tripType       "
                                             :value="tripType">{{ tripType
                                             }}</a-select-option>
                                     </a-select>
@@ -478,7 +477,7 @@ let formSchema = yup.object({
                             Описание программы
 
                             <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html"
-                                :toolbar="[['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }], [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }], ['link']]" />
+                                :toolbar="[['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }], [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }], ['link'], ['clean']]" />
                         </a-col>
                         <a-col :span="24">
                             <div>Описание программы по дням </div>
@@ -491,13 +490,13 @@ let formSchema = yup.object({
                                     </a-button></div>
                                 <QuillEditor class="ql-editor" theme="snow"
                                     v-model:content="form.dayByDayDescription[index]" contentType="html" :toolbar="[
-                ['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }],
+                                        ['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }],
 
-                [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
+                                        [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
 
-                ['link']
-            ]
-                " />
+                                        ['link'], ['clean']
+                                    ]
+                                        " />
                                 </col>
 
 

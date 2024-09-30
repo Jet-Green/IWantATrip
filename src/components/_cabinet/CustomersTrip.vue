@@ -10,6 +10,7 @@ import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
 import { useAuth } from "../../stores/auth";
 import { useTrips } from "../../stores/trips";
+import { useContract } from '../../stores/contract'
 import PrintCustomers from '../../print/PrintCustomers.vue'
 import Bus from "../Bus.vue";
 import _ from 'lodash'
@@ -23,6 +24,7 @@ const route = useRoute();
 
 const userStore = useAuth()
 const tripStore = useTrips();
+const contractStore = useContract()
 
 let trip = ref({});
 let userInfo = ref({
@@ -55,7 +57,7 @@ let getSelectedUsersCount = computed(() => {
     let result = 0
     for (let cartItem of selectedByUser.value) {
         result += cartItem.count
-    }    
+    }
     return result
 })
 
@@ -75,7 +77,7 @@ let tripStat = computed(() => {
                     statistic.additionalServicesSum += service.count * service.price
                     statistic.totalCost += service.count * service.price
                 })
-            }            
+            }
             element.cart.forEach(cart => {
                 statistic.amount += cart.count
                 statistic.totalCost += cart.count * cart.cost
@@ -144,6 +146,7 @@ async function buyTrip(isBoughtNow) {
                         object.count;
                 }, 0) : 0
             },
+            date: Date.now(),
             selectedStartLocation: selectedStartLocation.value,
             cart,
             additionalServices: additionalServices.value.filter((el) => el.count > 0),
@@ -291,6 +294,22 @@ async function updateBus() {
     updateSeats()
 }
 
+const getSellerContract = async (shopCode) => {
+  
+  return  await contractStore.getContractByShopCode(shopCode)
+
+}
+
+const printContract = async (BILL) => {
+    tripStore.printContractTour ={}
+    tripStore.printContractTour= BILL
+    tripStore.printContractTour.billTotal= billTotal(BILL)
+    tripStore.printContractTour.tripId = trip.value
+    tripStore.printContractTour.seller =  await getSellerContract(String(trip.value.tinkoffContract.ShopCode))
+    router.push('/print-contract')
+   
+};
+
 watch(isSupervisor, (sup) => {
     if (sup == false) {
         supervisor.value.count = 0
@@ -332,8 +351,8 @@ onMounted(async () => {
             <a-col :span="24" class="mb-8 d-flex space-between">
                 <a-breadcrumb>
                     <a-breadcrumb-item @click="router.push('/cabinet/created-trips')">{{
-            trip.name
-        }}</a-breadcrumb-item>
+                        trip.name
+                        }}</a-breadcrumb-item>
                     <a-breadcrumb-item>Покупатели</a-breadcrumb-item>
                 </a-breadcrumb>
                 <a-button type="primary" class="lets_go_btn" @click="addCustomerDialog = true">
@@ -344,9 +363,7 @@ onMounted(async () => {
 
             <a-row :gutter="[8, 8]">
                 <a-col :lg="8" :sm="12" :xs="24">
-                    <div class="mb-8">
-
-                    </div>
+                    
                     <a-card style=" border: 1px solid #245159; padding:4px">
                         Статистика тура
                         <div>c {{ clearData(trip.start) }} по {{ clearData(trip.end) }}</div>
@@ -354,7 +371,8 @@ onMounted(async () => {
                         <div>Забронировало: {{ tripStat ? tripStat.amount : '' }} чел.</div>
                         <div>Сумма полученная: {{ tripStat ? tripStat.received : '' }} руб.</div>
                         <div>Сумма доп. услуг {{ tripStat ? tripStat.additionalServicesSum : '' }} руб.</div>
-                        <div>Сумма без доп. услуг {{ tripStat ? tripStat.totalCost - tripStat.additionalServicesSum: '' }} руб.</div>
+                        <div>Сумма без доп. услуг {{ tripStat ? tripStat.totalCost - tripStat.additionalServicesSum : ''
+                            }} руб.</div>
                         <div>Сумма полная: <b>{{ tripStat ? tripStat.totalCost : '' }} руб.</b></div>
                     </a-card>
                 </a-col>
@@ -365,8 +383,8 @@ onMounted(async () => {
                             <div class="d-flex space-between">
                                 <div style="color:#ff6600"><span v-if="BILL?.isWaitingList"> Лист ожидания</span></div>
                                 <b>{{
-            clearData(BILL?.date)
-        }}</b>
+                                    clearData(BILL?.date)
+                                    }}</b>
                             </div>
                             <div>
                                 <span class="mdi mdi-account-outline" style=""></span>
@@ -385,7 +403,8 @@ onMounted(async () => {
 
                             <div v-for="cartItem of BILL.cart" class="d-flex justify-end">
                                 <div v-if="cartItem.count">
-                                    {{ cartItem.costType }} {{ cartItem.count }} x {{ cartItem.cost }} руб. = {{(cartItem.count*cartItem.cost).toFixed(2) }}
+                                    {{ cartItem.costType }} {{ cartItem.count }} x {{ cartItem.cost }} руб. =
+                                    {{ (cartItem.count * cartItem.cost).toFixed(2) }}
                                 </div>
 
                             </div>
@@ -395,14 +414,15 @@ onMounted(async () => {
                             <div class="d-flex justify-end" v-if="BILL.additionalServices?.length > 0">
                                 {{ BILL.cart.reduce((acc, o) => { return acc + o.count * o.cost }, 0) }} руб.
                             </div>
-                            
+
 
                             <div v-if="BILL.additionalServices?.length > 0">
                                 <hr>
                                 <div v-for="service of BILL.additionalServices" class="d-flex justify-end">
                                     {{ service.name }} {{ service.count }} x {{ service.price }} руб. =
-                               
-                                    {{ BILL.additionalServices.reduce((acc, o) => { return acc + o.count * o.price }, 0) }} руб.
+
+                                    {{ BILL.additionalServices.reduce((acc, o) => { return acc + o.count * o.price }, 0)
+                                    }} руб.
                                 </div>
                                 <hr>
                             </div>
@@ -437,6 +457,8 @@ onMounted(async () => {
                                     </a-badge>
                                     <span v-else class="mdi mdi-18px mdi-comment-edit-outline ml-4"
                                         @click="showEditUserCommentDialog(BILL)"></span>
+
+                                    <span class="mdi mdi-printer-outline ml-4" style=" cursor: pointer" @click="printContract(BILL)"></span>
 
                                 </div>
 
@@ -507,16 +529,16 @@ onMounted(async () => {
             <div class="d-flex justify-end">
                 <span>Итого: </span>
                 {{
-            billTotal(currentBill)
-        }}
+                    billTotal(currentBill)
+                }}
                 руб.
 
             </div>
             <div class="d-flex justify-end">
                 <span>Оплачено: </span>
                 {{
-                currentBill.payment.amount
-            }}
+                    currentBill.payment.amount
+                }}
                 руб.
             </div>
             <a-textarea v-model:value="userComment" placeholder="Комментарий к чеку" class="mt-12 mb-12" />
@@ -542,15 +564,16 @@ onMounted(async () => {
                         </a-col>
                         <a-col :span="12" class="d-flex">
                             <a-input style="width: 100%" v-model:value="tourist.phone" placeholder="89127528877" />
-                            <span class="mdi mdi-close" style="font-size: 20px; color: #ff6600 "  @click="currentBill.touristsList.splice(index, 1)"></span>
+                            <span class="mdi mdi-close" style="font-size: 20px; color: #ff6600 "
+                                @click="currentBill.touristsList.splice(index, 1)"></span>
                         </a-col>
                     </a-row>
                 </a-col>
                 <a-col :span="24">
                     <a-button type="dashed" block @click="currentBill.touristsList.push({ fullname: '', phone: '' })"
                         :disabled="currentBill.cart.reduce((accumulator, object) => {
-            return accumulator + object.count;
-        }, 0) == currentBill.touristsList.length">+
+                            return accumulator + object.count;
+                        }, 0) == currentBill.touristsList.length">+
                         добавить</a-button>
                 </a-col>
                 <!-- <a-col :span="24">
@@ -628,7 +651,7 @@ onMounted(async () => {
                 </a-col>
                 <a-col v-if="trip.additionalServices?.length > 0" :span="24">
                     <div>Дополнительные услуги</div>
-                    <a-row  v-for="service of additionalServices" class="d-flex space-between">
+                    <a-row v-for="service of additionalServices" class="d-flex space-between">
                         <div class="d-flex align-center">
                             {{ service.name }}
                         </div>
@@ -637,7 +660,8 @@ onMounted(async () => {
                         </div>
                         <div class="d-flex direction-column">
                             <span style="font-size: 8px;">кол-во</span>
-                            <a-input-number v-model:value="service.count" :min="0" :max="getSelectedUsersCount" placeholder="чел"></a-input-number>
+                            <a-input-number v-model:value="service.count" :min="0" :max="getSelectedUsersCount"
+                                placeholder="чел"></a-input-number>
                             <!-- <a-checkbox v-model:checked="service.selected" class="ma-8">добавить</a-checkbox> -->
                         </div>
                     </a-row>

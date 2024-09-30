@@ -1,13 +1,24 @@
 <script setup>
 import TinkoffLogo from '../../assets/images/tinkofflogo.svg'
 import tinkoffPlugin from '../../plugins/tinkoff';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, getCurrentInstance} from 'vue';
 import { useTrips } from '../../stores/trips'
+import { useContract } from '../../stores/contract'
 import { useAuth } from '../../stores/auth'
+import PrintContract from '../../print/PrintContract.vue';
+import { useRouter } from 'vue-router';
 
+
+
+const router = useRouter()
+
+const app = getCurrentInstance();
+const htmlToPaper = app.appContext.config.globalProperties.$htmlToPaper;
 
 const tripStore = useTrips()
 const userStore = useAuth()
+const contractStore = useContract()
+const sellerInn = ''
 
 // все чеки
 let bought = ref([])
@@ -19,6 +30,13 @@ let buyDialog = ref(false)
 let currentBill = ref({})
 
 
+
+
+const getSellerContract = async (shopCode) => {
+  
+   return  await contractStore.getContractByShopCode(shopCode)
+ 
+}
 const clearData = (dateNumber) => {
     let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
         year: "2-digit",
@@ -102,8 +120,19 @@ async function buyTrip(cardId) {
             console.log(err);
         });
 }
+const print = async (BILL) => {
+    tripStore.printContractTour ={}
+    tripStore.printContractTour= BILL
+    tripStore.printContractTour.billTotal= billTotal(BILL)
+  
+    tripStore.printContractTour.seller =  await getSellerContract(String(BILL?.tripId.tinkoffContract.ShopCode))
+    router.push('/print-contract')
+    // await htmlToPaper('printMe');
+};
+
 onMounted(async () => {
     await updateBought()
+
 })
 </script>
 <template>
@@ -180,9 +209,15 @@ onMounted(async () => {
                                 </div>
                             </div>
                         </span>
-                        <a-popconfirm v-if="BILL.payment.amount == 0" title="Отказаться?" ok-text="Да" cancel-text="Нет"
+
+                        <span class="mdi mdi-24px mdi-printer-outline" @click="print(BILL)"></span>
+
+                       
+
+
+                        <a-popconfirm v-if="BILL.payment.amount == 0" title="Удалить?" ok-text="Да" cancel-text="Нет"
                             @confirm="cancelTrip(BILL._id, userStore.user._id)">
-                            <span class="mdi mdi-24px mdi-delete ml-16" style="color: #ff6600"></span>
+                            <span class="mdi mdi-24px mdi-delete" style="color: #ff6600"></span>
                         </a-popconfirm>
                     </div>
 

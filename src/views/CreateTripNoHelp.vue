@@ -593,7 +593,7 @@ let formSchema = yup.object({
 
                   [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
 
-                  ['link']
+                  ['link'], ['clean'] 
                 ]
                   " />
 
@@ -614,7 +614,7 @@ let formSchema = yup.object({
 
                     [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
 
-                    ['link']
+                    ['link'],  ['clean']   
                   ]
                     " />
                 </col>
@@ -671,8 +671,8 @@ let formSchema = yup.object({
             </a-col>
             <a-col :span="24" :md="12">
               <Field name="partner" v-slot="{ value, handleChange }" v-model="form.partner">
-                Это тур партнера
-                <a-textarea autoSize @update:value="handleChange" :value="value" placeholder="" size="large">
+                Партнер
+                <a-textarea autoSize @update:value="handleChange" :value="value" placeholder="ООО Ромашка" size="large">
                 </a-textarea>
               </Field>
             </a-col>
