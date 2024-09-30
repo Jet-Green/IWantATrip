@@ -291,7 +291,7 @@ let formSchema = yup.object({
                 <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
                     <a-row :gutter="[16, 16]">
                         <a-col :span="24">
-                            <h2>Создать тур</h2>
+                            <h2>Редактировать тур</h2>
                             <Field name="name" v-slot="{ value, handleChange }" v-model="form.name">
                                 Название
                                 <a-input placeholder="Название тура" size="large" @update:value="handleChange"
@@ -443,6 +443,9 @@ let formSchema = yup.object({
                                 <a-select :value="value" @update:value="handleChange" style="width: 100%"
                                     :options="tripRegions" placeholder="На море, Кавказ, Урал, Заполярье, Кунгурские пещеры">
                                 </a-select>
+                                <span class="text-caption">
+                                    *пользователь будет искать ваш тур по этому ключевому слову
+                                </span>
                             </Field>
                             <Transition name="fade">
                                 <ErrorMessage name="tripRegion" class="error-message" />
