@@ -276,7 +276,7 @@ onMounted(() => {
           </a-row>
 
           <template #footer>
-            <a-button key="back" style="border-radius: 18px" @click="hideQuerySuggestions()">не по региону</a-button>
+            <a-button key="back" style="border-radius: 18px" @click="hideQuerySuggestions()">оставить поиск строкой</a-button>
             <a-button
               key="submit"
               :disabled="!regionSelected"
