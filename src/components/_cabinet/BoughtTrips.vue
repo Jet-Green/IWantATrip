@@ -1,6 +1,7 @@
 <script setup>
 import TinkoffLogo from '../../assets/images/tinkofflogo.svg'
 import tinkoffPlugin from '../../plugins/tinkoff';
+import { message } from "ant-design-vue";
 import { onMounted, ref, getCurrentInstance} from 'vue';
 import { useTrips } from '../../stores/trips'
 import { useContract } from '../../stores/contract'
@@ -90,8 +91,9 @@ async function buyTrip(cardId) {
     // console.log(currentBill.value);
     buyDialog.value = true
     const orderId = Date.now().toString()
+    let additionalServices = currentBill.value.additionalServices?.length?currentBill.value.additionalServices:[]
     let { data, token, success } =
-        await tinkoffPlugin.initPayment(orderId, currentBill.value.cart, userStore.user.email, currentBill.value.tripId.tinkoffContract, currentBill.value.tripId.name)
+        await tinkoffPlugin.initPayment(orderId, currentBill.value.cart, userStore.user.email, currentBill.value.tripId.tinkoffContract, currentBill.value.tripId.name, additionalServices)
     if (!success) {
         message.config({ duration: 3, top: "90vh" });
         message.error({ content: "Ошибка при оплате" });
