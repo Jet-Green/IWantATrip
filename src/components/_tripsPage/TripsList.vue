@@ -10,6 +10,8 @@ const route = useRoute();
 let tripStore = useTrips()
 let isRefreshing = ref(true)
 
+
+
 let handleScroll = async () => {
   isRefreshing.value = true
   let triggerHeight =
@@ -47,8 +49,12 @@ onMounted(async () => {
     <div class="wrapper" ref="wrapper">
       <a-row type="flex" justify="center">
         <a-col :xs="22" :lg="16">
-          <h2>Туры</h2>
+          <h2>Туры
+
+          </h2>
+       
         </a-col>
+
       </a-row>
       <TripFilter :search="route.query.search" />
       <a-row class="d-flex justify-center">

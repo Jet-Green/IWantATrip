@@ -9,6 +9,8 @@ import locale from "ant-design-vue/es/date-picker/locale/ru_RU"
 import "dayjs/locale/ru"
 dayjs.locale("ru")
 
+
+
 const ruLocale = locale
 
 let props = defineProps({
@@ -138,11 +140,11 @@ function saveLocationRadius() {
   radiusVisible.value = false
 }
 
-watch(query, () => {
-  if (query.value.length > 2) {
-    showQuerySuggestions()
-  }
-})
+// watch(query, () => {
+//   if (query.value.length > 2) {
+//     showQuerySuggestions()
+//   }
+// })
 
 onMounted(() => {
   query.value = localStorage.getItem("TripQuery") ?? ""
@@ -168,17 +170,27 @@ onMounted(() => {
 
   <a-row type="flex" justify="center" class="section_bg">
     <a-col :xs="22" :lg="16">
-      <a-row :gutter="[8, 4]" class="d-flex justify-center align-center flex-wrap">
+      <a-row class="d-flex justify-center">
+        <a-col :xs="24" :lg="12" :md="16" class="pa-16">
+          <div style="background: #239FCA; padding: 10px; border-radius: 12px; display: flex; align-items: center;">
+
+            <div color="#239FCA" @click="showQuerySuggestions()" class="filter-button" type="button">
+              Куда, откуда, когда?
+              <!-- тут покажем содежимой фильтра -->
+            </div>
+
+            <!-- Если будет что-то в фильтре показывать  -->
+            <a-button type="primary" shape="circle" class="ml-8">x </a-button>
+          </div>
+
+
+        </a-col>
+      </a-row>
+      <a-row :gutter="[8, 4]" class="d-flex justify-center align-center flex-wrap" v-if="false">
         <a-col :span="12" :md="6" class="d-flex direction-column">
           <div for="search" style="font-size: 10px; line-height: 10px">искать</div>
-          <a-input
-            v-model:value="query"
-            placeholder="сочи"
-            name="search"
-            style="width: 100%"
-            allowClear
-            autocomplete="off"
-          />
+          <a-input v-model:value="query" placeholder="сочи" name="search" style="width: 100%" allowClear
+            autocomplete="off" />
 
           <!-- <Transition name="fade">
             <div class="query-suggestions" v-if="querySuggestionsVisible">
@@ -226,77 +238,13 @@ onMounted(() => {
           </Transition> -->
         </a-col>
 
-        <a-modal v-model:open="querySuggestionsVisible" title="Регион">
-          <a-row :gutter="[16, 16]">
-            <a-col :span="24">
-              <a-input
-                v-model:value="tripRegion"
-                placeholder="сочи"
-                name="search"
-                style="width: 100%"
-                allowClear
-                autocomplete="off"
-              />
-            </a-col>
-
-            <a-col :span="24">
-              <a-button v-if="!radiusVisible" variant="outlined" class="location-btn" @click="radiusVisible = true">
-                <span class="mdi mdi-map-marker-radius-outline"></span>
-                туры рядом со мной</a-button
-              >
-              <div v-if="radiusVisible">
-                <a-slider
-                  v-model:value="locationRadius"
-                  :step="100"
-                  :min="100"
-                  :max="1800"
-                  tooltipPlacement="right"
-                  :tipFormatter="(s) => s + ' км'"
-                />
-                <b>Радиус поиска {{ locationRadius }} км.</b>
-              </div>
-            </a-col>
-
-            <a-col :span="24">
-              <hr class="mt-16 mb-16" />
-              <div>
-                <div v-if="suggestedRegions.length > 0" v-for="region of suggestedRegions">
-                  <div class="region-container" @click="selectRegion(region)">
-                    <div>
-                      {{ region }}
-                    </div>
-                    <div>
-                      <span class="mdi mdi-check"></span>
-                    </div>
-                  </div>
-                </div>
-                <div v-else>Ничего не нашлось</div>
-              </div>
-            </a-col>
-          </a-row>
-
-          <template #footer>
-            <a-button key="back" style="border-radius: 18px" @click="hideQuerySuggestions()">оставить поиск строкой</a-button>
-            <a-button
-              key="submit"
-              :disabled="!regionSelected"
-              style="border-radius: 18px"
-              type="primary"
-              @click="saveLocationRadius(), hideQuerySuggestions(), find()"
-              >применить</a-button
-            >
-          </template>
-        </a-modal>
 
         <a-col :span="12" :md="6" class="d-flex direction-column" v-if="appStore.appState">
           <div style="font-size: 10px; line-height: 10px">вид тура</div>
           <a-select v-model:value="type">
             <a-select-option value=""></a-select-option>
-            <a-select-option
-              placeholder="Tип тура"
-              v-for="tripType in appStore.appState[0]?.tripType"
-              :value="tripType"
-            >
+            <a-select-option placeholder="Tип тура" v-for="tripType in appStore.appState[0]?.tripType"
+              :value="tripType">
               {{ tripType }}
             </a-select-option>
           </a-select>
@@ -305,12 +253,8 @@ onMounted(() => {
         <a-col :span="24" :md="12" class="d-flex align-center space-between">
           <div class="d-flex direction-column" style="width: 100%">
             <div style="font-size: 10px; line-height: 10px">даты</div>
-            <a-range-picker
-              v-model:value="time"
-              :locale="ruLocale"
-              :placeholder="['начало', 'конец']"
-              inputmode="none"
-            />
+            <a-range-picker v-model:value="time" :locale="ruLocale" :placeholder="['начало', 'конец']"
+              inputmode="none" />
           </div>
         </a-col>
         <a-col :span="24" class="d-flex justify-center mt-16 mb-16">
@@ -326,6 +270,50 @@ onMounted(() => {
           </a-button>
         </a-col>
       </a-row>
+      <a-modal v-model:open="querySuggestionsVisible" title="Поиск тура">
+        <a-row :gutter="[16, 16]">
+          <a-col :span="24">
+            <a-input v-model:value="tripRegion" placeholder="Куда?" name="search" style="width: 100%" allowClear
+              autocomplete="off" />
+          </a-col>
+
+          <a-col :span="24">
+            <a-button v-if="!radiusVisible" variant="outlined" class="location-btn" @click="radiusVisible = true">
+              <span class="mdi mdi-map-marker-radius-outline"></span>
+              туры рядом</a-button>
+            <div v-if="radiusVisible">
+              <a-slider v-model:value="locationRadius" :step="100" :min="0" :max="1800" tooltipPlacement="right"
+                :tipFormatter="(s) => s + ' км'" />
+              <b>Радиус поиска {{ locationRadius }} км.</b>
+            </div>
+          </a-col>
+
+          <a-col :span="24">
+            <hr class="mt-16 mb-16" />
+            <div>
+              <div v-if="suggestedRegions.length > 0" v-for="region of suggestedRegions">
+                <div class="region-container" @click="selectRegion(region)">
+                  <div>
+                    {{ region }}
+                  </div>
+                  <div>
+                    <span class="mdi mdi-check"></span>
+                  </div>
+                </div>
+              </div>
+              <div v-else>Ничего не нашлось</div>
+            </div>
+          </a-col>
+        </a-row>
+
+        <template #footer>
+          <a-button key="submit" style="border-radius: 18px" type="primary"
+            @click="saveLocationRadius(), hideQuerySuggestions(), find()">Показать</a-button>
+          <a-button key="back" style="border-radius: 18px" @click="hideQuerySuggestions()">Очистить фильтр</a-button>
+
+        </template>
+      </a-modal>
+
     </a-col>
   </a-row>
 </template>
@@ -378,21 +366,26 @@ onMounted(() => {
   margin: 6px 0;
   user-select: none;
 }
+
 .region-container:hover {
   color: #ff6600;
 }
+
 .region-query:hover {
   color: #ff6600;
 }
+
 .region-query {
   cursor: pointer;
   width: fit-content;
 }
+
 @media (max-width: 767px) {
   .query-suggestions {
     top: 90px;
   }
 }
+
 .active_filter {
   color: #ff6600;
   cursor: pointer;
@@ -402,14 +395,28 @@ onMounted(() => {
   color: #227597;
   cursor: pointer;
 }
+
 .location-btn {
   text-transform: none;
   border-radius: 4px;
   line-height: 1;
   display: flex;
   align-items: center;
+
   .mdi {
     font-size: 20px;
   }
+}
+
+.filter-button {
+  background: white;
+  border-color: #239FCA;
+  border-radius: 8px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  cursor: pointer;
+ color: rgba(0, 0, 0, 0.7);
 }
 </style>
