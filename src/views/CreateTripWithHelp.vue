@@ -30,6 +30,8 @@ const start = ref(null);
 const end = ref(null);
 
 let form = reactive({
+  fullname: "",
+  phone: "",
   type: [],
   start: null,
   end: null,
@@ -41,10 +43,7 @@ let form = reactive({
   wishes: "",
 
 });
-let userInfo = reactive({
-  fullname: "",
-  phone: "",
-});
+
 function close() {
   router.push("/trips");
 }
@@ -59,7 +58,10 @@ async function submit() {
   await userStore
     .updateUser({
       email: userStore.user.email,
-      fullinfo: userInfo,
+      fullinfo: {
+        fullname: form.fullname,
+        phone: form.phone,
+      },
     })
     .then((response) => {
       userStore.user = response.data;
@@ -67,7 +69,7 @@ async function submit() {
     .catch((err) => {
       console.log(err);
     });
-  
+
   bookingStore.bookingTrip(toSend).then(async (res) => {
     if (res.status == 200) {
       message.config({ duration: 1.5, top: "70vh" });
@@ -84,6 +86,8 @@ async function submit() {
 }
 
 let formSchema = yup.object({
+  fullname: yup.string().required("заполните поле"),
+  phone: yup.string().required("заполните поле"),
   start: yup.object().required("заполните поле"),
   end: yup.object().required("заполните поле"),
   type: yup.string().required("заполните поле"),
@@ -109,11 +113,11 @@ watch(end, () => {
 onMounted(() => {
   if (userStore.user) {
     userStore.user.fullinfo.fullname
-      ? (userInfo.fullname = userStore.user.fullinfo.fullname)
-      : (userInfo.fullname = "");
+      ? (form.fullname = userStore.user.fullinfo.fullname)
+      : (form.fullname = "");
     userStore.user.fullinfo.phone
-      ? (userInfo.phone = userStore.user.fullinfo.phone)
-      : (userInfo.phone = "");
+      ? (form.phone = userStore.user.fullinfo.phone)
+      : (form.phone = "");
   }
 });
 </script>
@@ -133,7 +137,7 @@ onMounted(() => {
           <h2>О вас</h2>
           <a-row :gutter="[16, 16]">
             <a-col :span="24" :md="12">
-              <Field name="fullname" v-slot="{ value, handleChange }" v-model="userInfo.fullname">
+              <Field name="fullname" v-slot="{ value, handleChange }" v-model="form.fullname">
                 Фaмилия Имя
 
                 <a-input style="width: 100%" @update:value="handleChange" :value="value"
@@ -144,7 +148,7 @@ onMounted(() => {
               </Transition>
             </a-col>
             <a-col :span="24" :md="12">
-              <Field name="phone" v-slot="{ value, handleChange }" v-model="userInfo.phone">
+              <Field name="phone" v-slot="{ value, handleChange }" v-model="form.phone">
                 Телефон
 
                 <a-input style="width: 100%" @update:value="handleChange" :value="value" placeholder="79127528874" />
@@ -160,7 +164,7 @@ onMounted(() => {
                   Tип тура
 
                   <a-select @update:value="handleChange" :value="value" style="width: 100%">
-                    <a-select-option v-for=" tripType  in  appStore.appState[0].tripType " :value="tripType">{{ tripType
+                    <a-select-option v-for=" tripType in appStore.appState[0].tripType " :value="tripType">{{ tripType
                       }}</a-select-option>
                   </a-select>
                 </Field>

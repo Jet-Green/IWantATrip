@@ -199,6 +199,13 @@ export const useTrips = defineStore('trips', {
                 console.log(error);
             }
         },
+        async deleteOrder(_id) {
+            try {
+                return await BookingService.deleteOrder(_id)
+            } catch (error) {
+                console.log(error);
+            }
+        },
         async getBookingTrips(status) {
             try {
                 let res = await BookingService.getBookingTrips(status)
