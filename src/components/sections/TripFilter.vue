@@ -68,7 +68,7 @@ let buttonTitle = computed(() => {
       month: "long",
       day: "numeric",
     })
-    let end = new Date(time.value[1].$d).toLocaleDateString('RU-ru', {
+    let end = new Date(time.value[1].$d).toLocaleDateString("RU-ru", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -77,7 +77,7 @@ let buttonTitle = computed(() => {
     result.push(`c ${start} по ${end}`)
   }
 
-  return result.join(", ") ?? "Куда, откуда, когда?"
+  return result.join(", ").length > 0 ? result.join(", ") : "Куда, откуда, когда?"
 })
 
 watch(time, (newTime) => {
