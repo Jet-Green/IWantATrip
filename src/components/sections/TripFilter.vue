@@ -13,6 +13,7 @@ dayjs.locale("ru")
 
 const ruLocale = locale
 
+const router = useRouter()
 let props = defineProps({
   search: String,
 })
@@ -22,18 +23,20 @@ const appStore = useAppState()
 const locationStore = useLocations()
 
 let { selectLocationDialog } = storeToRefs(locationStore)
+let { trips } = storeToRefs(tripStore)
 
 let time = ref([])
 let query = ref("")
 let tripRegion = ref("")
 let type = ref("")
 let locationRadius = ref(100)
+// названия туров в диалоговом окне
+let foundTrips = ref([])
 
 let querySuggestionsVisible = ref(false)
 
-let router = useRouter()
-
 let suggestedRegions = computed(() => {
+  if (tripRegion.value.trim().length <= 2) return []
   return (
     appStore.appState[0].tripRegions?.filter((reg) =>
       reg.toLowerCase().includes(tripRegion.value.trim().toLocaleLowerCase())
@@ -97,7 +100,7 @@ function setStartEndTimeToState() {
   tripStore.tripFilter.end = end
 }
 
-function find() {
+async function find() {
   // query - для поиска по названиям
   // tripRegion для поиска по регионам
   // используются параллельно, независимо от того, выбрал ли
@@ -121,13 +124,13 @@ function find() {
     tripStore.tripFilter.type = type.value
 
     setStartEndTimeToState()
-    tripStore.fetchTrips()
+    await tripStore.fetchTrips()
   } else {
     tripStore.tripFilter.query = query.value
     tripStore.tripFilter.start = ""
     tripStore.tripFilter.end = ""
     tripStore.tripFilter.type = type.value
-    tripStore.fetchTrips()
+    await tripStore.fetchTrips()
   }
 }
 
@@ -157,6 +160,25 @@ watch(locationRadius, (newRadius) => {
   }
 })
 
+watch(tripRegion, async (newRegion) => {
+  localStorage.setItem("TripRegion", newRegion)
+
+  if (newRegion.trim().length > 2) {
+    await find()
+  }
+  // когда ничего не введено - не показывать туры
+  if (newRegion.trim().length == 0) foundTrips.value = []
+})
+
+watch(trips, (newTrips) => {
+  foundTrips.value = newTrips.map((trip) => {
+    return {
+      name: trip.name,
+      _id: trip._id,
+    }
+  })
+})
+
 onMounted(() => {
   query.value = localStorage.getItem("TripQuery") ?? ""
   type.value = localStorage.getItem("TripType") ?? ""
@@ -174,6 +196,10 @@ onMounted(() => {
     locationRadius.value = Number(localStorage.getItem("locationRadius"))
     // нужно, чтобы и в pinia обновлялась эта информация
     tripStore.tripFilter.locationRadius = locationRadius.value
+  }
+  if (localStorage.getItem("TripRegion")) {
+    tripRegion.value = localStorage.getItem("TripRegion")
+    tripStore.tripFilter.tripRegion = tripRegion.value
   }
 
   if (props.search) {
@@ -199,14 +225,12 @@ onMounted(() => {
           <div style="background: #239fca; padding: 10px; border-radius: 12px; display: flex; align-items: center">
             <div color="#239FCA" @click="showQuerySuggestions()" class="filter-button" type="button">
               <span v-if="tripRegion">
-                {{ tripRegion }} 
+                {{ tripRegion }}
                 <span v-if="locationStore.location?._id">
                   , из {{ locationStore.location?.shortName }} + {{ locationRadius }} км.
                 </span>
               </span>
-              <span v-else>
-                Куда, откуда, когда?
-              </span>
+              <span v-else> Куда, откуда, когда? </span>
 
               <!-- тут покажем содержимое фильтра -->
             </div>
@@ -218,98 +242,6 @@ onMounted(() => {
           </div>
         </a-col>
       </a-row>
-      <!--<a-row :gutter="[8, 4]" class="d-flex justify-center align-center flex-wrap" v-if="false">
-        <a-col :span="12" :md="6" class="d-flex direction-column">
-          <div for="search" style="font-size: 10px; line-height: 10px">искать</div>
-          <a-input
-            v-model:value="query"
-            placeholder="сочи"
-            name="search"
-            style="width: 100%"
-            allowClear
-            autocomplete="off"
-          />
-
-          <Transition name="fade">
-            <div class="query-suggestions" v-if="querySuggestionsVisible">
-              <div class="card" v-if="!nearMeSuggestionsVisible">
-
-                <span class="mdi mdi-close" @click="hideQuerySuggestions"></span>
-
-                <a-button variant="outlined" class="location-btn" @click="radiusModal = true">
-                  <span class="mdi mdi-map-marker-radius-outline"></span>
-                  туры рядом со мной</a-button
-                >
-                <b>
-                  радиус поиска {{ locationRadius }} км.
-                </b>
-                <hr class="mt-16 mb-16" />
-                <div>
-                  <div v-if="suggestedRegions.length > 0" v-for="region of suggestedRegions">
-                    <div class="region-container" @click="selectRegion(region)">
-                      <div>
-                        {{ region }}
-                      </div>
-                      <div>
-                        <span class="mdi mdi-check"></span>
-                      </div>
-                    </div>
-                  </div>
-                  <div v-else>Ничего не нашлось</div>
-                </div>
-              </div>
-              <div v-else class="card">
-                <b> Радиус поиска {{ locationRadius }} км. </b>
-                <a-slider
-                  v-model:value="locationRadius"
-                  :step="100"
-                  :min="100"
-                  :max="1800"
-                  tooltipPlacement="bottom"
-                  :tipFormatter="(s) => s + ' км'"
-                  class="mt-32"
-                />
-                <span class="mdi mdi-close" @click="nearMeSuggestionsVisible = false"></span>
-                <a-button style="border-radius: 18px" @click="hideQuerySuggestions">готово</a-button>
-              </div>
-            </div>
-          </Transition>
-        </a-col>
-
-        <a-col :span="12" :md="6" class="d-flex direction-column" v-if="appStore.appState">
-          <div style="font-size: 10px; line-height: 10px">вид тура</div>
-          <a-select v-model:value="type">
-            <a-select-option value=""></a-select-option>
-            <a-select-option
-              placeholder="Tип тура"
-              v-for="tripType in appStore.appState[0]?.tripType"
-              :value="tripType"
-            >
-              {{ tripType }}
-            </a-select-option>
-          </a-select>
-        </a-col>
-
-        <a-col :span="24" :md="12" class="d-flex align-center space-between">
-          <div class="d-flex direction-column" style="width: 100%">
-            <div style="font-size: 10px; line-height: 10px">даты</div>
-            <a-range-picker
-              v-model:value="time"
-              :locale="ruLocale"
-              :placeholder="['начало', 'конец']"
-              inputmode="none"
-            />
-          </div>
-        </a-col>
-        <a-col :span="24" class="d-flex justify-center mt-16 mb-16">
-          <a-button type="primary" shape="round" @click="find" class="mr-4">
-            найти
-          </a-button>
-          <a-button shape="round" @click="resetForm">
-            очистить
-          </a-button>
-        </a-col>
-      </a-row>-->
 
       <!-- Всплывающее окно с фильтрами -->
       <a-modal v-model:open="querySuggestionsVisible" title="Поиск тура">
@@ -382,7 +314,7 @@ onMounted(() => {
           </a-col>
 
           <a-col :span="24">
-            <hr class="mt-16 mb-16" />
+            <div style="font-size: 10px; line-height: 10px">Куда</div>
             <div class="suggestions-container">
               <div v-if="suggestedRegions.length > 0" v-for="region of suggestedRegions">
                 <div class="region-container" @click="selectRegion(region)">
@@ -394,7 +326,19 @@ onMounted(() => {
                   </div>
                 </div>
               </div>
-              <div v-else>Ничего не нашлось</div>
+              <div style="font-weight: 300;" v-else>Ничего не нашлось</div>
+              <hr />
+            </div>
+          </a-col>
+          <a-col :span="24">
+            <div style="font-size: 10px; line-height: 10px">Туры</div>
+            <div v-if="foundTrips.length" v-for="fTrip of foundTrips">
+              <span class="trip-name" @click="router.push(`/trip?_id=${fTrip._id}`)">
+                {{ fTrip.name }}
+              </span>
+            </div>
+            <div style="font-weight: 300;" v-else>
+              Ничего не нашлось
             </div>
           </a-col>
         </a-row>
@@ -526,6 +470,11 @@ onMounted(() => {
 .no-location {
   cursor: pointer;
   font-weight: bold;
+  font-size: clamp(0.875rem, 0.6761rem + 0.5682vw, 1.125rem);
+}
+.trip-name {
+  font-weight: 500;
+  cursor: pointer;
   font-size: clamp(0.875rem, 0.6761rem + 0.5682vw, 1.125rem);
 }
 </style>
