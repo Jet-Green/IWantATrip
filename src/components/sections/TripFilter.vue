@@ -254,7 +254,7 @@ onMounted(() => {
               shape="circle"
               class="ml-8"
               @click="resetForm"
-              v-if="tripRegion || Number(locationRadius) > 100"
+              v-if="tripRegion || Number(locationRadius) > 100 || type.length > 0 || time.length > 0"
             >
               <span class="mdi mdi-close"></span>
             </a-button>
