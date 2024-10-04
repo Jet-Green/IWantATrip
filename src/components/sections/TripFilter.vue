@@ -27,9 +27,7 @@ let time = ref([])
 let query = ref("")
 let tripRegion = ref("")
 let type = ref("")
-let locationRadius = ref(Number(localStorage.getItem("locationRadius")) ?? 100)
-
-let radiusVisible = ref(false)
+let locationRadius = ref(100)
 
 let querySuggestionsVisible = ref(false)
 
@@ -64,7 +62,6 @@ function hideQuerySuggestions() {
 }
 
 function showQuerySuggestions() {
-  tripRegion.value = query.value
   querySuggestionsVisible.value = true
 }
 
@@ -75,8 +72,38 @@ function selectRegion(regionName) {
   regionSelected.value = true
 }
 
+function setStartEndTimeToState() {
+  let start = new Date(time.value[0].$d)
+  let end = new Date(time.value[1].$d)
+  
+  start.setHours(0)
+  start.setMinutes(0)
+  start.setSeconds(0)
+  start.setMilliseconds(0)
+  
+  
+  end.setHours(23)
+  end.setMinutes(59)
+  end.setSeconds(59)
+  end.setMilliseconds(999)
+
+  // перед тем, как мы запишем в start и end Number, нужно сохранить в localStorage
+  localStorage.setItem("TripTimeStart", start)
+  localStorage.setItem("TripTimeEnd", end)
+
+  start = Number(Date.parse(start.toString()))
+  end = Number(Date.parse(end.toString()))
+
+  tripStore.tripFilter.start = start
+  tripStore.tripFilter.end = end
+}
+
 function find() {
-  query.value = query.value.trim()
+  // query - для поиска по названиям
+  // tripRegion для поиска по регионам
+  // используются параллельно, независимо от того, выбрал ли
+  // пользователь конкретный регион или нет
+  query.value = tripRegion.value
   localStorage.setItem("TripQuery", query.value)
   localStorage.setItem("TripType", type.value)
   tripStore.searchCursor = 1
@@ -89,29 +116,11 @@ function find() {
   // порядок в этом выражении важен, так как второе выражение
   // не будет выполняться, если первое не выполнилось и не будет возникать ошибки
   if (time.value != null && (time.value[0] || time.value[1])) {
-    let start = new Date(time.value[0].$d)
-    let end = new Date(time.value[1].$d)
-
-    localStorage.setItem("TripTimeStart", start)
-    localStorage.setItem("TripTimeEnd", end)
-
-    start.setHours(0)
-    start.setMinutes(0)
-    start.setSeconds(0)
-    start.setMilliseconds(0)
-
-    start = Number(Date.parse(start.toString()))
-
-    end.setHours(23)
-    end.setMinutes(59)
-    end.setSeconds(59)
-    end.setMilliseconds(999)
-
-    end = Number(Date.parse(end.toString()))
     tripStore.tripFilter.query = query.value
-    tripStore.tripFilter.start = start
-    tripStore.tripFilter.end = end
+
     tripStore.tripFilter.type = type.value
+
+    setStartEndTimeToState()
     tripStore.fetchTrips()
   } else {
     tripStore.tripFilter.query = query.value
@@ -142,24 +151,29 @@ function resetForm() {
   find()
 }
 
-function saveLocationRadius() {
-  localStorage.setItem("locationRadius", locationRadius.value)
-  radiusVisible.value = false
-}
-
-// watch(query, () => {
-//   if (query.value.length > 2) {
-//     showQuerySuggestions()
-//   }
-// })
+watch(locationRadius, (newRadius) => {
+  if (newRadius > 100) {
+    localStorage.setItem("locationRadius", newRadius)
+  }
+})
 
 onMounted(() => {
   query.value = localStorage.getItem("TripQuery") ?? ""
   type.value = localStorage.getItem("TripType") ?? ""
+  tripStore.tripFilter.type = type.value
+
+  tripStore.tripFilter.query = query.value
 
   if (localStorage.getItem("TripTimeStart")) {
     time.value[0] = dayjs(localStorage.getItem("TripTimeStart"))
     time.value[1] = dayjs(localStorage.getItem("TripTimeEnd"))
+    
+    setStartEndTimeToState()
+  }
+  if (localStorage.getItem("locationRadius")) {
+    locationRadius.value = Number(localStorage.getItem("locationRadius"))
+    // нужно, чтобы и в pinia обновлялась эта информация
+    tripStore.tripFilter.locationRadius = locationRadius.value
   }
 
   if (props.search) {
@@ -289,6 +303,7 @@ onMounted(() => {
       <a-modal v-model:open="querySuggestionsVisible" title="Поиск тура">
         <a-row :gutter="[16, 16]">
           <a-col :span="24">
+            <div style="font-size: 10px; line-height: 10px">Куда</div>
             <a-input
               v-model:value="tripRegion"
               placeholder="Куда?"
@@ -300,16 +315,14 @@ onMounted(() => {
               size="large"
             />
           </a-col>
+
           <!-- если есть локация, то можно показывать радиус -->
           <a-col :span="24" v-if="locationStore.location?._id">
-            Откуда
+            <div style="font-size: 10px; line-height: 10px">Откуда</div>
             <div class="start-location-container" @click="selectLocationDialog = !selectLocationDialog">
               <span class="mdi mdi-map-marker-radius-outline"></span>
               {{ locationStore.location.shortName }}
             </div>
-            <!-- <a-button v-if="!radiusVisible" variant="outlined" class="location-btn" @click="radiusVisible = true">
-             </a-button
-            > -->
             <div>
               <a-slider
                 v-model:value="locationRadius"
@@ -322,12 +335,11 @@ onMounted(() => {
               <b>Радиус поиска {{ locationRadius }} км.</b>
             </div>
           </a-col>
+          <!-- если нет локации - выбираем её, потом радиус и появится -->
           <a-col v-else :span="24">
             <div class="no-location" @click="selectLocationDialog = !selectLocationDialog">
               <span class="mdi mdi-map-marker-outline"></span>
-              <span>
-                Ваш город
-              </span>
+              <span> Ваш город </span>
             </div>
           </a-col>
 
@@ -376,11 +388,7 @@ onMounted(() => {
         </a-row>
 
         <template #footer>
-          <a-button
-            key="submit"
-            style="border-radius: 18px"
-            type="primary"
-            @click="saveLocationRadius(), hideQuerySuggestions(), find()"
+          <a-button key="submit" style="border-radius: 18px" type="primary" @click="hideQuerySuggestions(), find()"
             >Показать</a-button
           >
           <a-button key="back" style="border-radius: 18px" @click="resetForm">Очистить фильтр</a-button>
