@@ -44,6 +44,42 @@ let suggestedRegions = computed(() => {
   )
 })
 
+let buttonTitle = computed(() => {
+  if (
+    !tripRegion.value &&
+    (!locationStore.location?._id || locationRadius.value == 100) &&
+    !type.value &&
+    time.value?.length == 0
+  ) {
+    return "Куда, откуда, когда?"
+  }
+
+  let result = []
+  if (tripRegion.value) {
+    result.push(tripRegion.value)
+  }
+  if (locationStore.location?._id) {
+    result.push(`${locationStore.location.shortName} + ${locationRadius.value} км.`)
+  }
+  if (type.value.length > 0) result.push(type.value)
+  if (time.value?.length > 0) {
+    let start = new Date(time.value[0].$d).toLocaleDateString("RU-ru", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
+    let end = new Date(time.value[1].$d).toLocaleDateString('RU-ru', {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
+
+    result.push(`c ${start} по ${end}`)
+  }
+
+  return result.join(", ") ?? "Куда, откуда, когда?"
+})
+
 watch(time, (newTime) => {
   if (!newTime) {
     localStorage.setItem("TripTimeStart", "")
@@ -231,11 +267,13 @@ onMounted(() => {
         <a-col :xs="24" :lg="12" :md="16" class="pa-16">
           <div style="background: #239fca; padding: 10px; border-radius: 12px; display: flex; align-items: center">
             <div color="#239FCA" @click="showQuerySuggestions()" class="filter-button" type="button">
-              <span v-if="tripRegion">
+              {{ buttonTitle }}
+              <!-- <span v-if="tripRegion">
                 {{ tripRegion }}
                 <span v-if="locationStore.location?._id">
                   , из {{ locationStore.location?.shortName }} + {{ locationRadius }} км.
                 </span>
+                <span v-if="type.length > 0">{{ type }}</span>
               </span>
               <span v-else-if="locationStore.location?._id">
                 <span v-if="locationRadius > 100">
@@ -243,7 +281,7 @@ onMounted(() => {
                 </span>
                 <span v-else-if="locationRadius == 100"> Куда, откуда, когда? </span>
               </span>
-              <span v-else>Куда, откуда, когда?</span>
+              <span v-else>Куда, откуда, когда?</span> -->
 
               <!-- тут покажем содержимое фильтра -->
             </div>
@@ -254,7 +292,7 @@ onMounted(() => {
               shape="circle"
               class="ml-8"
               @click="resetForm"
-              v-if="tripRegion || Number(locationRadius) > 100 || type.length > 0 || time.length > 0"
+              v-if="tripRegion || Number(locationRadius) > 100 || type.length > 0 || time?.length > 0"
             >
               <span class="mdi mdi-close"></span>
             </a-button>
