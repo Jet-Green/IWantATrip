@@ -182,6 +182,9 @@ watch(trips, (newTrips) => {
     }
   })
 })
+watch(locationRadius, () => {
+  find()
+})
 
 onMounted(() => {
   query.value = localStorage.getItem("TripQuery") ?? ""
@@ -234,7 +237,14 @@ onMounted(() => {
                   , из {{ locationStore.location?.shortName }} + {{ locationRadius }} км.
                 </span>
               </span>
-              <span v-else-if="locationStore.location?._id"> {{ locationStore.location?.shortName }} + {{ locationRadius }} км. </span>
+              <span v-else-if="locationStore.location?._id">
+                <span v-if="locationRadius > 100">
+                  {{ locationStore.location?.shortName }} + {{ locationRadius }} км.
+                </span>
+                <span v-else-if="locationRadius == 100">
+                  Куда, откуда, когда?
+                </span>
+               </span>
               <span v-else>Куда, откуда, когда?</span>
 
               <!-- тут покажем содержимое фильтра -->
