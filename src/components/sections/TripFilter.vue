@@ -70,9 +70,10 @@ function showQuerySuggestions() {
 
 let regionSelected = ref(false)
 function selectRegion(regionName) {
-  tripRegion.value = regionName
-  query.value = regionName
-  regionSelected.value = true
+  tripRegion.value = regionName;
+  query.value = regionName;
+  regionSelected.value = true;
+  querySuggestionsVisible.value = false;
 }
 
 function setStartEndTimeToState() {
@@ -230,13 +231,14 @@ onMounted(() => {
                   , из {{ locationStore.location?.shortName }} + {{ locationRadius }} км.
                 </span>
               </span>
-              <span v-else> Куда, откуда, когда? </span>
+              <span v-else-if="locationStore.location?._id"> {{ locationStore.location?.shortName }} + {{ locationRadius }} км. </span>
+              <span v-else>Куда, откуда, когда?</span>
 
               <!-- тут покажем содержимое фильтра -->
             </div>
 
             <!-- Если будет что-то в фильтре показывать  -->
-            <a-button type="primary" shape="circle" class="ml-8" @click="resetForm">
+            <a-button type="primary" shape="circle" class="ml-8" @click="resetForm" v-if="tripRegion">
               <span class="mdi mdi-close"></span>
             </a-button>
           </div>
@@ -247,7 +249,7 @@ onMounted(() => {
       <a-modal v-model:open="querySuggestionsVisible" title="Поиск тура">
         <a-row :gutter="[16, 16]">
           <a-col :span="24">
-            <div style="font-size: 10px; line-height: 10px">Куда</div>
+            <div style="font-size: 13px; line-height: 13px">Куда</div>
             <a-input
               v-model:value="tripRegion"
               placeholder="Куда?"
@@ -262,7 +264,7 @@ onMounted(() => {
 
           <!-- если есть локация, то можно показывать радиус -->
           <a-col :span="24" v-if="locationStore.location?._id">
-            <div style="font-size: 10px; line-height: 10px">Откуда</div>
+            <div style="font-size: 13px; line-height: 13px">Откуда</div>
             <div class="start-location-container" @click="selectLocationDialog = !selectLocationDialog">
               <span class="mdi mdi-map-marker-radius-outline"></span>
               {{ locationStore.location.shortName }}
@@ -288,7 +290,7 @@ onMounted(() => {
           </a-col>
 
           <a-col :span="24" class="d-flex direction-column" v-if="appStore.appState">
-            <div style="font-size: 10px; line-height: 10px">вид тура</div>
+            <div style="font-size: 13px; line-height: 13px">вид тура</div>
             <a-select v-model:value="type">
               <a-select-option value=""></a-select-option>
               <a-select-option
@@ -303,7 +305,7 @@ onMounted(() => {
 
           <a-col :span="24" class="d-flex align-center space-between">
             <div class="d-flex direction-column" style="width: 100%">
-              <div style="font-size: 10px; line-height: 10px">даты</div>
+              <div style="font-size: 13px; line-height: 13px">даты</div>
               <a-range-picker
                 v-model:value="time"
                 :locale="ruLocale"
@@ -314,7 +316,7 @@ onMounted(() => {
           </a-col>
 
           <a-col :span="24">
-            <div style="font-size: 10px; line-height: 10px">Куда</div>
+            <div style="font-size: 13px; line-height: 13px">Куда</div>
             <div class="suggestions-container">
               <div v-if="suggestedRegions.length > 0" v-for="region of suggestedRegions">
                 <div class="region-container" @click="selectRegion(region)">
@@ -330,9 +332,9 @@ onMounted(() => {
               <hr />
             </div>
           </a-col>
-          <a-col :span="24">
-            <div style="font-size: 10px; line-height: 10px">Туры</div>
-            <div v-if="foundTrips.length" v-for="fTrip of foundTrips">
+          <a-col :span="24" class="trips-container">
+            <div style="font-size: 13px; line-height: 13px">Туры</div>
+            <div v-if="foundTrips.length" v-for="fTrip of foundTrips" class="mb-8">
               <span class="trip-name" @click="router.push(`/trip?_id=${fTrip._id}`)">
                 {{ fTrip.name }}
               </span>
@@ -396,10 +398,6 @@ onMounted(() => {
 //   }
 
 // }
-.suggestions-container {
-  max-height: 400px;
-  overflow-y: scroll;
-}
 .region-container {
   display: flex;
   justify-content: space-between;
@@ -462,7 +460,7 @@ onMounted(() => {
 }
 .start-location-container {
   font-weight: bold;
-  font-size: clamp(0.875rem, 0.6761rem + 0.5682vw, 1.125rem);
+  font-size: clamp(0.875rem, 0.7756rem + 0.2841vw, 1rem);
   // чтобы div не растягивался на весь контейнер
   width: fit-content;
   cursor: pointer;
@@ -470,11 +468,20 @@ onMounted(() => {
 .no-location {
   cursor: pointer;
   font-weight: bold;
-  font-size: clamp(0.875rem, 0.6761rem + 0.5682vw, 1.125rem);
+  font-size: clamp(0.875rem, 0.7756rem + 0.2841vw, 1rem);
 }
 .trip-name {
   font-weight: 500;
   cursor: pointer;
-  font-size: clamp(0.875rem, 0.6761rem + 0.5682vw, 1.125rem);
+  font-size: clamp(0.875rem, 0.7756rem + 0.2841vw, 1rem);
+  line-height: 1.2;
+}
+.trips-container {
+  max-height: 400px;
+  overflow-y: scroll;
+}
+.suggestions-container {
+  max-height: 400px;
+  overflow-y: scroll;
 }
 </style>
