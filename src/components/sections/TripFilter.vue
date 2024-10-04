@@ -75,13 +75,12 @@ function selectRegion(regionName) {
 function setStartEndTimeToState() {
   let start = new Date(time.value[0].$d)
   let end = new Date(time.value[1].$d)
-  
+
   start.setHours(0)
   start.setMinutes(0)
   start.setSeconds(0)
   start.setMilliseconds(0)
-  
-  
+
   end.setHours(23)
   end.setMinutes(59)
   end.setSeconds(59)
@@ -104,6 +103,7 @@ function find() {
   // используются параллельно, независимо от того, выбрал ли
   // пользователь конкретный регион или нет
   query.value = tripRegion.value
+
   localStorage.setItem("TripQuery", query.value)
   localStorage.setItem("TripType", type.value)
   tripStore.searchCursor = 1
@@ -167,7 +167,7 @@ onMounted(() => {
   if (localStorage.getItem("TripTimeStart")) {
     time.value[0] = dayjs(localStorage.getItem("TripTimeStart"))
     time.value[1] = dayjs(localStorage.getItem("TripTimeEnd"))
-    
+
     setStartEndTimeToState()
   }
   if (localStorage.getItem("locationRadius")) {
@@ -178,9 +178,12 @@ onMounted(() => {
 
   if (props.search) {
     query.value = props.search
+    tripStore.tripFilter.query = query.value
+    tripRegion.value = query.value
   }
-  query.value || type.value ? find() : null
-  //Надо обязательно вводить дату, иначе ошибка
+  if (query.value || type.value) {
+    find()
+  }
 })
 </script>
 
@@ -195,12 +198,21 @@ onMounted(() => {
         <a-col :xs="24" :lg="12" :md="16" class="pa-16">
           <div style="background: #239fca; padding: 10px; border-radius: 12px; display: flex; align-items: center">
             <div color="#239FCA" @click="showQuerySuggestions()" class="filter-button" type="button">
-              Куда, откуда, когда?
+              <span v-if="tripRegion">
+                {{ query }} 
+                <span v-if="locationStore.location?._id">
+                  , из {{ locationStore.location?.shortName }} + {{ locationRadius }} км.
+                </span>
+              </span>
+              <span v-else>
+                Куда, откуда, когда?
+              </span>
+
               <!-- тут покажем содержимое фильтра -->
             </div>
 
             <!-- Если будет что-то в фильтре показывать  -->
-            <a-button type="primary" shape="circle" class="ml-8">
+            <a-button type="primary" shape="circle" class="ml-8" @click="resetForm">
               <span class="mdi mdi-close"></span>
             </a-button>
           </div>
