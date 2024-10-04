@@ -199,7 +199,7 @@ onMounted(() => {
           <div style="background: #239fca; padding: 10px; border-radius: 12px; display: flex; align-items: center">
             <div color="#239FCA" @click="showQuerySuggestions()" class="filter-button" type="button">
               <span v-if="tripRegion">
-                {{ query }} 
+                {{ tripRegion }} 
                 <span v-if="locationStore.location?._id">
                   , из {{ locationStore.location?.shortName }} + {{ locationRadius }} км.
                 </span>
