@@ -141,23 +141,26 @@ function resetForm() {
   tripStore.tripFilter.end = ""
   tripStore.tripFilter.type = ""
   tripStore.tripFilter.tripRegion = ""
+  tripStore.tripFilter.locationRadius = 100
 
   type.value = ""
   time.value = []
   query.value = ""
   tripRegion.value = ""
+  locationRadius.value = 100
 
   localStorage.setItem("TripTimeStart", "")
   localStorage.setItem("TripTimeEnd", "")
   localStorage.setItem("TripQuery", "")
   localStorage.setItem("TripType", "")
+  localStorage.setItem("LocationRadius", "100")
 
   find()
 }
 
 watch(locationRadius, (newRadius) => {
   if (newRadius > 100) {
-    localStorage.setItem("locationRadius", newRadius)
+    localStorage.setItem("LocationRadius", newRadius)
   }
 })
 
@@ -193,8 +196,8 @@ onMounted(() => {
 
     setStartEndTimeToState()
   }
-  if (localStorage.getItem("locationRadius")) {
-    locationRadius.value = Number(localStorage.getItem("locationRadius"))
+  if (localStorage.getItem("LocationRadius")) {
+    locationRadius.value = Number(localStorage.getItem("LocationRadius"))
     // нужно, чтобы и в pinia обновлялась эта информация
     tripStore.tripFilter.locationRadius = locationRadius.value
   }
@@ -238,7 +241,7 @@ onMounted(() => {
             </div>
 
             <!-- Если будет что-то в фильтре показывать  -->
-            <a-button type="primary" shape="circle" class="ml-8" @click="resetForm" v-if="tripRegion">
+            <a-button type="primary" shape="circle" class="ml-8" @click="resetForm" v-if="tripRegion || Number(locationRadius) > 100">
               <span class="mdi mdi-close"></span>
             </a-button>
           </div>
@@ -273,7 +276,7 @@ onMounted(() => {
               <a-slider
                 v-model:value="locationRadius"
                 :step="100"
-                :min="0"
+                :min="100"
                 :max="1800"
                 tooltipPlacement="right"
                 :tipFormatter="(s) => s + ' км'"
