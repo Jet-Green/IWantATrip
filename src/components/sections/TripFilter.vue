@@ -268,22 +268,6 @@ onMounted(() => {
           <div style="background: #239fca; padding: 10px; border-radius: 12px; display: flex; align-items: center">
             <div color="#239FCA" @click="showQuerySuggestions()" class="filter-button" type="button">
               {{ buttonTitle }}
-              <!-- <span v-if="tripRegion">
-                {{ tripRegion }}
-                <span v-if="locationStore.location?._id">
-                  , из {{ locationStore.location?.shortName }} + {{ locationRadius }} км.
-                </span>
-                <span v-if="type.length > 0">{{ type }}</span>
-              </span>
-              <span v-else-if="locationStore.location?._id">
-                <span v-if="locationRadius > 100">
-                  {{ locationStore.location?.shortName }} + {{ locationRadius }} км.
-                </span>
-                <span v-else-if="locationRadius == 100"> Куда, откуда, когда? </span>
-              </span>
-              <span v-else>Куда, откуда, когда?</span> -->
-
-              <!-- тут покажем содержимое фильтра -->
             </div>
 
             <!-- Если будет что-то в фильтре показывать  -->
