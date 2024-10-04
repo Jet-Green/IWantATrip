@@ -70,10 +70,10 @@ function showQuerySuggestions() {
 
 let regionSelected = ref(false)
 function selectRegion(regionName) {
-  tripRegion.value = regionName;
-  query.value = regionName;
-  regionSelected.value = true;
-  querySuggestionsVisible.value = false;
+  tripRegion.value = regionName
+  query.value = regionName
+  regionSelected.value = true
+  querySuggestionsVisible.value = false
 }
 
 function setStartEndTimeToState() {
@@ -241,17 +241,21 @@ onMounted(() => {
                 <span v-if="locationRadius > 100">
                   {{ locationStore.location?.shortName }} + {{ locationRadius }} км.
                 </span>
-                <span v-else-if="locationRadius == 100">
-                  Куда, откуда, когда?
-                </span>
-               </span>
+                <span v-else-if="locationRadius == 100"> Куда, откуда, когда? </span>
+              </span>
               <span v-else>Куда, откуда, когда?</span>
 
               <!-- тут покажем содержимое фильтра -->
             </div>
 
             <!-- Если будет что-то в фильтре показывать  -->
-            <a-button type="primary" shape="circle" class="ml-8" @click="resetForm" v-if="tripRegion || Number(locationRadius) > 100">
+            <a-button
+              type="primary"
+              shape="circle"
+              class="ml-8"
+              @click="resetForm"
+              v-if="tripRegion || Number(locationRadius) > 100"
+            >
               <span class="mdi mdi-close"></span>
             </a-button>
           </div>
@@ -301,31 +305,38 @@ onMounted(() => {
               <span> Ваш город </span>
             </div>
           </a-col>
+          <a-col :span="24">
+            <a-collapse :bordered="false">
+              <a-collapse-panel key="1" header="Дополнительные фильтры" :style="'padding: 0px;'">
+                <a-row :gutter="[0, 16]">
+                  <a-col :span="24" class="d-flex direction-column" v-if="appStore.appState">
+                    <div style="font-size: 13px; line-height: 13px">вид тура</div>
+                    <a-select v-model:value="type">
+                      <a-select-option value=""></a-select-option>
+                      <a-select-option
+                        placeholder="Tип тура"
+                        v-for="tripType in appStore.appState[0]?.tripType"
+                        :value="tripType"
+                      >
+                        {{ tripType }}
+                      </a-select-option>
+                    </a-select>
+                  </a-col>
 
-          <a-col :span="24" class="d-flex direction-column" v-if="appStore.appState">
-            <div style="font-size: 13px; line-height: 13px">вид тура</div>
-            <a-select v-model:value="type">
-              <a-select-option value=""></a-select-option>
-              <a-select-option
-                placeholder="Tип тура"
-                v-for="tripType in appStore.appState[0]?.tripType"
-                :value="tripType"
-              >
-                {{ tripType }}
-              </a-select-option>
-            </a-select>
-          </a-col>
-
-          <a-col :span="24" class="d-flex align-center space-between">
-            <div class="d-flex direction-column" style="width: 100%">
-              <div style="font-size: 13px; line-height: 13px">даты</div>
-              <a-range-picker
-                v-model:value="time"
-                :locale="ruLocale"
-                :placeholder="['начало', 'конец']"
-                inputmode="none"
-              />
-            </div>
+                  <a-col :span="24" class="d-flex align-center space-between">
+                    <div class="d-flex direction-column" style="width: 100%">
+                      <div style="font-size: 13px; line-height: 13px">даты</div>
+                      <a-range-picker
+                        v-model:value="time"
+                        :locale="ruLocale"
+                        :placeholder="['начало', 'конец']"
+                        inputmode="none"
+                      />
+                    </div>
+                  </a-col>
+                </a-row>
+              </a-collapse-panel>
+            </a-collapse>
           </a-col>
 
           <a-col :span="24">
@@ -341,7 +352,7 @@ onMounted(() => {
                   </div>
                 </div>
               </div>
-              <div style="font-weight: 300;" v-else>Ничего не нашлось</div>
+              <div style="font-weight: 300" v-else>Ничего не нашлось</div>
               <hr />
             </div>
           </a-col>
@@ -352,9 +363,7 @@ onMounted(() => {
                 {{ fTrip.name }}
               </span>
             </div>
-            <div style="font-weight: 300;" v-else>
-              Ничего не нашлось
-            </div>
+            <div style="font-weight: 300" v-else>Ничего не нашлось</div>
           </a-col>
         </a-row>
 
