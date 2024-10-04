@@ -307,7 +307,7 @@ onMounted(() => {
           </a-col>
           <a-col :span="24">
             <a-collapse :bordered="false">
-              <a-collapse-panel key="1" header="Дополнительные фильтры" :style="'padding: 0px;'">
+              <a-collapse-panel key="1" header="доп. фильтры" :style="'padding: 0px;'">
                 <a-row :gutter="[0, 16]">
                   <a-col :span="24" class="d-flex direction-column" v-if="appStore.appState">
                     <div style="font-size: 13px; line-height: 13px">вид тура</div>
