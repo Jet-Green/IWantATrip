@@ -271,13 +271,8 @@ onMounted(() => {
             </div>
 
             <!-- Если будет что-то в фильтре показывать  -->
-            <a-button
-              type="primary"
-              shape="circle"
-              class="ml-8"
-              @click="resetForm"
-              v-if="tripRegion || Number(locationRadius) > 100 || type.length > 0 || time?.length > 0"
-            >
+            <a-button type="primary" shape="circle" class="ml-8" @click="resetForm"
+              v-if="tripRegion || Number(locationRadius) > 100 || type.length > 0 || time?.length > 0">
               <span class="mdi mdi-close"></span>
             </a-button>
           </div>
@@ -288,35 +283,21 @@ onMounted(() => {
       <a-modal v-model:open="querySuggestionsVisible" title="Поиск тура">
         <a-row :gutter="[16, 16]">
           <a-col :span="24">
-            <div style="font-size: 13px; line-height: 13px">Куда</div>
-            <a-input
-              v-model:value="tripRegion"
-              placeholder="Куда?"
-              name="search"
-              style="width: 100%"
-              allowClear
-              autocomplete="off"
-              autofocus
-              size="large"
-            />
+            <!-- <div class="subtitle">Куда</div> -->
+            <a-input v-model:value="tripRegion" placeholder="Название, направление? " name="search" style="width: 100%" allowClear
+              autocomplete="off" autofocus size="large" />
           </a-col>
 
           <!-- если есть локация, то можно показывать радиус -->
+          <a-col :span="24" class="subtitle">Откуда: место начала</a-col>
           <a-col :span="24" v-if="locationStore.location?._id">
-            <div style="font-size: 13px; line-height: 13px">Откуда</div>
             <div class="start-location-container" @click="selectLocationDialog = !selectLocationDialog">
               <span class="mdi mdi-map-marker-radius-outline"></span>
               {{ locationStore.location.shortName }}
             </div>
             <div>
-              <a-slider
-                v-model:value="locationRadius"
-                :step="100"
-                :min="100"
-                :max="1800"
-                tooltipPlacement="right"
-                :tipFormatter="(s) => s + ' км'"
-              />
+              <a-slider v-model:value="locationRadius" :step="100" :min="100" :max="1800" tooltipPlacement="right"
+                :tipFormatter="(s) => s + ' км'" />
               <b>Радиус поиска {{ locationRadius }} км.</b>
             </div>
           </a-col>
@@ -335,11 +316,8 @@ onMounted(() => {
                     <div style="font-size: 13px; line-height: 13px">вид тура</div>
                     <a-select v-model:value="type">
                       <a-select-option value=""></a-select-option>
-                      <a-select-option
-                        placeholder="Tип тура"
-                        v-for="tripType in appStore.appState[0]?.tripType"
-                        :value="tripType"
-                      >
+                      <a-select-option placeholder="Tип тура" v-for="tripType in appStore.appState[0]?.tripType"
+                        :value="tripType">
                         {{ tripType }}
                       </a-select-option>
                     </a-select>
@@ -348,23 +326,18 @@ onMounted(() => {
                   <a-col :span="24" class="d-flex align-center space-between">
                     <div class="d-flex direction-column" style="width: 100%">
                       <div style="font-size: 13px; line-height: 13px">даты</div>
-                      <a-range-picker
-                        v-model:value="time"
-                        :locale="ruLocale"
-                        :placeholder="['начало', 'конец']"
-                        inputmode="none"
-                      />
+                      <a-range-picker v-model:value="time" :locale="ruLocale" :placeholder="['начало', 'конец']"
+                        inputmode="none" />
                     </div>
                   </a-col>
                 </a-row>
               </a-collapse-panel>
             </a-collapse>
           </a-col>
-
-          <a-col :span="24">
-            <div style="font-size: 13px; line-height: 13px">Куда</div>
+          <a-col :span="24" v-if="suggestedRegions.length > 0">
+            <div class="subtitle">Направления</div>
             <div class="suggestions-container">
-              <div v-if="suggestedRegions.length > 0" v-for="region of suggestedRegions">
+              <div  v-for="region of suggestedRegions">
                 <div class="region-container" @click="selectRegion(region)">
                   <div>
                     {{ region }}
@@ -374,26 +347,24 @@ onMounted(() => {
                   </div>
                 </div>
               </div>
-              <div style="font-weight: 300" v-else>Ничего не нашлось</div>
-              <hr />
             </div>
           </a-col>
+          <a-divider></a-divider>
           <a-col :span="24" class="trips-container">
-            <div style="font-size: 13px; line-height: 13px">Туры</div>
+            <div class="subtitle">Туры</div>
             <div v-if="foundTrips.length" v-for="fTrip of foundTrips" class="mb-8">
               <span class="trip-name" @click="router.push(`/trip?_id=${fTrip._id}`)">
-                {{ fTrip.name }}
+               - {{ fTrip.name }}
               </span>
             </div>
-            <div style="font-weight: 300" v-else>Ничего не нашлось</div>
+            <div  v-else>Ничего не нашлось</div>
           </a-col>
         </a-row>
 
         <template #footer>
-          <a-button key="submit" style="border-radius: 18px" type="primary" @click="hideQuerySuggestions(), find()"
-            >Показать</a-button
-          >
-          <a-button key="back" style="border-radius: 18px" @click="resetForm">Очистить фильтр</a-button>
+          <a-button key="submit" style="border-radius: 18px" type="primary"
+            @click="hideQuerySuggestions(), find()">Показать</a-button>
+          <a-button key="back" style="border-radius: 18px" @click="resetForm">Очистить</a-button>
         </template>
       </a-modal>
       <!-- Всплывающее окно с фильтрами -->
@@ -402,46 +373,6 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-// .section_bg {
-//   background: rgba(67, 65, 79);
-// }
-
-// .mdi-close {
-//   position: absolute;
-//   top: 4px;
-//   right: 8px;
-//   font-size: 20px;
-//   padding: 4px;
-//   cursor: pointer;
-// }
-// .mdi-close:active {
-//   transform: scale(1.2);
-// }
-// .mdi-close:hover {
-//   transform: scale(1.2);
-// }
-// .query-suggestions {
-//   position: absolute;
-//   z-index: 1;
-//   top: 40px;
-//   left: 4px;
-//   width: 140%;
-//   max-height: 400px;
-//   overflow-y: scroll;
-//   padding: 6px;
-
-//   // overflow-x: hidden;
-//   .card {
-//     // background-color: #ff6600;
-//     border-radius: 6px;
-//     // border: 1px solid rgba(95, 95, 95, 0.3);
-//     box-shadow: 0px 0px 6px 0px rgba(95, 95, 95, 0.2);
-//     hr {
-//       color: rgba(95, 95, 95, 0.01);
-//     }
-//   }
-
-// }
 .region-container {
   display: flex;
   justify-content: space-between;
@@ -502,6 +433,7 @@ onMounted(() => {
   cursor: pointer;
   color: rgba(0, 0, 0, 0.7);
 }
+
 .start-location-container {
   font-weight: bold;
   font-size: clamp(0.875rem, 0.7756rem + 0.2841vw, 1rem);
@@ -509,23 +441,35 @@ onMounted(() => {
   width: fit-content;
   cursor: pointer;
 }
+
 .no-location {
   cursor: pointer;
   font-weight: bold;
   font-size: clamp(0.875rem, 0.7756rem + 0.2841vw, 1rem);
 }
+
 .trip-name {
-  font-weight: 500;
+
   cursor: pointer;
   font-size: clamp(0.875rem, 0.7756rem + 0.2841vw, 1rem);
-  line-height: 1.2;
+  line-height: 1.3;
 }
+
 .trips-container {
   max-height: 400px;
   overflow-y: scroll;
 }
+
 .suggestions-container {
   max-height: 400px;
   overflow-y: scroll;
+}
+
+.subtitle {
+  font-size: 13px;
+  line-height: 13px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-align: center;
 }
 </style>
