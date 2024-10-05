@@ -1,3 +1,4 @@
+import _ from "lodash";
 import $api from "../plugins/axios";
 
 export default {
@@ -30,5 +31,8 @@ export default {
     },
     toNewOffer(bookingId, offerId) {
         return $api.post('/booking/to-new-offer', { bookingId, offerId })
+    },
+    deleteOrder(_id) {
+        return $api.get(`/booking/delete-order?orderId=${_id}`)
     },
 }

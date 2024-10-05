@@ -48,8 +48,8 @@ let cards = ref([
   },
 
   {
-    title: "Развлечения",
-    icon: "mdi-human-female-dance",
+    title: "Аренда",
+    icon: "mdi-tent",
     route: "/enter",
     isShow: false,
 

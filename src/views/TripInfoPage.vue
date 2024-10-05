@@ -223,6 +223,7 @@ let getCurrentCustomerNumber = computed(() => {
 async function refreshDates() {
     let response = await tripStore.getFullTripById(_id);
     let tripFromDb = response.data;
+    additionalServices.value = []
     for (let service of tripFromDb.additionalServices) {
         additionalServices.value.push({ ...service, count: 0 })
     }
@@ -352,9 +353,11 @@ async function buyTrip() {
             selected_seats.value = []
             updateSeats()
             let tinkoffUrl = ''
+            let addServices = bill.additionalServices?.length?bill.additionalServices:[]
+          
             if (buyNow.value) {
                 const orderId = Date.now().toString()
-                let { data, token, success } = await tinkoffPlugin.initPayment(orderId, bill.cart, userStore.user.email, trip.value.tinkoffContract, trip.value.name, bill.additionalServices)
+                let { data, token, success } = await tinkoffPlugin.initPayment(orderId, bill.cart, userStore.user.email, trip.value.tinkoffContract, trip.value.name, addServices)
                 if (!success) {
                     message.config({ duration: 3, top: "90vh" });
                     message.error({ content: "Ошибка при оплате" });
