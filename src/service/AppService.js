@@ -22,5 +22,11 @@ export default {
     },
     async deleteExcursionType(body) {
         return $api.patch('/app-state/excursion-types', body)
-    }
+    },
+    addTripRegion(tripRegion) {
+        return $api.post('/app-state/trip-region', { tripRegion })
+    },
+    deleteTripRegion(tripRegion) {
+        return $api.post('/app-state/delete-trip-region', { tripRegion })
+    },
 }

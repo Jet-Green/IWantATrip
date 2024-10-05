@@ -2,7 +2,7 @@
 import BackButton from "../components/BackButton.vue";
 import ImageCropper from "../components/ImageCropper.vue";
 
-import { watch, nextTick, ref, reactive, onMounted } from "vue";
+import { watch, nextTick, ref, reactive, onMounted, computed } from "vue";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 
@@ -76,9 +76,11 @@ let form = reactive({
   canSellPartnerTour: null,
   includedInPrice: "",
   paidExtra: "",
-  travelRequirement: ""
-
+  travelRequirement: "",
+  tripRegion: ""
 });
+// для a-select с регионами тура
+let tripRegions = computed(() => appStore.appState[0]?.tripRegions.map((name) => { return { value: name } }) ?? [])
 
 const removeCost = (item) => {
   let index = form.cost.indexOf(item);
@@ -162,7 +164,7 @@ function submit() {
       isModerated: false,
       partner: "",
       canSellPartnerTour: null,
-
+      tripRegion: "",
     });
     images = [];
     // pdf = [];
@@ -374,7 +376,8 @@ let formSchema = yup.object({
   tripRoute: yup.string().required("заполните поле"),
   startLocation: yup.string().required("заполните поле"),
   returnConditions: yup.string().required("заполните поле"),
-  notNecessarily: yup.string()
+  notNecessarily: yup.string(),
+  tripRegion: yup.string().required("заполните поле"),
   // https://vee-validate.logaretm.com/v4/examples/array-fields/
 });
 </script>
@@ -537,6 +540,21 @@ let formSchema = yup.object({
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="startLocation" class="error-message" />
+              </Transition>
+            </a-col>
+
+            <a-col :span="24">
+              <Field name="tripRegion" v-slot="{ value, handleChange }" v-model="form.tripRegion">
+                Регион тура
+                <a-select :value="value" @update:value="handleChange" style="width: 100%"
+                  :options="tripRegions" placeholder="На море, Кавказ, Урал, Заполярье, Кунгурские пещеры">
+                </a-select>
+                <span class="text-caption">
+                  *пользователь будет искать ваш тур по этому ключевому слову
+                </span>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="tripRegion" class="error-message" />
               </Transition>
             </a-col>
 
