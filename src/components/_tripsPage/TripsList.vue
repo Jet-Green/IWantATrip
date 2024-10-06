@@ -13,7 +13,7 @@ let isRefreshing = ref(false)
 
 
 let handleScroll = async () => {
-  isRefreshing.value = true
+  
   let triggerHeight =
     wrapper.value.scrollTop + wrapper.value.offsetHeight + 5
 
@@ -22,6 +22,7 @@ let handleScroll = async () => {
   }
 
   if (triggerHeight == wrapper.value.scrollHeight) {
+    isRefreshing.value = true
     await tripStore.fetchTrips()
     isRefreshing.value = false
   }
@@ -38,6 +39,7 @@ onMounted(async () => {
   }
   wrapper.value.addEventListener("scroll", handleScroll);
   if (tripStore.trips.length == 0) {
+    isRefreshing.value = true
     await tripStore.fetchTrips()
     isRefreshing.value = false
   }
