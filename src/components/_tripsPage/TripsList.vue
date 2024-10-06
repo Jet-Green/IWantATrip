@@ -8,7 +8,7 @@ import { useRoute } from "vue-router";
 
 const route = useRoute();
 let tripStore = useTrips()
-let isRefreshing = ref(true)
+let isRefreshing = ref(false)
 
 
 
@@ -64,12 +64,12 @@ onMounted(async () => {
               <TripListCard :trip="trip" />
             </a-col>
           </a-row>
-          <a-row v-else-if="isRefreshing">
+          <a-row v-if="isRefreshing">
             <a-col :span="24" class="d-flex justify-center">
               <img src="../../assets/images/founddog.webp" alt="" style="height: 150px;">
             </a-col>
           </a-row>
-          <a-row v-else>
+          <a-row v-if="!tripStore.trips.length">
             <a-col :span="24" class="d-flex justify-center align-center">
               <div style="display: flex; flex-direction: column;">
                 <div class="d-flex justify-center">

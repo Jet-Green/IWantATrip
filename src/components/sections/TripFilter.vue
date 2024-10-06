@@ -280,7 +280,7 @@ onMounted(() => {
       </a-row>
 
       <!-- Всплывающее окно с фильтрами -->
-      <a-modal v-model:open="querySuggestionsVisible" title="Поиск тура">
+      <a-modal v-model:open="querySuggestionsVisible" title="Поиск тура" zIndex="900">
         <a-row :gutter="[16, 16]">
           <a-col :span="24">
             <!-- <div class="subtitle">Куда</div> -->
@@ -305,8 +305,9 @@ onMounted(() => {
           <a-col v-else :span="24">
             <div class="no-location" @click="selectLocationDialog = !selectLocationDialog">
               <span class="mdi mdi-map-marker-outline"></span>
-              <span> Ваш город </span>
+              <span> Ваш город </span>    
             </div>
+            <div> начало из любого города </div>
           </a-col>
           <a-col :span="24">
             <a-collapse :bordered="false">
@@ -456,12 +457,12 @@ onMounted(() => {
 }
 
 .trips-container {
-  max-height: 400px;
+  max-height: 150px;
   overflow-y: scroll;
 }
 
 .suggestions-container {
-  max-height: 400px;
+  max-height: 150px;
   overflow-y: scroll;
 }
 
