@@ -26,7 +26,7 @@ let router = useRouter()
 let tripStore = useTrips()
 let userStore = useAuth()
 let appStateStore = useAppState()
-let partner = ref(trip.value.partner??"" )
+let partner = ref(trip.value.partner ?? "")
 let canSellPartnerTour = ref(boolean)
 let dates = ref([{ start: null, end: null }])
 
@@ -68,7 +68,8 @@ let additionalService = ref({
 })
 
 const clearData = (dataString) => {
-    dataString = dataString - trip.value?.timezoneOffset
+    let timezoneOffset  = trip.value?.timezoneOffset? trip.value?.timezoneOffset:trip.value?.parent.timezoneOffset
+    dataString = dataString - timezoneOffset 
     const date = new Date(dataString);
     if (!isNaN(date.getTime())) {
         return date.toLocaleDateString("ru-RU", {
@@ -168,7 +169,7 @@ async function submit() {
     }
 }
 async function addPartner() {
-    tripStore.updatePartner(partner.value,  trip.value._id, canSellPartnerTour.value,)
+    tripStore.updatePartner(partner.value, trip.value._id, canSellPartnerTour.value,)
         .then(() => { addPartnerDialog.value = false; emit('updateTrip') })
         .catch(error => console.log(error))
 }
@@ -337,7 +338,7 @@ watch(dates, () => {
     }
 }, { deep: true })
 onMounted(async () => {
-    canSellPartnerTour.value = trip.value.canSellPartnerTour??false
+    canSellPartnerTour.value = trip.value.canSellPartnerTour ?? false
     checked.value = trip.value.isCatalog
     if (!appStateStore.appState[0]?.transport) {
         await appStateStore.refreshState()
@@ -485,7 +486,8 @@ onMounted(async () => {
             <a-col :span="24">
                 Принимать оплату в приложении?
                 <div class="d-flex align-center justify-center" style="height:100%">
-                    <a-checkbox v-model:checked="canSellPartnerTour">{{ canSellPartnerTour ? "ДА" : "НЕТ" }}</a-checkbox>
+                    <a-checkbox v-model:checked="canSellPartnerTour">{{ canSellPartnerTour ? "ДА" : "НЕТ"
+                        }}</a-checkbox>
                 </div>
 
             </a-col>
