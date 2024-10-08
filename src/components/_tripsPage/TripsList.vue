@@ -12,6 +12,7 @@ let isRefreshing = ref(false)
 
 
 
+
 let handleScroll = async () => {
   
   let triggerHeight =
@@ -69,7 +70,7 @@ onMounted(async () => {
               <img src="../../assets/images/founddog.webp" alt="" style="height: 150px;">
             </a-col>
           </a-row>
-          <a-row v-if="!tripStore.trips.length">
+          <a-row v-if="!tripStore.trips.length && !tripStore.isFetching">
             <a-col :span="24" class="d-flex justify-center align-center">
               <div style="display: flex; flex-direction: column;">
                 <div class="d-flex justify-center">
