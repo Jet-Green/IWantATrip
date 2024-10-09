@@ -12,13 +12,13 @@ function routeTo(buttonRoute) {
 }
 </script>
 <template>
-  <a-row class="justify-center ma-16 buttons">
+  <a-row class="justify-center buttons">
     <a-col :xs="24" :md="16">
       <a-row class="d-flex space-around align-center">
 
 
 
-        <a-button type="primary" shape="round" class="ma-4 order lets_go_btn" @click="routeTo('/create-with-help')">
+        <a-button type="primary" shape="round" class="order lets_go_btn" @click="routeTo('/create-with-help')">
 
           Заказать
         </a-button>
@@ -26,7 +26,7 @@ function routeTo(buttonRoute) {
 
           Из каталога
         </a-button> -->
-        <a-button type="primary" shape="round" class="ma-4 find lets_go_btn" @click="routeTo('/trips')">
+        <a-button type="primary" shape="round" class="find lets_go_btn" @click="routeTo('/trips')">
 
           Найти
         </a-button>
@@ -41,7 +41,7 @@ function routeTo(buttonRoute) {
             </a-button> </a>
         </div> -->
 
-        <a-button type="primary" shape="round" class="mа-4 companions lets_go_btn" @click="routeTo('/companions')">
+        <a-button type="primary" shape="round" class="companions lets_go_btn" @click="routeTo('/companions')">
           Попутчики
         </a-button>
       
@@ -76,5 +76,9 @@ function routeTo(buttonRoute) {
 
 .companions {
   background: linear-gradient(rgb(91, 109, 35), rgb(111, 133, 43));
+}
+.buttons{
+  margin-top: 16px;
+  margin-bottom: 20px;
 }
 </style>
