@@ -18,7 +18,7 @@ function routeTo(buttonRoute) {
 
 
 
-        <a-button type="primary" shape="round" class="ma-4 order" @click="routeTo('/create-with-help')">
+        <a-button type="primary" shape="round" class="ma-4 order lets_go_btn" @click="routeTo('/create-with-help')">
 
           Заказать
         </a-button>
@@ -26,7 +26,7 @@ function routeTo(buttonRoute) {
 
           Из каталога
         </a-button> -->
-        <a-button type="primary" shape="round" class="ma-4 find " @click="routeTo('/trips')">
+        <a-button type="primary" shape="round" class="ma-4 find lets_go_btn" @click="routeTo('/trips')">
 
           Найти
         </a-button>
@@ -41,7 +41,7 @@ function routeTo(buttonRoute) {
             </a-button> </a>
         </div> -->
 
-        <a-button type="primary" shape="round" class="mа-4 companions" @click="routeTo('/companions')">
+        <a-button type="primary" shape="round" class="mа-4 companions lets_go_btn" @click="routeTo('/companions')">
           Попутчики
         </a-button>
       
