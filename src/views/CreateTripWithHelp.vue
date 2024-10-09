@@ -134,6 +134,8 @@ onMounted(() => {
     <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
       <a-row type="flex" justify="center">
         <a-col :xs="22" :lg="12">
+          <h3>Закажите из   <b style="cursor: pointer; color: #FC4F06" @click="router.push('/catalog')">КАТАЛОГА</b> готовых туров! <br>
+          Ничего не нашли? Заполните форму, мы поможем! </h3>
           <h2>О вас</h2>
           <a-row :gutter="[16, 16]">
             <a-col :span="24" :md="12">

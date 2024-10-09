@@ -5,37 +5,25 @@
 
 <template>
   <a-affix>
-    <a-layout-footer>
+    <a-layout-footer class="footer" >
       <!-- <a-divider /> -->
       <a-row type="flex" justify="center">
         <a-col :xs="24" :md="18">
+       
           <a-row class="bottom_menu d-flex space-around">
             <a-col class="d-flex align-center direction-column">
               <router-link to="/documents">
-                <b> Документы </b>
+                <b style="color: white"> Документы </b>
               </router-link>
             </a-col>
 
             <a-col class="d-flex align-center direction-column">
               <router-link to="/contacts">
-                <b> Контакты </b>
+                <b style="color: white"> Контакты </b>
               </router-link>
             </a-col>
-            <!-- <a-col :xs="8" class="d-flex align-center direction-column">
-              <div>
-                <a href="https://doc.gorodaivesi.ru/education/main.html" target="_blank"><b>Обучение</b></a>
-              </div>
-
-              <div>
-                <div>
-                  <a href="https://doc.gorodaivesi.ru/education/create-trip.html" target="_blank">Создать поездку</a>
-                </div>
-                <div>
-                  <a href="https://doc.gorodaivesi.ru/education/reg.html" target="_blank">Регистрация</a>
-                </div>
-              </div>
-            </a-col> -->
           </a-row>
+      
         </a-col>
       </a-row>
 
@@ -53,6 +41,10 @@
 
 <style scoped>
 .bottom_menu {
+
   font-size: clamp(12px, 2vw, 14px);
+}
+.footer{
+  background: linear-gradient(#34313e, #22A0CC );
 }
 </style>

@@ -46,7 +46,7 @@ function getDate() {
 </script>
 <template>
   <div @click="goToTripPage" style="width: 270px">
-    <span class="title"> {{ trip.name }} {{ props.color }} </span>
+    <div class="title"> {{ trip.name }} {{ props.color }} </div>
     <a-badge-ribbon :text="`${trip.cost.length ? trip.cost[0].price : 0} руб`">
       <a-card hoverable style="text-align: center;">
         <div>
@@ -76,7 +76,9 @@ function getDate() {
 }
 
 .title {
+
   font-size: 16px;
+  text-align: center;
   text-transform: uppercase;
   color: white;
 }

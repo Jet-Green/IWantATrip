@@ -1,6 +1,6 @@
 <script setup></script>
 <template>
-  <svg version="1.1" viewBox="0 0 296.8 96.04" xmlns="http://www.w3.org/2000/svg">
+  <svg version="1.1" viewBox="0 0 296.8 80.04" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <filter
         id="filter78986"

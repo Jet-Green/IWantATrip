@@ -118,7 +118,7 @@ onMounted(() => {
                 {{ locationSearchRequest ? locationSearchRequest : "Ваш город" }}
               </span>
             </div>
-            <a-modal :mask="false" v-model:open="selectLocationDialog" title="Местоположение" :footer="null" zIndex="1000">
+            <a-modal :mask="false" v-model:open="selectLocationDialog" title="Местоположение" :footer="null" :zIndex=999>
               <a-select v-model:value="locationSearchRequest" style="width: 100%" @change="handleChange" show-search>
                 <a-select-option value="Ваш город">Ваш город</a-select-option>
                 <a-select-option

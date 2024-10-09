@@ -31,13 +31,15 @@ function find() {
     </a-col>
     <a-col :xs="22" :md="16" :lg="14">
       <a-row :gutter="[8, 8]" type="flex" justify="center">
-        <a-col :xs="24" :md="12">
-          <a-input-search
+        <a-col :xs="24" :md="12" class="pa-16">
+          <a-input
+        
             v-model:value="search"
-            placeholder="поиск"
-            enter-button
-            style="z-index: 0"
-            @search="find()"
+            placeholder="Куда, откуда, когда?"
+
+            style="z-index: 0;  border-color: #239fca;
+  border-radius: 8px;  padding: 8px; "
+        
           />
         </a-col>
         <a-col :span="24" class="d-flex justify-center">
@@ -47,7 +49,7 @@ function find() {
          
             @click="find()"
           >
-            Найти
+            Искать
           </a-button>
         </a-col>
       </a-row>
@@ -56,7 +58,7 @@ function find() {
 </template>
 
 <style lang="scss" scoped>
-.section_bg {
-  background: rgba(67, 65, 79);
-}
+// .section_bg {
+//   background: rgba(67, 65, 79);
+// }
 </style>

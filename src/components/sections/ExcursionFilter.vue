@@ -275,13 +275,11 @@ onMounted(async () => {
 
     <a-col :span="24" class="d-flex justify-center mt-16 mb-16">
       <a-button type="primary" shape="round" @click="find" class="mr-4">
-        <!-- <span class=" mdi mdi-magnify">
-              </span> -->
+   
         найти
       </a-button>
       <a-button shape="round" @click="resetForm">
-        <!-- <span class=" mdi mdi-close">
-              </span> -->
+   
         очистить
       </a-button>
     </a-col>

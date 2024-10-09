@@ -80,7 +80,7 @@ watch(locationStore, () => {
 <template>
   <a-row style="background-color: #f6f6f6; position: relative;" class="pa-16 justify-center">
     <a-col :xs="24" :md="20" :xl="16">
-      <h2 style="text-align: center; margin-bottom: 0">Гид по городу</h2>
+      <h2 style="text-align: center; margin-bottom: 0">В городе</h2>
       <h3 class="d-flex justify-center align-center">
         {{ locationStore.location.shortName }}
       </h3>
@@ -110,6 +110,7 @@ watch(locationStore, () => {
 .guide-select {
   font-size: 20px;
   margin-bottom: 16px;
+  
 }
 
 .guide-card {
@@ -119,7 +120,7 @@ watch(locationStore, () => {
   justify-content: center;
   width: 100%;
   border-radius: 10px;
-  aspect-ratio: 3/1;
+  aspect-ratio: 4/1;
   position: relative;
   padding: 8px;
 

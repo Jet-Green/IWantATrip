@@ -280,7 +280,7 @@ onMounted(() => {
       </a-row>
 
       <!-- Всплывающее окно с фильтрами -->
-      <a-modal v-model:open="querySuggestionsVisible" title="Поиск тура" zIndex="900">
+      <a-modal v-model:open="querySuggestionsVisible" title="Поиск тура" :zIndex=900>
         <a-row :gutter="[16, 16]">
           <a-col :span="24">
             <!-- <div class="subtitle">Куда</div> -->

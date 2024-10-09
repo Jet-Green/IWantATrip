@@ -28,9 +28,9 @@ onMounted (()=>{
   <div>
     <Explanation />
     <ButtonsRow />
-    <ToTrips />
+    <!-- <ToTrips /> -->
     <FindTrip />
-    <Companions />
+    <!-- <Companions /> -->
     <CityGuide id="guide"/>
     <Footer/>
   

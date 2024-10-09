@@ -21,12 +21,12 @@ onMounted(async () => {
 });
 </script>
 <template>
-  <a-row type="flex" justify="center" class="find_trip_bg pt-16 pb-16">
-    <a-col :xs="20" :md="16" :lg="14">
+  <a-row type="flex" justify="center" class="find_trip_bg ">
+    <a-col :xs="24" >
       <a-row type="flex" justify="center" style="flex-direction: row">
-        <a-col>
+        <!-- <a-col>
           <h2 style="color: white">Выбери готовый тур</h2>
-        </a-col>
+        </a-col> -->
       </a-row>
       <a-row v-if="trips.length">
         <a-col :span="24">
@@ -47,7 +47,8 @@ onMounted(async () => {
 </template>
 <style scoped>
 .find_trip_bg {
-  background: linear-gradient(270deg, #24b0d6, #27728b);
+
+  background: linear-gradient( #22A0CC, #34313e);
 }
 
 .carousel__slide {
