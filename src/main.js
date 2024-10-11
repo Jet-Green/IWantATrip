@@ -10,8 +10,14 @@ import VueSocialSharing from 'vue-social-sharing'
 import MasonryWall from '@yeger/vue-masonry-wall'
 import 'ant-design-vue/dist/reset.css';
 import { registerSW } from 'virtual:pwa-register'
-
+import yandexMetrika from './plugins/yandexMetrika';
 // registerSW({ immediate: true })
+
+
+
+
+
+
 
 let refreshing = false;
 const updateSW = registerSW({   
@@ -36,5 +42,6 @@ createApp(App)
     .use(VueSocialSharing)
     .use(VueHtmlToPaper)
     .use(MasonryWall)
+    .use(yandexMetrika, { id: 98607105 })
     .mount('#app')
 

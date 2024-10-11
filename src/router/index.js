@@ -706,7 +706,15 @@ const router = createRouter({
     }
 
     return { x: 0, y: 0 };
-  }
+  },
+  
 })
+
+// яндекс аналитика
+router.afterEach((to, from) => {
+  if (typeof ym !== 'undefined') {
+    ym(98607105, 'hit', to.fullPath);
+  }
+});
 
 export default router
