@@ -45,6 +45,6 @@
   font-size: clamp(12px, 2vw, 14px);
 }
 .footer{
-  background: linear-gradient(#34313e, #22A0CC );
+  background: #64bed8;
 }
 </style>

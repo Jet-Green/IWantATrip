@@ -12,8 +12,8 @@ function routeTo(buttonRoute) {
 }
 </script>
 <template>
-  <a-row class="justify-center buttons">
-    <a-col :xs="24" :md="16">
+  <a-row class="justify-center " style="background:#64bed8">
+    <a-col :xs="24" :md="16" class="buttons">
       <a-row class="d-flex space-around align-center">
 
 
@@ -80,5 +80,6 @@ function routeTo(buttonRoute) {
 .buttons{
   margin-top: 16px;
   margin-bottom: 20px;
+ 
 }
 </style>

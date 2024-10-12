@@ -48,7 +48,7 @@ onMounted(async () => {
 <style scoped>
 .find_trip_bg {
   min-height: 282px;
-  background: linear-gradient(#22A0CC, #34313e);
+  background: linear-gradient(#64bed8, #34313e);
 }
 
 .carousel__slide {

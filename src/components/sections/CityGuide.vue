@@ -40,12 +40,13 @@ let cards = ref([
 
   },
   {
-    title: "Еда",
-    icon: "mdi-food-outline",
-    route: "/eat",
+    title: "Места",
+    icon: "mdi-map-marker-outline",
+    route: "/guides",
     isShow: false,
 
   },
+ 
 
   {
     title: "Аренда",
@@ -55,9 +56,9 @@ let cards = ref([
 
   },
   {
-    title: "Гиды",
-    icon: "mdi-human-greeting-proximity",
-    route: "/guides",
+    title: "Еда",
+    icon: "mdi-food-outline",
+    route: "/eat",
     isShow: false,
 
   },
@@ -78,7 +79,7 @@ watch(locationStore, () => {
 </script>
 
 <template>
-  <a-row style="background-color: #f6f6f6; position: relative;" class="pa-16 justify-center">
+  <a-row class="pa-16 justify-center guide">
     <a-col :xs="24" :md="20" :xl="16">
       <h2 style="text-align: center; margin-bottom: 0">В городе</h2>
       <h3 class="d-flex justify-center align-center">
@@ -150,7 +151,12 @@ watch(locationStore, () => {
 }
 
 .opacity {
-  opacity: 0.4;
-  background: white;
+  
+  background: lightgray;
+}
+.guide{
+  position: relative;
+  background: linear-gradient(#34313e, #64bed8);
+  color:white;
 }
 </style>
