@@ -18,7 +18,7 @@ import StartImage from "../_explanation/StartSvgImg.vue";
   text-align: center;
   transform: translateY(120%);
   font-family: 'Caveat', cursive;
-  font-size: clamp(0.75rem, -1.05rem + 7.2vw, 3rem);
+  font-size: clamp(0.875rem, -0.825rem + 6.8vw, 3rem);
   color: white;
   font-weight: 700;
   height: 0;
