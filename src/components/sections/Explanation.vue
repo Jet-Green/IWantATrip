@@ -7,7 +7,7 @@ import StartImage from "../_explanation/StartSvgImg.vue";
 <template>
   <a-row style="background:#64bed8">
     <a-col :span="24">
-      <div class="slogan" >Cодружество уютных мест</div>
+      <div class="slogan" >Cодружество гостеприимных территорий</div>
       <StartImage style="width: 100%"></StartImage>
     </a-col>
   </a-row>
