@@ -2,18 +2,20 @@
 import BackButton from "../components/BackButton.vue";
 import ImageCropper from "../components/ImageCropper.vue";
 
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, toRef } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useExcursion } from "../stores/excursion"
+import { useAppState } from "../stores/appState";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import { message } from 'ant-design-vue';
+import { toRefs } from "@vueuse/core";
 
-import excursionTypes from '../db/excursionTypes'
 
+const appStateStore = useAppState()
 let locationSearchRequest = ref("")
 let possibleLocations = ref([])
-
+let excursionTypes = toRef(appStateStore.appState[0]?.excursionTypes)
 let previews = ref([]);
 let newBlobImages = ref([]); // type: blob
 let oldImages = ref([])
@@ -102,7 +104,7 @@ function addPreview(blob) {
   previews.value.push(URL.createObjectURL(blob));
 }
 let getExcursionDirections = computed(() => {
-  let type = excursionTypes.filter((type) => {
+  let type = excursionTypes.value.filter((type) => {
     return type.type == excursionType.value.type
   })
   return type[0]?.direction
@@ -143,6 +145,7 @@ async function submit() {
   }
 }
 onMounted(async () => {
+  
   let excursionId = route.query._id
   let response = await excursionStore.getExcursionById(excursionId)
   form.value = response.data
@@ -172,6 +175,7 @@ onMounted(async () => {
             </a-col>
             <a-col :span="12">
               Тип экскурсии
+          
               <a-select v-model:value="excursionType.type" style="width: 100%;"
                 @change="excursionType.directionType = ''">
                 <a-select-option placeholder="Tип тура" v-for="excursionType in excursionTypes"

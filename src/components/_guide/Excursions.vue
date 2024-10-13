@@ -37,6 +37,7 @@ onMounted(async () => {
       <a-col :xs="22" :lg="16">
         <h2>Экскурсии</h2>
         <ExcursionFilter :search="route.query.search"/>
+        
         <a-row :gutter="[12, 16]">
           <a-col :span="24" :sm="12" :md="8" v-for="ex of excursionStore.excursions" :key="ex._id">
 

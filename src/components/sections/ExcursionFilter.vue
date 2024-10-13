@@ -19,7 +19,6 @@ dayjs.locale("ru");
 let breakpoints = useBreakpoints(breakpointsTailwind);
 
 let sm = breakpoints.smaller("md");
-
 const ruLocale = locale;
 
 let props = defineProps({
@@ -27,8 +26,8 @@ let props = defineProps({
 });
 
 const excursionStore = useExcursion();
-
 const excursionTypes = ref([]);
+let isFilterShow = ref(false);
 
 let time = reactive({
   start: "",
@@ -43,6 +42,12 @@ let excursionType = reactive({
 let minAge = ref("")
 let havePrices = ref(false)
 
+function showFilter() {
+  isFilterShow.value = true
+}
+function hideFilter() {
+  isFilterShow.value = false
+}
 
 function find() {
   query.value = query.value.trim();
@@ -116,6 +121,51 @@ function resetForm() {
   find();
 }
 
+const clearData = (dateNumber) => {
+    let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
+        year: "2-digit",
+        month: "2-digit",
+        day: "2-digit",
+    });
+    if (date !== "Invalid Date" && date) {
+        return date;
+    }
+    return "";
+};
+
+let filterString = computed(() => {
+  let keyString = ''
+  let excFilter = excursionStore.excursionFilter
+  for (let key in excFilter) {
+    if (key == 'start' && excFilter[key] ) {
+      keyString = keyString + `c ${clearData(excFilter[key])}, ` 
+      continue;
+    }
+    if (key == 'end' && excFilter[key]) {
+      keyString = keyString + `по ${clearData(excFilter[key])}, ` 
+      continue;
+    }
+    if (key == 'minAge' && excFilter[key]) {
+      keyString = keyString + `от ${excFilter[key]} лет, ` 
+      continue;
+    }
+    if (key == 'havePrices' && excFilter[key]) {
+      keyString = keyString + `бесплатно, ` 
+      continue;
+    }
+
+    if (excFilter[key]) {
+
+      keyString = keyString + `${excFilter[key]}, ` 
+    }
+  }
+  return keyString.trim().slice(0, -1)
+})
+
+let buttonTitle = computed(() => {
+  return  filterString.value? filterString.value: "Куда, когда?"
+}
+)
 let getExcursionDirections = computed(() => {
   let type = excursionTypes.value.filter((type) => {
     return type.type == excursionType.type
@@ -133,6 +183,7 @@ let getExcursionPlace = computed(() => {
 
 })
 
+
 watch(() => excursionType.type, () => {
   excursionType.directionType = ''
   excursionType.directionPlace = ''
@@ -140,9 +191,37 @@ watch(() => excursionType.type, () => {
 watch(() => excursionType.directionType, () => {
   excursionType.directionPlace = ''
 })
-watch(havePrices, () => {
-  find()
+watch(() => time.start, () => {
+  if (time.start) {
+    let start = time.start
+    localStorage.setItem("ExcursionTimeStart", start);
+    start.setHours(0);
+    start.setMinutes(0);
+    start.setSeconds(0);
+    start.setMilliseconds(0);
+    excursionStore.excursionFilter.start = start;
+  } else {
+    localStorage.setItem("ExcursionTimeStart", time.start);
+    excursionStore.excursionFilter.start = time.start;
+  }
+
 })
+watch(() => time.end, () => {
+  if (time.end) {
+    let end = time.end
+    localStorage.setItem("ExcursionTimeEnd", end);
+    end.setHours(0);
+    end.setMinutes(0);
+    end.setSeconds(0);
+    end.setMilliseconds(0);
+    excursionStore.excursionFilter.end = end;
+  } else {
+    localStorage.setItem("ExcursionTimeEnd", time.end);
+    excursionStore.excursionFilter.end = time.end;
+  }
+
+})
+
 onMounted(async () => {
 
   await appStateStore.refreshState();
@@ -171,122 +250,130 @@ onMounted(async () => {
 </script>
 
 <template>
-  <!-- <span class="ml-16 mdi mdi-24px mdi-filter-outline" :class="{ active_filter: visible, filter: !visible }"
-    @click="visible = !visible">
-  </span> -->
 
-  <a-row class="section_bg">
-    <a-col :xs="24">
-      <a-row :gutter="[8, 8]" class="d-flex justify-center flex-wrap">
-        <a-col :span="24" :md="6" class="d-flex direction-column">
+  <a-row class="d-flex justify-center">
+    <a-col :xs="24" :lg="12" :md="16" class="pa-16">
+      <div style="background: #239fca; padding: 10px; border-radius: 12px; display: flex; align-items: center">
+        <div color="#239FCA" @click="showFilter" class="filter-button" type="button">
+          {{ buttonTitle }}
+        </div>
 
-          <div for="search" style="font-size: 10px; line-height: 10px">поиск</div>
-          <a-input v-model:value="query" placeholder="по названию, содержанию" name="search"
-            style="z-index: 0; width: 100%; margin-bottom: 6px" />
-
-        </a-col>
-        <a-col :span="24" :md="6" class="d-flex direction-column">
-
-          <div style="font-size: 10px; line-height: 10px">мин. возраст</div>
-          <a-input v-model:value="minAge" placeholder="12" style="z-index: 0; width: 100%;" />
-
-        </a-col>
-
-        <a-col :span="24" :md="6" class="d-flex  space-between">
-
-          <div class="d-flex direction-column" style="width: 100%">
-            <div style="font-size: 10px; line-height: 10px">от</div>
-            <div style="display: flex; flex-direction: row">
-              <VueDatePicker v-model="time.start" locale="ru-Ru" calendar-class-name="dp-custom-calendar"
-                placeholder="дата" calendar-cell-class-name="dp-custom-cell" cancel-text="отмена" select-text="выбрать"
-                :min-date="new Date()" :enable-time-picker="false" format="dd/MM/yyyy">
-                <template #input-icon>
-                  <span style="font-size: 20px; color: rgba(95, 95, 95, 0.65)"
-                    class="mdi mdi-calendar-outline ml-8"></span>
-                </template>
-              </VueDatePicker>
-            </div>
-          </div>
-        </a-col>
-
-        <a-col :span="24" :md="6" class="d-flex space-between">
-
-          <div class="d-flex direction-column" style="width: 100%">
-            <div style="font-size: 10px; line-height: 10px">до</div>
-            <div style="display: flex; flex-direction: row">
-              <VueDatePicker v-model="time.end" locale="ru-Ru" calendar-class-name="dp-custom-calendar"
-                placeholder="дата" calendar-cell-class-name="dp-custom-cell" cancel-text="отмена" select-text="выбрать"
-                :min-date="new Date()" :enable-time-picker="false" format="dd/MM/yyyy">
-                <template #input-icon>
-                  <span style="font-size: 20px; color: rgba(95, 95, 95, 0.65)"
-                    class="mdi mdi-calendar-outline ml-8"></span>
-                </template>
-              </VueDatePicker>
-            </div>
-
-          </div>
-        </a-col>
-      </a-row>
+        <!-- Если будет что-то в фильтре показывать  -->
+        <a-button type="primary" shape="circle" class="ml-8" v-if="filterString" @click="resetForm">
+          <span class="mdi mdi-close"></span>
+        </a-button>
+      </div>
     </a-col>
   </a-row>
 
 
-  <a-row :gutter="[8, 8]" class="d-flex flex-wrap">
-
-    <a-col :span="24" :md="6" class="d-flex justify-center align-center">
-
-
-      <a-checkbox v-model:checked="havePrices"> Бесплатно</a-checkbox>
-
-    </a-col>
-    <a-col :span="24" :md="6" class="d-flex direction-column">
-      <div style="font-size: 10px; line-height: 10px">вид экскурсии</div>
-      <a-select v-model:value="excursionType.type">
-        <a-select-option value=""></a-select-option>
-        <a-select-option placeholder="Вид экскурсии" v-for="excursionType in excursionTypes"
-          :value="excursionType.type">
-          {{ excursionType.type }}
-        </a-select-option>
-      </a-select>
-    </a-col>
-
-    <a-col :span="24" :md="6" class="d-flex direction-column" v-if="(excursionType.type)">
-      <div style="font-size: 10px; line-height: 10px">направление</div>
-      <a-select v-model:value="excursionType.directionType" style="width: 100%;">
-        <a-select-option value=""></a-select-option>
-        <a-select-option placeholder="Tип тура" v-for="excursionDirection in getExcursionDirections"
-          :value="excursionDirection.directionType">
-          {{ excursionDirection.directionType }}
-        </a-select-option>
-      </a-select>
-    </a-col>
-
-    <a-col :span="24" :md="6" class="d-flex direction-column" v-if="(excursionType.directionType)">
-      <div style="font-size: 10px; line-height: 10px">место</div>
-      <a-select v-model:value="excursionType.directionPlace" style="width: 100%;">
-        <a-select-option value=""></a-select-option>
-        <a-select-option placeholder="Tип тура" v-for="directionPlace in getExcursionPlace" :value="directionPlace">
-          {{ directionPlace }}
-        </a-select-option>
-      </a-select>
-    </a-col>
+  <a-modal v-model:open="isFilterShow" title="Поиск экскурсии" :zIndex=900>
 
 
 
-    <a-col :span="24" class="d-flex justify-center mt-16 mb-16">
-      <a-button type="primary" shape="round" @click="find" class="mr-4">
-   
-        найти
-      </a-button>
-      <a-button shape="round" @click="resetForm">
-   
-        очистить
-      </a-button>
-    </a-col>
+    <a-row :gutter="[8, 8]" class="d-flex justify-center flex-wrap">
+      <a-col :span="24" class="d-flex direction-column">
+
+
+        <a-input v-model:value="query" placeholder="название, содержание?" name="search"
+          style="z-index: 0; width: 100%; margin-bottom: 6px" />
+
+      </a-col>
+      <a-col :span="24" class="d-flex direction-column">
+
+        <div style="font-size: 10px; line-height: 10px">вид экскурсии</div>
+        <a-select v-model:value="excursionType.type">
+          <a-select-option value=""></a-select-option>
+          <a-select-option placeholder="Вид экскурсии" v-for="excursionType in excursionTypes"
+            :value="excursionType.type">
+            {{ excursionType.type }}
+          </a-select-option>
+        </a-select>
+      </a-col>
+
+      <a-col :span="24" class="d-flex direction-column" v-if="(excursionType.type)">
+        <div style="font-size: 10px; line-height: 10px">направление</div>
+        <a-select v-model:value="excursionType.directionType" style="width: 100%;">
+          <a-select-option value=""></a-select-option>
+          <a-select-option placeholder="Tип тура" v-for="excursionDirection in getExcursionDirections"
+            :value="excursionDirection.directionType">
+            {{ excursionDirection.directionType }}
+          </a-select-option>
+        </a-select>
+      </a-col>
+
+      <a-col :span="24" class="d-flex direction-column" v-if="(excursionType.directionType)">
+        <div style="font-size: 10px; line-height: 10px">место</div>
+        <a-select v-model:value="excursionType.directionPlace" style="width: 100%;">
+          <a-select-option value=""></a-select-option>
+          <a-select-option placeholder="Tип тура" v-for="directionPlace in getExcursionPlace" :value="directionPlace">
+            {{ directionPlace }}
+          </a-select-option>
+        </a-select>
+      </a-col>
+
+
+      <a-col :span="24" class="d-flex  space-between">
+
+        <div class="d-flex direction-column" style="width: 100%">
+          <div style="font-size: 10px; line-height: 10px">от</div>
+          <div style="display: flex; flex-direction: row">
+            <VueDatePicker v-model="time.start" locale="ru-Ru" calendar-class-name="dp-custom-calendar"
+              placeholder="дата" calendar-cell-class-name="dp-custom-cell" cancel-text="отмена" select-text="выбрать"
+              :min-date="new Date()" :enable-time-picker="false" format="dd/MM/yyyy">
+              <template #input-icon>
+                <span style="font-size: 20px; color: rgba(95, 95, 95, 0.65)"
+                  class="mdi mdi-calendar-outline ml-8"></span>
+              </template>
+            </VueDatePicker>
+          </div>
+        </div>
+      </a-col>
+
+
+      <a-col :span="24" class="d-flex space-between">
+
+        <div class="d-flex direction-column" style="width: 100%">
+          <div style="font-size: 10px; line-height: 10px">до</div>
+          <div style="display: flex; flex-direction: row">
+            <VueDatePicker v-model="time.end" locale="ru-Ru" calendar-class-name="dp-custom-calendar" placeholder="дата"
+              calendar-cell-class-name="dp-custom-cell" cancel-text="отмена" select-text="выбрать"
+              :min-date="new Date()" :enable-time-picker="false" format="dd/MM/yyyy">
+              <template #input-icon>
+                <span style="font-size: 20px; color: rgba(95, 95, 95, 0.65)"
+                  class="mdi mdi-calendar-outline ml-8"></span>
+              </template>
+            </VueDatePicker>
+          </div>
+
+        </div>
+      </a-col>
+      <a-col :span="12" class="d-flex direction-column">
+
+        <div style="font-size: 10px; line-height: 10px">мин. возраст</div>
+        <a-input v-model:value="minAge" placeholder="12" style="z-index: 0; width: 100%;" />
+
+      </a-col>
+
+      <a-col :span="12" class="d-flex justify-center align-center">
+
+
+        <a-checkbox v-model:checked="havePrices"> Только бесплатные </a-checkbox>
+
+      </a-col>
+
+    </a-row>
 
 
 
-  </a-row>
+
+
+    <template #footer>
+      <a-button key="submit" style="border-radius: 18px" type="primary"
+        @click="hideFilter(), find()">Показать</a-button>
+      <a-button key="back" style="border-radius: 18px" @click="resetForm(), hideFilter()">Очистить</a-button>
+    </template>
+  </a-modal>
 </template>
 
 <style lang="scss" scoped>
@@ -302,5 +389,17 @@ onMounted(async () => {
 .filter {
   color: #227597;
   cursor: pointer;
+}
+
+.filter-button {
+  background: white;
+  border-color: #239fca;
+  border-radius: 8px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.7);
 }
 </style>
