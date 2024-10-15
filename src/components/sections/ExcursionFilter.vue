@@ -146,7 +146,7 @@ let filterString = computed(() => {
       continue;
     }
     if (key == 'minAge' && excFilter[key]) {
-      keyString = keyString + `от ${excFilter[key]} лет, ` 
+      keyString = keyString + `меньше ${excFilter[key]} лет, ` 
       continue;
     }
     if (key == 'havePrices' && excFilter[key]) {

@@ -545,9 +545,9 @@ let formSchema = yup.object({
 
             <a-col :span="24">
               <Field name="tripRegion" v-slot="{ value, handleChange }" v-model="form.tripRegion">
-                Регион тура
+                Регион (направление) тура
                 <a-select :value="value" @update:value="handleChange" style="width: 100%"
-                  :options="tripRegions" placeholder="На море, Кавказ, Урал, Заполярье, Кунгурские пещеры">
+                  :options="tripRegions" placeholder="На море, Кавказ, Урал, Заполярье, Кунгурские пещеры" show-search allowClear>
                 </a-select>
                 <span class="text-caption">
                   *пользователь будет искать ваш тур по этому ключевому слову

@@ -392,7 +392,7 @@ watch(form, (newValue) => {
             <a-col :span="24" :md="12">
               <Field name="deadline" v-slot="{ value, handleChange }" v-model="form.deadline">
                 <div>Срок подачи заявки</div>
-                <a-input placeholder="За 10 дней" @update:value="handleChange" :value="value" />
+                <a-input placeholder="10 дней" @update:value="handleChange" :value="value" />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="deadline" class="error-message" />
