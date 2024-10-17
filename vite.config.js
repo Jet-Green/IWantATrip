@@ -71,7 +71,7 @@ export default defineConfig(
             description: 'Description of your app',
             theme_color: '#ffffff',
             background_color: "#ffffff",
-            version: "1.2.6",
+            version: "1.2.7",
             display: "standalone",
             icons: [
               {
