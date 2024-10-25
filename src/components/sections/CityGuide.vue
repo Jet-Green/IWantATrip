@@ -42,8 +42,8 @@ let cards = ref([
   {
     title: "Места",
     icon: "mdi-map-marker-outline",
-    route: "/guides",
-    isShow: false,
+    route: "/places",
+    isShow: true,
 
   },
  

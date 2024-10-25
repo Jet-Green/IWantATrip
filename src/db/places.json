@@ -1,0 +1,107 @@
+[
+    {
+      "name": "Central Park",
+      "dadataLocation": null,
+      "customLocation": {
+        "latitude": 40.785091,
+        "longitude": -73.968285,
+        "name": "Central Park, New York"
+      },
+      "images": [
+        "https://picsum.photos/seed/slon/450/300",
+        "https://picsum.photos/seed/table/450/300"
+      ],
+      "shortDescription": "A large public park in New York City.",
+      "description": "Central Park is one of the most famous parks in the world, offering a peaceful retreat in the heart of New York City.",
+      "advicesForTourists": "Best to visit early morning to avoid crowds. Don't miss the Central Park Zoo!",
+      "openingHours": "6:00 AM - 1:00 AM",
+      "price": "Free",
+      "website": "https://www.centralparknyc.org/",
+      "socialMedia": "@centralparknyc",
+      "category": "Park"
+    },
+    {
+      "name": "Louvre Museum",
+      "dadataLocation": null,
+      "customLocation": {
+        "latitude": 48.860611,
+        "longitude": 2.337644,
+        "name": "Louvre Museum, Paris"
+      },
+      "images": [
+        "https://picsum.photos/seed/hi/450/300",
+        "https://picsum.photos/seed/hjjkk/450/300"
+      ],
+      "shortDescription": "The world's largest art museum in Paris.",
+      "description": "The Louvre is home to thousands of works of art, including the Mona Lisa and the Venus de Milo.",
+      "advicesForTourists": "Buy tickets in advance and plan to arrive early to avoid long lines.",
+      "openingHours": "9:00 AM - 6:00 PM",
+      "price": "$17",
+      "website": "https://www.louvre.fr/",
+      "socialMedia": "@museelouvre",
+      "category": "Museum"
+    },
+    {
+      "name": "Tokyo Tower",
+      "dadataLocation": null,
+      "customLocation": {
+        "latitude": 35.658581,
+        "longitude": 139.745433,
+        "name": "Tokyo Tower, Tokyo"
+      },
+      "images": [
+        "https://picsum.photos/seed/ioon/450/300",
+        "https://picsum.photos/seed/mkjj/450/300"
+      ],
+      "shortDescription": "A communications and observation tower in Tokyo.",
+      "description": "Tokyo Tower offers incredible views of the Tokyo skyline and a variety of shops and restaurants.",
+      "advicesForTourists": "Visit at night for stunning views of the illuminated city.",
+      "openingHours": "9:00 AM - 11:00 PM",
+      "price": "$10",
+      "website": "https://www.tokyotower.co.jp/",
+      "socialMedia": "@tokyotower_official",
+      "category": "Landmark"
+    },
+    {
+      "name": "Sydney Opera House",
+      "dadataLocation": null,
+      "customLocation": {
+        "latitude": -33.856784,
+        "longitude": 151.215297,
+        "name": "Sydney Opera House, Sydney"
+      },
+      "images": [
+        "https://picsum.photos/seed/az/450/300",
+        "https://picsum.photos/seed/gt/450/300"
+      ],
+      "shortDescription": "A world-renowned performing arts center in Sydney.",
+      "description": "The Sydney Opera House is known for its unique design and hosts numerous performances each year.",
+      "advicesForTourists": "Take a guided tour to learn about the history and architecture of this iconic building.",
+      "openingHours": "9:00 AM - 5:00 PM",
+      "price": "$30",
+      "website": "https://www.sydneyoperahouse.com/",
+      "socialMedia": "@sydneyoperahouse",
+      "category": "Theater"
+    },
+    {
+      "name": "Great Wall of China",
+      "dadataLocation": null,
+      "customLocation": {
+        "latitude": 40.431908,
+        "longitude": 116.570374,
+        "name": "Great Wall of China, Beijing"
+      },
+      "images": [
+     "https://picsum.photos/seed/ss/450/300",
+        "https://picsum.photos/seed/cc/450/300"
+      ],
+      "shortDescription": "An ancient series of walls and fortifications in northern China.",
+      "description": "The Great Wall is one of the most iconic landmarks in the world, stretching over 13,000 miles.",
+      "advicesForTourists": "Wear comfortable shoes, as some sections can be quite steep.",
+      "openingHours": "7:30 AM - 5:30 PM",
+      "price": "$6",
+      "website": "https://www.greatwall.com.cn/",
+      "socialMedia": "@greatwallchina",
+      "category": "Historical Site"
+    }
+  ]
