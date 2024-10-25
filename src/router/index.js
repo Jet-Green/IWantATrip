@@ -16,27 +16,43 @@ const router = createRouter({
           component: () => import('../views/TinkoffPayment.vue')
         },
         {
-            path: '/documents',
-            name: 'Documents',
-            component: () => import('../views/Documents.vue')
+          path: '/documents',
+          name: 'Documents',
+          component: () => import('../views/Documents.vue')
         },
         {
           path: '/document',
           name: 'Document',
           component: () => import('../views/Document.vue')
-      },
-      {
-        path: '/print-contract',
-        name: 'PrintContract',
-        component: () => import('../print/PrintContract.vue')
+        },
+        {
+          path: '/print-contract',
+          name: 'PrintContract',
+          component: () => import('../print/PrintContract.vue')
+        },
+      ]
     },
+    {
+      path: '/places-layout',
+      name: 'PlacesLayout',
+      component: () => import('../layouts/Places.vue'),
+      children: [
+        {
+          path: '/places',
+          name: 'Places',
+          component: () => import('../views/Places.vue')
+        },
       ]
     },
     {
       path: '/',
       component: () => import('../layouts/Index.vue'),
       children: [
-
+        {
+          path: '/place',
+          name: 'PlacePage',
+          component: () => import('../views/PlacePage.vue')
+        },
         {
           path: '/edit-excursion',
           name: 'EditExcursion',
@@ -671,7 +687,7 @@ const router = createRouter({
           name: 'Contacts',
           component: () => import('../views/Contacts.vue')
         },
-     
+
         {
           path: '/fourothree',
           name: 'FourOThree',
@@ -707,7 +723,7 @@ const router = createRouter({
 
     return { x: 0, y: 0 };
   },
-  
+
 })
 
 // яндекс аналитика
