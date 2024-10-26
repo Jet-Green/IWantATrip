@@ -7,8 +7,9 @@ defineProps({
 });
 let cols = ref(12)
 
+let fullInfo = ref(false)
 let toggleCols = () => {
-  cols.value == 12 ? cols.value = 24 : cols.value = 12;
+  cols.value == 12 ? (cols.value = 24, fullInfo.value = true) : (cols.value = 12, fullInfo.value = false);
 }
 
 const router = useRouter()
@@ -20,25 +21,37 @@ const router = useRouter()
     <p @click="toggleCols()">{{ place.shortDescription }}</p>
 
     <a-row>
+
       <a-col :xs="24" :md="cols">
+
         <a-carousel arrows dots-class="slick-dots slick-thumb" effect="fade" autoplay>
 
           <div v-for="item, index in place.images" :key="index">
             <img :src="item" @click="toggleCols()" />
           </div>
         </a-carousel>
-      </a-col>
-      <a-col :xs="24" :md="cols" class="pa-4">
-        <p >{{ place.description }}</p>
-        <p> {{ place.advicesForTourists }}</p>
-        <p><b>Часы работы:</b> {{ place.openingHours }}</p>
-        <p><b>Цена:</b> {{ place.price }}</p>
-        <p><b>Сайт:</b> {{ place.website }}</p>
-        <p><b>Соц. сети:</b> {{ place.socialMedia }}</p>
-        <p> <b>На карте <span class="mdi  mdi-map-marker-outline" style="font-size: 24px;"></span></b>
 
-        </p>
       </a-col>
+
+      <a-col :xs="24" :md="cols" class="pa-4">
+
+        <p> {{ place.advicesForTourists }}</p>
+        <div><b>Часы работы:</b> {{ place.openingHours }}</div>
+        <div><b>Цена:</b> {{ place.price }}</div>
+        <div><b>Сайт:</b> {{ place.website }}</div>
+        <div><b>Соц. сети:</b> {{ place.socialMedia }}</div>
+        <div> <b>На карте <span class="mdi  mdi-map-outline" style="font-size: 24px;"></span></b>
+
+        </div>
+        <div @click="toggleCols()" style="text-align: center;"><span class="mdi  "
+            :class="fullInfo ? 'mdi-chevron-double-up' : 'mdi-chevron-double-down'"
+            style="font-size: 28px; font-weight: bold;"></span></div>
+
+      </a-col>
+      <a-col :xs="24" v-if="fullInfo">
+        <p>{{ place.description }}</p>
+      </a-col>
+
     </a-row>
 
   </div>
@@ -59,7 +72,4 @@ const router = useRouter()
 :deep(.slick-arrow) {
   display: none !important;
 }
-
-
-
 </style>

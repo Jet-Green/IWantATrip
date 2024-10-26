@@ -2,6 +2,7 @@
 import BackButton from "../components/BackButton.vue"
 import PlaceCard from "../components/cards/PlaceCard.vue"
 import places from '../db/places.json'
+import PlaceFilter from "../components/_guide/PlaceFilter.vue";
 </script>
 <template>
   <div style="overflow-x: hidden">
@@ -9,10 +10,10 @@ import places from '../db/places.json'
     <a-row class="justify-center d-flex">
 
       <a-col :xs="22" :xl="16">
-       <h2>Места</h2> 
-    
+        <h2>Места</h2>
+        <PlaceFilter />
         <PlaceCard :place="place" v-for="place, index in places" :key="index" />
-     
+
       </a-col>
     </a-row>
   </div>
