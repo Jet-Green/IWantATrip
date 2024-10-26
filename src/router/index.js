@@ -103,6 +103,19 @@ const router = createRouter({
           }
         },
         {
+          path: '/create-place',
+          name: 'CreatePlace',
+          component: () => import('../components/_cabinet/CreatePlace.vue'),
+          beforeEnter: async (to, from) => {
+            let userStore = useAuth()
+            if (!localStorage.getItem('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+
+            if (!userStore.isAuth)
+              return '/auth'
+          }
+        },
+        {
           path: '/create-no-help',
           name: 'CreateTripNoHelp',
           component: () => import('../views/CreateTripNoHelp.vue'),
@@ -717,11 +730,15 @@ const router = createRouter({
 
   ],
   scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) {
+    if (to.path === '/places') {
+      // Scroll to the element with id "top" on /places route
+      return { el: '#top'};
+    } else if (savedPosition) {
       return savedPosition;
+    } else {
+      // Default behavior for other routes
+      return { x: 0, y: 0 };
     }
-
-    return { x: 0, y: 0 };
   },
 
 })
