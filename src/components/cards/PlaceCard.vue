@@ -40,7 +40,7 @@ const router = useRouter()
         <div><b>Цена:</b> {{ place.price }}</div>
         <div><b>Сайт:</b> {{ place.website }}</div>
         <div><b>Соц. сети:</b> {{ place.socialMedia }}</div>
-        <div> <b>На карте <span class="mdi  mdi-map-outline" style="font-size: 24px;"></span></b>
+        <div  class="d-flex align-center"> <div><b>На карте: </b> </div> <b> <span class="mdi  mdi-map-outline" style="font-size: 24px;"></span></b>
 
         </div>
         <div @click="toggleCols()" style="text-align: center;"><span class="mdi  "

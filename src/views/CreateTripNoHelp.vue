@@ -705,7 +705,7 @@ let formSchema = yup.object({
     </a-row>
   </div>
 </template>
-<style lang="scss">
+<style lang="scss" scoped>
 .ql-editor {
   max-height: 500px;
   overflow-y: auto;

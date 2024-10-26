@@ -278,3 +278,7 @@ a {
 ::-webkit-scrollbar-thumb:active {
   background-color: rgba(95, 95, 95, 0.5);
 }
+.ql-editor {
+  max-height: 400px;
+  overflow-y: auto;
+}
