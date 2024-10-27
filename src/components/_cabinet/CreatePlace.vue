@@ -1,11 +1,12 @@
 <script setup>
-import { reactive, ref, watch } from 'vue';
+import { reactive, ref, watch, onMounted } from 'vue';
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
-import { useAppState } from "../../stores/appState";
+import ImageCropper from "../../components/ImageCropper.vue";
 
+import { useAppState } from "../../stores/appState";
 import BackButton from "../../components/BackButton.vue";
 
 const appStore = useAppState();
@@ -26,6 +27,15 @@ function selectStartLocation(selected) {
     }
   }
 }
+
+//crop and img
+const targetIndex = ref(null);
+const delPhotoDialog = ref(false);
+// cropper
+let visibleCropperModal = ref(false);
+let previews = ref([]);
+// отправляем на сервер
+let images = localStorage.getItem('createPlaceImages') ? JSON.parse(localStorage.getItem('createPlaceImages')) : []; // type: blob
 
 
 const form = reactive({
@@ -55,11 +65,45 @@ let formSchema = yup.object({
   // https://vee-validate.logaretm.com/v4/examples/array-fields/
 });
 function submit() {
-// провериьть на наличие координат вывести предупреждение
+  // провериьть на наличие координат вывести предупреждение
+  // добавить дату и автора
 
- }
+}
 
+function uploadPlaceImages(_id) {
+  let imagesFormData = new FormData();
+  for (let i = 0; i < images.length; i++) {
+    imagesFormData.append(
+      "trip-image",
+      new File([images[i]], _id + '_' + Date.now() + "_" + i + ".jpg"),
+      _id + '_' + Date.now() + "_" + i + ".jpg"
+    );
+  }
+  TripService.uploadPlaceImages(imagesFormData).then(() => {
+    console.log('фотографии загружены')
+    localStorage.removeItem('createPlaceImages')
+  })
+}
+function addPreview(blob) {
+  // imagesFormData.append("image", blob, `product-${previews.value.length}`);
+  visibleCropperModal.value = false;
+  images.push(blob);
+  previews.value.push(URL.createObjectURL(blob));
+  localStorage.setItem('createPlaceImages', JSON.stringify(previews.value))
+}
+const delPhoto = () => {
+  console.log()
+  previews.value.splice(targetIndex.value, 1);
+  images.splice(targetIndex.value, 1);
+  delPhotoDialog.value = false;
+  localStorage.setItem('createPlaceImages', JSON.stringify(previews.value))
+};
 
+function handleImgError(i) {
+    previews.value.splice(i, 1)
+    images.splice(i, 1)
+    localStorage.setItem('createPlaceImages', JSON.stringify(previews.value))
+  }
 
 
 watch(locationSearchRequest, async (newValue, oldValue) => {
@@ -125,6 +169,10 @@ watch(locationType, () => {
     possibleLocations.value = []
     locationSearchRequest.value = ""
   }
+})
+onMounted(() => {
+  console.log(localStorage.getItem('createPlaceImages'))
+ previews.value = localStorage.getItem('createPlaceImages') ? JSON.parse(localStorage.getItem('createPlaceImages')) : []
 })
 
 </script>
@@ -228,7 +276,7 @@ watch(locationType, () => {
             </a-col>
             <a-col :span="24">
               <div>Адрес или координаты</div>
-              <div>
+              <div class="mt-4 mb-4">
                 <a-radio-group v-model:value="locationType" name="radioGroup">
                   <a-radio value="dadataLocation">Адрес</a-radio>
                   <a-radio value="customLocation">Координаты</a-radio>
@@ -253,8 +301,17 @@ watch(locationType, () => {
               </div>
             </a-col>
 
-            <a-col :span="24">
+            <a-col :xs="24">
               Фотографии
+              <div class="d-flex" style="overflow-x: scroll">
+                <img v-for="(pr, i) in previews   " :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
+                  @click="delPhotoDialog = true;
+                  targetIndex = i;" @error="handleImgError(i)" />
+              </div>
+              <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
+                <span class="mdi mdi-12px mdi-plus"></span>
+                Добавить фото
+              </a-button>
             </a-col>
 
             <a-col :span="24" class="d-flex justify-center ">
@@ -263,6 +320,16 @@ watch(locationType, () => {
             </a-col>
           </a-row>
         </Form>
+        <a-modal v-model:open="visibleCropperModal" :footer="null" :destroyOnClose="true">
+          <ImageCropper @addImage="addPreview" />
+        </a-modal>
+        <a-modal v-model:open="delPhotoDialog" :footer="null">
+          <h3>Удалить фото?</h3>
+          <div class="d-flex justify-center">
+            <a-button class="mt-16" type="primary" size="large" @click="delPhoto">Да
+            </a-button>
+          </div>
+        </a-modal>
 
       </a-col>
     </a-row>
