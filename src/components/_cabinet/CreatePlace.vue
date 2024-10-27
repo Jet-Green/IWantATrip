@@ -4,8 +4,12 @@ import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
+import { useAppState } from "../../stores/appState";
 
 import BackButton from "../../components/BackButton.vue";
+
+const appStore = useAppState();
+
 const form = reactive({
   name: '',
   dadataLocation: {},
@@ -26,9 +30,13 @@ let formSchema = yup.object({
   openingHours: yup.string().required("заполните поле"),
   website: yup.string().required("заполните поле"),
   price: yup.string().required("заполните поле"),
+  category:yup.string().required("заполните поле"),
   // https://vee-validate.logaretm.com/v4/examples/array-fields/
 });
 function submit() { }
+
+let placeCategory =  appStore.appState[0]?.placeCategory.map((name) => { return { value: name } }) ?? []
+
 </script>
 <template>
   <div>
@@ -82,6 +90,20 @@ function submit() { }
                   " />
             </a-col>
 
+            <a-col :span="24">
+              <Field name="category" v-slot="{ value, handleChange }" v-model="form.category">
+                Категория места
+                <a-select :value="value" @update:value="handleChange" style="width: 100%"
+                  :options="placeCategory" placeholder="Музей, памятник" show-search allowClear>
+                </a-select>
+  
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="category" class="error-message" />
+              </Transition>
+            </a-col>
+
+
             <a-col :span="24" class="mt-4">
               <Field name="openingHours" v-slot="{ value, handleChange }" v-model="form.openingHours">
                 Время работы
@@ -115,12 +137,10 @@ function submit() { }
               </Transition>
             </a-col>
             <a-col :span="24">
+              Адрес или координаты
               Локации из ddata руками
             </a-col>
 
-            <a-col :span="24">
-              Категории
-            </a-col>
             <a-col :span="24">
               Фотографии
             </a-col>
