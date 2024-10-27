@@ -1,5 +1,5 @@
 <script setup>
-import { reactive } from 'vue';
+import { reactive, ref, watch } from 'vue';
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import { QuillEditor } from "@vueup/vue-quill";
@@ -9,6 +9,24 @@ import { useAppState } from "../../stores/appState";
 import BackButton from "../../components/BackButton.vue";
 
 const appStore = useAppState();
+const locationType = ref('dadataLocation')
+const customLocation = ref({
+  type: "Point",
+  coordinates: ["", ""]
+})
+
+// dadata
+let possibleLocations = ref([])
+let locationSearchRequest = ref("")
+function selectStartLocation(selected) {
+  for (let l of possibleLocations.value) {
+    // l.value - name
+    if (l.value == selected) {
+      form.dadataLocation = l.location
+    }
+  }
+}
+
 
 const form = reactive({
   name: '',
@@ -24,18 +42,90 @@ const form = reactive({
 
   category: ''
 });
+
+let placeCategory = appStore.appState[0]?.placeCategory.map((name) => { return { value: name } }) ?? []
+
 let formSchema = yup.object({
   name: yup.string().required("заполните поле"),
   shortDescription: yup.string().required("заполните поле"),
   openingHours: yup.string().required("заполните поле"),
   website: yup.string().required("заполните поле"),
   price: yup.string().required("заполните поле"),
-  category:yup.string().required("заполните поле"),
+  category: yup.string().required("заполните поле"),
   // https://vee-validate.logaretm.com/v4/examples/array-fields/
 });
-function submit() { }
+function submit() {
+// провериьть на наличие координат вывести предупреждение
 
-let placeCategory =  appStore.appState[0]?.placeCategory.map((name) => { return { value: name } }) ?? []
+ }
+
+
+
+
+watch(locationSearchRequest, async (newValue, oldValue) => {
+  if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
+    var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
+
+    var options = {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": "Token " + import.meta.env.VITE_DADATA_TOKEN
+      },
+      body: JSON.stringify({
+        query: newValue,
+        count: 5,
+        "from_bound": { "value": "city" },
+        "to_bound": { "value": "settlement" }
+      })
+    }
+
+    let res = await fetch(url, options)
+    try {
+      let suggestions = JSON.parse(await res.text()).suggestions
+      possibleLocations.value = []
+      for (let s of suggestions) {
+        let location = {
+          value: s.value,
+          location: {
+            name: s.value,
+            shortName: '',
+            type: 'Point',
+            coordinates: [
+              s.data.geo_lon,
+              s.data.geo_lat
+            ]
+          }
+        }
+        if (s.data.settlement) {
+          location.location.shortName = s.data.settlement
+        }
+        else if (s.data.city) {
+          location.location.shortName = s.data.city
+        } else {
+          location.location.shortName = s.value
+        }
+
+        possibleLocations.value.push(location)
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+})
+
+watch(locationType, () => {
+  if (locationType.value == 'dadataLocation') {
+    form.customLocation = {}
+  } else {
+    form.customLocation = customLocation.value
+    form.dadataLocation = {}
+    possibleLocations.value = []
+    locationSearchRequest.value = ""
+  }
+})
 
 </script>
 <template>
@@ -69,7 +159,7 @@ let placeCategory =  appStore.appState[0]?.placeCategory.map((name) => { return 
               </Transition>
             </a-col>
 
-            <a-col :span="24"  style="display: flex; flex-direction: column">
+            <a-col :span="24" style="display: flex; flex-direction: column">
               Подробное описанние
               <QuillEditor class="ql-editor" theme="snow" ref="quill" v-model:content="form.description"
                 contentType="html" :toolbar="[
@@ -79,8 +169,8 @@ let placeCategory =  appStore.appState[0]?.placeCategory.map((name) => { return 
                 ]
                   " />
             </a-col>
-            <a-col :span="24"  style="display: flex; flex-direction: column">
-            Советы туристам
+            <a-col :span="24" style="display: flex; flex-direction: column">
+              Советы туристам
               <QuillEditor class="ql-editor" theme="snow" ref="quill" v-model:content="form.advicesForTourists"
                 contentType="html" :toolbar="[
                   ['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }],
@@ -93,10 +183,10 @@ let placeCategory =  appStore.appState[0]?.placeCategory.map((name) => { return 
             <a-col :span="24">
               <Field name="category" v-slot="{ value, handleChange }" v-model="form.category">
                 Категория места
-                <a-select :value="value" @update:value="handleChange" style="width: 100%"
-                  :options="placeCategory" placeholder="Музей, памятник" show-search allowClear>
+                <a-select :value="value" @update:value="handleChange" style="width: 100%" :options="placeCategory"
+                  placeholder="Музей, памятник" show-search allowClear>
                 </a-select>
-  
+
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="category" class="error-message" />
@@ -137,14 +227,35 @@ let placeCategory =  appStore.appState[0]?.placeCategory.map((name) => { return 
               </Transition>
             </a-col>
             <a-col :span="24">
-              Адрес или координаты
-              Локации из ddata руками
+              <div>Адрес или координаты</div>
+              <div>
+                <a-radio-group v-model:value="locationType" name="radioGroup">
+                  <a-radio value="dadataLocation">Адрес</a-radio>
+                  <a-radio value="customLocation">Координаты</a-radio>
+
+                </a-radio-group>
+              </div>
+              <div v-if="locationType == 'dadataLocation'">
+                <Field name="location" v-slot="{ value, handleChange }" v-model="locationSearchRequest">
+                  <a-auto-complete :value="value" @update:value="handleChange" style="width: 100%"
+                    :options="possibleLocations" placeholder="Глазов" @select="selectStartLocation">
+                  </a-auto-complete>
+                </Field>
+                <Transition name="fade">
+                  <ErrorMessage name="location" class="error-message" />
+                </Transition>
+              </div>
+              <div v-else>
+                Широта (lon)
+                <a-input placeholder="52.663446" v-model:value="customLocation.coordinates[0]" allow-clear></a-input>
+                Долгота (lat)
+                <a-input placeholder="58.135907" v-model:value="customLocation.coordinates[1]" allow-clear></a-input>
+              </div>
             </a-col>
 
             <a-col :span="24">
               Фотографии
             </a-col>
-
 
             <a-col :span="24" class="d-flex justify-center ">
               <a-button class="lets_go_btn ma-36" type="primary" html-type="submit">Отправить
@@ -158,6 +269,4 @@ let placeCategory =  appStore.appState[0]?.placeCategory.map((name) => { return 
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
