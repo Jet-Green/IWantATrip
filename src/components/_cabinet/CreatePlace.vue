@@ -5,11 +5,15 @@ import * as yup from "yup";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 import ImageCropper from "../../components/ImageCropper.vue";
+import { message } from "ant-design-vue";
 
 import { useAppState } from "../../stores/appState";
 import BackButton from "../../components/BackButton.vue";
+import { useAuth } from '../../stores/auth';
 
 const appStore = useAppState();
+const userStore = useAuth();
+
 const locationType = ref('dadataLocation')
 const customLocation = ref({
   type: "Point",
@@ -67,6 +71,22 @@ let formSchema = yup.object({
 function submit() {
   // провериьть на наличие координат вывести предупреждение
   // добавить дату и автора
+  // create -> upload-images
+  // clear localStorage
+  if (locationType.value == "customLocation") {
+    if (form.customLocation.coordinates.length < 2 || form.customLocation.coordinates[0] == '' || form.customLocation.coordinates[1] == '') {
+      message.config({ duration: 3, top: "70vh" });
+      message.warning("Укажите широту и долготу!");
+    }
+  }
+
+  let toSend = { ...form }
+  toSend.author = userStore.user._id
+  toSend.createdDate = Date.now()
+
+  
+
+  console.log(toSend);
 
 }
 
@@ -100,10 +120,10 @@ const delPhoto = () => {
 };
 
 function handleImgError(i) {
-    previews.value.splice(i, 1)
-    images.splice(i, 1)
-    localStorage.setItem('createPlaceImages', JSON.stringify(previews.value))
-  }
+  previews.value.splice(i, 1)
+  images.splice(i, 1)
+  localStorage.setItem('createPlaceImages', JSON.stringify(previews.value))
+}
 
 
 watch(locationSearchRequest, async (newValue, oldValue) => {
@@ -170,9 +190,16 @@ watch(locationType, () => {
     locationSearchRequest.value = ""
   }
 })
+
+watch(form, (newForm) => {
+  localStorage.setItem('createPlaceForm', JSON.stringify(newForm))
+})
 onMounted(() => {
   console.log(localStorage.getItem('createPlaceImages'))
- previews.value = localStorage.getItem('createPlaceImages') ? JSON.parse(localStorage.getItem('createPlaceImages')) : []
+  previews.value = localStorage.getItem('createPlaceImages') ? JSON.parse(localStorage.getItem('createPlaceImages')) : []
+  if (localStorage.getItem('createPlaceForm')) {
+    Object.assign(form, JSON.parse(localStorage.getItem('createPlaceForm')))
+  }
 })
 
 </script>
