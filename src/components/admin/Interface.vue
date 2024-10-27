@@ -11,8 +11,7 @@ import { message } from 'ant-design-vue';
 let router = useRouter()
 let appStateStore = useAppState()
 let tripType = ref('')
-let transport = ref({})
-let taxi = ref({})
+let placeCategory = ref('')
 let buses = ref()
 // Регион тура, выбирается при создании тура (На море, Кавказ, Урал, Кунгурские пещеры). 
 // Нужен для более удобного поиска по турам.
@@ -29,12 +28,25 @@ async function addTripType() {
         message.error({ content: 'Слишком короткое название типа тура' });
     }
 }
-async function addTransportName() {
-    if (transport.value.name.length > 2) {
-        let res = await appStateStore.addTransportName(transport.value.name)
+
+async function addPlaceCategory () {
+    if (placeCategory.value.length > 2) {
+        let res = await appStateStore.addPlaceCategory(placeCategory.value)
         if (res.status == 200) {
+            placeCategory.value = ''
             await appStateStore.refreshState();
         }
+    } else {
+        message.config({ duration: 2 });
+        message.error({ content: 'Слишком короткое название места' });
+    }
+}
+
+async function deletePlaceCategory(placeCategory) {
+    let res = await appStateStore.deletePlaceCategory(placeCategory)
+    
+    if (res.status == 200) {
+        await appStateStore.refreshState();
     }
 }
 
@@ -119,25 +131,23 @@ onMounted(async () => {
             </a-popconfirm>
         </a-col>
     </a-row>
-    <!-- <a-row>
+    <a-row class="mb-24">
         <a-col :span="24">
-            <a-row>
-                <a-col :span="24">
-                    <h3>Транспорт</h3>
-                </a-col>
-                <a-col :span="24" class="d-flex align-center">
-                    <a-input placeholder="Легковой" size="large" v-model:value="transport.name"></a-input>
-                    <a-button type="primary" class="ml-12 lets_go_btn" @click="addTransportName">добавить</a-button>
-                </a-col>
-                <a-col v-for="t of appStateStore.appState[0].transport" class="ma-8" style="cursor: pointer">
-                    <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"
-                        @confirm="() => { appStateStore.deleteTransportName(t.name) }">
-                        <div class="name-wrapper"> {{ t.name }}</div>
-                    </a-popconfirm>
-                </a-col>
-            </a-row>
+            <h3>Категории интересных мест</h3>
+
         </a-col>
-    </a-row> -->
+        <a-col :span="24" class="d-flex align-center">
+            <a-input placeholder="Памятник, музей, водопад" size="large" v-model:value="placeCategory"></a-input>
+            <a-button type="primary" class="ml-12 lets_go_btn" @click="addPlaceCategory()">добавить</a-button>
+        </a-col>
+        <a-col v-for="place of appStateStore.appState[0].placeCategory" class="ma-8" style="cursor: pointer">
+            <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"
+                @confirm="() => { deletePlaceCategory(place) }">
+                <div class="name-wrapper">{{ place }}</div>
+            </a-popconfirm>
+        </a-col>
+    </a-row>
+
     <a-row class="mb-24">
         <a-col :span="24">
             <a-row>

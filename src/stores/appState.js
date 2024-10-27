@@ -26,6 +26,16 @@ export const useAppState = defineStore('app-state', {
                 console.log(error);
             }
         },
+        async addPlaceCategory(category) {
+            try {
+                let res = await AppService.addPlaceCategory(category)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
+
         async deleteTripType(name) {
             try {
                 if (name) {
@@ -94,5 +104,15 @@ export const useAppState = defineStore('app-state', {
                 console.log(error);
             }
         },
+        async deletePlaceCategory(category) {
+            try {
+                let res = await AppService.deletePlaceCategory(category)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
+        
     },
 })

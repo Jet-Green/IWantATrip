@@ -4,6 +4,11 @@ export default {
     getAppState() {
         return $api.get('/app-state/app-state')
     },
+    
+
+    async addPlaceCategory(category) {
+        return $api.post('/app-state/add-place-category', { category })
+    },
 
     async setTripType(type) {
         return $api.post('/app-state/set-trip-type', { type })
@@ -29,4 +34,9 @@ export default {
     deleteTripRegion(tripRegion) {
         return $api.post('/app-state/delete-trip-region', { tripRegion })
     },
+    deletePlaceCategory(category) {
+        return $api.post('/app-state/delete-place-category', { category })
+    },
+
+    
 }
