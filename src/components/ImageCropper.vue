@@ -10,6 +10,9 @@ let imageInput = ref(null)
 let cropper;
 
 const emit = defineEmits(["addImage"]);
+const props = defineProps({
+    aspectRatio: Number,
+})
 
 function loadImage() {
     loadedImages.value = imageInput.value.files;
@@ -51,7 +54,7 @@ async function crop() {
 }
 watch(preview, () => {
     cropper = new Cropper(previewImage.value, {
-        aspectRatio: 270 / 175,
+        aspectRatio: props.aspectRatio ?? 270 / 175,
         maxContainerWidth: 300,
         maxContainerHeight: 300,
         minContainerWidth: 300,

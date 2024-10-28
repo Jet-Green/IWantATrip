@@ -7,12 +7,17 @@ import "@vueup/vue-quill/dist/vue-quill.snow.css";
 import ImageCropper from "../../components/ImageCropper.vue";
 import { message } from "ant-design-vue";
 
+import { useRouter } from 'vue-router';
 import { useAppState } from "../../stores/appState";
 import BackButton from "../../components/BackButton.vue";
 import { useAuth } from '../../stores/auth';
+import { usePlaces } from '../../stores/place';
+import PlaceService from '../../service/PlaceService';
 
 const appStore = useAppState();
 const userStore = useAuth();
+const placeStore = usePlaces();
+const router = useRouter();
 
 const locationType = ref('dadataLocation')
 const customLocation = ref({
@@ -68,7 +73,22 @@ let formSchema = yup.object({
   category: yup.string().required("заполните поле"),
   // https://vee-validate.logaretm.com/v4/examples/array-fields/
 });
-function submit() {
+
+async function uploadPlaceImages(_id) {
+  let imagesFormData = new FormData();
+  for (let i = 0; i < images.length; i++) {
+    imagesFormData.append(
+      "place-image",
+      new File([images[i]], _id + '_' + Date.now() + "_" + i + ".jpg"),
+      _id + '_' + Date.now() + "_" + i + ".jpg"
+    );
+  }
+  let res = await PlaceService.uploadPlaceImages(imagesFormData)
+  localStorage.removeItem('createPlaceImages')
+  return res
+}
+
+async function submit() {
   // провериьть на наличие координат вывести предупреждение
   // добавить дату и автора
   // create -> upload-images
@@ -84,26 +104,51 @@ function submit() {
   toSend.author = userStore.user._id
   toSend.createdDate = Date.now()
 
-  
-
-  console.log(toSend);
-
-}
-
-function uploadPlaceImages(_id) {
-  let imagesFormData = new FormData();
-  for (let i = 0; i < images.length; i++) {
-    imagesFormData.append(
-      "trip-image",
-      new File([images[i]], _id + '_' + Date.now() + "_" + i + ".jpg"),
-      _id + '_' + Date.now() + "_" + i + ".jpg"
-    );
+  // вдруг пользователь введёт и там и там
+  if (locationType.value == "customLocation") {
+    toSend.dadataLocation = {}
+  } else {
+    toSend.customLocation = {}
   }
-  TripService.uploadPlaceImages(imagesFormData).then(() => {
-    console.log('фотографии загружены')
-    localStorage.removeItem('createPlaceImages')
-  })
+
+  function close() {
+    router.push("/places");
+    clearForm()
+  }
+  function clearForm() {
+    Object.assign(form, {
+      name: '',
+      dadataLocation: {},
+      customLocation: {},
+      images: [],
+      shortDescription: '',
+      description: '',
+      advicesForTourists: '',
+      openingHours: '',
+      price: '',
+      website: '',
+      category: ''
+    });
+    images = [];
+    previews.value = [];
+  }
+  let response = await placeStore.create(toSend)
+  if (response.status == 200) {
+    const placeId = response.data._id;
+    let res = await uploadPlaceImages(placeId)
+    if (res.status == 200) {
+      localStorage.setItem('createPlaceForm', {})
+      message.config({ duration: 1.5, top: "70vh" });
+      message.success({
+        content: "Место создано!", onClose: () => {
+          close()
+        },
+      });
+    }
+  }
 }
+
+
 function addPreview(blob) {
   // imagesFormData.append("image", blob, `product-${previews.value.length}`);
   visibleCropperModal.value = false;
@@ -112,7 +157,6 @@ function addPreview(blob) {
   localStorage.setItem('createPlaceImages', JSON.stringify(previews.value))
 }
 const delPhoto = () => {
-  console.log()
   previews.value.splice(targetIndex.value, 1);
   images.splice(targetIndex.value, 1);
   delPhotoDialog.value = false;
@@ -195,7 +239,6 @@ watch(form, (newForm) => {
   localStorage.setItem('createPlaceForm', JSON.stringify(newForm))
 })
 onMounted(() => {
-  console.log(localStorage.getItem('createPlaceImages'))
   previews.value = localStorage.getItem('createPlaceImages') ? JSON.parse(localStorage.getItem('createPlaceImages')) : []
   if (localStorage.getItem('createPlaceForm')) {
     Object.assign(form, JSON.parse(localStorage.getItem('createPlaceForm')))
@@ -209,7 +252,6 @@ onMounted(() => {
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="12">
         <h2>Создать место</h2>
-        {{ form }}
         <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
           <a-row :gutter="[16, 16]">
             <a-col :span="24">
@@ -348,7 +390,7 @@ onMounted(() => {
           </a-row>
         </Form>
         <a-modal v-model:open="visibleCropperModal" :footer="null" :destroyOnClose="true">
-          <ImageCropper @addImage="addPreview" />
+          <ImageCropper :aspectRatio="2 / 1" @addImage="addPreview" />
         </a-modal>
         <a-modal v-model:open="delPhotoDialog" :footer="null">
           <h3>Удалить фото?</h3>
