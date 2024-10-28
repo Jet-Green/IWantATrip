@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref, watch, onMounted } from 'vue';
+import { reactive, ref, watch, onMounted, computed } from 'vue';
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import { QuillEditor } from "@vueup/vue-quill";
@@ -73,6 +73,13 @@ let formSchema = yup.object({
   category: yup.string().required("заполните поле"),
   // https://vee-validate.logaretm.com/v4/examples/array-fields/
 });
+
+let isLocationValid = computed(() => {
+  if (locationType.value == "customLocation") {
+    return form.customLocation?.coordinates?.length == 2 && form.customLocation?.coordinates[0] && form.customLocation?.coordinates[1]
+  }
+  return form.dadataLocation?.coordinates?.length == 2
+})
 
 async function uploadPlaceImages(_id) {
   let imagesFormData = new FormData();
@@ -349,7 +356,6 @@ onMounted(() => {
                 <a-radio-group v-model:value="locationType" name="radioGroup">
                   <a-radio value="dadataLocation">Адрес</a-radio>
                   <a-radio value="customLocation">Координаты</a-radio>
-
                 </a-radio-group>
               </div>
               <div v-if="locationType == 'dadataLocation'">
@@ -382,9 +388,9 @@ onMounted(() => {
                 Добавить фото
               </a-button>
             </a-col>
-
-            <a-col :span="24" class="d-flex justify-center ">
-              <a-button class="lets_go_btn ma-36" type="primary" html-type="submit">Отправить
+            <a-col :span="24" class="d-flex justify-center">
+              <a-button class="lets_go_btn ma-36" type="primary" html-type="submit"
+                :disabled="!meta.valid || form.advicesForTourists.length < 3 || form.description.length < 3 || !isLocationValid">Отправить
               </a-button>
             </a-col>
           </a-row>
