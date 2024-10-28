@@ -124,6 +124,11 @@ onMounted(async () => {
             <span v-else class="mdi mdi-24px mdi-account-group"
               style="color: #245159;"></span>
           </a-menu-item>
+          <a-menu-item key="/cabinet/my-places">
+            <span v-if=!sm>Места</span>
+            <span v-else class="mdi mdi-24px mdi-map-marker-outline"
+              style="color: #245159;"></span>
+          </a-menu-item>
           <a-menu-item key="/cabinet/my-companions">
             <span ref='companions' v-if=!sm>Попутчики</span>
             <span v-else class="mdi mdi-24px mdi-human-capacity-decrease"
