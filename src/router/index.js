@@ -388,6 +388,11 @@ const router = createRouter({
               component: () => import('../components/_cabinet/ExcursionBookingInfo.vue'),
             },
             {
+              path: 'my-places',
+              name: 'MyPlaces',
+              component: () => import('../components/_cabinet/MyPlaces.vue'),
+            },
+            {
               path: 'excursion-bookings',
               name: 'ExcursionBookings',
               component: () => import('../components/_cabinet/ExcursionBookings.vue'),
