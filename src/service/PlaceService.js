@@ -7,4 +7,8 @@ export default {
   async uploadPlaceImages(images) {
     return $api.post('/places/upload-images', images)
   },
+  getAll(filter) {
+
+    return $api.post('/places/get-all', {filter})
+  }
 }
