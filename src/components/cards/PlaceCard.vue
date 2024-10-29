@@ -35,7 +35,7 @@ const router = useRouter()
 
       <a-col :xs="24" :md="cols" class="pa-4">
 
-        <p> {{ place.advicesForTourists }}</p>
+        <p v-html="place.advicesForTourists"> </p>
         <div><b>Часы работы:</b> {{ place.openingHours }}</div>
         <div><b>Цена:</b> {{ place.price }}</div>
         <div><b>Сайт:</b> {{ place.website }}</div>
@@ -49,7 +49,7 @@ const router = useRouter()
 
       </a-col>
       <a-col :xs="24" v-if="fullInfo">
-        <p>{{ place.description }}</p>
+        <p v-html="place.description"></p>
       </a-col>
 
     </a-row>
