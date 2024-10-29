@@ -533,6 +533,29 @@ const router = createRouter({
               }
             },
             {
+              path: 'moderation-places',
+              name: 'PlacesModeration',
+              component: () => import('../components/admin/PlacesOnModeration.vue'),
+              beforeEnter: () => {
+                let userStore = useAuth()
+                if (!userStore.user?.roles.includes('admin')) {
+                  return false
+                }
+              },
+              children: [
+                {
+                  path: 'on-moderation',
+                  name: 'PlacesOnModeration',
+                  component: () => import('../components/admin/placesOnModeration/onModeration.vue'),
+                },
+                {
+                  path: 'rejected',
+                  name: 'RejectedPlaces',
+                  component: () => import('../components/admin/placesOnModeration/rejected.vue'),
+                },
+              ]
+            },
+            {
               path: 'interface',
               name: 'Interface',
               component: () => import('../components/admin/Interface.vue'),
@@ -664,7 +687,6 @@ const router = createRouter({
             if (!userStore.user?.roles.includes('admin')) {
               return false
             }
-
           }
         },
         {
@@ -727,7 +749,21 @@ const router = createRouter({
             if (!userStore.isAuth)
               return '/auth'
           }
-        }
+        },
+        {
+          path: "/moderate-place",
+          name: "ModeratePlace",
+          component: () => import('../components/admin/ModeratePlace.vue'),
+          beforeEnter: async () => {
+            let userStore = useAuth()
+            if (!localStorage.getItem('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+            if (!userStore.user?.roles.includes('admin')) {
+              return false
+            }
+          }
+        },
+        
       ]
     },
 
@@ -737,7 +773,7 @@ const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
     if (to.path === '/places') {
       // Scroll to the element with id "top" on /places route
-      return { el: '#top'};
+      return { el: '#top' };
     } else if (savedPosition) {
       return savedPosition;
     } else {
