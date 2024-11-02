@@ -10,12 +10,15 @@ export const usePlaces = defineStore('places', {
   getters: {
   },
   actions: {
-    async getAll(filter) {
+    async getAll(page, query) {
+      if (page == 1) {
+        this.places = [];
+      }
       try {
         if (!this.isFetching) {
           this.isFetching = true
           let response = await PlaceService.getAll(
-            filter
+            page, query
           );
           this.isFetching = false
 
@@ -35,14 +38,15 @@ export const usePlaces = defineStore('places', {
         console.log(err);
       }
     },
-    async getPlacesForModeration(status) {
+    async deletePlace(id) {
       try {
-        const response = await PlaceService.getPlacesForModeration(status)
+        const response = await PlaceService.deletePlace(id);
         return response
-      } catch (error) {
-        console.log(error);
+      } catch (err) {
+        console.log(err);
       }
     },
+
     async getById(_id) {
       try {
         const response = await PlaceService.getById(_id)
@@ -50,6 +54,25 @@ export const usePlaces = defineStore('places', {
       } catch (error) {
         console.log(error);
       }
-    }
+    },
+    async moderatePlace(_id) {
+      try {
+        const response = await PlaceService.moderatePlace(_id)
+        return response
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async rejectPlace(_id) {
+      try {
+        const response = await PlaceService.rejectPlace(_id)
+        return response
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+
+
   }
 })

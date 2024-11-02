@@ -1,51 +1,65 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useRoute } from 'vue-router'
+import { useAuth } from "../../stores/auth";
+import { usePlaces } from "../../stores/place"
+import MyPlaceCard from './MyPlaceCard.vue';
+
+
+
 
 const router = useRouter()
 const route = useRoute();
-
+const userStore = useAuth();
+const placeStore = usePlaces()
 
 let places = ref([])
-let query = ref('')
+let search = ref('')
+let page = 1
+let query = {
+  author: userStore.user._id,
+  name: { $regex: '', $options: 'i' }
+}
 
-let filteredPlaces = computed(() => {
-  if (query.value.length > 2) {
-    // localStorage.setItem("excursionQuery", query.value);
-    // return excursions.value.filter((excursion) => excursion.name.toLowerCase().includes(query.value.toLowerCase())
-    //   || excursion.description.toLowerCase().includes(query.value.toLowerCase())
-    //   || excursion.excursionType.type.toLowerCase().includes(query.value.toLowerCase())
-    //   || excursion.excursionType.directionType.toLowerCase().includes(query.value.toLowerCase())
-    //   || excursion.excursionType.directionPlace.toLowerCase().includes(query.value.toLowerCase())
-    // )
-  } else {
-    // localStorage.setItem("excursionQuery", '');
-    return places.value
+async function refreshPlaces() {
+  let data = await placeStore.getAll(page, query)
+  places.value = data
+}
+
+watch(search, (newSearch, oldSearch) => {
+
+  if (newSearch.length > 2 || newSearch.length <= oldSearch.length) {
+    query.name.$regex = newSearch
+    refreshPlaces()
   }
+})
 
+onMounted(async () => {
+  await refreshPlaces()
 })
 </script>
 <template>
   <div>
 
-<div style="display: flex; justify-content:space-between; flex-wrap:wrap" class="pa-8">
-  <div>
-    <a-button class="btn_light ma-8" @click="router.push('/create-place')">
-      создать место
-    </a-button>
+    <div style="display: flex; justify-content:space-between; flex-wrap:wrap" class="pa-8">
+      <div>
+        <a-button class="btn_light ma-8" @click="router.push('/create-place')">
+          создать место
+        </a-button>
+      </div>
+
+      <div>
+        <a-input v-model:value="search" placeholder="поиск" style="width:180px" allow-clear />
+      </div>
+
+    </div>
+    <a-row :gutter="[8, 8]">
+      <a-col v-for="place in places" :span="24" :sm="12" :lg="8">
+
+        <MyPlaceCard @refreshPlaces="refreshPlaces()" :place="place"/>
+      </a-col>
+
+    </a-row>
   </div>
-  <div>
-    <a-input v-model:value="query" placeholder="поиск" style="width:180px" />
-  </div>
-  
-</div>
-<a-row :gutter="[8, 8]">
-  <a-col v-for="place in filteredPlaces" :span="24" :sm="12" :lg="8">
-    
-    <!-- <ExcursionCard :excursion="excursion" @updateExcursion="updateExcursion" /> -->
-  </a-col>
- 
-</a-row>
-</div>
 </template>

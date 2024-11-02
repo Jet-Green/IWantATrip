@@ -7,27 +7,17 @@ const placeStore = usePlaces()
 let placesOnModeration = ref([])
 let router = useRouter()
 
-async function tripToDelete(_id) {
-  await tripStore.deleteById(_id)
+let page =  1 
+let query = {isModerated:false, isRejected:false}
+
+async function deletePlace(_id) {
+
+  await placeStore.deletePlace (_id)
   await refreshPlacesOnModeration()
 }
-const clearData = (dataString) => {
-  let date
-  dataString = String(dataString)
-  if (dataString.length == 13) {
-    const dataFromString = new Date(Number(dataString))
-    date = dataFromString
-  } else {
-    date = new Date(dataString)
-  }
-  return date.toLocaleDateString("ru-Ru", {
-    year: "2-digit",
-    month: "2-digit",
-    day: "2-digit",
-  })
-}
+
 async function refreshPlacesOnModeration() {
-  let { data } = await placeStore.getPlacesForModeration("on-moderation")
+  let  data  = await placeStore.getAll(page, query)
   placesOnModeration.value = data
 }
 
@@ -54,16 +44,9 @@ onMounted(async () => {
           <span class="mdi mdi-compass-outline"></span>
           {{ place.dadataLocation?.name ? place.dadataLocation?.name : place.name }}
         </div>
-        <!-- <div>
-          <span class="mdi mdi-calendar-arrow-right"></span>
-          {{ `c ${clearData(place.start)}` }}
-          <span class="mdi mdi-calendar-arrow-left"></span>
-          {{ `по ${clearData(place.end)}` }}
-        </div> -->
-        <!-- <div class="mt-8">Автор: {{ place.author.fullinfo.fullname }}</div> -->
 
         <div class="actions d-flex justify-center">
-          <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="() => {}">
+          <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="deletePlace(place._id)">
             <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
           </a-popconfirm>
           <span
