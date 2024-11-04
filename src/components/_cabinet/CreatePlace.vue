@@ -182,7 +182,7 @@ watch(locationSearchRequest, async (newValue, oldValue) => {
         query: newValue,
         count: 5,
         "from_bound": { "value": "city" },
-        "to_bound": { "value": "settlement" }
+       "to_bound": { "value": "house" }
       })
     }
 

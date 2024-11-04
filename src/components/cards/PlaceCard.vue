@@ -17,7 +17,7 @@ const router = useRouter()
 <template>
   <div class="ma-8">
     <h3 style="text-align: center" @click="toggleCols()"> {{ place.name }}</h3>
-    <div style="text-align: center">{{ place.category.toLowerCase() }}</div>
+    <div style="text-align: center">{{ place?.category?.toLowerCase() }}</div>
     <p @click="toggleCols()">{{ place.shortDescription }}</p>
 
     <a-row>
@@ -40,9 +40,12 @@ const router = useRouter()
         <div><b>Цена:</b> {{ place.price }}</div>
         <div><b>Сайт:</b> {{ place.website }}</div>
         <div><b>Соц. сети:</b> {{ place.socialMedia }}</div>
-        <div  class="d-flex align-center"> <div><b>На карте: </b> </div> <b> <span class="mdi  mdi-map-outline" style="font-size: 24px;"></span></b>
+        <div> <b>Адрес: </b> <a
+            :href="`https://yandex.ru/maps/?ll=${place.location.coordinates[0]}%2C${place.location.coordinates[1]}&z=16&pt=${place.location.coordinates[0]},${place.location.coordinates[1]}}`"
+            target="_blank"> {{ place.location.name }} |на картe<span class="mdi  mdi-map-outline"
+            style="font-size: 16px;"></span>|</a></div>
 
-        </div>
+
         <div @click="toggleCols()" style="text-align: center;"><span class="mdi  "
             :class="fullInfo ? 'mdi-chevron-double-up' : 'mdi-chevron-double-down'"
             style="font-size: 28px; font-weight: bold;"></span></div>
