@@ -11,7 +11,6 @@ export default {
     return $api.post('/places/upload-images', images)
   },
   getAll(page, query) {
-console.log(page, query);
     return $api.post('/places/get-all', { page, query })
   },
   getPlacesForModeration(status) {
@@ -26,6 +25,10 @@ console.log(page, query);
   rejectPlace(_id) {
     return $api.get(`/places/reject-place?_id=${_id}`)
   },
+  hidePlace(_id) {
+    return $api.get(`/places/hide-place?_id=${_id}`)
+  },
+  
 
   
 }

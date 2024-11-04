@@ -5,7 +5,12 @@ import PlaceService from '../service/PlaceService';
 export const usePlaces = defineStore('places', {
   state: () => ({
     isFetching: false,
-    places: []
+    places: [],
+    filter:{
+      search:'',
+      category:'',
+
+    }
   }),
   getters: {
   },
@@ -46,7 +51,15 @@ export const usePlaces = defineStore('places', {
         console.log(err);
       }
     },
-
+    async hidePlace(id) {
+      try {
+        const response = await PlaceService.hidePlace(id);
+        return response
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    
     async getById(_id) {
       try {
         const response = await PlaceService.getById(_id)

@@ -9,6 +9,7 @@ import MyPlaceCard from './MyPlaceCard.vue';
 
 
 
+
 const router = useRouter()
 const route = useRoute();
 const userStore = useAuth();
@@ -19,8 +20,12 @@ let search = ref('')
 let page = 1
 let query = {
   author: userStore.user._id,
-  name: { $regex: '', $options: 'i' }
-}
+  $or: [
+    { name: { $regex: '', $options: 'i' } },
+    { category: { $regex: '', $options: 'i' } }
+  ]
+};
+
 
 async function refreshPlaces() {
   let data = await placeStore.getAll(page, query)
@@ -30,7 +35,8 @@ async function refreshPlaces() {
 watch(search, (newSearch, oldSearch) => {
 
   if (newSearch.length > 2 || newSearch.length <= oldSearch.length) {
-    query.name.$regex = newSearch
+    query.$or[0].name.$regex = newSearch
+    query.$or[1].category.$regex = newSearch
     refreshPlaces()
   }
 })
@@ -57,9 +63,10 @@ onMounted(async () => {
     <a-row :gutter="[8, 8]">
       <a-col v-for="place in places" :span="24" :sm="12" :lg="8">
 
-        <MyPlaceCard @refreshPlaces="refreshPlaces()" :place="place"/>
-      </a-col>
+        <MyPlaceCard @refreshPlaces="refreshPlaces()" :place="place">
+        </MyPlaceCard>
 
+      </a-col>
     </a-row>
   </div>
 </template>

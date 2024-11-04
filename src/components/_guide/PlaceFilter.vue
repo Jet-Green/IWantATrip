@@ -1,65 +1,62 @@
 <script setup>
-import { ref, onMounted, watch, computed, reactive } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 
-import "@vuepic/vue-datepicker/dist/main.css";
+import { useAppState } from "../../stores/appState";
+import { usePlaces } from "../../stores/place";
 
-import { useAppState } from "../../stores/appState.js";
+const placeStore = usePlaces()
+const appStore = useAppState();
 
-const appStateStore = useAppState()
-
+const emit = defineEmits(['refreshPlaces'])
 
 
 
 let isFilterShow = ref(false);
-let query = ref("");
+
+
 function showFilter() {
   isFilterShow.value = true
 }
 function hideFilter() {
   isFilterShow.value = false
+  emit('refreshPlaces');
 }
 
 function find() {
-
+  emit('refreshPlaces');
 }
 function resetForm() {
-  
+  placeStore.filter.search = ''
+  placeStore.filter.category = ''
+  emit('refreshPlaces');
 }
 
 
-
+let placeCategory = appStore.appState[0]?.placeCategory.map((name) => { return { value: name } }) ?? []
 let filterString = computed(() => {
-  // let keyString = ''
-  // let excFilter = excursionStore.excursionFilter
-  // for (let key in excFilter) {
-  //   if (key == 'start' && excFilter[key] ) {
-  //     keyString = keyString + `c ${clearData(excFilter[key])}, ` 
-  //     continue;
-  //   }
-
-
-  //   if (excFilter[key]) {
-
-  //     keyString = keyString + `${excFilter[key]}, ` 
-  //   }
-  // }
-  // return keyString.trim().slice(0, -1)
+  let keyString = ''
+  let placeFilter = placeStore.filter
+  for (let key in placeFilter) {
+    if (placeFilter[key] && placeFilter[key].length) {
+      keyString = keyString + `${placeFilter[key]}, `
+    }
+  }
+  return keyString.trim().slice(0, -1)
 })
 
 let buttonTitle = computed(() => {
-  return  filterString.value? filterString.value: "Что, где?"
+  return filterString.value ? filterString.value : "Что, где, куда?"
 }
 )
+// watch(search, (newSearch, oldSearch) => {
+//   if (newSearch.length > 2 || newSearch.length <= oldSearch.length) {
+//     placeStore.filter.search = newSearch
+//   }
 
-
-
-
+// })
 
 onMounted(async () => {
-
   // await appStateStore.refreshState();
-
-
 
 });
 </script>
@@ -81,7 +78,6 @@ onMounted(async () => {
     </a-col>
   </a-row>
 
-
   <a-modal v-model:open="isFilterShow" title="Поиск места" :zIndex=900>
 
 
@@ -90,15 +86,20 @@ onMounted(async () => {
       <a-col :span="24" class="d-flex direction-column">
 
 
-        <a-input v-model:value="query" placeholder="название, содержание?" name="search"
-          style="z-index: 0; width: 100%; margin-bottom: 6px" />
+        <a-input v-model:value="placeStore.filter.search" placeholder="название места" name="search"
+          style="z-index: 0; width: 100%; margin-bottom: 6px" allowClear />
 
       </a-col>
       <a-col :span="24">
         локация
       </a-col>
+      {{ placeStore.filter.category }}
+    
       <a-col :span="24">
-        категория
+        Тип места
+        <a-select style="width: 100%" v-model:value="placeStore.filter.category "
+          :options="placeCategory" placeholder="Музей, памятник" show-search allowClear>
+        </a-select>
       </a-col>
 
 

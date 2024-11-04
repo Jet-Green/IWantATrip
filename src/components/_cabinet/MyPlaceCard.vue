@@ -1,6 +1,7 @@
 <script setup>
-import { toRefs, computed, ref } from 'vue';
+import { toRefs, computed, ref, onMounted, reactive } from 'vue';
 import { useRouter } from 'vue-router';
+import PlaceCard from '../cards/PlaceCard.vue';
 
 let props = defineProps(['place'])
 let emit = defineEmits(['refreshPlaces'])
@@ -9,6 +10,7 @@ import { usePlaces } from "../../stores/place"
 const router = useRouter()
 const placeStore = usePlaces()
 let color = ref('black')
+let show = ref(false)
 // toRefs add reactivity
 let { place } = toRefs(props)
 
@@ -24,11 +26,11 @@ let status = computed(() => {
   if (!place.value.isModerated) {
     color.value = '#20A0CF'
     return "на проверке"
-  } else   {
+  } else {
     color.value = 'black'
     return "на сайте"
   }
-  
+
 })
 
 async function placeToDelete(_id) {
@@ -37,19 +39,14 @@ async function placeToDelete(_id) {
     emit('refreshPlaces')
   }
 }
-async function hideExcursion(_id, isHide) {
-  let response = await placeStore.hideExcursion(_id, isHide);
+async function hidePlace(_id) {
+  let response = await placeStore.hidePlace(_id);
   if (response.status == 200) {
     emit('refreshPlaces')
   }
 }
-function placeInfo(_id) {
-  if (place.value.prices.length == 0) {
-    router.push(`/cabinet/place-booking-info?_id=${_id}`)
-  } else {
-    router.push(`/cabinet/place-info?_id=${_id}`)
-  }
-}
+
+
 </script>
 <template>
   <a-card class="card" :class="[place.isHidden ? 'overlay' : '']" v-if="place._id">
@@ -63,12 +60,12 @@ function placeInfo(_id) {
     <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
     <div class="actions">
       <div>
-     
+
         <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="placeToDelete(place._id)">
           <span class="mdi mdi-delete" style="color: #ff6600;"></span>
         </a-popconfirm>
-        <a-popconfirm title="Скрыть?" ok-text="Да" cancel-text="Нет"
-          @confirm="hideExcursion(place._id, !place.isHidden)">
+
+        <a-popconfirm title="Скрыть/показать?" ok-text="Да" cancel-text="Нет" @confirm="hidePlace(place._id)">
           <span v-if="!place.isHidden" class="mdi mdi-eye-outline"></span>
           <span v-else class="mdi mdi-eye-off-outline"></span>
         </a-popconfirm>
@@ -76,13 +73,16 @@ function placeInfo(_id) {
           @confirm="router.push(`/edit-place?_id=${place._id}`)">
           <span class="mdi mdi-pen"></span>
         </a-popconfirm>
-        <span class="mdi mdi-information-outline" @click="placeInfo(place._id)"></span>
+        <span class="mdi mdi-information-outline" @click="show=!show"></span>
       </div>
-      <div :style="{color}" style="font-size:14px">
+      <div :style="{ color }" style="font-size:14px">
         {{ status }}
       </div>
 
     </div>
+      <a-modal v-model:open="show" :footer="null">
+        <PlaceCard :place="place" />
+      </a-modal>
   </a-card>
 </template>
 <style scoped lang="scss">
@@ -111,16 +111,5 @@ function placeInfo(_id) {
 
 .overlay {
   opacity: 0.5;
-}
-
-.money-indicator {
-  position: absolute;
-  top: 0;
-  right: 8px;
-}
-
-.mdi-cash {
-  font-size: 22px;
-  cursor: pointer;
 }
 </style>

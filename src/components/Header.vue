@@ -231,6 +231,7 @@ onMounted(() => {
           <div @click="toComponentFromMenu('ExcursionsPage')" class="route ma-8">экскурсии</div>
           <div @click="toComponentFromMenu('CreateExcursion')" class="route ma-8">создать экскурсию</div>
           <div @click="toComponentFromMenu('Poster')" class="route ma-8">афиши</div>
+          <div @click="toComponentFromMenu('Places')" class="route ma-8">места</div>
           <div @click="toComponentFromMenu('Transport')" class="route ma-8">транспорт</div>
           <div @click="toComponentFromMenu('ToStay')" class="route ma-8">гостиницы</div>
         </div>
