@@ -32,7 +32,7 @@ function selectStartLocation(selected) {
   for (let l of possibleLocations.value) {
     // l.value - name
     if (l.value == selected) {
-      form.dadataLocation = l.location
+      form.location = l.location
     }
   }
 }
@@ -49,8 +49,7 @@ let images = localStorage.getItem('createPlaceImages') ? JSON.parse(localStorage
 
 const form = reactive({
   name: '',
-  dadataLocation: {},
-  customLocation: {},
+  location: { name: "", shortName: "", type: "Point", coordinates: [] },
   images: [],
   shortDescription: '',
   description: '',
@@ -75,10 +74,7 @@ let formSchema = yup.object({
 });
 
 let isLocationValid = computed(() => {
-  if (locationType.value == "customLocation") {
-    return form.customLocation?.coordinates?.length == 2 && form.customLocation?.coordinates[0] && form.customLocation?.coordinates[1]
-  }
-  return form.dadataLocation?.coordinates?.length == 2
+  return form.location?.coordinates?.length == 2
 })
 
 async function uploadPlaceImages(_id) {
@@ -100,23 +96,17 @@ async function submit() {
   // добавить дату и автора
   // create -> upload-images
   // clear localStorage
-  if (locationType.value == "customLocation") {
-    if (form.customLocation.coordinates.length < 2 || form.customLocation.coordinates[0] == '' || form.customLocation.coordinates[1] == '') {
-      message.config({ duration: 3, top: "70vh" });
-      message.warning("Укажите широту и долготу!");
-    }
+
+  if (form.location.coordinates.length < 2 || form.location.coordinates[0] == '' || form.location.coordinates[1] == '') {
+    message.config({ duration: 3, top: "70vh" });
+    message.warning("Укажите широту и долготу!");
   }
+
 
   let toSend = { ...form }
   toSend.author = userStore.user._id
   toSend.createdDate = Date.now()
 
-  // вдруг пользователь введёт и там и там
-  if (locationType.value == "customLocation") {
-    toSend.dadataLocation = {}
-  } else {
-    toSend.customLocation = {}
-  }
 
   function close() {
     router.push("/places");
@@ -125,8 +115,7 @@ async function submit() {
   function clearForm() {
     Object.assign(form, {
       name: '',
-      dadataLocation: {},
-      customLocation: {},
+      location: { name: "", shortName: "", type: "Point", coordinates: [] },
       images: [],
       shortDescription: '',
       description: '',
@@ -232,14 +221,15 @@ watch(locationSearchRequest, async (newValue, oldValue) => {
 })
 
 watch(locationType, () => {
-  if (locationType.value == 'dadataLocation') {
-    form.customLocation = {}
-  } else {
-    form.customLocation = customLocation.value
-    form.dadataLocation = {}
-    possibleLocations.value = []
-    locationSearchRequest.value = ""
-  }
+  form.location = { name: "", shortName: "", type: "Point", coordinates: [] }
+  // if (locationType.value == 'dadataLocation') {
+  //   form.location = { name: "", shortName: "", type: "Point", coordinates: [] }
+  // } else {
+  //   form.customLocation = customLocation.value
+  //   form.dadataLocation = {}
+  //   possibleLocations.value = []
+  //   locationSearchRequest.value = ""
+  // }
 })
 
 watch(form, (newForm) => {
@@ -259,6 +249,7 @@ onMounted(() => {
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="12">
         <h2>Создать место</h2>
+        {{ form }}
         <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
           <a-row :gutter="[16, 16]">
             <a-col :span="24">
@@ -370,9 +361,9 @@ onMounted(() => {
               </div>
               <div v-else>
                 Широта (lon)
-                <a-input placeholder="52.663446" v-model:value="customLocation.coordinates[0]" allow-clear></a-input>
+                <a-input placeholder="52.663446" v-model:value="form.location.coordinates[0]" allow-clear></a-input>
                 Долгота (lat)
-                <a-input placeholder="58.135907" v-model:value="customLocation.coordinates[1]" allow-clear></a-input>
+                <a-input placeholder="58.135907" v-model:value="form.location.coordinates[1]" allow-clear></a-input>
               </div>
             </a-col>
 

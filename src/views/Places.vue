@@ -13,24 +13,36 @@ let page = 1
 
 
 
+
+
+
 let conditions = computed(() => {
-  const conditions = [];
+  const conditions = {};
 
   if (placeStore.filter.search) {
-    conditions.push({ name: { $regex: placeStore.filter.search, $options: 'i' } });
+    conditions.name = placeStore.filter.search;
   }
 
   if (placeStore.filter.category) {
-    conditions.push({ category: placeStore.filter.category });
+    conditions.category = placeStore.filter.category
   }
-  return conditions.length > 0 ? conditions : undefined;
+  if (placeStore.filter.location.coordinates.length) {
+    conditions.location = placeStore.filter.location
+             
+  }
+  if (placeStore.filter.locationRadius) {
+    conditions.locationRadius = placeStore.filter.locationRadius
+            
+  }
+ 
+  return Object.keys(conditions).length > 0 ? conditions : undefined;
 })
 
 let query = reactive({
   isModerated: true,
   isRejected: false,
   isHidden: false,
-  $and: conditions
+  conditions: conditions
 })
 
 
@@ -52,12 +64,6 @@ let refreshPlaces = async () => {
   await placeStore.getAll(page, query)
 }
 
-// watch(placeStore.filter, (newFilter, oldFilter) => {
-//   query.$and[0].name.$regex = newFilter.search
-//   query.$and[1].category = newFilter.category
-// }
-// )
-
 
 
 onMounted(async () => {
@@ -78,7 +84,7 @@ const backRoute = { name: 'Landing', hash: '#guide' };
       <a-col :xs="22" :xl="16">
         <h2>Места</h2>
         <PlaceFilter @refreshPlaces=refreshPlaces />
-
+        {{ query }}
         <PlaceCard :place="place" v-for="place, index in placeStore.places" :key="index" />
         <div class="justify-center d-flex" @click="morePlaces()" v-if="showMoreButton"> <a-button>Ещё</a-button></div>
 

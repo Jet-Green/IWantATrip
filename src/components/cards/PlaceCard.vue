@@ -17,7 +17,7 @@ const router = useRouter()
 <template>
   <div class="ma-8">
     <h3 style="text-align: center" @click="toggleCols()"> {{ place.name }}</h3>
-    <div style="text-align: center">{{ place.category }}</div>
+    <div style="text-align: center">{{ place.category.toLowerCase() }}</div>
     <p @click="toggleCols()">{{ place.shortDescription }}</p>
 
     <a-row>

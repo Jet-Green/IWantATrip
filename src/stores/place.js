@@ -6,10 +6,11 @@ export const usePlaces = defineStore('places', {
   state: () => ({
     isFetching: false,
     places: [],
-    filter:{
-      search:'',
-      category:'',
-
+    filter: {
+      search: '',
+      category: '',
+      location: { name: "", shortName: "", type: "Point", coordinates: [] },
+      locationRadius: 0
     }
   }),
   getters: {
@@ -59,7 +60,7 @@ export const usePlaces = defineStore('places', {
         console.log(err);
       }
     },
-    
+
     async getById(_id) {
       try {
         const response = await PlaceService.getById(_id)

@@ -19,7 +19,7 @@ let tripRegion = ref('')
 
 async function addTripType() {
     if (tripType.value.length > 2) {
-        let res = await appStateStore.addTripType(tripType.value)
+        let res = await appStateStore.addTripType(tripType.value.toLowerCase().trim())
         if (res.status == 200) {
             await appStateStore.refreshState();
         }
@@ -31,7 +31,7 @@ async function addTripType() {
 
 async function addPlaceCategory () {
     if (placeCategory.value.length > 2) {
-        let res = await appStateStore.addPlaceCategory(placeCategory.value)
+        let res = await appStateStore.addPlaceCategory(placeCategory.value.toLowerCase().trim())
         if (res.status == 200) {
             placeCategory.value = ''
             await appStateStore.refreshState();
@@ -57,7 +57,7 @@ async function deleteBus(_id) {
 
 async function addTripRegion() {
     if (tripRegion.value.length > 2 && tripRegion.value.length <= 35) {
-        let res = await appStateStore.addTripRegion(tripRegion.value)
+        let res = await appStateStore.addTripRegion(tripRegion.value.trim())
         if (res.status == 200) {
             message.config({ duration: 3 });
             message.success({ content: `Регион "${tripRegion.value}" создан` });         
