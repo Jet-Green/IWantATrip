@@ -55,13 +55,13 @@ let cards = ref([
     isShow: false,
 
   },
-  {
-    title: "Еда",
-    icon: "mdi-food-outline",
-    route: "/eat",
-    isShow: false,
+  // {
+  //   title: "Еда",
+  //   icon: "mdi-food-outline",
+  //   route: "/eat",
+  //   isShow: false,
 
-  },
+  // },
   {
     title: "Сувениры",
     icon: "mdi-gift-outline",
@@ -138,13 +138,13 @@ watch(locationStore, () => {
 
 .in-work {
   position: absolute;
-  top: 60%;
-  left: 50%;
+  top: 80%;
+  left: 40%;
   border: solid 1px #ff6600;
   padding: 16px;
   border-radius: 5px;
   color: #ff6600;
-  transform: rotate(-15deg);
+  transform: rotate(-5deg);
   z-index: 99;
   font-size: clamp(1.125rem, 0.6563rem + 1.5vw, 1.5rem);
 

@@ -68,10 +68,10 @@ export default defineConfig(
           manifest: {
             name: 'Города и веси',
             short_name: 'Города и веси',
-            description: 'Description of your app',
+            description: 'Путешествия, туры, путевки, отдых',
             theme_color: '#ffffff',
             background_color: "#ffffff",
-            version: "1.2.7",
+            version: "1.3.0",
             display: "standalone",
             icons: [
               {
