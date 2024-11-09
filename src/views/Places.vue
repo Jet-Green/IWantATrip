@@ -11,11 +11,6 @@ let showMoreButton = ref(true)
 let page = 1
 
 
-
-
-
-
-
 let conditions = computed(() => {
   const conditions = {};
 
@@ -80,12 +75,11 @@ const backRoute = { name: 'Landing', hash: '#guide' };
 <template>
   <div style="overflow-x: hidden" id="top">
     <BackButton :backRoute="backRoute" />
-    <a-row class="justify-center d-flex pb-64">
-      <a-col :xs="22" :xl="16">
+    <a-row class="justify-center d-flex">
+      <a-col :xs="22" :xl="16" >
         <h2>Места</h2>
         <PlaceFilter @refreshPlaces=refreshPlaces />
-        {{ query }}
-        <PlaceCard :place="place" v-for="place, index in placeStore.places" :key="index" />
+        <PlaceCard :place="place" v-for="place, index in placeStore.places" :key="index" style="margin-bottom: 16px;" />
         <div class="justify-center d-flex" @click="morePlaces()" v-if="showMoreButton"> <a-button>Ещё</a-button></div>
 
       </a-col>

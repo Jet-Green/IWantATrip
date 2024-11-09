@@ -8,57 +8,67 @@ defineProps({
 let cols = ref(12)
 
 let fullInfo = ref(false)
+let isVisible = ref(true)
 let toggleCols = () => {
-  cols.value == 12 ? (cols.value = 24, fullInfo.value = true) : (cols.value = 12, fullInfo.value = false);
+  isVisible.value = false; // Скрываем элемент для анимации растворения
+
+setTimeout(() => {
+  // Меняем ширину после завершения анимации растворения
+  cols.value = cols.value === 12 ? 24 : 12;
+  fullInfo.value = !fullInfo.value;
+  isVisible.value = true; // Появляем элемент заново
+}, 500); // Время задержки должно совпадать с длительностью анимации растворения
 }
 
 const router = useRouter()
 </script>
 <template>
-  <div class="ma-8">
-    <h3 style="text-align: center" @click="toggleCols()"> {{ place.name }}</h3>
-    <div style="text-align: center">{{ place?.category?.toLowerCase() }}</div>
-    <p @click="toggleCols()">{{ place.shortDescription }}</p>
+  <Transition name="fade">
+  <div class="pa-16" v-show="isVisible">
+    <h2 style="text-align: center" @click="toggleCols()"> {{ place.name }}</h2>
+    <div style="text-align: center"><b>{{ place?.category?.toLowerCase() }}</b> </div>
+    <p @click="toggleCols()"><i>{{ place.shortDescription }}</i> </p>
 
     <a-row>
+      
+        <a-col :xs="24" :md="cols" >
 
-      <a-col :xs="24" :md="cols">
+          <a-carousel arrows dots-class="slick-dots slick-thumb" effect="fade" autoplay>
 
-        <a-carousel arrows dots-class="slick-dots slick-thumb" effect="fade" autoplay>
+            <div v-for="item, index in place.images" :key="index">
+              <img :src="item" @click="toggleCols()" />
+            </div>
+          </a-carousel>
 
-          <div v-for="item, index in place.images" :key="index">
-            <img :src="item" @click="toggleCols()" />
-          </div>
-        </a-carousel>
-
-      </a-col>
-
-      <a-col :xs="24" :md="cols" class="pa-4">
-
-        <p v-html="place.advicesForTourists"> </p>
+        </a-col>
+  
+      <a-col :xs="24" :md="cols" class="pa-32 place-card">
         <div><b>Часы работы:</b> {{ place.openingHours }}</div>
         <div><b>Цена:</b> {{ place.price }}</div>
-        <div><b>Сайт:</b> {{ place.website }}</div>
-        <div><b>Соц. сети:</b> {{ place.socialMedia }}</div>
-        <div> <b>Адрес: </b> <a
+        <div><b>Сайт:</b>  <a :href="`http://${place.website}`" target="_blank">{{ place.website }}</a>   </div>
+        <div><b>Соц. сети:</b> <a :href="`http://${place.socialMedia}`" target="_blank"> {{ place.socialMedia }}</a></div>
+        <div> <b>Адрес/координаты: <br> </b> <a
             :href="`https://yandex.ru/maps/?ll=${place.location.coordinates[0]}%2C${place.location.coordinates[1]}&z=16&pt=${place.location.coordinates[0]},${place.location.coordinates[1]}}`"
-            target="_blank"> {{ place.location.name }} |на картe<span class="mdi  mdi-map-outline"
-            style="font-size: 16px;"></span>|</a></div>
-
+            target="_blank"> {{ place.location.name || place.location.coordinates }} | на картe<span class="mdi  mdi-map-outline"
+              style="font-size: 16px;"></span></a></div>
+              <div style="width:50%">
+                <a-divider style="margin:8px;">          </a-divider>
+              </div> 
+              <div v-html="place.advicesForTourists"> </div> 
 
         <div @click="toggleCols()" style="text-align: center;"><span class="mdi  "
             :class="fullInfo ? 'mdi-chevron-double-up' : 'mdi-chevron-double-down'"
-            style="font-size: 28px; font-weight: bold;"></span></div>
+            style="font-size: 28px; "></span></div>
 
       </a-col>
-      <a-col :xs="24" v-if="fullInfo">
+      <a-col :xs="24" v-if="fullInfo" >
         <p v-html="place.description"></p>
       </a-col>
 
     </a-row>
 
   </div>
-  <a-divider style="height: 2px; background-color: #50651D" />
+    </Transition>
 </template>
 
 <style scoped>
@@ -74,5 +84,15 @@ const router = useRouter()
 
 :deep(.slick-arrow) {
   display: none !important;
+}
+
+
+
+/* Классы для эффекта растворения */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter, .fade-leave-to  {
+  opacity: 0;
 }
 </style>

@@ -128,7 +128,7 @@ watch(locationSearchRequest, async (newValue, oldValue) => {
 })
 
 onMounted(async () => {
-  // await appStateStore.refreshState();
+  await appStateStore.refreshState();
 
 });
 </script>

@@ -15,6 +15,7 @@ const route = useRoute();
 const userStore = useAuth();
 const placeStore = usePlaces()
 
+let showMoreButton = ref(true)
 let places = ref([])
 let search = ref('')
 let page = 1
@@ -27,7 +28,20 @@ let query = {
 };
 
 
+let morePlaces = async () => {
+  page++
+  let res = await refreshPlaces()
+
+  if (res.length == postersLenght) {
+    showMoreButton.value = false
+  }
+  postersLenght = res.length
+
+}
+
+
 async function refreshPlaces() {
+  page = 1
   let data = await placeStore.getAll(page, query)
   places.value = data
 }
@@ -43,6 +57,9 @@ watch(search, (newSearch, oldSearch) => {
 
 onMounted(async () => {
   await refreshPlaces()
+  if (placeStore.places.length < 20) {
+    showMoreButton.value = false
+  }
 })
 </script>
 <template>
@@ -67,6 +84,7 @@ onMounted(async () => {
         </MyPlaceCard>
 
       </a-col>
+      <a-col :span="24"  class="justify-center d-flex" @click="morePlaces()" v-if="showMoreButton"> <a-button>Ещё</a-button></a-col>
     </a-row>
   </div>
 </template>

@@ -249,7 +249,6 @@ onMounted(() => {
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="12">
         <h2>Создать место</h2>
-        {{ form }}
         <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
           <a-row :gutter="[16, 16]">
             <a-col :span="24">
