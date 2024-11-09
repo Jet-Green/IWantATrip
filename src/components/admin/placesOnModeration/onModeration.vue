@@ -54,6 +54,11 @@ onMounted(async () => {
             @click="router.push(`/moderate-place?_id=${place._id}`)"
             style="color: #245159; cursor: pointer"
           ></span>
+          <span
+            class="mdi mdi-pencil"
+            @click="router.push(`/edit-place?_id=${place._id}&is_admin=${true}`)"
+            style="color: #245159; cursor: pointer"
+          ></span>
         </div>
       </a-card>
     </a-col>

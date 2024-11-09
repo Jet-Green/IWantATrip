@@ -763,12 +763,19 @@ const router = createRouter({
             }
           }
         },
-        
+        {
+          path: "/edit-place",
+          name: "EditPlace",
+          component: () => import('../views/EditPlace.vue'),
+          beforeEnter: async () => {
+            let userStore = useAuth()
+            if (!localStorage.getItem('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+          }
+        },        
       ]
     },
-
-
-
+   
   ],
   scrollBehavior(to, from, savedPosition) {
     if (to.path === '/places') {

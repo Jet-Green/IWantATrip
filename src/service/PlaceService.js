@@ -28,7 +28,9 @@ export default {
   hidePlace(_id) {
     return $api.get(`/places/hide-place?_id=${_id}`)
   },
-  
-
-  
+  edit(toSend) {
+    let placeId = toSend._id;
+    delete toSend._id;
+    return $api.post(`/places/edit`, { placeId, place: toSend })
+  }
 }

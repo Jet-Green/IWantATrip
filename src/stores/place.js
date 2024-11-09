@@ -85,8 +85,13 @@ export const usePlaces = defineStore('places', {
         console.log(error);
       }
     },
-
-
-
+    async edit(toSend) {
+      try {
+        const response = await PlaceService.edit(toSend)
+        return response
+      } catch (error) {
+        console.log(error);
+      }
+    }
   }
 })
