@@ -50,6 +50,10 @@ let images = [] // type: blob
 // images from server
 let oldImages = ref([])
 
+// для customLocation, так как нет реактивности в v-model="form.location.coordinates[index]"
+let lon = ref()
+let lat = ref()
+
 const form = reactive({
   name: "",
   location: { name: "", shortName: "", type: "Point", coordinates: [] },
@@ -80,7 +84,8 @@ let formSchema = yup.object({
 })
 
 let isLocationValid = computed(() => {
-  return form.location?.coordinates?.length == 2
+  // для customLocation условие тоже нужно добавить
+  return form.location?.coordinates?.length == 2 || (lon?.value > 0 && lat?.value > 0)
 })
 
 async function uploadPlaceImages(_id) {
@@ -101,11 +106,7 @@ async function submit() {
   // добавить дату и автора
   // create -> upload-images
 
-  if (
-    form.location.coordinates.length < 2 ||
-    form.location.coordinates[0] == "" ||
-    form.location.coordinates[1] == ""
-  ) {
+  if (!isLocationValid) {
     message.config({ duration: 3, top: "70vh" })
     message.warning("Укажите широту и долготу!")
   }
@@ -113,6 +114,10 @@ async function submit() {
   let toSend = { ...form }
   // toSend.author = userStore.user._id
   // toSend.createdDate = Date.now()
+
+  if (locationType.value == "customLocation") {
+    toSend.location.coordinates = [lon.value, lat.value]
+  }
 
   function close() {
     router.back()
@@ -135,12 +140,11 @@ async function submit() {
     previews.value = []
     oldImages.value = []
   }
-  if (route.query?.is_admin != 'true') {
-    toSend.isModerated = false;
-    toSend.isRejected = false;
+  if (route.query?.is_admin != "true") {
+    toSend.isModerated = false
+    toSend.isRejected = false
   }
   let response = await placeStore.edit(toSend)
-
 
   if (response.status == 200) {
     const placeId = route.query._id
@@ -251,10 +255,18 @@ onMounted(async () => {
     if (res.status == 200) {
       Object.assign(form, res.data)
       oldImages.value = res.data.images
-
+      
+      form.location = res.data.location
       if (res.data.location?.name) {
-        locationSearchRequest.value = res.data.location.shortName
+        locationSearchRequest.value = res.data.location.name
         locationType.value = "dadataLocation"
+      } else {
+        if (res.data.location.coordinates.length == 2) {
+          lon.value = res.data?.location?.coordinates[0]
+          lat.value = res.data?.location?.coordinates[1]
+
+          locationType.value = "customLocation"
+        }
       }
     }
   }
@@ -429,9 +441,9 @@ onMounted(async () => {
               </div>
               <div v-else>
                 Широта (lon)
-                <a-input placeholder="52.663446" v-model:value="form.location.coordinates[0]" allow-clear></a-input>
+                <a-input placeholder="52.663446" v-model:value="lon" allow-clear></a-input>
                 Долгота (lat)
-                <a-input placeholder="58.135907" v-model:value="form.location.coordinates[1]" allow-clear></a-input>
+                <a-input placeholder="58.135907" v-model:value="lat" allow-clear></a-input>
               </div>
             </a-col>
 
