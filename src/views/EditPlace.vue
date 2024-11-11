@@ -114,6 +114,11 @@ async function submit() {
   let toSend = { ...form }
   // toSend.author = userStore.user._id
   // toSend.createdDate = Date.now()
+  
+  // там какая-то проблема с удалением, видимо с ссылкой на переменные что-то было
+  // удалялось 2 раза из одного индекса, потому что мы удаляли сначала из oldImages, потом из form.images, 
+  // видимо они ссылаются на одну и ту же переменную в памяти
+  toSend.images = oldImages.value;
 
   if (locationType.value == "customLocation") {
     toSend.location.coordinates = [lon.value, lat.value]
@@ -175,9 +180,8 @@ const delPhoto = () => {
   delPhotoDialog.value = false
 }
 
-const delOldPhoto = () => {
+const delOldPhoto = () => {  
   oldImages.value.splice(targetIndex.value, 1)
-  form.images.splice(targetIndex.value, 1)
   delOldPhotoDialog.value = false
 }
 
