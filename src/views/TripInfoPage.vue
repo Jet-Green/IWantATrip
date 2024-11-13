@@ -532,8 +532,6 @@ onMounted(async () => {
                             <span style="opacity: 0.7; cursor: pointer;" class="mdi mdi-24px mdi-printer ma-8 "
                                 @click="print()"></span>
 
-
-
                             <span style="opacity: 0.7;" class="mdi mdi-24px mdi-share-variant-outline ma-8"
                                 @click="startShare()"></span>
 
@@ -541,6 +539,15 @@ onMounted(async () => {
 
                         <div>
                             Старт: <b> {{ getStartLocationNames }}</b>
+                        </div>
+
+                        <div>
+                            Локации: 
+                            <div class="place-link" v-for="place of trip.places">
+                                <span class="mdi mdi-map-marker-outline"></span>
+                                <a v-if="place.location?.name?.length > 0" href="https://ymaps.ru" target="_blank">{{ place.location.shortName }}</a>
+                                <a v-else href="https://ymaps.ru" target="_blank">{{ place.name }}</a>
+                            </div>
                         </div>
 
                         <div>
@@ -947,5 +954,8 @@ img {
 
 .btn {
     border-radius: 15px;
+}
+.place-link {
+    display: flex;
 }
 </style>
