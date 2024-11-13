@@ -92,6 +92,15 @@ export const usePlaces = defineStore('places', {
       } catch (error) {
         console.log(error);
       }
+    },
+    async getForCreateTrip() {
+      try {
+        const response = await PlaceService.getForCreateTrip()
+        return response
+      } catch (error) {
+        console.log(error);
+        
+      }
     }
   }
 })

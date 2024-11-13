@@ -12,6 +12,8 @@ import { useRouter } from "vue-router";
 import { useTrips } from "../stores/trips";
 import { useAuth } from "../stores/auth";
 import { useAppState } from "../stores/appState";
+import { usePlaces } from "../stores/place";
+
 import TripService from "../service/TripService";
 import datePlugin from '../plugins/dates'
 
@@ -26,6 +28,9 @@ dayjs.locale('ru');
 const TripStore = useTrips();
 const userStore = useAuth();
 const appStore = useAppState();
+const placesStore = usePlaces();
+
+let places = ref([])
 
 let formFromLocalStorage = JSON.parse(localStorage.getItem("CreatingTrip"));
 
@@ -77,7 +82,8 @@ let form = reactive({
   includedInPrice: "",
   paidExtra: "",
   travelRequirement: "",
-  tripRegion: ""
+  tripRegion: "",
+  places: [],
 });
 // для a-select с регионами тура
 let tripRegions = computed(() => appStore.appState[0]?.tripRegions.map((name) => { return { value: name } }) ?? [])
@@ -165,6 +171,7 @@ function submit() {
       partner: "",
       canSellPartnerTour: null,
       tripRegion: "",
+      places: [],
     });
     images = [];
     // pdf = [];
@@ -348,16 +355,7 @@ watch(end, () => {
   }
   duration.value = ((form.end - form.start) / 86400000).toFixed(0)
 });
-onMounted(() => {
-  if (localStorage.getItem('CreatingTrip')) {
-    let f = JSON.parse(localStorage.getItem('CreatingTrip'))
-    quill.value.setHTML(f.description);
-    Object.assign(form, f)
-    if (f.startLocation) {
-      locationSearchRequest.value = f.startLocation.name
-    }
-  }
-});
+
 function handleImgError(i) {
   previews.value.splice(i, 1)
   images.splice(i, 1)
@@ -379,6 +377,22 @@ let formSchema = yup.object({
   notNecessarily: yup.string(),
   tripRegion: yup.string().required("заполните поле"),
   // https://vee-validate.logaretm.com/v4/examples/array-fields/
+});
+
+onMounted(async () => {
+  if (localStorage.getItem('CreatingTrip')) {
+    let f = JSON.parse(localStorage.getItem('CreatingTrip'))
+    quill.value.setHTML(f.description);
+    Object.assign(form, f)
+    if (f.startLocation) {
+      locationSearchRequest.value = f.startLocation.name
+    }
+  }
+  let res = await placesStore.getForCreateTrip();
+
+  if (res.status == 200) {
+    places.value = res.data;
+  }
 });
 </script>
 <template>
@@ -598,6 +612,21 @@ let formSchema = yup.object({
                   " />
 
             </a-col>
+
+
+            <a-col :span="24">
+                Место
+                <a-select v-model:value="form.places" :options="places"
+                style="width: 100%;"
+                mode="multiple"
+                :fieldNames="{
+                  label: 'name',
+                  value: '_id',
+                }"
+              ></a-select>
+            </a-col>
+
+
             <a-col :span="24">
               <div>Описание программы по дням </div>
 
