@@ -50,6 +50,15 @@ const router = useRouter()
               :href="`https://yandex.ru/maps/?ll=${place.location?.coordinates[0]}%2C${place.location?.coordinates[1]}&z=16&pt=${place.location?.coordinates[0]},${place.location?.coordinates[1]}}`"
               target="_blank"> {{ place.location?.name || place.location?.coordinates }} | на картe<span
                 class="mdi  mdi-map-outline" style="font-size: 16px;"></span></a></div>
+          <div>
+            <b>Туры, в которых посещают</b>
+            <div >
+            <a  v-for="trip of place.trips" :href="`/trip?_id=${trip._id}`">
+              <span class="mdi mdi-map-marker-distance"></span>
+              {{ trip.name }}
+            </a>
+            </div>        
+          </div>
 
           <div @click="toggleCols()" style="text-align: center; width: 100%"><span class="mdi  "
               :class="fullInfo ? 'mdi-chevron-double-up' : 'mdi-chevron-double-down'" style="font-size: 28px; "></span>

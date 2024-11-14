@@ -41,16 +41,16 @@ let query = reactive({
 })
 
 
-let postersLenght = 0
+let postersLength = 0
 
 let morePlaces = async () => {
   page++
   let res = await refreshPlaces()
 
-  if (res.length == postersLenght) {
+  if (res.length == postersLength) {
     showMoreButton.value = false
   }
-  postersLenght = res.length
+  postersLength = res.length
 
 }
 let refreshPlaces = async () => {

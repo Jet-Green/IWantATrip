@@ -558,6 +558,18 @@ onMounted(async () => {
             </a-col>
 
             <a-col :span="24">
+                Места, которые будут посещены
+                <a-select v-model:value="form.places" :options="places"
+                style="width: 100%;"
+                mode="multiple"
+                :fieldNames="{
+                  label: 'name',
+                  value: '_id',
+                }"
+              ></a-select>
+            </a-col>
+
+            <a-col :span="24">
               <Field name="tripRegion" v-slot="{ value, handleChange }" v-model="form.tripRegion">
                 Регион (направление) тура
                 <a-select :value="value" @update:value="handleChange" style="width: 100%"
@@ -612,20 +624,6 @@ onMounted(async () => {
                   " />
 
             </a-col>
-
-
-            <a-col :span="24">
-                Место
-                <a-select v-model:value="form.places" :options="places"
-                style="width: 100%;"
-                mode="multiple"
-                :fieldNames="{
-                  label: 'name',
-                  value: '_id',
-                }"
-              ></a-select>
-            </a-col>
-
 
             <a-col :span="24">
               <div>Описание программы по дням </div>
