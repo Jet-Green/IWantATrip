@@ -16,6 +16,7 @@ import { useRouter } from 'vue-router'
 import { useAuth } from '../../stores/auth'
 import { useTrips } from "../../stores/trips.js";
 import { useAppState } from "../../stores/appState";
+import { usePlaces } from "../../stores/place.js";
 import datePlugin from '../../plugins/dates'
 
 import TripService from "../../service/TripService";
@@ -23,6 +24,7 @@ import TripService from "../../service/TripService";
 const userStore = useAuth()
 const tripStore = useTrips()
 const appStore = useAppState();
+const placesStore = usePlaces();
 
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
 const monthFormatList = ["MM.YY"];
@@ -72,9 +74,12 @@ let form = ref({
     returnConditions: '',
     rejected: false,
     tripRegion: "",
+    places: [],
 });
 // для a-select с регионами тура
 let tripRegions = computed(() => appStore.appState[0]?.tripRegions.map((name) => { return { value: name } }) ?? [])
+
+let places = ref([])
 
 const removeCost = (item) => {
     let index = form.value.cost.indexOf(item);
@@ -227,7 +232,7 @@ const clearData = (dataString) => {
 
 onMounted(() => {
     tripStore.getById(router.currentRoute.value.query._id)
-        .then((response) => {
+        .then(async (response) => {
             let d = response.data;
             delete d.__v
 
@@ -239,6 +244,11 @@ onMounted(() => {
             for (let i of form.value.images)
                 previews.value.push(i)
             quill.value.setHTML(d.description)
+            let res = await placesStore.getForCreateTrip();
+
+            if (res.status == 200) {
+                places.value = res.data;
+            }
         })
         .catch((error) => {
             console.log(error);
@@ -435,6 +445,17 @@ let formSchema = yup.object({
                             <Transition name="fade">
                                 <ErrorMessage name="location" class="error-message" />
                             </Transition>
+                        </a-col>
+                        <a-col :span="24">
+                                Места, которые будут посещены
+                            <a-select v-model:value="form.places" :options="places"
+                                style="width: 100%;"
+                                mode="multiple"
+                                :fieldNames="{
+                                    label: 'name',
+                                    value: '_id',
+                                }"
+                            ></a-select>
                         </a-col>
 
                         <a-col :span="24">
