@@ -5,6 +5,20 @@ import { useLocations } from '../../stores/locations'
 const locationStore = useLocations()
 let cards = ref([
   {
+    title: "Места",
+    icon: "mdi-map-marker-outline",
+    route: { name: 'Places', hash: '#top' },
+    isShow: true,
+
+  },
+  {
+    title: "Экскурсии",
+    icon: "mdi-crowd",
+    route: "/excursions",
+    isShow: true,
+
+  },
+  {
     title: "Афиша",
     icon: "mdi-movie-roll",
     route: "/poster",
@@ -25,13 +39,7 @@ let cards = ref([
     isShow: true,
 
   },
-  {
-    title: "Экскурсии",
-    icon: "mdi-crowd",
-    route: "/excursions",
-    isShow: true,
 
-  },
   {
     title: "Фотобанк",
     icon: "mdi-camera",
@@ -39,15 +47,6 @@ let cards = ref([
     isShow: true,
 
   },
-  {
-    title: "Места",
-    icon: "mdi-map-marker-outline",
-    route: { name: 'Places', hash: '#top' },
-    isShow: true,
-
-  },
- 
-
   {
     title: "Аренда",
     icon: "mdi-tent",
@@ -111,7 +110,7 @@ watch(locationStore, () => {
 .guide-select {
   font-size: 20px;
   margin-bottom: 16px;
-  
+
 }
 
 .guide-card {
@@ -151,12 +150,13 @@ watch(locationStore, () => {
 }
 
 .opacity {
-  
+
   background: lightgray;
 }
-.guide{
+
+.guide {
   position: relative;
   background: linear-gradient(#34313e, #64bed8);
-  color:white;
+  color: white;
 }
 </style>

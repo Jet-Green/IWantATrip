@@ -558,22 +558,23 @@ onMounted(async () => {
             </a-col>
 
             <a-col :span="24">
-                Места, которые будут посещены
-                <a-select v-model:value="form.places" :options="places"
-                style="width: 100%;"
-                mode="multiple"
-                :fieldNames="{
-                  label: 'name',
-                  value: '_id',
-                }"
-              ></a-select>
+              Достопримечательности/места
+          
+              <a-select v-model:value="form.places" :options="places" style="width: 100%;" mode="multiple" :fieldNames="{
+                label: 'name',
+                value: '_id',
+              }" :filter-option="(input, option) => {
+                const label = option.name || '';
+                return label.toLowerCase().includes(input.toLowerCase());
+              }">
+              </a-select>
             </a-col>
 
             <a-col :span="24">
               <Field name="tripRegion" v-slot="{ value, handleChange }" v-model="form.tripRegion">
                 Регион (направление) тура
-                <a-select :value="value" @update:value="handleChange" style="width: 100%"
-                  :options="tripRegions" placeholder="На море, Кавказ, Урал, Заполярье, Кунгурские пещеры" show-search allowClear>
+                <a-select :value="value" @update:value="handleChange" style="width: 100%" :options="tripRegions"
+                  placeholder="На море, Кавказ, Урал, Заполярье, Кунгурские пещеры" show-search allowClear>
                 </a-select>
                 <span class="text-caption">
                   *пользователь будет искать ваш тур по этому ключевому слову
@@ -619,7 +620,7 @@ onMounted(async () => {
 
                   [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
 
-                  ['link'], ['clean'] 
+                  ['link'], ['clean']
                 ]
                   " />
 
@@ -641,7 +642,7 @@ onMounted(async () => {
 
                     [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
 
-                    ['link'],  ['clean']   
+                    ['link'], ['clean']
                   ]
                     " />
                 </col>
@@ -706,7 +707,8 @@ onMounted(async () => {
             <a-col :span="24" :md="12" v-if="form.partner.length">
               Принимать оплату в приложении?
               <div class="d-flex align-center justify-center" style="height:100%">
-                <a-checkbox v-model:checked="form.canSellPartnerTour">{{ form.canSellPartnerTour? "ДА": "НЕТ" }}</a-checkbox>
+                <a-checkbox v-model:checked="form.canSellPartnerTour">{{ form.canSellPartnerTour ? "ДА" : "НЕТ"
+                  }}</a-checkbox>
               </div>
 
             </a-col>

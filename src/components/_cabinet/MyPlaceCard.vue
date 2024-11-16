@@ -81,7 +81,7 @@ async function hidePlace(_id) {
 
     </div>
       <a-modal v-model:open="show" :footer="null">
-        <PlaceCard :place="place" />
+        <PlaceCard :place="place" :inCard = true />
       </a-modal>
   </a-card>
 </template>

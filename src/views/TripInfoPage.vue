@@ -1,16 +1,17 @@
 <script setup>
-import { ref, computed, onMounted, getCurrentInstance, watch } from "vue";
+import { ref, computed, onMounted, getCurrentInstance, watch, reactive } from "vue";
 import _ from 'lodash'
 import tinkoffPlugin from '../plugins/tinkoff'
 import TinkoffLogo from "../assets/images/tinkofflogo.svg"
+import PlaceCard from "../components/cards/PlaceCard.vue";
 
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+
 import BackButton from "../components/BackButton.vue";
 import datePlugin from '../plugins/dates'
 import { useTrips } from "../stores/trips";
 import { useAuth } from "../stores/auth";
 import { message } from "ant-design-vue";
-import { useRouter } from "vue-router";
 import { useLocations } from "../stores/locations";
 import * as yup from "yup";
 import { Form, Field, ErrorMessage } from 'vee-validate';
@@ -27,15 +28,13 @@ const router = useRouter();
 const route = useRoute();
 
 const _id = route.query._id;
-
+const isHistory = route.query.history;
 const tripStore = useTrips();
 const userStore = useAuth();
 const locationStore = useLocations();
 
 let bus = ref()
 let selected_seats = ref([])
-let selected_bus = ref()
-let waiting_bus = ref()
 let free_seats = ref([])
 let show_old_bus = ref(true)
 let tripDates = ref([]);
@@ -48,18 +47,25 @@ let isInWaitingList = ref(false)
 let touristsList = ref([]);
 let activeKey = ref(null)
 let additionalServices = ref([])
-// watch([selected_bus, waiting_bus], async ([selected, waiting]) => {
-//     let bus_id = _.isEmpty(selected) ? waiting.transportType.bus_id : selected.transportType.bus_id
-//     if (!bus_id) return show_old_bus.value = true
-//     show_old_bus.value = false
+let show = ref(false)
+let selectPlace = reactive()
 
-//     bus.value = await useBus().getById(bus_id)
-//     updateSeats()
-// })
+
+let showPlace = (place) => {
+    selectPlace = place
+    show.value = true
+
+
+}
 
 let link = computed(() => {
     return API_URL + route.fullPath
 })
+
+function goToPlacePage(_id) {
+
+  router.push(`/place?_id=${_id}`);
+}
 const options = ref({
     url: link.value,
     title: trip.value.name,
@@ -110,7 +116,8 @@ async function changeTouristsField() {
 }
 
 
-const backRoute = { name: 'TripsPage', hash: `#${_id}` };
+let backRoute = { name: 'TripsPage', hash: `#${_id}` };
+
 
 const creatorsType = computed(() => {
     return trip.value.creatorForm[1] == "author"
@@ -122,18 +129,6 @@ const creatorsType = computed(() => {
 
 
 
-
-// let tripsCount = computed(() => {
-//     let sum = 0;
-//     for (let i = 0; i < trip.value.billsList.length; i++) {
-//         if (trip.value.billsList[i]) {
-//             for (let j = 0; j < trip.value.billsList[i].cart?.length; j++) {
-//                 sum += trip.value.billsList[i].cart[j].count;
-//             }
-//         }
-//     }
-//     return sum;
-// });
 
 let finalCost = computed(() => {
     // if (!isInWaitingList.value) {
@@ -147,17 +142,7 @@ let finalCost = computed(() => {
         sum += service.price * service.count
     }
     return sum;
-    // } 
-    // else {
-    //     let fixedCost = trip.value.transports[0].price
-    //     let sum = 0;
-    //     for (let date of tripDates.value) {
-    //         for (let cost of date.selectedCosts) {
-    //             sum += fixedCost * cost.count;
-    //         }
-    //     }
-    //     return sum;
-    // }
+
 });
 
 const clearData = (dateNumber) => {
@@ -177,10 +162,7 @@ const clearData = (dateNumber) => {
 function getImg(index) {
     return trip.value.images[index];
 }
-function getLink() {
 
-    return API_URL + route.fullPath
-}
 
 let buyTripDialog = () => {
 
@@ -353,8 +335,8 @@ async function buyTrip() {
             selected_seats.value = []
             updateSeats()
             let tinkoffUrl = ''
-            let addServices = bill.additionalServices?.length?bill.additionalServices:[]
-          
+            let addServices = bill.additionalServices?.length ? bill.additionalServices : []
+
             if (buyNow.value) {
                 const orderId = Date.now().toString()
                 let { data, token, success } = await tinkoffPlugin.initPayment(orderId, bill.cart, userStore.user.email, trip.value.tinkoffContract, trip.value.name, addServices)
@@ -407,10 +389,6 @@ async function buyTrip() {
     }
 }
 
-
-function detectIsWaiting(isWaiting) {
-    isInWaitingList.value = isWaiting
-}
 
 const phoneRegex = /^(?:\d{5}|\d{10}|\d{11})$/
 
@@ -492,11 +470,11 @@ onMounted(async () => {
 </script>
 <template>
     <div style="overflow-x: hidden">
-        <BackButton :backRoute="backRoute" />
+        <BackButton :backRoute="backRoute" v-if="!isHistory"  />
+        <BackButton v-if="isHistory"  />
         <a-row class="justify-center d-flex">
             <a-col :xs="22" :xl="16" class="mb-32">
                 <h2 class="ma-0">{{ trip.name }}</h2>
-
                 <p><i> {{ trip.offer }}</i> </p>
 
                 <a-spin v-if="!trip._id" size="large"></a-spin>
@@ -541,14 +519,7 @@ onMounted(async () => {
                             Старт: <b> {{ getStartLocationNames }}</b>
                         </div>
 
-                        <div>
-                            Локации: 
-                            <div class="place-link" v-for="place of trip.places">
-                                <span class="mdi mdi-map-marker-outline"></span>
-                                <a v-if="place.location?.name?.length > 0" href="https://ymaps.ru" target="_blank">{{ place.location.shortName }}</a>
-                                <a v-else href="https://ymaps.ru" target="_blank">{{ place.name }}</a>
-                            </div>
-                        </div>
+
 
                         <div>
                             Продолжительность: <b>{{ trip.duration }}</b>
@@ -626,7 +597,17 @@ onMounted(async () => {
                         </div>
 
                     </a-col>
+                    <a-col :xs="24" v-if="trip?.places?.length">
+                        <div>
+                            <b>Мы посетим: </b> 
 
+                            <span v-for="place, index of trip.places" :key="index" @click="goToPlacePage(place._id)"
+                                style="cursor: pointer; font-style: italic;"> 
+                                {{ place?.name }} 
+                                 <span v-if="index < trip.places.length - 1">, </span>
+                            </span>
+                        </div>
+                    </a-col>
                     <a-col :xs="24">
                         <span v-html="trip.description"></span>
                     </a-col>
@@ -861,6 +842,7 @@ onMounted(async () => {
                 </a-row>
             </Form>
         </a-modal>
+      
     </div>
 </template>
 <style lang="scss" scoped>
@@ -954,8 +936,5 @@ img {
 
 .btn {
     border-radius: 15px;
-}
-.place-link {
-    display: flex;
 }
 </style>

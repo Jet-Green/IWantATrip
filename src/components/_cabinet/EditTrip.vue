@@ -447,22 +447,23 @@ let formSchema = yup.object({
                             </Transition>
                         </a-col>
                         <a-col :span="24">
-                                Места, которые будут посещены
-                            <a-select v-model:value="form.places" :options="places"
-                                style="width: 100%;"
-                                mode="multiple"
+                            Достопримечательности, места
+                            <a-select v-model:value="form.places" :options="places" style="width: 100%;" mode="multiple"
                                 :fieldNames="{
                                     label: 'name',
                                     value: '_id',
-                                }"
-                            ></a-select>
+                                }" :filter-option="(input, option) => {
+                                    const label = option.name || '';
+                                    return label.toLowerCase().includes(input.toLowerCase());
+                                }"></a-select>
                         </a-col>
 
                         <a-col :span="24">
                             <Field name="tripRegion" v-slot="{ value, handleChange }" v-model="form.tripRegion">
                                 Регион тура
                                 <a-select :value="value" @update:value="handleChange" style="width: 100%"
-                                    :options="tripRegions" placeholder="На море, Кавказ, Урал, Заполярье, Кунгурские пещеры">
+                                    :options="tripRegions"
+                                    placeholder="На море, Кавказ, Урал, Заполярье, Кунгурские пещеры">
                                 </a-select>
                                 <span class="text-caption">
                                     *пользователь будет искать ваш тур по этому ключевому слову
