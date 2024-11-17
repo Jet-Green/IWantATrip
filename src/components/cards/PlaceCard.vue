@@ -47,7 +47,7 @@ onMounted(async () => {
 <template>
 
   <Transition name="fade">
-    <div class="pa-16" v-show="isVisible" >
+    <div  v-show="isVisible" >
       <h2 style="text-align: center" @click="toggleCols()"> {{ place?.name }}</h2>
       <div class="text" style="text-align: center"><b>{{ place?.category?.toLowerCase() }}</b> </div>
       <p @click="toggleCols()" class="text"><i>{{ place?.shortDescription }}</i> </p>
