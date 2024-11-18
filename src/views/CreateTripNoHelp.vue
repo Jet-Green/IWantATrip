@@ -559,7 +559,6 @@ onMounted(async () => {
 
             <a-col :span="24">
               Достопримечательности/места
-          
               <a-select v-model:value="form.places" :options="places" style="width: 100%;" mode="multiple" :fieldNames="{
                 label: 'name',
                 value: '_id',

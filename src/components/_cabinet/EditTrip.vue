@@ -160,9 +160,7 @@ function addPreview(blob) {
     images.push(blob);
     previews.value.push(URL.createObjectURL(blob));
 }
-function updateUserInfo(info) {
-    fullUserInfo = info;
-}
+
 function selectStartLocation(selected) {
     for (let l of possibleLocations.value) {
         // l.value - name
@@ -244,7 +242,9 @@ onMounted(() => {
             for (let i of form.value.images)
                 previews.value.push(i)
             quill.value.setHTML(d.description)
-            let res = await placesStore.getForCreateTrip();
+            form.value.places = form.value.places.map(place =>{return place._id}) 
+
+                let res = await placesStore.getForCreateTrip();
 
             if (res.status == 200) {
                 places.value = res.data;
@@ -455,7 +455,7 @@ let formSchema = yup.object({
                                 }" :filter-option="(input, option) => {
                                     const label = option.name || '';
                                     return label.toLowerCase().includes(input.toLowerCase());
-                                }"></a-select>
+                                }"> {{ form.places.name }}</a-select>
                         </a-col>
 
                         <a-col :span="24">

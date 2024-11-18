@@ -47,7 +47,7 @@ onMounted(async () => {
 <template>
 
   <Transition name="fade">
-    <div  v-show="isVisible" >
+    <div v-show="isVisible">
       <h2 style="text-align: center" @click="toggleCols()"> {{ place?.name }}</h2>
       <div class="text" style="text-align: center"><b>{{ place?.category?.toLowerCase() }}</b> </div>
       <p @click="toggleCols()" class="text"><i>{{ place?.shortDescription }}</i> </p>
@@ -71,9 +71,9 @@ onMounted(async () => {
           <div>Сайт/соц.сеть: <b> <a :href="`http://${place?.website}`" target="_blank">{{ place?.website }}</a> </b>
           </div>
           <div> Адрес/координаты: <br> <b> <a
-              :href="`https://yandex.ru/maps/?ll=${place?.location?.coordinates[0]}%2C${place?.location?.coordinates[1]}&z=16&pt=${place?.location?.coordinates[0]},${place?.location?.coordinates[1]}}`"
-              target="_blank"> {{ place?.location?.name || place?.location?.coordinates }} <span
-                class="mdi  mdi-map-outline" style="font-size: 16px;"></span></a></b> </div>
+                :href="`https://yandex.ru/maps/?ll=${place?.location?.coordinates[0]}%2C${place?.location?.coordinates[1]}&z=16&pt=${place?.location?.coordinates[0]},${place?.location?.coordinates[1]}}`"
+                target="_blank"> {{ place?.location?.name || place?.location?.coordinates }} <span
+                  class="mdi  mdi-map-outline" style="font-size: 16px;"></span></a></b> </div>
 
 
           <div @click="toggleCols()" style="text-align: center; width: 100%"><span class="mdi  "
@@ -84,7 +84,7 @@ onMounted(async () => {
         <a-col :xs="24" v-if="fullInfo">
           <p v-html="place?.description"></p>
         </a-col>
-      
+
         <a-col :xs="24" v-if="fullInfo">
           <div v-html="place?.advicesForTourists"> </div>
         </a-col>
@@ -92,16 +92,17 @@ onMounted(async () => {
         <a-col v-if="fullInfo && place?.trips.length">
           <div>
             <b>Посещается в турах: </b>
-            <p style="font-style: italic;">
-              <RouterLink v-for="trip, index of place?.trips" :key="index" :to="`/trip?_id=${trip._id}&history=true`">
 
-                {{ trip.name }}
-                <span v-if="index < place?.trips.length - 1">, </span>
+            <div class="d-flex flex-wrap">
+              <RouterLink v-for="trip, index of place?.trips" :key="index" :to="`/trip?_id=${trip._id}&history=true`">
+                <a-card class="pa-8 ml-8 mb-8 text " hoverable style="cursor: pointer; border: #239FCC 1px solid;">
+                  {{ trip.name }}
+                </a-card>
               </RouterLink>
-            </p>
+            </div>
           </div>
         </a-col>
-   
+
       </a-row>
 
     </div>

@@ -138,7 +138,17 @@ function getImg(index) {
               </div>
             </div>
           </a-col>
-
+          <a-col :xs="24" v-if="trip?.places?.length">
+                        <div>
+                            <b>Мы посетим: </b>
+                            <div class="d-flex flex-wrap">
+                                <a-card v-for="place, index of trip.places" :key="index" class="pa-8 ml-8 mb-8 text " hoverable
+                                    @click="goToPlacePage(place._id)" style="cursor: pointer; border: #239FCC 1px solid;">
+                                    {{ place?.name }}
+                                </a-card>
+                            </div>
+                        </div>
+                    </a-col>
           <a-col :xs="24">
             <span v-html="trip.description"></span>
           </a-col>

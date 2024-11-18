@@ -64,7 +64,7 @@ let link = computed(() => {
 
 function goToPlacePage(_id) {
 
-  router.push(`/place?_id=${_id}`);
+    router.push(`/place?_id=${_id}`);
 }
 const options = ref({
     url: link.value,
@@ -470,8 +470,8 @@ onMounted(async () => {
 </script>
 <template>
     <div style="overflow-x: hidden">
-        <BackButton :backRoute="backRoute" v-if="!isHistory"  />
-        <BackButton v-if="isHistory"  />
+        <BackButton :backRoute="backRoute" v-if="!isHistory" />
+        <BackButton v-if="isHistory" />
         <a-row class="justify-center d-flex">
             <a-col :xs="22" :xl="16" class="mb-32">
                 <h2 class="ma-0">{{ trip.name }}</h2>
@@ -599,13 +599,15 @@ onMounted(async () => {
                     </a-col>
                     <a-col :xs="24" v-if="trip?.places?.length">
                         <div>
-                            <b>Мы посетим: </b> 
+                            <b>Мы посетим: </b>
+                            <div class="d-flex flex-wrap">
+                                <a-card v-for="place, index of trip.places" :key="index" class="pa-8 ml-8 mb-8 text " hoverable
+                                    @click="goToPlacePage(place._id)" style="cursor: pointer; border: #239FCC 1px solid;">
+                                    {{ place?.name }}
+                                </a-card>
+                            </div>
 
-                            <span v-for="place, index of trip.places" :key="index" @click="goToPlacePage(place._id)"
-                                style="cursor: pointer; font-style: italic;"> 
-                                {{ place?.name }} 
-                                 <span v-if="index < trip.places.length - 1">, </span>
-                            </span>
+
                         </div>
                     </a-col>
                     <a-col :xs="24">
@@ -842,7 +844,7 @@ onMounted(async () => {
                 </a-row>
             </Form>
         </a-modal>
-      
+
     </div>
 </template>
 <style lang="scss" scoped>
