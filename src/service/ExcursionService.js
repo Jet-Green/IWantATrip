@@ -60,6 +60,9 @@ export default {
     hideExcursion(_id, isHide) {
         return $api.post('/excursion/hide-by-id', { _id: _id, isHide: isHide })
     },
+    setComment(_id, comment) {
+        return $api.post('/excursion/comment', { _id: _id, comment: comment })
+    },
     buyWithTinkoff(body) {
         return $api.post('/excursion/buy-with-tinkoff', body)
     },

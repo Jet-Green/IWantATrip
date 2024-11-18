@@ -1,5 +1,5 @@
 <script setup>
-import { toRefs } from 'vue';
+import { toRefs, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useExcursion } from "../../stores/excursion";
 let props = defineProps(['excursion'])
@@ -8,6 +8,8 @@ let emit = defineEmits(['updateExcursion'])
 const excursionStore = useExcursion()
 const router = useRouter()
 
+let editCommentDialog = ref(false)
+let comment = ref('')
 // toRefs add reactivity
 let { excursion } = toRefs(props)
 
@@ -34,6 +36,19 @@ function excursionInfo(_id) {
     router.push(`/cabinet/excursion-info?_id=${_id}`)
   }
 }
+async function setComment(_id) {
+  let response = await excursionStore.setComment(_id, comment.value)
+  if (response.status == 200) {
+    emit('updateExcursion')
+    editCommentDialog.value = false
+  }
+}
+onMounted(() => {
+  if (excursion?.value?.comment) {
+    comment.value = excursion?.value?.comment
+  }
+
+})
 </script>
 <template>
   <a-card class="card" :class="[excursion.isHidden ? 'overlay' : '']" v-if="excursion._id">
@@ -69,7 +84,22 @@ function excursionInfo(_id) {
         <span class="mdi mdi-pen"></span>
       </a-popconfirm>
       <span class="mdi mdi-information-outline" @click="excursionInfo(excursion._id)"></span>
+      <a-badge :dot="true" v-if="excursion.comment?.length > 0">
+        <span class="mdi mdi-18px mdi-comment-edit-outline"
+          @click="editCommentDialog = !editCommentDialog; comment = excursion.comment"></span>
+      </a-badge>
+      <span v-else class="mdi mdi-18px mdi-comment-edit-outline"
+          @click="editCommentDialog = !editCommentDialog; comment = excursion.comment"></span>
+
     </div>
+    <a-modal v-model:open="editCommentDialog" title="Изменить комментарий" okText="Отправить" cancelText="Отмена"
+      @ok="setComment(excursion._id)">
+      <a-row>
+        <a-col :span="24">
+          <a-textarea placeholder="комментарий" v-model:value="comment" style="min-height: 120px;"></a-textarea>
+        </a-col>
+      </a-row>
+    </a-modal>
   </a-card>
 </template>
 <style scoped lang="scss">
@@ -107,5 +137,9 @@ function excursionInfo(_id) {
 .mdi-cash {
   font-size: 22px;
   cursor: pointer;
+}
+
+.card {
+  height: 100%;
 }
 </style>

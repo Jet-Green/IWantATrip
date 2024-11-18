@@ -116,6 +116,11 @@ export const useExcursion = defineStore('excursion', {
         async hideExcursion(_id, isHide) {
             return await ExcursionService.hideExcursion(_id, isHide)
         },
+        async setComment(_id, comment) {
+            return await ExcursionService.setComment(_id, comment)
+        },
+
+        
         /**
          * for more params see ExcursionModel
          * @param {Object} bill 
