@@ -47,6 +47,11 @@ const router = createRouter({
           name: 'Place',
           component: () => import('../views/PlacePage.vue')
         },
+        {
+          path: '/poster',
+          name: 'Poster',
+          component: () => import('../components/_guide/Poster.vue')
+        },
       ]
     },
     {
@@ -294,11 +299,7 @@ const router = createRouter({
           name: 'Sport',
           component: () => import('../components/_guide/Sport.vue')
         },
-        {
-          path: '/poster',
-          name: 'Poster',
-          component: () => import('../components/_guide/Poster.vue')
-        },
+     
         {
           path: '/photos',
           name: 'Photos',

@@ -1,15 +1,13 @@
 <script setup>
-import { useRouter } from "vue-router"; 
-import { ref, computed } from "vue";
+import {computed } from "vue";
 import { useLocations } from "../../stores/locations";
 import BackButton from "../BackButton.vue";
-// let loc_name = JSON.parse(localStorage.getItem("location")).name
+
 const backRoute = { name: 'Landing', hash: '#guide' };
 
 const locationStore = useLocations();
 const src = computed(() => {
   let locationName = locationStore?.location?.name;
-  // return `http://localhost:3030/frame?location=${encodeURIComponent(locationName)}`;
   return `https://plpo.ru/frame?location=${encodeURIComponent(locationName)}`;
 });
 </script>
@@ -20,8 +18,6 @@ const src = computed(() => {
       <a-col :xs="22" :lg="16">
         <h2>
           Афиши
-          <!-- <a href="https://plpo.ru" target="_blank">
-            <img src="../../assets/plpo.webp" alt="" srcset="" style="max-height: 50px;"></a> -->
         </h2>
       </a-col>
     </a-row>
@@ -36,3 +32,14 @@ const src = computed(() => {
 
   </div>
 </template>
+<style scoped>
+#iframe {
+  -ms-overflow-style: none; 
+  scrollbar-width: none;   
+}
+
+#iframe::-webkit-scrollbar {
+  display: none; 
+}
+
+</style>
