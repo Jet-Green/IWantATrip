@@ -126,6 +126,19 @@ const router = createRouter({
           }
         },
         {
+          path: '/create-partner',
+          name: 'CreatePartner',
+          component: () => import('../components/_cabinet/crm/CreatePartner.vue'),
+          beforeEnter: async (to, from) => {
+            let userStore = useAuth()
+            if (!localStorage.getItem('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+
+            if (!userStore.isAuth)
+              return '/auth'
+          }
+        },
+        {
           path: '/create-no-help',
           name: 'CreateTripNoHelp',
           component: () => import('../views/CreateTripNoHelp.vue'),
@@ -397,6 +410,16 @@ const router = createRouter({
               path: 'my-places',
               name: 'MyPlaces',
               component: () => import('../components/_cabinet/MyPlaces.vue'),
+            },
+            {
+              path: 'partners',
+              name: 'Partners',
+              component: () => import('../components/_cabinet/crm/Partners.vue'),
+            },
+            {
+              path: 'tasks',
+              name: 'Tasks',
+              component: () => import('../components/_cabinet/crm/Tasks.vue'),
             },
             {
               path: 'excursion-bookings',

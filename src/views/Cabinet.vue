@@ -18,46 +18,12 @@ let current = ref([router.currentRoute.value.path]);
 let showBookingNotifications = ref(false)
 
 const open = ref(true);
-let currentStep = ref(0);
+
 
 let cab = ref(null);
 let tur = ref(null);
 let companions = ref(null);
-
-
-// const steps = [
-//   {
-//     title: 'О пользователе',
-//     description: 'контактные данные, создание тура, экскурсии, идеи',
-//     placement: 'bottom',
-//     target: () => cab.value,
-//   },
-//   {
-//     title: 'Туры',
-//     description: 'управление купленными и созданными турами, заказами',
-//     placement: 'bottom',
-//     target: () => tur.value,
-//   },
-//   {
-//     title: 'Попутчики',
-//     description: 'отклики на ваши анкеты и управление анкетами',
-//     placement: 'bottom',
-//     target: () => companions.value,
-//   }
-// ];
-// function openCabinetTour(state) {
-//   if (state) {
-//     open.value = state
-//     localStorage.setItem('cabinetTour', true)
-//   } else {
-//     currentStep.value = 0
-//     open.value = false
-//     localStorage.setItem('cabinetTour', false)
-//   }
-// }
-// const next = () => {
-//   currentStep.value++;
-// };
+let crm = ref(null);
 
 const logOut = () => {
   userStore.logout();
@@ -68,34 +34,19 @@ watch(current, (newRout, oldRout) => {
 })
 
 onMounted(async () => {
-  // if (localStorage.getItem('cabinetTour') == 'false' || !sm.value) {
-  //   open.value = JSON.parse(localStorage?.getItem('cabinetTour'))
-  // }
 
-  // for (let n of userStore.user?.notifications) {
-  //   if (n.type == 'BookingTrip' && n.send == true) {
-  //     showBookingNotifications.value = true
-  //     break
-  //   }
-  // }
 })
 </script>
 
 <template>
   <div>
     <BackButton></BackButton>
-    <!-- <a-config-provider :locale="ruRU" v-if="!sm">
-      <a-tour :open="open" v-model:current="currentStep" :steps="steps" @finish='openCabinetTour(false)' @click="next"
-        @close='openCabinetTour(false)'>
-      </a-tour>
-    </a-config-provider> -->
+
 
     <a-row type="flex" justify="center">
       <a-col :xs="22" :sm="16">
         <h2>
           Кабинет
-          <!-- <span v-if="!sm" class="mdi mdi-18px mdi-information-variant"
-            style="color: #245159; cursor: pointer; vertical-align: super;" @click="open = !open"></span> -->
           <span @click="logOut()" class="mdi mdi-24px mdi-logout" style="cursor: pointer; float: right">
           </span>
         </h2>
@@ -107,6 +58,10 @@ onMounted(async () => {
           <a-menu-item key="/cabinet/me">
             <span ref='cab' v-if=!sm>О пользователе</span>
             <span v-else class="mdi mdi-24px mdi-account-outline" style="color: #245159; "></span>
+          </a-menu-item>
+          <a-menu-item key="/cabinet/my-companions">
+            <span ref='companions' v-if=!sm>Попутчики</span>
+            <span v-else class="mdi mdi-24px mdi-human-capacity-decrease" style="color: #245159; "></span>
           </a-menu-item>
           <a-sub-menu key="sub1">
             <template #title>
@@ -121,24 +76,28 @@ onMounted(async () => {
           </a-sub-menu>
           <a-menu-item key="/cabinet/excursions">
             <span v-if=!sm>Экскурсии</span>
-            <span v-else class="mdi mdi-24px mdi-account-group"
-              style="color: #245159;"></span>
+            <span v-else class="mdi mdi-24px mdi-account-group" style="color: #245159;"></span>
           </a-menu-item>
           <a-menu-item key="/cabinet/my-places">
             <span v-if=!sm>Места</span>
-            <span v-else class="mdi mdi-24px mdi-map-marker-outline"
-              style="color: #245159;"></span>
+            <span v-else class="mdi mdi-24px mdi-map-marker-outline" style="color: #245159;"></span>
           </a-menu-item>
-          <a-menu-item key="/cabinet/my-companions">
-            <span ref='companions' v-if=!sm>Попутчики</span>
-            <span v-else class="mdi mdi-24px mdi-human-capacity-decrease"
-              style="color: #245159; "></span>
-          </a-menu-item>
+          <a-sub-menu key="sub4">
+            <template #title>
+              <span ref='crm' v-if=!sm>CRM</span>
+              <span v-else class="mdi mdi-24px mdi-calendar-check-outline" style="color: #245159; "></span>
+            </template>
+            <a-menu-item key="/cabinet/tasks">Задачи</a-menu-item>
+            <a-menu-item key="/cabinet/partners">Партнеры</a-menu-item>
+        
+          </a-sub-menu>
+
           <a-menu-item key="/cabinet/booking-notifications" v-if="showBookingNotifications">
             <span v-if=!sm>Заказы</span>
             <span v-else class="mdi mdi-24px mdi-hand-wave-outline" style="color: #245159; "></span>
           </a-menu-item>
           <a-sub-menu key="sub2" v-if="userStore.user.roles.includes('manager')">
+
 
             <template #title>
               <span v-if=!sm>Админ</span>
@@ -172,13 +131,11 @@ onMounted(async () => {
               <template #title>
                 Договоры
               </template>
-              <!-- <a-menu-item v-if="userStore.user.roles.includes('admin')"
-                key="/cabinet/add-admin-contract">Добавить</a-menu-item> -->
+
               <a-menu-item v-if="userStore.user.roles.includes('admin')"
                 key="/cabinet/admin-contracts-list">Список</a-menu-item>
             </a-sub-menu>
-            <!-- <a-menu-item v-if="userStore.user.roles.includes('admin')" key="/cabinet/scripts"
-              style="color: red">Scripts</a-menu-item> -->
+
             <a-menu-item v-if="userStore.user.roles.includes('admin')" key="/cabinet/determinate-winner">
               Розыгрыш
             </a-menu-item>
