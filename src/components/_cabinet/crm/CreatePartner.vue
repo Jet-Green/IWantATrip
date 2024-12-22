@@ -73,7 +73,6 @@ function clearForm() {
 
 async function submit() {
   if (partnerId.value) {
-console.log(form)
     let response = await partnerStore.edit(partnerId.value, form)
     if (response.status == 200) {
       message.config({ duration: 1.5, top: "70vh" });
@@ -181,7 +180,6 @@ onMounted(async () => {
         <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
           <a-row :gutter="[16, 16]">
             <a-col :span="24">
-              {{ partnerId }}
               <Field name="name" v-slot="{ value, handleChange }" v-model="form.name">
                 Наименование<sup>*</sup>
                 <a-input placeholder="Наименование партнера" @update:value="handleChange" :value="value"

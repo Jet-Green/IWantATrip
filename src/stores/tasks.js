@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import _ from 'lodash'
 import PartnerService from '../service/PartnerService';
 
-export const usePartners = defineStore('partners', {
+export const useTasks = defineStore('tasks', {
   state: () => ({
     isFetching: false,
     partners: [],
@@ -78,8 +78,6 @@ export const usePartners = defineStore('partners', {
         console.log(error);
         
       }
-    },
-
-  
+    }
   }
 })

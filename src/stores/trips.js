@@ -120,6 +120,9 @@ export const useTrips = defineStore('trips', {
                 console.log(err);
             }
         },
+        async findAuthorTrips(query, _id) {
+            return await TripService.findAuthorTrips(query, _id)
+        },
         async getMyCatalogTrips(id) {
             return await TripService.getMyCatalogTrips(id)
         },

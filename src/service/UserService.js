@@ -49,5 +49,8 @@ export default {
     },
     setTripCalculator(body) {
         return $api.put('/auth/set-trip-calculator', body)
+    },
+    checkUserEmail(email) {
+        return $api.get(`/auth/check-user-email?user_email=${email}`)
     }
 }

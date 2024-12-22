@@ -24,5 +24,6 @@ export default {
   },
   getForCreateTrip() {
     return $api.get('/partners/for-create-trip')
-  }
+  },
+
 }

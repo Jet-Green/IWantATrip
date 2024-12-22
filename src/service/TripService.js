@@ -16,6 +16,9 @@ export default {
     async searchTrips(req, cursor) {
         return $api.post(`/trips/search?cursor=${cursor}`, req)
     },
+    async findAuthorTrips(query, _id) {
+        return $api.post('/trips/find-author-trips', {query, _id})
+    },
     async getById(_id) {
         return $api.get(`/trips/get-by-id?_id=${_id}`)
     },

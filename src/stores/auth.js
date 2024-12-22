@@ -215,6 +215,14 @@ export const useAuth = defineStore('auth', {
             } catch (error) {
                 console.log(error);
             }
+        },
+        async checkUserEmail(email) {
+            try {
+                let res = await UserService.checkUserEmail(email)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
         }
     },
 })
