@@ -71,7 +71,8 @@ export const useTrips = defineStore('trips', {
                             this.tripFilter.end,
                             this.tripFilter.type,
                             this.tripFilter.tripRegion,
-                            this.tripFilter.locationRadius
+                            this.tripFilter.locationRadius,
+                            location.name
                         );
                         this.isFetching = false
                     } else {
@@ -83,7 +84,8 @@ export const useTrips = defineStore('trips', {
                             this.tripFilter.end,
                             this.tripFilter.type,
                             this.tripFilter.tripRegion,
-                            this.tripFilter.locationRadius
+                            this.tripFilter.locationRadius,
+                            null
                         );
                         this.isFetching = false
                     }
