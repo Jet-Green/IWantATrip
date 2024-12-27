@@ -2,6 +2,9 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import { createPinia } from 'pinia'
+import { createI18n } from 'vue-i18n'
+import customLocalization from './localization.js'
+
 import ANTD from 'ant-design-vue';
 // import 'ant-design-vue/dist/antd.less';
 import './assets/styles/styles.scss'
@@ -34,7 +37,7 @@ const updateSW = registerSW({
   });
 
 const pinia = createPinia()
-
+const i18n = createI18n(customLocalization)
 createApp(App)
     .use(pinia)
     .use(router)
@@ -43,5 +46,6 @@ createApp(App)
     .use(VueHtmlToPaper)
     .use(MasonryWall)
     .use(yandexMetrika, { id: 98607105 })
+    .use(i18n)
     .mount('#app')
 

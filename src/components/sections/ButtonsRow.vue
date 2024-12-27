@@ -16,19 +16,17 @@ function routeTo(buttonRoute) {
     <a-col :xs="24" :md="16" class="buttons">
       <a-row class="d-flex space-around align-center">
 
-
+        
 
         <a-button type="primary" shape="round" class="order lets_go_btn" @click="routeTo('/create-with-help')">
-
-          Заказать
+          {{ $t('buttons.order') }}
         </a-button>
         <!-- <a-button type="primary" shape="round" class="ma-4 order" @click="routeTo('/catalog')">
 
           Из каталога
         </a-button> -->
         <a-button type="primary" shape="round" class="find lets_go_btn" @click="routeTo('/trips')">
-
-          Найти
+          {{ $t('buttons.find') }}
         </a-button>
 
 
@@ -42,7 +40,7 @@ function routeTo(buttonRoute) {
         </div> -->
 
         <a-button type="primary" shape="round" class="companions lets_go_btn" @click="routeTo('/companions')">
-          Попутчики
+          {{ $t('buttons.companions') }}
         </a-button>
       
 

@@ -1,4 +1,5 @@
 <script setup>
+import SelectLocalization from "./SelectLocalization.vue"
 import { useRouter } from "vue-router"
 import { ref, watch, onMounted, computed } from "vue"
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core"
@@ -118,8 +119,14 @@ onMounted(() => {
                 {{ locationSearchRequest ? locationSearchRequest : "Ваш город" }}
               </span>
             </div>
-            <a-modal :mask="false" v-model:open="selectLocationDialog" title="Местоположение" :footer="null" :zIndex=999>
-              <a-select v-model:value="locationSearchRequest" style="width: 100%" @change="handleChange" show-search >
+            <a-modal
+              :mask="false"
+              v-model:open="selectLocationDialog"
+              title="Местоположение"
+              :footer="null"
+              :zIndex="999"
+            >
+              <a-select v-model:value="locationSearchRequest" style="width: 100%" @change="handleChange" show-search>
                 <a-select-option value="Ваш город">Ваш город</a-select-option>
                 <a-select-option
                   v-for="(location, index) of locationStore.locations"
@@ -186,6 +193,8 @@ onMounted(() => {
         ></span>
       </div>
       <div class="right-drawer">
+        <SelectLocalization></SelectLocalization>
+
         <div @click="toComponentFromMenu('Me')" class="route ma-8" style="text-align: center; font-weight: bold">
           <div>
             <span
