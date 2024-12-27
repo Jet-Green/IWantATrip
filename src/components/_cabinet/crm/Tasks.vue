@@ -3,8 +3,9 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useRoute } from 'vue-router'
 import { useAuth } from "../../../stores/auth";
-import { usePartners } from "../../../stores/partner";
-import PartnerCard from './PartnerCard.vue';
+import { useTasks } from "../../../stores/tasks";
+import TaskCard from './TaskCard.vue';
+
 
 
 
@@ -13,10 +14,10 @@ import PartnerCard from './PartnerCard.vue';
 const router = useRouter()
 const route = useRoute();
 const userStore = useAuth();
-const partnerStore = usePartners()
+const taskStore = useTasks()
 
 let showMoreButton = ref(true)
-let partners = ref([])
+let tasks = ref([])
 
 let search = ref('')
 let page = 1
@@ -29,36 +30,36 @@ let query = {
 };
 
 
-let morePartners = async () => {
+let moreTasks = async () => {
   page++
-  let res = await refreshPartners()
+  let res = await refreshTasks()
 
-  if (res.length == partnersLenght) {
+  if (res.length == tasksLenght) {
     showMoreButton.value = false
   }
-  partnersLenght = res.length
+  tasksLenght = res.length
 
 }
 
 
-async function refreshPartners() {
+async function refreshTasks() {
   page = 1
-  let data = await partnerStore.getAll(page, query)
-  partners.value = data
+  let data = await taskStore.getAll(page, query)
+  tasks.value = data
 }
 
 watch(search, (newSearch, oldSearch) => {
 
   if (newSearch.length > 2 || newSearch.length <= oldSearch.length) {
     query.$or[0].name.$regex = newSearch
-    query.$or[1].category.$regex = newSearch
-    refreshPartners()
+    // query.$or[1].category.$regex = newSearch
+    refreshTasks()
   }
 })
 
 onMounted(async () => {
-  await refreshPartners()
-  if (partnerStore.partners.length < 20) {
+  await refreshTasks()
+  if (taskStore.tasks.length < 20) {
     showMoreButton.value = false
   }
 })
@@ -79,13 +80,13 @@ onMounted(async () => {
 
     </div>
     <a-row :gutter="[8, 8]">
-      <a-col v-for="partner in partners" :span="24" :sm="12" :lg="8">
+      <a-col v-for="task in tasks" :span="24">
 
-        <PartnerCard @refreshPartners="refreshPartners()" :partner="partner">
-        </PartnerCard>
+        <TaskCard @refreshTasks="refreshTasks()" :task="task">
+        </TaskCard>
 
       </a-col>
-      <a-col :span="24"  class="justify-center d-flex" @click="morePartners()" v-if="showMoreButton"> <a-button>Ещё</a-button></a-col>
+      <a-col :span="24"  class="justify-center d-flex" @click="moreTasks()" v-if="showMoreButton"> <a-button>Ещё</a-button></a-col>
     </a-row>
   </div>
 </template>

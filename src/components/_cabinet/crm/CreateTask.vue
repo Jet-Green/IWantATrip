@@ -19,15 +19,13 @@ import { useTasks } from '../../../stores/tasks';
 
 
 dayjs.locale('ru');
-const dateFormatList = ["DD.MM.YY HH:mm"];
 
-const appStore = useAppState();
 const userStore = useAuth();
 const partnerStore = usePartners();
 const tripsStore = useTrips()
+const tasksStore = useTasks()
 const router = useRouter();
-const route = useRoute();
-const partnerId = ref()
+
 const emailExists = ref([]);
 
 let trips = ref()
@@ -64,17 +62,23 @@ let formSchema = yup.object({
 
 
 function close() {
-  router.push("/cabinet/partners");
-  clearForm()
+  router.push("/cabinet/tasks");
 }
 function clearForm() {
   Object.assign(form, {
+    author: '',
     name: '',
-    location: { name: "", shortName: "", type: "Point", coordinates: [] },
-    phone: '',
-    email: '',
-    contactPerson: '',
-    category: ''
+    trip: "",
+    partner: "",
+    deadLine: null,
+    createdDate: null,
+    timezoneOffset: null,
+    payAmount: null,
+    payments: [],
+    status: '',
+    managers: [],
+    comment: '',
+    interactions: [],
   });
 }
 
@@ -98,36 +102,28 @@ let checkManagers = async () => {
 }
 
 async function submit() {
-  if (partnerId.value) {
+  let toSend = { ...form }
+  toSend.author = userStore.user._id
+  toSend.createdDate = Date.now()
+  toSend.status = 'open'
+  toSend.timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000;
+  if (toSend.deadLine) {
+    toSend.deadLine = new Date(toSend.deadLine).getTime() + toSend.timezoneOffset
+  }
 
-    let response = await partnerStore.edit(partnerId.value, form)
-    if (response.status == 200) {
-      message.config({ duration: 1.5, top: "70vh" });
-      message.success({
-        content: "Партнер обновлен!", onClose: () => {
-          close()
-          clearForm()
-        },
-      });
-    }
 
-  } else {
-    let toSend = { ...form }
-    toSend.author = userStore.user._id
-    toSend.createdDate = Date.now()
-
-    let response = await partnerStore.create(toSend)
-    if (response.status == 200) {
-      message.config({ duration: 1.5, top: "70vh" });
-      message.success({
-        content: "Задача добавлена!", onClose: () => {
-          close()
-          clearForm()
-        },
-      });
-    }
+  let response = await tasksStore.create(toSend)
+  if (response.status == 200) {
+    message.config({ duration: 1.5, top: "70vh" });
+    message.success({
+      content: "Задача добавлена!", onClose: () => {
+        close()
+        clearForm()
+      },
+    });
   }
 }
+
 // туры для селектора
 
 let getTips = async (search) => {
@@ -181,18 +177,6 @@ let removeManager = (index) => {
 
 watch(() => form.managers, () => checkManagers(), { deep: true })
 
-onMounted(async () => {
-  partnerId.value = route.query._id
-  if (partnerId.value) {
-    let res = await partnerStore.getById(partnerId.value)
-    if (res.status == 200) {
-      Object.assign(form, res.data)
-      form.location = res.data.location
-      locationSearchRequest.value = res.data.location.name
-
-    }
-  }
-})
 
 </script>
 <template>
@@ -204,7 +188,6 @@ onMounted(async () => {
         <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
           <a-row :gutter="[16, 16]">
             <a-col :span="24">
-
               <Field name="name" v-slot="{ value, handleChange }" v-model="form.name">
                 Наименование<sup>*</sup>
                 <a-input placeholder="Наименование задачи" @update:value="handleChange" :value="value"
@@ -273,7 +256,8 @@ onMounted(async () => {
                   style="font-size:24px; font-weight:bold; color:#219FCF"></span>
 
 
-                <span v-else class="mdi mdi-not-equal-variant" style="font-size:24px; font-weight:bold; color:#ff6600"></span>
+                <span v-else class="mdi mdi-not-equal-variant"
+                  style="font-size:24px; font-weight:bold; color:#ff6600"></span>
 
 
                 <a-button @click="removeManager(index)" shape="circle" class="ml-4">

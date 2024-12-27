@@ -1,15 +1,14 @@
 import { defineStore } from 'pinia'
 import _ from 'lodash'
-import PartnerService from '../service/PartnerService';
+import TaskService from '../service/TaskService';
 
 export const useTasks = defineStore('tasks', {
   state: () => ({
     isFetching: false,
-    partners: [],
+    tasks: [],
     filter: {
       search: '',
       category: '',
-      location: { name: "", shortName: "", type: "Point", coordinates: [] },
       locationRadius: 0
     }
   }),
@@ -18,27 +17,27 @@ export const useTasks = defineStore('tasks', {
   actions: {
     async getAll(page, query) {
       if (page == 1) {
-        this.partners = [];
+        this.tasks = [];
       }
       try {
         if (!this.isFetching) {
           this.isFetching = true
-          let response = await PartnerService.getAll(
+          let response = await TaskService.getAll(
             page, query
           );
           this.isFetching = false
 
-          this.partners.push(...response.data);
-          this.partners = _.uniqBy(this.partners, '_id')
-          return this.partners
+          this.tasks.push(...response.data);
+          this.tasks = _.uniqBy(this.tasks, '_id')
+          return this.tasks
         }
       } catch (err) {
         console.log(err);
       }
     },
-    async create(partner) {
+    async create(task) {
       try {
-        const response = await PartnerService.create(partner);
+        const response = await TaskService.create(task);
         return response
       } catch (err) {
         console.log(err);
@@ -46,7 +45,7 @@ export const useTasks = defineStore('tasks', {
     },
     async deletePlace(id) {
       try {
-        const response = await PartnerService.deletePlace(id);
+        const response = await TaskService.deletePlace(id);
         return response
       } catch (err) {
         console.log(err);
@@ -55,16 +54,16 @@ export const useTasks = defineStore('tasks', {
 
     async getById(_id) {
       try {
-        const response = await PartnerService.getById(_id)
+        const response = await TaskService.getById(_id)
         return response
       } catch (error) {
         console.log(error);
       }
     },
 
-    async edit(partnerId, form) {
+    async edit(taskId, form) {
       try {
-        const response = await PartnerService.edit(partnerId, form)
+        const response = await TaskService.edit(taskId, form)
         return response
       } catch (error) {
         console.log(error);
@@ -72,7 +71,7 @@ export const useTasks = defineStore('tasks', {
     },
     async getForCreateTrip() {
       try {
-        const response = await PartnerService.getForCreateTrip()
+        const response = await TaskService.getForCreateTrip()
         return response
       } catch (error) {
         console.log(error);
