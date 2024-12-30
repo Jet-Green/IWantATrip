@@ -111,7 +111,7 @@ function getImg(index) {
           </a-col>
           <a-col :xs="24" :md="12" class="pa-8">
             <div>
-              Старт: <b>{{ trip.startLocation.name }}</b>
+              Старт: <b>{{ trip.startLocation?.name ? trip.startLocation.name : "Не указано" }}</b>
             </div>
 
             <div>

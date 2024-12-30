@@ -161,7 +161,7 @@ function submit() {
       tripType: "",
       fromAge: "",
       author: "",
-      startLocation: "",
+      startLocation: null,
       bonuses: [],
       returnConditions: "",
       includedInPrice: "",
@@ -372,13 +372,12 @@ let formSchema = yup.object({
   fromAge: yup.string().required("заполните поле"),
   offer: yup.string().required("заполните поле"),
   tripRoute: yup.string().required("заполните поле"),
-  startLocation: yup.string().required("заполните поле"),
+  // startLocation: yup.string().required("заполните поле"),
   returnConditions: yup.string().required("заполните поле"),
   notNecessarily: yup.string(),
   tripRegion: yup.string().required("заполните поле"),
   // https://vee-validate.logaretm.com/v4/examples/array-fields/
 });
-
 onMounted(async () => {
   if (localStorage.getItem('CreatingTrip')) {
     let f = JSON.parse(localStorage.getItem('CreatingTrip'))

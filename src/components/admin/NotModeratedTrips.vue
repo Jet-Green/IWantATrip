@@ -45,7 +45,8 @@ onMounted(async () => {
                 </div>
                 <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
                 <div>
-                    <span class="mdi mdi-compass-outline"></span> {{ trip.startLocation.name }}
+                    <!-- <span class="mdi mdi-compass-outline"></span> {{ trip.startLocation.name }} -->
+                    <span class="mdi mdi-compass-outline"></span> {{ trip.startLocation?.name ? trip.startLocation.name : "Не указано" }}
                 </div>
                 <div>
                     <span class="mdi mdi-calendar-arrow-right"></span>
