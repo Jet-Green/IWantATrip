@@ -29,6 +29,8 @@ export const useTasks = defineStore('tasks', {
 
           this.tasks.push(...response.data);
           this.tasks = _.uniqBy(this.tasks, '_id')
+          // Сортировка массива по полю deadLine с использованием lodash
+          this.tasks = _.orderBy(this.tasks, [(task) => task.deadLine], ['asc']);
           return this.tasks
         }
       } catch (err) {
@@ -75,7 +77,7 @@ export const useTasks = defineStore('tasks', {
         return response
       } catch (error) {
         console.log(error);
-        
+
       }
     }
   }

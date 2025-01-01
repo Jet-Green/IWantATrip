@@ -30,6 +30,7 @@ let isCalendarVisible = ref(false)
 let search = ref('')
 let page = 1
 let query = {
+  status: 'open',
   author: userStore.user._id,
   $or: [
     { name: { $regex: '', $options: 'i' } },
@@ -37,16 +38,17 @@ let query = {
   ]
 };
 
-const selectedDate = ref(dayjs().startOf('day'));
-const events = ref([
-  { date: dayjs().startOf('day').valueOf(), title: 'Событие 1' },
-  { date: dayjs().startOf('day').valueOf(), title: 'Событие 2' },
-  { date: dayjs().add(1, 'day').startOf('day').valueOf(), title: 'Событие 3' },
-  { date: dayjs().add(3, 'day').startOf('day').valueOf(), title: 'Событие 3' },
-]);
+const selectedDate = ref(null);
 
 
-function getEvents(currentDate) {
+const events = computed(() => {
+  return tasks.value.map(item => ({
+    date: dayjs(item.deadLine).startOf('day').valueOf(),
+  }))
+}
+)
+
+function getTasks(currentDate) {
   return events.value.filter((event) =>
     dayjs(event.date).isSame(currentDate, 'day')
   );
@@ -54,14 +56,15 @@ function getEvents(currentDate) {
 
 
 
-function onDateSelect(date) {
+async function onDateSelect(date) {
   const clickedDate = dayjs(date).startOf('day'); // Преобразуем дату в объект dayjs с началом дня
 
   // Сравнение: если текущая дата совпадает с выбранной, сбрасываем
   selectedDate.value && selectedDate.value.isSame(clickedDate)
     ? (selectedDate.value = null)
     : (selectedDate.value = clickedDate); // Иначе устанавливаем новую дату
-    isCalendarVisible.value =  false
+
+  await refreshTasks()
 }
 
 let prettyDate = computed(
@@ -82,11 +85,19 @@ let moreTasks = async () => {
   tasksLenght = res.length
 
 }
-
-
 async function refreshTasks() {
   page = 1
+  if (selectedDate.value) {
+    const startOfDay = selectedDate.value.startOf('day').valueOf();
+    const endOfDay = selectedDate.value.endOf('day').valueOf();
+    query.deadLine = {
+      $gte: startOfDay, // Больше или равно началу дня
+      $lte: endOfDay,   // Меньше или равно концу дня
 
+    };
+  } else {
+    query.deadLine = { $gt: Date.now() };
+  }
   let data = await taskStore.getAll(page, query)
   tasks.value = data
 }
@@ -131,17 +142,17 @@ onMounted(async () => {
     </div>
     <h3> {{ prettyDate ? `Задачи на ${prettyDate}` : 'Все задачи' }}</h3>
     <a-config-provider :locale="locale">
-    <a-calendar :value="selectedDate" @select="onDateSelect" v-if="isCalendarVisible">
-      <template #dateCellRender="{ current }">
-        <div class="date-cell">
-          <span v-if="getEvents(current).length > 0">
-            {{ getEvents(current).length }}
-          </span>
-        </div>
-      </template>
-    </a-calendar>
+      <a-calendar :value="selectedDate" @select="onDateSelect" v-if="isCalendarVisible">
+        <template #dateCellRender="{ current }">
+          <div class="date-cell">
+            <span v-if="getTasks(current).length > 0">
+              {{ getTasks(current).length }}
+            </span>
+          </div>
+        </template>
+      </a-calendar>
     </a-config-provider>
-
+    {{ events }}
     <a-row :gutter="[8, 8]">
       <a-col v-for="task in tasks" :span="24">
 
