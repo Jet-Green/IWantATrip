@@ -45,25 +45,14 @@ const events = ref([
   { date: dayjs().add(3, 'day').startOf('day').valueOf(), title: 'Событие 3' },
 ]);
 
-/**
- * Фильтрация событий для указанной даты.
- * @param {Object} currentDate - Дата текущей ячейки.
- * @returns {Array} - Список событий для данной даты.
- */
+
 function getEvents(currentDate) {
   return events.value.filter((event) =>
     dayjs(event.date).isSame(currentDate, 'day')
   );
 }
 
-/**
- * Обработчик смены месяца/года в календаре.
- * @param {Date} value - Новое значение.
- */
-// function onPanelChange(value) {
-//   console.log(dayjs(value))
-//   selectedDate.value = dayjs(value);
-// }
+
 
 function onDateSelect(date) {
   const clickedDate = dayjs(date).startOf('day'); // Преобразуем дату в объект dayjs с началом дня
