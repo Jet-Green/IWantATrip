@@ -54,9 +54,13 @@ function getTasks(currentDate) {
   );
 }
 
-
+async function delDateSelect() {
+  selectedDate.value = null
+  await refreshTasks()
+}
 
 async function onDateSelect(date) {
+
   const clickedDate = dayjs(date).startOf('day'); // Преобразуем дату в объект dayjs с началом дня
 
   // Сравнение: если текущая дата совпадает с выбранной, сбрасываем
@@ -96,10 +100,10 @@ async function refreshTasks() {
 
     };
   } else {
-    query.deadLine = { $gt: Date.now() };
+    delete query.deadLine
   }
-  let data = await taskStore.getAll(page, query)
-  tasks.value = data
+  await taskStore.getAll(page, query)
+  tasks.value = taskStore.tasks
 }
 
 watch(search, (newSearch, oldSearch) => {
@@ -140,9 +144,11 @@ onMounted(async () => {
       </div>
 
     </div>
-    <h3> {{ prettyDate ? `Задачи на ${prettyDate}` : 'Все задачи' }}</h3>
+    <h3> {{ prettyDate ? `Задачи на ${prettyDate}` : 'Все задачи' }}  <sup v-if="selectedDate"
+        @click="delDateSelect()" class="mdi mdi-close"
+        style="font-size: 16px; color: #FC4F06; cursor: pointer;"></sup></h3>
     <a-config-provider :locale="locale">
-      <a-calendar :value="selectedDate" @select="onDateSelect" v-if="isCalendarVisible">
+      <a-calendar :value="selectedDate || dayjs()" @select="onDateSelect" v-if="isCalendarVisible">
         <template #dateCellRender="{ current }">
           <div class="date-cell">
             <span v-if="getTasks(current).length > 0">
@@ -152,7 +158,6 @@ onMounted(async () => {
         </template>
       </a-calendar>
     </a-config-provider>
-    {{ events }}
     <a-row :gutter="[8, 8]">
       <a-col v-for="task in tasks" :span="24">
 
@@ -170,7 +175,7 @@ onMounted(async () => {
 .date-cell {
   text-align: center;
 
-  color: #ff4d4f;
+  color: #FC4F06;
   font-weight: bold;
 
 }
