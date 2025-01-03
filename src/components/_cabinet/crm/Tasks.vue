@@ -6,16 +6,11 @@ import { useAuth } from "../../../stores/auth"
 import { useTasks } from "../../../stores/tasks"
 import TaskCard from "./TaskCard.vue"
 import dayjs from "dayjs"
-import "dayjs/locale/ru"
-import localeData from "dayjs/plugin/localeData"
-import updateLocale from "dayjs/plugin/updateLocale"
+
+// для языка календаря
 import ruRU from "ant-design-vue/es/locale/ru_RU"
 
-dayjs.extend(localeData)
-dayjs.extend(updateLocale)
-
 // Устанавливаем русский язык как основной
-dayjs.locale("ru")
 const locale = ruRU
 
 const router = useRouter()
@@ -38,11 +33,14 @@ let query = {
   ],
 }
 
-const selectedDate = ref(null)
+const CURRENT_OFFSET = new Date().getTimezoneOffset() * 60 * 1000
 
+const selectedDate = ref(null)
 const events = computed(() => {
   return tasks.value.map((item) => ({
-    date: dayjs(item.deadLine).startOf("day").valueOf(),
+    date: dayjs(item.deadLine - CURRENT_OFFSET)
+      .startOf("day")
+      .valueOf(),
   }))
 })
 
@@ -55,14 +53,14 @@ async function delDateSelect() {
   await refreshTasks()
 }
 
-async function onDateSelect(date) {
-  const clickedDate = dayjs(date).startOf("day") // Преобразуем дату в объект dayjs с началом дня
-
+async function onDateSelect(date) {  
+  const clickedDate = dayjs(date).startOf("day"); // Преобразуем дату в объект dayjs с началом дня
+  
   // Сравнение: если текущая дата совпадает с выбранной, сбрасываем
   selectedDate.value && selectedDate.value.isSame(clickedDate)
-    ? (selectedDate.value = null)
-    : (selectedDate.value = clickedDate) // Иначе устанавливаем новую дату
-
+  ? (selectedDate.value = null)
+  : (selectedDate.value = clickedDate) // Иначе устанавливаем новую дату
+  
   await refreshTasks()
 }
 
@@ -80,13 +78,15 @@ let moreTasks = async () => {
   tasksLenght = res.length
 }
 async function refreshTasks() {
-  page = 1
-  if (selectedDate.value) {
+  page = 1  
+  
+  if (selectedDate.value) {    
     const startOfDay = selectedDate.value.startOf("day").valueOf()
     const endOfDay = selectedDate.value.endOf("day").valueOf()
+    
     query.deadLine = {
-      $gte: startOfDay, // Больше или равно началу дня
-      $lte: endOfDay, // Меньше или равно концу дня
+      $gte: startOfDay + CURRENT_OFFSET, // Больше или равно началу дня
+      $lte: endOfDay + CURRENT_OFFSET, // Меньше или равно концу дня
     }
   } else {
     delete query.deadLine

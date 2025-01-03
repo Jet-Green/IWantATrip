@@ -61,7 +61,10 @@ export default {
             return (index >= 0 && index < numeralDay.length) ? numeralDay[index] : "";
         },
         getLocalDateFromUTC(utcTimestamp, timezoneOffset) {
-            const localDate = new Date(utcTimestamp - timezoneOffset); // Корректируем таймстамп на локальное время
+            const utcDate = new Date(utcTimestamp); // Корректируем таймстамп на локальное время
+            let localDateString = utcDate.toLocaleString() + ' UTC';            
+            const localDate = new Date(localDateString)
+            
             return {
                 year: localDate.getFullYear(),
                 month: localDate.getMonth(),
