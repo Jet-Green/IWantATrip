@@ -1,26 +1,29 @@
 <script setup>
+import PartnerDialog from "./dialogs/PartnerDialog.vue"
+import NewInteractionDialog from "./dialogs/NewInteractionDialog.vue"
+
 import { toRefs, computed, ref, onMounted, reactive } from "vue"
 import { useRouter } from "vue-router"
 import datePlugin from "../../../plugins/dates"
+import { useTasks } from "../../../stores/tasks"
 
 let props = defineProps(["task"])
 let emit = defineEmits(["refreshTasks"])
-import { useTasks } from "../../../stores/tasks"
 
 const router = useRouter()
 const taskStore = useTasks()
-let color = ref("black")
-let show = ref(false)
+
 // toRefs add reactivity
 let { task } = toRefs(props)
 
 let viewPartnerDialog = ref(false)
+let newInteractionDialog = ref(false)
 
 let deadline = datePlugin.excursions.getLocalDateFromUTC(task.value.deadLine, task.value.timezoneOffset)
 let date = datePlugin.excursions.getPrettyDate(deadline)
 
 async function closePartnerDialog() {
-  viewPartnerDialog.value = false;
+  viewPartnerDialog.value = false
 }
 
 async function taskToDelete(_id) {
@@ -29,112 +32,146 @@ async function taskToDelete(_id) {
     emit("refreshTasks")
   }
 }
+
+async function addNewInteraction() {
+  // результат встречи с клиентом, тип встречи, статус задачи
+  newInteractionDialog.value = true;
+}
 </script>
 <template>
   <a-card class="card" v-if="task._id">
-    <div style="width: 100%; height: 100%; text-align: center; font-weight: 700">
-      {{ task.name }}
+    <div
+      style="
+        width: 100%;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      "
+    >
+      <div style="font-weight: 700; font-size: clamp(1.125rem, 0.9261rem + 0.5682vw, 1.375rem)">
+        {{ task.name }}
+      </div>
+      <router-link class="link" :to="`/trip?_id=${task.trip._id}`">
+        {{ task.trip.name }}
+      </router-link>
     </div>
-    <div class="info">
-      <div class="deadline info-item">
-        <span class="mdi mdi-clock-time-five-outline"></span>
-        {{ date.day + " " + date.month }} к
-        {{ deadline.hours + ":" + deadline.minutes }}
-      </div>
+    <a-row :gutter="[24, 24]">
+      <a-col class="info-item deadline">
+        <div class="date">
+          {{ date.day + " " + date.month }}
+        </div>
+        <div class="time">к {{ deadline.hours + ":" + deadline.minutes }}</div>
+      </a-col>
 
-      <div class="info-item">
-        <b> Тур: </b>
-        <router-link class="link" :to="`/trip?_id=${task.trip._id}`">
-          {{ task.trip.name }}
-        </router-link>
-      </div>
+      <a-col class="info-item partner" v-if="task.partner?._id">
+        <div class="d-flex align-center">
+          <span class="link" @click="viewPartnerDialog = true">
+            {{ task.partner.name }}<span class="mdi mdi-open-in-new"></span>
+          </span>
+        </div>
 
-      <div class="partner info-item">
-        <b> Партнёр: </b>
-        <span class="partner-name" @click="viewPartnerDialog = true">
-          {{ task.partner.name }}<span class="mdi mdi-open-in-new"></span>
-        </span>
-      </div>
-    </div>
-    
-    {{ task }}
+        <div class="actions">
+          <a-button shape="circle" size="large" :href="`tel:${task.partner?.phone}`">
+            <template #icon>
+              <span class="mdi mdi-phone-outline"></span>
+            </template>
+          </a-button>
 
-    <a-divider class="ma-4" style="border-color: #205f79"></a-divider>
-    <div class="actions">
-      <div>
-        <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="taskToDelete(task._id)">
-          <span class="mdi mdi-delete" style="color: #ff6600"></span>
-        </a-popconfirm>
+          <a-button shape="circle" size="large" class="ml-16" :href="`mailto:${task.partner?.email}`">
+            <template #icon>
+              <span class="mdi mdi-email-outline"></span>
+            </template>
+          </a-button>
+        </div>
+      </a-col>
 
-        <a-popconfirm
-          title="Редактировать?"
-          ok-text="Да"
-          cancel-text="Нет"
-          @confirm="router.push(`/create-task?_id=${task._id}`)"
-        >
-          <span class="mdi mdi-pen"></span>
-        </a-popconfirm>
-      </div>
-    </div>
+      <a-col class="info-item payment" v-if="task.payAmount">
+        <div class="amount">
+          <b>
+            {{ task.payments }}
+          </b>
+          из
+          <b> {{ task.payAmount }}₽ </b>
+        </div>
 
+        <a-button size="small" style="text-transform: none !important;">
+          оплата
+          <template #icon>
+            <span class="mdi mdi-cash-multiple mr-4"></span>
+          </template>
+        </a-button>
+      </a-col>
+    </a-row>
+
+    <a-row class="bordered" :gutter="[8, 8]">
+      <a-col :span="24">
+        <a-button @click="addNewInteraction">Новая встреча
+          <template #icon>
+            <span class="mdi mdi-plus"></span>
+          </template>
+        </a-button>
+      </a-col>
+      <a-col :span="24">
+        <a-collapse :bordered="false" ghost>
+          <a-collapse-panel key="0" header="История общения">
+            <a-row>
+              <a-col v-if="task.interactions.length == 0">
+                Пусто
+              </a-col>
+              <a-col v-else :span="24">
+                {{ task.interactions }}
+              </a-col>
+            </a-row>
+          </a-collapse-panel>
+        </a-collapse>
+      </a-col>
+    </a-row>
+
+    <PartnerDialog :partner="task.partner" :props-dialog="viewPartnerDialog" @close="viewPartnerDialog = false" />
+    <NewInteractionDialog :taskId="task._id" :props-dialog="newInteractionDialog" @close="newInteractionDialog = false" />
   </a-card>
 </template>
 <style scoped lang="scss">
-.actions {
-  display: flex;
-  justify-content: space-between;
-  font-size: 20px;
-  cursor: pointer;
-  position: relative;
-  color: #245159;
-
-  * {
-    margin: 4px;
-    cursor: pointer;
-  }
-}
-
-.type {
-  display: flex;
-  align-items: center;
-
-  span {
-    font-size: 20px;
-  }
-}
-
-.overlay {
-  opacity: 0.5;
-}
-
-.info {
-  display: flex;
-  align-items: center;
+.info-item {
+  border: 1px solid rgb(231, 231, 231);
+  border-radius: 10px;
+  margin: 10px;
+  padding: 10px;
 }
 
 .deadline {
-  display: flex;
+  line-height: 1.1;
   font-weight: 600;
-  user-select: none;
+
   display: flex;
-  align-items: center;
-  .mdi-clock-time-five-outline {
-    font-size: 22px;
-    margin-right: 6px;
-  }
-}
-.link {
-  text-decoration: underline;
-}
-.info-item {
-  margin: 4px 8px;
+  flex-direction: column;
+  font-size: clamp(1.125rem, 0.9261rem + 0.5682vw, 1.375rem);
 }
 
 .partner {
-  .partner-name {
-    user-select: none;
+  font-weight: 600;
+  display: flex;
+
+  font-size: clamp(1.125rem, 0.9261rem + 0.5682vw, 1.375rem);
+  .link {
+    text-decoration: underline;
+    font-size: clamp(0.75rem, 0.4517rem + 0.8523vw, 1.125rem);
+    font-weight: 400;
     cursor: pointer;
-    font-weight: 500;
   }
+  .actions {
+    margin-left: 18px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+}
+.payment {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: clamp(0.75rem, 0.4517rem + 0.8523vw, 1.125rem);
 }
 </style>

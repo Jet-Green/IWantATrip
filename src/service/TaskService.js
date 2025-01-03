@@ -25,5 +25,7 @@ export default {
   getForCreateTrip() {
     return $api.get('/tasks/for-create-trip')
   },
-
+  createInteraction(body) {
+    return $api.post('/tasks/create-interaction', body)
+  }
 }
