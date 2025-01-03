@@ -105,12 +105,14 @@ let checkManagers = async () => {
 async function submit() {
   let toSend = { ...form }
   toSend.author = userStore.user._id
-  toSend.createdDate = Date.now()
   toSend.status = "open"
   toSend.timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000
   toSend.tripInfo = tripInfo.value
+  // to utc
+  toSend.createdDate = Date.now() + toSend.timezoneOffset;
 
   if (toSend.deadLine) {
+    // to utc
     toSend.deadLine = new Date(toSend.deadLine).getTime() + toSend.timezoneOffset
   }
   let response = await tasksStore.create(toSend)
