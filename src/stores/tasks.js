@@ -75,7 +75,14 @@ export const useTasks = defineStore('tasks', {
         return response
       } catch (error) {
         console.log(error);
-        
+
+      }
+    },
+    async createInteraction(interaction, taskId) {
+      try {
+        return await TaskService.createInteraction({ interaction, taskId })
+      } catch (error) {
+        console.log(error);
       }
     }
   }

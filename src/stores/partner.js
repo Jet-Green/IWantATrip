@@ -79,7 +79,6 @@ export const usePartners = defineStore('partners', {
         
       }
     },
-
   
   }
 })

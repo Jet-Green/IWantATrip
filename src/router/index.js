@@ -816,10 +816,9 @@ const router = createRouter({
             if (!localStorage.getItem('token') || !userStore.isAuth)
               await userStore.checkAuth()
           }
-        },        
+        },
       ]
     },
-   
   ],
   scrollBehavior(to, from, savedPosition) {
     if (to.path === '/places') {
