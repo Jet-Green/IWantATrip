@@ -64,7 +64,7 @@ export default {
             const localDate = new Date(utcTimestamp - timezoneOffset); // Корректируем таймстамп на локальное время
             return {
                 year: localDate.getFullYear(),
-                month: localDate.getMonth() + 1, // Месяцы начинаются с 0
+                month: localDate.getMonth(),
                 day: localDate.getDate(),
                 hours: localDate.getHours(),
                 minutes: localDate.getMinutes().length > 1 ? localDate.getMinutes() : "0" + localDate.getMinutes(),
