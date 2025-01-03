@@ -76,7 +76,7 @@ watch(propsDialog, (newDialog) => {
       </a-col>
       <a-col :span="24">
         Результат
-        <a-textarea placeholder="О чём договорились" allow-clear autosize></a-textarea>
+        <a-textarea v-model:value="form.result" placeholder="О чём договорились" allow-clear autoSize></a-textarea>
       </a-col>
       <a-col :span="24" class="d-flex justify-center">
         <a-button @click="createNewInteraction" class="lets_go_btn" type="primary">отправить</a-button>
