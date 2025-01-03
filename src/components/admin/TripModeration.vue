@@ -110,8 +110,8 @@ function getImg(index) {
             </a-carousel>
           </a-col>
           <a-col :xs="24" :md="12" class="pa-8">
-            <div>
-              Старт: <b>{{ trip.startLocation?.name ? trip.startLocation.name : "Не указано" }}</b>
+            <div v-if="trip.startLocation?.name">
+              Старт: <b>{{trip.startLocation.name}}</b>
             </div>
 
             <div>

@@ -724,7 +724,7 @@ onMounted(async () => {
                     </a-col>
                 </a-row>
                 <a-row :gutter="[4, 8]">
-                    <a-col :span="24" v-if="trip.locationNames.length > 1">
+                    <a-col :span="24" v-if="trip?.locationNames?.length > 1">
                         <div class="d-flex direction-column">
                             Место посадки
                             <a-select placeholder="г.Глазов" v-model:value="selectedStartLocation">

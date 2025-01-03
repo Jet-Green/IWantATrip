@@ -29,7 +29,7 @@ let time = ref([])
 let query = ref("")
 let tripRegion = ref("")
 let type = ref("")
-let locationRadius = ref(100)
+let locationRadius = ref(0)
 // названия туров в диалоговом окне
 let foundTrips = ref([])
 

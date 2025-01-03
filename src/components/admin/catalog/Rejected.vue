@@ -31,7 +31,7 @@ onMounted(async () => {
                     {{ catalog.name }}
                 </div>
                 <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
-                <div>
+                <div v-if="catalog?.startLocation?.name">
                     <span class="mdi mdi-compass-outline"></span> {{ catalog.startLocation.name }}
                 </div>
                 <div class="mt-8">Автор: {{ catalog.author.fullinfo.fullname }}</div>

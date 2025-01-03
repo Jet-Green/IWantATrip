@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, getCurrentInstance } from "vue";
 
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import BackButton from "../components/BackButton.vue";
 import { useTrips } from "../stores/trips";
 import { useLocations } from "../stores/locations";
@@ -15,6 +15,7 @@ const app = getCurrentInstance();
 const htmlToPaper = app.appContext.config.globalProperties.$htmlToPaper;
 
 const route = useRoute();
+const router = useRouter()
 
 const _id = route.query._id;
 
@@ -65,26 +66,31 @@ const print = async () => {
     await htmlToPaper('printMe');
 };
 
-function orderCatalog() {
+async function orderCatalog() {
     let toSend = {}
     toSend.wishes = trip.value.name
     toSend.type = trip.value.tripType
     toSend.location = trip.value.tripRoute
     toSend.dateOfBooking = new Date().getTime()
-
-    toSend.creatorId = userStore.user._id
-
-    bookingStore.bookingTrip(toSend).then(async (res) => {
-        if (res.status == 200) {
-            message.config({ duration: 1.5, top: "70vh" });
-            message.success({
-                content: "Успешно!",
-                onClose: () => {
-                    close()
-                },
-            });
-        }
-    });
+    if (!localStorage.getItem('token') || !userStore.isAuth)
+        await userStore.checkAuth()
+    if (!userStore.isAuth)
+        router.push("/auth")
+    else{
+        toSend.creatorId = userStore.user._id
+    
+        bookingStore.bookingTrip(toSend).then(async (res) => {
+            if (res.status == 200) {
+                message.config({ duration: 1.5, top: "70vh" });
+                message.success({
+                    content: "Успешно!",
+                    onClose: () => {
+                        close()
+                    },
+                });
+            }
+        });
+    }
 }
 
 onMounted(async () => {
@@ -153,7 +159,7 @@ onMounted(async () => {
                         </div>
 
 
-                        <div>
+                        <div v-if="trip?.startLocation?.name ">
                             Старт: <b> {{ trip.startLocation?.name }}</b>
                         </div>
 

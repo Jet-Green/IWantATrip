@@ -376,14 +376,22 @@ onMounted(async () => {
             form.author = d.author;
             start.value = dayjs(new Date(d.start));
             end.value = dayjs(new Date(d.end));
-            form.startLocation = d.startLocation;
-            form.includedLocations = d.includedLocations
-            form.locationNames = d.locationNames
+            if(form?.startLocation?.name){
+                form.startLocation = d.startLocation;
+                form.includedLocations = d.includedLocations
+                form.locationNames = d.locationNames
+                locationSearchRequest.value = d.startLocation.name;
+            }
+            else{
+                form.startLocation = null;
+                form.includedLocations = null
+                form.locationNames = null
+                locationSearchRequest.value = "";
+            }
             form.returnConditions = d.returnConditions
             form.includedInPrice = d.includedInPrice
             form.paidExtra = d.paidExtra
             form.travelRequirement = d.travelRequirement
-            locationSearchRequest.value = d.startLocation.name;
         });
     }
 });
@@ -398,7 +406,7 @@ let formSchema = yup.object({
     fromAge: yup.string().required("заполните поле"),
     offer: yup.string().required("заполните поле"),
     tripRoute: yup.string().required("заполните поле"),
-    startLocation: yup.string().required("заполните поле"),
+    // startLocation: yup.string().required("заполните поле"),
     returnConditions: yup.string().required("заполните поле"),
     notNecessarily: yup.string()
     // distance: yup.string().required("заполните поле"),

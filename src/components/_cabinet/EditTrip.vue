@@ -236,7 +236,8 @@ onMounted(() => {
 
             start.value = dayjs(new Date(d.start))
             end.value = dayjs(new Date(d.end))
-            locationSearchRequest.value = d.startLocation.name
+            if (d?.startLocation?.name)
+                {locationSearchRequest.value = d.startLocation.name}
 
             form.value = d;
             for (let i of form.value.images)

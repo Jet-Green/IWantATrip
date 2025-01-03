@@ -32,7 +32,7 @@ async function hideTrip(_id) {
             <div style="width:100%;text-align:center">{{ trip.name }}</div>
         </div>
         <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
-        <div>
+        <div v-if="trip?.startLocation?.name">
             <span class="mdi mdi-compass-outline"> </span>{{ trip.startLocation.name }}
         </div>
 
