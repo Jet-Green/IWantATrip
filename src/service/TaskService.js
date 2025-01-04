@@ -13,6 +13,9 @@ export default {
   getAll(page, query) {
     return $api.post('/tasks/get-all', { page, query })
   },
+  getTasksAmount(query) {
+    return $api.post('/tasks/get-tasks-amount', { query })
+  },
   getPlacesForModeration(status) {
     return $api.get(`/tasks/for-moderation?status=${status}`)
   },

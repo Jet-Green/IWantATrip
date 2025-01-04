@@ -6,12 +6,22 @@ import { useAuth } from "../../../stores/auth"
 import { useTasks } from "../../../stores/tasks"
 import TaskCard from "./TaskCard.vue"
 import dayjs from "dayjs"
-
-// для языка календаря
+import "dayjs/locale/ru"
+import localeData from "dayjs/plugin/localeData"
+import updateLocale from "dayjs/plugin/updateLocale"
 import ruRU from "ant-design-vue/es/locale/ru_RU"
 
+dayjs.extend(localeData)
+dayjs.extend(updateLocale)
+
 // Устанавливаем русский язык как основной
+dayjs.locale("ru")
 const locale = ruRU
+// для языка календаря
+
+import { date } from "yup"
+
+
 
 const router = useRouter()
 
@@ -20,6 +30,7 @@ const taskStore = useTasks()
 
 let showMoreButton = ref(true)
 let tasks = ref([])
+let tasksAmount = ref([])
 let isCalendarVisible = ref(false)
 
 let search = ref("")
@@ -27,17 +38,22 @@ let page = 1
 let query = {
   status: "open",
   author: userStore.user._id,
+  'tripInfo.end': {
+      $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000
+    },
   $or: [
     { name: { $regex: "", $options: "i" } },
     // { category: { $regex: '', $options: 'i' } }
   ],
+
 }
 
 const CURRENT_OFFSET = new Date().getTimezoneOffset() * 60 * 1000
 
-const selectedDate = ref(null)
+const selectedDate = ref(undefined)
+const activeDate = ref(null)
 const events = computed(() => {
-  return tasks.value.map((item) => ({
+  return tasksAmount.value.map((item) => ({
     date: dayjs(item.deadLine - CURRENT_OFFSET)
       .startOf("day")
       .valueOf(),
@@ -45,27 +61,48 @@ const events = computed(() => {
 })
 
 function getTasks(currentDate) {
-  return events.value.filter((event) => dayjs(event.date).isSame(currentDate, "day"))
+
+  currentDate = dayjs(currentDate).startOf("day")
+ 
+  return events.value.filter((event) => {
+    console.log( Date.parse(currentDate) == event.date)
+  return  Date.parse(currentDate) == event.date
+  
+})
+}
+async function getTasksAmount() {
+     //добавить менеджера через $or
+
+  let query = {
+    status: "open",
+    author: userStore.user._id,
+    'tripInfo.end': {
+      $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000
+    }
+ 
+  }
+  let res = await taskStore.getTasksAmount(query)
+  tasksAmount.value = res
 }
 
 async function delDateSelect() {
-  selectedDate.value = null
+  activeDate.value = null
   await refreshTasks()
 }
 
-async function onDateSelect(date) {  
+async function onDateSelect(date) {
   const clickedDate = dayjs(date).startOf("day"); // Преобразуем дату в объект dayjs с началом дня
-  
+
   // Сравнение: если текущая дата совпадает с выбранной, сбрасываем
-  selectedDate.value && selectedDate.value.isSame(clickedDate)
-  ? (selectedDate.value = null)
-  : (selectedDate.value = clickedDate) // Иначе устанавливаем новую дату
-  
+  activeDate.value && activeDate.value.isSame(clickedDate)
+    ? (activeDate.value = null)
+    : (activeDate.value = clickedDate) // Иначе устанавливаем новую дату
+
   await refreshTasks()
 }
 
 let prettyDate = computed(() => {
-  return selectedDate.value ? selectedDate.value.format("DD:MM:YYYY") : ""
+  return activeDate.value ? activeDate.value.format("DD:MM:YYYY") : ""
 })
 
 let moreTasks = async () => {
@@ -78,12 +115,12 @@ let moreTasks = async () => {
   tasksLenght = res.length
 }
 async function refreshTasks() {
-  page = 1  
-  
-  if (selectedDate.value) {    
-    const startOfDay = selectedDate.value.startOf("day").valueOf()
-    const endOfDay = selectedDate.value.endOf("day").valueOf()
-    
+  page = 1
+
+  if (activeDate.value) {
+    const startOfDay = activeDate.value.startOf("day").valueOf()
+    const endOfDay = activeDate.value.endOf("day").valueOf()
+
     query.deadLine = {
       $gte: startOfDay + CURRENT_OFFSET, // Больше или равно началу дня
       $lte: endOfDay + CURRENT_OFFSET, // Меньше или равно концу дня
@@ -93,6 +130,7 @@ async function refreshTasks() {
   }
   await taskStore.getAll(page, query)
   tasks.value = taskStore.tasks
+  await getTasksAmount()
 }
 
 watch(search, (newSearch, oldSearch) => {
@@ -105,6 +143,7 @@ watch(search, (newSearch, oldSearch) => {
 })
 
 onMounted(async () => {
+ 
   if (localStorage.getItem("taskSearch")) {
     search.value = localStorage.getItem("taskSearch")
   }
@@ -113,6 +152,7 @@ onMounted(async () => {
   if (taskStore.tasks.length < 20) {
     showMoreButton.value = false
   }
+  await getTasksAmount()
 })
 </script>
 <template>
@@ -123,25 +163,18 @@ onMounted(async () => {
       </div>
 
       <div>
-        <span
-          @click="isCalendarVisible = !isCalendarVisible"
-          class="mdi mdi-calendar-range-outline"
-          style="font-size: 24px; margin-right: 8px; cursor: pointer"
-        ></span>
+        <span @click="isCalendarVisible = !isCalendarVisible" class="mdi mdi-calendar-range-outline"
+          style="font-size: 24px; margin-right: 8px; cursor: pointer"></span>
         <a-input v-model:value="search" placeholder="поиск" style="width: 180px" allow-clear />
       </div>
     </div>
     <h3>
       {{ prettyDate ? `Задачи на ${prettyDate}` : "Все задачи" }}
-      <sup
-        v-if="selectedDate"
-        @click="delDateSelect()"
-        class="mdi mdi-close"
-        style="font-size: 16px; color: #fc4f06; cursor: pointer"
-      ></sup>
+      <sup v-if="activeDate" @click="delDateSelect()" class="mdi mdi-close"
+        style="font-size: 16px; color: #fc4f06; cursor: pointer"></sup>
     </h3>
     <a-config-provider :locale="locale">
-      <a-calendar :value="selectedDate || dayjs()" @select="onDateSelect" v-if="isCalendarVisible">
+      <a-calendar :value="selectedDate" @select="onDateSelect" v-if="isCalendarVisible">
         <template #dateCellRender="{ current }">
           <div class="date-cell">
             <span v-if="getTasks(current).length > 0">
@@ -151,13 +184,13 @@ onMounted(async () => {
         </template>
       </a-calendar>
     </a-config-provider>
+    {{ tasksAmount }}
     <a-row :gutter="[8, 8]">
       <a-col v-for="(task, index) in tasks" :span="24" :key="task._id">
         <TaskCard @refreshTasks="refreshTasks()" :task="task"> </TaskCard>
       </a-col>
       <a-col :span="24" class="justify-center d-flex" @click="moreTasks()" v-if="showMoreButton">
-        <a-button>Ещё</a-button></a-col
-      >
+        <a-button>Ещё</a-button></a-col>
     </a-row>
   </div>
 </template>

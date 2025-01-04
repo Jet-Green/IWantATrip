@@ -37,6 +37,19 @@ export const useTasks = defineStore('tasks', {
         console.log(err);
       }
     },
+    async getTasksAmount(query) {
+      try {
+      
+          let response = await TaskService.getTasksAmount(
+           query
+          )
+          return response.data
+        
+      } catch (err) {
+        console.log(err);
+      }
+
+    },
     async create(task) {
       try {
         const response = await TaskService.create(task);

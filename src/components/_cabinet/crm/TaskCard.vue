@@ -40,16 +40,14 @@ async function addNewInteraction() {
 </script>
 <template>
   <a-card class="card" v-if="task._id">
-    <div
-      style="
+    <div style="
         width: 100%;
         text-align: center;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-      "
-    >
+      ">
       <div style="font-weight: 700; font-size: clamp(1.125rem, 0.9261rem + 0.5682vw, 1.375rem)">
         {{ task.name }}
       </div>
@@ -128,9 +126,28 @@ async function addNewInteraction() {
         </a-collapse>
       </a-col>
     </a-row>
+    <a-row>
+      <a-col>
+        <div>
+
+          <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="taskToDelete(task._id)">
+            <span class="mdi mdi-delete" style="color: #ff6600;"></span>
+          </a-popconfirm>
+
+
+          <a-popconfirm title="Редактировать?" ok-text="Да" cancel-text="Нет"
+            @confirm="router.push(`/create-task?_id=${task._id}`)">
+            <span class="mdi mdi-pen"></span>
+          </a-popconfirm>
+
+        </div>
+      </a-col>
+    </a-row>
+
 
     <PartnerDialog :partner="task.partner" :props-dialog="viewPartnerDialog" @close="viewPartnerDialog = false" />
-    <NewInteractionDialog :taskId="task._id" :props-dialog="newInteractionDialog" @close="newInteractionDialog = false" />
+    <NewInteractionDialog :taskId="task._id" :props-dialog="newInteractionDialog"
+      @close="newInteractionDialog = false" />
   </a-card>
 </template>
 <style scoped lang="scss">
@@ -155,12 +172,14 @@ async function addNewInteraction() {
   display: flex;
 
   font-size: clamp(1.125rem, 0.9261rem + 0.5682vw, 1.375rem);
+
   .link {
     text-decoration: underline;
     font-size: clamp(0.75rem, 0.4517rem + 0.8523vw, 1.125rem);
     font-weight: 400;
     cursor: pointer;
   }
+
   .actions {
     margin-left: 18px;
     height: 100%;
@@ -168,6 +187,7 @@ async function addNewInteraction() {
     align-items: center;
   }
 }
+
 .payment {
   display: flex;
   flex-direction: column;
