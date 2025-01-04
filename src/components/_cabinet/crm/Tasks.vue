@@ -28,6 +28,7 @@ const router = useRouter()
 const userStore = useAuth()
 const taskStore = useTasks()
 
+let isCreator =  userStore.user.tinkoffContract||false
 let showMoreButton = ref(true)
 let tasks = ref([])
 let tasksAmount = ref([])
@@ -170,8 +171,8 @@ onMounted(async () => {
 <template>
   <div>
     <div style="display: flex; justify-content: space-between; flex-wrap: wrap; align-items: center" class="pa-8">
-      <div>
-        <a-button class="btn_light ma-8" @click="router.push('/create-task')"> создать задачу </a-button>
+      <div >
+        <a-button v-if="isCreator" class="btn_light ma-8" @click="router.push('/create-task')"> создать задачу </a-button>
       </div>
 
       <div>
