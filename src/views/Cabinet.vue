@@ -83,7 +83,7 @@ onMounted(async () => {
             <span v-if=!sm>Места</span>
             <span v-else class="mdi mdi-24px mdi-map-marker-outline" style="color: #245159;"></span>
           </a-menu-item>
-          <a-sub-menu key="sub4" v-if="isCreator">
+          <a-sub-menu key="sub4" >
             <template #title>
               <span ref='crm' v-if=!sm>CRM</span>
               <span v-else class="mdi mdi-24px mdi-calendar-check-outline" style="color: #245159; "></span>

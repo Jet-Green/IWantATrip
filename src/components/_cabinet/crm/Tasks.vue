@@ -37,14 +37,24 @@ let search = ref("")
 let page = 1
 let query = {
   status: "open",
-  author: userStore.user._id,
+  $and: [
+    {
+      $or: [
+        { author: userStore.user._id },
+        { managers: userStore.user._id }
+      ]
+    },
+    {
+      $or: [
+        { name: { $regex: "", $options: "i" } },
+        { 'tripInfo.name': { $regex: '', $options: 'i' } }
+      ]
+    }
+  ],
   'tripInfo.end': {
     $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000
   },
-  $or: [
-    { name: { $regex: "", $options: "i" } },
-    { 'tripInfo.name': { $regex: '', $options: 'i' } }
-  ],
+
 
 }
 
@@ -74,7 +84,10 @@ async function getTasksAmount() {
 
   let query = {
     status: "open",
-    author: userStore.user._id,
+    $or: [
+    { author: userStore.user._id },
+    { managers: userStore.user._id }
+  ],
     'tripInfo.end': {
       $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000
     }
