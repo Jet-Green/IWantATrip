@@ -43,7 +43,7 @@ let query = {
     },
   $or: [
     { name: { $regex: "", $options: "i" } },
-    // { category: { $regex: '', $options: 'i' } }
+    { 'tripInfo.name': { $regex: '', $options: 'i' } }
   ],
 
 }
@@ -115,7 +115,7 @@ let moreTasks = async () => {
   tasksLenght = res.length
 }
 async function refreshTasks() {
-  page = 1
+
 
   if (activeDate.value) {
     const startOfDay = activeDate.value.startOf("day").valueOf()
@@ -137,7 +137,7 @@ watch(search, (newSearch, oldSearch) => {
   if (newSearch.length > 2 || newSearch.length <= oldSearch.length) {
     localStorage.setItem("taskSearch", newSearch)
     query.$or[0].name.$regex = newSearch
-    // query.$or[1].category.$regex = newSearch
+    query.$or[1]['tripInfo.name'].$regex = newSearch
     refreshTasks()
   }
 })
