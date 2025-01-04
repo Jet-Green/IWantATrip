@@ -39,8 +39,8 @@ let query = {
   status: "open",
   author: userStore.user._id,
   'tripInfo.end': {
-      $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000
-    },
+    $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000
+  },
   $or: [
     { name: { $regex: "", $options: "i" } },
     { 'tripInfo.name': { $regex: '', $options: 'i' } }
@@ -63,15 +63,14 @@ const events = computed(() => {
 function getTasks(currentDate) {
 
   currentDate = dayjs(currentDate).startOf("day")
- 
+
   return events.value.filter((event) => {
-    console.log( Date.parse(currentDate) == event.date)
-  return  Date.parse(currentDate) == event.date
-  
-})
+    return Date.parse(currentDate) == event.date
+
+  })
 }
 async function getTasksAmount() {
-     //добавить менеджера через $or
+  //добавить менеджера через $or
 
   let query = {
     status: "open",
@@ -79,7 +78,7 @@ async function getTasksAmount() {
     'tripInfo.end': {
       $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000
     }
- 
+
   }
   let res = await taskStore.getTasksAmount(query)
   tasksAmount.value = res
@@ -143,7 +142,7 @@ watch(search, (newSearch, oldSearch) => {
 })
 
 onMounted(async () => {
- 
+
   if (localStorage.getItem("taskSearch")) {
     search.value = localStorage.getItem("taskSearch")
   }

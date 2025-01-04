@@ -1,6 +1,6 @@
 <script setup>
 import PartnerCard from "../PartnerCard.vue"
-import { ref, watch, toRefs, defineProps } from "vue"
+import { ref, watch, toRefs } from "vue"
 
 let props = defineProps({
   partner: Object,

@@ -79,8 +79,8 @@ function getImg(index) {
           Автор: {{ trip.author?.fullinfo?.fullname }} <br />
           Телефон:
           <a :href="'tel:' + trip.author?.fullinfo?.phone">{{
-        trip.author?.fullinfo?.phone
-      }}</a>
+            trip.author?.fullinfo?.phone
+            }}</a>
         </p>
         <p>
           <i> {{ trip.offer }}</i>
@@ -111,7 +111,10 @@ function getImg(index) {
           </a-col>
           <a-col :xs="24" :md="12" class="pa-8">
             <div v-if="trip.startLocation?.name">
-              Старт: <b>{{trip.startLocation.name}}</b>
+              Старт: <b>{{ trip.startLocation.name }}</b>
+            </div>
+            <div v-if="trip.tripRegion != ''">
+              Куда: <b> {{ trip.tripRegion }}</b>
             </div>
 
             <div>
@@ -139,28 +142,29 @@ function getImg(index) {
             </div>
           </a-col>
           <a-col :xs="24" v-if="trip?.places?.length">
-                        <div>
-                            <b>Мы посетим: </b>
-                            <div class="d-flex flex-wrap">
-                                <a-card v-for="place, index of trip.places" :key="index" class="pa-8 ml-8 mb-8 text " hoverable
-                                    @click="goToPlacePage(place._id)" style="cursor: pointer; border: #239FCC 1px solid;">
-                                    {{ place?.name }}
-                                </a-card>
-                            </div>
-                        </div>
-                    </a-col>
+            <div>
+              <b>Мы посетим: </b>
+              <div class="d-flex flex-wrap">
+                <a-card v-for="place, index of trip.places" :key="index" class="pa-8 ml-8 mb-8 text " hoverable
+                  @click="goToPlacePage(place._id)" style="cursor: pointer; border: #239FCC 1px solid;">
+                  {{ place?.name }}
+                </a-card>
+              </div>
+            </div>
+          </a-col>
           <a-col :xs="24">
             <span v-html="trip.description"></span>
           </a-col>
           <a-col :xs="24" v-if="trip.dayByDayDescription.length">
-                        <b>Программа по дням:</b>
-                        <a-collapse v-model:activeKey="activeKey">
-                            <a-collapse-panel v-for="day,index in trip.dayByDayDescription" :key="index" key="1" :header="`${ datePlugin.excursions.getNumeralDay(index) } день`">
-                                <span v-html="day"></span>
-                            </a-collapse-panel>
-                         
-                        </a-collapse>
-                    </a-col>
+            <b>Программа по дням:</b>
+            <a-collapse v-model:activeKey="activeKey">
+              <a-collapse-panel v-for="day, index in trip.dayByDayDescription" :key="index" key="1"
+                :header="`${datePlugin.excursions.getNumeralDay(index)} день`">
+                <span v-html="day"></span>
+              </a-collapse-panel>
+
+            </a-collapse>
+          </a-col>
 
           <a-divider class="ma-0"></a-divider>
           <a-col :xs="24" v-if="trip.includedInPrice" class="mb-16">
@@ -177,7 +181,7 @@ function getImg(index) {
             <b>Условия возврата:</b> {{ trip.returnConditions }}
           </a-col>
           <a-col :xs="24" v-if="trip.partner" class="mb-16">
-            <b>Это тур партнера:</b> {{ trip.partner}},  {{ trip.canSellPartnerTour?"с возможностью продажи": "без возможности продажи"  }}   на платформе
+            <b>Это тур партнера:</b> {{ trip.partner }}, {{ trip.canSellPartnerTour ? "с возможностью продажи" : "без возможности продажи" }} на платформе
           </a-col>
         </a-row>
       </a-col>

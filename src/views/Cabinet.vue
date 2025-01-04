@@ -11,6 +11,7 @@ const router = useRouter();
 
 let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
+let isCreator =  userStore.user.tinkoffContract||false
 
 // чтобы не сбрасывалось при обновлении
 let current = ref([router.currentRoute.value.path]);
@@ -68,21 +69,21 @@ onMounted(async () => {
               <span ref='tur' v-if=!sm>Туры</span>
               <span v-else class="mdi mdi-24px mdi-map-outline" style="color: #245159; "></span>
             </template>
-            <a-menu-item key="/cabinet/created-trips">Созданные</a-menu-item>
+            <a-menu-item v-if="isCreator" key="/cabinet/created-trips" >Созданные</a-menu-item>
             <a-menu-item key="/cabinet/bought-trips">Купленные</a-menu-item>
             <a-menu-item key="/cabinet/booking-trips">Заказанные</a-menu-item>
-            <a-menu-item key="/calc">Калькулятор</a-menu-item>
-            <a-menu-item key="/cabinet/find-buyer">Найти покупателя</a-menu-item>
+            <a-menu-item v-if="isCreator" key="/calc">Калькулятор</a-menu-item>
+            <a-menu-item v-if="isCreator" key="/cabinet/find-buyer">Найти покупателя</a-menu-item>
           </a-sub-menu>
-          <a-menu-item key="/cabinet/excursions">
+          <a-menu-item  key="/cabinet/excursions">
             <span v-if=!sm>Экскурсии</span>
             <span v-else class="mdi mdi-24px mdi-account-group" style="color: #245159;"></span>
           </a-menu-item>
-          <a-menu-item key="/cabinet/my-places">
+          <a-menu-item v-if="isCreator" key="/cabinet/my-places">
             <span v-if=!sm>Места</span>
             <span v-else class="mdi mdi-24px mdi-map-marker-outline" style="color: #245159;"></span>
           </a-menu-item>
-          <a-sub-menu key="sub4">
+          <a-sub-menu key="sub4" v-if="isCreator">
             <template #title>
               <span ref='crm' v-if=!sm>CRM</span>
               <span v-else class="mdi mdi-24px mdi-calendar-check-outline" style="color: #245159; "></span>

@@ -5,6 +5,7 @@ import { useAuth } from "../../stores/auth";
 let router = useRouter()
 const userStore = useAuth();
 const user = userStore.user;
+let isCreator =  userStore.user.tinkoffContract||false
 let info = userStore.user.fullinfo;
 </script>
 
@@ -53,13 +54,13 @@ let info = userStore.user.fullinfo;
     </div>
 
     <a-row :gutter="[5]">
-      <a-col>
+      <a-col v-if='isCreator'>
         <a-button class="btn_light ma-8" @click="router.push('/create-no-help')">
           Создать тур
         </a-button>
       </a-col>
 
-      <a-col>
+      <a-col v-if='isCreator'>
         <a-button class="btn_light ma-8" @click="router.push('/create-catalog-trip')">
           Создать тур в каталоге
         </a-button>

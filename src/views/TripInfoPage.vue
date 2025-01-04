@@ -520,6 +520,9 @@ onMounted(async () => {
                         <div v-if="getStartLocationNames !=''">
                             Старт: <b> {{ getStartLocationNames }}</b>
                         </div>
+                        <div v-if="trip.tripRegion !=''">
+                            Куда: <b> {{ trip.tripRegion }}</b>
+                        </div>
 
 
 
