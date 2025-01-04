@@ -184,7 +184,6 @@ onMounted(async () => {
         </template>
       </a-calendar>
     </a-config-provider>
-    {{ tasksAmount }}
     <a-row :gutter="[8, 8]">
       <a-col v-for="(task, index) in tasks" :span="24" :key="task._id">
         <TaskCard @refreshTasks="refreshTasks()" :task="task"> </TaskCard>
