@@ -48,7 +48,7 @@ onMounted(async () => {
                     {{ trip.name }}
                 </div>
                 <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
-                <div>
+                <div v-if="trip?.startLocation?.name">
                     <span class="mdi mdi-compass-outline"></span> {{ trip.startLocation.name }}
                 </div>
                 <div>

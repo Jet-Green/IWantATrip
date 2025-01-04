@@ -169,7 +169,7 @@ onMounted(async () => {
           placeholder="Глазов" @select="selectStartLocation" allowClear>
         </a-auto-complete>
         <div v-if="locationSearchRequest">
-          <a-slider v-model:value="placeStore.filter.locationRadius" :step="50" :min="50" :max="1000" tooltipPlacement="right"
+          <a-slider v-model:value="placeStore.filter.locationRadius" :step="50" :min="0" :max="1000" tooltipPlacement="right"
             :tipFormatter="(s) => s + ' км'" />
           <b>Радиус поиска {{ placeStore.filter.locationRadius }} км.</b>
         </div>

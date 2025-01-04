@@ -51,7 +51,7 @@ onMounted(async () => {
                 <a-card hoverable style="padding:10px 10px; border-radius: 10px; font-size:18px;">
                     <b>{{ t.name }}</b> <br />
                     <span class="mdi mdi-phone-in-talk"></span> {{ t.phone }}<br />
-                    {{ t.location.name }}
+                    {{ t?.location?.name }}
                     <div class="actions d-flex justify-center">
                         <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="deleteTaxi(t._id)">
                             <span class="mdi mdi-delete" style=" cursor: pointer"></span>

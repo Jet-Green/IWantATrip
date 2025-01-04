@@ -214,7 +214,7 @@ let formSchema = yup.object({
   fromAge: yup.string().required("заполните поле"),
   offer: yup.string().required("заполните поле"),
   tripRoute: yup.string().required("заполните поле"),
-  startLocation: yup.string().required("заполните поле"),
+  // startLocation: yup.string().required("заполните поле"),
   // https://vee-validate.logaretm.com/v4/examples/array-fields/
 });
 
@@ -222,7 +222,11 @@ onMounted(async () => {
   const tripId = route.query.id;
   let res = await TripStore.getFullCatalogById(tripId)
   form.value = res.data
-  locationSearchRequest.value = form.value.startLocation.name
+  if (form?.value?.startLocation?.name)
+  {locationSearchRequest.value = form.value.startLocation.name}
+  else{
+    locationSearchRequest.value = ""
+  }
 
 
 });

@@ -32,7 +32,7 @@ let filteredTrips = computed(() => {
             || trip.description.toLowerCase().includes(query.value.toLowerCase())
             || trip.tripRoute.toLowerCase().includes(query.value.toLowerCase())
             || trip.tripType.toLowerCase().includes(query.value.toLowerCase())
-            || trip.startLocation.name.toLowerCase().includes(query.value.toLowerCase())
+            || trip?.startLocation?.name.toLowerCase().includes(query.value.toLowerCase())
             || (trip.partner ? trip.partner.toLowerCase().includes(query.value.toLowerCase()) : false)
             || trip.offer.toLowerCase().includes(query.value.toLowerCase())
             || trip.userComment?.toLowerCase().includes(query.value.toLowerCase())

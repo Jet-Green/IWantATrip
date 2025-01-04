@@ -94,7 +94,7 @@ function getImg(index) {
             </a-carousel>
           </a-col>
           <a-col :xs="24" :md="12" class="pa-8">
-            <div>
+            <div v-if="catalogTrip?.startLocation?.name">
               Старт: <b>{{ catalogTrip.startLocation.name }}</b>
             </div>
 

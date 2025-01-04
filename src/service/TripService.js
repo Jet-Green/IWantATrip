@@ -7,8 +7,8 @@ export default {
     async getCustomers(ids) {
         return $api.post('/trips/get-customers', ids)
     },
-    async fetchTrips(cursor, lon, lat, query, start, end, type, tripRegion, locationRadius) {
-        return $api.get(`/trips/get-all?cursor=${cursor}&lon=${lon}&lat=${lat}&query=${query}&start=${start}&end=${end}&type=${type}&tripRegion=${tripRegion}&locationRadius=${locationRadius}`)
+    async fetchTrips(cursor, lon, lat, query, start, end, type, tripRegion, locationRadius, location) {
+        return $api.get(`/trips/get-all?cursor=${cursor}&lon=${lon}&lat=${lat}&query=${query}&start=${start}&end=${end}&type=${type}&tripRegion=${tripRegion}&locationRadius=${locationRadius}&location=${location}`)
     },
     async fetchCatalogTrips(cursor, lon, lat, query = '', type = '') {
         return $api.get(`/catalog/get-all-catalog?cursor=${cursor}&lon=${lon}&lat=${lat}&query=${query}&type=${type}&tripRegion=${""}&locationRadius=${""}`)

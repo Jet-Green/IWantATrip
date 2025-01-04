@@ -217,7 +217,7 @@ async function refreshDates() {
         trip.value.transports = _.sortBy(tripFromDb.transports, [function (o) { return o.capacity; }])
     }
 
-    selectedStartLocation.value = trip?.value.locationNames[0].name
+    selectedStartLocation.value = trip?.value?.locationNames ? trip?.value?.locationNames[0]?.name : null
     if (trip.value.start >= Date.now()) {
         tripDates.value.push({
             _id: trip.value._id,
@@ -257,20 +257,22 @@ const print = async () => {
 };
 
 let getStartLocationNames = computed(() => {
-
-    let starts = trip.value.includedLocations.coordinates
-
-    let results = []
-    for (let i = 0; i < starts.length; i++) {
-        for (let j = 0; j < locationStore.locations.length; j++) {
-
-            if (starts[i][0] == locationStore.locations[j].coordinates[0]) {
-
-                results.push(locationStore.locations[j].shortName)
+    if (trip.value.includedLocations){
+        let starts = trip.value.includedLocations.coordinates
+    
+        let results = []
+        for (let i = 0; i < starts.length; i++) {
+            for (let j = 0; j < locationStore.locations.length; j++) {
+    
+                if (starts[i][0] == locationStore.locations[j].coordinates[0]) {
+    
+                    results.push(locationStore.locations[j].shortName)
+                }
             }
         }
+        return results.join(', ')
     }
-    return results.join(', ')
+    else{ return "" }
 })
 
 let getSelectedUsersCount = computed(() => {
@@ -515,7 +517,7 @@ onMounted(async () => {
 
                         </div>
 
-                        <div>
+                        <div v-if="getStartLocationNames !=''">
                             Старт: <b> {{ getStartLocationNames }}</b>
                         </div>
 
@@ -641,7 +643,7 @@ onMounted(async () => {
                     <div id="printMe" style="display: none">
                         <h2 class="ma-0">{{ trip.name }}</h2>
                         <p><i> {{ trip.offer }}</i></p>
-                        <div>
+                        <div v-if="trip?.startLocation?.name">
                             Старт: <b>{{ trip.startLocation.name }}</b>
                         </div>
 
@@ -722,7 +724,7 @@ onMounted(async () => {
                     </a-col>
                 </a-row>
                 <a-row :gutter="[4, 8]">
-                    <a-col :span="24" v-if="trip.locationNames.length > 1">
+                    <a-col :span="24" v-if="trip?.locationNames?.length > 1">
                         <div class="d-flex direction-column">
                             Место посадки
                             <a-select placeholder="г.Глазов" v-model:value="selectedStartLocation">

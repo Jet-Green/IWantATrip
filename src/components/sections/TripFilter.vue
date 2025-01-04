@@ -29,7 +29,7 @@ let time = ref([])
 let query = ref("")
 let tripRegion = ref("")
 let type = ref("")
-let locationRadius = ref(100)
+let locationRadius = ref(0)
 // названия туров в диалоговом окне
 let foundTrips = ref([])
 
@@ -296,7 +296,7 @@ onMounted(() => {
               {{ locationStore.location.shortName }}
             </div>
             <div>
-              <a-slider v-model:value="locationRadius" :step="100" :min="100" :max="1800" tooltipPlacement="right"
+              <a-slider v-model:value="locationRadius" :step="100" :min="0" :max="1800" tooltipPlacement="right"
                 :tipFormatter="(s) => s + ' км'" />
               <b>Радиус поиска {{ locationRadius }} км.</b>
             </div>

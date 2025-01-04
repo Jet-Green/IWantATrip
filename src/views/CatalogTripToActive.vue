@@ -342,12 +342,19 @@ onMounted(async () => {
         form.tripRoute = d.tripRoute;
         form.offer = d.offer;
         form.author = d.author;
-
-        form.startLocation = d.startLocation;
-        form.includedLocations = d.includedLocations
-        form.locationNames = d.locationNames
+        if(form?.startLocation?.name){
+            form.startLocation = d.startLocation;
+            form.includedLocations = d.includedLocations
+            form.locationNames = d.locationNames
+            locationSearchRequest.value = d.startLocation.name;
+        }
+        else{
+            form.startLocation = null;
+            form.includedLocations = null
+            form.locationNames = null
+            locationSearchRequest.value = "";
+        }
         form.returnConditions = d.returnConditions
-        locationSearchRequest.value = d.startLocation.name;
     }
 });
 

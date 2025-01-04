@@ -367,7 +367,7 @@ onMounted(async () => {
             <div v-if="trip.partner">
                 <span class="mdi mdi-human-handsup"> </span>{{ trip.partner }}
             </div>
-            <div>
+            <div v-if="trip?.startLocation?.name">
                 <span class="mdi mdi-compass-outline"> </span>{{ trip.startLocation.name }}
             </div>
             <div>
@@ -393,10 +393,10 @@ onMounted(async () => {
                 </a-popconfirm>
                 <span v-if="!trip.parent && actions.includes('addDate')" class="mdi mdi-plus-circle-outline"
                     style="cursor: pointer" @click="addDateDialog = true"></span>
-                <a-popconfirm v-if="actions.includes('copy') && !trip.parent" title="Вы уверены?" ok-text="Да"
+                <!-- <a-popconfirm v-if="actions.includes('copy') && !trip.parent" title="Вы уверены?" ok-text="Да"
                     cancel-text="Нет" @confirm="copyTrip(trip._id)">
                     <span class="mdi mdi-content-copy" style="cursor: pointer"></span>
-                </a-popconfirm>
+                </a-popconfirm> -->
                 <span class="mdi mdi-information-outline"
                     @click="router.push({ path: '/cabinet/customers-trip', query: { _id: trip._id } })"
                     v-if="actions.includes('info')"></span>
