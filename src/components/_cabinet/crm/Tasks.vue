@@ -28,7 +28,7 @@ const router = useRouter()
 const userStore = useAuth()
 const taskStore = useTasks()
 
-let isCreator =  userStore.user.tinkoffContract||false
+let isCreator = userStore.user.tinkoffContract || false
 let showMoreButton = ref(true)
 let tasks = ref([])
 let tasksAmount = ref([])
@@ -86,9 +86,9 @@ async function getTasksAmount() {
   let query = {
     status: "open",
     $or: [
-    { author: userStore.user._id },
-    { managers: userStore.user._id }
-  ],
+      { author: userStore.user._id },
+      { managers: userStore.user._id }
+    ],
     'tripInfo.end': {
       $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000
     }
@@ -149,8 +149,8 @@ async function refreshTasks() {
 watch(search, (newSearch, oldSearch) => {
   if (newSearch.length > 2 || newSearch.length <= oldSearch.length) {
     localStorage.setItem("taskSearch", newSearch)
-    query.$or[0].name.$regex = newSearch
-    query.$or[1]['tripInfo.name'].$regex = newSearch
+    query.$and[1].$or[0].name.$regex = newSearch
+    query.$and[1].$or[1]['tripInfo.name'].$regex = newSearch
     refreshTasks()
   }
 })
@@ -171,8 +171,9 @@ onMounted(async () => {
 <template>
   <div>
     <div style="display: flex; justify-content: space-between; flex-wrap: wrap; align-items: center" class="pa-8">
-      <div >
-        <a-button v-if="isCreator" class="btn_light ma-8" @click="router.push('/create-task')"> создать задачу </a-button>
+      <div>
+        <a-button v-if="isCreator" class="btn_light ma-8" @click="router.push('/create-task')"> создать задачу
+        </a-button>
       </div>
 
       <div>
