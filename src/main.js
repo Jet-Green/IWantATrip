@@ -46,6 +46,5 @@ createApp(App)
     .use(MasonryWall)
     // .use(yandexMetrika, { id: 98607105 })
     .use(ConfigProvider)
-    .use(yandexMetrika, { id: 98607105 })
     .mount('#app')
 
