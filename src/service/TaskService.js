@@ -30,5 +30,8 @@ export default {
   },
   createInteraction(body) {
     return $api.post('/tasks/create-interaction', body)
+  },
+  deleteManager(body) {
+    return $api.post('/tasks/delete-manager', body)
   }
 }

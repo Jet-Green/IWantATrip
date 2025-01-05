@@ -35,19 +35,29 @@ async function taskToDelete(_id) {
 
 async function addNewInteraction() {
   // результат встречи с клиентом, тип встречи, статус задачи
-  newInteractionDialog.value = true;
+  newInteractionDialog.value = true
+}
+
+function addManager() {}
+async function managerToDelete(managerId) {
+  let response = await taskStore.deleteManager(managerId, props?.task?._id)
+  if (response.status == 200) {
+    emit("refreshTasks")
+  }
 }
 </script>
 <template>
   <a-card class="card" v-if="task._id">
-    <div style="
+    <div
+      style="
         width: 100%;
         text-align: center;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-      ">
+      "
+    >
       <div style="font-weight: 700; font-size: clamp(1.125rem, 0.9261rem + 0.5682vw, 1.375rem)">
         {{ task.name }}
       </div>
@@ -94,7 +104,7 @@ async function addNewInteraction() {
           <b> {{ task.payAmount }}₽ </b>
         </div>
 
-        <a-button size="small" style="text-transform: none !important;">
+        <a-button size="small" style="text-transform: none !important">
           оплата
           <template #icon>
             <span class="mdi mdi-cash-multiple mr-4"></span>
@@ -103,9 +113,35 @@ async function addNewInteraction() {
       </a-col>
     </a-row>
 
+    <a-row>
+      <a-col :span="24">
+        <a-collapse :bordered="false" ghost>
+          <a-collapse-panel key="0" header="Менеджеры">
+            <div class="managers">
+              <div class="manager-card add-manager" @click="addManager">
+                <span class="mdi mdi-plus"></span>
+              </div>
+              <div class="manager-card" v-for="manager of task.managers" :key="manager?._id">
+                <div class="info">
+                  {{ manager.fullname }} <br />
+                  <a :href="`mailto:${manager.email}`">{{ manager.email }}</a>
+                </div>
+                <div class="actions">
+                  <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="managerToDelete(manager._id)">
+                    <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+                  </a-popconfirm>
+                </div>
+              </div>
+            </div>
+          </a-collapse-panel>
+        </a-collapse>
+      </a-col>
+    </a-row>
+
     <a-row class="bordered" :gutter="[8, 8]">
       <a-col :span="24">
-        <a-button @click="addNewInteraction">Новая встреча
+        <a-button @click="addNewInteraction"
+          >Новая встреча
           <template #icon>
             <span class="mdi mdi-plus"></span>
           </template>
@@ -115,9 +151,7 @@ async function addNewInteraction() {
         <a-collapse :bordered="false" ghost>
           <a-collapse-panel key="0" header="История общения">
             <a-row>
-              <a-col v-if="task.interactions.length == 0">
-                Пусто
-              </a-col>
+              <a-col v-if="task.interactions.length == 0"> Пусто </a-col>
               <a-col v-else :span="24">
                 {{ task.interactions }}
               </a-col>
@@ -129,25 +163,28 @@ async function addNewInteraction() {
     <a-row>
       <a-col>
         <div>
-
           <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="taskToDelete(task._id)">
-            <span class="mdi mdi-delete" style="color: #ff6600;"></span>
+            <span class="mdi mdi-delete" style="color: #ff6600"></span>
           </a-popconfirm>
 
-
-          <a-popconfirm title="Редактировать?" ok-text="Да" cancel-text="Нет"
-            @confirm="router.push(`/create-task?_id=${task._id}`)">
+          <a-popconfirm
+            title="Редактировать?"
+            ok-text="Да"
+            cancel-text="Нет"
+            @confirm="router.push(`/create-task?_id=${task._id}`)"
+          >
             <span class="mdi mdi-pen"></span>
           </a-popconfirm>
-
         </div>
       </a-col>
     </a-row>
 
-
     <PartnerDialog :partner="task.partner" :props-dialog="viewPartnerDialog" @close="viewPartnerDialog = false" />
-    <NewInteractionDialog :taskId="task._id" :props-dialog="newInteractionDialog"
-      @close="newInteractionDialog = false" />
+    <NewInteractionDialog
+      :taskId="task._id"
+      :props-dialog="newInteractionDialog"
+      @close="newInteractionDialog = false"
+    />
   </a-card>
 </template>
 <style scoped lang="scss">
@@ -193,5 +230,30 @@ async function addNewInteraction() {
   flex-direction: column;
   justify-content: space-between;
   font-size: clamp(0.75rem, 0.4517rem + 0.8523vw, 1.125rem);
+}
+.managers {
+  width: 100%;
+  display: flex;
+}
+.manager-card {
+  border: 1px solid rgb(231, 231, 231);
+  border-radius: 10px;
+  margin: 5px;
+  padding: 5px;
+  display: flex;
+  .actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+  }
+}
+.add-manager {
+  font-size: 30px;
+  min-width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 </style>

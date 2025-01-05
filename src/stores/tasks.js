@@ -39,12 +39,12 @@ export const useTasks = defineStore('tasks', {
     },
     async getTasksAmount(query) {
       try {
-      
-          let response = await TaskService.getTasksAmount(
-           query
-          )
-          return response.data
-        
+
+        let response = await TaskService.getTasksAmount(
+          query
+        )
+        return response.data
+
       } catch (err) {
         console.log(err);
       }
@@ -98,6 +98,17 @@ export const useTasks = defineStore('tasks', {
         return await TaskService.createInteraction({ interaction, taskId })
       } catch (error) {
         console.log(error);
+      }
+    },
+    async deleteManager(managerId, taskId) {
+      try {
+        if (!managerId || !taskId) {
+          throw new Error('no manager or task')
+        }
+        return await TaskService.deleteManager({ managerId, taskId })
+      } catch (error) {
+        console.log(error);
+        
       }
     }
   }
