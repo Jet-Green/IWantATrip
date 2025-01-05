@@ -23,18 +23,20 @@ const partnerStore = usePartners()
 const tripsStore = useTrips()
 const tasksStore = useTasks()
 const router = useRouter()
+const route = useRoute()
 
 const emailExists = ref([])
 
-let trips = ref()
+let trips = ref([])
 let partners = ref()
+let taskId = ref()
 
-const form = reactive({
+let form = reactive({
   author: "",
   name: "",
   trip: "",
   partner: "",
-  deadLine: null,
+  deadLine: dayjs(),
   createdDate: null,
   timezoneOffset: null,
   payAmount: null,
@@ -78,6 +80,7 @@ function clearForm() {
 }
 
 function handleDateChange(value) {
+   console.log('Выбранная дата:', value)
   form.deadLine = value
 }
 let isChecking = false
@@ -180,14 +183,35 @@ let removeManager = (index) => {
 watch(managersEmails, () => checkManagers(), { deep: true })
 watch(
   () => form.trip,
-  (newTripId) => {    
+  (newTripId) => {
     for (let i = 0; i < trips.value.length; i++) {
       if (trips.value[i]._id == newTripId) {
-        tripInfo.value = trips.value[i]        
+        tripInfo.value = trips.value[i]
       }
     }
   }
 )
+onMounted(async () => {
+  taskId.value = route.query._id
+  if (taskId.value) {
+    let res = await tasksStore.getById(taskId.value)
+    let taskFromDB = res.data
+
+    if (res.status == 200) {
+
+
+      form.name = taskFromDB.name
+      form.trip = taskFromDB.tripInfo.name
+      form.partner = taskFromDB.partner.name
+      form.deadLine =dayjs(new Date(taskFromDB.deadLine))
+      form.comment = taskFromDB.comment,
+        managersEmails.value = taskFromDB.managers.map((manager) => {
+          return manager.email
+        })
+       
+    }
+  }
+})
 </script>
 <template>
   <div>
@@ -195,17 +219,14 @@ watch(
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="12">
         <h2>Создать задачу</h2>
+        <pre>{{ form.deadLine }}</pre>
         <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
           <a-row :gutter="[16, 16]">
             <a-col :span="24">
               <Field name="name" v-slot="{ value, handleChange }" v-model="form.name">
                 Наименование<sup>*</sup>
-                <a-input
-                  placeholder="Наименование задачи"
-                  @update:value="handleChange"
-                  :value="value"
-                  allow-clear
-                ></a-input>
+                <a-input placeholder="Наименование задачи" @update:value="handleChange" :value="value"
+                  allow-clear></a-input>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="name" class="error-message" />
@@ -214,51 +235,26 @@ watch(
             <a-col :span="24">
               <div>Тур</div>
 
-              <a-select
-                v-model:value="form.trip"
-                show-search
-                placeholder="поиск тура"
-                style="width: 100%"
-                :default-active-first-option="false"
-                :show-arrow="false"
-                :filter-option="false"
-                :fieldNames="{ label: 'name', value: '_id' }"
-                :not-found-content="null"
-                :options="trips"
-                @search="tripSearch"
-                @change="tripChange"
-              ></a-select>
+              <a-select v-model:value="form.trip" show-search placeholder="поиск тура" style="width: 100%"
+                :default-active-first-option="false" :show-arrow="false" :filter-option="false"
+                :fieldNames="{ label: 'name', value: '_id' }" :not-found-content="null" :options="trips"
+                @search="tripSearch" @change="tripChange"></a-select>
             </a-col>
             <a-col :span="24">
               <div>Партнер</div>
 
-              <a-select
-                v-model:value="form.partner"
-                show-search
-                placeholder="поиск партнера"
-                style="width: 100%"
-                :default-active-first-option="false"
-                :show-arrow="false"
-                :filter-option="false"
-                :fieldNames="{ label: 'name', value: '_id' }"
-                :not-found-content="null"
-                :options="partners"
-                @search="partnerSearch"
-                @change="partnerChange"
-              ></a-select>
+              <a-select v-model:value="form.partner" show-search placeholder="поиск партнера" style="width: 100%"
+                :default-active-first-option="false" :show-arrow="false" :filter-option="false"
+                :fieldNames="{ label: 'name', value: '_id' }" :not-found-content="null" :options="partners"
+                @search="partnerSearch" @change="partnerChange"></a-select>
             </a-col>
             <a-col :span="24">
               <Field name="start" v-slot="{ value, handleChange }" v-model="form.deadLine">
                 Крайний срок
-                <a-date-picker
-                  v-model="form.deadLine"
-                  :showTime="{ format: 'HH:mm', defaultValue: dayjs().hour(0).minute(0).second(0) }"
-                  style="width: 100%"
-                  placeholder="крайний срок"
-                  :locale="locale"
-                  :format="(value) => dayjs(value).format('DD.MM.YY HH:mm')"
-                  @change="handleDateChange"
-                />
+                <a-date-picker v-model="form.deadLine"
+                  :showTime="{ format: 'HH:mm', defaultValue: dayjs().hour(0).minute(0).second(0) }" style="width: 100%"
+                  placeholder="крайний срок" :locale="locale" :format="(value) => dayjs(value).format('DD.MM.YY HH:mm')"
+                  @change="handleDateChange" />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="start" class="error-message" />
@@ -267,13 +263,8 @@ watch(
             <a-col :span="24">
               <Field name="payAmount" v-slot="{ value, handleChange }" v-model="form.payAmount">
                 Стоимость
-                <a-input
-                  placeholder="5500"
-                  @update:value="handleChange"
-                  :value="value"
-                  allow-clear
-                  type="number"
-                ></a-input>
+                <a-input placeholder="5500" @update:value="handleChange" :value="value" allow-clear
+                  type="number"></a-input>
               </Field>
             </a-col>
             <a-col :span="24">
@@ -286,26 +277,15 @@ watch(
             <a-col :span="24">
               Менеджеры
 
-              <div
-                v-for="(item, index) in managersEmails"
-                :key="index"
-                style="display: flex"
-                align="center"
-                class="mb-16"
-              >
+              <div v-for="(item, index) in managersEmails" :key="index" style="display: flex" align="center"
+                class="mb-16">
                 <a-input v-model:value="managersEmails[index]" placeholder="manager@mail.ru" class="mr-8" />
 
-                <span
-                  v-if="emailExists[index]"
-                  class="mdi mdi-check"
-                  style="font-size: 24px; font-weight: bold; color: #219fcf"
-                ></span>
+                <span v-if="emailExists[index]" class="mdi mdi-check"
+                  style="font-size: 24px; font-weight: bold; color: #219fcf"></span>
 
-                <span
-                  v-else
-                  class="mdi mdi-not-equal-variant"
-                  style="font-size: 24px; font-weight: bold; color: #ff6600"
-                ></span>
+                <span v-else class="mdi mdi-not-equal-variant"
+                  style="font-size: 24px; font-weight: bold; color: #ff6600"></span>
 
                 <a-button @click="removeManager(index)" shape="circle" class="ml-4">
                   <span class="mdi mdi-minus" style="cursor: pointer"></span>
@@ -319,8 +299,7 @@ watch(
             </a-col>
 
             <a-col :span="24" class="d-flex justify-center">
-              <a-button class="lets_go_btn ma-36" type="primary" html-type="submit" :disabled="!meta.valid"
-                >Отправить
+              <a-button class="lets_go_btn ma-36" type="primary" html-type="submit" :disabled="!meta.valid">Отправить
               </a-button>
             </a-col>
           </a-row>
