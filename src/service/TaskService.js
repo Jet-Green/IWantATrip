@@ -41,5 +41,8 @@ export default {
   },
   changeStatus(body) {
     return $api.post('/tasks/change-status', body)
+  },
+  edit(body) {
+    return $api.post('/tasks/edit', body)
   }
 }
