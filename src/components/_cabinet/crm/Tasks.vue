@@ -37,7 +37,7 @@ let isCalendarVisible = ref(false)
 let search = ref("")
 let page = 1
 let query = {
-  status: "open",
+  // status: "open",
   $and: [
     {
       $or: [

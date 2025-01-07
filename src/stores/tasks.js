@@ -108,7 +108,7 @@ export const useTasks = defineStore('tasks', {
         return await TaskService.deleteManager({ managerId, taskId })
       } catch (error) {
         console.log(error);
-        
+
       }
     },
     async addPayment(payment, taskId) {
@@ -116,7 +116,18 @@ export const useTasks = defineStore('tasks', {
         return await TaskService.addPayment(payment, taskId)
       } catch (error) {
         console.log(error);
-        
+
+      }
+    },
+    async changeStatus(taskId, status) {
+      try {
+        if (!taskId || !status) {
+          throw new Error('no task or status')
+        }
+        return await TaskService.changeStatus({ taskId, status })
+      } catch (error) {
+        console.log(error);
+
       }
     }
   }

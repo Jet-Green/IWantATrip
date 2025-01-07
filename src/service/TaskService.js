@@ -38,5 +38,8 @@ export default {
     return $api.post('/tasks/add-payment', {
       payment, taskId
     })
+  },
+  changeStatus(body) {
+    return $api.post('/tasks/change-status', body)
   }
 }

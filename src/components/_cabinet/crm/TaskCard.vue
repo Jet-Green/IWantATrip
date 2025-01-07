@@ -39,13 +39,43 @@ async function taskToDelete(_id) {
   }
 }
 
-async function addNewInteraction() {
+function addNewInteraction() {
   // результат встречи с клиентом, тип встречи, статус задачи
   newInteractionDialog.value = true
+}
+let isStatusSetting = ref(false)
+async function closeTask() {
+  if (isStatusSetting.value) return
+  isStatusSetting.value = true
+  let res = await taskStore.changeStatus(task.value._id, "closed")
+  if (res.status == 200) {
+    isStatusSetting.value = false
+    emit('refreshTasks')
+  }
+}
+
+async function openTask() {
+  if (isStatusSetting.value) return
+  isStatusSetting.value = true
+  let res = await taskStore.changeStatus(task.value._id, "open")
+  if (res.status == 200) {
+    isStatusSetting.value = false
+    emit('refreshTasks')
+  }
 }
 </script>
 <template>
   <a-card class="card" v-if="task._id">
+    <div class="status">
+      <span
+        class="mdi mdi-checkbox-blank-outline open-status"
+        @click="closeTask"
+        v-if="task.status == 'open' && !isStatusSetting"
+      ></span>
+      <a-spin v-else-if="isStatusSetting" />
+      <span @click="openTask" class="mdi mdi-checkbox-marked closed-status" v-if="task.status == 'closed'"></span>
+    </div>
+
     <div
       style="
         width: 100%;
@@ -56,7 +86,7 @@ async function addNewInteraction() {
         align-items: center;
       "
     >
-      <div style="font-weight: 700; font-size: clamp(1.125rem, 0.9261rem + 0.5682vw, 1.375rem)">
+      <div style="font-weight: 700; font-size: clamp(1.125rem, 0.9261rem + 0.5682vw, 1.375rem)" :class="task.status == 'closed' ? 'green-text' : ''">
         {{ task.name }}
       </div>
       <router-link class="link" :to="`/trip?_id=${task.trip._id}`">
@@ -110,7 +140,7 @@ async function addNewInteraction() {
         </a-button>
       </a-col>
     </a-row>
-<!-- <a-row>
+    <!-- <a-row>
       <a-col :span="24">
         <a-collapse :bordered="false" ghost>
           <a-collapse-panel key="0" header="Менеджеры">
@@ -181,6 +211,7 @@ async function addNewInteraction() {
       :taskId="task._id"
       :props-dialog="newInteractionDialog"
       @close="newInteractionDialog = false"
+      @update="emit('refreshTasks')"
     />
     <AddPayment
       :props-dialog="addPaymentDialog"
@@ -259,5 +290,23 @@ async function addNewInteraction() {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+}
+.status {
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  .mdi {
+    font-size: 24px;
+    cursor: pointer;
+  }
+  .open-status {
+    color: #ff6600;
+  }
+  .closed-status {
+    color: green;
+  }
+}
+.green-text {
+  color: green;
 }
 </style>
