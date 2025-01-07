@@ -22,7 +22,7 @@ let newInteractionDialog = ref(false)
 let addPaymentDialog = ref(false)
 
 let deadline = datePlugin.excursions.getLocalDateFromUTC(task.value.deadLine, task.value.timezoneOffset)
-let date = datePlugin.excursions.getPrettyDate(deadline)
+let deadlineDate = datePlugin.excursions.getPrettyDate(deadline)
 
 const totalPaymentAmount = computed(() => {
   let res = 0
@@ -66,7 +66,7 @@ async function addNewInteraction() {
     <a-row :gutter="[24, 24]">
       <a-col class="info-item deadline">
         <div class="date">
-          {{ date.day + " " + date.month }}
+          {{ deadlineDate.day + " " + deadlineDate.month }}
         </div>
         <div class="time">к {{ deadline.hours + ":" + deadline.minutes }}</div>
       </a-col>
