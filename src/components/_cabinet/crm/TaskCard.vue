@@ -5,8 +5,8 @@ import AddPayment from "./dialogs/AddPayment.vue"
 
 import { toRefs, computed, ref, onMounted, reactive } from "vue"
 import { useRouter } from "vue-router"
-import datePlugin from "../../../plugins/dates"
 import { useTasks } from "../../../stores/tasks"
+import datePlugin from "../../../plugins/dates"
 
 let props = defineProps(["task"])
 let emit = defineEmits(["refreshTasks"])
@@ -31,6 +31,11 @@ const totalPaymentAmount = computed(() => {
   }
   return res
 })
+
+const currentOffset = new Date().getTimezoneOffset() * 60 * 1000
+function getFullDate(date) {
+  return datePlugin.getFullDate(date + currentOffset)
+}
 
 async function taskToDelete(_id) {
   let response = await taskStore.deletePlace(_id)
@@ -187,7 +192,15 @@ async function openTask() {
             <a-row>
               <a-col v-if="task.interactions.length == 0"> Пусто </a-col>
               <a-col v-else :span="24">
-                {{ task.interactions }}
+                <a-row>
+                  <a-col v-for="(inter, index) of task.interactions" :key="index" :span="24">
+                    <b>
+                      {{ getFullDate(inter.date) }} {{ inter.meetingType }}
+                    </b>
+                    <!-- вдруг подключим текстовый редактор -->
+                    <pre v-html="inter.result"></pre>
+                  </a-col>
+                </a-row>
               </a-col>
             </a-row>
           </a-collapse-panel>
