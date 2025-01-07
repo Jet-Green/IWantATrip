@@ -17,12 +17,20 @@ const taskStore = useTasks()
 // toRefs add reactivity
 let { task } = toRefs(props)
 
-let viewPartnerDialog = ref(false);
-let newInteractionDialog = ref(false);
-let addPaymentDialog = ref(false);
+let viewPartnerDialog = ref(false)
+let newInteractionDialog = ref(false)
+let addPaymentDialog = ref(false)
 
 let deadline = datePlugin.excursions.getLocalDateFromUTC(task.value.deadLine, task.value.timezoneOffset)
 let date = datePlugin.excursions.getPrettyDate(deadline)
+
+const totalPaymentAmount = computed(() => {
+  let res = 0
+  for (let payment of task.value.payments) {
+    res += Number(payment?.amount || 0)
+  }
+  return res
+})
 
 async function closePartnerDialog() {
   viewPartnerDialog.value = false
@@ -101,7 +109,7 @@ async function managerToDelete(managerId) {
       <a-col class="info-item payment" v-if="task.payAmount">
         <div class="amount">
           <b>
-            {{ task.payments }}
+            {{ totalPaymentAmount }}
           </b>
           из
           <b> {{ task.payAmount }}₽ </b>
@@ -188,7 +196,12 @@ async function managerToDelete(managerId) {
       :props-dialog="newInteractionDialog"
       @close="newInteractionDialog = false"
     />
-    <AddPayment :props-dialog="addPaymentDialog" :task-id="task._id" @close="addPaymentDialog = false" @update="emit('refreshTasks')" />
+    <AddPayment
+      :props-dialog="addPaymentDialog"
+      :task-id="task._id"
+      @close="addPaymentDialog = false"
+      @update="emit('refreshTasks')"
+    />
   </a-card>
 </template>
 <style scoped lang="scss">
