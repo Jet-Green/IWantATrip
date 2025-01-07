@@ -49,8 +49,10 @@ async function closeTask() {
   isStatusSetting.value = true
   let res = await taskStore.changeStatus(task.value._id, "closed")
   if (res.status == 200) {
-    isStatusSetting.value = false
-    emit('refreshTasks')
+    setTimeout(() => {
+      isStatusSetting.value = false
+      emit("refreshTasks")
+    }, 600)
   }
 }
 
@@ -59,8 +61,10 @@ async function openTask() {
   isStatusSetting.value = true
   let res = await taskStore.changeStatus(task.value._id, "open")
   if (res.status == 200) {
-    isStatusSetting.value = false
-    emit('refreshTasks')
+    setTimeout(() => {
+      isStatusSetting.value = false
+      emit("refreshTasks")
+    }, 600)
   }
 }
 </script>
@@ -73,7 +77,7 @@ async function openTask() {
         v-if="task.status == 'open' && !isStatusSetting"
       ></span>
       <a-spin v-else-if="isStatusSetting" />
-      <span @click="openTask" class="mdi mdi-checkbox-marked closed-status" v-if="task.status == 'closed'"></span>
+      <span @click="openTask" class="mdi mdi-checkbox-marked closed-status" v-if="task.status == 'closed' && !isStatusSetting"></span>
     </div>
 
     <div
@@ -86,7 +90,10 @@ async function openTask() {
         align-items: center;
       "
     >
-      <div style="font-weight: 700; font-size: clamp(1.125rem, 0.9261rem + 0.5682vw, 1.375rem)" :class="task.status == 'closed' ? 'green-text' : ''">
+      <div
+        style="font-weight: 700; font-size: clamp(1.125rem, 0.9261rem + 0.5682vw, 1.375rem)"
+        :class="task.status == 'closed' ? 'green-text' : ''"
+      >
         {{ task.name }}
       </div>
       <router-link class="link" :to="`/trip?_id=${task.trip._id}`">
@@ -295,9 +302,13 @@ async function openTask() {
   position: absolute;
   right: 10px;
   top: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   .mdi {
     font-size: 24px;
     cursor: pointer;
+    line-height: 1;
   }
   .open-status {
     color: #ff6600;
