@@ -19,9 +19,6 @@ dayjs.locale("ru")
 const locale = ruRU
 // для языка календаря
 
-import { date } from "yup"
-
-
 
 const router = useRouter()
 
@@ -33,30 +30,22 @@ let showMoreButton = ref(true)
 let tasks = ref([])
 let tasksAmount = ref([])
 let isCalendarVisible = ref(false)
+let selectedStatus = ref("all")
 
 let search = ref("")
 let page = 1
 let query = {
-  // status: "open",
   $and: [
     {
-      $or: [
-        { author: userStore.user._id },
-        { managers: userStore.user._id }
-      ]
+      $or: [{ author: userStore.user._id }, { managers: userStore.user._id }],
     },
     {
-      $or: [
-        { name: { $regex: "", $options: "i" } },
-        { 'tripInfo.name': { $regex: '', $options: 'i' } }
-      ]
-    }
+      $or: [{ name: { $regex: "", $options: "i" } }, { "tripInfo.name": { $regex: "", $options: "i" } }],
+    },
   ],
-  'tripInfo.end': {
-    $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000
+  "tripInfo.end": {
+    $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000,
   },
-
-
 }
 
 const CURRENT_OFFSET = new Date().getTimezoneOffset() * 60 * 1000
@@ -72,27 +61,25 @@ const events = computed(() => {
 })
 
 function getTasks(currentDate) {
-
   currentDate = dayjs(currentDate).startOf("day")
 
   return events.value.filter((event) => {
     return Date.parse(currentDate) == event.date
-
   })
 }
 async function getTasksAmount() {
   //добавить менеджера через $or
 
   let query = {
-    status: "open",
-    $or: [
-      { author: userStore.user._id },
-      { managers: userStore.user._id }
-    ],
-    'tripInfo.end': {
-      $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000
-    }
+    $or: [{ author: userStore.user._id }, { managers: userStore.user._id }],
+    "tripInfo.end": {
+      $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000,
+    },
+  }
 
+  query.status = selectedStatus.value
+  if (selectedStatus.value == "all") {
+    delete query.status
   }
   let res = await taskStore.getTasksAmount(query)
   tasksAmount.value = res
@@ -104,7 +91,7 @@ async function delDateSelect() {
 }
 
 async function onDateSelect(date) {
-  const clickedDate = dayjs(date).startOf("day"); // Преобразуем дату в объект dayjs с началом дня
+  const clickedDate = dayjs(date).startOf("day") // Преобразуем дату в объект dayjs с началом дня
 
   // Сравнение: если текущая дата совпадает с выбранной, сбрасываем
   activeDate.value && activeDate.value.isSame(clickedDate)
@@ -127,9 +114,14 @@ let moreTasks = async () => {
   }
   tasksLenght = res.length
 }
+
+
 async function refreshTasks() {
-
-
+  query.status = selectedStatus.value
+  if (selectedStatus.value == "all") {
+    delete query.status
+  }
+  
   if (activeDate.value) {
     const startOfDay = activeDate.value.startOf("day").valueOf()
     const endOfDay = activeDate.value.endOf("day").valueOf()
@@ -150,15 +142,24 @@ watch(search, (newSearch, oldSearch) => {
   if (newSearch.length > 2 || newSearch.length <= oldSearch.length) {
     localStorage.setItem("taskSearch", newSearch)
     query.$and[1].$or[0].name.$regex = newSearch
-    query.$and[1].$or[1]['tripInfo.name'].$regex = newSearch
+    query.$and[1].$or[1]["tripInfo.name"].$regex = newSearch
     refreshTasks()
   }
 })
 
-onMounted(async () => {
+watch(selectedStatus, async (newStatus) => {
+  if (newStatus == '') return;
+  await refreshTasks()  
+  localStorage.setItem('tasks.selectedStatus', selectedStatus.value)
+})
 
+onMounted(async () => {
   if (localStorage.getItem("taskSearch")) {
     search.value = localStorage.getItem("taskSearch")
+  }
+
+  if (localStorage.getItem("tasks.selectedStatus")) {
+    selectedStatus.value = localStorage.getItem("tasks.selectedStatus");    
   }
 
   await refreshTasks()
@@ -166,26 +167,40 @@ onMounted(async () => {
     showMoreButton.value = false
   }
   await getTasksAmount()
+
 })
 </script>
 <template>
   <div>
     <div style="display: flex; justify-content: space-between; flex-wrap: wrap; align-items: center" class="pa-8">
       <div>
-        <a-button v-if="isCreator" class="btn_light ma-8" @click="router.push('/create-task')"> создать задачу
+        <a-button v-if="isCreator" class="btn_light ma-8" @click="router.push('/create-task')">
+          создать задачу
         </a-button>
       </div>
 
       <div>
-        <span @click="isCalendarVisible = !isCalendarVisible" class="mdi mdi-calendar-range-outline"
-          style="font-size: 24px; margin-right: 8px; cursor: pointer"></span>
+        <a-radio-group v-model:value="selectedStatus">
+          <a-radio value="open">Новые</a-radio>
+          <a-radio value="closed">Выполнено</a-radio>
+          <a-radio value="all">Все</a-radio>
+        </a-radio-group>
+        <span
+          @click="isCalendarVisible = !isCalendarVisible"
+          class="mdi mdi-calendar-range-outline"
+          style="font-size: 24px; margin-right: 8px; cursor: pointer"
+        ></span>
         <a-input v-model:value="search" placeholder="поиск" style="width: 180px" allow-clear />
       </div>
     </div>
     <h3>
       {{ prettyDate ? `Задачи на ${prettyDate}` : "Все задачи" }}
-      <sup v-if="activeDate" @click="delDateSelect()" class="mdi mdi-close"
-        style="font-size: 16px; color: #fc4f06; cursor: pointer"></sup>
+      <sup
+        v-if="activeDate"
+        @click="delDateSelect()"
+        class="mdi mdi-close"
+        style="font-size: 16px; color: #fc4f06; cursor: pointer"
+      ></sup>
     </h3>
     <a-config-provider :locale="locale">
       <a-calendar :value="selectedDate" @select="onDateSelect" v-if="isCalendarVisible">
@@ -203,7 +218,8 @@ onMounted(async () => {
         <TaskCard @refreshTasks="refreshTasks()" :task="task"> </TaskCard>
       </a-col>
       <a-col :span="24" class="justify-center d-flex" @click="moreTasks()" v-if="showMoreButton">
-        <a-button>Ещё</a-button></a-col>
+        <a-button>Ещё</a-button></a-col
+      >
     </a-row>
   </div>
 </template>
