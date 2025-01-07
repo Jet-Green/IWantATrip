@@ -33,5 +33,10 @@ export default {
   },
   deleteManager(body) {
     return $api.post('/tasks/delete-manager', body)
+  },
+  addPayment(payment, taskId) {
+    return $api.post('/tasks/add-payment', {
+      payment, taskId
+    })
   }
 }

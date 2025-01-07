@@ -1,6 +1,7 @@
 <script setup>
 import PartnerDialog from "./dialogs/PartnerDialog.vue"
 import NewInteractionDialog from "./dialogs/NewInteractionDialog.vue"
+import AddPayment from "./dialogs/AddPayment.vue"
 
 import { toRefs, computed, ref, onMounted, reactive } from "vue"
 import { useRouter } from "vue-router"
@@ -16,8 +17,9 @@ const taskStore = useTasks()
 // toRefs add reactivity
 let { task } = toRefs(props)
 
-let viewPartnerDialog = ref(false)
-let newInteractionDialog = ref(false)
+let viewPartnerDialog = ref(false);
+let newInteractionDialog = ref(false);
+let addPaymentDialog = ref(false);
 
 let deadline = datePlugin.excursions.getLocalDateFromUTC(task.value.deadLine, task.value.timezoneOffset)
 let date = datePlugin.excursions.getPrettyDate(deadline)
@@ -39,6 +41,7 @@ async function addNewInteraction() {
 }
 
 function addManager() {}
+
 async function managerToDelete(managerId) {
   let response = await taskStore.deleteManager(managerId, props?.task?._id)
   if (response.status == 200) {
@@ -104,7 +107,7 @@ async function managerToDelete(managerId) {
           <b> {{ task.payAmount }}₽ </b>
         </div>
 
-        <a-button size="small" style="text-transform: none !important">
+        <a-button @click="addPaymentDialog = true" size="small" style="text-transform: none !important">
           оплата
           <template #icon>
             <span class="mdi mdi-cash-multiple mr-4"></span>
@@ -185,6 +188,7 @@ async function managerToDelete(managerId) {
       :props-dialog="newInteractionDialog"
       @close="newInteractionDialog = false"
     />
+    <AddPayment :props-dialog="addPaymentDialog" :task-id="task._id" @close="addPaymentDialog = false" @update="emit('refreshTasks')" />
   </a-card>
 </template>
 <style scoped lang="scss">

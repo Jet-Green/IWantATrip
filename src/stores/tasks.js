@@ -110,6 +110,14 @@ export const useTasks = defineStore('tasks', {
         console.log(error);
         
       }
+    },
+    async addPayment(payment, taskId) {
+      try {
+        return await TaskService.addPayment(payment, taskId)
+      } catch (error) {
+        console.log(error);
+        
+      }
     }
   }
 })
