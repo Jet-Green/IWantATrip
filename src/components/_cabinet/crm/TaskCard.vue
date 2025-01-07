@@ -32,10 +32,6 @@ const totalPaymentAmount = computed(() => {
   return res
 })
 
-async function closePartnerDialog() {
-  viewPartnerDialog.value = false
-}
-
 async function taskToDelete(_id) {
   let response = await taskStore.deletePlace(_id)
   if (response.status == 200) {
@@ -46,15 +42,6 @@ async function taskToDelete(_id) {
 async function addNewInteraction() {
   // результат встречи с клиентом, тип встречи, статус задачи
   newInteractionDialog.value = true
-}
-
-function addManager() {}
-
-async function managerToDelete(managerId) {
-  let response = await taskStore.deleteManager(managerId, props?.task?._id)
-  if (response.status == 200) {
-    emit("refreshTasks")
-  }
 }
 </script>
 <template>
@@ -123,8 +110,7 @@ async function managerToDelete(managerId) {
         </a-button>
       </a-col>
     </a-row>
-
-    <a-row>
+<!-- <a-row>
       <a-col :span="24">
         <a-collapse :bordered="false" ghost>
           <a-collapse-panel key="0" header="Менеджеры">
@@ -147,7 +133,7 @@ async function managerToDelete(managerId) {
           </a-collapse-panel>
         </a-collapse>
       </a-col>
-    </a-row>
+    </a-row> -->
 
     <a-row class="bordered" :gutter="[8, 8]">
       <a-col :span="24">
