@@ -199,6 +199,7 @@ async function managerToDelete(managerId) {
     <AddPayment
       :props-dialog="addPaymentDialog"
       :task-id="task._id"
+      :payments="task.payments"
       @close="addPaymentDialog = false"
       @update="emit('refreshTasks')"
     />

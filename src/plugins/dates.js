@@ -62,9 +62,9 @@ export default {
         },
         getLocalDateFromUTC(utcTimestamp, timezoneOffset) {
             const utcDate = new Date(utcTimestamp); // Корректируем таймстамп на локальное время
-            let localDateString = utcDate.toLocaleString() + ' UTC';            
+            let localDateString = utcDate.toLocaleString() + ' UTC';
             const localDate = new Date(localDateString)
-            
+
             return {
                 year: localDate.getFullYear(),
                 month: localDate.getMonth(),
@@ -74,5 +74,14 @@ export default {
             };
         }
 
+    },
+    // localDate in timestamp
+    getFullDate(localDate) {
+        return (new Date(localDate)).toLocaleDateString('ru-RU', {
+            month: "numeric",
+            day: 'numeric',
+            hour: "numeric",
+            minute: "numeric"
+        })
     }
 }
