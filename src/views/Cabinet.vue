@@ -56,7 +56,7 @@ onMounted(async () => {
     </a-row>
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16" class="mb-8">
-        <a-menu v-model:selectedKeys="current" mode="horizontal">
+        <a-menu v-model:selectedKeys="current" mode="horizontal" >
           <a-menu-item key="/cabinet/me">
             <span ref='cab' v-if=!sm>О пользователе</span>
             <span v-else class="mdi mdi-24px mdi-account-outline" style="color: #245159; "></span>
