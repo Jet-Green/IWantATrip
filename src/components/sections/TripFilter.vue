@@ -47,7 +47,7 @@ let suggestedRegions = computed(() => {
 let buttonTitle = computed(() => {
   if (
     !tripRegion.value &&
-    (!locationStore.location?._id || locationRadius.value == 100) &&
+    (!locationStore.location?._id) &&
     !type.value &&
     time.value?.length == 0
   ) {
@@ -177,13 +177,13 @@ function resetForm() {
   tripStore.tripFilter.end = ""
   tripStore.tripFilter.type = ""
   tripStore.tripFilter.tripRegion = ""
-  tripStore.tripFilter.locationRadius = 100
+  tripStore.tripFilter.locationRadius = 0
 
   type.value = ""
   time.value = []
   query.value = ""
   tripRegion.value = ""
-  locationRadius.value = 100
+  locationRadius.value = 0
 
   localStorage.setItem("TripTimeStart", "")
   localStorage.setItem("TripTimeEnd", "")
@@ -195,9 +195,9 @@ function resetForm() {
 }
 
 watch(locationRadius, (newRadius) => {
-  if (newRadius > 100) {
+
     localStorage.setItem("LocationRadius", newRadius)
-  }
+
 })
 
 watch(tripRegion, async (newRegion) => {
@@ -272,7 +272,7 @@ onMounted(() => {
 
             <!-- Если будет что-то в фильтре показывать  -->
             <a-button type="primary" shape="circle" class="ml-8" @click="resetForm"
-              v-if="tripRegion || Number(locationRadius) > 100 || type.length > 0 || time?.length > 0">
+              v-if="tripRegion || Number(locationRadius) || type.length > 0 || time?.length > 0">
               <span class="mdi mdi-close"></span>
             </a-button>
           </div>

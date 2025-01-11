@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, watch, computed, reactive } from "vue";
 
 import { useAppState } from "../../stores/appState";
 import { usePlaces } from "../../stores/place";
@@ -12,7 +12,7 @@ const emit = defineEmits(['refreshPlaces'])
 
 
 let isFilterShow = ref(false);
-
+let placeCategory = reactive([])  
 // dadata
 let possibleLocations = ref([])
 let locationSearchRequest = ref("")
@@ -48,7 +48,7 @@ function resetForm() {
 }
 
 
-let placeCategory = appStore.appState[0]?.placeCategory.sort().map((name) => { return { value: name } }) ?? []
+ 
 let filterString = computed(() => {
   let keyString = ''
 
@@ -129,6 +129,7 @@ watch(locationSearchRequest, async (newValue, oldValue) => {
 
 onMounted(async () => {
   await appStore.refreshState();
+  placeCategory = appStore.appState[0]?.placeCategory.sort().map((name) => { return { value: name } }) ?? []
 
 });
 </script>
