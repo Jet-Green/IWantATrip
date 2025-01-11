@@ -34,8 +34,8 @@ let taskId = ref()
 let form = reactive({
   author: "",
   name: "",
-  trip: "",
-  partner: "",
+  trip: null,
+  partner: null,
   deadLine: dayjs(),
   createdDate: null,
   timezoneOffset: null,
@@ -65,8 +65,8 @@ function clearForm() {
   Object.assign(form, {
     author: "",
     name: "",
-    trip: "",
-    partner: "",
+    trip: null,
+    partner: null,
     deadLine: null,
     createdDate: null,
     timezoneOffset: null,
@@ -107,12 +107,12 @@ async function submit() {
   toSend.status = "open"
   toSend.timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000
   toSend.tripInfo = tripInfo.value
-  // to utc
-  toSend.createdDate = Date.now() + toSend.timezoneOffset
+  
+  toSend.createdDate = Date.now() 
 
   if (toSend.deadLine) {
-    // to utc
-    toSend.deadLine = new Date(toSend.deadLine).getTime() + toSend.timezoneOffset
+
+    toSend.deadLine = new Date(toSend.deadLine).getTime() 
   }
 
   // edit or create???
@@ -215,7 +215,7 @@ onMounted(async () => {
       form.name = taskFromDB.name
       form.trip = taskFromDB.tripInfo.name
       form.partner = taskFromDB.partner.name
-      form.deadLine = dayjs(new Date(taskFromDB.deadLine))
+      form.deadLine = dayjs(new Date(taskFromDB.deadLine + new Date().getTimezoneOffset()))
       form.comment = taskFromDB.comment
       form.payAmount = taskFromDB.payAmount
 
@@ -266,6 +266,7 @@ onMounted(async () => {
                 :options="trips"
                 @search="tripSearch"
                 @change="tripChange"
+                allow-clear
               ></a-select>
             </a-col>
             <a-col :span="24">
@@ -285,6 +286,7 @@ onMounted(async () => {
                 :options="partners"
                 @search="partnerSearch"
                 @change="partnerChange"
+                allow-clear
               ></a-select>
             </a-col>
             <a-col :span="24">

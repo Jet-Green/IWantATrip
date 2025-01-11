@@ -2,10 +2,12 @@
 import PartnerDialog from "./dialogs/PartnerDialog.vue"
 import NewInteractionDialog from "./dialogs/NewInteractionDialog.vue"
 import AddPayment from "./dialogs/AddPayment.vue"
+import dayjs from 'dayjs';
 
 import { toRefs, computed, ref, onMounted, reactive } from "vue"
 import { useRouter } from "vue-router"
 import { useTasks } from "../../../stores/tasks"
+import { useAuth } from "../../../stores/auth"
 import datePlugin from "../../../plugins/dates"
 
 let props = defineProps(["task"])
@@ -13,16 +15,20 @@ let emit = defineEmits(["refreshTasks"])
 
 const router = useRouter()
 const taskStore = useTasks()
+const userStore = useAuth()
 
 // toRefs add reactivity
 let { task } = toRefs(props)
 
+let isCreator =  userStore.user.tinkoffContract||false
 let viewPartnerDialog = ref(false)
 let newInteractionDialog = ref(false)
 let addPaymentDialog = ref(false)
+let showInteraction = ref(false)
+let showPayments = ref(false)
 
-let deadline = datePlugin.excursions.getLocalDateFromUTC(task.value.deadLine, task.value.timezoneOffset)
-let deadlineDate = datePlugin.excursions.getPrettyDate(deadline)
+let taskDate = dayjs(task.value.deadLine + new Date().getTimezoneOffset()).format('DD.MM.YYYY')
+let taskTime = dayjs(task.value.deadLine + new Date().getTimezoneOffset()).format('HH:mm')
 
 const totalPaymentAmount = computed(() => {
   let res = 0
@@ -74,189 +80,145 @@ async function openTask() {
 }
 </script>
 <template>
-  <a-card class="card" v-if="task._id">
+  <a-card class="pa-8 pb-32" v-if="task._id">
     <div class="status">
-      <span
-        class="mdi mdi-checkbox-blank-outline open-status"
-        @click="closeTask"
-        v-if="task.status == 'open' && !isStatusSetting"
-      ></span>
+      <span class="mdi mdi-checkbox-blank-outline open-status" @click="closeTask"
+        v-if="task.status == 'open' && !isStatusSetting"></span>
       <a-spin v-else-if="isStatusSetting" />
-      <span @click="openTask" class="mdi mdi-checkbox-marked closed-status" v-if="task.status == 'closed' && !isStatusSetting"></span>
+      <span @click="openTask" class="mdi mdi-checkbox-marked closed-status"
+        v-if="task.status == 'closed' && !isStatusSetting"></span>
     </div>
 
-    <div
-      style="
-        width: 100%;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-      "
-    >
-      <div
-        style="font-weight: 700; font-size: clamp(1.125rem, 0.9261rem + 0.5682vw, 1.375rem)"
-        :class="task.status == 'closed' ? 'green-text' : ''"
-      >
-        {{ task.name }}
-      </div>
-      <router-link class="link" :to="`/trip?_id=${task.trip._id}`">
-        {{ task.trip.name }}
-      </router-link>
+
+    <div style="font-weight: 600; font-size:18px">{{ taskDate }} до {{ taskTime }} </div>
+    <div class="task-name pa-4 ma-4" @click="router.push(`/create-task?_id=${task._id}`)">
+      {{ task.name }}
+      <!-- <span @click="router.push(`/create-task?_id=${task._id}`)" class="mdi mdi-pen"></span> -->
     </div>
-    <a-row :gutter="[24, 24]">
-      <a-col class="info-item deadline">
-        <div class="date">
-          {{ deadlineDate.day + " " + deadlineDate.month }}
+    <div v-if="task.trip" style="font-weight: 500;" class="pa-4 ma-4"> {{ task.trip.name }} от {{ dayjs(task.trip.start +
+      task.trip.timezoneOffset).format('DD.MM.YYYY') }}
+    </div>
+    <a-card v-if="task.partner?._id" class="pa-4 ma-4">
+      <div class="d-flex flex-wrap" style="gap: 5px 20px;">
+        <div style="cursor: pointer;" @click="viewPartnerDialog = true">
+
+          {{ task.partner.category }}: {{ task.partner.name }}
+
         </div>
-        <div class="time">к {{ deadline.hours + ":" + deadline.minutes }}</div>
-      </a-col>
-
-      <a-col class="info-item partner" v-if="task.partner?._id">
-        <div class="d-flex align-center">
-          <span class="link" @click="viewPartnerDialog = true">
-            {{ task.partner.name }}<span class="mdi mdi-open-in-new"></span>
-          </span>
-        </div>
-
-        <div class="actions">
-          <a-button shape="circle" size="large" :href="`tel:${task.partner?.phone}`">
-            <template #icon>
-              <span class="mdi mdi-phone-outline"></span>
-            </template>
-          </a-button>
-
-          <a-button shape="circle" size="large" class="ml-16" :href="`mailto:${task.partner?.email}`">
-            <template #icon>
-              <span class="mdi mdi-email-outline"></span>
-            </template>
-          </a-button>
-        </div>
-      </a-col>
-
-      <a-col class="info-item payment" v-if="task.payAmount">
-        <div class="amount">
-          <b>
-            {{ totalPaymentAmount }}
-          </b>
-          из
-          <b> {{ task.payAmount }}₽ </b>
-        </div>
-
-        <a-button @click="addPaymentDialog = true" size="small" style="text-transform: none !important">
-          оплата
-          <template #icon>
-            <span class="mdi mdi-cash-multiple mr-4"></span>
-          </template>
-        </a-button>
-      </a-col>
-    </a-row>
-    <!-- <a-row>
-      <a-col :span="24">
-        <a-collapse :bordered="false" ghost>
-          <a-collapse-panel key="0" header="Менеджеры">
-            <div class="managers">
-              <div class="manager-card add-manager" @click="addManager">
-                <span class="mdi mdi-plus"></span>
-              </div>
-              <div class="manager-card" v-for="manager of task.managers" :key="manager?._id">
-                <div class="info">
-                  {{ manager.fullname }} <br />
-                  <a :href="`mailto:${manager.email}`">{{ manager.email }}</a>
-                </div>
-                <div class="actions">
-                  <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="managerToDelete(manager._id)">
-                    <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
-                  </a-popconfirm>
-                </div>
-              </div>
-            </div>
-          </a-collapse-panel>
-        </a-collapse>
-      </a-col>
-    </a-row> -->
-
-    <a-row class="bordered" :gutter="[8, 8]">
-      <a-col :span="24">
-        <a-button @click="addNewInteraction"
-          >Новая встреча
-          <template #icon>
-            <span class="mdi mdi-plus"></span>
-          </template>
-        </a-button>
-      </a-col>
-      <a-col :span="24">
-        <a-collapse :bordered="false" ghost>
-          <a-collapse-panel key="0" header="История общения">
-            <a-row>
-              <a-col v-if="task.interactions.length == 0"> Пусто </a-col>
-              <a-col v-else :span="24">
-                <a-row>
-                  <a-col v-for="(inter, index) of task.interactions" :key="index" :span="24">
-                    <b>
-                      {{ getFullDate(inter.date) }} {{ inter.meetingType }}
-                    </b>
-                    <!-- вдруг подключим текстовый редактор -->
-                    <pre v-html="inter.result"></pre>
-                  </a-col>
-                </a-row>
-              </a-col>
-            </a-row>
-          </a-collapse-panel>
-        </a-collapse>
-      </a-col>
-    </a-row>
-    <a-row>
-      <a-col>
         <div>
-          <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="taskToDelete(task._id)">
-            <span class="mdi mdi-delete" style="color: #ff6600"></span>
-          </a-popconfirm>
-
-          <a-popconfirm
-            title="Редактировать?"
-            ok-text="Да"
-            cancel-text="Нет"
-            @confirm="router.push(`/create-task?_id=${task._id}`)"
-          >
-            <span class="mdi mdi-pen"></span>
-          </a-popconfirm>
+          <a :href="`tel:${task.partner?.phone}`">
+            тел: <b>{{ task.partner?.phone }}</b>
+          </a>
         </div>
-      </a-col>
-    </a-row>
+        <div>
+
+        </div>
+        <div>
+          <a :href="`mailto:${task.partner?.email}`">
+            почта: <b>{{ task.partner?.email }}</b>
+          </a>
+        </div>
+        <div>
+
+          контакт: {{ task.partner?.contactPerson }}
+        </div>
+      </div>
+    </a-card>
+    <div class="d-flex space-around flex-wrap mb-4" >
+      <div>
+        <a-button @click="showInteraction = !showInteraction">
+          Действия
+        </a-button>
+        <a-button @click="addNewInteraction">
+          <span class="mdi mdi-plus"></span>
+        </a-button>
+      </div>
+      <div style="min-width: 200px;" >
+        <a-button @click="showPayments = !showPayments" v-if="task.payAmount">
+          <div v-if="task.payAmount">
+
+            {{ totalPaymentAmount }}/
+            {{ task.payAmount }} ₽
+          </div>
+        </a-button>
+        <a-button @click="addPaymentDialog = true" v-if="task.payAmount">
+          <span class="mdi mdi-plus"></span>
+        </a-button>
+      </div>
+    </div>
+
+
+    <div>
+
+      <a-row :gutter="[8, 8]">
+        <a-col :span="24" :md="12" v-if="showInteraction">
+          <a-card style="height: 100%; padding:8px">
+            <h3>Действия</h3>
+            <div v-if="task?.interactions.length == 0"> Пусто </div>
+            <div v-else :span="24">
+              <div v-for="(inter, index) of task.interactions" :key="index" style="gap: 10px;">
+                <div>
+
+                  <div>
+                    {{ dayjs(inter.date + new Date().getTimezoneOffset()).format('DD.MM.YYYY HH.mm') }} - {{
+                      inter.meetingType }}
+                  </div>
+
+
+
+                  <div>{{ inter.result }}
+                  </div>
+
+
+                </div>
+                <a-divider style="margin:4px"></a-divider>
+              </div>
+
+            </div>
+          </a-card>
+
+        </a-col>
+        <a-col v-if="showPayments" :span="24" :md="showInteraction?{ span: 12}:{span:12, offset: 12 }" >
+          <a-card style="height: 100%; padding:8px">
+            <h3>Оплаты</h3>
+            <div v-for="(payment, index) of task.payments" :key="index">
+              {{ dayjs(payment.date + new Date().getTimezoneOffset()).format('DD.MM.YYYY') }} <b>{{ payment.amount }}
+                руб.</b> - {{ payment.document }}
+              <a-divider style="margin:4px"></a-divider>
+            </div>
+
+          </a-card>
+
+        </a-col>
+      </a-row>
+
+
+
+    </div>
+
+    <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="taskToDelete(task._id)" v-if="isCreator">
+      <span class="mdi mdi-delete"
+        style="color:#ff6600; font-size: 24px; position: absolute;   right: 5px;  bottom: 0px;"></span>
+    </a-popconfirm>
+
+
+
 
     <PartnerDialog :partner="task.partner" :props-dialog="viewPartnerDialog" @close="viewPartnerDialog = false" />
-    <NewInteractionDialog
-      :taskId="task._id"
-      :props-dialog="newInteractionDialog"
-      @close="newInteractionDialog = false"
-      @update="emit('refreshTasks')"
-    />
-    <AddPayment
-      :props-dialog="addPaymentDialog"
-      :task-id="task._id"
-      :payments="task.payments"
-      @close="addPaymentDialog = false"
-      @update="emit('refreshTasks')"
-    />
+    <NewInteractionDialog :taskId="task._id" :props-dialog="newInteractionDialog" @close="newInteractionDialog = false"
+      @update="emit('refreshTasks')" />
+    <AddPayment :props-dialog="addPaymentDialog" :taskId="task._id" :payments="task.payments" :payAmount="task.payAmount"
+      @close="addPaymentDialog = false" @update="emit('refreshTasks')" />
   </a-card>
 </template>
 <style scoped lang="scss">
-.info-item {
-  border: 1px solid rgb(231, 231, 231);
-  border-radius: 10px;
-  margin: 10px;
-  padding: 10px;
-}
-
 .deadline {
   line-height: 1.1;
   font-weight: 600;
 
   display: flex;
   flex-direction: column;
-  font-size: clamp(1.125rem, 0.9261rem + 0.5682vw, 1.375rem);
+  // font-size: clamp(1.125rem, 0.9261rem + 0.5682vw, 1.375rem);
 }
 
 .partner {
@@ -265,19 +227,7 @@ async function openTask() {
 
   font-size: clamp(1.125rem, 0.9261rem + 0.5682vw, 1.375rem);
 
-  .link {
-    text-decoration: underline;
-    font-size: clamp(0.75rem, 0.4517rem + 0.8523vw, 1.125rem);
-    font-weight: 400;
-    cursor: pointer;
-  }
 
-  .actions {
-    margin-left: 18px;
-    height: 100%;
-    display: flex;
-    align-items: center;
-  }
 }
 
 .payment {
@@ -286,16 +236,19 @@ async function openTask() {
   justify-content: space-between;
   font-size: clamp(0.75rem, 0.4517rem + 0.8523vw, 1.125rem);
 }
+
 .managers {
   width: 100%;
   display: flex;
 }
+
 .manager-card {
   border: 1px solid rgb(231, 231, 231);
   border-radius: 10px;
   margin: 5px;
   padding: 5px;
   display: flex;
+
   .actions {
     display: flex;
     align-items: center;
@@ -303,34 +256,31 @@ async function openTask() {
     margin-left: 10px;
   }
 }
-.add-manager {
-  font-size: 30px;
-  min-width: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
+
 .status {
   position: absolute;
-  right: 10px;
+  right: 5px;
   top: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+
+
   .mdi {
     font-size: 24px;
     cursor: pointer;
     line-height: 1;
   }
+
   .open-status {
     color: #ff6600;
   }
+
   .closed-status {
-    color: green;
+    color: #AEBC58;
   }
 }
-.green-text {
-  color: green;
+
+.task-name {
+  background: rgb(237, 237, 237);
+  font-size: 16px;
+  cursor: pointer;
 }
 </style>

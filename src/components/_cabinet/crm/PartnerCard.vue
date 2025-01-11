@@ -27,8 +27,8 @@ async function hidePlace(_id) {
 }
 </script>
 <template>
-  <a-card class="card" v-if="partner._id">
-    <div style="width: 100%; height: 100%; text-align: center; font-weight: 700">
+  <!-- <a-card class="card" v-if="partner._id"> -->
+    <div style="width: 100%;  text-align: center; font-weight: 700">
       {{ partner.name }}
     </div>
     <div v-if="partner?.category" style="text-align: center">
@@ -43,7 +43,7 @@ async function hidePlace(_id) {
     <div v-if="partner?.contactPerson">Контакт: {{ partner?.contactPerson }}</div>
     <div v-if="partner?.location.name">Адрес: {{ partner?.location.name }}</div>
 
-    <a-divider class="ma-4" style="border-color: #205f79"></a-divider>
+    <a-divider class="mt-4 mb-4" style="border-color: #205f79"></a-divider>
     <div class="actions">
       <div>
         <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="partnerToDelete(partner._id)">
@@ -60,7 +60,7 @@ async function hidePlace(_id) {
         </a-popconfirm>
       </div>
     </div>
-  </a-card>
+  <!-- </a-card> -->
 </template>
 <style scoped lang="scss">
 .actions {

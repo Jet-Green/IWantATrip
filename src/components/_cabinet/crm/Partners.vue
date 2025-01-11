@@ -80,12 +80,15 @@ onMounted(async () => {
     </div>
     <a-row :gutter="[8, 8]">
       <a-col v-for="partner in partners" :span="24" :sm="12" :lg="8">
+        <a-card class="pa-8">
+          <PartnerCard @refreshPartners="refreshPartners()" :partner="partner">
+          </PartnerCard>
+        </a-card>
 
-        <PartnerCard @refreshPartners="refreshPartners()" :partner="partner">
-        </PartnerCard>
 
       </a-col>
-      <a-col :span="24"  class="justify-center d-flex" @click="morePartners()" v-if="showMoreButton"> <a-button>Ещё</a-button></a-col>
+      <a-col :span="24" class="justify-center d-flex" @click="morePartners()" v-if="showMoreButton">
+        <a-button>Ещё</a-button></a-col>
     </a-row>
   </div>
 </template>

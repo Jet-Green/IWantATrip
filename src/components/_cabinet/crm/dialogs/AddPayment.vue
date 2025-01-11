@@ -1,7 +1,6 @@
 <script setup>
-import { ref, watch, toRefs } from "vue"
+import { ref, watch, toRefs, computed } from "vue"
 import { message } from "ant-design-vue"
-import datePlugin from "../../../../plugins/dates"
 
 import { useTasks } from "../../../../stores/tasks"
 
@@ -12,13 +11,21 @@ let props = defineProps({
   taskId: String,
   propsDialog: Boolean,
   payments: Array,
+  payAmount: Number
 })
 let emit = defineEmits(["close", "update"])
 
 let dialog = ref(false)
 
-let { propsDialog, taskId } = toRefs(props)
+let { propsDialog, taskId, payAmount  } = toRefs(props)
 
+const totalPaymentAmount = computed(() => {
+  let res = 0
+  for (let payment of props.payments) {
+    res += Number(payment?.amount || 0)
+  }
+  return res
+})
 watch(propsDialog, (newDialog) => {
   dialog.value = newDialog
 })
@@ -28,16 +35,24 @@ let payment = ref({
   amount: 0,
   document: "",
 })
-const currentOffset = new Date().getTimezoneOffset() * 60 * 1000
-function getDate(date) {
-  return datePlugin.getFullDate(date + currentOffset)
-}
+
 async function submit() {
-  const timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000
+
+  if((totalPaymentAmount.value + payment.value.amount)> payAmount.value) {
+    message.config({ duration: 2, top: "70vh" })
+    message.success({
+      content: "Оплата больше необходимой!",
+      onClose: () => {
+        emit("close")
+      },
+    })
+    return
+  }
+
 
   let toSend = {
     ...payment.value,
-    date: Date.now() + timezoneOffset,
+    date: Date.now(),
   }
 
   let res = await tasksStore.addPayment(toSend, taskId.value)
@@ -60,37 +75,12 @@ async function submit() {
       <span class="mdi mdi-plus"></span>
       Добавить оплату
     </template>
-
-    <a-row>
-      <a-col :span="24">
-        <a-collapse :bordered="false" ghost>
-          <a-collapse-panel key="0" header="Документы">
-            <a-row :gutter="[8, 8]">
-              <a-col v-for="(payment, index) of payments" :span="24">
-                <a-row :gutter="[8, 8]">
-                  <a-col>
-                    {{ getDate(payment.date) }}
-                  </a-col>
-                  <a-col v-if="payment.document">
-                    <span class="mdi mdi-file-document-outline"></span>
-                    {{ payment.document }}
-                  </a-col>
-                  <a-col v-if="payment.amount">
-                    <span class="mdi mdi-cash-multiple"></span>
-                      {{ payment.amount }}₽
-                  </a-col>
-                </a-row>
-              </a-col>
-            </a-row>
-          </a-collapse-panel>
-        </a-collapse>
-      </a-col>
-    </a-row>
-
+    {{ payAmount }} - {{ totalPaymentAmount }} осталось {{payAmount - totalPaymentAmount   }} руб
     <a-row :gutter="[16, 16]">
       <a-col :span="24">
         Сумма
-        <a-input-number style="width: 100%" v-model:value="payment.amount"></a-input-number>
+        <a-input-number style="width: 100%" v-model:value="payment.amount"
+          ></a-input-number>
       </a-col>
 
       <a-col :span="24">

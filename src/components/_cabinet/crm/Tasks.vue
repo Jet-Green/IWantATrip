@@ -43,9 +43,23 @@ let query = {
       $or: [{ name: { $regex: "", $options: "i" } }, { "tripInfo.name": { $regex: "", $options: "i" } }],
     },
   ],
-  "tripInfo.end": {
-    $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000,
-  },
+  $or: [
+    {
+      "tripInfo.end": {
+        $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000,
+      }
+    },
+    {
+      $and: [
+        { trip: null },
+        {
+          deadLine: {
+            $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000 - 7 * 24 * 60 * 60 * 1000, // minus 7 days 
+          }
+        }
+      ]
+    },
+  ]
 }
 
 const CURRENT_OFFSET = new Date().getTimezoneOffset() * 60 * 1000
@@ -68,13 +82,33 @@ function getTasks(currentDate) {
   })
 }
 async function getTasksAmount() {
-  //добавить менеджера через $or
+
 
   let query = {
-    $or: [{ author: userStore.user._id }, { managers: userStore.user._id }],
-    "tripInfo.end": {
-      $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000,
-    },
+    $and: [
+      { $or: [{ author: userStore.user._id }, { managers: userStore.user._id }], },
+      {
+        $or: [
+          {
+            "tripInfo.end": {
+              $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000,
+            }
+          },
+          {
+            $and: [
+              { trip: null },
+              {
+                deadLine: {
+                  $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000 - 7 * 24 * 60 * 60 * 1000, // minus 7 days 
+                }
+              }
+            ]
+          },
+        ]
+      }
+    ]
+
+
   }
 
   query.status = selectedStatus.value
@@ -102,7 +136,7 @@ async function onDateSelect(date) {
 }
 
 let prettyDate = computed(() => {
-  return activeDate.value ? activeDate.value.format("DD:MM:YYYY") : ""
+  return activeDate.value ? activeDate.value.format("DD.MM.YYYY") : ""
 })
 
 let moreTasks = async () => {
@@ -121,7 +155,7 @@ async function refreshTasks() {
   if (selectedStatus.value == "all") {
     delete query.status
   }
-  
+
   if (activeDate.value) {
     const startOfDay = activeDate.value.startOf("day").valueOf()
     const endOfDay = activeDate.value.endOf("day").valueOf()
@@ -149,7 +183,7 @@ watch(search, (newSearch, oldSearch) => {
 
 watch(selectedStatus, async (newStatus) => {
   if (newStatus == '') return;
-  await refreshTasks()  
+  await refreshTasks()
   localStorage.setItem('tasks.selectedStatus', selectedStatus.value)
 })
 
@@ -159,7 +193,7 @@ onMounted(async () => {
   }
 
   if (localStorage.getItem("tasks.selectedStatus")) {
-    selectedStatus.value = localStorage.getItem("tasks.selectedStatus");    
+    selectedStatus.value = localStorage.getItem("tasks.selectedStatus");
   }
 
   await refreshTasks()
@@ -171,8 +205,9 @@ onMounted(async () => {
 })
 </script>
 <template>
-  <div>
-    <div style="display: flex; justify-content: space-between; flex-wrap: wrap; align-items: center" class="pa-8">
+  <div style="margin-bottom: 72px;">
+    <div
+      style="display: flex; justify-content: space-between; flex-wrap: wrap; align-items: center; margin-bottom: 8px">
       <div>
         <a-button v-if="isCreator" class="btn_light ma-8" @click="router.push('/create-task')">
           создать задачу
@@ -185,22 +220,17 @@ onMounted(async () => {
           <a-radio value="closed">Выполнено</a-radio>
           <a-radio value="all">Все</a-radio>
         </a-radio-group>
-        <span
-          @click="isCalendarVisible = !isCalendarVisible"
-          class="mdi mdi-calendar-range-outline"
-          style="font-size: 24px; margin-right: 8px; cursor: pointer"
-        ></span>
+      </div>
+      <div>
+        <span @click="isCalendarVisible = !isCalendarVisible" class="mdi mdi-calendar-range-outline"
+          style="font-size: 24px; margin-right: 8px; cursor: pointer"></span>
         <a-input v-model:value="search" placeholder="поиск" style="width: 180px" allow-clear />
       </div>
     </div>
     <h3>
-      {{ prettyDate ? `Задачи на ${prettyDate}` : "Все задачи" }}
-      <sup
-        v-if="activeDate"
-        @click="delDateSelect()"
-        class="mdi mdi-close"
-        style="font-size: 16px; color: #fc4f06; cursor: pointer"
-      ></sup>
+      {{ prettyDate ? `Задачи на ${prettyDate}` : "Задачи" }}
+      <sup v-if="activeDate" @click="delDateSelect()" class="mdi mdi-close"
+        style="font-size: 16px; color: #fc4f06; cursor: pointer"></sup>
     </h3>
     <a-config-provider :locale="locale">
       <a-calendar :value="selectedDate" @select="onDateSelect" v-if="isCalendarVisible">
@@ -218,8 +248,7 @@ onMounted(async () => {
         <TaskCard @refreshTasks="refreshTasks()" :task="task"> </TaskCard>
       </a-col>
       <a-col :span="24" class="justify-center d-flex" @click="moreTasks()" v-if="showMoreButton">
-        <a-button>Ещё</a-button></a-col
-      >
+        <a-button>Ещё</a-button></a-col>
     </a-row>
   </div>
 </template>

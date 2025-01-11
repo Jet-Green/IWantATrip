@@ -17,20 +17,20 @@ let dialog = ref(false)
 
 const meetingTypes = [
   {
-    value: "Телефонный звонок",
-    name: "Телефонный звонок",
+    value: "Телефон",
+    name: "Телефон",
   },
   {
-    value: "По почте",
-    name: "По почте",
+    value: "Email",
+    name: "Email",
   },
   {
-    value: "В мессенджере",
-    name: "В мессенджере",
+    value: "Мессенджер",
+    name: "Мессенджер",
   },
   {
-    value: "Личная встреча",
-    name: "Личная встреча",
+    value: "Встреча",
+    name: "Встреча",
   },
 ]
 
@@ -66,12 +66,12 @@ watch(propsDialog, (newDialog) => {
   <a-modal v-model:open="dialog" @cancel="emit('close')">
     <template #title>
       <span class="mdi mdi-plus"></span>
-      Добавить результат встречи
+      Добавить результат общения
     </template>
 
     <a-row :gutter="[16, 16]">
       <a-col :span="24">
-        Тип встречи
+        Способ контакта
         <a-select v-model:value="form.meetingType" :options="meetingTypes" style="width: 100%"> </a-select>
       </a-col>
       <a-col :span="24">

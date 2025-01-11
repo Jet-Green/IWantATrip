@@ -17,10 +17,16 @@ watch(propsDialog, (newDialog) => {
 })
 </script>
 <template>
-  <a-modal v-model:open="dialog" @cancel="emit('close')">
+  <a-modal v-model:open="dialog" @cancel="emit('close')" id="modal">
     <PartnerCard :partner="partner" />
     <template #footer>
       
     </template>
   </a-modal>
 </template>
+<style scoped>
+#modal{
+  padding:0 0;
+}
+
+</style>
