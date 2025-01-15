@@ -12,6 +12,7 @@ const router = useRouter();
 let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
 let isCreator =  userStore.user.tinkoffContract||false
+let isPlaceCreator =  userStore.user.tinkoffContract||false
 let isTasksManager = userStore.user.roles.includes('tasksManager')
 
 // чтобы не сбрасывалось при обновлении
@@ -80,7 +81,7 @@ onMounted(async () => {
             <span v-if=!sm>Экскурсии</span>
             <span v-else class="mdi mdi-24px mdi-account-group" style="color: #245159;"></span>
           </a-menu-item>
-          <a-menu-item v-if="isCreator" key="/cabinet/my-places">
+          <a-menu-item  key="/cabinet/my-places">
             <span v-if=!sm>Места</span>
             <span v-else class="mdi mdi-24px mdi-map-marker-outline" style="color: #245159;"></span>
           </a-menu-item>
