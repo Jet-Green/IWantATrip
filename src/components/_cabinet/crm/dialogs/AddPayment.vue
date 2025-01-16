@@ -32,7 +32,7 @@ watch(propsDialog, (newDialog) => {
 // dialog
 
 let payment = ref({
-  amount: 0,
+  amount: null,
   document: "",
 })
 

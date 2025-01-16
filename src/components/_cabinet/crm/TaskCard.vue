@@ -38,6 +38,20 @@ const totalPaymentAmount = computed(() => {
   return res
 })
 
+let getColor = computed( () => {
+
+if (task.value.payAmount ==  totalPaymentAmount.value) {
+  return  "background: #bcc662"
+}
+if ( totalPaymentAmount.value ==  0) {
+  return  "background: #ff6600"
+}
+if (task.value.payAmount >  totalPaymentAmount.value) {
+  return  "background: #20A0CE"
+}
+
+})
+
 const currentOffset = new Date().getTimezoneOffset() * 60 * 1000
 function getFullDate(date) {
   return datePlugin.getFullDate(date + currentOffset)
@@ -78,6 +92,27 @@ async function openTask() {
     }, 600)
   }
 }
+
+
+
+
+{/* <span v-if="billTotal(BILL) == BILL.payment.amount" style="color: #bcc662">
+                                        <span class="mdi mdi-check-all" style="font-size: 20px"></span>
+                                        оплачен
+                                    </span>
+                                    <span v-if="billTotal(BILL) != BILL.payment.amount"
+                                        style="display: flex; align-items: center">
+                                        <div v-if="BILL.payment.amount == 0" style="color: #ff6600">
+                                            <span class="mdi mdi-close" style="font-size: 20px; "></span>
+                                            не оплачен
+                                        </div>
+                                        <div v-else style="color: #20A0CE">
+                                            <span class="mdi mdi-check" style="font-size: 20px"></span>
+                                            частично
+                                        </div>
+                                    </span> */}
+
+
 </script>
 <template>
   <a-card class="pa-8 pb-32" v-if="task._id">
@@ -124,17 +159,20 @@ async function openTask() {
         </div>
       </div>
     </a-card>
+
     <div class="d-flex space-around flex-wrap mb-4" >
       <div>
+        <a-badge :dot="true" v-if="task.interactions?.length>0" :offset=[-3,3]>
         <a-button @click="showInteraction = !showInteraction">
           Действия
         </a-button>
+      </a-badge>
         <a-button @click="addNewInteraction">
           <span class="mdi mdi-plus"></span>
         </a-button>
       </div>
-      <div style="min-width: 200px;" >
-        <a-button @click="showPayments = !showPayments" v-if="task.payAmount">
+      <div style="min-width: 200px;"  >
+        <a-button @click="showPayments = !showPayments" v-if="task.payAmount"  style='color:white' :style='getColor'>
           <div v-if="task.payAmount">
 
             {{ totalPaymentAmount }}/
@@ -159,14 +197,14 @@ async function openTask() {
               <div v-for="(inter, index) of task.interactions" :key="index" style="gap: 10px;">
                 <div>
 
-                  <div>
+                  <div >
                     {{ dayjs(inter.date + new Date().getTimezoneOffset()).format('DD.MM.YYYY HH.mm') }} - {{
                       inter.meetingType }}
                   </div>
 
 
 
-                  <div>{{ inter.result }}
+                  <div style="font-weight: bold">{{ inter.result }}
                   </div>
 
 

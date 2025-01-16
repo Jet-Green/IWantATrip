@@ -48,8 +48,8 @@ onMounted(async () => {
 
   <Transition name="fade">
     <div v-show="isVisible">
-      <h2 style="text-align: center" @click="toggleCols()"> {{ place?.name }}</h2>
-      <div class="text" style="text-align: center"><b>{{ place?.category?.toLowerCase() }}</b> </div>
+      <p style="text-align: center; font-size: clamp(1.125rem, 0.925rem + 0.8vw, 1.375rem);" @click="toggleCols()"> {{ place?.name }}</p>
+      <div class="text" style="text-align: center">{{ place?.category?.toLowerCase() }} </div>
       <p @click="toggleCols()" class="text"><i>{{ place?.shortDescription }}</i> </p>
 
       <a-row class="text">
@@ -76,8 +76,8 @@ onMounted(async () => {
                   class="mdi  mdi-map-outline" style="font-size: 16px;"></span></a></b> </div>
 
 
-          <div @click="toggleCols()" style="text-align: center; width: 100%"><span class="mdi  "
-              :class="fullInfo ? 'mdi-chevron-double-up' : 'mdi-chevron-double-down'" style="font-size: 28px; "></span>
+          <div @click="toggleCols()" style="text-align: center; width: 100%; cursor:pointer"><span class="mdi  "
+              :class="fullInfo ? 'mdi-chevron-up' : 'mdi-chevron-down'" style="font-size: 28px; "></span>
           </div>
         </a-col>
 
