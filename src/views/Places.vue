@@ -56,7 +56,15 @@ let morePlaces = async () => {
 let refreshPlaces = async () => {
 
   page = 1
+  postersLength = 0
   await placeStore.getAll(page, query)
+  if (placeStore.places.length < 20) {
+    showMoreButton.value = false
+  } else{
+    showMoreButton.value = true
+  }
+  
+
 }
 
 
@@ -80,7 +88,7 @@ const backRoute = { name: 'Landing', hash: '#guide' };
         <h2>Места</h2>
         <PlaceFilter @refreshPlaces=refreshPlaces />
         <PlaceCard :place="place" v-for="place, index in placeStore.places" :key="index" style="margin-bottom: 16px;" />
-        <div class="justify-center d-flex" @click="morePlaces()" v-if="showMoreButton"> <a-button>Ещё</a-button></div>
+        <div class="justify-center d-flex ma-16" @click="morePlaces()" v-if="showMoreButton"> <a-button>Ещё</a-button></div>
 
       </a-col>
     </a-row>

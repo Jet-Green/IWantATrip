@@ -57,6 +57,7 @@ const form = reactive({
   openingHours: '',
   price: '',
   website: '',
+  phone:'',
 
   category: ''
 });
@@ -123,7 +124,8 @@ async function submit() {
       openingHours: '',
       price: '',
       website: '',
-      category: ''
+      category: '',
+      phone:''
     });
     images = [];
     previews.value = [];
@@ -329,7 +331,16 @@ onMounted(() => {
                 <ErrorMessage name="price" class="error-message" />
               </Transition>
             </a-col>
-
+            <a-col :span="24">
+              <Field name="website" v-slot="{ value, handleChange }" v-model="form.phone">
+                Телефон
+                <a-input placeholder="8919999999" @update:value="handleChange" :value="value" :maxlength="50"
+                  allow-clear show-count></a-input>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="website" class="error-message" />
+              </Transition>
+            </a-col>
             <a-col :span="24">
               <Field name="website" v-slot="{ value, handleChange }" v-model="form.website">
                 Сайт/соц.сеть
