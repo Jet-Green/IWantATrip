@@ -45,7 +45,7 @@ let postersLength = 0
 
 let morePlaces = async () => {
   page++
-  let res = await refreshPlaces()
+  let res = await placeStore.getAll(page, query)
 
   if (res.length == postersLength) {
     showMoreButton.value = false
