@@ -67,9 +67,10 @@ let placeCategory = appStore.appState[0]?.placeCategory.map((name) => { return {
 let formSchema = yup.object({
   name: yup.string().required("заполните поле"),
   shortDescription: yup.string().required("заполните поле"),
-  openingHours: yup.string().required("заполните поле"),
-  website: yup.string().required("заполните поле"),
-  price: yup.string().required("заполните поле"),
+  // openingHours: yup.string().required("заполните поле"),
+  // website: yup.string().required("заполните поле"),
+  // phone: yup.string().required("заполните поле"),
+  // price: yup.string().required("заполните поле"),
   category: yup.string().required("заполните поле"),
   // https://vee-validate.logaretm.com/v4/examples/array-fields/
 });
@@ -332,13 +333,13 @@ onMounted(() => {
               </Transition>
             </a-col>
             <a-col :span="24">
-              <Field name="website" v-slot="{ value, handleChange }" v-model="form.phone">
+              <Field name="phone" v-slot="{ value, handleChange }" v-model="form.phone">
                 Телефон
-                <a-input placeholder="8919999999" @update:value="handleChange" :value="value" :maxlength="50"
+                <a-input placeholder="8919999999" @update:value="handleChange" :value="value"
                   allow-clear show-count></a-input>
               </Field>
               <Transition name="fade">
-                <ErrorMessage name="website" class="error-message" />
+                <ErrorMessage name="phone" class="error-message" />
               </Transition>
             </a-col>
             <a-col :span="24">

@@ -66,9 +66,10 @@ onMounted(async () => {
         </a-col>
 
         <a-col :xs="24" :md="cols" class="place-card ">
-          <div> Часы работы: <b> {{ place?.openingHours }} </b></div>
-          <div> Стоимость: <b> {{ place?.price }} </b></div>
-          <div>Сайт/соц.сеть: <b> <a :href="place?.website" target="_blank">{{ place?.website }}</a> </b>
+          <div v-if = "place?.openingHours"> Часы работы: <b> {{ place?.openingHours }} </b></div>
+          <div v-if = "place?.price "> Стоимость: <b> {{ place?.price }} </b></div>
+          <div v-if = "place?.phone " >Телефон: <b> <a :href=" `tel:${place?.phone}`">{{ place?.phone }}</a> </b></div>
+          <div v-if = "place?.website ">Сайт/соц.сеть: <b> <a :href="place?.website" target="_blank">{{ place?.website }}</a> </b>
           </div>
           <div> Адрес/координаты: <br> <b> <a
                 :href="`https://yandex.ru/maps/?ll=${place?.location?.coordinates[0]}%2C${place?.location?.coordinates[1]}&z=16&pt=${place?.location?.coordinates[0]},${place?.location?.coordinates[1]}}`"
