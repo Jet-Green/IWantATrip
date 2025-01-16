@@ -167,6 +167,9 @@ async function openTask() {
           Действия
         </a-button>
       </a-badge>
+      <a-button v-else @click="showInteraction = !showInteraction">
+          Действия
+        </a-button>
         <a-button @click="addNewInteraction">
           <span class="mdi mdi-plus"></span>
         </a-button>
