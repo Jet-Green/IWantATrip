@@ -597,6 +597,11 @@ const router = createRouter({
                   name: 'RejectedPlaces',
                   component: () => import('../components/admin/placesOnModeration/rejected.vue'),
                 },
+                {
+                  path: 'manage',
+                  name: 'ManagePlaces',
+                  component: () => import('../components/admin/placesOnModeration/manage.vue'),
+                },
               ]
             },
             {

@@ -17,6 +17,7 @@ watch(status, (newStatus) => {
       <a-radio-group v-model:value="status">
         <a-radio value="on-moderation">На модерации</a-radio>
         <a-radio value="rejected">Откaзaнные</a-radio>
+        <a-radio value="manage">Управление</a-radio>
       </a-radio-group>
 
       <router-view />
