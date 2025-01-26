@@ -83,7 +83,7 @@ onMounted(async () => {
         <img src="../../assets/images/founddog.webp" alt="" style="height: 150px;">
     </a-col>
     <a-col :span="24" v-else><a-row :gutter="[8, 8]" class="mt-8" v-if="getArchivedTrips.length > 0">
-            <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getArchivedTrips" :key="index">
+            <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getArchivedTrips" :key="trip._id">
 
                 <CabinetTrip :trip="trip"
                     :actions="['delete', 'info', 'copy', 'edit', 'addDate', 'transports', 'addLocation', 'editComment']"

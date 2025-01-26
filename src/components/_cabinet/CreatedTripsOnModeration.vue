@@ -71,7 +71,7 @@ onMounted(async () => {
     </a-col>
     <a-col :span="24" v-else>
         <a-row :gutter="[8, 8]" class="mt-8" v-if="getTripsOnModeration.length > 0">
-            <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getTripsOnModeration" :key="index">
+            <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getTripsOnModeration" :key="trip._id">
                 <CabinetTrip :trip="trip" :actions="['delete', 'info', 'edit', 'msg', 'transports', 'editComment']"
                     @deleteTrip="deleteTrip" @updateTrip="getAllTrips" />
             </a-col>

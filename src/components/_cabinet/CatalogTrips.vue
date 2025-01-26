@@ -94,7 +94,7 @@ onMounted(async () => {
                     </a-col>
                     <a-col :span="24" v-else>
                         <a-row :gutter="[8, 8]" class="mt-8" v-if="moderatedTrips.length > 0">
-                            <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of moderatedTrips" :key="index">
+                            <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of moderatedTrips" :key="trip._id">
                                 <CatalogCabinetTrip @deleteTrip="deleteTrip" :trip="trip" />
                             </a-col>
                         </a-row>
