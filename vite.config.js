@@ -71,7 +71,7 @@ export default defineConfig(
             description: 'Путешествия, туры, путевки, отдых',
             theme_color: '#ffffff',
             background_color: "#ffffff",
-            version: "1.4.0",
+            version: "1.4.1",
             display: "standalone",
             icons: [
               {
