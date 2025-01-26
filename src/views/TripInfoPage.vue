@@ -74,11 +74,13 @@ const options = ref({
 
 const { isSupported } = useShare(options)
 
-function startShare() {
+async function startShare() {
     const { share } = useShare(options)
-    return share().catch(err => {
+    try {
+        return await share();
+    } catch (err) {
         console.log(err);
-    })
+    }
 }
 
 async function updateSeats() {

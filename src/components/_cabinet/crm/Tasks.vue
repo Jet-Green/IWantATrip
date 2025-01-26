@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted, computed, watch } from "vue"
-import { useRouter } from "vue-router"
-import { useRoute } from "vue-router"
+import { useRouter, useRoute } from "vue-router"
 import { useAuth } from "../../../stores/auth"
 import { useTasks } from "../../../stores/tasks"
 import TaskCard from "./TaskCard.vue"
@@ -21,6 +20,7 @@ const locale = ruRU
 
 
 const router = useRouter()
+const route = useRoute()
 
 const userStore = useAuth()
 const taskStore = useTasks()
@@ -173,6 +173,11 @@ async function refreshTasks() {
 }
 
 watch(search, (newSearch, oldSearch) => {
+  if (newSearch == "" && route.query.tripName) {
+    query.$and.pop()
+    router.push('/cabinet/tasks')
+  }
+
   if (newSearch.length > 2 || newSearch.length <= oldSearch.length) {
     localStorage.setItem("taskSearch", newSearch)
     query.$and[1].$or[0].name.$regex = newSearch
@@ -195,12 +200,19 @@ onMounted(async () => {
   if (localStorage.getItem("tasks.selectedStatus")) {
     selectedStatus.value = localStorage.getItem("tasks.selectedStatus");
   }
+  if (route.query.tripName) {
+    selectedStatus.value = 'all'
+    search.value = route.query.tripName
+    query.$and.push({ "tripInfo._id": route.query._id })
+
+  }
 
   await refreshTasks()
-  if (taskStore.tasks.length < 20) {
+  if (taskStore.tasks.length < 50) {
     showMoreButton.value = false
   }
   await getTasksAmount()
+
 
 })
 </script>

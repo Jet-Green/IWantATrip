@@ -7,6 +7,7 @@ import { useAuth } from '../../stores/auth';
 import { useBus } from '../../stores/bus'
 import { useAppState } from '../../stores/appState';
 import Bus from '../../components/Bus.vue'
+import { useTasks } from "../../stores/tasks"
 
 import dayjs from 'dayjs'
 
@@ -25,6 +26,7 @@ let { trip } = toRefs(props)
 let router = useRouter()
 let tripStore = useTrips()
 let userStore = useAuth()
+const taskStore = useTasks()
 let appStateStore = useAppState()
 let partner = ref(trip.value.partner ?? "")
 let canSellPartnerTour = ref(boolean)
@@ -67,9 +69,41 @@ let additionalService = ref({
     price: 0
 })
 
+let tasks = ref([])
+let search = ref("")
+let page = 1
+let query = {
+    $and: [
+        {
+            $or: [{ author: userStore.user._id }, { managers: userStore.user._id }],
+        },
+        {
+            $or: [{ name: { $regex: trip?.value.name, $options: "i" } }, { "tripInfo.name": { $regex: trip?.value.name, $options: "i" } }],
+        },
+    ],
+    $or: [
+        {
+            "tripInfo.end": {
+                $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000,
+            }
+        },
+        {
+            $and: [
+                { trip: null },
+                {
+                    deadLine: {
+                        $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000 - 7 * 24 * 60 * 60 * 1000, // minus 7 days 
+                    }
+                }
+            ]
+        },
+    ]
+}
+
+
 const clearData = (dataString) => {
-    let timezoneOffset  = trip.value?.timezoneOffset? trip.value?.timezoneOffset:trip.value?.parent.timezoneOffset
-    dataString = dataString - timezoneOffset 
+    let timezoneOffset = trip.value?.timezoneOffset ? trip.value?.timezoneOffset : trip.value?.parent.timezoneOffset
+    dataString = dataString - timezoneOffset
     const date = new Date(dataString);
     if (!isNaN(date.getTime())) {
         return date.toLocaleDateString("ru-RU", {
@@ -271,6 +305,28 @@ async function deleteAdditionalService(serviceId) {
     }
 }
 
+const goToTasks = () => {
+    router.push({
+        path:'/cabinet/tasks', 
+        query: { tripName: trip.value.name, _id: trip.value._id}, // передаем trip.value.name как query параметр
+    })
+}
+const tasksStatus = computed(() => {
+    const statusCount = { open: 0, closed: 0 };
+    tasks.value.forEach((task) => {
+        if (task.status in statusCount) {
+            statusCount[task.status]++;
+        }
+    });
+    return statusCount;
+});
+const taskClass = computed(() => {
+    if (!tasks.value.length) {
+        return '';
+    }
+    return tasksStatus.value.closed != tasks.value.length ? 'open-status' : 'closed-status';
+});
+
 watch(locationSearchRequest, async (newValue, oldValue) => {
     if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
         var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
@@ -348,6 +404,10 @@ onMounted(async () => {
     }
     buses.value = await useBus().get()
     // addTransportForm.value.price = trip.value.transports[0]?.price ?? null
+    await taskStore.getAll(page, query)
+
+    tasks.value = taskStore.tasks
+
 })
 </script>
 <template>
@@ -375,6 +435,11 @@ onMounted(async () => {
                 {{ `c ${clearData(trip.start)}` }}
                 <span class="mdi mdi-calendar-arrow-left"></span>
                 {{ `по ${clearData(trip.end)}` }}
+            </div>
+            <div class="d-flex justify-end">
+                <a-button size='small' shape="round" @click="goToTasks()" :class="taskClass">
+                    <span class="mdi mdi-calendar-check-outline"> </span>
+                    {{ tasksStatus.closed }}/{{ tasks.length }}</a-button>
             </div>
 
             <div class="actions d-flex justify-center">
@@ -631,5 +696,13 @@ onMounted(async () => {
 
     opacity: 0.5;
 
+}
+
+.open-status {
+    background: #ff6600;
+}
+
+.closed-status {
+    background: #AEBC58;
 }
 </style>

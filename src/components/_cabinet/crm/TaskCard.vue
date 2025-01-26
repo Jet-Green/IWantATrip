@@ -124,7 +124,6 @@ async function openTask() {
         v-if="task.status == 'closed' && !isStatusSetting"></span>
     </div>
 
-
     <div style="font-weight: 600; font-size:18px">{{ taskDate }} до {{ taskTime }} </div>
     <div class="task-name pa-4 ma-4" @click="router.push(`/create-task?_id=${task._id}`)">
       {{ task.name }}
@@ -161,7 +160,7 @@ async function openTask() {
     </a-card>
 
     <div class="d-flex space-around flex-wrap mb-4" >
-      <div>
+      <div class="d-flex justify-center" style="padding-top:5px">
         <a-badge :dot="true" v-if="task.interactions?.length>0" :offset=[-3,3]>
         <a-button @click="showInteraction = !showInteraction">
           Действия
@@ -174,7 +173,7 @@ async function openTask() {
           <span class="mdi mdi-plus"></span>
         </a-button>
       </div>
-      <div style="min-width: 200px;"  >
+      <div style="min-width: 200px; padding-top:5px"  class="d-flex justify-center" >
         <a-button @click="showPayments = !showPayments" v-if="task.payAmount"  style='color:white' :style='getColor'>
           <div v-if="task.payAmount">
 
