@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import CabinetTrip from "../cards/CabinetTrip.vue";
 import { useAuth } from "../../stores/auth.js";
 import { useTrips } from "../../stores/trips.js";
@@ -9,11 +9,12 @@ let tripStore = useTrips();
 
 let allTrips = ref([])
 let loading = ref(true)
+let page=ref(1)
 let query = ref('')
 
 let getTripsInWork = computed(() => {
     let tripsInWork = [];
-    for (let trip of filteredTrips.value) {
+    for (let trip of allTrips.value) {
         if (trip.start < Date.now()) {
             continue
         }
@@ -24,26 +25,7 @@ let getTripsInWork = computed(() => {
     return tripsInWork
 })
 
-let filteredTrips = computed(() => {
 
-    if (query.value.length > 2) {
-        localStorage.setItem("cabinetQuery", query.value);
-        return allTrips.value.filter((trip) => trip.name.toLowerCase().includes(query.value.toLowerCase())
-            || trip.description.toLowerCase().includes(query.value.toLowerCase())
-            || trip.tripRoute.toLowerCase().includes(query.value.toLowerCase())
-            || trip.tripType.toLowerCase().includes(query.value.toLowerCase())
-            || trip?.startLocation?.name.toLowerCase().includes(query.value.toLowerCase())
-            || (trip.partner ? trip.partner.toLowerCase().includes(query.value.toLowerCase()) : false)
-            || trip.offer.toLowerCase().includes(query.value.toLowerCase())
-            || trip.userComment?.toLowerCase().includes(query.value.toLowerCase())
-            || clearData(trip.start).includes(query.value.toLowerCase()) 
-        )
-    } else {
-        localStorage.setItem("cabinetQuery", '');
-        return allTrips.value
-    }
-
-})
 
 async function deleteTrip() {
     await getAllTrips()
@@ -53,7 +35,19 @@ async function deleteTrip() {
 async function getAllTrips() {
     loading.value = true
     let userId = userStore.user._id
-    let response = await tripStore.getCreatedTripsInfoByUserId(userId)
+    let filter = {
+      $or: [
+        { "name": { $regex: query.value, $options: 'i' } },
+        { "description": { $regex: query.value, $options: 'i' } },
+        { "tripRoute": { $regex: query.value, $options: 'i' } },
+        { "tripType": { $regex: query.value, $options: 'i' } },
+        { 'startLocation.name': { $regex: query.value, $options: 'i' } },
+        { "partner": { $regex: query.value, $options: 'i' } },
+        { "offer": { $regex: query.value, $options: 'i' } },
+        { "userComment": { $regex: query.value, $options: 'i' } },
+      ],
+    };
+    let response = await tripStore.getCreatedTripsInfoByUserId(userId,filter,page.value)
 
     allTrips.value = response.data
     loading.value = false
@@ -74,6 +68,16 @@ const clearData = (dataString) => {
 
     })
 }
+watch(query,()=>{
+    if (query.value.length > 2) {
+        localStorage.setItem("cabinetQuery", query.value);
+        getAllTrips()
+    } else {
+        localStorage.setItem("cabinetQuery", '');
+        getAllTrips()
+    }
+})
+
 onMounted(async () => {
     query.value = localStorage.getItem("cabinetQuery") ?? '';
     await getAllTrips()

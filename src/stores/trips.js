@@ -181,9 +181,9 @@ export const useTrips = defineStore('trips', {
         },
         // когда открываем Созданные туры
         // Получает все туры, созданные пользователем
-        async getCreatedTripsInfoByUserId(_id) {
+        async getCreatedTripsInfoByUserId(_id,query,page) {
             try {
-                return await TripService.getCreatedTripsInfoByUserId(_id)
+                return await TripService.getCreatedTripsInfoByUserId(_id,query,page)
             } catch (error) {
                 console.log(error);
             }
