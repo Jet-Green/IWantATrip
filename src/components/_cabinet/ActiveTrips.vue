@@ -12,21 +12,6 @@ let loading = ref(true)
 let page=ref(1)
 let query = ref('')
 
-let getTripsInWork = computed(() => {
-    let tripsInWork = [];
-    for (let trip of allTrips.value) {
-        if (trip.start < Date.now()) {
-            continue
-        }
-        if (trip.isModerated) {
-            tripsInWork.push(trip);
-        }
-    }
-    return tripsInWork
-})
-
-
-
 async function deleteTrip() {
     await getAllTrips()
 }
@@ -45,9 +30,11 @@ async function getAllTrips() {
         { "partner": { $regex: query.value, $options: 'i' } },
         { "offer": { $regex: query.value, $options: 'i' } },
         { "userComment": { $regex: query.value, $options: 'i' } },
-      ],
+    ],
+    "isModerated": {$eq:true}
     };
-    let response = await tripStore.getCreatedTripsInfoByUserId(userId,filter,page.value)
+    let archive=false
+    let response = await tripStore.getCreatedTripsInfoByUserId(userId,filter,page.value,archive)
 
     allTrips.value = response.data
     loading.value = false
@@ -92,8 +79,8 @@ onMounted(async () => {
         <img src="../../assets/images/founddog.webp" alt="" style="height: 150px;">
     </a-col>
     <a-col :span="24" v-else>
-        <a-row :gutter="[8, 8]" class="mt-8" v-if="getTripsInWork.length > 0">
-            <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getTripsInWork" :key="index">
+        <a-row :gutter="[8, 8]" class="mt-8" v-if="allTrips.length > 0">
+            <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of allTrips" :key="index">
                 <CabinetTrip :trip="trip"
                     :actions="['delete', 'info', 'copy', 'hide', 'edit', 'addDate', 'addLocation', 'transports', 'editComment', 'addAdditionalService']"
                     @deleteTrip="deleteTrip" @updateTrip="getAllTrips" />

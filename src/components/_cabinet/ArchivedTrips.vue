@@ -12,27 +12,6 @@ let loading = ref(true)
 let page=ref(1)
 let query = ref('')
 
-let getArchivedTrips = computed(() => {
-    let ArchivedTrips = [];
-    for (let trip of allTrips.value) {
-        if (trip.start < Date.now()) {
-            ArchivedTrips.push(trip)
-        }
-    }
-    return ArchivedTrips
-})
-
-// let filteredTrips = computed(() => {
-//     if (query.value.length > 2) {
-//         localStorage.setItem("cabinetQuery", query.value);
-//         // getAllTrips()
-//         return allTrips.value
-//     } else {
-//         localStorage.setItem("cabinetQuery", '');
-//         return allTrips.value
-//     }
-// })
-
 async function getAllTrips() {
     loading.value = true
     let userId = userStore.user._id
@@ -48,7 +27,8 @@ async function getAllTrips() {
         { "userComment": { $regex: query.value, $options: 'i' } },
       ],
     };
-    let response = await tripStore.getCreatedTripsInfoByUserId(userId,filter,page.value)
+    let archive=true
+    let response = await tripStore.getCreatedTripsInfoByUserId(userId,filter,page.value,archive)
 
     allTrips.value = response.data
     loading.value = false
@@ -97,8 +77,8 @@ onMounted(async () => {
     <a-col :span="24" v-if="loading" class="d-flex justify-center">
         <img src="../../assets/images/founddog.webp" alt="" style="height: 150px;">
     </a-col>
-    <a-col :span="24" v-else><a-row :gutter="[8, 8]" class="mt-8" v-if="getArchivedTrips.length > 0">
-            <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getArchivedTrips" :key="trip._id">
+    <a-col :span="24" v-else><a-row :gutter="[8, 8]" class="mt-8" v-if="allTrips.length > 0">
+            <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of allTrips" :key="trip._id">
 
                 <CabinetTrip :trip="trip"
                     :actions="['delete', 'info', 'copy', 'edit', 'addDate', 'transports', 'addLocation', 'editComment']"
