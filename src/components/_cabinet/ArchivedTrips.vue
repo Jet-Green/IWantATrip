@@ -9,7 +9,6 @@ let tripStore = useTrips();
 
 let allTrips = ref([])
 let loading = ref(true)
-let page=ref(1)
 let query = ref('')
 
 async function getAllTrips() {
@@ -27,10 +26,10 @@ async function getAllTrips() {
         { "userComment": { $regex: query.value, $options: 'i' } },
       ],
     };
-    let archive=true
-    let response = await tripStore.getCreatedTripsInfoByUserId(userId,filter,page.value,archive)
+    let cursorType=2
+    let response = await tripStore.getCreatedTripsInfoByUserId(userId,filter,cursorType)
 
-    allTrips.value = response.data
+    allTrips.value.push(...response)
     loading.value = false
 }
 
@@ -66,6 +65,7 @@ watch(query,()=>{
 
 onMounted(async () => {
     query.value = localStorage.getItem("cabinetQuery") ?? '';
+    tripStore.cabinetTripsCursor=0
     await getAllTrips()
 });
 
@@ -82,7 +82,10 @@ onMounted(async () => {
 
                 <CabinetTrip :trip="trip"
                     :actions="['delete', 'info', 'copy', 'edit', 'addDate', 'transports', 'addLocation', 'editComment']"
-                    @deleteTrip="deleteTrip" @updateTrip="getAllTrips" />
+                    @deleteTrip="deleteTrip"/>
+                </a-col>
+            <a-col :span="24">
+                <div class="justify-center d-flex ma-16" @click="getAllTrips()"> <a-button>Ещё</a-button></div>
             </a-col>
         </a-row>
         <a-row :lg="8" :sm="12" :xs="24" v-else>

@@ -9,7 +9,6 @@ let tripStore = useTrips();
 
 let allTrips = ref([])
 let loading = ref(true)
-let page=ref(1)
 let query = ref('')
 
 async function deleteTrip() {
@@ -33,10 +32,10 @@ async function getAllTrips() {
     ],
     "isModerated": {$eq:true}
     };
-    let archive=false
-    let response = await tripStore.getCreatedTripsInfoByUserId(userId,filter,page.value,archive)
+    let cursorType=3
+    let response = await tripStore.getCreatedTripsInfoByUserId(userId,filter,cursorType)
 
-    allTrips.value = response.data
+    allTrips.value.push(...response)
     loading.value = false
 }
 const clearData = (dataString) => {
@@ -67,6 +66,7 @@ watch(query,()=>{
 
 onMounted(async () => {
     query.value = localStorage.getItem("cabinetQuery") ?? '';
+    tripStore.cabinetTripsCursor=0
     await getAllTrips()
 });
 

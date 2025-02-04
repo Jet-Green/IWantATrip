@@ -9,7 +9,6 @@ let tripStore = useTrips();
 
 let allTrips = ref([])
 let loading = ref(true)
-let page=ref(1)
 let query = ref('')
 
 async function getAllTrips() {
@@ -28,10 +27,10 @@ async function getAllTrips() {
     ],
     "isModerated": {$eq:false} ,
     };
-    let archive=false
-    let response = await tripStore.getCreatedTripsInfoByUserId(userId,filter,page.value,archive)
+    let cursorType=1
+    let response = await tripStore.getCreatedTripsInfoByUserId(userId,filter,cursorType)
 
-    allTrips.value = response.data
+    allTrips.value.push(...response)
     loading.value = false
 }
 
@@ -51,6 +50,7 @@ watch(query,()=>{
 
 onMounted(async () => {
     query.value = localStorage.getItem("cabinetQuery") ?? '';
+    tripStore.cabinetTripsCursor=0
     await getAllTrips()
 });
 
@@ -67,6 +67,7 @@ onMounted(async () => {
             <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of allTrips" :key="trip._id">
                 <CabinetTrip :trip="trip" :actions="['delete', 'info', 'edit', 'msg', 'transports', 'editComment']"
                     @deleteTrip="deleteTrip" @updateTrip="getAllTrips" />
+            
             </a-col>
         </a-row>
         <a-row :lg="8" :sm="12" :xs="24" v-else>
