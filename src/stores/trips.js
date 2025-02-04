@@ -15,7 +15,7 @@ export const useTrips = defineStore('trips', {
         cursor: 1,
         catalogCursor: 1,
         searchCursor: 1,
-        cabinetTripsCursor:0,
+        cabinetTripsCursor:1,
         isFetching: false,
         tripFilter: {
             query: "",

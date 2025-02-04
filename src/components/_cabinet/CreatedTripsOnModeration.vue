@@ -10,6 +10,7 @@ let tripStore = useTrips();
 let allTrips = ref([])
 let loading = ref(true)
 let query = ref('')
+let retrievedTrips=ref(0)
 
 async function getAllTrips() {
     loading.value = true
@@ -29,7 +30,7 @@ async function getAllTrips() {
     };
     let cursorType=1
     let response = await tripStore.getCreatedTripsInfoByUserId(userId,filter,cursorType)
-
+    retrievedTrips.value=response.length
     allTrips.value.push(...response)
     loading.value = false
 }
@@ -67,7 +68,9 @@ onMounted(async () => {
             <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of allTrips" :key="trip._id">
                 <CabinetTrip :trip="trip" :actions="['delete', 'info', 'edit', 'msg', 'transports', 'editComment']"
                     @deleteTrip="deleteTrip" @updateTrip="getAllTrips" />
-            
+            </a-col>
+            <a-col :span="24">
+                <div class="justify-center d-flex ma-16" @click="getAllTrips()" v-if="allTrips.length>=10"> <a-button>Ещё</a-button></div>
             </a-col>
         </a-row>
         <a-row :lg="8" :sm="12" :xs="24" v-else>

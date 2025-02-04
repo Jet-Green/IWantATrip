@@ -10,6 +10,7 @@ let tripStore = useTrips();
 let allTrips = ref([])
 let loading = ref(true)
 let query = ref('')
+let retrievedTrips=ref(0)
 
 async function getAllTrips() {
     loading.value = true
@@ -28,7 +29,7 @@ async function getAllTrips() {
     };
     let cursorType=2
     let response = await tripStore.getCreatedTripsInfoByUserId(userId,filter,cursorType)
-
+    retrievedTrips.value=response.length
     allTrips.value.push(...response)
     loading.value = false
 }
@@ -85,7 +86,7 @@ onMounted(async () => {
                     @deleteTrip="deleteTrip"/>
                 </a-col>
             <a-col :span="24">
-                <div class="justify-center d-flex ma-16" @click="getAllTrips()"> <a-button>Ещё</a-button></div>
+                <div class="justify-center d-flex ma-16" @click="getAllTrips()" v-if="allTrips.length>=10"> <a-button>Ещё</a-button></div>
             </a-col>
         </a-row>
         <a-row :lg="8" :sm="12" :xs="24" v-else>
