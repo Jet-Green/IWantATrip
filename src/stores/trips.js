@@ -15,7 +15,6 @@ export const useTrips = defineStore('trips', {
         cursor: 1,
         catalogCursor: 1,
         searchCursor: 1,
-        cabinetTripsCursor:1,
         isFetching: false,
         tripFilter: {
             query: "",
@@ -182,16 +181,16 @@ export const useTrips = defineStore('trips', {
         },
         // когда открываем Созданные туры
         // Получает все туры, созданные пользователем
-        async getCreatedTripsInfoByUserId(_id,query,cursorType) {
+        async getCreatedTripsInfoByUserId(_id,query,page) {
             try {
                 if (!this.isFetching) {
                     this.isFetching = true
                     let response;
 
-                    response = await TripService.getCreatedTripsInfoByUserId(_id,query,this.cabinetTripsCursor,cursorType)
+                    response = await TripService.getCreatedTripsInfoByUserId(_id,query,page)
                     this.isFetching = false
                     response = _.uniqBy(response.data, '_id')
-                    this.cabinetTripsCursor++
+                
                     // this.catalogCursor++
                     // console.log(response)
 

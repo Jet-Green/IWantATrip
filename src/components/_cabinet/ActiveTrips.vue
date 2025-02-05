@@ -10,8 +10,9 @@ let tripStore = useTrips();
 let allTrips = ref([])
 let loading = ref(true)
 let query = ref('')
-let retrievedTrips=ref(0)
-
+let page = 1
+let userId = userStore.user._id
+let showMoreButton = ref(true)
 async function deleteTrip() {
     await getAllTrips()
 }
@@ -19,55 +20,37 @@ async function deleteTrip() {
 
 async function getAllTrips() {
     loading.value = true
-    let userId = userStore.user._id
     let filter = {
-      $or: [
-        { "name": { $regex: query.value, $options: 'i' } },
-        { "description": { $regex: query.value, $options: 'i' } },
-        { "tripRoute": { $regex: query.value, $options: 'i' } },
-        { "tripType": { $regex: query.value, $options: 'i' } },
-        { 'startLocation.name': { $regex: query.value, $options: 'i' } },
-        { "partner": { $regex: query.value, $options: 'i' } },
-        { "offer": { $regex: query.value, $options: 'i' } },
-        { "userComment": { $regex: query.value, $options: 'i' } },
-    ],
-    "isModerated": {$eq:true}
+        $or: [
+            { "name": { $regex: query.value, $options: 'i' } },
+            { "description": { $regex: query.value, $options: 'i' } }, 
+        ],
+        "isModerated": { $eq: true },
+        start: { $gte: Date.now() }
     };
-    let cursorType=3
-    let response = await tripStore.getCreatedTripsInfoByUserId(userId,filter,cursorType)
-    retrievedTrips.value=response.length
+    let response = await tripStore.getCreatedTripsInfoByUserId(userId, filter, page)
+    response.length < 10 ? showMoreButton.value = false : showMoreButton.value = true
     allTrips.value.push(...response)
     loading.value = false
 }
-const clearData = (dataString) => {
-    let date = 0
-    if (dataString.length == 13) {
-        const dataFromString = new Date(Number(dataString));
-        date = dataFromString
-
-    } else {
-        date = new Date(dataString)
-    };
-    return date.toLocaleDateString("ru-Ru", {
-        year: "2-digit",
-        month: "2-digit",
-        day: "2-digit",
-
-    })
+async function getNextTrips() {
+    page++
+    await getAllTrips()
 }
-watch(query,()=>{
-    if (query.value.length > 2) {
+
+watch(query, (newQuery, oldQuery) => {
+    if (query.value.length > 2 || newQuery.length<=oldQuery.length) {
         localStorage.setItem("cabinetQuery", query.value);
+        allTrips.value = []
+        page = 1
         getAllTrips()
-    } else {
-        localStorage.setItem("cabinetQuery", '');
-        getAllTrips()
-    }
+    } 
 })
+
 
 onMounted(async () => {
     query.value = localStorage.getItem("cabinetQuery") ?? '';
-    tripStore.cabinetTripsCursor=0
+    page = 1
     await getAllTrips()
 });
 
@@ -86,8 +69,10 @@ onMounted(async () => {
                     :actions="['delete', 'info', 'copy', 'hide', 'edit', 'addDate', 'addLocation', 'transports', 'editComment', 'addAdditionalService']"
                     @deleteTrip="deleteTrip" @updateTrip="getAllTrips" />
             </a-col>
-            <a-col :span="24">
-                <div class="justify-center d-flex ma-16" @click="getAllTrips()" v-if="retrievedTrips==10"> <a-button>Ещё</a-button></div>
+            <a-col :span="24" v-if="showMoreButton">
+                <div class="justify-center d-flex ma-16" @click="getNextTrips()" >
+                    <a-button>Ещё</a-button>
+                </div>
             </a-col>
         </a-row>
         <a-row :lg="8" :sm="12" :xs="24" v-else>

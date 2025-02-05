@@ -7,30 +7,25 @@ import { useTrips } from "../../stores/trips.js";
 let userStore = useAuth();
 let tripStore = useTrips();
 
+let page = 1
 let allTrips = ref([])
 let loading = ref(true)
 let query = ref('')
-let retrievedTrips=ref(0)
-
+let userId = userStore.user._id
+let showMoreButton = ref(true)
 async function getAllTrips() {
     loading.value = true
-    let userId = userStore.user._id
+
     let filter = {
       $or: [
         { "name": { $regex: query.value, $options: 'i' } },
         { "description": { $regex: query.value, $options: 'i' } },
-        { "tripRoute": { $regex: query.value, $options: 'i' } },
-        { "tripType": { $regex: query.value, $options: 'i' } },
-        { 'startLocation.name': { $regex: query.value, $options: 'i' } },
-        { "partner": { $regex: query.value, $options: 'i' } },
-        { "offer": { $regex: query.value, $options: 'i' } },
-        { "userComment": { $regex: query.value, $options: 'i' } },
     ],
     "isModerated": {$eq:false} ,
     };
-    let cursorType=1
-    let response = await tripStore.getCreatedTripsInfoByUserId(userId,filter,cursorType)
-    retrievedTrips.value=response.length
+ 
+    let response = await tripStore.getCreatedTripsInfoByUserId(userId,filter,page)
+    response.length < 10 ? showMoreButton.value = false : showMoreButton.value = true
     allTrips.value.push(...response)
     loading.value = false
 }
@@ -39,12 +34,15 @@ async function deleteTrip() {
     await getAllTrips()
 }
 
-watch(query,()=>{
-    if (query.value.length > 2) {
+async function getNextTrips() {
+    page++
+    await getAllTrips()
+}
+watch(query, (newQuery, oldQuery) => {
+    if (query.value.length > 2 || newQuery.length <= oldQuery.length) {
         localStorage.setItem("cabinetQuery", query.value);
-        getAllTrips()
-    } else {
-        localStorage.setItem("cabinetQuery", '');
+        allTrips.value = []
+        page = 1
         getAllTrips()
     }
 })
@@ -69,9 +67,10 @@ onMounted(async () => {
                 <CabinetTrip :trip="trip" :actions="['delete', 'info', 'edit', 'msg', 'transports', 'editComment']"
                     @deleteTrip="deleteTrip" @updateTrip="getAllTrips" />
             </a-col>
-            <a-col :span="24">
-                <div class="justify-center d-flex ma-16" @click="getAllTrips()" v-if="allTrips.length>=10"> <a-button>Ещё</a-button></div>
+            <a-col :span="24" v-if="showMoreButton">
+                <div class="justify-center d-flex ma-16" @click="getAllTrips()"> <a-button>Ещё</a-button></div>
             </a-col>
+      
         </a-row>
         <a-row :lg="8" :sm="12" :xs="24" v-else>
             Нет туров

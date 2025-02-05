@@ -99,8 +99,8 @@ export default {
     sendCatalogModerationMessage(trip_id, msg) {
         return $api.post(`/admin/send-catalog-moderation-message?tripId=${trip_id}`, { msg })
     },
-    getCreatedTripsInfoByUserId(_id,query,page,cursorType) {
-        return $api.post(`/trips/created-trips-info`, {_id:_id,query:query,page:page,cursorType:cursorType})
+    getCreatedTripsInfoByUserId(_id,query,page) {
+        return $api.post(`/trips/created-trips-info`, {_id,query,page})
     },
     getFullTripById(_id) {
         return $api.get(`/trips/get-full-trip?_id=${_id}`)
