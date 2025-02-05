@@ -55,6 +55,7 @@ async function startShare() {
 }
 
 function openBuyDialog(timeInfo) {
+ 
   if (selectedDate.value._id) return
   for (let date of excursion.value.dates) {
     for (let t of date.times) {
@@ -75,12 +76,23 @@ function closeBuyDialog() {
 }
 
 async function order() {
+  if (!fullinfo.fullname || !fullinfo.phone || !fullinfo.date || !fullinfo.maxPeople) {
+    message.config({ duration: 3, top: "70vh" });
+    message.success({
+      content: "Заполните все поля",
+      onClose: () => {
+        open.value = false
+      },
+    });
+    return
+  }
   if (!userStore.user.fullinfo?.fullname) {
     await userStore.updateFullinfo(userStore.user._id, {
       fullname: fullinfo.fullname,
       phone: fullinfo.phone
     })
   }
+
   let response = await excursionStore.order(fullinfo, excursion.value._id, excursion.value.name, excursion.value.author)
   Object.assign(fullinfo, {
     fullname: userStore.user.fullinfo?.fullname,
@@ -243,7 +255,7 @@ if (userStore.isAuth) {
               <a-input v-model:value="fullinfo.phone"></a-input>
             </div>
             <div>
-              Время экскурсии
+              Дата экскурсии
               <VueDatePicker v-model="fullinfo.date" locale="ru-Ru" calendar-class-name="dp-custom-calendar"
                 placeholder="выберите дату" calendar-cell-class-name="dp-custom-cell" cancel-text="отмена"
                 select-text="выбрать" :min-date="new Date()" :enable-time-picker="false" format="dd/MM/yyyy">

@@ -131,6 +131,16 @@ async function buyWithTinkoff() {
 }
 
 async function buy() {
+  if (!fullinfo.fullname || !fullinfo.phone || !fullinfo.date || !fullinfo.maxPeople) {
+    message.config({ duration: 3, top: "70vh" });
+    message.success({
+      content: "Заполните все поля",
+      onClose: () => {
+        open.value = false
+      },
+    });
+    return
+  }
   if (!userStore.user.fullinfo?.fullname) {
     await userStore.updateFullinfo(userStore.user._id, {
       fullname: fullinfo.fullname,
@@ -187,6 +197,17 @@ async function buy() {
 }
 
 async function book() {
+
+  if (!fullinfo.fullname || !fullinfo.phone ) {
+    message.config({ duration: 3, top: "70vh" });
+    message.success({
+      content: "Заполните все поля",
+      onClose: () => {
+        open.value = false
+      },
+    });
+    return
+  }
   if (!bookingCount.value) {
     message.config({ duration: 1, top: "70vh" });
     message.success({
@@ -272,10 +293,10 @@ onMounted(() => {
 </script>
 <template>
   <a-modal v-model:open="open" @cancel="emit('close')" :footer="null">
-    <div v-if="!userStore.user.fullinfo?.fullname" class="mt-16 mb-16">
+    <div  class="mt-16 mb-16">
       <div>
         ФИО
-        <a-input v-model:value="fullinfo.fullname" style="border-radius: 12px;"></a-input>
+        <a-input v-model:value="fullinfo.fullname" style="border-radius: 12px;" ></a-input>
       </div>
       <div>
         Телефон
