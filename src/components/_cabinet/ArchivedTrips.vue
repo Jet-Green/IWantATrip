@@ -10,43 +10,27 @@ let tripStore = useTrips();
 let allTrips = ref([])
 let loading = ref(true)
 let query = ref('')
+let retrievedTrips=ref(0)
 
-let getArchivedTrips = computed(() => {
-    let ArchivedTrips = [];
-    for (let trip of filteredTrips.value) {
-        if (trip.start < Date.now()) {
-            ArchivedTrips.push(trip)
-        }
-    }
-    return ArchivedTrips
-})
-
-let filteredTrips = computed(() => {
-
-    if (query.value.length > 2) {
-        localStorage.setItem("cabinetQuery", query.value);
-        return allTrips.value.filter((trip) => trip.name.toLowerCase().includes(query.value.toLowerCase())
-            || trip.description.toLowerCase().includes(query.value.toLowerCase())
-            || trip.tripRoute.toLowerCase().includes(query.value.toLowerCase())
-            || trip.tripType.toLowerCase().includes(query.value.toLowerCase())
-            || trip?.startLocation?.name.toLowerCase().includes(query.value.toLowerCase())
-            || (trip.partner ? trip.partner.toLowerCase().includes(query.value.toLowerCase()) : false)
-            || trip.offer.toLowerCase().includes(query.value.toLowerCase())
-            || trip.userComment?.toLowerCase().includes(query.value.toLowerCase())
-            || clearData(trip.start).includes(query.value.toLowerCase()) 
-        )
-    } else {
-        localStorage.setItem("cabinetQuery", '');
-        return allTrips.value
-    }
-
-})
 async function getAllTrips() {
     loading.value = true
     let userId = userStore.user._id
-    let response = await tripStore.getCreatedTripsInfoByUserId(userId)
-
-    allTrips.value = response.data
+    let filter = {
+      $or: [
+        { "name": { $regex: query.value, $options: 'i' } },
+        { "description": { $regex: query.value, $options: 'i' } },
+        { "tripRoute": { $regex: query.value, $options: 'i' } },
+        { "tripType": { $regex: query.value, $options: 'i' } },
+        { 'startLocation.name': { $regex: query.value, $options: 'i' } },
+        { "partner": { $regex: query.value, $options: 'i' } },
+        { "offer": { $regex: query.value, $options: 'i' } },
+        { "userComment": { $regex: query.value, $options: 'i' } },
+      ],
+    };
+    let cursorType=2
+    let response = await tripStore.getCreatedTripsInfoByUserId(userId,filter,cursorType)
+    retrievedTrips.value=response.length
+    allTrips.value.push(...response)
     loading.value = false
 }
 
@@ -69,25 +53,40 @@ const clearData = (dataString) => {
 
     })
 }
+
+watch(query,()=>{
+    if (query.value.length > 2) {
+        localStorage.setItem("cabinetQuery", query.value);
+        getAllTrips()
+    } else {
+        localStorage.setItem("cabinetQuery", '');
+        getAllTrips()
+    }
+})
+
 onMounted(async () => {
     query.value = localStorage.getItem("cabinetQuery") ?? '';
+    tripStore.cabinetTripsCursor=0
     await getAllTrips()
 });
 
 </script>
 <template>
     <div>
-        <a-input v-model:value="query" placeholder="поиск" />
+        <a-input v-model:value="query" placeholder="поиск"/>
     </div>
     <a-col :span="24" v-if="loading" class="d-flex justify-center">
         <img src="../../assets/images/founddog.webp" alt="" style="height: 150px;">
     </a-col>
-    <a-col :span="24" v-else><a-row :gutter="[8, 8]" class="mt-8" v-if="getArchivedTrips.length > 0">
-            <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getArchivedTrips" :key="trip._id">
+    <a-col :span="24" v-else><a-row :gutter="[8, 8]" class="mt-8" v-if="allTrips.length > 0">
+            <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of allTrips" :key="trip._id">
 
                 <CabinetTrip :trip="trip"
                     :actions="['delete', 'info', 'copy', 'edit', 'addDate', 'transports', 'addLocation', 'editComment']"
-                    @deleteTrip="deleteTrip" @updateTrip="getAllTrips" />
+                    @deleteTrip="deleteTrip"/>
+                </a-col>
+            <a-col :span="24">
+                <div class="justify-center d-flex ma-16" @click="getAllTrips()" v-if="allTrips.length>=10"> <a-button>Ещё</a-button></div>
             </a-col>
         </a-row>
         <a-row :lg="8" :sm="12" :xs="24" v-else>

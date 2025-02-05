@@ -15,6 +15,7 @@ export const useTrips = defineStore('trips', {
         cursor: 1,
         catalogCursor: 1,
         searchCursor: 1,
+        cabinetTripsCursor:1,
         isFetching: false,
         tripFilter: {
             query: "",
@@ -181,12 +182,25 @@ export const useTrips = defineStore('trips', {
         },
         // когда открываем Созданные туры
         // Получает все туры, созданные пользователем
-        async getCreatedTripsInfoByUserId(_id) {
+        async getCreatedTripsInfoByUserId(_id,query,cursorType) {
             try {
-                return await TripService.getCreatedTripsInfoByUserId(_id)
-            } catch (error) {
-                console.log(error);
-            }
+                if (!this.isFetching) {
+                    this.isFetching = true
+                    let response;
+
+                    response = await TripService.getCreatedTripsInfoByUserId(_id,query,this.cabinetTripsCursor,cursorType)
+                    this.isFetching = false
+                    response = _.uniqBy(response.data, '_id')
+                    this.cabinetTripsCursor++
+                    // this.catalogCursor++
+                    // console.log(response)
+
+                    return response
+                    }
+    
+                } catch (err) {
+                    console.log(err);
+                }
         },
         // когда переходим на страницу с покупателями туры
         async getFullTripById(_id) {

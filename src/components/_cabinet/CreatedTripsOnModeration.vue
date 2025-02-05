@@ -10,45 +10,28 @@ let tripStore = useTrips();
 let allTrips = ref([])
 let loading = ref(true)
 let query = ref('')
+let retrievedTrips=ref(0)
 
-let getTripsOnModeration = computed(() => {
-    let OnModerationTrips = [];
-    for (let trip of filteredTrips.value) {
-        if (trip.start < Date.now()) {
-            continue
-        }
-        if (!trip.isModerated) {
-            OnModerationTrips.push(trip)
-        }
-    }
-    return OnModerationTrips
-})
-
-let filteredTrips = computed(() => {
-
-    if (query.value.length > 2) {
-        localStorage.setItem("cabinetQuery", query.value);
-        return allTrips.value.filter((trip) => trip.name.toLowerCase().includes(query.value.toLowerCase())
-            || trip.description.toLowerCase().includes(query.value.toLowerCase())
-            || trip.tripRoute.toLowerCase().includes(query.value.toLowerCase())
-            || trip.tripType.toLowerCase().includes(query.value.toLowerCase())
-            || trip?.startLocation?.name.toLowerCase().includes(query.value.toLowerCase())
-            || (trip.partner ? trip.partner.toLowerCase().includes(query.value.toLowerCase()) : false)
-            || trip.offer.toLowerCase().includes(query.value.toLowerCase())
-            || trip.userComment?.toLowerCase().includes(query.value.toLowerCase())
-        )
-    } else {
-        localStorage.setItem("cabinetQuery", '');
-        return allTrips.value
-    }
-
-})
 async function getAllTrips() {
     loading.value = true
     let userId = userStore.user._id
-    let response = await tripStore.getCreatedTripsInfoByUserId(userId)
-
-    allTrips.value = response.data
+    let filter = {
+      $or: [
+        { "name": { $regex: query.value, $options: 'i' } },
+        { "description": { $regex: query.value, $options: 'i' } },
+        { "tripRoute": { $regex: query.value, $options: 'i' } },
+        { "tripType": { $regex: query.value, $options: 'i' } },
+        { 'startLocation.name': { $regex: query.value, $options: 'i' } },
+        { "partner": { $regex: query.value, $options: 'i' } },
+        { "offer": { $regex: query.value, $options: 'i' } },
+        { "userComment": { $regex: query.value, $options: 'i' } },
+    ],
+    "isModerated": {$eq:false} ,
+    };
+    let cursorType=1
+    let response = await tripStore.getCreatedTripsInfoByUserId(userId,filter,cursorType)
+    retrievedTrips.value=response.length
+    allTrips.value.push(...response)
     loading.value = false
 }
 
@@ -56,8 +39,19 @@ async function deleteTrip() {
     await getAllTrips()
 }
 
+watch(query,()=>{
+    if (query.value.length > 2) {
+        localStorage.setItem("cabinetQuery", query.value);
+        getAllTrips()
+    } else {
+        localStorage.setItem("cabinetQuery", '');
+        getAllTrips()
+    }
+})
+
 onMounted(async () => {
     query.value = localStorage.getItem("cabinetQuery") ?? '';
+    tripStore.cabinetTripsCursor=0
     await getAllTrips()
 });
 
@@ -70,10 +64,13 @@ onMounted(async () => {
         <img src="../../assets/images/founddog.webp" alt="" style="height: 150px;">
     </a-col>
     <a-col :span="24" v-else>
-        <a-row :gutter="[8, 8]" class="mt-8" v-if="getTripsOnModeration.length > 0">
-            <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getTripsOnModeration" :key="trip._id">
+        <a-row :gutter="[8, 8]" class="mt-8" v-if="allTrips.length > 0">
+            <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of allTrips" :key="trip._id">
                 <CabinetTrip :trip="trip" :actions="['delete', 'info', 'edit', 'msg', 'transports', 'editComment']"
                     @deleteTrip="deleteTrip" @updateTrip="getAllTrips" />
+            </a-col>
+            <a-col :span="24">
+                <div class="justify-center d-flex ma-16" @click="getAllTrips()" v-if="allTrips.length>=10"> <a-button>Ещё</a-button></div>
             </a-col>
         </a-row>
         <a-row :lg="8" :sm="12" :xs="24" v-else>
