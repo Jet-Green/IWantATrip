@@ -6,69 +6,47 @@ import { useTrips } from "../../stores/trips.js";
 
 let userStore = useAuth();
 let tripStore = useTrips();
-
+let page = 1
 let allTrips = ref([])
 let loading = ref(true)
 let query = ref('')
+let showMoreButton = ref(true)
 
-let getArchivedTrips = computed(() => {
-    let ArchivedTrips = [];
-    for (let trip of filteredTrips.value) {
-        if (trip.start < Date.now()) {
-            ArchivedTrips.push(trip)
-        }
-    }
-    return ArchivedTrips
-})
+let userId = userStore.user._id
 
-let filteredTrips = computed(() => {
-
-    if (query.value.length > 2) {
-        localStorage.setItem("cabinetQuery", query.value);
-        return allTrips.value.filter((trip) => trip.name.toLowerCase().includes(query.value.toLowerCase())
-            || trip.description.toLowerCase().includes(query.value.toLowerCase())
-            || trip.tripRoute.toLowerCase().includes(query.value.toLowerCase())
-            || trip.tripType.toLowerCase().includes(query.value.toLowerCase())
-            || trip?.startLocation?.name.toLowerCase().includes(query.value.toLowerCase())
-            || (trip.partner ? trip.partner.toLowerCase().includes(query.value.toLowerCase()) : false)
-            || trip.offer.toLowerCase().includes(query.value.toLowerCase())
-            || trip.userComment?.toLowerCase().includes(query.value.toLowerCase())
-            || clearData(trip.start).includes(query.value.toLowerCase()) 
-        )
-    } else {
-        localStorage.setItem("cabinetQuery", '');
-        return allTrips.value
-    }
-
-})
 async function getAllTrips() {
     loading.value = true
-    let userId = userStore.user._id
-    let response = await tripStore.getCreatedTripsInfoByUserId(userId)
+    let filter = {
+        $or: [
+            { "name": { $regex: query.value, $options: 'i' } },
+            { "description": { $regex: query.value, $options: 'i' } },
+        ],
+        start: { $lte: Date.now() }
+    };
 
-    allTrips.value = response.data
+    let response = await tripStore.getCreatedTripsInfoByUserId(userId, filter, page)
+    response.length < 10 ? showMoreButton.value = false : showMoreButton.value = true
+    allTrips.value.push(...response)
     loading.value = false
 }
 
 async function deleteTrip() {
     await getAllTrips()
 }
-const clearData = (dataString) => {
-    let date = 0
-    if (dataString.length == 13) {
-        const dataFromString = new Date(Number(dataString));
-        date = dataFromString
-
-    } else {
-        date = new Date(dataString)
-    };
-    return date.toLocaleDateString("ru-Ru", {
-        year: "2-digit",
-        month: "2-digit",
-        day: "2-digit",
-
-    })
+async function getNextTrips() {
+    page++
+    await getAllTrips()
 }
+
+watch(query, (newQuery, oldQuery) => {
+    if (query.value.length > 2 || newQuery.length <= oldQuery.length) {
+        localStorage.setItem("cabinetQuery", query.value);
+        allTrips.value = []
+        page = 1
+        getAllTrips()
+    }
+})
+
 onMounted(async () => {
     query.value = localStorage.getItem("cabinetQuery") ?? '';
     await getAllTrips()
@@ -82,12 +60,17 @@ onMounted(async () => {
     <a-col :span="24" v-if="loading" class="d-flex justify-center">
         <img src="../../assets/images/founddog.webp" alt="" style="height: 150px;">
     </a-col>
-    <a-col :span="24" v-else><a-row :gutter="[8, 8]" class="mt-8" v-if="getArchivedTrips.length > 0">
-            <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of getArchivedTrips" :key="index">
+    <a-col :span="24" v-else><a-row :gutter="[8, 8]" class="mt-8" v-if="allTrips.length > 0">
+            <a-col :lg="8" :sm="12" :xs="24" v-for="(trip, index) of allTrips" :key="trip._id">
 
                 <CabinetTrip :trip="trip"
                     :actions="['delete', 'info', 'copy', 'edit', 'addDate', 'transports', 'addLocation', 'editComment']"
-                    @deleteTrip="deleteTrip" @updateTrip="getAllTrips" />
+                    @deleteTrip="deleteTrip" />
+            </a-col>
+            <a-col :span="24" v-if="showMoreButton">
+                <div class="justify-center d-flex ma-16" @click="getNextTrips()">
+                    <a-button>Ещё</a-button>
+                </div>
             </a-col>
         </a-row>
         <a-row :lg="8" :sm="12" :xs="24" v-else>

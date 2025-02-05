@@ -826,12 +826,13 @@ const router = createRouter({
     },
   ],
   scrollBehavior(to, from, savedPosition) {
-    if (to.path === '/places') {
+    if (to.path === '/places' ) {
       // Scroll to the element with id "top" on /places route
       return { el: '#top' };
     } else if (savedPosition) {
       return savedPosition;
-    } else {
+    } 
+    else {
       // Default behavior for other routes
       return { x: 0, y: 0 };
     }
@@ -839,11 +840,11 @@ const router = createRouter({
 
 })
 
-// яндекс аналитика
-router.afterEach((to, from) => {
-  if (typeof ym !== 'undefined') {
-    ym(98607105, 'hit', to.fullPath);
-  }
-});
+// // яндекс аналитика
+// router.afterEach((to, from) => {
+//   if (typeof ym !== 'undefined') {
+//     ym(98607105, 'hit', to.fullPath);
+//   }
+// });
 
 export default router

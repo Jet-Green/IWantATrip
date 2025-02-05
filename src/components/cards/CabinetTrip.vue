@@ -307,8 +307,8 @@ async function deleteAdditionalService(serviceId) {
 
 const goToTasks = () => {
     router.push({
-        path:'/cabinet/tasks', 
-        query: { tripName: trip.value.name, _id: trip.value._id}, // передаем trip.value.name как query параметр
+        path: '/cabinet/tasks',
+        query: { tripName: trip.value.name, _id: trip.value._id }, // передаем trip.value.name как query параметр
     })
 }
 const tasksStatus = computed(() => {
@@ -321,12 +321,16 @@ const tasksStatus = computed(() => {
     return statusCount;
 });
 const taskClass = computed(() => {
-    if (!tasks.value.length) {
-        return '';
+    if (!(tasks.value.length)) {
+        return ''
     }
-    return tasksStatus.value.closed != tasks.value.length ? 'open-status' : 'closed-status';
+    return tasksStatus.value.closed != tasks?.value.length ? 'open-status' : 'closed-status';
 });
 
+let fetchTasks = async () => {
+    await taskStore.getAll(page, query).then((data) => { data? tasks.value = data: tasks.value =[] })
+
+}
 watch(locationSearchRequest, async (newValue, oldValue) => {
     if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
         var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
@@ -393,7 +397,11 @@ watch(dates, () => {
         }
     }
 }, { deep: true })
+
+
+
 onMounted(async () => {
+
     canSellPartnerTour.value = trip.value.canSellPartnerTour ?? false
     checked.value = trip.value.isCatalog
     if (!appStateStore.appState[0]?.transport) {
@@ -404,9 +412,8 @@ onMounted(async () => {
     }
     buses.value = await useBus().get()
     // addTransportForm.value.price = trip.value.transports[0]?.price ?? null
-    await taskStore.getAll(page, query)
+    await fetchTasks()
 
-    tasks.value = taskStore.tasks
 
 })
 </script>
@@ -441,7 +448,6 @@ onMounted(async () => {
                     <span class="mdi mdi-calendar-check-outline"> </span>
                     {{ tasksStatus.closed }}/{{ tasks.length }}</a-button>
             </div>
-
             <div class="actions d-flex justify-center">
                 <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="tripToDelete(trip._id)"
                     v-if="(!trip.billsList?.length > 0) && actions.includes('delete')">

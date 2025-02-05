@@ -181,12 +181,25 @@ export const useTrips = defineStore('trips', {
         },
         // когда открываем Созданные туры
         // Получает все туры, созданные пользователем
-        async getCreatedTripsInfoByUserId(_id) {
+        async getCreatedTripsInfoByUserId(_id,query,page) {
             try {
-                return await TripService.getCreatedTripsInfoByUserId(_id)
-            } catch (error) {
-                console.log(error);
-            }
+                if (!this.isFetching) {
+                    this.isFetching = true
+                    let response;
+
+                    response = await TripService.getCreatedTripsInfoByUserId(_id,query,page)
+                    this.isFetching = false
+                    response = _.uniqBy(response.data, '_id')
+                
+                    // this.catalogCursor++
+                    // console.log(response)
+
+                    return response
+                    }
+    
+                } catch (err) {
+                    console.log(err);
+                }
         },
         // когда переходим на страницу с покупателями туры
         async getFullTripById(_id) {
