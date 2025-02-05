@@ -30,8 +30,8 @@ let open = ref(false)
 const backRoute = { name: 'ExcursionsPage', hash: `#${_id}` };
 
 let fullinfo = reactive({
-  fullname: userStore.user.fullinfo?.fullname,
-  phone: userStore.user.fullinfo?.phone,
+  fullname: "",
+  phone: "",
   date: "",
   maxPeople: ""
 })
@@ -47,7 +47,7 @@ const options = ref({
 
 const { isSupported } = useShare(options)
 
-function startShare() {
+async function startShare() {
   const { share } = useShare(options)
   return share().catch(err => {
     console.log(err);
@@ -110,6 +110,14 @@ async function order() {
 onMounted(async () => {
   let response = await excursionStore.getExcursionById(_id);
   excursion.value = response.data;
+
+if (userStore.isAuth) {
+  fullinfo.fullname = userStore.user.fullinfo?.fullname || '',
+  fullinfo.phone = userStore.user.fullinfo?.phone || ''
+}
+ 
+
+
 });
 </script>
 <template>
@@ -122,7 +130,7 @@ onMounted(async () => {
         <h2 class="ma-0">{{ excursion.name }}</h2>
         <div>
           {{ excursion.excursionType.type }} | {{ excursion.excursionType.directionType }} | {{
-        excursion.excursionType.directionPlace }}
+            excursion.excursionType.directionPlace }}
         </div>
         <a-row :gutter="[12, 12]" class="text justify-center d-flex">
           <a-col :xs="24" :md="12">
@@ -209,7 +217,13 @@ onMounted(async () => {
             <div v-if="_.isEmpty(excursion.dates)" class="month">
               По заявкам
               <div class="d-flex justify-center ma-8">
-                <a-button type="primary" class="lets_go_btn" @click="open = !open">заказать</a-button>
+
+                <a-button v-if="userStore.isAuth" type="primary" class="lets_go_btn"
+                  @click="open = !open">заказать</a-button>
+                <RouterLink to="/auth">
+                  <a-button type="primary" class="lets_go_btn" to="/auth" v-if="!userStore.isAuth"> вход/регистрация для
+                    заказа </a-button>
+                </RouterLink>
               </div>
             </div>
             <BuyExcursionDates v-else :max-people="excursion.maxPeople" :excursionId="excursion._id" :buy="buy"
@@ -243,8 +257,10 @@ onMounted(async () => {
               Количество человек
               <a-input v-model:value="fullinfo.maxPeople"></a-input>
             </div>
+
             <div class="d-flex justify-center mt-8">
               <a-button type="primary" class="lets_go_btn" @click="order">Отправить</a-button>
+
             </div>
           </div>
         </a-modal>
@@ -258,14 +274,14 @@ onMounted(async () => {
   font-weight: 600;
   font-size: clamp(0.9375rem, 0.6889rem + 0.7102vw, 1.25rem);
 }
+
 img {
-    width: 100%;
-    aspect-ratio: 270/175;
-    object-fit: cover;
+  width: 100%;
+  aspect-ratio: 270/175;
+  object-fit: cover;
 }
 
 // .order_container{
 //   display: flex;
 //   justify-content: center;
-// }
-</style>
+// }</style>

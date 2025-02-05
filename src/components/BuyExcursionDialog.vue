@@ -28,8 +28,8 @@ let bookingCount = ref(null)
 let pricesForm = ref([])
 
 let fullinfo = reactive({
-  fullname: userStore.user.fullinfo?.fullname,
-  phone: userStore.user.fullinfo?.phone,
+  fullname: "",
+  phone: "",
   date: "",
   time: "",
   name: props.excursion.name,
@@ -264,6 +264,10 @@ watch(selectedDate, (newValue) => {
 })
 onMounted(() => {
   createPriceForm()
+  if (userStore.isAuth) {
+  fullinfo.fullname = userStore.user.fullinfo?.fullname || '',
+  fullinfo.phone = userStore.user.fullinfo?.phone || ''
+}
 })
 </script>
 <template>
