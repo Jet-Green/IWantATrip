@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, watch, computed } from "vue";
 import CabinetTrip from "../cards/CabinetTrip.vue";
+import TaskStatusButton from "./crm/TaskStatusButton.vue";
 import { useAuth } from "../../stores/auth.js";
 import { useTrips } from "../../stores/trips.js";
 

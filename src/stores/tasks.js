@@ -37,6 +37,23 @@ export const useTasks = defineStore('tasks', {
         console.log(err);
       }
     },
+    async getTripTasks(query) {
+
+      try {
+        let response = await TaskService.getTripTasks(
+          query
+        );
+        let tripTasks = _.uniqBy(response.data, '_id')
+        // Сортировка массива по полю deadLine с использованием lodash
+        tripTasks = _.orderBy(tripTasks, [(task) => task.deadLine], ['asc']);
+        return tripTasks
+
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
+
     async getTasksAmount(query) {
       try {
 

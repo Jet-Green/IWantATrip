@@ -13,6 +13,9 @@ export default {
   getAll(page, query) {
     return $api.post('/tasks/get-all', { page, query })
   },
+  getTripTasks(query) {
+    return $api.post('/tasks/get-trip-tasks', { query })
+  },
   getTasksAmount(query) {
     return $api.post('/tasks/get-tasks-amount', { query })
   },

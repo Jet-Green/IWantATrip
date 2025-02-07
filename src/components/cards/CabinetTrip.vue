@@ -7,6 +7,7 @@ import { useAuth } from '../../stores/auth';
 import { useBus } from '../../stores/bus'
 import { useAppState } from '../../stores/appState';
 import Bus from '../../components/Bus.vue'
+import TaskStatusButton from '../_cabinet/crm/TaskStatusButton.vue';
 import { useTasks } from "../../stores/tasks"
 
 import dayjs from 'dayjs'
@@ -328,7 +329,7 @@ const taskClass = computed(() => {
 });
 
 let fetchTasks = async () => {
-    await taskStore.getAll(page, query).then((data) => { data? tasks.value = data: tasks.value =[] })
+    await taskStore.getAll(page, query).then((data) => { data ? tasks.value = data : tasks.value = [] })
 
 }
 watch(locationSearchRequest, async (newValue, oldValue) => {
@@ -443,11 +444,12 @@ onMounted(async () => {
                 <span class="mdi mdi-calendar-arrow-left"></span>
                 {{ `по ${clearData(trip.end)}` }}
             </div>
-            <div class="d-flex justify-end">
+            <!-- <div class="d-flex justify-end">
                 <a-button size='small' shape="round" @click="goToTasks()" :class="taskClass">
                     <span class="mdi mdi-calendar-check-outline"> </span>
                     {{ tasksStatus.closed }}/{{ tasks.length }}</a-button>
-            </div>
+            </div> -->
+            <TaskStatusButton :trip="trip" />
             <div class="actions d-flex justify-center">
                 <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="tripToDelete(trip._id)"
                     v-if="(!trip.billsList?.length > 0) && actions.includes('delete')">
