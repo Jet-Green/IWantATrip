@@ -17,8 +17,11 @@ let query = {
             $or: [{ author: userStore.user._id }, { managers: userStore.user._id }],
         },
         {
-            $or: [{ name: { $regex: trip?.value.name, $options: "i" } }, { "tripInfo.name": { $regex: trip?.value.name, $options: "i" } }],
+            $or: [{ name: { $regex: trip?.value.name, $options: "i" } }, { "tripInfo.name": { $regex: trip?.value.name, $options: "i" } }, { "tripInfo._id": trip?.value._id }],
         },
+      
+
+      
     ],
     $or: [
         {
