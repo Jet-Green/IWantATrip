@@ -260,7 +260,6 @@ onMounted(async () => {
             </a-col>
             <a-col :span="24">
               <div>Тур</div>
-              {{ trips }}
               <a-select v-model:value="form.trip" show-search placeholder="поиск тура" style="width: 100%"
                 :default-active-first-option="false" :show-arrow="false" :filter-option="false"
                 :fieldNames="{ label: 'label', value: '_id' }" :not-found-content="null" :options="trips"

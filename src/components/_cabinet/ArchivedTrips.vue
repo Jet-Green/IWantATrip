@@ -21,6 +21,7 @@ async function getAllTrips() {
         $or: [
             { "name": { $regex: query.value, $options: 'i' } },
             { "description": { $regex: query.value, $options: 'i' } },
+            { "parent": { $exists: true } }
         ],
         start: { $lte: Date.now() }
     };
