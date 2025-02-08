@@ -25,8 +25,8 @@ async function getAllTrips() {
     "isModerated": {$eq:false} ,
     };
  
-    let response = await tripStore.getCreatedTripsInfoByUserId(userId,filter,page)
-    // response.length < 10 ? showMoreButton.value = false : showMoreButton.value = true
+    let response = await tripStore.getCreatedTripsInfoByUserId(userId,filter,page) || []
+    response.length < 15 ? showMoreButton.value = false : showMoreButton.value = true
     allTrips.value.push(...response)
     loading.value = false
 }
@@ -69,7 +69,9 @@ onMounted(async () => {
                     @deleteTrip="deleteTrip" @updateTrip="getAllTrips" />
             </a-col>
             <a-col :span="24" v-if="showMoreButton">
-                <div class="justify-center d-flex ma-16" @click="getAllTrips()"> <a-button>Ещё</a-button></div>
+                <div class="justify-center d-flex ma-16" @click="getNextTrips()">
+                    <a-button>Ещё</a-button>
+                </div>
             </a-col>
       
         </a-row>

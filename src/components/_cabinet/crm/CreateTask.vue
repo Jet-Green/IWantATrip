@@ -127,8 +127,18 @@ async function submit() {
       })
     }
   } else {
+    let toSend = {}
     toSend._id = taskId.value
-
+    toSend.name = form.name
+    toSend.trip = form.trip
+    toSend.partner = form.partner
+    toSend.managers = form.managers
+    toSend.payAmount = form.payAmount
+    toSend.author = userStore.user._id
+    if (form.deadLine) {
+      toSend.deadLine = new Date(form.deadLine).getTime()
+    }
+    console.log(toSend)
 
     let response = await tasksStore.editTask(toSend)
     if (response.status == 200) {
@@ -165,11 +175,7 @@ const tripChange = (search) => {
   getTrips(search)
 }
 
-const tripString = (trip) => {
-  console.log(trip)
-  //  return  { label: trip.name , value: trip._id }
-  // return dayjs(trip.start + trip.timezoneOffset).format('DD.MM.YYYY')
-}
+
 
 // партнеры для селектора
 let page = 1
@@ -225,10 +231,13 @@ onMounted(async () => {
     if (res.status == 200) {
       form.name = taskFromDB.name
       form.trip = taskFromDB.tripInfo._id
-      form.partner = taskFromDB.partner._id
+      form.timezoneOffset = taskFromDB.timezoneOffset
+      taskFromDB.partner._id ? form.partner = taskFromDB.partner._id : form.partner = null
       form.deadLine = dayjs(new Date(taskFromDB.deadLine + new Date().getTimezoneOffset()))
       form.comment = taskFromDB.comment
       form.payAmount = taskFromDB.payAmount
+      console.log(`${taskFromDB.tripInfo.name} от ${dayjs(taskFromDB.tripInfo.start + taskFromDB.timezoneOffset).format('DD.MM.YYYY')}`)
+      // taskFromDB.tripInfo.label = `${taskFromDB.tripInfo.name} от ${dayjs(taskFromDB.tripInfo.start + taskFromDB.timezoneOffset).format('DD.MM.YYYY')}`
       trips.value.push(taskFromDB.tripInfo)
       partners.value.push(taskFromDB.partner)
 
@@ -260,6 +269,7 @@ onMounted(async () => {
             </a-col>
             <a-col :span="24">
               <div>Тур</div>
+              {{ form }}
               <a-select v-model:value="form.trip" show-search placeholder="поиск тура" style="width: 100%"
                 :default-active-first-option="false" :show-arrow="false" :filter-option="false"
                 :fieldNames="{ label: 'label', value: '_id' }" :not-found-content="null" :options="trips"

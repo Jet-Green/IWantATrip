@@ -26,8 +26,8 @@ async function getAllTrips() {
         start: { $lte: Date.now() }
     };
 
-    let response = await tripStore.getCreatedTripsInfoByUserId(userId, filter, page)
-    // response.length < 10 ? showMoreButton.value = false : showMoreButton.value = true
+    let response = await tripStore.getCreatedTripsInfoByUserId(userId, filter, page)||[]
+    response.length < 15 ? showMoreButton.value = false : showMoreButton.value = true
     allTrips.value.push(...response)
     loading.value = false
 }

@@ -90,24 +90,6 @@ async function openTask() {
 
 
 
-
-{/* <span v-if="billTotal(BILL) == BILL.payment.amount" style="color: #bcc662">
-                                        <span class="mdi mdi-check-all" style="font-size: 20px"></span>
-                                        оплачен
-                                    </span>
-                                    <span v-if="billTotal(BILL) != BILL.payment.amount"
-                                        style="display: flex; align-items: center">
-                                        <div v-if="BILL.payment.amount == 0" style="color: #ff6600">
-                                            <span class="mdi mdi-close" style="font-size: 20px; "></span>
-                                            не оплачен
-                                        </div>
-                                        <div v-else style="color: #20A0CE">
-                                            <span class="mdi mdi-check" style="font-size: 20px"></span>
-                                            частично
-                                        </div>
-                                    </span> */}
-
-
 </script>
 <template>
   <a-card class="pa-8 pb-32" v-if="task._id">
@@ -118,14 +100,13 @@ async function openTask() {
       <span @click="openTask" class="mdi mdi-checkbox-marked closed-status"
         v-if="task.status == 'closed' && !isStatusSetting"></span>
     </div>
-
     <div style="font-weight: 600; font-size:18px">{{ taskDate }} до {{ taskTime }} </div>
     <div class="task-name pa-4 ma-4" @click="router.push(`/create-task?_id=${task._id}`)">
       {{ task.name }}
       <!-- <span @click="router.push(`/create-task?_id=${task._id}`)" class="mdi mdi-pen"></span> -->
     </div>
     <div v-if="task.trip" style="font-weight: 500;" class="pa-4 ma-4"> {{ task.tripInfo.name }} от {{ dayjs(task.trip.start +
-      task.trip.timezoneOffset).format('DD.MM.YYYY') }}
+      task.timezoneOffset).format('DD.MM.YYYY') }}
     </div>
     <a-card v-if="task.partner?._id" class="pa-4 ma-4">
       <div class="d-flex flex-wrap" style="gap: 5px 20px;">
