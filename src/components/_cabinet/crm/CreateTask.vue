@@ -195,11 +195,13 @@ let removeManager = (index) => {
 
 watch(managersEmails, () => checkManagers(), { deep: true })
 watch(
-  () => form.trip,
-  (newTripId) => {
+ trips,
+  () => {
+   
     for (let i = 0; i < trips.value.length; i++) {
-      if (trips.value[i]._id == newTripId) {
+      if (trips.value[i]._id == form.trip) {
         tripInfo.value = trips.value[i]
+        console.log(tripInfo.value)
       }
     }
   }
