@@ -56,7 +56,7 @@ onMounted(async () => {
 </script>
 <template>
     <div>
-        <a-input v-model:value="query" placeholder="поиск" />
+        <a-input v-model:value="query" placeholder="поиск" allow-clear />
     </div>
     <a-col :span="24" v-if="loading" class="d-flex justify-center">
         <img src="../../assets/images/founddog.webp" alt="" style="height: 150px;">

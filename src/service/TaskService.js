@@ -25,8 +25,8 @@ export default {
   getById(_id) {
     return $api.get(`/tasks/get-by-id?_id=${_id}`)
   },
-  edit(taskId, form) {
-    return $api.post(`/tasks/edit`, { taskId, form })
+  editTask(form) {
+    return $api.post(`/tasks/edit-task`,form)
   },
   getForCreateTrip() {
     return $api.get('/tasks/for-create-trip')

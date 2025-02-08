@@ -28,7 +28,7 @@ const route = useRoute()
 const emailExists = ref([])
 
 let trips = ref([])
-let partners = ref()
+let partners = ref([])
 let taskId = ref()
 
 let form = reactive({
@@ -107,9 +107,7 @@ async function submit() {
   toSend.status = "open"
   toSend.timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000
   toSend.tripInfo = tripInfo.value
-  
   toSend.createdDate = Date.now() 
-
   if (toSend.deadLine) {
 
     toSend.deadLine = new Date(toSend.deadLine).getTime() 
@@ -130,8 +128,9 @@ async function submit() {
     }
   } else {
     toSend._id = taskId.value
-    
-    let response = await tasksStore.edit(toSend)
+    console.log(toSend)
+   
+    let response = await tasksStore.editTask(toSend)
     if (response.status == 200) {
       message.config({ duration: 1.5, top: "70vh" })
       message.success({
@@ -211,13 +210,16 @@ onMounted(async () => {
     let res = await tasksStore.getById(taskId.value)
     let taskFromDB = res.data
 
+
     if (res.status == 200) {
       form.name = taskFromDB.name
-      form.trip = taskFromDB.tripInfo.name
-      form.partner = taskFromDB.partner.name
+      form.trip = taskFromDB.tripInfo._id
+      form.partner = taskFromDB.partner._id
       form.deadLine = dayjs(new Date(taskFromDB.deadLine + new Date().getTimezoneOffset()))
       form.comment = taskFromDB.comment
       form.payAmount = taskFromDB.payAmount
+      trips.value.push(taskFromDB.tripInfo)
+      partners.value.push(taskFromDB.partner)
 
       managersEmails.value = taskFromDB.managers.map((manager) => {
         return manager.email
@@ -251,9 +253,9 @@ onMounted(async () => {
             </a-col>
             <a-col :span="24">
               <div>Тур</div>
-
+         
               <a-select
-                :disabled="taskId ? true : false"
+        
                 v-model:value="form.trip"
                 show-search
                 placeholder="поиск тура"
@@ -273,7 +275,7 @@ onMounted(async () => {
               <div>Партнер</div>
 
               <a-select
-                :disabled="taskId ? true : false"
+              
                 v-model:value="form.partner"
                 show-search
                 placeholder="поиск партнера"

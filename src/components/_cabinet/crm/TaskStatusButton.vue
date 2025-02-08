@@ -19,9 +19,7 @@ let query = {
         {
             $or: [{ name: { $regex: trip?.value.name, $options: "i" } }, { "tripInfo.name": { $regex: trip?.value.name, $options: "i" } }, { "tripInfo._id": trip?.value._id }],
         },
-      
-
-      
+         
     ],
     $or: [
         {

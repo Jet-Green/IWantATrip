@@ -93,9 +93,10 @@ export const useTasks = defineStore('tasks', {
       }
     },
 
-    async edit(taskId, form) {
+    async editTask(form) {
+   
       try {
-        const response = await TaskService.edit(taskId, form)
+        const response = await TaskService.editTask(form)
         return response
       } catch (error) {
         console.log(error);
