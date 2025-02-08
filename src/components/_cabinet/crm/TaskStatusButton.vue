@@ -17,7 +17,7 @@ let query = {
             $or: [{ author: userStore.user._id }, { managers: userStore.user._id }],
         },
         {
-            $or: [{ name: { $regex: trip?.value.name, $options: "i" } }, { "tripInfo.name": { $regex: trip?.value.name, $options: "i" } }, { "tripInfo._id": trip?.value._id }],
+            $or: [ { "tripInfo._id": trip?.value._id }],
         },
          
     ],
@@ -56,7 +56,7 @@ const taskClass = computed(() => {
 });
 
 let fetchTasks = async () => {
-    await taskStore.getAll(query).then((data) => { data? tasks.value = data: tasks.value =[] })
+    // await taskStore.getAll(query).then((data) => { data? tasks.value = data: tasks.value =[] })
     await taskStore.getTripTasks(query).then((data) => { data? tasks.value = data: tasks.value =[] })
 }
 const goToTasks = () => {

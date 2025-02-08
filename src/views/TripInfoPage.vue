@@ -328,8 +328,8 @@ async function buyTrip() {
                 touristsList: touristsList.value,
                 userInfo: {
                     _id: userStore.user._id,
-                    fullname: userStore.user.fullinfo.fullname,
-                    phone: userStore.user.fullinfo.phone,
+                    fullname: touristsList.value[0].fullname,
+                    phone: touristsList.value[0].phone,
                 },
             };
             if (bill.userInfo.phone == "") {

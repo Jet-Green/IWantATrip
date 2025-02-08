@@ -52,11 +52,6 @@ if (task.value.payAmount >  totalPaymentAmount.value) {
 
 })
 
-const currentOffset = new Date().getTimezoneOffset() * 60 * 1000
-function getFullDate(date) {
-  return datePlugin.getFullDate(date + currentOffset)
-}
-
 async function taskToDelete(_id) {
   let response = await taskStore.deletePlace(_id)
   if (response.status == 200) {
@@ -129,7 +124,7 @@ async function openTask() {
       {{ task.name }}
       <!-- <span @click="router.push(`/create-task?_id=${task._id}`)" class="mdi mdi-pen"></span> -->
     </div>
-    <div v-if="task.trip" style="font-weight: 500;" class="pa-4 ma-4"> {{ task.trip.name }} от {{ dayjs(task.trip.start +
+    <div v-if="task.trip" style="font-weight: 500;" class="pa-4 ma-4"> {{ task.tripInfo.name }} от {{ dayjs(task.trip.start +
       task.trip.timezoneOffset).format('DD.MM.YYYY') }}
     </div>
     <a-card v-if="task.partner?._id" class="pa-4 ma-4">
