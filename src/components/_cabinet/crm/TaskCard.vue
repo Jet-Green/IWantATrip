@@ -20,7 +20,7 @@ const userStore = useAuth()
 // toRefs add reactivity
 let { task } = toRefs(props)
 
-let isCreator =  userStore.user.tinkoffContract||false
+let isCreator = userStore.user.tinkoffContract || false
 let viewPartnerDialog = ref(false)
 let newInteractionDialog = ref(false)
 let addPaymentDialog = ref(false)
@@ -38,17 +38,17 @@ const totalPaymentAmount = computed(() => {
   return res
 })
 
-let getColor = computed( () => {
+let getColor = computed(() => {
 
-if (task.value.payAmount ==  totalPaymentAmount.value) {
-  return  "background: #bcc662"
-}
-if ( totalPaymentAmount.value ==  0) {
-  return  "background: #ff6600"
-}
-if (task.value.payAmount >  totalPaymentAmount.value) {
-  return  "background: #20A0CE"
-}
+  if (task.value.payAmount == totalPaymentAmount.value) {
+    return "background: #bcc662"
+  }
+  if (totalPaymentAmount.value == 0) {
+    return "background: #ff6600"
+  }
+  if (task.value.payAmount > totalPaymentAmount.value) {
+    return "background: #20A0CE"
+  }
 
 })
 
@@ -92,7 +92,7 @@ async function openTask() {
 
 </script>
 <template>
-  <a-card class="pa-8 pb-32" v-if="task._id">
+  <a-card class="pa-8" v-if="task._id">
     <div class="status">
       <span class="mdi mdi-checkbox-blank-outline open-status" @click="closeTask"
         v-if="task.status == 'open' && !isStatusSetting"></span>
@@ -105,8 +105,9 @@ async function openTask() {
       {{ task.name }}
       <!-- <span @click="router.push(`/create-task?_id=${task._id}`)" class="mdi mdi-pen"></span> -->
     </div>
-    <div v-if="task.trip" style="font-weight: 500;" class="pa-4 ma-4"> {{ task.tripInfo.name }} от {{ dayjs(task.trip.start +
-      task.timezoneOffset).format('DD.MM.YYYY') }}
+    <div v-if="task.trip" style="font-weight: 500;" class="pa-4 ma-4"> {{ task.tripInfo.name }} от {{
+      dayjs(task.trip.start +
+        task.timezoneOffset).format('DD.MM.YYYY') }}
     </div>
     <a-card v-if="task.partner?._id" class="pa-4 ma-4">
       <div class="d-flex flex-wrap" style="gap: 5px 20px;">
@@ -135,33 +136,41 @@ async function openTask() {
       </div>
     </a-card>
 
-    <div class="d-flex space-around flex-wrap mb-4" >
+    <div class="d-flex space-around flex-wrap mb-4">
       <div class="d-flex justify-center" style="padding-top:5px">
-        <a-badge :dot="true" v-if="task.interactions?.length>0" :offset=[-3,3]>
-        <a-button @click="showInteraction = !showInteraction">
+        <a-badge :dot="true" v-if="task.interactions?.length > 0" >
+          <a-button @click="showInteraction = !showInteraction">
+            Действия
+          </a-button>
+        </a-badge>
+        <a-button v-else @click="showInteraction = !showInteraction">
           Действия
         </a-button>
-      </a-badge>
-      <a-button v-else @click="showInteraction = !showInteraction">
-          Действия
-        </a-button>
-        <a-button @click="addNewInteraction">
+        <a-button @click="addNewInteraction" style="margin-left: 4px;">
           <span class="mdi mdi-plus"></span>
         </a-button>
       </div>
-      <div style="min-width: 200px; padding-top:5px"  class="d-flex justify-center" >
-        <a-button @click="showPayments = !showPayments" v-if="task.payAmount"  style='color:white' :style='getColor'>
+      <div style="min-width: 200px; padding-top:5px" class="d-flex justify-center">
+        <a-button @click="showPayments = !showPayments" v-if="task.payAmount" style='color:white' :style='getColor'>
           <div v-if="task.payAmount">
 
             {{ totalPaymentAmount }}/
             {{ task.payAmount }} ₽
           </div>
         </a-button>
-        <a-button @click="addPaymentDialog = true" v-if="task.payAmount">
+        <a-button @click="addPaymentDialog = true" v-if="task.payAmount" style="margin-left: 4px;">
           <span class="mdi mdi-plus"></span>
         </a-button>
       </div>
     </div>
+    <div style="position:relative; line-height: 24px; padding: 4px;">
+      <i>{{task.comment }}</i> 
+      <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="taskToDelete(task._id)" v-if="isCreator">
+        <span class="mdi mdi-delete"
+          style="color:#ff6600; font-size: 24px; position: absolute;   right: 0px;  bottom: 0px;"></span>
+      </a-popconfirm>
+    </div>
+
 
 
     <div>
@@ -175,7 +184,7 @@ async function openTask() {
               <div v-for="(inter, index) of task.interactions" :key="index" style="gap: 10px;">
                 <div>
 
-                  <div >
+                  <div>
                     {{ dayjs(inter.date + new Date().getTimezoneOffset()).format('DD.MM.YYYY HH.mm') }} - {{
                       inter.meetingType }}
                   </div>
@@ -194,7 +203,7 @@ async function openTask() {
           </a-card>
 
         </a-col>
-        <a-col v-if="showPayments" :span="24" :md="showInteraction?{ span: 12}:{span:12, offset: 12 }" >
+        <a-col v-if="showPayments" :span="24" :md="showInteraction ? { span: 12 } : { span: 12, offset: 12 }">
           <a-card style="height: 100%; padding:8px">
             <h3>Оплаты</h3>
             <div v-for="(payment, index) of task.payments" :key="index">
@@ -212,10 +221,7 @@ async function openTask() {
 
     </div>
 
-    <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="taskToDelete(task._id)" v-if="isCreator">
-      <span class="mdi mdi-delete"
-        style="color:#ff6600; font-size: 24px; position: absolute;   right: 5px;  bottom: 0px;"></span>
-    </a-popconfirm>
+
 
 
 
@@ -223,8 +229,8 @@ async function openTask() {
     <PartnerDialog :partner="task.partner" :props-dialog="viewPartnerDialog" @close="viewPartnerDialog = false" />
     <NewInteractionDialog :taskId="task._id" :props-dialog="newInteractionDialog" @close="newInteractionDialog = false"
       @update="emit('refreshTasks')" />
-    <AddPayment :props-dialog="addPaymentDialog" :taskId="task._id" :payments="task.payments" :payAmount="task.payAmount"
-      @close="addPaymentDialog = false" @update="emit('refreshTasks')" />
+    <AddPayment :props-dialog="addPaymentDialog" :taskId="task._id" :payments="task.payments"
+      :payAmount="task.payAmount" @close="addPaymentDialog = false" @update="emit('refreshTasks')" />
   </a-card>
 </template>
 <style scoped lang="scss">

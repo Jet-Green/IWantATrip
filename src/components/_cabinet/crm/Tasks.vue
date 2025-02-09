@@ -46,7 +46,7 @@ let query = {
   $or: [
     {
       "tripInfo.end": {
-        $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000,
+        $gte: Date.now() ,
       }
     },
     {
@@ -54,7 +54,7 @@ let query = {
         { trip: null },
         {
           deadLine: {
-            $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000 - 7 * 24 * 60 * 60 * 1000, // minus 7 days 
+            $gte: Date.now()  - 14 * 24 * 60 * 60 * 1000, // minus 14 days 
           }
         }
       ]
@@ -62,13 +62,12 @@ let query = {
   ]
 }
 
-const CURRENT_OFFSET = new Date().getTimezoneOffset() * 60 * 1000
 
 const selectedDate = ref(undefined)
 const activeDate = ref(null)
 const events = computed(() => {
   return tasksAmount.value.map((item) => ({
-    date: dayjs(item.deadLine - CURRENT_OFFSET)
+    date: dayjs(item.deadLine)
       .startOf("day")
       .valueOf(),
   }))
@@ -91,7 +90,7 @@ async function getTasksAmount() {
         $or: [
           {
             "tripInfo.end": {
-              $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000,
+              $gte: Date.now(),
             }
           },
           {
@@ -99,7 +98,7 @@ async function getTasksAmount() {
               { trip: null },
               {
                 deadLine: {
-                  $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000 - 7 * 24 * 60 * 60 * 1000, // minus 7 days 
+                  $gte: Date.now()  - 14 * 24 * 60 * 60 * 1000, // minus 14 days 
                 }
               }
             ]
@@ -161,8 +160,8 @@ async function refreshTasks() {
     const endOfDay = activeDate.value.endOf("day").valueOf()
 
     query.deadLine = {
-      $gte: startOfDay + CURRENT_OFFSET, // Больше или равно началу дня
-      $lte: endOfDay + CURRENT_OFFSET, // Меньше или равно концу дня
+      $gte: startOfDay, // Больше или равно началу дня
+      $lte: endOfDay, // Меньше или равно концу дня
     }
   } else {
     delete query.deadLine

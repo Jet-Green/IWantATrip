@@ -106,8 +106,12 @@ async function submit() {
   toSend.author = userStore.user._id
   toSend.status = "open"
   toSend.timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000
-  toSend.tripInfo = tripInfo.value
   toSend.createdDate = Date.now()
+
+  if(form.trip) {
+      toSend.trip = form.trip
+      toSend.tripInfo = tripInfo.value
+    }
   if (toSend.deadLine) {
 
     toSend.deadLine = new Date(toSend.deadLine).getTime()
@@ -130,11 +134,16 @@ async function submit() {
     let toSend = {}
     toSend._id = taskId.value
     toSend.name = form.name
-    toSend.trip = form.trip
+ 
     toSend.partner = form.partner
     toSend.managers = form.managers
     toSend.payAmount = form.payAmount
+    toSend.comment = form.comment
     toSend.author = userStore.user._id
+    if(form.trip) {
+      toSend.trip = form.trip
+      toSend.tripInfo = tripInfo.value
+    }
     if (form.deadLine) {
       toSend.deadLine = new Date(form.deadLine).getTime()
     }
@@ -229,18 +238,22 @@ onMounted(async () => {
 
 
     if (res.status == 200) {
+      form.deadLine = dayjs(taskFromDB.deadLine)
       form.name = taskFromDB.name
-      form.trip = taskFromDB.tripInfo._id
-      form.timezoneOffset = taskFromDB.timezoneOffset
-      taskFromDB.partner._id ? form.partner = taskFromDB.partner._id : form.partner = null
-      form.deadLine = dayjs(new Date(taskFromDB.deadLine + new Date().getTimezoneOffset()))
+      if (taskFromDB.trip) {
+        form.trip = taskFromDB.tripInfo._id
+        trips.value.push(taskFromDB.tripInfo)
+        taskFromDB.tripInfo.label = `${taskFromDB.tripInfo.name} от ${dayjs(taskFromDB.tripInfo.start + taskFromDB.timezoneOffset).format('DD.MM.YYYY')}`
+      }
+      if (taskFromDB.partner) {
+        form.partner = taskFromDB.partner._id
+        partners.value.push(taskFromDB.partner)
+      }
       form.comment = taskFromDB.comment
       form.payAmount = taskFromDB.payAmount
-      console.log(`${taskFromDB.tripInfo.name} от ${dayjs(taskFromDB.tripInfo.start + taskFromDB.timezoneOffset).format('DD.MM.YYYY')}`)
-      // taskFromDB.tripInfo.label = `${taskFromDB.tripInfo.name} от ${dayjs(taskFromDB.tripInfo.start + taskFromDB.timezoneOffset).format('DD.MM.YYYY')}`
-      trips.value.push(taskFromDB.tripInfo)
-      partners.value.push(taskFromDB.partner)
-
+      // console.log(`${taskFromDB.tripInfo.name} от ${dayjs(taskFromDB.tripInfo.start + taskFromDB.timezoneOffset).format('DD.MM.YYYY')}`)
+    
+    
       managersEmails.value = taskFromDB.managers.map((manager) => {
         return manager.email
       })
@@ -268,8 +281,7 @@ onMounted(async () => {
               </Transition>
             </a-col>
             <a-col :span="24">
-              <div>Тур</div>
-              {{ form }}
+              <div>Тур</div>        
               <a-select v-model:value="form.trip" show-search placeholder="поиск тура" style="width: 100%"
                 :default-active-first-option="false" :show-arrow="false" :filter-option="false"
                 :fieldNames="{ label: 'label', value: '_id' }" :not-found-content="null" :options="trips"
@@ -277,7 +289,6 @@ onMounted(async () => {
             </a-col>
             <a-col :span="24">
               <div>Партнер</div>
-
               <a-select v-model:value="form.partner" show-search placeholder="поиск партнера" style="width: 100%"
                 :default-active-first-option="false" :show-arrow="false" :filter-option="false"
                 :fieldNames="{ label: 'name', value: '_id' }" :not-found-content="null" :options="partners"
