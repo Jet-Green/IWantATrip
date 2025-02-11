@@ -27,7 +27,7 @@ async function getAllTrips() {
     let filter = {
         $or: [
             { "name": { $regex: query.value, $options: 'i' } },
-            { "description": { $regex: query.value, $options: 'i' } },
+            // { "description": { $regex: query.value, $options: 'i' } },
             { "parent": { $exists: true } }
         ],
         "isModerated": { $eq: true },
