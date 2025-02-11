@@ -74,7 +74,7 @@ onMounted(async () => {
                     :actions="['delete', 'info', 'copy', 'hide', 'edit', 'addDate', 'addLocation', 'transports', 'editComment', 'addAdditionalService']"
                     @deleteTrip="deleteTrip" @updateTrip="updateTrip" />
             </a-col>
-            <a-col :span="24" v-if="showMoreButton">
+            <a-col :span="24">
                 <div class="justify-center d-flex ma-16" @click="getNextTrips()">
                     <a-button>Ещё</a-button>
                 </div>

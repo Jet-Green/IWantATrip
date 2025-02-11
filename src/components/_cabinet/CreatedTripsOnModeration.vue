@@ -68,7 +68,7 @@ onMounted(async () => {
                 <CabinetTrip :trip="trip" :actions="['delete', 'info', 'edit', 'msg', 'transports', 'editComment']"
                     @deleteTrip="deleteTrip" @updateTrip="getAllTrips" />
             </a-col>
-            <a-col :span="24" v-if="showMoreButton">
+            <a-col :span="24" >
                 <div class="justify-center d-flex ma-16" @click="getNextTrips()">
                     <a-button>Ещё</a-button>
                 </div>
