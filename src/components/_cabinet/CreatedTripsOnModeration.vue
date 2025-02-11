@@ -17,15 +17,15 @@ async function getAllTrips() {
     loading.value = true
 
     let filter = {
-      $or: [
-        { "name": { $regex: query.value, $options: 'i' } },
-        { "description": { $regex: query.value, $options: 'i' } },
-        { "parent": { $exists: true } }
-    ],
-    "isModerated": {$eq:false} ,
+        $or: [
+            { "name": { $regex: query.value, $options: 'i' } },
+            { "description": { $regex: query.value, $options: 'i' } },
+            { "parent": { $exists: true } }
+        ],
+        "isModerated": { $eq: false },
     };
- 
-    let response = await tripStore.getCreatedTripsInfoByUserId(userId,filter,page) || []
+
+    let response = await tripStore.getCreatedTripsInfoByUserId(userId, filter, page) || []
     response.length < 15 ? showMoreButton.value = false : showMoreButton.value = true
     allTrips.value.push(...response)
     loading.value = false
@@ -50,7 +50,7 @@ watch(query, (newQuery, oldQuery) => {
 
 onMounted(async () => {
     query.value = localStorage.getItem("cabinetQuery") ?? '';
-    tripStore.cabinetTripsCursor=0
+    tripStore.cabinetTripsCursor = 0
     await getAllTrips()
 });
 
@@ -68,15 +68,19 @@ onMounted(async () => {
                 <CabinetTrip :trip="trip" :actions="['delete', 'info', 'edit', 'msg', 'transports', 'editComment']"
                     @deleteTrip="deleteTrip" @updateTrip="getAllTrips" />
             </a-col>
-            <a-col :span="24" >
+          
+
+        </a-row>
+        <a-row :lg="8" :sm="12" :xs="24" v-else>
+            Нет туров
+        </a-row>
+        <a-row>
+            <a-col :span="24">
                 <div class="justify-center d-flex ma-16" @click="getNextTrips()">
                     <a-button>Ещё</a-button>
                 </div>
             </a-col>
-      
         </a-row>
-        <a-row :lg="8" :sm="12" :xs="24" v-else>
-            Нет туров
-        </a-row></a-col>
+    </a-col>
 </template>
 <style></style>

@@ -74,14 +74,19 @@ onMounted(async () => {
                     :actions="['delete', 'info', 'copy', 'hide', 'edit', 'addDate', 'addLocation', 'transports', 'editComment', 'addAdditionalService']"
                     @deleteTrip="deleteTrip" @updateTrip="updateTrip" />
             </a-col>
+
+        </a-row>
+        <a-row :lg="8" :sm="12" :xs="24" v-else>
+            Нет туров
+        </a-row>
+        <a-row>
             <a-col :span="24">
                 <div class="justify-center d-flex ma-16" @click="getNextTrips()">
                     <a-button>Ещё</a-button>
                 </div>
             </a-col>
         </a-row>
-        <a-row :lg="8" :sm="12" :xs="24" v-else>
-            Нет туров
-        </a-row></a-col>
+
+    </a-col>
 </template>
 <style></style>
