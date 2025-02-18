@@ -27,7 +27,6 @@ async function getAllTrips() {
     let filter = {
         $or: [
             { "name": { $regex: query.value, $options: 'i' } },
-            // { "description": { $regex: query.value, $options: 'i' } },
             { "parent": { $exists: true } }
         ],
         "isModerated": { $eq: true },
@@ -36,8 +35,10 @@ async function getAllTrips() {
     let response = await tripStore.getCreatedTripsInfoByUserId(userId, filter, page) || []
     page=response.page
     response=response.data
-    response.length < 15 ? showMoreButton.value = false : showMoreButton.value = true
-    allTrips.value.push(...response)
+    response?.length < 15 ? showMoreButton.value = false : showMoreButton.value = true
+    if (response?.length>0){
+        allTrips.value.push(...response)
+    }
     loading.value = false
 }
 async function getNextTrips() {
