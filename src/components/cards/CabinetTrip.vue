@@ -71,35 +71,35 @@ let additionalService = ref({
 })
 
 let tasks = ref([])
-let search = ref("")
-let page = 1
-let query = {
-    $and: [
-        {
-            $or: [{ author: userStore.user._id }, { managers: userStore.user._id }],
-        },
-        {
-            $or: [{ name: { $regex: trip?.value.name, $options: "i" } }, { "tripInfo.name": { $regex: trip?.value.name, $options: "i" } }],
-        },
-    ],
-    $or: [
-        {
-            "tripInfo.end": {
-                $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000,
-            }
-        },
-        {
-            $and: [
-                { trip: null },
-                {
-                    deadLine: {
-                        $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000 - 7 * 24 * 60 * 60 * 1000, // minus 7 days 
-                    }
-                }
-            ]
-        },
-    ]
-}
+
+// let page = 1
+// let query = {
+//     $and: [
+//         {
+//             $or: [{ author: userStore.user._id }, { managers: userStore.user._id }],
+//         },
+//         {
+//             $or: [{ name: { $regex: trip?.value.name, $options: "i" } }, { "tripInfo.name": { $regex: trip?.value.name, $options: "i" } }],
+//         },
+//     ],
+//     $or: [
+//         {
+//             "tripInfo.end": {
+//                 $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000,
+//             }
+//         },
+//         {
+//             $and: [
+//                 { trip: null },
+//                 {
+//                     deadLine: {
+//                         $gte: Date.now() + new Date().getTimezoneOffset() * 60 * 1000 - 7 * 24 * 60 * 60 * 1000, // minus 7 days 
+//                     }
+//                 }
+//             ]
+//         },
+//     ]
+// }
 
 
 const clearData = (dataString) => {
@@ -306,32 +306,8 @@ async function deleteAdditionalService(serviceId) {
     }
 }
 
-const goToTasks = () => {
-    router.push({
-        path: '/cabinet/tasks',
-        query: { tripName: trip.value.name, _id: trip.value._id }, // передаем trip.value.name как query параметр
-    })
-}
-const tasksStatus = computed(() => {
-    const statusCount = { open: 0, closed: 0 };
-    tasks.value.forEach((task) => {
-        if (task.status in statusCount) {
-            statusCount[task.status]++;
-        }
-    });
-    return statusCount;
-});
-const taskClass = computed(() => {
-    if (!(tasks.value.length)) {
-        return ''
-    }
-    return tasksStatus.value.closed != tasks?.value.length ? 'open-status' : 'closed-status';
-});
 
-let fetchTasks = async () => {
-    await taskStore.getAll(page, query).then((data) => { data ? tasks.value = data : tasks.value = [] })
 
-}
 watch(locationSearchRequest, async (newValue, oldValue) => {
     if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
         var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
@@ -412,8 +388,7 @@ onMounted(async () => {
         possibleTransport.value.push({ value: t.name })
     }
     buses.value = await useBus().get()
-    // addTransportForm.value.price = trip.value.transports[0]?.price ?? null
-    // await fetchTasks()
+
 
 
 })
@@ -444,12 +419,8 @@ onMounted(async () => {
                 <span class="mdi mdi-calendar-arrow-left"></span>
                 {{ `по ${clearData(trip.end)}` }}
             </div>
-            <!-- <div class="d-flex justify-end">
-                <a-button size='small' shape="round" @click="goToTasks()" :class="taskClass">
-                    <span class="mdi mdi-calendar-check-outline"> </span>
-                    {{ tasksStatus.closed }}/{{ tasks.length }}</a-button>
-            </div> -->
-            <!-- <TaskStatusButton :trip="trip" /> -->
+        
+            <TaskStatusButton :trip="trip" />
             <div class="actions d-flex justify-center">
                 <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="tripToDelete(trip._id)"
                     v-if="(!trip.billsList?.length > 0) && actions.includes('delete')">
@@ -587,18 +558,13 @@ onMounted(async () => {
         <a-modal v-model:open="updateTransportDialog" title="Изменить транспорт" okText="Отправить" cancelText="Отмена"
             @ok="updateTrasports">
             <a-row :gutter="[16, 16]">
-                <!-- <a-col :span="24" :md="24">
-                    Тип
-                    <a-auto-complete style="width: 100%" :options="possibleTransport" placeholder="Минивен"
-                        @select="(value) => { addTransportForm.transportType = { name: value } }"></a-auto-complete>
-                </a-col> -->
                 <a-col :span="24" :md="24">
                     <a-select v-model="selected_bus" @select="bus => {
                         bus = JSON.parse(bus);
                         addTransportForm.transportType = { name: bus.name, bus_id: bus._id };
                         addTransportForm.capacity = bus.seats.length - bus.stuff.length;
                     }" style="width: 100%" placeholder="Выбрать автобус" option-label-prop="label">
-                        <a-select-option v-for="bus in buses" :value="JSON.stringify(bus)"
+                        <a-select-option v-for="bus in buses" :key="bus.index" :value="JSON.stringify(bus)"
                             :label="`${bus.name} (${bus.author}) — ${bus.seats.length} мест`">
                             <div style="display: flex; flex-direction: row; gap: 10px">
                                 <Bus :bus="bus" preview style="width: max(4cqw, 90px);" />
@@ -613,16 +579,6 @@ onMounted(async () => {
                         </a-select-option>
                     </a-select>
                 </a-col>
-
-                <!-- <a-col :span="24" :md="24">
-                    <a-button @click="router.push('/create-bus')">
-                        Добавить свой
-                    </a-button>
-                </a-col> -->
-                <!-- <a-col :span="24" :md="12">
-                    Цена для ожидающих
-                    <a-input-number :min="1" style="width: 100%" v-model:value="addTransportForm.price"></a-input-number>
-                </a-col> -->
                 <a-col :span="24" :md="12">
                     Лист ожидания до, чел
                     <a-input-number :max="trip.maxPeople" :min="0" style="width: 100%"
@@ -637,7 +593,7 @@ onMounted(async () => {
 
 
 
-            <span v-for="(transport) of trip.transports">
+            <span v-for="(transport) of trip.transports" :key="transport.index">
                 <a-popconfirm @confirm="addToDeleteTransports(transport.transportType.name)"
                     :title="transportToDelete.includes(transport.transportType.name) ? 'Не удалять?' : 'Удалить?'"
                     ok-text="Да" cancel-text="Нет" class="mt-8">
@@ -651,7 +607,7 @@ onMounted(async () => {
         <a-modal v-model:open="addAdditionalServiceDialog" title="Дополнительный услуги" okText="Отправить"
             cancelText="Отмена" @ok="addAdditionalService">
 
-            <a-row v-for="service of trip.additionalServices" :gutter="[16, 16]">
+            <a-row v-for="service of trip.additionalServices" :key="service.index" :gutter="[16, 16]">
                 <a-col :span="18">
                     <b style="font-size: 16px;">
                         {{ service.name }}
