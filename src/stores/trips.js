@@ -188,13 +188,12 @@ export const useTrips = defineStore('trips', {
                     let response;
 
                     response = await TripService.getCreatedTripsInfoByUserId(_id,query,page)
-                    page=response.data.page
-                    response=response.data.data
+                    console.log(response)
                     this.isFetching = false
                     // response = _.uniqBy(response.data, '_id')
 
 
-                    return {data:response,page}
+                    return {data:response.data.result,page:response.data.currentPage}
                     }
     
                 } catch (err) {

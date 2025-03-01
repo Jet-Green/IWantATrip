@@ -413,7 +413,7 @@ onMounted(async () => {
     }
     buses.value = await useBus().get()
     // addTransportForm.value.price = trip.value.transports[0]?.price ?? null
-    await fetchTasks()
+    // await fetchTasks()
 
 
 })
@@ -449,7 +449,7 @@ onMounted(async () => {
                     <span class="mdi mdi-calendar-check-outline"> </span>
                     {{ tasksStatus.closed }}/{{ tasks.length }}</a-button>
             </div> -->
-            <TaskStatusButton :trip="trip" />
+            <!-- <TaskStatusButton :trip="trip" /> -->
             <div class="actions d-flex justify-center">
                 <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="tripToDelete(trip._id)"
                     v-if="(!trip.billsList?.length > 0) && actions.includes('delete')">
@@ -528,7 +528,7 @@ onMounted(async () => {
             </a-row>
         </a-modal>
         <a-modal v-model:open="addDateDialog" title="Добавить даты" okText="Отправить" cancelText="Отмена" @ok="submit">
-            <a-row :gutter="[16, 16]" v-for="date of dates">
+            <a-row :gutter="[16, 16]" v-for="date of dates" :key="date.index">
                 <a-col :span="12">
                     Дата начала
                     <a-date-picker style="width: 100%" v-model:value="date.start" placeholder="Начало"
@@ -572,7 +572,7 @@ onMounted(async () => {
                     :options="possibleLocations" placeholder="Город/поселок"
                     @select="selectStartLocation"></a-auto-complete>
 
-                <span v-for="(loc, index) of trip.locationNames">
+                <span v-for="(loc, index) of trip.locationNames" :key='index'>
                     <a-popconfirm :disabled="index == 0" @confirm="addToDeleteLocations(loc._id)"
                         :title="locationsToDelete.includes(loc._id) ? 'Не удалять?' : 'Удалить?'" ok-text="Да"
                         cancel-text="Нет" class="mt-8">
