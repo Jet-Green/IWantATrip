@@ -26,7 +26,7 @@ const userStore = useAuth()
 const taskStore = useTasks()
 
 let isCreator = userStore.user.tinkoffContract || false
-let showMoreButton = ref(true)
+
 let tasks = ref([])
 let tasksAmount = ref([])
 let isCalendarVisible = ref(false)
@@ -141,10 +141,6 @@ let prettyDate = computed(() => {
 let moreTasks = async () => {
   page++
   let res = await refreshTasks()
-
-  if (res.length == tasksLenght) {
-    showMoreButton.value = false
-  }
   tasksLenght = res.length
 }
 
@@ -178,10 +174,23 @@ watch(search, (newSearch, oldSearch) => {
   }
 
   if (newSearch.length > 2 || newSearch.length <= oldSearch.length) {
-    localStorage.setItem("taskSearch", newSearch)
-    query.$and[1].$or[0].name.$regex = newSearch
-    query.$and[1].$or[1]["tripInfo.name"].$regex = newSearch
-    refreshTasks()
+    localStorage.setItem("taskSearch", newSearch);
+
+    // Обновляем query корректно
+    query = {
+      ...query,
+      $and: [
+        query.$and[0], // оставляем первый фильтр
+        {
+          $or: [
+            { name: { $regex: newSearch } },
+            { "tripInfo.name": { $regex: newSearch } }
+          ]
+        }
+      ]
+    };
+
+    refreshTasks();
   }
 })
 
@@ -255,10 +264,10 @@ onMounted(async () => {
       </a-calendar>
     </a-config-provider>
     <a-row :gutter="[8, 8]">
-      <a-col v-for="(task, index) in tasks" :span="24" :key="task._id">
+      <a-col v-for="(task) in tasks" :span="24" :key="task._id">
         <TaskCard @refreshTasks="refreshTasks()" :task="task"> </TaskCard>
       </a-col>
-      <a-col :span="24" class="justify-center d-flex" @click="moreTasks()" v-if="showMoreButton">
+      <a-col :span="24" class="justify-center d-flex" @click="moreTasks()" >
         <a-button>Ещё</a-button></a-col>
     </a-row>
   </div>
