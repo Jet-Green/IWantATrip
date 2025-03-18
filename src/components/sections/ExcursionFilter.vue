@@ -318,7 +318,7 @@ onMounted(async () => {
         <div class="d-flex direction-column" style="width: 100%">
           <div style="font-size: 10px; line-height: 10px">от</div>
           <div style="display: flex; flex-direction: row">
-            <VueDatePicker v-model="time.start" locale="ru-Ru" calendar-class-name="dp-custom-calendar"
+            <VueDatePicker v-model="time.start" locale="ru-Ru" calendar-class-name="dp-custom-calendar" auto-apply
               placeholder="дата" calendar-cell-class-name="dp-custom-cell" cancel-text="отмена" select-text="выбрать"
               :min-date="new Date()" :enable-time-picker="false" format="dd/MM/yyyy">
               <template #input-icon>
@@ -336,7 +336,7 @@ onMounted(async () => {
         <div class="d-flex direction-column" style="width: 100%">
           <div style="font-size: 10px; line-height: 10px">до</div>
           <div style="display: flex; flex-direction: row">
-            <VueDatePicker v-model="time.end" locale="ru-Ru" calendar-class-name="dp-custom-calendar" placeholder="дата"
+            <VueDatePicker v-model="time.end" locale="ru-Ru" calendar-class-name="dp-custom-calendar" placeholder="дата" auto-apply
               calendar-cell-class-name="dp-custom-cell" cancel-text="отмена" select-text="выбрать"
               :min-date="new Date()" :enable-time-picker="false" format="dd/MM/yyyy">
               <template #input-icon>
