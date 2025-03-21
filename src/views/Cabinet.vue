@@ -127,9 +127,10 @@ onMounted(async () => {
             <a-sub-menu key="sub02">
 
               <template #title>
-                Гид
+                Сервисы
               </template>
               <a-menu-item key="/cabinet/transport">Транспорт</a-menu-item>
+              <a-menu-item key="/cabinet/guide">Гиды</a-menu-item>
             </a-sub-menu>
             <a-menu-item v-if="userStore.user.roles.includes('admin')"
               key="/cabinet/management">Управление</a-menu-item>
