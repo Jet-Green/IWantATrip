@@ -81,7 +81,7 @@ async function buyExcursion(time, bookingsCount) {
           <div class="large-date">
             {{ getDate(date.date).day }}
           </div>
-          <div class="column">
+          <div class="column ml-4">
             <div class="month">{{ getDate(date.date).month }}</div>
             <div class="weekday">{{ getDate(date.date).weekday }}</div>
           </div>
@@ -116,12 +116,14 @@ async function buyExcursion(time, bookingsCount) {
 
   .large-date {
     font-weight: 600;
-    font-size: clamp(1.875rem, 1.3778rem + 1.4205vw, 2.5rem);
+    // font-size: clamp(1.875rem, 1.3778rem + 1.4205vw, 2.5rem);
+    font-size: clamp(1.8rem, 1.3778rem + 1.4205vw, 2.5rem);
   }
 
   .time {
     font-weight: 600;
-    font-size: clamp(0.75rem, 0.6009rem + 0.4261vw, 0.9375rem);
+    // font-size: clamp(0.75rem, 0.6009rem + 0.4261vw, 0.9375rem);
+    font-size: clamp(0.5rem, 0.6009rem + 0.4261vw, 0.9375rem);
   }
 
   .time-container {
@@ -137,12 +139,14 @@ async function buyExcursion(time, bookingsCount) {
 
   .month {
     font-weight: 600;
-    font-size: clamp(0.9375rem, 0.6889rem + 0.7102vw, 1.25rem);
+    // font-size: clamp(0.9375rem, 0.6889rem + 0.7102vw, 1.25rem);
+    font-size: clamp(0.75rem, 0.6889rem + 0.7102vw, 1.25rem);
   }
 
   .weekday {
     font-weight: 300;
-    font-size: clamp(0.625rem, 0.4261rem + 0.5682vw, 0.875rem);
+    // font-size: clamp(0.625rem, 0.4261rem + 0.5682vw, 0.875rem);
+    font-size: clamp(0.5rem, 0.4261rem + 0.5682vw, 0.875rem);
   }
 }
 
