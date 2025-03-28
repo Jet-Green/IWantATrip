@@ -6,7 +6,7 @@ import { refresh } from 'less';
 let guideStore = useGuide()
 
 let addGuideModal = ref(false)
-let guide = reactive({
+let guide = ref({
     name: '',
     surname: '',
     email: '',
@@ -16,48 +16,64 @@ let guide = reactive({
     offer: '',
     description: ''
 })
+// {
+//         name: 'Иван',
+//         surname: 'Иванов',
+//         email: 'iv@ya.ru',
+//         phone: '+7 999 999 99 99',
+//         image: 'https://xsgames.co/randomusers/assets/avatars/pixel/9.jpg',
+//         socialMedia: 'https://vk.com/qbitclub',
+//         offer: 'Профессиональный гид в Татарстане',
+//         description: 'Описание гида абиммаве абиммаве бимаве абиммаве бибиммаве сибиммаве',
+//         location: ''
+//     }
+let guides = ref([])
 
-let guides = reactive([
-    {
-        name: 'Иван',
-        surname: 'Иванов',
-        email: 'iv@ya.ru',
-        phone: '+7 999 999 99 99',
-        image: 'https://xsgames.co/randomusers/assets/avatars/pixel/9.jpg',
-        socialMedia: 'https://vk.com/qbitclub',
-        offer: 'Профессиональный гид в Татарстане',
-        description: 'Описание гида абиммаве абиммаве бимаве абиммаве бибиммаве сибиммаве'
-    }
-])
+async function refreshGuides() {
+    let res = await guideStore.getGuides(null)
+    // console.log(guides,res.data)
+    guides.value=res.data
+}
 
 async function addGuide() {
-    if (guide.name.length > 1 && guide.surname.length > 1 && guide.phone.length > 2 && guide.email.length > 2 && guide.offer.length > 2) {
-        let location = {}
-        if (localStorage.getItem("location")) {
-            location = JSON.parse(localStorage.getItem("location"))
-            taxi.value.location = location
-        }
+    if (guide.value.name.length > 1 && guide.value.surname.length > 1 && guide.value.phone.length > 2 && guide.value.email.length > 2 && guide.value.offer.length > 2 
+        && guide.value.description.length > 2 && guide.value.name.search(new RegExp(/@*./)) != -1
+    ) {
         let res = await guideStore.addGuide(guide.value)
         addGuideModal.value = false;
-        guide.value = {}
-        if (res.status == 200) {
-            refreshGuides()
+        guide.value = {
+            name: '',
+            surname: '',
+            email: '',
+            phone: '',
+            image: '',
+            socialMedia: '',
+            offer: '',
+            description: '',
+            location: ''
+        }
+        if (res.status === 200) {
+            await refreshGuides()
         }
     }
 }
 
-onMounted(() => {
-    // guides.value = guideStore.guides
+onMounted(async () => {
+    await refreshGuides()
 })
 
 </script>
 <template>
     <a-col :span="24" class="d-flex space-between">
+    <div class="d-flex">
         <h2>Гиды</h2>
-        <a-button @click="addGuideModal = true" type="primary" class="lets_go_btn mt-8">
-            <span class="mdi mdi-taxi mr-4"></span> Добавить
-        </a-button>
-        
+        <a-col :span="24" class="ml-8 mt-4">
+            <a-button type="primary" @click="addGuide()" style="border-radius: 18px"> добавить </a-button>
+        </a-col>
+    </div>
+    <div>
+        <a-input v-model:value="query" placeholder="поиск" allow-clear />
+    </div>
     </a-col>
 
     <a-row>
@@ -67,14 +83,15 @@ onMounted(() => {
                     <template #avatar>
                         <a-avatar :src="guide.image" />
                     </template>
-                    </a-card-meta>
-                    <div class="mt-4">
-                        <b>О себе:</b> {{ guide.description }}<br>
-                        <b>Контакты:</b> {{ guide.phone }}<br>
-                        {{ guide.email }}<br>
-                        {{ guide.socialMedia }}
-                    </div>
-                </a-card>
+                </a-card-meta>
+                <div class="mt-4">
+                    <b>О себе:</b> {{ guide.description }}<br>
+                    <!-- <b>О себе:</b> {{ guide.description }}<br> -->
+                    <!-- <b>Контакты:</b> {{ guide.phone }}<br> -->
+                    <!-- {{ guide.email }}<br> -->
+                    <!-- {{ guide.socialMedia }} -->
+                </div>
+            </a-card>
         </a-col>
     </a-row>
     <a-modal v-model:open="addGuideModal" :footer="null" title="Добавить такси">
@@ -104,11 +121,12 @@ onMounted(() => {
                     <a-input style="width: 100%" v-model:value="guide.socialMedia" placeholder="https://vk.com/qbitclub"/>
                 </a-col>
                 <a-col :span="24">
-                    Описание
-                    <a-textarea style="width: 100%" v-model:value="guide.description" placeholder="Описание" auto-size/>
+                    Локации
+                    <a-input style="width: 100%" v-model:value="guide.location" placeholder="Москва Новгород Верхняя Слудка"/>
                 </a-col>
                 <a-col :span="24">
-                    <a-button type="primary" @click="addGuide()"> добавить </a-button>
+                    Описание
+                    <a-textarea style="width: 100%" v-model:value="guide.description" placeholder="Описание" auto-size/>
                 </a-col>
             </a-row>
         </a-modal> 
