@@ -22,8 +22,8 @@ export default {
     async addGuide(guide) {
         return $api.post('/guide/add-guide', { guide })
     },
-    async getGuides(guide) {
-        return $api.post('/guide/get-guides', { guide })
+    async getGuides(query) {
+        return $api.post('/guide/get-guides', { query })
     },
     async deleteTaxi(_id) {
         return $api.post('/guide/delete-taxi', { _id })

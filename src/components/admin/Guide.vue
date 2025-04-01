@@ -6,6 +6,7 @@ import { refresh } from 'less';
 let guideStore = useGuide()
 
 let addGuideModal = ref(false)
+let query = ref()
 let guide = ref({
     name: '',
     surname: '',
@@ -30,7 +31,7 @@ let guide = ref({
 let guides = ref([])
 
 async function refreshGuides() {
-    let res = await guideStore.getGuides(null)
+    let res = await guideStore.getGuides(query.value)
     // console.log(guides,res.data)
     guides.value=res.data
 }
@@ -68,16 +69,16 @@ onMounted(async () => {
     <div class="d-flex">
         <h2>Гиды</h2>
         <a-col :span="24" class="ml-8 mt-4">
-            <a-button type="primary" @click="addGuide()" style="border-radius: 18px"> добавить </a-button>
+            <a-button type="primary" @click="addGuideModal = true;" style="border-radius: 18px"> добавить </a-button>
         </a-col>
     </div>
     <div>
-        <a-input v-model:value="query" placeholder="поиск" allow-clear />
+        <a-input-search v-model:value="query" placeholder="поиск" allow-clear enter-button @search="refreshGuides()"/>
     </div>
     </a-col>
 
     <a-row>
-        <a-col v-for="guide in guides" :span="24">
+        <a-col v-for="guide in guides" :span="24" class="mb-8">
                 <a-card style="padding:10px 10px; border-radius: 10px;">
                     <a-card-meta :title="guide.name+' '+guide.surname" :description="guide.offer">
                     <template #avatar>
@@ -86,6 +87,7 @@ onMounted(async () => {
                 </a-card-meta>
                 <div class="mt-4">
                     <b>О себе:</b> {{ guide.description }}<br>
+                    <b>Локации:</b> {{ guide.location }}<br>
                     <!-- <b>О себе:</b> {{ guide.description }}<br> -->
                     <!-- <b>Контакты:</b> {{ guide.phone }}<br> -->
                     <!-- {{ guide.email }}<br> -->
@@ -128,6 +130,7 @@ onMounted(async () => {
                     Описание
                     <a-textarea style="width: 100%" v-model:value="guide.description" placeholder="Описание" auto-size/>
                 </a-col>
+                <a-button type="primary" @click="addGuide()" style="border-radius: 18px"> добавить </a-button>
             </a-row>
         </a-modal> 
 </template>
