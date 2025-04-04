@@ -5,8 +5,10 @@ import { refresh } from 'less';
 
 let guideStore = useGuide()
 
+let dbSkip=ref(0)
+let limit = ref(0)
 let addGuideModal = ref(false)
-let query = ref()
+let query = ref("")
 let guide = ref({
     name: '',
     surname: '',
@@ -31,9 +33,19 @@ let guide = ref({
 let guides = ref([])
 
 async function refreshGuides() {
-    let res = await guideStore.getGuides(query.value)
+    // console.log(query.value dbSkip.value)
+    while (limit.value<=2){
+        let res = await guideStore.getGuides(query.value,dbSkip.value)
+        if (res.ended){break;}
+        // console.log(res)
+        dbSkip.value=res.dbSkip
+        guides.value.push(...res.data.data)
+        console.log(res.data.data.length)
+        limit.value = limit.value + res.data.data.length
+    limit.value=0
     // console.log(guides,res.data)
-    guides.value=res.data
+    // guides.value=res.data
+    }
 }
 
 async function addGuide() {
