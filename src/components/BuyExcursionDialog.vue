@@ -131,7 +131,7 @@ async function buyWithTinkoff() {
 }
 
 async function buy() {
-  if (!fullinfo.fullname || !fullinfo.phone || !fullinfo.date || !fullinfo.maxPeople) {
+  if (!fullinfo.fullname || !fullinfo.phone){
     message.config({ duration: 3, top: "70vh" });
     message.success({
       content: "Заполните все поля",
