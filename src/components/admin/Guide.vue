@@ -6,7 +6,7 @@ import { refresh } from 'less';
 let guideStore = useGuide()
 
 let dbSkip=ref(0)
-let limit = ref(0)
+let limit = ref(false)
 let addGuideModal = ref(false)
 let query = ref("")
 let guide = ref({
@@ -33,18 +33,16 @@ let guide = ref({
 let guides = ref([])
 
 async function refreshGuides() {
-    // console.log(query.value dbSkip.value)
-    while (limit.value<=2){
-        let res = await guideStore.getGuides(query.value,dbSkip.value)
-        if (res.ended){break;}
-        // console.log(res)
-        dbSkip.value=res.dbSkip
-        guides.value.push(...res.data.data)
-        console.log(res.data.data.length)
-        limit.value = limit.value + res.data.data.length
-    limit.value=0
-    // console.log(guides,res.data)
-    // guides.value=res.data
+    if (limit.value=true){        
+            let res = await guideStore.getGuides(query.value,dbSkip.value)
+            console.log(res)
+                
+            dbSkip.value=res.data.dbSkip
+            guides.value.push(...res.data.data)
+            if (res.data.ended){
+                limit.value = false
+        
+            }
     }
 }
 
@@ -89,8 +87,8 @@ onMounted(async () => {
     </div>
     </a-col>
 
-    <a-row>
-        <a-col v-for="guide in guides" :span="24" class="mb-8">
+    <a-row :gutter=[8,8]>
+        <a-col v-for="guide in guides" :xs="24" :xl="12" class="mb-8">
                 <a-card style="padding:10px 10px; border-radius: 10px;">
                     <a-card-meta :title="guide.name+' '+guide.surname" :description="guide.offer">
                     <template #avatar>
@@ -105,9 +103,17 @@ onMounted(async () => {
                     <!-- {{ guide.email }}<br> -->
                     <!-- {{ guide.socialMedia }} -->
                 </div>
+
             </a-card>
         </a-col>
     </a-row>
+    <a-row>
+            <a-col :span="24">
+                <div class="justify-center d-flex ma-16" @click="refreshGuides()">
+                    <a-button>Ещё</a-button>
+                </div>
+            </a-col>
+        </a-row>
     <a-modal v-model:open="addGuideModal" :footer="null" title="Добавить такси">
             <a-row :gutter="[4, 24]">
                 <a-col :span="24" :md="12">

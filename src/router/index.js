@@ -442,6 +442,11 @@ const router = createRouter({
               component: () => import('../components/_cabinet/ExcursionBookings.vue'),
             },
             {
+              path: 'guide',
+              name: 'Guide',
+              component: () => import('../components/_cabinet/Guide.vue'),
+            },
+            {
               path: 'created-trips',
               component: () => import('../components/_cabinet/CreatedTrips.vue'),
               children: [
@@ -638,8 +643,8 @@ const router = createRouter({
               }
             },
             {
-              path: 'guide',
-              name: 'AdminGuide',
+              path: 'guides',
+              name: 'AdminGuides',
               component: () => import('../components/admin/Guide.vue'),
               beforeEnter: () => {
                 let userStore = useAuth()
