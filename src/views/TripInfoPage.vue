@@ -194,6 +194,7 @@ function getCustomersCount(billsList) {
             res += cartItem.count;
         }
     }
+
     return res;
 }
 
@@ -537,7 +538,7 @@ onMounted(async () => {
                         <div class="d-flex">
                             Дата начала тура: &nbsp
                             <div>
-                                <a-checkable-tag class="pretty-tag" v-for="(date, index) of tripDates"
+                                <a-checkable-tag class="pretty-tag" v-for="(date, index) of tripDates" :key="index"
                                     :checked="date.selected" @change="selectDate(index)">
                                     <b>
                                         {{ clearData(date.start) }} -
@@ -661,7 +662,7 @@ onMounted(async () => {
                         <div>
                             Даты:
                             <div>
-                                <a-checkable-tag class="pretty-tag" v-for="(date, index) of tripDates"
+                                <a-checkable-tag class="pretty-tag" v-for="(date, index) of tripDates" :key="index"
                                     :checked="date.selected" @change="selectDate(index)">
                                     <b>
                                         {{ clearData(date.start) }} -
@@ -784,7 +785,7 @@ onMounted(async () => {
                     </a-col>
                     <a-col v-if="trip.additionalServices?.length > 0" :span="24">
                         <div>Дополнительные услуги</div>
-                        <a-row v-for="service of additionalServices" class="d-flex space-between">
+                        <a-row v-for="service of additionalServices" :key="service.index" class="d-flex space-between">
                             <div class="d-flex align-center">
                                 {{ service.name }}
                             </div>

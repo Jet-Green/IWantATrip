@@ -55,31 +55,33 @@ let loading = ref(true)
 
 let updateExcursion = async () => {
   let response = await excursionStore.getTimeCustomers(route.query.excursion_id, route.query.time_id)
-  if (response.status == 200 && response.data.time?._id) {
+  console.log(response.data)
+ 
     excursion.value = response.data.excursion
     time.value = response.data.time
-  }
+
   loading.value = false
 }
 function getBillsSum(bills) {
   let sum = 0
-  for (let b of bills) {
-    for (let p of b.cart) {
-      sum += p.price * p.count
-    }
-  }
+  // for (let b of bills) {
+  //   for (let p of b.cart) {
+  //     sum += p.price * p.count
+  //   }
+  // }
   return sum
 }
 function getPeopleCount(bills) {
   let sum = 0
-  for (let b of bills) {
-    for (let p of b.cart) {
-      sum += p.count
-    }
-  }
+  // for (let b of bills) {
+  //   for (let p of b.cart) {
+  //     sum += p.count
+  //   }
+  // }
   return sum
 }
 onMounted(async () => {
+  console.log(route.query.excursion_id, route.query.time_id)
   await updateExcursion()
 })
 </script>
