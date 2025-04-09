@@ -69,6 +69,23 @@ let availableBooking = computed(() => {
  * purchase with tinkoff
  */
 async function buyWithTinkoff() {
+  if (!fullinfo.fullname || !fullinfo.phone ){
+    message.config({ duration: 3, top: "70vh" });
+    message.error({
+      content: "Заполните все поля",
+      onClose: () => {
+        // open.value = false
+      },
+    });
+    return
+  }
+  if (selectedPlaces.value==0) {
+    message.config({ duration: 3, top: "70vh" });
+    message.error({
+      content: "Введите количество",
+    });
+    return
+  }
   // return undefined if no places
   if (places.value.available < selectedPlaces.value) {
     message.config({ duration: 1, top: "70vh" });
@@ -131,24 +148,32 @@ async function buyWithTinkoff() {
 }
 
 async function buy() {
-  if (!fullinfo.fullname || !fullinfo.phone){
+  if (!fullinfo.fullname || !fullinfo.phone ){
     message.config({ duration: 3, top: "70vh" });
-    message.success({
+    message.error({
       content: "Заполните все поля",
       onClose: () => {
-        open.value = false
+        // open.value = false
       },
     });
     return
   }
-  if (!userStore.user.fullinfo?.fullname) {
-    await userStore.updateFullinfo(userStore.user._id, {
-      fullname: fullinfo.fullname,
-      phone: fullinfo.phone,
-    })
+  if (selectedPlaces.value==0) {
+    message.config({ duration: 3, top: "70vh" });
+    message.error({
+      content: "Введите количество",
+    });
+    return
   }
+
+  // if (!userStore.user.fullinfo?.fullname) {
+  //   await userStore.updateFullinfo(userStore.user._id, {
+  //     fullname: fullinfo.fullname,
+  //     phone: fullinfo.phone,
+  //   })
+  // }
   if (places.value.available < selectedPlaces.value) {
-    message.config({ duration: 1, top: "70vh" });
+    message.config({ duration: 3, top: "70vh" });
     message.error({
       content: "Свободных мест всего " + places.value.available,
     });
@@ -175,7 +200,7 @@ async function buy() {
       let res = await excursionStore.buy(selectedDate.value.time._id, toSend, fullinfo)
       if (res.status == 200) {
         createPriceForm()
-        message.config({ duration: 1, top: "70vh" });
+        message.config({ duration: 3, top: "70vh" });
         message.success({
           content: "Успешно!",
           onClose: () => {
@@ -184,7 +209,7 @@ async function buy() {
           },
         });
       } else {
-        message.config({ duration: 1, top: "70vh" });
+        message.config({ duration: 3, top: "70vh" });
         message.error({
           content: "Ошибка покупки!",
           onClose: () => {
@@ -200,31 +225,31 @@ async function book() {
 
   if (!fullinfo.fullname || !fullinfo.phone ) {
     message.config({ duration: 3, top: "70vh" });
-    message.success({
+    message.error({
       content: "Заполните все поля",
       onClose: () => {
-        open.value = false
+        // open.value = false
       },
     });
     return
   }
-  if (!bookingCount.value) {
-    message.config({ duration: 1, top: "70vh" });
-    message.success({
+  if (selectedPlaces.value==0) {
+    message.config({ duration: 3, top: "70vh" });
+    message.error({
       content: "Введите количество",
     });
     return
   }
   if (availableBooking.value < bookingCount.value) {
-    message.config({ duration: 1, top: "70vh" });
+    message.config({ duration: 3, top: "70vh" });
     message.error({
       content: "Свободных мест всего " + availableBooking.value,
     });
     return
   }
-  if (!userStore.user.fullinfo?.fullname) {
-    await userStore.updateFullinfo(userStore.user._id, fullinfo)
-  }
+  // if (!userStore.user.fullinfo?.fullname) {
+  //   await userStore.updateFullinfo(userStore.user._id, fullinfo)
+  // }
 
   fullinfo.date = selectedDate.value.date
   fullinfo.time = selectedDate.value.time
@@ -326,8 +351,7 @@ onMounted(() => {
         </a-input-number> чел.
       </div>
     </div>
-
-    <div v-for="price of pricesForm">
+    <div v-for="price of pricesForm" :key="price.index">
       <div class="price-container">
         <div class="price">{{ price.type }} x <span style="color: #ff6600;">{{ price.price }}₽</span></div>
         <div>
@@ -337,6 +361,7 @@ onMounted(() => {
       </div>
     </div>
     <!-- заказ -->
+
     <div class="d-flex justify-center " v-if="excursion.prices.length == 0">
       <a-button type="primary" class="lets_go_btn" @click="book"
         :disabled="bookingCount + selectedDate.bookingsCount < props.excursion.minPeople">заказать</a-button>
