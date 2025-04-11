@@ -71,5 +71,30 @@ export const useGuide = defineStore('guide', {
                 console.log(error);
             }
         },
+        async updateGuide(guide) {
+            try {
+                let res = await GuideService.updateGuide(guide)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async uploadGuideImage(image) {
+            try {
+                console.log(image)
+                let res = await GuideService.uploadGuideImage(image)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async getGuideByEmail(email) {
+            try {
+                let res = await GuideService.getGuideByEmail(email)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
+        },
     },
 })

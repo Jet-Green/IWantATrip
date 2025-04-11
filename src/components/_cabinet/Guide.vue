@@ -1,16 +1,11 @@
 <script setup>
 import { ref, reactive, onMounted, watch } from 'vue';
 import { message } from 'ant-design-vue'; // For user feedback
+import { useGuide } from '../../stores/guide';
+import { useAuth } from '../../stores/auth'; // Import useAuth
 import ImageCropper from '../../components/ImageCropper.vue'; // Assuming ImageCropper is in the same directory or adjust path
 let guideStore = useGuide()
-
-// --- Props ---
-const props = defineProps({
-  guideId: {
-    type: String,
-    required: true, // Need an ID to know which guide to load/update
-  }
-});
+let userStore = useAuth()
 
 // --- State ---
 const isLoading = ref(false);
@@ -32,35 +27,26 @@ const guideData = reactive({
 
 // Image Editing State
 const currentImageUrl = ref(''); // To display existing or updated image URL
-const newImageBlob = ref(null); // Stores the Blob of the newly cropped image
+let imageUrl=ref("")
+let currentImg=ref()
 const newImagePreviewUrl = ref(''); // Stores the ObjectURL for the new image preview
 const visibleCropperModal = ref(false);
 
-// --- Lifecycle Hooks ---
-onMounted(() => {
-  fetchGuideData();
-});
 
-// Watch for prop changes if the component might be reused without unmounting
-watch(() => props.guideId, (newId) => {
-  if (newId) {
-    fetchGuideData();
-  }
-});
 
 // --- Methods ---
 async function fetchGuideData() {
-  if (!props.guideId) return;
   isLoading.value = true;
   errorMsg.value = '';
   // Clear previous image state
   clearNewImageSelection();
   try {
     // Replace with your actual API call
-    const response = await GuideService.getGuideById(props.guideId);
+    const response = await guideStore.getGuideByEmail(userStore.user.email);
     // Assuming API returns the guide object matching the schema
     Object.assign(guideData, response.data); // Update reactive object
-    currentImageUrl.value = guideData.image || ''; // Set initial image URL
+    console.log(response.data)
+    currentImageUrl.value = currentImg.value || ''; // Set initial image URL
   } catch (err) {
     console.error("Error fetching guide data:", err);
     errorMsg.value = 'Не удалось загрузить данные гида. ' + (err.response?.data?.message || err.message);
@@ -70,7 +56,7 @@ async function fetchGuideData() {
   }
 }
 
-async function handleUpdateGuide() {
+async function submit() {
   isSaving.value = true;
   errorMsg.value = '';
   try {
@@ -89,35 +75,17 @@ async function handleUpdateGuide() {
     };
 
     let response;
-    if (newImageBlob.value) {
-      // If a new image exists, send as FormData
-      const formData = new FormData();
-      // Append text fields
-      Object.keys(updatePayload).forEach(key => {
-        if (updatePayload[key] !== null && updatePayload[key] !== undefined) {
-            formData.append(key, updatePayload[key]);
-        }
-      });
-      // Append the image blob with a filename
-      // Generate a unique-ish filename on the client or let the server handle it
-      const filename = `guide-${props.guideId}-${Date.now()}.jpg`;
-      formData.append('image', newImageBlob.value, filename); // 'image' must match backend multer field name
 
-      // Replace with your actual API call using FormData
-      response = await GuideService.updateGuideWithImage(props.guideId, formData);
-       message.success('Гид обновлен (с изображением).');
-
-    } else {
-      // If no new image, send as JSON
-      // Replace with your actual API call using JSON
-      response = await GuideService.updateGuide(props.guideId, updatePayload);
+    response = await guideStore.updateGuide(guideData);
+    if (response.status == 200) {
       message.success('Гид обновлен.');
+      const placeId = response.data._id;
+      let res = await uploadPlaceImages(placeId)
+      // Update local state with response from server (which should include the potentially new image URL)
+      Object.assign(guideData, response.data);
+      currentImageUrl.value = currentImg.value || '';
+      clearNewImageSelection(); // Clear the temporary new image state
     }
-
-    // Update local state with response from server (which should include the potentially new image URL)
-    Object.assign(guideData, response.data);
-    currentImageUrl.value = guideData.image || '';
-    clearNewImageSelection(); // Clear the temporary new image state
 
   } catch (err) {
     console.error("Error updating guide data:", err);
@@ -134,35 +102,48 @@ function openImageCropper() {
 
 // Called when ImageCropper emits 'addImage'
 function addPreview(blob) {
-  if (newImagePreviewUrl.value) {
-    // Clean up previous blob URL
-    URL.revokeObjectURL(newImagePreviewUrl.value);
-  }
-  newImageBlob.value = blob;
-  newImagePreviewUrl.value = URL.createObjectURL(blob);
   visibleCropperModal.value = false; // Close cropper modal
+  if (currentImg.value!="") {
+    // Clean up previous blob URL
+    URL.revokeObjectURL(currentImg.value);
+  }
+  currentImg.value = blob;
+  imageUrl.value = URL.createObjectURL(blob);
 }
 
 function clearNewImageSelection() {
-    if (newImagePreviewUrl.value) {
-        URL.revokeObjectURL(newImagePreviewUrl.value);
-    }
-    newImageBlob.value = null;
-    newImagePreviewUrl.value = '';
+  if (imageUrl.value) {
+    URL.revokeObjectURL(imageUrl.value);
+  }
+  currentImg.value = null
+  imageUrl.value = null
 }
+async function uploadPlaceImages(_id) {
+  console.log(guideData,'susususususus')
+  let imagesFormData = new FormData();
+    imagesFormData.append(
+      "guide-image",
+
+      new File([currentImg.value], _id + '_' + Date.now() + ".jpg"),
+
+      _id + '_' + Date.now() + ".jpg"
+    );
+  let res = await guideStore.uploadGuideImage(imagesFormData)
+  clearNewImageSelection()
+  return res
+}
+
 
 function handleImgError() {
   console.warn('Image failed to load:', newImagePreviewUrl.value || currentImageUrl.value);
+  console.log(guideData)
   // Optionally set a placeholder image
   // currentImageUrl.value = '/path/to/placeholder.png';
 }
 
-// Cleanup blob URL when component unmounts
-import { onUnmounted } from 'vue';
-onUnmounted(() => {
-    if (newImagePreviewUrl.value) {
-        URL.revokeObjectURL(newImagePreviewUrl.value);
-    }
+// --- Lifecycle Hooks ---
+onMounted(() => {
+  fetchGuideData();
 });
 
 </script>
@@ -180,13 +161,13 @@ onUnmounted(() => {
             <h4>Фотография</h4>
             <div class="image-container mb-2">
                 <img
-                    :src="newImagePreviewUrl || currentImageUrl || '/placeholder-image.png'"
+                    :src="imageUrl"
                     alt="Guide Image"
                     class="guide-image"
                     @error="handleImgError"
                 />
                 <!-- Display overlay/button if a new image is staged -->
-                <div v-if="newImagePreviewUrl" class="new-image-overlay">
+                <div v-if="imageUrl" class="new-image-overlay">
                     <p>Новое фото (не сохранено)</p>
                      <a-button size="small" @click="clearNewImageSelection" danger>Отменить</a-button>
                 </div>
@@ -249,7 +230,7 @@ onUnmounted(() => {
             <a-col>
                 <a-button
                     type="primary"
-                    @click="handleUpdateGuide"
+                    @click="submit"
                     :loading="isSaving"
                     :disabled="isLoading || !guideData.name || !guideData.phone"
                 >
@@ -265,9 +246,9 @@ onUnmounted(() => {
       </div>
 
       <!-- Modals -->
-      <a-modal v-model:open="visibleCropperModal" :footer="null" :destroyOnClose="true" title="Обрезать фото" width="auto">
+      <a-modal v-model:open="visibleCropperModal" :footer="null" :destroyOnClose="true" title="Обрезать фото">
          <!-- Pass aspect ratio if desired, e.g., :aspectRatio="1" for square -->
-         <ImageCropper @addImage="addPreview" :aspectRatio="16/10"/>
+         <ImageCropper @addImage="addPreview" :aspectRatio="2/1"/>
       </a-modal>
 
     </div>
