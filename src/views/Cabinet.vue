@@ -15,6 +15,8 @@ let sm = breakpoints.smaller("md");
 let isCreator = userStore.user.tinkoffContract || false
 let isPlaceCreator = userStore.user.tinkoffContract || false
 let isTasksManager = userStore.user.roles.includes('tasksManager')
+let isAdmin = userStore.user.roles.includes('admin')
+let isManager = userStore.user.roles.includes('manager')
 
 // чтобы не сбрасывалось при обновлении
 let current = ref([route.path]);
@@ -104,7 +106,7 @@ onMounted(async () => {
             <span v-if=!sm>Заказы</span>
             <span v-else class="mdi mdi-24px mdi-hand-wave-outline" style="color: #245159; "></span>
           </a-menu-item>
-          <a-sub-menu key="sub2" v-if="userStore.user.roles.includes('manager')">
+          <a-sub-menu key="sub2" v-if="isAdmin||isManager">
 
 
             <template #title>
@@ -123,7 +125,7 @@ onMounted(async () => {
               <a-menu-item key="/cabinet/moderation-places/on-moderation">Места</a-menu-item>
             </a-sub-menu>
             <a-menu-item key="/cabinet/orders">Заказы</a-menu-item>
-            <a-menu-item v-if="userStore.user.roles.includes('admin')" key="/cabinet/interface">Интерфейс</a-menu-item>
+            <a-menu-item v-if="isAdmin" key="/cabinet/interface">Интерфейс</a-menu-item>
             <a-sub-menu key="sub02">
 
               <template #title>
@@ -131,20 +133,20 @@ onMounted(async () => {
               </template>
               <a-menu-item key="/cabinet/transport">Транспорт</a-menu-item>
             </a-sub-menu>
-            <a-menu-item v-if="userStore.user.roles.includes('admin')"
+            <a-menu-item v-if="isAdmin"
               key="/cabinet/management">Управление</a-menu-item>
 
-            <a-sub-menu key="sub3">
+            <a-sub-menu key="sub3" v-if="isAdmin">
 
               <template #title>
                 Договоры
               </template>
 
-              <a-menu-item v-if="userStore.user.roles.includes('admin')"
+              <a-menu-item 
                 key="/cabinet/admin-contracts-list">Список</a-menu-item>
             </a-sub-menu>
 
-            <a-menu-item v-if="userStore.user.roles.includes('admin')" key="/cabinet/determinate-winner">
+            <a-menu-item v-if="isManager" key="/cabinet/determinate-winner">
               Розыгрыш
             </a-menu-item>
           </a-sub-menu>

@@ -518,7 +518,7 @@ const router = createRouter({
               component: () => import('../components/admin/TripsOnModeration.vue'),
               beforeEnter: () => {
                 let userStore = useAuth()
-                if (!userStore.user?.roles.includes('admin')) {
+                if (!userStore.user?.roles.includes('manager')) {
                   return false
                 }
               },
@@ -539,7 +539,7 @@ const router = createRouter({
               component: () => import('../components/admin/CatalogTripsModeration.vue'),
               beforeEnter: () => {
                 let userStore = useAuth()
-                if (!userStore.user?.roles.includes('admin')) {
+                if (!userStore.user?.roles.includes('manager')) {
                   return false
                 }
               },
@@ -560,7 +560,7 @@ const router = createRouter({
               component: () => import('../components/admin/CompanionsOnModeration.vue'),
               beforeEnter: () => {
                 let userStore = useAuth()
-                if (!userStore.user?.roles.includes('admin')) {
+                if (!userStore.user?.roles.includes('manager')) {
                   return false
                 }
               }
@@ -571,7 +571,7 @@ const router = createRouter({
               component: () => import('../components/admin/ExcursionOnModeration.vue'),
               beforeEnter: () => {
                 let userStore = useAuth()
-                if (!userStore.user?.roles.includes('admin')) {
+                if (!userStore.user?.roles.includes('manager')) {
                   return false
                 }
               }
@@ -582,7 +582,7 @@ const router = createRouter({
               component: () => import('../components/admin/PlacesOnModeration.vue'),
               beforeEnter: () => {
                 let userStore = useAuth()
-                if (!userStore.user?.roles.includes('admin')) {
+                if (!userStore.user?.roles.includes('manager')) {
                   return false
                 }
               },
@@ -632,22 +632,22 @@ const router = createRouter({
               component: () => import('../components/admin/Transport.vue'),
               beforeEnter: () => {
                 let userStore = useAuth()
-                if (!userStore.user?.roles.includes('admin')) {
+                if (!userStore.user?.roles.includes('manager')) {
                   return false
                 }
               }
             },
-            {
-              path: 'scripts',
-              name: 'Scripts',
-              component: () => import('../components/admin/Scripts.vue'),
-              beforeEnter: () => {
-                let userStore = useAuth()
-                if (!userStore.user?.roles.includes('admin')) {
-                  return false
-                }
-              }
-            },
+            // {
+            //   path: 'scripts',
+            //   name: 'Scripts',
+            //   component: () => import('../components/admin/Scripts.vue'),
+            //   beforeEnter: () => {
+            //     let userStore = useAuth()
+            //     if (!userStore.user?.roles.includes('admin')) {
+            //       return false
+            //     }
+            //   }
+            // },
             {
               path: "add-admin-contract",
               name: 'AddAdminContract',
@@ -677,7 +677,7 @@ const router = createRouter({
               component: () => import('../components/admin/DeterminateWinner.vue'),
               beforeEnter: () => {
                 let userStore = useAuth()
-                if (!userStore.user?.roles.includes('admin')) {
+                if (!userStore.user?.roles.includes('manager')) {
                   return false
                 }
               }
@@ -720,7 +720,7 @@ const router = createRouter({
             let userStore = useAuth()
             if (!localStorage.getItem('token') || !userStore.isAuth)
               await userStore.checkAuth()
-            if (!userStore.user?.roles.includes('admin')) {
+            if (!userStore.user?.roles.includes('manager')) {
               return false
             }
           }
@@ -733,7 +733,7 @@ const router = createRouter({
             let userStore = useAuth()
             if (!localStorage.getItem('token') || !userStore.isAuth)
               await userStore.checkAuth()
-            if (!userStore.user?.roles.includes('admin')) {
+            if (!userStore.user?.roles.includes('manager')) {
               return false
             }
           }
@@ -807,7 +807,7 @@ const router = createRouter({
             let userStore = useAuth()
             if (!localStorage.getItem('token') || !userStore.isAuth)
               await userStore.checkAuth()
-            if (!userStore.user?.roles.includes('admin')) {
+            if (!userStore.user?.roles.includes('manager')) {
               return false
             }
           }

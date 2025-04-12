@@ -94,6 +94,11 @@ async function buyWithTinkoff() {
     });
     return
   }
+  await userStore.updateFullinfo(userStore.user._id, {
+      fullname: fullinfo.fullname,
+      phone: fullinfo.phone,
+    })
+
   // toSend is a bill's cart
   let toSend = []
   for (let p of pricesForm.value) {
@@ -166,12 +171,12 @@ async function buy() {
     return
   }
 
-  // if (!userStore.user.fullinfo?.fullname) {
-  //   await userStore.updateFullinfo(userStore.user._id, {
-  //     fullname: fullinfo.fullname,
-  //     phone: fullinfo.phone,
-  //   })
-  // }
+
+    await userStore.updateFullinfo(userStore.user._id, {
+      fullname: fullinfo.fullname,
+      phone: fullinfo.phone,
+    })
+
   if (places.value.available < selectedPlaces.value) {
     message.config({ duration: 3, top: "70vh" });
     message.error({
@@ -247,9 +252,12 @@ async function book() {
     });
     return
   }
-  // if (!userStore.user.fullinfo?.fullname) {
-  //   await userStore.updateFullinfo(userStore.user._id, fullinfo)
-  // }
+
+  await userStore.updateFullinfo(userStore.user._id, {
+      fullname: fullinfo.fullname,
+      phone: fullinfo.phone,
+    })
+
 
   fullinfo.date = selectedDate.value.date
   fullinfo.time = selectedDate.value.time
