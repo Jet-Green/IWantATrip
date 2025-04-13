@@ -37,7 +37,7 @@ async function deleteExcursionBill(_id) {
   <a-card hoverable class="customer-card">
 
     <div>
-      <div v-if="bill.userInfo.fullname">
+      <div v-if="bill.userInfo">
         <span class="mdi mdi-account-outline" style=""></span>
         {{ bill?.userInfo.fullname }}
       </div>
@@ -46,7 +46,7 @@ async function deleteExcursionBill(_id) {
         {{ bill?.user.fullinfo.fullname }}
       </div>
    
-      <div v-if="bill.userInfo.phone">
+      <div v-if="bill.userInfo">
         <span class="mdi mdi-phone-outline mr-4" style=""></span>
         <a :href="`tel:${bill.userInfo.phone}`">
           {{ bill?.userInfo.phone }}
