@@ -127,18 +127,19 @@ export const useExcursion = defineStore('excursion', {
          * @returns 
          */
         async buyWithTinkoff(bill) {
-            let userStore = useAuth()
-            const emailHtml = 'Куплено через T-bank'
-            return await ExcursionService.buyWithTinkoff({ emailHtml, bill })
+          
+            const emailHtml = `Куплено через T-bank: ${bill.userInfo}`
+            return await ExcursionService.buyWithTinkoff({ emailHtml, bill})
         },
         async updateBill(billId, tinkoff) {
             return await ExcursionService.updateBill({ billId, tinkoff })
         },
-        async buy(timeId, toSend, toEmail) {
+        async buy(timeId, toSend, fullinfo) {
+
             let userStore = useAuth()
             // console.log(toEmail)
-            const emailHtml = await render(BuyExcursionTemplate, { toSend: toSend, toEmail: toEmail });
-            return await ExcursionService.buy(emailHtml, timeId, userStore.user._id, toSend, toEmail.author)
+            const emailHtml = await render(BuyExcursionTemplate, { toSend: toSend, toEmail: fullinfo });
+            return await ExcursionService.buy(timeId, toSend, fullinfo, emailHtml, userStore.user._id)
         },
         async book(count, timeId, excursionId, toEmail) {
             let userStore = useAuth()

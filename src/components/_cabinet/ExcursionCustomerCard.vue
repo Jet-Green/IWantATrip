@@ -37,28 +37,29 @@ async function deleteExcursionBill(_id) {
   <a-card hoverable class="customer-card">
 
     <div>
-      <div v-if="bill.user">
+      <div v-if="bill.userInfo.fullname">
         <span class="mdi mdi-account-outline" style=""></span>
-        {{ bill.user.fullinfo.fullname }}
+        {{ bill?.userInfo.fullname }}
       </div>
-      <div v-else-if="bill.userInfo">
+      <div v-else>
         <span class="mdi mdi-account-outline" style=""></span>
-        {{ bill.userInfo.fullname }}
+        {{ bill?.user.fullinfo.fullname }}
       </div>
-
-      <div v-if="bill.user">
-        <span class="mdi mdi-phone-outline mr-4" style=""></span>
-        <a :href="`tel:${bill.user.fullinfo.phone}`">
-          {{ bill.user.fullinfo.phone }}
-        </a>
-      </div>
-      <div v-else-if="bill.userInfo">
+   
+      <div v-if="bill.userInfo.phone">
         <span class="mdi mdi-phone-outline mr-4" style=""></span>
         <a :href="`tel:${bill.userInfo.phone}`">
-          {{ bill.userInfo.phone }}
+          {{ bill?.userInfo.phone }}
         </a>
       </div>
-      <div v-for="cartItem of bill.cart" class="cart-container">
+      <div v-else>
+        <span class="mdi mdi-phone-outline mr-4" style=""></span>
+        <a :href="`tel:${bill.user.fullinfo.phone}`">
+          {{ bill.user?.fullinfo.phone }}
+        </a>
+      </div>
+     
+      <div v-for="cartItem of bill.cart" :key="cartItem.index" class="cart-container">
         {{ cartItem.type }} {{ cartItem.count }} x {{ cartItem.price }}₽
       </div>
       <div class="sum">

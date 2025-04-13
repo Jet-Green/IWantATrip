@@ -69,8 +69,9 @@ export default {
     updateBill(body) {
         return $api.patch('/excursion/bill', body)
     },
-    buy(emailHtml, timeId, userId, toSend, author) {
-        return $api.post('/excursion/buy', { emailHtml, timeId, userId, bill: toSend, author: author })
+    
+    buy(timeId, toSend, fullinfo, emailHtml, userId) {
+        return $api.post('/excursion/buy', { timeId, toSend, fullinfo, emailHtml, userId})
     },
     buyFromCabinet(timeId, toSend, fullinfo) {
         return $api.post('/excursion/buy-from-cabinet', { timeId, fullinfo, bill: toSend })

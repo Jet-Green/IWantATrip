@@ -86,12 +86,7 @@ async function order() {
     });
     return
   }
-  if (!userStore.user.fullinfo?.fullname) {
-    await userStore.updateFullinfo(userStore.user._id, {
-      fullname: fullinfo.fullname,
-      phone: fullinfo.phone
-    })
-  }
+
 
   let response = await excursionStore.order(fullinfo, excursion.value._id, excursion.value.name, excursion.value.author)
   Object.assign(fullinfo, {
@@ -181,8 +176,8 @@ if (userStore.isAuth) {
             </div>
 
             <!-- <div class="d-flex">
-              Гиды: &nbsp
-              <div v-for="guide in excursion.guides">
+              Гид: &nbsp
+              <div v-for="guide in excursion.guides" :key="guide.index">
                 <b>{{ guide.name }} </b>
               </div>
             </div> -->
