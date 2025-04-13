@@ -152,5 +152,7 @@ onMounted(() => {
   width: 100%;
   min-height: 110px;
   padding: 12px;
+  padding-top: 30px;
+
 }
 </style>
