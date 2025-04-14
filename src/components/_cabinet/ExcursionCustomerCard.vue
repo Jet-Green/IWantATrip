@@ -70,7 +70,7 @@ async function deleteExcursionBill(_id) {
       </div>
     </div>
     <div class="actions d-flex">
-      <a-popconfirm v-if="!bill.tinkoff" title="Удалить?" ok-text="Да" cancel-text="Нет"
+      <a-popconfirm v-if="!payedByTinkoff" title="Удалить?" ok-text="Да" cancel-text="Нет"
         @confirm="deleteExcursionBill(bill._id)">
         <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
       </a-popconfirm>

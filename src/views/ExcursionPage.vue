@@ -226,7 +226,7 @@ if (userStore.isAuth) {
               <div class="d-flex justify-center ma-8">
 
                 <a-button v-if="userStore.isAuth" type="primary" class="lets_go_btn"
-                  @click="open = !open">ч</a-button>
+                  @click="open = !open">Заказать</a-button>
                 <RouterLink to="/auth">
                   <a-button type="primary" class="lets_go_btn" to="/auth" v-if="!userStore.isAuth"> вход/регистрация для
                     заказа </a-button>
@@ -239,7 +239,7 @@ if (userStore.isAuth) {
 
           </a-col>
         </a-row>
-        <a-modal v-model:open="open" :footer="null">ч
+        <a-modal v-model:open="open" :footer="null">
     
           <div class="mt-16 mb-16">
             <div>
