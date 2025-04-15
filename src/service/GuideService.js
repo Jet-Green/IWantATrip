@@ -33,7 +33,7 @@ export default {
         return $api.post('/guide/get-guides', { query,dbSkip })
     },
     async uploadGuideImage(image) {
-        return $api.post('/guide/upload-images', { image })
+        return $api.post('/guide/upload-images', image )
     },
     async getGuideByEmail(email) {
         return $api.post('/guide/get-guide-by-email', { email })

@@ -26,10 +26,10 @@ const guideData = reactive({
 });
 
 // Image Editing State
-const currentImageUrl = ref(''); // To display existing or updated image URL
+// const currentImageUrl = ref(''); // To display existing or updated image URL
 let imageUrl=ref("")
 let currentImg=ref()
-const newImagePreviewUrl = ref(''); // Stores the ObjectURL for the new image preview
+// const newImagePreviewUrl = ref(''); // Stores the ObjectURL for the new image preview
 const visibleCropperModal = ref(false);
 
 
@@ -45,8 +45,9 @@ async function fetchGuideData() {
     const response = await guideStore.getGuideByEmail(userStore.user.email);
     // Assuming API returns the guide object matching the schema
     Object.assign(guideData, response.data); // Update reactive object
-    console.log(response.data)
-    currentImageUrl.value = currentImg.value || ''; // Set initial image URL
+    // console.log(response.data)
+
+    imageUrl.value = response.data.image || ''; // Set initial image URL
   } catch (err) {
     console.error("Error fetching guide data:", err);
     errorMsg.value = 'Не удалось загрузить данные гида. ' + (err.response?.data?.message || err.message);
@@ -62,29 +63,19 @@ async function submit() {
   try {
     // Prepare data for update
     // Usually we don't send the full object, just the editable fields
-    const updatePayload = {
-      name: guideData.name,
-      surname: guideData.surname,
-      phone: guideData.phone,
-      offer: guideData.offer,
-      socialMedia: guideData.socialMedia,
-      description: guideData.description,
-      location: guideData.location,
-      // Include image URL ONLY IF a new one wasn't uploaded via FormData
-      // The backend logic will handle updating the image field if req.file exists
-    };
 
     let response;
 
     response = await guideStore.updateGuide(guideData);
     if (response.status == 200) {
       message.success('Гид обновлен.');
-      const placeId = response.data._id;
-      let res = await uploadPlaceImages(placeId)
+      // console.log(response.data,'amoguss')
+      const guideId = response.data._id;
+      if (currentImg.value!=null && typeof currentImg.value=='object')
+      {
+        let res = await uploadPlaceImages(guideId)
+      }
       // Update local state with response from server (which should include the potentially new image URL)
-      Object.assign(guideData, response.data);
-      currentImageUrl.value = currentImg.value || '';
-      clearNewImageSelection(); // Clear the temporary new image state
     }
 
   } catch (err) {
@@ -118,25 +109,25 @@ function clearNewImageSelection() {
   currentImg.value = null
   imageUrl.value = null
 }
+
 async function uploadPlaceImages(_id) {
-  console.log(guideData,'susususususus')
+  // console.log(guideData,'susususususus')
   let imagesFormData = new FormData();
-    imagesFormData.append(
+  // console.log(Date.now())
+  imagesFormData.append(
       "guide-image",
-
-      new File([currentImg.value], _id + '_' + Date.now() + ".jpg"),
-
+      new File( [currentImg.value] , _id + '_' + Date.now() + ".jpg"),
       _id + '_' + Date.now() + ".jpg"
     );
   let res = await guideStore.uploadGuideImage(imagesFormData)
-  clearNewImageSelection()
+  // clearNewImageSelection()
   return res
 }
 
 
 function handleImgError() {
-  console.warn('Image failed to load:', newImagePreviewUrl.value || currentImageUrl.value);
-  console.log(guideData)
+  console.warn('Image failed to load:', currentImg.value);
+  // console.log(guideData)
   // Optionally set a placeholder image
   // currentImageUrl.value = '/path/to/placeholder.png';
 }
@@ -167,7 +158,7 @@ onMounted(() => {
                     @error="handleImgError"
                 />
                 <!-- Display overlay/button if a new image is staged -->
-                <div v-if="imageUrl" class="new-image-overlay">
+                <div v-if="imageUrl=='' || imageUrl==null" class="new-image-overlay">
                     <p>Новое фото (не сохранено)</p>
                      <a-button size="small" @click="clearNewImageSelection" danger>Отменить</a-button>
                 </div>

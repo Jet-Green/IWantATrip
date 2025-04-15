@@ -81,7 +81,7 @@ export const useGuide = defineStore('guide', {
         },
         async uploadGuideImage(image) {
             try {
-                console.log(image)
+                // console.log(image.getAll('guide-image'))
                 let res = await GuideService.uploadGuideImage(image)
                 return res
             } catch (error) {

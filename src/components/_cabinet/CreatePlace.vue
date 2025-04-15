@@ -88,7 +88,6 @@ async function uploadPlaceImages(_id) {
       _id + '_' + Date.now() + "_" + i + ".jpg"
     );
   }
-  console.log(images,imagesFormData.keys(),imagesFormData.values())
   let res = await PlaceService.uploadPlaceImages(imagesFormData)
   localStorage.removeItem('createPlaceImages')
   return res
