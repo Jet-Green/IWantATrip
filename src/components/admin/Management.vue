@@ -165,7 +165,7 @@ onMounted(async () => {
             <a-button type="primary" class="ml-12 lets_go_btn"
                 @click="addCabinetNotifications('BookingTrip', cabinetNotifications.bookingTrip)">добавить</a-button>
         </a-col>
-        <a-col v-if="createTripEmails.length != 0" v-for="email of bookingTripNotifications" class="ma-4"
+        <a-col v-if="createTripEmails.length != 0" v-for="email of bookingTripNotifications" :key="email.index" class="ma-4"
             style="cursor: pointer; font-size: 12px;">
             <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"
                 @confirm="deleteNotfications('BookingTrip', email)">
@@ -191,7 +191,7 @@ onMounted(async () => {
                 @click="addEmail('CreateTrip', emailCreateTrip)">добавить</a-button>
 
         </a-col>
-        <a-col v-if="createTripEmails.length != 0" v-for="email of createTripEmails" class="ma-4"
+        <a-col v-if="createTripEmails.length != 0" v-for="email of createTripEmails" :key="email.index" class="ma-4"
             style="cursor: pointer; font-size: 12px;">
             <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deleteEmail('CreateTrip', email)">
                 {{ email }}
@@ -210,7 +210,7 @@ onMounted(async () => {
             <a-button type="primary" class="ml-12 lets_go_btn"
                 @click="addEmail('BookingTrip', emailBookingTrip)">добавить</a-button>
         </a-col>
-        <a-col v-if="bookingTripEmails.length != 0" v-for="email of bookingTripEmails" class="ma-4"
+        <a-col v-if="bookingTripEmails.length != 0" v-for="email of bookingTripEmails" :key="email.index" class="ma-4"
             style="cursor: pointer; font-size: 12px;">
             <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deleteEmail('BookingTrip', email)">
                 {{ email }}
@@ -229,7 +229,7 @@ onMounted(async () => {
             <a-button type="primary" class="ml-12 lets_go_btn"
                 @click="addEmail('CreateCompanion', emailCreateCompanion)">добавить</a-button>
         </a-col>
-        <a-col v-if="createCompanionEmails.length != 0" v-for="email of createCompanionEmails" class="ma-4"
+        <a-col v-if="createCompanionEmails.length != 0" v-for="email of createCompanionEmails" :key="email.index" class="ma-4"
             style="cursor: pointer; font-size: 12px;">
             <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"
                 @confirm="deleteEmail('CreateCompanion', email)">
@@ -249,7 +249,7 @@ onMounted(async () => {
             <a-button type="primary" class="ml-12 lets_go_btn"
                 @click="addEmail('CreateExcurtion', emailCreateExcurtion)">добавить</a-button>
         </a-col>
-        <a-col v-if="createExcurtionEmails.length != 0" v-for="email of createExcurtionEmails" class="ma-4"
+        <a-col v-if="createExcurtionEmails.length != 0" v-for="email of createExcurtionEmails" :key="email.index" class="ma-4"
             style="cursor: pointer; font-size: 12px;">
             <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"
                 @confirm="deleteEmail('CreateExcurtion', email)">
@@ -269,7 +269,7 @@ onMounted(async () => {
             <a-button type="primary" class="ml-12 lets_go_btn"
                 @click="addEmail('BuyTrip', emailBuyTrip)">добавить</a-button>
         </a-col>
-        <a-col v-if="buyTripEmails.length != 0" v-for="email of buyTripEmails" class="ma-4"
+        <a-col v-if="buyTripEmails.length != 0" v-for="email of buyTripEmails" :key="email.index" class="ma-4"
             style="cursor: pointer; font-size: 12px;">
             <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deleteEmail('BuyTrip', email)">
                 {{ email }}
@@ -292,12 +292,12 @@ onMounted(async () => {
             <a-select v-model:value="userRole" style="width: 100%">
                 <a-select-option
                     v-for="role in [{ value: 'user', name: 'Все' }, { value: 'manager', name: 'Менеджер' }, { value: 'admin', name: 'Админ' }]"
-                    :value="role.value">{{ role.name }}</a-select-option>
+                    :value="role.value" :key="role.index">{{ role.name }}</a-select-option>
             </a-select>
         </a-col>
     </a-row>
     <a-row class="mt-16 mb-16" :gutter="[16, 16]" style="max-height: 300px; overflow-y: scroll;">
-        <a-col v-for="userFromDb of users" :span="24" :md="12">
+        <a-col v-for="userFromDb of users" :key="userFromDb.index" :span="24" :md="12">
             <UserCard :userFromDb="userFromDb" />
         </a-col>
     </a-row>

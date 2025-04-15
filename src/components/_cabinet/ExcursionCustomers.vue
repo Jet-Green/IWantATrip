@@ -64,20 +64,20 @@ let updateExcursion = async () => {
 }
 function getBillsSum(bills) {
   let sum = 0
-  // for (let b of bills) {
-  //   for (let p of b.cart) {
-  //     sum += p.price * p.count
-  //   }
-  // }
+  for (let b of bills) {
+    for (let p of b.cart) {
+      sum += p.price * p.count
+    }
+  }
   return sum
 }
 function getPeopleCount(bills) {
   let sum = 0
-  // for (let b of bills) {
-  //   for (let p of b.cart) {
-  //     sum += p.count
-  //   }
-  // }
+  for (let b of bills) {
+    for (let p of b.cart) {
+      sum += p.count
+    }
+  }
   return sum
 }
 onMounted(async () => {
@@ -141,9 +141,9 @@ onMounted(async () => {
         </a-card>
       </a-col>
     </a-row>
-    <h3 class="mt-8 mb-8"><span style="color: #ff6600;">{{ excursion.name }}</span></h3>
+    <!-- <h3 class="mt-8 mb-8"><span style="color: #ff6600;">{{ excursion.name }}</span></h3> -->
     <a-row :gutter="[16, 16]" v-if="time?.bills?.length > 0" class="mb-16">
-      <a-col :span="24" :md="12" :xl="8" v-for="bill of time.bills">
+      <a-col :span="24" :md="12" :xl="8" v-for="bill of time.bills" :key="bill.index">
         <ExcursionCustomerCard :bill="bill" @updateExcursion="updateExcursion" />
       </a-col>
     </a-row>
