@@ -25,12 +25,10 @@ const guideData = reactive({
   user: null, // Store user ID if needed, likely not editable here
 });
 
-// Image Editing State
-// const currentImageUrl = ref(''); // To display existing or updated image URL
+const visibleCropperModal = ref(false);
+
 let imageUrl=ref("")
 let currentImg=ref()
-// const newImagePreviewUrl = ref(''); // Stores the ObjectURL for the new image preview
-const visibleCropperModal = ref(false);
 
 
 
@@ -73,7 +71,7 @@ async function submit() {
       const guideId = response.data._id;
       if (currentImg.value!=null && typeof currentImg.value=='object')
       {
-        let res = await uploadPlaceImages(guideId)
+        let res = await uploadGuideImages(guideId)
       }
       // Update local state with response from server (which should include the potentially new image URL)
     }
@@ -110,7 +108,7 @@ function clearNewImageSelection() {
   imageUrl.value = null
 }
 
-async function uploadPlaceImages(_id) {
+async function uploadGuideImages(_id) {
   // console.log(guideData,'susususususus')
   let imagesFormData = new FormData();
   // console.log(Date.now())
@@ -148,20 +146,10 @@ onMounted(() => {
         <a-row :gutter="[16, 16]">
 
           <!-- Image Section -->
-          <a-col :xs="24" :md="8" :lg="6">
+          <a-col :span='24'>
             <h4>Фотография</h4>
-            <div class="image-container mb-2">
-                <img
-                    :src="imageUrl"
-                    alt="Guide Image"
-                    class="guide-image"
-                    @error="handleImgError"
-                />
-                <!-- Display overlay/button if a new image is staged -->
-                <div v-if="imageUrl=='' || imageUrl==null" class="new-image-overlay">
-                    <p>Новое фото (не сохранено)</p>
-                     <a-button size="small" @click="clearNewImageSelection" danger>Отменить</a-button>
-                </div>
+            <div class="image-preview-container mb-8" v-if="imageUrl">
+                             <img :src="imageUrl" alt="Предпросмотр фото" class="preview-image" @error="handleImgError"/>
             </div>
              <a-button type="dashed" block @click="openImageCropper">
                 <span class="mdi mdi-camera mr-1"></span>
@@ -170,8 +158,7 @@ onMounted(() => {
           </a-col>
 
           <!-- Text Fields Section -->
-          <a-col :xs="24" :md="16" :lg="18">
-            <a-row :gutter="[16, 16]">
+
               <a-col :xs="24" :sm="12">
                 <a-form-item label="Имя" :validate-status="!guideData.name ? 'error' : ''" help="Имя обязательно">
                   <a-input v-model:value="guideData.name" placeholder="Введите имя" />
@@ -213,8 +200,7 @@ onMounted(() => {
                 </a-form-item>
               </a-col>
             </a-row>
-          </a-col>
-        </a-row>
+
 
         <!-- Actions -->
         <a-row justify="end" class="mt-16">
@@ -239,7 +225,7 @@ onMounted(() => {
       <!-- Modals -->
       <a-modal v-model:open="visibleCropperModal" :footer="null" :destroyOnClose="true" title="Обрезать фото">
          <!-- Pass aspect ratio if desired, e.g., :aspectRatio="1" for square -->
-         <ImageCropper @addImage="addPreview" :aspectRatio="2/1"/>
+         <ImageCropper @addImage="addPreview" :aspectRatio="1/1"/>
       </a-modal>
 
     </div>
@@ -252,27 +238,26 @@ onMounted(() => {
   margin: auto;
 }
 
-.image-container {
-    position: relative;
+.image-preview-container {
     width: 100%;
-    /* Maintain aspect ratio, e.g., 16:10 */
-    aspect-ratio: 16 / 10;
-    background-color: #f0f0f0; /* Placeholder background */
-    border: 1px solid #d9d9d9;
+    max-width: 200px; /* Limit preview size */
+    aspect-ratio: 1 / 1; /* Maintain square aspect ratio */
+    border: 1px dashed #d9d9d9;
     border-radius: 4px;
-    overflow: hidden; /* Ensures image stays within bounds */
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: #fafafa;
 }
 
-.guide-image {
-  display: block;
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: cover; /* Or 'contain' depending on preference */
-   height: 100%;
-   width: 100%;
+.preview-image {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
 }
 
 .new-image-overlay {

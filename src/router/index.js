@@ -279,6 +279,22 @@ const router = createRouter({
           }
         },
         {
+          path: '/create-guide',
+          name: 'CreateGuide',
+          component: () => import('../components/_cabinet/CreateGuide.vue'),
+          beforeEnter: async (to, from) => {
+            let userStore = useAuth()
+            if (!localStorage.getItem('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+
+            if (!userStore.isAuth)
+              return '/auth'
+            if (!userStore.user?.roles?.includes('manager')) {
+              return false
+            }
+          }
+        },
+        {
           path: '/create-bus',
           component: () => import('../components/admin/CreateBus.vue'),
         },

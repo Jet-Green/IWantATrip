@@ -96,5 +96,13 @@ export const useGuide = defineStore('guide', {
                 console.log(error);
             }
         },
+        async deleteGuideById(_id) {
+            try {
+                let res = await GuideService.deleteGuideById(_id)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
+        },
     },
 })
