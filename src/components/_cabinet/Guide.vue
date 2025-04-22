@@ -181,22 +181,22 @@ onMounted(() => {
               </a-col>
                <a-col :xs="24">
                 <a-form-item label="Локация / Город">
-                  <a-input v-model:value="guideData.location" placeholder="Город или регион работы" />
+                  <a-input v-model:value="guideData.location" placeholder="Город или регион работы" :maxlength="75" show-count/>
                 </a-form-item>
               </a-col>
               <a-col :xs="24">
                 <a-form-item label="Предложение / Специализация">
-                  <a-textarea v-model:value="guideData.offer" placeholder="Например: Исторические туры по центру города, Гастрономические экскурсии" :rows="3" />
+                  <a-textarea v-model:value="guideData.offer" placeholder="Например: Исторические туры по центру города, Гастрономические экскурсии" :rows="1" :maxlength="125" show-count/>
                 </a-form-item>
               </a-col>
               <a-col :xs="24">
                 <a-form-item label="Описание">
-                  <a-textarea v-model:value="guideData.description" placeholder="Расскажите подробнее о себе и своих услугах" :rows="5" />
+                  <a-textarea v-model:value="guideData.description" placeholder="Расскажите подробнее о себе и своих услугах" :rows="2" :maxlength="200" show-count/>
                 </a-form-item>
               </a-col>
               <a-col :xs="24">
                 <a-form-item label="Соц. сети / Сайт">
-                  <a-input v-model:value="guideData.socialMedia" placeholder="Ссылка на Вконтакте, Instagram, личный сайт и т.д." />
+                  <a-input v-model:value="guideData.socialMedia" placeholder="Ссылка на Вконтакте, Instagram, личный сайт и т.д." :maxlength="125" show-count/>
                 </a-form-item>
               </a-col>
             </a-row>

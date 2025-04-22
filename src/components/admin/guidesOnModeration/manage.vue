@@ -1,28 +1,16 @@
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
-import { useGuide } from '../../stores/guide';
+import { useGuide } from '../../../stores/guide';
 import { useRouter } from "vue-router";
 import { message } from 'ant-design-vue';
-import ImageCropper from '../../components/ImageCropper.vue'; // Import the cropper
+import ImageCropper from '../../../components/ImageCropper.vue'; // Import the cropper
 
 let guideStore = useGuide()
 const router = useRouter();
 
 let dbSkip = ref(0)
 let limit = ref(true) // Initialize limit correctly
-let addGuideModal = ref(false)
 let query = ref("")
-let guide = ref({
-    name: '',
-    surname: '',
-    email: '',
-    phone: '',
-    image: '', // Image URL will be set after upload
-    socialMedia: '',
-    offer: '',
-    description: '',
-    location: ''
-})
 
 let guides = ref([])
 
@@ -94,13 +82,13 @@ onMounted(async () => {
 </script>
 
 <template>
-    <a-col :span="24" class="d-flex space-between align-center mb-16">
-        <div class="d-flex align-center">
+    <a-col :span="24" class="d-flex space-between align-center mb-16 mt-16">
+        <!-- <div class="d-flex align-center">
             <h2>Гиды</h2>
             <a-button type="primary" @click="router.push('/create-guide');" style="border-radius: 18px" class="ml-8">
                 Добавить
             </a-button>
-        </div>
+        </div> -->
         <div>
             <a-input-search v-model:value="query" placeholder="поиск по имени, email..." allow-clear enter-button
                 @search="refreshGuides" style="width: 250px" />

@@ -289,9 +289,10 @@ const router = createRouter({
 
             if (!userStore.isAuth)
               return '/auth'
-            if (!userStore.user?.roles?.includes('manager')) {
-              return false
-            }
+            return true
+            // if (!userStore.user?.roles?.includes('manager')) {
+            //   return false
+            // }
           }
         },
         {
@@ -622,6 +623,34 @@ const router = createRouter({
                   path: 'manage',
                   name: 'ManagePlaces',
                   component: () => import('../components/admin/placesOnModeration/manage.vue'),
+                },
+              ]
+            },
+            {
+              path: 'moderation-guides',
+              name: 'GuidesModeration',
+              component: () => import('../components/admin/GuidesOnModeration.vue'),
+              beforeEnter: () => {
+                let userStore = useAuth()
+                if (!userStore.user?.roles.includes('manager')) {
+                  return false
+                }
+              },
+              children: [
+                {
+                  path: 'on-moderation',
+                  name: 'GuidesOnModeration',
+                  component: () => import('../components/admin/guidesOnModeration/onModeration.vue'),
+                },
+                {
+                  path: 'rejected',
+                  name: 'RejectedGuides',
+                  component: () => import('../components/admin/guidesOnModeration/rejected.vue'),
+                },
+                {
+                  path: 'manage',
+                  name: 'ManageGuides',
+                  component: () => import('../components/admin/guidesOnModeration/manage.vue'),
                 },
               ]
             },

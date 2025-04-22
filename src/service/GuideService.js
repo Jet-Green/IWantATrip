@@ -11,7 +11,7 @@ export default {
         return $api.post('/guide/delete-by-id', _id)
     },
     async deleteGuideById(_id) {
-        return await $api.post('/guide/delete-guide', {_id})
+        return $api.post('/guide/delete-guide', {_id})
     },
     async createGuideElement(element) {
         return $api.post('/guide/create-element', element)

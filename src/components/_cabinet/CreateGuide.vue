@@ -4,6 +4,10 @@ import { message } from 'ant-design-vue'; // For user feedback
 import { useGuide } from '../../stores/guide';
 import { useAuth } from '../../stores/auth'; // Import useAuth
 import ImageCropper from '../../components/ImageCropper.vue'; // Assuming ImageCropper is in the same directory or adjust path
+
+import { useRouter } from "vue-router";
+const router = useRouter();
+
 let guideStore = useGuide()
 let userStore = useAuth()
 
@@ -78,6 +82,7 @@ async function addGuide() {
                 socialMedia: '', offer: '', description: '', location: ''
             };
             clearNewImageSelection(); // Reset image state
+            router.push('/admin/guides');
             
 
         } else {
