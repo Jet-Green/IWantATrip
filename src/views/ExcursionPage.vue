@@ -8,7 +8,7 @@ import BackButton from "../components/BackButton.vue";
 import BuyExcursionDates from "../components/BuyExcursionDates.vue";
 import BuyExcursionDialog from "../components/BuyExcursionDialog.vue";
 import _ from "lodash"
-
+import { useHead } from "@unhead/vue";
 
 
 import { useRoute } from "vue-router";
@@ -44,6 +44,37 @@ const options = ref({
   title: excursion.value.name,
 
 })
+
+
+useHead(computed(() => ({
+  title: excursion.value?.name,
+  meta: [
+    {
+      name: "description",
+      content: excursion.value?.description,
+    },
+    {
+      property: "og:title",
+      content: excursion.value?.name,
+    },
+    {
+      name: "og:description",
+      content: excursion.value?.description,
+    },
+    {
+      name: "og:image",
+      content: excursion?.value?.images,
+    },
+  
+    {
+      name: "og:url",
+      content: `${API_URL}/excursion?_id=${excursion.value?._id}`,
+    },
+  ],
+  link: [{ rel: "canonical", href: `${API_URL}/excursion?_id=${excursion.value?._id}` }],
+})));
+
+
 
 const { isSupported } = useShare(options)
 
