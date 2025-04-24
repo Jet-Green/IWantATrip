@@ -14,7 +14,7 @@ import { registerSW } from 'virtual:pwa-register'
 // import yandexMetrika from './plugins/yandexMetrika';
 import { ConfigProvider } from 'ant-design-vue';
 // registerSW({ immediate: true })
-
+import { createHead } from '@unhead/vue/client'
 
 
 
@@ -36,9 +36,11 @@ const updateSW = registerSW({
   });
 
 const pinia = createPinia()
+const head = createHead()
 
 createApp(App)
     .use(pinia)
+    .use(head)
     .use(router)
     .use(ANTD)
     .use(VueSocialSharing)

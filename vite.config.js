@@ -56,15 +56,22 @@ export default defineConfig(
             // Контролируем кэширование файлов, чтобы обновлять их только при изменениях
             clientsClaim: true,
             skipWaiting: true,
-            runtimeCaching: [{
-              urlPattern: ({ request }) => request.destination === 'document',
-              handler: 'NetworkFirst', // Получаем данные из сети, если возможно
-              options: {
-                cacheName: 'html-cache',
+            navigateFallbackDenylist: [
+              /robots\.txt$/,
+              /sitemap\.xml$/
+            ],
+            runtimeCaching: [
+              {
+                urlPattern: ({ request }) => request.destination === 'document',
+                handler: 'NetworkFirst',
+                options: {
+                  cacheName: 'html-cache',
+                }
               }
-            }]
+         
+            ]
           },
-          includeAssets: ['favicon.svg', 'favicon.ico', 'robots.txt', 'images/apple-touch-icon.png'],
+          includeAssets: ['favicon.svg', 'favicon.ico', 'images/apple-touch-icon.png'],
           manifest: {
             name: 'Города и веси',
             short_name: 'Города и веси',

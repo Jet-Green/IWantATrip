@@ -29,13 +29,14 @@ let toggleCols = () => {
     }
     fullInfo.value = !fullInfo.value;
     isVisible.value = true; // Появляем элемент заново
-  }, 500); // Время задержки должно совпадать с длительностью анимации растворения
+  }, 100); // Время задержки должно совпадать с длительностью анимации растворения
 }
 
 onMounted(async () => {
+  isVisible.value = true
+
   if (_id) {
     placeStore.getById(_id).then((res) => place.value = res.data)
-
   }
   if (props.open || props.inCard) {
     fullInfo.value = true
@@ -48,9 +49,9 @@ onMounted(async () => {
 
   <Transition name="fade">
     <div v-show="isVisible">
-      <p style="text-align: center; font-size: clamp(1.125rem, 0.925rem + 0.8vw, 1.375rem);" @click="toggleCols()"> {{ place?.name }}</p>
+      <p style="text-align: center; font-size: clamp(1.125rem, 0.925rem + 0.8vw, 1.375rem);" @click="toggleCols"> {{ place?.name }}</p>
       <div class="text" style="text-align: center">{{ place?.category?.toLowerCase() }} </div>
-      <p @click="toggleCols()" class="text"><i>{{ place?.shortDescription }}</i> </p>
+      <p @click="toggleCols" class="text"><i>{{ place?.shortDescription }}</i> </p>
 
       <a-row class="text">
 
@@ -59,7 +60,7 @@ onMounted(async () => {
           <a-carousel arrows dots-class="slick-dots slick-thumb" effect="fade" autoplay>
 
             <div v-for="item, index in place?.images" :key="index">
-              <img :src="item" @click="toggleCols()" />
+              <img :src="item" @click="toggleCols" />
             </div>
           </a-carousel>
 
