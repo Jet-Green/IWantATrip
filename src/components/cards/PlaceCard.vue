@@ -57,10 +57,11 @@ onMounted(async () => {
 
         <a-col :xs="24" :md="cols">
 
-          <a-carousel arrows dots-class="slick-dots slick-thumb" effect="fade" autoplay>
+          <a-carousel arrows dots-class="slick-dots slick-thumb"  autoplay>
 
             <div v-for="item, index in place?.images" :key="index">
-              <img :src="item" @click="toggleCols" />
+              <img :src="item" @click="toggleCols"  loading="lazy"
+              />
             </div>
           </a-carousel>
 
@@ -131,7 +132,7 @@ onMounted(async () => {
 /* Классы для эффекта растворения */
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.5s ease;
+  transition: opacity 0.1s ease;
 }
 
 .fade-enter,

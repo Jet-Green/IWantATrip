@@ -50,7 +50,7 @@ let touristsList = ref([]);
 let activeKey = ref(null)
 let additionalServices = ref([])
 let show = ref(false)
-let selectPlace = reactive()
+
 
 
 let link = computed(() => {
