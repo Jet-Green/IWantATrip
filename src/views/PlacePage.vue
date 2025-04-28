@@ -11,7 +11,7 @@ const place = ref();
 const route = useRoute();
 const placeStore = usePlaces();
 const _id = route.query._id;
-
+let backRoute = { name: 'Places', hash: `#${_id}` };
 // Заголовок обновится автоматически, когда place.value станет доступным
 useHead(computed(() => ({
   title: place.value?.name,
@@ -50,7 +50,8 @@ onMounted(async () => {
 </script>
 <template>
   <div style="overflow-x: hidden">
-    <BackButton />
+    <BackButton :backRoute="backRoute" v-if="_id" />
+    <BackButton v-else />
     <a-row class="justify-center d-flex">
       <a-col :xs="22" :xl="16">
         <PlaceCard :place="place" :open="true" style="margin-bottom: 32px" />
