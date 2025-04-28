@@ -12,7 +12,9 @@ const _id = route.query._id
 let excursion = ref({})
 let updateExcursion = async (_id) => {
   const response = await excursionStore.getExcursionBillsById(_id)
+ 
   excursion.value = response.data
+
 }
 
 function getDate(dateObj) {

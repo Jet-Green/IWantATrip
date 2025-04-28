@@ -188,7 +188,6 @@ export const useTrips = defineStore('trips', {
                     let response;
 
                     response = await TripService.getCreatedTripsInfoByUserId(_id,query,page)
-                    console.log(response)
                     this.isFetching = false
                     // response = _.uniqBy(response.data, '_id')
 

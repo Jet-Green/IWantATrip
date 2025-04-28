@@ -81,7 +81,7 @@ async function startShare() {
 async function updateSeats() {
     if (!bus.value) return
     let bought_seats = await tripStore.getBoughtSeats(selectedDate.value._id)
-    free_seats.value = bus.value.seats.map(seat => seat.number).filter(seat => !bought_seats.includes(seat) && !bus.value.stuff.includes(seat))
+   free_seats.value = bus.value.seats.map(seat => seat.number).filter(seat => !bought_seats.includes(seat) && !bus.value.stuff.includes(seat))
     selected_seats.value = selected_seats.value.filter(seat => free_seats.value.includes(seat))
 }
 
