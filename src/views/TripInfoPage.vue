@@ -19,6 +19,8 @@ import Bus from "../components/Bus.vue";
 import { useBus } from "../stores/bus";
 import { useShare } from '@vueuse/core'
 const API_URL = import.meta.env.VITE_API_URL
+import { useHead } from "@unhead/vue";
+
 
 const app = getCurrentInstance();
 const htmlToPaper = app.appContext.config.globalProperties.$htmlToPaper;
@@ -48,15 +50,8 @@ let touristsList = ref([]);
 let activeKey = ref(null)
 let additionalServices = ref([])
 let show = ref(false)
-let selectPlace = reactive()
 
 
-let showPlace = (place) => {
-    selectPlace = place
-    show.value = true
-
-
-}
 
 let link = computed(() => {
     return API_URL + route.fullPath
@@ -86,7 +81,7 @@ async function startShare() {
 async function updateSeats() {
     if (!bus.value) return
     let bought_seats = await tripStore.getBoughtSeats(selectedDate.value._id)
-    free_seats.value = bus.value.seats.map(seat => seat.number).filter(seat => !bought_seats.includes(seat) && !bus.value.stuff.includes(seat))
+   free_seats.value = bus.value.seats.map(seat => seat.number).filter(seat => !bought_seats.includes(seat) && !bus.value.stuff.includes(seat))
     selected_seats.value = selected_seats.value.filter(seat => free_seats.value.includes(seat))
 }
 
@@ -287,6 +282,35 @@ let getSelectedUsersCount = computed(() => {
     }
     return result
 })
+
+useHead(computed(() => ({
+  title: trip.value?.name,
+  meta: [
+    {
+      name: "description",
+      content: trip.value?.offer,
+    },
+    {
+      property: "og:title",
+      content: trip.value?.name,
+    },
+    {
+      name: "og:description",
+      content: trip.value?.offer,
+    },
+    {
+      name: "og:image",
+      content: trip?.value?.images,
+    },
+  
+    {
+      name: "og:url",
+      content: `${API_URL}/trip?_id=${trip.value?._id}`,
+    },
+  ],
+  link: [{ rel: "canonical", href: `${API_URL}/trip?_id=${trip.value?._id}` }],
+})));
+
 
 async function buyTrip() {
     if (userStore.user.email) {
@@ -508,8 +532,6 @@ onMounted(async () => {
                         </a-carousel>
                     </a-col>
                     <a-col :xs="24" :md="12" class="pa-8">
-
-
 
                         <div style="float: right;">
                             <span style="opacity: 0.7; cursor: pointer;" class="mdi mdi-24px mdi-printer ma-8 "
