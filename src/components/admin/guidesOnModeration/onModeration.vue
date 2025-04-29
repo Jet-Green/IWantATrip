@@ -9,13 +9,7 @@ let router = useRouter()
 
 let dbSkip = ref(0)
 let limit = ref(true) // Initialize limit correctly
-let query = {isModerated:false, isRejected:false}
-
-async function deleteGuide(_id) {
-
-await guideStore.deleteGuideById(_id)
-await refreshGuidesOnModeration()
-}
+let query = ref({strQuery: "", isModerated:false, isRejected:false})
 
 async function refreshGuidesOnModeration() {
   // Reset state for potentially new search/load

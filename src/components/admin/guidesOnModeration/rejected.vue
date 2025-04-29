@@ -9,7 +9,7 @@ let router = useRouter()
 
 let dbSkip = ref(0)
 let limit = ref(true) // Initialize limit correctly
-let query = {isModerated:false, isRejected:true}
+let query = ref({strQuery: "", isModerated:false, isRejected:true})
 
 async function deleteGuide(_id) {
 

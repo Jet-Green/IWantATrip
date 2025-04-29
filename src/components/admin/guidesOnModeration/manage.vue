@@ -10,7 +10,7 @@ const router = useRouter();
 
 let dbSkip = ref(0)
 let limit = ref(true) // Initialize limit correctly
-let query = ref("")
+let query = ref({strQuery:""})
 
 let guides = ref([])
 
@@ -90,7 +90,7 @@ onMounted(async () => {
             </a-button>
         </div> -->
         <div>
-            <a-input-search v-model:value="query" placeholder="поиск по имени, email..." allow-clear enter-button
+            <a-input-search v-model:value="query.strQuery" placeholder="поиск по имени, email..." allow-clear enter-button
                 @search="refreshGuides" style="width: 250px" />
         </div>
     </a-col>
@@ -154,50 +154,6 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.space-between {
-    justify-content: space-between;
-}
-
-.align-center {
-    align-items: center;
-}
-
-.d-flex {
-    display: flex;
-}
-
-.ml-8 {
-    margin-left: 8px;
-}
-
-.mt-4 {
-    margin-top: 4px;
-}
-
-.mt-8 {
-    margin-top: 8px;
-}
-
-.mr-8 {
-    margin-right: 8px;
-}
-
-.mb-8 {
-    margin-bottom: 8px;
-}
-
-.mb-16 {
-    margin-bottom: 16px;
-}
-
-.mt-16 {
-    margin-top: 16px;
-}
-
-.ma-8 {
-    margin: 8px;
-}
-
 /* Added margin for button spacing */
 .mr-1 {
     margin-right: 4px;
