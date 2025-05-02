@@ -800,6 +800,19 @@ const router = createRouter({
           }
         },
         {
+          path: '/guide-moderation',
+          name: 'GuideModeration',
+          component: () => import('../components/admin/GuideModeration.vue'),
+          beforeEnter: async () => {
+            let userStore = useAuth()
+            if (!localStorage.getItem('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+            if (!userStore.user?.roles.includes('manager')) {
+              return false
+            }
+          }
+        },
+        {
           path: '/reg',
           name: 'RegForm',
           component: () => import('../components/RegForm.vue')

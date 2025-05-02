@@ -134,6 +134,7 @@ onMounted(async () => {
               <a-menu-item key="/cabinet/moderation-companions">Попутчики</a-menu-item>
               <a-menu-item key="/cabinet/moderation-excursions">Экскурсии</a-menu-item>
               <a-menu-item key="/cabinet/moderation-places/on-moderation">Места</a-menu-item>
+              <a-menu-item key="/cabinet/moderation-guides/on-moderation">Гиды</a-menu-item>
             </a-sub-menu>
             <a-menu-item key="/cabinet/orders">Заказы</a-menu-item>
             <a-menu-item v-if="isAdmin" key="/cabinet/interface">Интерфейс</a-menu-item>
@@ -143,7 +144,6 @@ onMounted(async () => {
                 Сервисы
               </template>
               <a-menu-item key="/cabinet/transport">Транспорт</a-menu-item>
-              <a-menu-item key="/cabinet/guides">Гиды</a-menu-item>
             </a-sub-menu>
             <a-menu-item v-if="isAdmin"
               key="/cabinet/management">Управление</a-menu-item>
