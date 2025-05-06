@@ -123,6 +123,7 @@ function clearForm() {
   localStorage.removeItem('createExcursionForm')
 }
 async function submit() {
+  // console.log(form)
   form.author = user_id
   if (userStore.user?.tinkoffContract?.shopInfo) {
     let t = userStore.user.tinkoffContract

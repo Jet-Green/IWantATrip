@@ -41,8 +41,9 @@ async function sendGuideModerationMessage() {
 }
 
 onMounted(async () => {
-  // let { data } = await guideStore.getGuideById(route.query._id);
-  let { data } = await guideStore.getGuideByEmail('qwerty@qwerty');
+  let { data } = await guideStore.getGuideById(route.query._id);
+  // let { data } = await guideStore.getGuideByEmail('qwerty@qwerty');
+  console.log(data)
   guide.value = data;
   isModerated.value = guide.value.isModerated;
   moderationMessage.value = guide.value.moderationMessage;
@@ -61,15 +62,6 @@ onMounted(async () => {
                             
                             <div class="d-flex space-between" style="width: 100%;">
                             <a-avatar :size="40" :src="guide.image"/>
-
-                            <a-popconfirm title="Удалить гида?" ok-text="Да" cancel-text="Нет"
-                                @confirm="deleteGuide(guide._id)">
-                                <a-button type="primary" style="border-radius: 18px" class="mt-4">
-                                    <template #icon>
-                                        <span class="mdi mdi-delete"></span>
-                                    </template>
-                                </a-button>
-                            </a-popconfirm>
                         </div>
                         <span>{{ guide.name + ' ' + guide.surname }}</span>
                     </div>
@@ -79,12 +71,13 @@ onMounted(async () => {
                         </template> -->
                 </a-card-meta>
                 <div class="mt-8 card-content">
-                    <!-- <p><b>О себе:</b> {{ guide.description }}</p> -->
-                    <div class="text-truncate"> {{ guide.offer }}</div>
-                    <p v-if="guide.location"><b>Локации:</b> {{ guide.location }}</p>
-                    <!-- <p v-if="guide.phone"><b>Тел:</b> {{ guide.phone }}</p>
-                    <p v-if="guide.email"><b>Email:</b> {{ guide.email }}</p>
-                    <p v-if="guide.socialMedia"><b>Соц.сеть:</b> <a :href="guide.socialMedia" target="_blank" rel="noopener noreferrer">ссылка</a></p> -->
+                    <div><b>О себе:</b> {{ guide.description }}</div>
+                    <div> {{ guide.offer }}</div>
+                    
+                    <div v-if="guide.location"><b>Локации:</b> {{ guide.location }}</div>
+                    <div v-if="guide.phone"><b>Тел:</b> {{ guide.phone }}</div>
+                    <div v-if="guide.email"><b>Email:</b> {{ guide.email }}</div>
+                    <div v-if="guide.socialMedia"><b>Соц.сеть:</b> <a :href="guide.socialMedia" target="_blank" rel="noopener noreferrer">ссылка</a></div>
                 </div>
             </a-card>
             </a-col>

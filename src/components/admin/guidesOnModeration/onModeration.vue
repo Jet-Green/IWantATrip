@@ -60,22 +60,30 @@ onMounted(async () => {
                             
                             <div class="d-flex space-between" style="width: 100%;">
                             <a-avatar :size="40" :src="guide.image"/>
+                          </div>
+                          <span>{{ guide.name + ' ' + guide.surname }}</span>
                         </div>
-                        <span>{{ guide.name + ' ' + guide.surname }}</span>
+                      </template>
+                      <!-- <template #avatar>
+                        <a-avatar :size="40" :src="guide.image" class="mr-8" style=""/>
+                      </template> -->
+                    </a-card-meta>
+                    <div class="mt-8 card-content">
+                      <!-- <p><b>О себе:</b> {{ guide.description }}</p> -->
+                      <div class="text-truncate"> {{ guide.offer }}</div>
+                      <p v-if="guide.location"><b>Локации:</b> {{ guide.location }}</p>
+                      <!-- <p v-if="guide.phone"><b>Тел:</b> {{ guide.phone }}</p>
+                      <p v-if="guide.email"><b>Email:</b> {{ guide.email }}</p>
+                      <p v-if="guide.socialMedia"><b>Соц.сеть:</b> <a :href="guide.socialMedia" target="_blank" rel="noopener noreferrer">ссылка</a></p> -->
                     </div>
-                    </template>
-                    <!-- <template #avatar>
-                            <a-avatar :size="40" :src="guide.image" class="mr-8" style=""/>
-                        </template> -->
-                </a-card-meta>
-                <div class="mt-8 card-content">
-                    <!-- <p><b>О себе:</b> {{ guide.description }}</p> -->
-                    <div class="text-truncate"> {{ guide.offer }}</div>
-                    <p v-if="guide.location"><b>Локации:</b> {{ guide.location }}</p>
-                    <!-- <p v-if="guide.phone"><b>Тел:</b> {{ guide.phone }}</p>
-                    <p v-if="guide.email"><b>Email:</b> {{ guide.email }}</p>
-                    <p v-if="guide.socialMedia"><b>Соц.сеть:</b> <a :href="guide.socialMedia" target="_blank" rel="noopener noreferrer">ссылка</a></p> -->
-                </div>
+                    <div class="d-flex justify-center">
+                    <a-button type="primary" style="border-radius: 18px; text-align: center;" class="mt-4" @click="router.push('/guide-moderation/?_id=' + guide._id)" >
+                            <template #icon>
+                                <span class="mdi mdi-check-decagram-outline"></span>
+                            </template>
+                            проверить
+                      </a-button>
+                    </div>
             </a-card>
     </a-col>
     <a-col :span="24" v-else> Нет мест на модерации </a-col>

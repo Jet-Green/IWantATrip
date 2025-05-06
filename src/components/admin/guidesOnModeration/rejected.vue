@@ -92,6 +92,14 @@ onMounted(async () => {
                     <p v-if="guide.email"><b>Email:</b> {{ guide.email }}</p>
                     <p v-if="guide.socialMedia"><b>Соц.сеть:</b> <a :href="guide.socialMedia" target="_blank" rel="noopener noreferrer">ссылка</a></p> -->
                 </div>
+                <div class="d-flex justify-center">
+                <a-button type="primary" style="border-radius: 18px; text-align: center;" class="mt-4" @click="router.push('/guide-moderation/?_id=' + guide._id)" >
+                            <template #icon>
+                                <span class="mdi mdi-check-decagram-outline"></span>
+                            </template>
+                            проверить
+                      </a-button>
+                </div>
             </a-card>
     </a-col>
     <a-col :span="24" v-else> Нет гидов для модерации </a-col>

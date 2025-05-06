@@ -104,9 +104,17 @@ export const useGuide = defineStore('guide', {
                 console.log(error);
             }
         },
-        async getGuideById(_id) {
+        async moderateGuide(_id) {
             try {
-                let res = await GuideService.getGuideById(_id)
+                let res = await GuideService.moderateGuide(_id)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async sendGuideModerationMessage(_id,msg) {
+            try {
+                let res = await GuideService.sendGuideModerationMessage(_id,msg)
                 return res
             } catch (error) {
                 console.log(error);
@@ -123,5 +131,13 @@ export const useGuide = defineStore('guide', {
                 console.log(error);
             }
         },
+        async getGuidesAutocomplete(query){
+            try {
+                let res = await GuideService.getGuidesAutocomplete(query)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
+        }
     },
 })
