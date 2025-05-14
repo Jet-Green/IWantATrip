@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, ref, watch, computed } from "vue";
+import { onMounted, reactive, ref, watch, computed, nextTick } from "vue";
 import BackButton from "../components/BackButton.vue"
 import PlaceCard from "../components/cards/PlaceCard.vue"
 
@@ -22,8 +22,8 @@ useHead(computed(() => ({
       name: "og:description",
       content: 'Парк, кафе, музей, театр, ресторан, бассейн, клуб - лучшие места России, Удмуртии',
     },
-  
-  
+
+
     {
       name: "og:url",
       content: `${API_URL}/places`,
@@ -52,13 +52,13 @@ let conditions = computed(() => {
   }
   if (placeStore.filter.location.coordinates.length) {
     conditions.location = placeStore.filter.location
-             
+
   }
   if (placeStore.filter.locationRadius) {
     conditions.locationRadius = placeStore.filter.locationRadius
-            
+
   }
- 
+
   return Object.keys(conditions).length > 0 ? conditions : undefined;
 })
 
@@ -89,22 +89,19 @@ let refreshPlaces = async () => {
   await placeStore.getAll(page, query)
   if (placeStore.places.length < 20) {
     showMoreButton.value = false
-  } else{
+  } else {
     showMoreButton.value = true
   }
-  
+
 
 }
 
 
-
 onMounted(async () => {
-
   await refreshPlaces()
-
-  if (placeStore.places.length < 20) {
-    showMoreButton.value = false
-  }
+if (placeStore.places.length < 20) {
+  showMoreButton.value = false
+}
 
 })
 const backRoute = { name: 'Landing', hash: '#guide' };
@@ -113,11 +110,12 @@ const backRoute = { name: 'Landing', hash: '#guide' };
   <div style="overflow-x: hidden" id="top">
     <BackButton :backRoute="backRoute" />
     <a-row class="justify-center d-flex">
-      <a-col :xs="22" :xl="16" >
+      <a-col :xs="22" :xl="16">
         <h2>Места</h2>
         <PlaceFilter @refreshPlaces=refreshPlaces />
         <PlaceCard :place="place" v-for="place, index in placeStore.places" :key="index" style="margin-bottom: 16px;" />
-        <div class="justify-center d-flex ma-16" @click="morePlaces()" v-if="showMoreButton"> <a-button>Ещё</a-button></div>
+        <div class="justify-center d-flex ma-16" @click="morePlaces()" v-if="showMoreButton"> <a-button>Ещё</a-button>
+        </div>
 
       </a-col>
     </a-row>
