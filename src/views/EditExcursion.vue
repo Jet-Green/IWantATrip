@@ -66,7 +66,8 @@ let formSchema = yup.object({
   contacts: yup.object({
     email: yup.string().email('в формате gorodaivesi@mail.ru').required("заполните поле"),
     phone: yup.string().required("заполните поле"),
-  })
+  }),
+  
 })
 function selectStartLocation(selected) {
   for (let l of possibleLocations.value) {
@@ -149,7 +150,9 @@ onMounted(async () => {
   let excursionId = route.query._id
   let response = await excursionStore.getExcursionById(excursionId)
   form.value = response.data
+  if(response.data.excursionType){
   excursionType.value = response.data.excursionType
+  }
   oldImages.value = response.data.images
   locationSearchRequest.value = response.data.location.name
 })

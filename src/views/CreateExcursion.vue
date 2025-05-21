@@ -75,7 +75,12 @@ let formSchema = yup.object({
   contacts: yup.object({
     email: yup.string().email('в формате gorodaivesi@mail.ru').required("заполните поле"),
     phone: yup.string().required("заполните поле"),
-  })
+
+  }),
+  excursionType: yup.object({
+    type: yup.string().required("выберите тип тура"),
+  }),
+
 })
 
 function addPreview(blob) {
@@ -261,17 +266,21 @@ watch(form, (newValue) => {
               </Transition>
             </a-col>
             <a-col :span="24" :md="12">
-              Тип экскурсии
-              <a-select v-model:value="form.excursionType.type" style="width: 100%;">
-                <!-- <a-select-option value=""></a-select-option> -->
-                <a-select-option placeholder="Tип тура" :value="''">
+              <Field name="excursionType.type" v-slot="{ value, handleChange }" v-model="form.excursionType.type">
+                Тип экскурсии
+                <a-select :value="value" @update:value="handleChange" placeholder="Выберите тип экскурсии"
+                  style="width: 100%;">
+                  <a-select-option value="" disabled>Выберите тип экскурсии</a-select-option>
+                  <a-select-option v-for="excursionType in excursionTypes" :key="excursionType.type"
+                    :value="excursionType.type">
+                    {{ excursionType.type }}
+                  </a-select-option>
+                </a-select>
+              </Field>
 
-                </a-select-option>
-                <a-select-option placeholder="Tип тура" v-for="excursionType in excursionTypes"
-                  :value="excursionType.type">
-                  {{ excursionType.type }}
-                </a-select-option>
-              </a-select>
+              <Transition name="fade">
+                <ErrorMessage name="excursionType.type" class="error-message" />
+              </Transition>
             </a-col>
             <a-col :span="24" :md="12" v-if='getExcursionDirections'>
               Направление
@@ -300,9 +309,9 @@ watch(form, (newValue) => {
             <a-col :xs="24">
               Фотографии
               <div class="d-flex" style="overflow-x: scroll">
-                <img v-for="(pr, i) in previews   " :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
+                <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
                   @click="delPhotoDialog = true;
-      targetIndex = i;" @error="handleImgError(i)" />
+                  targetIndex = i;" @error="handleImgError(i)" />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
@@ -328,8 +337,7 @@ watch(form, (newValue) => {
               </div>
 
 
-              <div v-for="   item, index in form.prices   " :key="index" style="display: flex" align="baseline"
-                class="mb-16">
+              <div v-for="item, index in form.prices" :key="index" style="display: flex" align="baseline" class="mb-16">
                 <a-input v-model:value="item.type" placeholder="Взрослый" />
 
                 <a-input-number v-model:value="item.price" style="width: 100%" placeholder="1000" type="number" :min="0"
