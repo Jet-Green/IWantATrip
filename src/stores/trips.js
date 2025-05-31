@@ -181,13 +181,13 @@ export const useTrips = defineStore('trips', {
         },
         // когда открываем Созданные туры
         // Получает все туры, созданные пользователем
-        async getCreatedTripsInfoByUserId(_id,query,page) {
+        async getCreatedTripsInfoByUserId(_id,query,search, page) {
             try {
                 if (!this.isFetching) {
                     this.isFetching = true
                     let response;
 
-                    response = await TripService.getCreatedTripsInfoByUserId(_id,query,page)
+                    response = await TripService.getCreatedTripsInfoByUserId(_id,query, search, page)
                     this.isFetching = false
                     // response = _.uniqBy(response.data, '_id')
 
