@@ -169,6 +169,22 @@ function selectStartLocation(selected) {
         }
     }
 }
+const handlePlacesSearch = async (val) => {
+ 
+    if (val.length > 2) {
+      try {
+        const res = await placesStore.getForCreateTrip(val)
+        if (res.status === 200) {
+          places.value = res.data
+        }
+      } catch (e) {
+        console.error('Ошибка при загрузке мест:', e)
+      }
+    } else {
+      places.value = []
+    }
+
+}
 watch(locationSearchRequest, async (newValue, oldValue) => {
     if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
         var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
@@ -236,16 +252,15 @@ onMounted(() => {
 
             start.value = dayjs(new Date(d.start))
             end.value = dayjs(new Date(d.end))
-            if (d?.startLocation?.name)
-                {locationSearchRequest.value = d.startLocation.name}
+            if (d?.startLocation?.name) { locationSearchRequest.value = d.startLocation.name }
 
             form.value = d;
             for (let i of form.value.images)
                 previews.value.push(i)
             quill.value.setHTML(d.description)
-            form.value.places = form.value.places.map(place =>{return place._id}) 
+            form.value.places = form.value.places.map(place => { return place._id })
 
-                let res = await placesStore.getForCreateTrip();
+            let res = await placesStore.getForCreateTrip();
 
             if (res.status == 200) {
                 places.value = res.data;
@@ -315,7 +330,7 @@ let formSchema = yup.object({
                         <a-col :xs="24">
                             Фотографии
                             <div class="d-flex" style="overflow-x: scroll">
-                                <img v-for="(pr, i) in previews       " :key="i" :src="pr" alt="" class="ma-4"
+                                <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="" class="ma-4"
                                     style="max-width: 200px; min-width: 50px; background:#ccc" @click="delPhotoDialog = true;
                                     targetIndex = i;" />
                             </div>
@@ -370,7 +385,7 @@ let formSchema = yup.object({
 
                         <a-col :span="24">
                             Цены
-                            <div v-for="       item in form.cost       " :key="item.type" style="display: flex"
+                            <div v-for="item in form.cost" :key="item.type" style="display: flex"
                                 align="baseline" class="mb-16">
                                 <a-input v-model:value="item.first" placeholder="Для кого" />
 
@@ -390,7 +405,7 @@ let formSchema = yup.object({
 
                         <a-col :span="24">
                             Бонусы и скидки
-                            <div v-for="       item in form.bonuses       " :key="item" style="display: flex"
+                            <div v-for="item in form.bonuses" :key="item" style="display: flex"
                                 align="baseline" class="mb-16">
                                 <a-input v-model:value="item.type" placeholder="Количество человек" />
 
@@ -413,7 +428,7 @@ let formSchema = yup.object({
                                 Тип тура
                                 <div>
                                     <a-select @update:value="handleChange" :value="value" style="width: 100%">
-                                        <a-select-option v-for="       tripType in appStore.appState[0].tripType       "
+                                        <a-select-option v-for="tripType in appStore.appState[0].tripType"
                                             :value="tripType">{{ tripType
                                             }}</a-select-option>
                                     </a-select>
@@ -453,10 +468,9 @@ let formSchema = yup.object({
                                 :fieldNames="{
                                     label: 'name',
                                     value: '_id',
-                                }" :filter-option="(input, option) => {
-                                    const label = option.name || '';
-                                    return label.toLowerCase().includes(input.toLowerCase());
-                                }"> {{ form.places.name }}</a-select>
+                                }" @search="handlePlacesSearch" :filter-option="false">
+
+                            </a-select>
                         </a-col>
 
                         <a-col :span="24">
