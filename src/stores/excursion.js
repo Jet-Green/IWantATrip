@@ -57,7 +57,7 @@ export const useExcursion = defineStore('excursion', {
             try {
                 this.excursions = []
                 let response;
-                response = await ExcursionService.getAll(useLocations().location._id, this.excursionFilter.query, this.excursionFilter.start, this.excursionFilter.end, this.excursionFilter.type, this.excursionFilter.directionType, this.excursionFilter.directionPlace, this.excursionFilter.minAge, this.excursionFilter.havePrices)
+                response = await ExcursionService.getAll(useLocations().location._id)
 
                 this.excursions.push(...response.data);
                 this.excursions = _.uniqBy(this.excursions, '_id')
