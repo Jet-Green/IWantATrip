@@ -175,14 +175,16 @@ watch(() => excursionType.directionPlace, () => {
 
 })
 watch(filter, () => {
-  if (filter.withTimes != 'с датами' ) {
-    filter.start = '' 
+  if (filter.withTimes != 'с датами') {
+    filter.start = ''
     filter.end = ''
   }
   localStorage.setItem('excurtionsFilterForm', JSON.stringify(filter))
 })
-watch(() => locationsStore.location, () => {
-  find()
+watch(() => locationsStore.location?._id, (newId, oldId) => {
+  if (newId && newId !== oldId) {
+    find()
+  }
 })
 
 onMounted(async () => {
@@ -205,11 +207,11 @@ onMounted(async () => {
       isRestoring.value = false
     })
   }
-
+  find()
   if (props.search) {
     filter.query = props.search;
   }
- 
+
 });
 </script>
 
