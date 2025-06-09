@@ -1,11 +1,11 @@
 <script setup>
-import { ref, onMounted, watch, computed, reactive } from "vue";
+import { ref, onMounted, watch, computed, reactive, nextTick } from "vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import { useExcursion } from "../../stores/excursion.js";
 import { useAppState } from "../../stores/appState";
-
+import { useLocations } from '../../stores/locations.js'
 const appStateStore = useAppState()
 
 import dayjs from "dayjs";
@@ -21,7 +21,9 @@ let props = defineProps({
   search: String,
 });
 const excursionStore = useExcursion();
+const locationsStore = useLocations()
 const excursionTypes = ref([]);
+let cursor = 1
 
 let filter = reactive({
   start: '',
@@ -32,7 +34,7 @@ let filter = reactive({
   directionPlace: '',
   minAge: '',
   havePrices: false,
-  withTimes: true
+  withTimes: 'все'
 
 })
 
@@ -68,11 +70,9 @@ function endOfDayUTC(date) {
 }
 
 function find() {
-  query.value = query.value.trim();
-  excursionStore.searchCursor = 1;
-  excursionStore.cursor = 1;
-  excursionStore.excursions = [];
-  excursionStore.getAll();
+  let locationId = locationsStore.location._id ? locationsStore.location._id : ''
+
+  excursionStore.getAll(locationId, cursor, filter);
 }
 
 function resetForm() {
@@ -86,9 +86,11 @@ function resetForm() {
   filter.end = ''
   filter.query = ''
   filter.minAge = ''
-  filter.withTimes = true
+  filter.withTimes = 'все'
   filter.havePrices = false
-
+  filter.type = ''
+  filter.directionType = ''
+  filter.directionPlace = ''
 
 
   find();
@@ -118,7 +120,7 @@ let filterString = computed(() => {
       continue;
     }
     if (key == 'minAge' && filter[key]) {
-      keyString = keyString + `меньше ${filter[key]} лет, `
+      keyString = keyString + `от ${filter[key]} лет, `
       continue;
     }
     if (key == 'havePrices' && filter[key]) {
@@ -155,38 +157,59 @@ let getExcursionPlace = computed(() => {
 
 })
 
-
+let isRestoring = ref(false)
 watch(() => excursionType.type, () => {
+  if (isRestoring.value) return
   filter.type = excursionType.type
   excursionType.directionType = ''
   excursionType.directionPlace = ''
 })
 watch(() => excursionType.directionType, () => {
+  if (isRestoring.value) return
   filter.directionType = excursionType.directionType
   excursionType.directionPlace = ''
 })
 watch(() => excursionType.directionPlace, () => {
+  if (isRestoring.value) return
   filter.directionPlace = excursionType.directionPlace
 
 })
-
-
+watch(filter, () => {
+  if (filter.withTimes != 'с датами' ) {
+    filter.start = '' 
+    filter.end = ''
+  }
+  localStorage.setItem('excurtionsFilterForm', JSON.stringify(filter))
+})
+watch(() => locationsStore.location, () => {
+  find()
+})
 
 onMounted(async () => {
-
   await appStateStore.refreshState();
-
   excursionTypes.value = appStateStore.appState[0]?.excursionTypes || [];
 
+  let localFilter = localStorage.getItem('excurtionsFilterForm')
+  if (localFilter) {
+    let storageFilter = JSON.parse(localFilter)
+    for (const key in filter) {
+      if (key in storageFilter) {
+        filter[key] = storageFilter[key]
+      }
+    }
+    isRestoring.value = true
+    excursionType.type = storageFilter.type
+    excursionType.directionType = storageFilter.directionType
+    excursionType.directionPlace = storageFilter.directionPlace
+    nextTick(() => {
+      isRestoring.value = false
+    })
+  }
 
-
-
-  // if (props.search) {
-  //   query.value = props.search;
-  // }
-  // query.value ? find() : null;
-  // (query.value || excursionType.type || minAge.value || havePrices.value) ? find() : null;
-
+  if (props.search) {
+    filter.query = props.search;
+  }
+ 
 });
 </script>
 
@@ -204,10 +227,18 @@ onMounted(async () => {
       </div>
     </a-col>
   </a-row>
-  {{ filter }}
   <a-modal v-model:open="isFilterShow" title="Поиск экскурсии" :zIndex=900>
     <a-row :gutter="[8, 8]" class="d-flex justify-center flex-wrap">
-      <a-col :span="24" class="d-flex direction-column">
+      <a-col :span="24">
+
+        <a-radio-group v-model:value="filter.withTimes">
+          <a-radio value="с датами">C датами</a-radio>
+          <a-radio value="для заказа">Для заказа</a-radio>
+          <a-radio value="все">Все</a-radio>
+
+        </a-radio-group>
+      </a-col>
+      <a-col :span="24">
         <a-input v-model:value="filter.query" placeholder="название, содержание?" name="search"
           style="z-index: 0; width: 100%; margin-bottom: 6px" />
 
@@ -245,7 +276,7 @@ onMounted(async () => {
       </a-col>
 
 
-      <a-col :span="24" class="d-flex  space-between">
+      <a-col :span="24" class="d-flex  space-between" v-if="filter.withTimes == 'с датами'">
 
         <div class="d-flex direction-column" style="width: 100%">
           <div style="font-size: 10px; line-height: 10px">от</div>
@@ -263,7 +294,7 @@ onMounted(async () => {
       </a-col>
 
 
-      <a-col :span="24" class="d-flex space-between">
+      <a-col :span="24" class="d-flex space-between" v-if="filter.withTimes == 'с датами'">
 
         <div class="d-flex direction-column" style="width: 100%">
           <div style="font-size: 10px; line-height: 10px">до</div>
@@ -283,7 +314,7 @@ onMounted(async () => {
       <a-col :span="12" class="d-flex direction-column">
 
         <div style="font-size: 10px; line-height: 10px">мин. возраст</div>
-        <a-input v-model:value="minAge" placeholder="12" style="z-index: 0; width: 100%;" />
+        <a-input v-model:value="filter.minAge" placeholder="12" style="z-index: 0; width: 100%;" />
 
       </a-col>
 
