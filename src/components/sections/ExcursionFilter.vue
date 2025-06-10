@@ -207,9 +207,11 @@ onMounted(async () => {
       isRestoring.value = false
     })
   }
-  find()
   if (props.search) {
     filter.query = props.search;
+  }
+  if (!excursionStore.excursions.length) {
+    find()
   }
 
 });
