@@ -34,7 +34,7 @@ export default {
     delete toSend._id;
     return $api.post(`/places/edit`, { placeId, place: toSend })
   },
-  getForCreateTrip() {
-    return $api.get('/places/for-create-trip')
+  getForCreateTrip(search) {
+    return $api.get(`/places/for-create-trip?search=${search}`)
   }
 }

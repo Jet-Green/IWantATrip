@@ -60,10 +60,10 @@ onMounted(() => {
     <div style="width: 100%; text-align: center;">
       {{ excursion.name }}
     </div>
-    <div v-if="excursion?.excursionType">
+    <div v-if="excursion.excursionType">
       {{ excursion?.excursionType?.type }}
     </div>
-    <div v-if="excursion?.excursionType?.directionType" class="type">
+    <div v-if="excursion?.excursionType?.directionType && excursion.excursionType" class="type">
       <span class="mdi mdi-directions-fork"></span>{{ excursion.excursionType.directionType }}
 
       <span class="mdi mdi-map-marker-outline"></span>{{ excursion.excursionType.directionPlace }}
@@ -89,7 +89,7 @@ onMounted(() => {
           @click="editCommentDialog = !editCommentDialog; comment = excursion.comment"></span>
       </a-badge>
       <span v-else class="mdi mdi-18px mdi-comment-edit-outline"
-          @click="editCommentDialog = !editCommentDialog; comment = excursion.comment"></span>
+        @click="editCommentDialog = !editCommentDialog; comment = excursion.comment"></span>
 
     </div>
     <a-modal v-model:open="editCommentDialog" title="Изменить комментарий" okText="Отправить" cancelText="Отмена"

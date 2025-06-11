@@ -93,9 +93,9 @@ export const usePlaces = defineStore('places', {
         console.log(error);
       }
     },
-    async getForCreateTrip() {
+    async getForCreateTrip(search) {
       try {
-        const response = await PlaceService.getForCreateTrip()
+        const response = await PlaceService.getForCreateTrip(search)
         return response
       } catch (error) {
         console.log(error);

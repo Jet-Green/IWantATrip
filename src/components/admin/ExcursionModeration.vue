@@ -44,9 +44,9 @@ onMounted(async () => {
       <a-col :xs="22" :xl="16" v-else>
         <h2 style="color:#ff6600">модерация</h2>
         <h2 class="ma-0">{{ excursion.name }}   </h2>
-        <div>
-          {{ excursion.excursionType.type }} | {{ excursion.excursionType.directionType }} | {{
-        excursion.excursionType.directionPlace }}
+        <div v-if="excursion.excursionType">
+          {{ excursion?.excursionType.type }} | {{ excursion?.excursionType.directionType }} | {{
+        excursion?.excursionType.directionPlace }}
         </div>
         <a-row :gutter="[12, 12]" class="text justify-center d-flex">
           <a-col :xs="24" :md="12">

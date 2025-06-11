@@ -2,7 +2,7 @@
 import BackButton from "../components/BackButton.vue";
 import ImageCropper from "../components/ImageCropper.vue";
 
-import { ref, onMounted, computed, toRef } from "vue";
+import { ref, onMounted, computed, toRef,watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useExcursion } from "../stores/excursion"
 import { useAppState } from "../stores/appState";
@@ -66,7 +66,8 @@ let formSchema = yup.object({
   contacts: yup.object({
     email: yup.string().email('в формате gorodaivesi@mail.ru').required("заполните поле"),
     phone: yup.string().required("заполните поле"),
-  })
+  }),
+  
 })
 function selectStartLocation(selected) {
   for (let l of possibleLocations.value) {
@@ -144,12 +145,68 @@ async function submit() {
     message.success({ content: 'Успешно! Экскурсия на модерации', onClose: close })
   }
 }
+watch(locationSearchRequest, async (newValue, oldValue) => {
+  if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
+    var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
+
+    var options = {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": "Token " + import.meta.env.VITE_DADATA_TOKEN
+      },
+      body: JSON.stringify({
+        query: newValue,
+        count: 5,
+        "from_bound": { "value": "city" },
+        "to_bound": { "value": "settlement" }
+      })
+    }
+
+    let res = await fetch(url, options)
+    try {
+      let suggestions = JSON.parse(await res.text()).suggestions
+      possibleLocations.value = []
+      for (let s of suggestions) {
+        let location = {
+          value: s.value,
+          location: {
+            name: s.value,
+            shortName: '',
+            type: 'Point',
+            coordinates: [
+              s.data.geo_lon,
+              s.data.geo_lat
+            ]
+          }
+        }
+
+        if (s.data.settlement) {
+          location.location.shortName = s.data.settlement
+        }
+        else if (s.data.city) {
+          location.location.shortName = s.data.city
+        } else {
+          location.location.shortName = s.value
+        }
+
+        possibleLocations.value.push(location)
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+})
 onMounted(async () => {
   
   let excursionId = route.query._id
   let response = await excursionStore.getExcursionById(excursionId)
   form.value = response.data
+  if(response.data.excursionType){
   excursionType.value = response.data.excursionType
+  }
   oldImages.value = response.data.images
   locationSearchRequest.value = response.data.location.name
 })

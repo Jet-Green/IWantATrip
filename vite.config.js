@@ -46,6 +46,9 @@ export default defineConfig(
       },
       build: {
         target: ["esnext"], // 👈 build.target
+        minify: 'esbuild', // ✅ Быстрая минификация
+        cssCodeSplit: true, // ✅ Разделение CSS по чанкам
+        sourcemap: false, // ✅ Не генерировать карты исходников в продакшене
       },
       // base: baseUrl,
       plugins: [
@@ -62,13 +65,10 @@ export default defineConfig(
             ],
             runtimeCaching: [
               {
-                urlPattern: ({ request }) => request.destination === 'document',
-                handler: 'NetworkFirst',
-                options: {
-                  cacheName: 'html-cache',
-                }
+                urlPattern: /Document.*\.js$/,
+                handler: 'NetworkOnly',
               }
-         
+              
             ]
           },
           includeAssets: ['favicon.svg', 'favicon.ico', 'images/apple-touch-icon.png'],

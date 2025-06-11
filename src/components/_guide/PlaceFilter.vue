@@ -3,16 +3,18 @@ import { ref, onMounted, watch, computed, reactive } from "vue";
 
 import { useAppState } from "../../stores/appState";
 import { usePlaces } from "../../stores/place";
+import { useLocations } from "../../stores/locations";
 
 const placeStore = usePlaces()
 const appStore = useAppState();
+const locationsStore = useLocations()
 
 const emit = defineEmits(['refreshPlaces'])
 
 
 
 let isFilterShow = ref(false);
-let placeCategory = reactive([])  
+let placeCategory = reactive([])
 // dadata
 let possibleLocations = ref([])
 let locationSearchRequest = ref("")
@@ -48,22 +50,26 @@ function resetForm() {
 }
 
 
- 
+
 let filterString = computed(() => {
   let keyString = ''
 
   let placeFilter = placeStore.filter
-  for (let key in placeFilter) { 
-    if (key == 'location' && placeFilter[key] ) {
-      keyString = keyString + ` ${placeFilter[key].shortName} ` 
+  for (let key in placeFilter) {
+    if (key == 'location' && placeFilter[key]) {
+     
+      keyString = keyString + ` ${placeFilter[key].shortName} `
+  
       continue;
     }
-    if (key == 'locationRadius' && placeFilter[key] ) {
-      keyString = keyString + ` + ${placeFilter[key]}км. ` 
+    if (key == 'locationRadius' && placeFilter[key]) {
+      keyString = keyString + ` + ${placeFilter[key]}км. `
+
       continue;
     }
     if (placeFilter[key]) {
-      keyString = keyString + `${placeFilter[key]}, ` 
+      keyString = keyString + `${placeFilter[key]}, `
+ 
     }
   }
   return keyString.trim().slice(0, -1)
@@ -126,9 +132,19 @@ watch(locationSearchRequest, async (newValue, oldValue) => {
     }
   }
 })
-
+if (locationsStore?.location.name) {
+    placeStore.filter.location.name = locationsStore?.location.name
+    placeStore.filter.location.shortName = locationsStore?.location.shortName
+    placeStore.filter.location.type = locationsStore?.location.type
+    placeStore.filter.location.coordinates = locationsStore?.location.coordinates
+    locationSearchRequest.value = locationsStore?.location.name
+    placeStore.filter.locationRadius = 50
+  }
+find()
 onMounted(async () => {
   await appStore.refreshState();
+
+
   placeCategory = appStore.appState[0]?.placeCategory.sort().map((name) => { return { value: name } }) ?? []
 
 });
@@ -170,8 +186,8 @@ onMounted(async () => {
           placeholder="Глазов" @select="selectStartLocation" allowClear>
         </a-auto-complete>
         <div v-if="locationSearchRequest">
-          <a-slider v-model:value="placeStore.filter.locationRadius" :step="50" :min="0" :max="1000" tooltipPlacement="right"
-            :tipFormatter="(s) => s + ' км'" />
+          <a-slider v-model:value="placeStore.filter.locationRadius" :step="50" :min="0" :max="1000"
+            tooltipPlacement="right" :tipFormatter="(s) => s + ' км'" />
           <b>Радиус поиска {{ placeStore.filter.locationRadius }} км.</b>
         </div>
 

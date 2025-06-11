@@ -18,14 +18,14 @@ let userId = userStore.user._id
 async function getAllTrips() {
     loading.value = true
     let filter = {
-        $or: [
-            { "name": { $regex: query.value, $options: 'i' } },
-            { "parent": { $exists: true } }
-        ],
+        // $or: [
+        //     { "name": { $regex: query.value, $options: 'i' } },
+        //     { "parent": { $exists: true } }
+        // ],
         start: { $lte: Date.now() }
     };
 
-    let response = await tripStore.getCreatedTripsInfoByUserId(userId, filter, page) || []
+    let response = await tripStore.getCreatedTripsInfoByUserId(userId, filter,query.value, page) || []
     page=response.page
     response=response.data
     response?.length < 15 ? showMoreButton.value = false : showMoreButton.value = true

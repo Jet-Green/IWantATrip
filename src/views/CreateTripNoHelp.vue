@@ -223,7 +223,7 @@ function submit() {
       await uploadTripImages(_id)
       await updateUser(_id)
 
-   
+
       message.config({ duration: 1.5, top: "70vh" });
       message.success({
         content: "Тур создан!", onClose: () => {
@@ -255,6 +255,22 @@ function selectStartLocation(selected) {
       form.startLocation = l.location
     }
   }
+}
+const handlePlacesSearch = async (val) => {
+ 
+    if (val.length > 2) {
+      try {
+        const res = await placesStore.getForCreateTrip(val)
+        if (res.status === 200) {
+          places.value = res.data
+        }
+      } catch (e) {
+        console.error('Ошибка при загрузке мест:', e)
+      }
+    } else {
+      places.value = []
+    }
+
 }
 watch(locationSearchRequest, async (newValue, oldValue) => {
   if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
@@ -388,11 +404,7 @@ onMounted(async () => {
       locationSearchRequest.value = f.startLocation.name
     }
   }
-  let res = await placesStore.getForCreateTrip();
 
-  if (res.status == 200) {
-    places.value = res.data;
-  }
 });
 </script>
 <template>
@@ -416,7 +428,7 @@ onMounted(async () => {
             <a-col :xs="24">
               Фотографии
               <div class="d-flex" style="overflow-x: scroll">
-                <img v-for="(pr, i) in previews   " :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
+                <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
                   @click="delPhotoDialog = true;
                   targetIndex = i;" @error="handleImgError(i)" />
               </div>
@@ -481,7 +493,7 @@ onMounted(async () => {
               </div>
 
 
-              <div v-for="   item in form.cost   " :key="item.type" style="display: flex" align="baseline"
+              <div v-for="item in form.cost" :key="item.type" style="display: flex" align="baseline"
                 class="mb-16">
                 <a-input v-model:value="item.first" placeholder="Для кого" />
 
@@ -501,7 +513,7 @@ onMounted(async () => {
 
             <a-col :span="24">
 
-              <div v-for="   item in form.bonuses   " style="display: flex" align="baseline" class="mb-16">
+              <div v-for="item in form.bonuses" style="display: flex" align="baseline" class="mb-16">
                 <a-input v-model:value="item.type" placeholder="Количество человек" />
 
                 <a-input v-model:value="item.bonus" style="width: 100%" placeholder="Бонусы или скидки"
@@ -523,9 +535,9 @@ onMounted(async () => {
                 Тип тура
                 <div>
                   <a-select @update:value="handleChange" :value="value" style="width: 100%">
-                    <a-select-option v-for="   tripType in appStore.appState[0].tripType   " :value="tripType">{{
+                    <a-select-option v-for="tripType in appStore.appState[0].tripType" :value="tripType">{{
                       tripType
-                    }}</a-select-option>
+                      }}</a-select-option>
                   </a-select>
                 </div>
               </Field>
@@ -559,13 +571,14 @@ onMounted(async () => {
 
             <a-col :span="24">
               Достопримечательности/места
+
               <a-select v-model:value="form.places" :options="places" style="width: 100%;" mode="multiple" :fieldNames="{
                 label: 'name',
                 value: '_id',
-              }" :filter-option="(input, option) => {
-                const label = option.name || '';
-                return label.toLowerCase().includes(input.toLowerCase());
-              }">
+              }" @search="handlePlacesSearch"
+              :filter-option="false"
+              >
+              
               </a-select>
             </a-col>
 
@@ -707,7 +720,7 @@ onMounted(async () => {
               Принимать оплату в приложении?
               <div class="d-flex align-center justify-center" style="height:100%">
                 <a-checkbox v-model:checked="form.canSellPartnerTour">{{ form.canSellPartnerTour ? "ДА" : "НЕТ"
-                  }}</a-checkbox>
+                }}</a-checkbox>
               </div>
 
             </a-col>
