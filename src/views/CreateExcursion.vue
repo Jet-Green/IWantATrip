@@ -21,7 +21,9 @@ const user_id = userStore?.user._id
 
 let excursionTypes = appStateStore?.appState[0]?.excursionTypes || []
 let locationSearchRequest = ref("")
+let guideSearchRequest = ref()
 let possibleLocations = ref([])
+let possibleGuides = ref([{value:'sus'}])
 
 let visibleCropperModal = ref(false);
 let previews = ref(localStorage.getItem('createExcursionImages') ? JSON.parse(localStorage.getItem('createExcursionImages')) : []);
@@ -243,6 +245,24 @@ watch(
   },
   { deep: true }
 )
+
+watch(guideSearchRequest, (oldValue, newValue) => () => {
+  if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
+    let suggestions = guideStore.getGuides(newValue)
+    possibleGuides.value = []
+
+    for (let s of suggestions) {
+      let guide = {
+        value: s.name,
+        id: s._id
+      }
+
+      possibleGuides.value.push(guide)
+
+    }
+  }
+})
+
 watch(form, (newValue) => {
   localStorage.setItem('createExcursionForm', JSON.stringify(newValue))
 }, { deep: true })
@@ -429,8 +449,12 @@ watch(form, (newValue) => {
             </a-col>
             <a-col :span="24">
               Экскурсовод
-              <Field name="guides" v-slot="{ value, handleChange }" v-model="form.guides[0].name">
-                <a-input placeholder="Александр Невский" @update:value="handleChange" :value="value" />
+              <Field name="guides" v-slot="{ value, handleChange }" v-model="guideSearchRequest">
+                <a-select :value="value" @update:value="handleChange" style="width: 100%" mode="multiple"
+                  :options="possibleGuides" placeholder="Глазов" @select="selectGuide">
+                </a-select>
+              
+                <!-- <a-input placeholder="Александр Невский" @update:value="handleChange" :value="value" /> -->
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="guides" class="error-message" />
