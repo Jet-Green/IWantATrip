@@ -77,7 +77,7 @@ let formSchema = yup.object({
   minAge: yup.number().required("заполните поле"),
   deadline: yup.string().required("заполните поле"),
   requirements: yup.string().required("заполните поле"),
-  guides: yup.string().required("заполните поле"),
+  guides: yup.array().required("заполните поле"),
   location: yup.string().required("заполните поле"),
   contacts: yup.object({
     email: yup.string().email('в формате gorodaivesi@mail.ru').required("заполните поле"),
@@ -269,24 +269,29 @@ watch(
 // })
 const fetchGuides = async (guide) => {
   possibleGuides.guide = [];
-  guidesFetching.guide = true;
+  guidesFetching.value = true;
   if (guide.trim().length > 2 && guide.length > previousGuide.value.length) {
     // console.log('fetching guide', guide);
     let suggestions = await guideStore.getGuides({strQuery: guide, isModerated:true, isRejected:false})
     // console.log('suggestions', suggestions);
     possibleGuides.value = []
-
+    let count = 0
     for (let s of suggestions?.data?.data) {
       let option = {
         label: s.name+' '+s.surname,
-        value: s._id
+        value: s._id,
+        icon: s.image,
     }
+      count++
 
       possibleGuides.value.push(option)
-
+    if (count==5){
+      break
+    }
     }
   }
   previousGuide.value=guide
+  guidesFetching.value = false;
 };
 // watch(state.value, () => {
 //   state.data = [];
@@ -488,15 +493,16 @@ watch(form, (newValue) => {
                 :options="possibleGuides" 
                 :filter-option="false"
                 placeholder="Глазов" 
-                @select="selectGuide"
-                :not-found-content="guideFetching ? undefined : null"
+                :not-found-content="guidesFetching ? undefined : null"
                 @search="fetchGuides"
                 >
-                 <!-- <template #dropdownRender="{ menuNode: menu }">
-                  
-                 </template> -->
+                <!-- @select="selectGuide" -->
+                <template #option="{ value: value, label, icon }" class="pa-0" style="align-items: center;">
+                    <a-avatar :src=icon></a-avatar>
+                        &nbsp;&nbsp;{{ label }}
+                      </template>
 
-                 <template v-if="guideFetching" #notFoundContent>
+                 <template v-if="guidesFetching" #notFoundContent>
                   <a-spin size="small" />
                  </template>
 
