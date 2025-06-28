@@ -1,5 +1,6 @@
 <script setup>
 import { ref, reactive, onMounted, watch } from 'vue';
+import BackButton from '../../components/BackButton.vue';
 import { message } from 'ant-design-vue'; // For user feedback
 import { useGuide } from '../../stores/guide';
 import { useAuth } from '../../stores/auth'; // Import useAuth
@@ -37,18 +38,15 @@ let currentImg = ref()
 // --- Methods ---
 
 async function addGuide() {
-    // Basic validation
+
     if (!(guide.value.name.length > 1 && guide.value.surname.length > 1 && guide.value.phone.length > 2 && guide.value.email.length > 2 && guide.value.offer.length > 2 && guide.value.description.length > 2)) {
-        console.log(guide.value.name.length, guide.value.surname.length, guide.value.phone.length, guide.value.email.length, guide.value.offer.length, guide.value.description.length,guide.value.email)
         message.error('Пожалуйста, заполните все обязательные поля.');
         return;
     }
-    // Email validation (simple)
     if (!/\S+@\S+\.\S+/.test(guide.value.email)) {
         message.error('Пожалуйста, введите корректный email.');
         return;
     }
-    // Phone validation (simple)
     if (!/^\d{11}$/.test(guide.value.phone)) {
         message.error('Пожалуйста, введите корректный номер телефона.');
         return;
@@ -63,10 +61,10 @@ async function addGuide() {
             const newGuideId = res.data._id; // Get ID of the newly created guide.value
 
             // 2. Upload image if one was selected/cropped
-            if (currentImg.value!=null && typeof currentImg.value=='object'){
+            if (currentImg.value != null && typeof currentImg.value == 'object') {
                 try {
                     await uploadGuideImages(newGuideId);
-                    message.success('Гид и фото добавлены.');
+                    message.success('Гид добавлены');
                 } catch (imgError) {
                     console.error("Error uploading guide.value image:", imgError);
                     message.warning(`Гид добавлен, но не удалось загрузить фото: ${imgError.message || 'Проверьте консоль'}`);
@@ -82,8 +80,8 @@ async function addGuide() {
                 socialMedia: '', offer: '', description: '', location: ''
             };
             clearNewImageSelection(); // Reset image state
-            router.push('/admin/guides');
-            
+            router.push('/cabinet/me');
+
 
         } else {
             message.error(`Не удалось добавить гида: ${res.data?.message || 'Статус ' + res.status}`);
@@ -140,7 +138,9 @@ function handleImgError() {
 </script>
 
 <template>
-    <a-spin :spinning="isLoading">
+    <div>
+        <BackButton />
+        <div> <a-spin :spinning="isLoading"></a-spin></div>
         <div class="guide-profile-editor pa-4">
             <a-alert v-if="errorMsg" :message="errorMsg" type="error" show-icon closable @close="errorMsg = ''"
                 class="mb-4" />
@@ -165,8 +165,7 @@ function handleImgError() {
                     <!-- Text Fields Section -->
 
                     <a-col :xs="24" :sm="12">
-                        <a-form-item label="Имя"
-                            help="Имя обязательно">
+                        <a-form-item label="Имя" help="Имя обязательно">
                             <a-input v-model:value="guide.name" placeholder="Введите имя" />
                         </a-form-item>
                     </a-col>
@@ -181,8 +180,7 @@ function handleImgError() {
                         </a-form-item>
                     </a-col>
                     <a-col :xs="24" :sm="12">
-                        <a-form-item label="Телефон"
-                            help="Телефон обязателен">
+                        <a-form-item label="Телефон" help="Телефон обязателен">
                             <a-input v-model:value="guide.phone" placeholder="+7 (XXX) XXX-XX-XX" />
                         </a-form-item>
                     </a-col>
@@ -211,22 +209,17 @@ function handleImgError() {
                         </a-form-item>
                     </a-col>
                 </a-row>
+                <a-col :span="24" class="d-flex justify-center">
 
-
-                <a-col :span="24" class="text-right d-flex space-between">
-                    <a-button @click="addGuideModal = false; clearNewImageSelection();" class="mr-8"> Отмена </a-button>
-                    <a-button type="primary" @click="addGuide()" style="border-radius: 18px"> Добавить гида </a-button>
+                    <a-button class="lets_go_btn ma-36" type="primary" @click="addGuide()"> Добавить гида </a-button>
                 </a-col>
             </a-form>
-
-            <!-- Modals -->
-            <a-modal v-model:open="visibleCropperModal" :footer="null" :destroyOnClose="true" title="Обрезать фото">
-                <!-- Pass aspect ratio if desired, e.g., :aspectRatio="1" for square -->
+            <a-modal v-model:open="visibleCropperModal" :footer="null" :destroyOnClose="true">
                 <ImageCropper @addImage="addPreview" :aspectRatio="1 / 1" />
             </a-modal>
 
         </div>
-    </a-spin>
+    </div>
 </template>
 
 <style scoped>
@@ -279,25 +272,7 @@ function handleImgError() {
     margin-bottom: 8px;
 }
 
-.pa-4 {
-    padding: 16px;
-}
 
-.ma-4 {
-    margin: 16px;
-}
-
-.mb-4 {
-    margin-bottom: 16px;
-}
-
-.mt-16 {
-    margin-top: 16px;
-}
-
-.mr-1 {
-    margin-right: 4px;
-}
 
 /* Ant input validation styling */
 :deep(.ant-form-item-has-error .ant-input),

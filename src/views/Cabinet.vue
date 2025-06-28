@@ -4,7 +4,7 @@ import { useAuth } from "../stores/auth";
 import { useRouter, useRoute, RouterView } from "vue-router";
 import BackButton from "../components/BackButton.vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import ruRU from 'ant-design-vue/es/locale/ru_RU';
+
 
 const userStore = useAuth();
 const router = useRouter();
@@ -14,7 +14,7 @@ let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
 let isCreator = userStore.user.tinkoffContract || false
 let isPlaceCreator = userStore.user.tinkoffContract || false
-let isGuide = userStore.user.roles.includes('guide')
+// let isGuide = userStore.user.roles.includes('guide')
 let isTasksManager = userStore.user.roles.includes('tasksManager')
 let isAdmin = userStore.user.roles.includes('admin')
 let isManager = userStore.user.roles.includes('manager')
@@ -75,12 +75,9 @@ onMounted(async () => {
             <span ref='companions' v-if=!sm>Попутчики</span>
             <span v-else class="mdi mdi-24px mdi-human-capacity-decrease" style="color: #245159; "></span>
           </a-menu-item>
-          <a-menu-item key="/cabinet/guide" v-if="isGuide">
-              <span ref='guide' v-if=!sm>Гид</span>
-              <span v-else class="mdi mdi-24px mdi-calendar-check-outline" style="color: #245159; "></span>
-            <!-- <a-menu-item key="/cabinet/tasks">Задачи</a-menu-item>
-            <a-menu-item v-if="isCreator" key="/cabinet/partners">Партнеры</a-menu-item> -->
-
+          <a-menu-item key="/cabinet/guide">
+              <span ref='guide' v-if=!sm>Гиды</span>
+              <span v-else class="mdi mdi-24px mdi-nature-people" style="color: #245159; "></span>
           </a-menu-item>
           <a-sub-menu key="sub1">
             <template #title>
