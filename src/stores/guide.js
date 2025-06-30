@@ -10,6 +10,7 @@ export const useGuide = defineStore('guide', {
 
     },
     actions: {
+        // Это отнисится к гайдам
         async fetchElementsByQuery(name) {
             try {
                 const response = await GuideService.fetchElementsByQuery(name);
@@ -55,6 +56,8 @@ export const useGuide = defineStore('guide', {
                 console.log(error);
             }
         },
+
+        // Это отнисится к гидам
         async addGuide(guide) {
             try {
                 let res = await GuideService.addGuide(guide)
@@ -63,9 +66,17 @@ export const useGuide = defineStore('guide', {
                 console.log(error);
             }
         },
-        async getGuides(query,dbSkip) {
+        async getGuides(query, dbSkip) {
             try {
-                let res = await GuideService.getGuides(query,dbSkip)
+                let res = await GuideService.getGuides(query, dbSkip)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async getGuidesByUserId(page, query) {
+            try {
+                let res = await GuideService.getGuidesByUserId(page, query)
                 return res
             } catch (error) {
                 console.log(error);
@@ -112,9 +123,9 @@ export const useGuide = defineStore('guide', {
                 console.log(error);
             }
         },
-        async sendGuideModerationMessage(_id,msg) {
+        async sendGuideModerationMessage(_id, msg) {
             try {
-                let res = await GuideService.sendGuideModerationMessage(_id,msg)
+                let res = await GuideService.sendGuideModerationMessage(_id, msg)
                 return res
             } catch (error) {
                 console.log(error);
@@ -124,14 +135,14 @@ export const useGuide = defineStore('guide', {
             try {
                 let res = await GuideService.deleteGuideById(_id)
                 // if (res.status == 200) {
-                    // await this.refreshState();
+                // await this.refreshState();
                 // }
                 return res
             } catch (error) {
                 console.log(error);
             }
         },
-        async getGuidesAutocomplete(query){
+        async getGuidesAutocomplete(query) {
             try {
                 let res = await GuideService.getGuidesAutocomplete(query)
                 return res

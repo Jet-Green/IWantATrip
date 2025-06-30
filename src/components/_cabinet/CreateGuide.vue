@@ -33,10 +33,6 @@ const visibleCropperModal = ref(false);
 let imageUrl = ref("")
 let currentImg = ref()
 
-
-
-// --- Methods ---
-
 async function addGuide() {
 
     if (!(guide.value.name.length > 1 && guide.value.surname.length > 1 && guide.value.phone.length > 2 && guide.value.email.length > 2 && guide.value.offer.length > 2 && guide.value.description.length > 2)) {
@@ -51,8 +47,6 @@ async function addGuide() {
         message.error('Пожалуйста, введите корректный номер телефона.');
         return;
     }
-
-
     try {
         // 1. Add guide.value text data
         let res = await guideStore.addGuide(guide.value)
