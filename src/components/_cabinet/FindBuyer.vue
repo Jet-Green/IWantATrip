@@ -1,12 +1,13 @@
 <script setup>
 import { ref, onMounted, watch, computed } from "vue";
+import{useRouter} from 'vue-router'
 
 import { useAuth } from "../../stores/auth.js";
 import { useTrips } from "../../stores/trips.js";
 
 let userStore = useAuth();
 let tripStore = useTrips();
-
+let router = useRouter()
 
 let loading = ref(true)
 let buyer = ref('')
@@ -48,7 +49,7 @@ const clearData = (dataString) => {
 
         <a-row :gutter="[8, 8]">
             <a-col :lg="8" :sm="12" :xs="24" v-for="trip in tripsByCustomers">
-                <a-card class="card" hoverable>
+                <a-card class="card" hoverable  @click="router.push({ path: '/cabinet/customers-trip', query: { _id: trip._id } })">
                     <div style="text-align:center">
                         {{ trip.name }}
                     </div>

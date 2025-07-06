@@ -201,7 +201,7 @@ let getCurrentCustomerNumber = computed(() => {
 })
 
 async function refreshDates() {
-    let response = await tripStore.getFullTripById(_id);
+    let response = await tripStore.getTripById(_id);
     let tripFromDb = response.data;
     additionalServices.value = []
     for (let service of tripFromDb.additionalServices) {
@@ -730,7 +730,6 @@ onMounted(async () => {
                             <b>Условия возврата:</b> {{ trip.returnConditions }}
                         </div>
                     </div>
-
                 </a-row>
             </a-col>
         </a-row>

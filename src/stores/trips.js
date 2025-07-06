@@ -181,23 +181,23 @@ export const useTrips = defineStore('trips', {
         },
         // когда открываем Созданные туры
         // Получает все туры, созданные пользователем
-        async getCreatedTripsInfoByUserId(_id,query,search, page) {
+        async getCreatedTripsInfoByUserId(_id, query, search, page) {
             try {
                 if (!this.isFetching) {
                     this.isFetching = true
                     let response;
 
-                    response = await TripService.getCreatedTripsInfoByUserId(_id,query, search, page)
+                    response = await TripService.getCreatedTripsInfoByUserId(_id, query, search, page)
                     this.isFetching = false
                     // response = _.uniqBy(response.data, '_id')
 
 
-                    return {data:response.data.result,page:response.data.currentPage}
-                    }
-    
-                } catch (err) {
-                    console.log(err);
+                    return { data: response.data.result, page: response.data.currentPage }
                 }
+
+            } catch (err) {
+                console.log(err);
+            }
         },
         // когда переходим на страницу с покупателями туры
         async getFullTripById(_id) {
@@ -207,6 +207,14 @@ export const useTrips = defineStore('trips', {
                 console.log(error);
             }
         },
+        async getTripById(_id) {
+            try {
+                return await TripService.getTripById(_id)
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
         async getFullCatalogById(_id) {
             try {
                 return await TripService.getFullCatalogById(_id)

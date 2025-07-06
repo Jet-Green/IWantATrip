@@ -17,7 +17,7 @@ export default {
         return $api.post(`/trips/search?cursor=${cursor}`, req)
     },
     async findAuthorTrips(query, _id) {
-        return $api.post('/trips/find-author-trips', {query, _id})
+        return $api.post('/trips/find-author-trips', { query, _id })
     },
     async getById(_id) {
         return $api.get(`/trips/get-by-id?_id=${_id}`)
@@ -99,11 +99,14 @@ export default {
     sendCatalogModerationMessage(trip_id, msg) {
         return $api.post(`/admin/send-catalog-moderation-message?tripId=${trip_id}`, { msg })
     },
-    getCreatedTripsInfoByUserId(_id,query,search,page) {
-        return $api.post(`/trips/created-trips-info`, {_id,query,search, page})
+    getCreatedTripsInfoByUserId(_id, query, search, page) {
+        return $api.post(`/trips/created-trips-info`, { _id, query, search, page })
     },
     getFullTripById(_id) {
         return $api.get(`/trips/get-full-trip?_id=${_id}`)
+    },
+    getTripById(_id) {
+        return $api.get(`/trips/get-trip-by-id?_id=${_id}`)
     },
     getFullCatalogById(_id) {
         return $api.get(`/catalog/get-full-catalog?_id=${_id}`)
@@ -121,12 +124,12 @@ export default {
         return $api.post('/trips/update-bills-tourists', { _id: bill, touristsList: bill.touristsList })
     },
     updatePartner(partner, trip_id, canSellPartnerTour) {
-        return $api.post('/trips/update-partner', { partner: partner, _id: trip_id, canSellPartnerTour:canSellPartnerTour })
+        return $api.post('/trips/update-partner', { partner: partner, _id: trip_id, canSellPartnerTour: canSellPartnerTour })
     },
     updateCatalogTrip(_id, trip) {
         return $api.post('/catalog/update-catalog-trip', { _id, trip })
     },
-    editCatalogTrip(_id, trip){
+    editCatalogTrip(_id, trip) {
         return $api.post('/catalog/edit-catalog-trip', { _id, trip })
     },
     updateIncludedLocations(updateObject) {
