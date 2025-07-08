@@ -26,11 +26,11 @@ const guide = ref({
     socialMedia: '',
     description: '',
     location: '',
-    isAccredited: false,
+    type: '',
 });
 const guideTypes = ref([
-    { label: "Знаток города", value: false },
-    { label: "Аккредитованный", value: true },
+    { label: "Знаток города", value: "Знаток города" },
+    { label: "Аккредитованный", value: "Аккредитованный" },
 ])
 
 const visibleCropperModal = ref(false);
