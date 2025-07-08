@@ -1,10 +1,10 @@
 <script setup>
 import { ref, reactive, onMounted, watch } from 'vue';
-import BackButton from '../../components/BackButton.vue';
+import BackButton from '../components/BackButton.vue';
 import { message } from 'ant-design-vue'; // For user feedback
-import { useGuide } from '../../stores/guide';
-import { useAuth } from '../../stores/auth'; // Import useAuth
-import ImageCropper from '../../components/ImageCropper.vue'; // Assuming ImageCropper is in the same directory or adjust path
+import { useGuide } from '../stores/guide';
+import { useAuth } from '../stores/auth'; // Import useAuth
+import ImageCropper from '../components/ImageCropper.vue'; // Assuming ImageCropper is in the same directory or adjust path
 
 import { useRouter } from "vue-router";
 const router = useRouter();
@@ -26,9 +26,17 @@ const guide = ref({
     socialMedia: '',
     description: '',
     location: '',
+    isAccredited: false,
 });
+const guideTypes = ref([
+    { label: "Знаток города", value: false },
+    { label: "Аккредитованный", value: true },
+])
 
 const visibleCropperModal = ref(false);
+
+let possibleLocations = ref([])
+let locationSearchRequest = ref("")
 
 let imageUrl = ref("")
 let currentImg = ref()
@@ -111,18 +119,78 @@ function clearNewImageSelection() {
 }
 
 async function uploadGuideImages(_id) {
-    // console.log(guide.value,'susususususus')
     let imagesFormData = new FormData();
-    // console.log(Date.now())
     imagesFormData.append(
         "guide-image",
         new File([currentImg.value], _id + '_' + Date.now() + ".jpg"),
         _id + '_' + Date.now() + ".jpg"
     );
     let res = await guideStore.uploadGuideImage(imagesFormData)
-    // clearNewImageSelection()
     return res
 }
+function selectLocation(selected) {
+  for (let l of possibleLocations.value) {
+    // l.value - name
+    if (l.value == selected) {
+      guide.value.location = l.location
+    }
+  }
+  console.log(guide.value)
+}
+watch(locationSearchRequest, async (newValue, oldValue) => {
+  if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
+    var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
+
+    var options = {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": "Token " + import.meta.env.VITE_DADATA_TOKEN
+      },
+      body: JSON.stringify({
+        query: newValue,
+        count: 5,
+        "from_bound": { "value": "city" },
+        "to_bound": { "value": "settlement" }
+      })
+    }
+
+    let res = await fetch(url, options)
+    try {
+      let suggestions = JSON.parse(await res.text()).suggestions
+      possibleLocations.value = []
+      for (let s of suggestions) {
+        let location = {
+          value: s.value,
+          location: {
+            name: s.value,
+            shortName: '',
+            type: 'Point',
+            coordinates: [
+              Number(s.data.geo_lon),
+              Number(s.data.geo_lat)
+            ]
+          }
+        }
+
+        if (s.data.settlement) {
+          location.location.shortName = s.data.settlement
+        }
+        else if (s.data.city) {
+          location.location.shortName = s.data.city
+        } else {
+          location.location.shortName = s.value
+        }
+
+        possibleLocations.value.push(location)
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+})
 
 
 function handleImgError() {
@@ -178,9 +246,17 @@ function handleImgError() {
                             <a-input v-model:value="guide.phone" placeholder="+7 (XXX) XXX-XX-XX" />
                         </a-form-item>
                     </a-col>
-                    <a-col :xs="24">
+                    <a-col :xs="24" :sm="12">
                         <a-form-item label="Локация / Город">
-                            <a-input v-model:value="guide.location" placeholder="Город или регион работы" />
+                            <!-- <a-input v-model:value="guide.location" placeholder="Город или регион работы" /> -->
+                            <a-auto-complete v-model:value="locationSearchRequest" style="width: 100%"
+                                :options="possibleLocations" placeholder="Город или регион работы" @select="selectLocation">
+                            </a-auto-complete>
+                        </a-form-item>
+                    </a-col>
+                    <a-col :xs="24" :sm="12">
+                        <a-form-item label="Тип">
+                            <a-radio-group v-model:value="guide.isAccredited" :options="guideTypes" />
                         </a-form-item>
                     </a-col>
                     <a-col :xs="24">

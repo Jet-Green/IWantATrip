@@ -281,7 +281,7 @@ const router = createRouter({
         {
           path: '/create-guide',
           name: 'CreateGuide',
-          component: () => import('../components/_cabinet/CreateGuide.vue'),
+          component: () => import('../views/CreateGuide.vue'),
           beforeEnter: async (to, from) => {
             let userStore = useAuth()
             if (!localStorage.getItem('token') || !userStore.isAuth)
