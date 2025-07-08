@@ -4,7 +4,7 @@ import { useAuth } from "../stores/auth";
 import { useRouter, useRoute, RouterView } from "vue-router";
 import BackButton from "../components/BackButton.vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import ruRU from 'ant-design-vue/es/locale/ru_RU';
+
 
 const userStore = useAuth();
 const router = useRouter();
@@ -14,7 +14,7 @@ let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
 let isCreator = userStore.user.tinkoffContract || false
 let isPlaceCreator = userStore.user.tinkoffContract || false
-let isGuide = userStore.user.roles.includes('guide')
+// let isGuide = userStore.user.roles.includes('guide')
 let isTasksManager = userStore.user.roles.includes('tasksManager')
 let isAdmin = userStore.user.roles.includes('admin')
 let isManager = userStore.user.roles.includes('manager')
@@ -31,7 +31,7 @@ let cab = ref(null);
 let tur = ref(null);
 let companions = ref(null);
 let crm = ref(null);
-let guide=ref(null)
+let cabinetGuide = ref(null)
 
 const logOut = () => {
   userStore.logout();
@@ -75,13 +75,6 @@ onMounted(async () => {
             <span ref='companions' v-if=!sm>Попутчики</span>
             <span v-else class="mdi mdi-24px mdi-human-capacity-decrease" style="color: #245159; "></span>
           </a-menu-item>
-          <a-menu-item key="/cabinet/guide" v-if="isGuide">
-              <span ref='guide' v-if=!sm>Гид</span>
-              <span v-else class="mdi mdi-24px mdi-calendar-check-outline" style="color: #245159; "></span>
-            <!-- <a-menu-item key="/cabinet/tasks">Задачи</a-menu-item>
-            <a-menu-item v-if="isCreator" key="/cabinet/partners">Партнеры</a-menu-item> -->
-
-          </a-menu-item>
           <a-sub-menu key="sub1">
             <template #title>
               <span ref='tur' v-if=!sm>Туры</span>
@@ -96,6 +89,10 @@ onMounted(async () => {
           <a-menu-item key="/cabinet/excursions">
             <span v-if=!sm>Экскурсии</span>
             <span v-else class="mdi mdi-24px mdi-account-group" style="color: #245159;"></span>
+          </a-menu-item>
+          <a-menu-item key="/cabinet/cabinet-guides">
+            <span ref='cabinetGuide' v-if=!sm>Гиды</span>
+            <span v-else class="mdi mdi-24px mdi-nature-people" style="color: #245159; "></span>
           </a-menu-item>
           <a-menu-item key="/cabinet/my-places">
             <span v-if=!sm>Места</span>
@@ -117,7 +114,7 @@ onMounted(async () => {
             <span v-if=!sm>Заказы</span>
             <span v-else class="mdi mdi-24px mdi-hand-wave-outline" style="color: #245159; "></span>
           </a-menu-item>
-          <a-sub-menu key="sub2" v-if="isAdmin||isManager">
+          <a-sub-menu key="sub2" v-if="isAdmin || isManager">
 
 
             <template #title>
@@ -145,8 +142,7 @@ onMounted(async () => {
               </template>
               <a-menu-item key="/cabinet/transport">Транспорт</a-menu-item>
             </a-sub-menu>
-            <a-menu-item v-if="isAdmin"
-              key="/cabinet/management">Управление</a-menu-item>
+            <a-menu-item v-if="isAdmin" key="/cabinet/management">Управление</a-menu-item>
 
             <a-sub-menu key="sub3" v-if="isAdmin">
 
@@ -154,8 +150,7 @@ onMounted(async () => {
                 Договоры
               </template>
 
-              <a-menu-item 
-                key="/cabinet/admin-contracts-list">Список</a-menu-item>
+              <a-menu-item key="/cabinet/admin-contracts-list">Список</a-menu-item>
             </a-sub-menu>
 
             <a-menu-item v-if="isManager" key="/cabinet/determinate-winner">

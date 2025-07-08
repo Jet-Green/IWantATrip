@@ -459,9 +459,14 @@ const router = createRouter({
               component: () => import('../components/_cabinet/ExcursionBookings.vue'),
             },
             {
-              path: 'guide',
-              name: 'Guide',
-              component: () => import('../components/_cabinet/Guide.vue'),
+              path: 'edit-guide',
+              name: 'EditGuide',
+              component: () => import('../components/_cabinet/EditGuide.vue'),
+            },
+              {
+              path: 'cabinet-guides',
+              name: 'CabinetGuides',
+              component: () => import('../components/_cabinet/CabinetGuides.vue'),
             },
             {
               path: 'created-trips',
