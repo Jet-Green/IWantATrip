@@ -153,9 +153,6 @@ if (userStore.isAuth) {
   fullinfo.fullname = userStore.user.fullinfo?.fullname || '',
   fullinfo.phone = userStore.user.fullinfo?.phone || ''
 }
- 
-
-
 });
 </script>
 <template>

@@ -53,9 +53,7 @@ let form = reactive(JSON.parse(localStorage.getItem('createExcursionForm')) || {
   duration: "",
   minPeople: 0,
   maxPeople: 0,
-  guides: [{
-    name: ''
-  }],
+  guides: [],
   excursionType: {},
   startPlace: "",
   prices: [],
@@ -135,7 +133,6 @@ function clearForm() {
   localStorage.removeItem('createExcursionForm')
 }
 async function submit() {
-  // console.log(form)
   form.author = user_id
   if (userStore.user?.tinkoffContract?.shopInfo) {
     let t = userStore.user.tinkoffContract
@@ -292,6 +289,10 @@ const fetchGuides = async (guide) => {
   previousGuide.value=guide
   guidesFetching.value = false;
 };
+const selectGuide = async (guide) => {
+  // console.log(guide)
+  form.guides.push(guide)
+}
 // watch(state.value, () => {
 //   state.data = [];
 //   state.fetching = false;
@@ -300,6 +301,17 @@ const fetchGuides = async (guide) => {
 watch(form, (newValue) => {
   localStorage.setItem('createExcursionForm', JSON.stringify(newValue))
 }, { deep: true })
+onMounted(async()=>{
+  for (let id in form.guides){
+    let guide = await guideStore.getGuideById(form.guides[id])
+    // console.log(guide)
+    chosenGuides.value.push({
+        label: guide.data.name+' '+guide.data.surname,
+        value: guide.data._id,
+        icon: guide.data.image,
+    })
+  }
+})
 </script>
 <template>
   <div>
@@ -494,8 +506,8 @@ watch(form, (newValue) => {
                 placeholder="Глазов" 
                 :not-found-content="guidesFetching ? undefined : null"
                 @search="fetchGuides"
+                @select="selectGuide"
                 >
-                <!-- @select="selectGuide" -->
                 <template #option="{ value: value, label, icon }" class="pa-0" style="align-items: center;">
                     <a-avatar :src=icon></a-avatar>
                         &nbsp;&nbsp;{{ label }}
