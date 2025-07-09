@@ -290,13 +290,14 @@ const fetchGuides = async (guide) => {
   guidesFetching.value = false;
 };
 const selectGuide = async (guide) => {
-  // console.log(guide)
   form.guides.push(guide)
 }
-// watch(state.value, () => {
-//   state.data = [];
-//   state.fetching = false;
-// });
+const removeGuide = async (guide) => {
+  const i = form.guides.indexOf(guide);
+  if (i !== -1) {
+    form.guides.splice(i, 1);
+  }
+}
 
 watch(form, (newValue) => {
   localStorage.setItem('createExcursionForm', JSON.stringify(newValue))
@@ -507,6 +508,7 @@ onMounted(async()=>{
                 :not-found-content="guidesFetching ? undefined : null"
                 @search="fetchGuides"
                 @select="selectGuide"
+                @deselect="removeGuide"
                 >
                 <template #option="{ value: value, label, icon }" class="pa-0" style="align-items: center;">
                     <a-avatar :src=icon></a-avatar>
