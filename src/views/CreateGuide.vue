@@ -1,7 +1,9 @@
 <script setup>
-import { ref, reactive, onMounted, watch } from 'vue';
+import { ref, reactive, onMounted, watch, computed } from 'vue';
 import BackButton from '../components/BackButton.vue';
 import { message } from 'ant-design-vue'; // For user feedback
+import { Form, Field, ErrorMessage } from "vee-validate";
+import * as yup from "yup";
 import { useGuide } from '../stores/guide';
 import { useAuth } from '../stores/auth'; // Import useAuth
 import ImageCropper from '../components/ImageCropper.vue'; // Assuming ImageCropper is in the same directory or adjust path
@@ -19,19 +21,31 @@ const errorMsg = ref('');
 const guide = ref({
     name: '',
     surname: '',
-    image: '', // URL of the current image
-    email: '', // Usually not editable or requires special handling
+    image: '',
+    email: '',
     phone: '',
     offer: '',
     socialMedia: '',
     description: '',
-    location: '',
-    type: '',
+    location: null,
+    type: "Знаток города",
 });
 const guideTypes = ref([
     { label: "Знаток города", value: "Знаток города" },
     { label: "Аккредитованный", value: "Аккредитованный" },
 ])
+let formSchema = yup.object({
+    name: yup.string().required("заполните поле"),
+    surname: yup.string().required("заполните поле"),
+    email: yup.string().required("заполните поле").email('неверный формат'),
+    phone: yup.string().required("заполните поле"),
+    offer: yup.string().required("заполните поле"),
+    description: yup.string().required("заполните поле"),
+});
+let isLocationValid = computed(() => {
+    // console.log(guide.value.location)
+    return guide.value.location?.coordinates?.length == 2
+})
 
 const visibleCropperModal = ref(false);
 
@@ -41,20 +55,7 @@ let locationSearchRequest = ref("")
 let imageUrl = ref("")
 let currentImg = ref()
 
-async function addGuide() {
-
-    if (!(guide.value.name.length > 1 && guide.value.surname.length > 1 && guide.value.phone.length > 2 && guide.value.email.length > 2 && guide.value.offer.length > 2 && guide.value.description.length > 2)) {
-        message.error('Пожалуйста, заполните все обязательные поля.');
-        return;
-    }
-    if (!/\S+@\S+\.\S+/.test(guide.value.email)) {
-        message.error('Пожалуйста, введите корректный email.');
-        return;
-    }
-    if (!/^\d{11}$/.test(guide.value.phone)) {
-        message.error('Пожалуйста, введите корректный номер телефона.');
-        return;
-    }
+async function submit() {
     try {
         // 1. Add guide.value text data
         let res = await guideStore.addGuide(guide.value)
@@ -129,67 +130,67 @@ async function uploadGuideImages(_id) {
     return res
 }
 function selectLocation(selected) {
-  for (let l of possibleLocations.value) {
-    // l.value - name
-    if (l.value == selected) {
-      guide.value.location = l.location
+    for (let l of possibleLocations.value) {
+        // l.value - name
+        if (l.value == selected) {
+            guide.value.location = l.location
+        }
     }
-  }
-  console.log(guide.value)
+    console.log(guide.value)
 }
 watch(locationSearchRequest, async (newValue, oldValue) => {
-  if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
-    var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
+    if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
+        var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
 
-    var options = {
-      method: "POST",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": "Token " + import.meta.env.VITE_DADATA_TOKEN
-      },
-      body: JSON.stringify({
-        query: newValue,
-        count: 5,
-        "from_bound": { "value": "city" },
-        "to_bound": { "value": "settlement" }
-      })
+        var options = {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": "Token " + import.meta.env.VITE_DADATA_TOKEN
+            },
+            body: JSON.stringify({
+                query: newValue,
+                count: 5,
+                "from_bound": { "value": "city" },
+                "to_bound": { "value": "settlement" }
+            })
+        }
+
+        let res = await fetch(url, options)
+        try {
+            let suggestions = JSON.parse(await res.text()).suggestions
+            possibleLocations.value = []
+            for (let s of suggestions) {
+                let location = {
+                    value: s.value,
+                    location: {
+                        name: s.value,
+                        shortName: '',
+                        type: 'Point',
+                        coordinates: [
+                            Number(s.data.geo_lon),
+                            Number(s.data.geo_lat)
+                        ]
+                    }
+                }
+
+                if (s.data.settlement) {
+                    location.location.shortName = s.data.settlement
+                }
+                else if (s.data.city) {
+                    location.location.shortName = s.data.city
+                } else {
+                    location.location.shortName = s.value
+                }
+
+                possibleLocations.value.push(location)
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
-
-    let res = await fetch(url, options)
-    try {
-      let suggestions = JSON.parse(await res.text()).suggestions
-      possibleLocations.value = []
-      for (let s of suggestions) {
-        let location = {
-          value: s.value,
-          location: {
-            name: s.value,
-            shortName: '',
-            type: 'Point',
-            coordinates: [
-              Number(s.data.geo_lon),
-              Number(s.data.geo_lat)
-            ]
-          }
-        }
-
-        if (s.data.settlement) {
-          location.location.shortName = s.data.settlement
-        }
-        else if (s.data.city) {
-          location.location.shortName = s.data.city
-        } else {
-          location.location.shortName = s.value
-        }
-
-        possibleLocations.value.push(location)
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
 })
 
 
@@ -203,102 +204,149 @@ function handleImgError() {
     <div>
         <BackButton />
         <div> <a-spin :spinning="isLoading"></a-spin></div>
-        <div class="guide-profile-editor pa-4">
-            <a-alert v-if="errorMsg" :message="errorMsg" type="error" show-icon closable @close="errorMsg = ''"
-                class="mb-4" />
+        <a-row type="flex" justify="center">
+            <a-col :xs="22" :lg="12">
+                <h2>Создать гида</h2>
+                <!-- <a-alert v-if="errorMsg" :message="errorMsg" type="error" show-icon closable @close="errorMsg = ''"
+                class="mb-4" /> -->
 
-            <a-form layout="vertical">
-                <a-row :gutter="[16, 16]">
-                    <h2>Создать гида</h2>
+                <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">
+                    <a-row :gutter="[16, 16]">
 
-                    <!-- Image Section -->
-                    <a-col :span='24'>
-                        <h4>Фотография</h4>
-                        <div class="image-preview-container mb-8" v-if="imageUrl">
-                            <img :src="imageUrl" alt="Предпросмотр фото" class="preview-image"
-                                @error="handleImgError" />
-                        </div>
-                        <a-button type="dashed" block @click="openImageCropper">
-                            <span class="mdi mdi-camera mr-1"></span>
-                            Изменить фото
+
+                        <a-col :span="24">
+                            <h4>Фотография</h4>
+                            <div class="image-preview-container mb-8" v-if="imageUrl">
+                                <img :src="imageUrl" alt="Предпросмотр фото" class="preview-image"
+                                    @error="handleImgError" />
+                            </div>
+                            <a-button type="dashed" block @click="openImageCropper">
+                                <span class="mdi mdi-camera mr-1"></span>
+                                Изменить фото
+                            </a-button>
+                        </a-col>
+
+
+                        <a-col :span="24">
+                            <Field name="name" v-slot="{ value, handleChange }" v-model="guide.name">
+                                Имя
+                                <a-input placeholder="Введите имя" @update:value="handleChange" :value="value"
+                                    allow-clear></a-input>
+                            </Field>
+                            <Transition name="fade">
+                                <ErrorMessage name="name" class="error-message" />
+                            </Transition>
+                        </a-col>
+
+                        <a-col :span="24">
+                            <Field name="surname" v-slot="{ value, handleChange }" v-model="guide.surname">
+                                Фамилия
+                                <a-input placeholder="Введите фамилию" @update:value="handleChange" :value="value"
+                                    allow-clear></a-input>
+                            </Field>
+                            <Transition name="fade">
+                                <ErrorMessage name="surname" class="error-message" />
+                            </Transition>
+                        </a-col>
+
+                        <a-col :span="24">
+                            <Field name="email" v-slot="{ value, handleChange }" v-model="guide.email">
+                                Email (Логин)
+                                <a-input placeholder="Email пользователя" @update:value="handleChange" :value="value"
+                                    allow-clear></a-input>
+                            </Field>
+                            <Transition name="fade">
+                                <ErrorMessage name="email" class="error-message" />
+                            </Transition>
+                        </a-col>
+
+                        <a-col :span="24">
+                            <Field name="phone" v-slot="{ value, handleChange }" v-model="guide.phone">
+                                Телефон
+                                <a-input placeholder="+7 (XXX) XXX-XX-XX" @update:value="handleChange" :value="value"
+                                    allow-clear></a-input>
+                            </Field>
+                            <Transition name="fade">
+                                <ErrorMessage name="phone" class="error-message" />
+                            </Transition>
+                        </a-col>
+
+                        <a-col :span="24">
+                            <Field name="location" v-slot="{ value, handleChange }" v-model="locationSearchRequest">
+                                Локация / Город
+                                <a-auto-complete :value="value" @update:value="handleChange" style="width: 100%"
+                                    :options="possibleLocations" placeholder="Город или регион работы"
+                                    @select="selectLocation">
+                                </a-auto-complete>
+                            </Field>
+                            <Transition name="fade">
+                                <ErrorMessage name="location" class="error-message" />
+                            </Transition>
+                        </a-col>
+
+                        <a-col :span="24">
+                            <Field name="type" v-slot="{ value, handleChange }" v-model="guide.type">
+                                Тип
+                                <a-radio-group @update:value="handleChange" :value="value" :options="guideTypes"
+                                    style="width: 100%;" />
+                            </Field>
+                            <Transition name="fade">
+                                <ErrorMessage name="type" class="error-message" />
+                            </Transition>
+                        </a-col>
+
+                        <a-col :span="24">
+                            <Field name="socialMedia" v-slot="{ value, handleChange }" v-model="guide.socialMedia">
+                                Соц. сети / Сайт
+                                <a-input @update:value="handleChange" :value="value"
+                                    placeholder="Ссылка на Вконтакте, Instagram, личный сайт и т.д." allow-clear />
+                            </Field>
+                            <Transition name="fade">
+                                <ErrorMessage name="socialMedia" class="error-message" />
+                            </Transition>
+                        </a-col>
+
+                        <a-col :span="24">
+                            <Field name="offer" v-slot="{ value, handleChange }" v-model="guide.offer">
+                                Краткое описание
+                                <a-textarea @update:value="handleChange" :value="value"
+                                    placeholder="Например: Исторические туры по центру города, Гастрономические экскурсии"
+                                    :rows="2" allow-clear show-count :maxlength="60" />
+                            </Field>
+                            <Transition name="fade">
+                                <ErrorMessage name="offer" class="error-message" />
+                            </Transition>
+                        </a-col>
+
+                        <a-col :span="24">
+                            <Field name="description" v-slot="{ value, handleChange }" v-model="guide.description">
+                                Описание
+                                <a-textarea @update:value="handleChange" :value="value"
+                                    placeholder="Расскажите подробнее о себе и своих услугах" :rows="5" allow-clear
+                                    show-count :maxlength="200" />
+                            </Field>
+                            <Transition name="fade">
+                                <ErrorMessage name="description" class="error-message" />
+                            </Transition>
+                        </a-col>
+
+                    </a-row>
+                    <a-col :span="24" class="d-flex justify-center">
+
+                        <a-button class="lets_go_btn ma-36" type="primary" html-type="submit"
+                            :disabled="!meta.valid || !isLocationValid || !/^\d{11}$/.test(guide.phone)">Добавить гида
                         </a-button>
                     </a-col>
-
-                    <!-- Text Fields Section -->
-
-                    <a-col :xs="24" :sm="12">
-                        <a-form-item label="Имя" help="Имя обязательно">
-                            <a-input v-model:value="guide.name" placeholder="Введите имя" />
-                        </a-form-item>
-                    </a-col>
-                    <a-col :xs="24" :sm="12">
-                        <a-form-item label="Фамилия">
-                            <a-input v-model:value="guide.surname" placeholder="Введите фамилию" />
-                        </a-form-item>
-                    </a-col>
-                    <a-col :xs="24" :sm="12">
-                        <a-form-item label="Email (Логин)">
-                            <a-input v-model:value="guide.email" placeholder="Email пользователя" />
-                        </a-form-item>
-                    </a-col>
-                    <a-col :xs="24" :sm="12">
-                        <a-form-item label="Телефон" help="Телефон обязателен">
-                            <a-input v-model:value="guide.phone" placeholder="+7 (XXX) XXX-XX-XX" />
-                        </a-form-item>
-                    </a-col>
-                    <a-col :xs="24" :sm="12">
-                        <a-form-item label="Локация / Город">
-                            <!-- <a-input v-model:value="guide.location" placeholder="Город или регион работы" /> -->
-                            <a-auto-complete v-model:value="locationSearchRequest" style="width: 100%"
-                                :options="possibleLocations" placeholder="Город или регион работы" @select="selectLocation">
-                            </a-auto-complete>
-                        </a-form-item>
-                    </a-col>
-                    <a-col :xs="24" :sm="12">
-                        <a-form-item label="Тип">
-                            <a-radio-group v-model:value="guide.isAccredited" :options="guideTypes" />
-                        </a-form-item>
-                    </a-col>
-                    <a-col :xs="24">
-                        <a-form-item label="Предложение / Специализация">
-                            <a-textarea v-model:value="guide.offer"
-                                placeholder="Например: Исторические туры по центру города, Гастрономические экскурсии"
-                                :rows="3" />
-                        </a-form-item>
-                    </a-col>
-                    <a-col :xs="24">
-                        <a-form-item label="Описание">
-                            <a-textarea v-model:value="guide.description"
-                                placeholder="Расскажите подробнее о себе и своих услугах" :rows="5" />
-                        </a-form-item>
-                    </a-col>
-                    <a-col :xs="24">
-                        <a-form-item label="Соц. сети / Сайт">
-                            <a-input v-model:value="guide.socialMedia"
-                                placeholder="Ссылка на Вконтакте, Instagram, личный сайт и т.д." />
-                        </a-form-item>
-                    </a-col>
-                </a-row>
-                <a-col :span="24" class="d-flex justify-center">
-
-                    <a-button class="lets_go_btn ma-36" type="primary" @click="addGuide()"> Добавить гида </a-button>
-                </a-col>
-            </a-form>
-            <a-modal v-model:open="visibleCropperModal" :footer="null" :destroyOnClose="true">
-                <ImageCropper @addImage="addPreview" :aspectRatio="1 / 1" />
-            </a-modal>
-
-        </div>
+                </Form>
+                <a-modal v-model:open="visibleCropperModal" :footer="null" :destroyOnClose="true">
+                    <ImageCropper @addImage="addPreview" :aspectRatio="1 / 1" />
+                </a-modal>
+            </a-col>
+        </a-row>
     </div>
 </template>
 
 <style scoped>
-.guide-profile-editor {
-    max-width: 900px;
-    /* Or your desired max width */
-    margin: auto;
-}
-
 .image-preview-container {
     width: 100%;
     max-width: 200px;
@@ -340,15 +388,5 @@ function handleImgError() {
 
 .new-image-overlay p {
     margin-bottom: 8px;
-}
-
-
-
-/* Ant input validation styling */
-:deep(.ant-form-item-has-error .ant-input),
-:deep(.ant-form-item-has-error .ant-input-affix-wrapper),
-:deep(.ant-form-item-has-error .ant-input:hover),
-:deep(.ant-form-item-has-error .ant-input-affix-wrapper:hover) {
-    border-color: #ff4d4f;
 }
 </style>
