@@ -296,6 +296,20 @@ const router = createRouter({
           }
         },
         {
+          path: 'edit-guide',
+          name: 'EditGuide',
+          component: () => import('../views/EditGuide.vue'),
+                    beforeEnter: async (to, from) => {
+            let userStore = useAuth()
+            if (!localStorage.getItem('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+
+            if (!userStore.isAuth)
+              return '/auth'
+            return true
+          }
+        },
+        {
           path: '/create-bus',
           component: () => import('../components/admin/CreateBus.vue'),
         },
@@ -459,11 +473,6 @@ const router = createRouter({
               component: () => import('../components/_cabinet/ExcursionBookings.vue'),
             },
             {
-              path: 'edit-guide',
-              name: 'EditGuide',
-              component: () => import('../components/_cabinet/EditGuide.vue'),
-            },
-              {
               path: 'cabinet-guides',
               name: 'CabinetGuides',
               component: () => import('../components/_cabinet/CabinetGuides.vue'),
