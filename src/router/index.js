@@ -281,7 +281,7 @@ const router = createRouter({
         {
           path: '/create-guide',
           name: 'CreateGuide',
-          component: () => import('../components/_cabinet/CreateGuide.vue'),
+          component: () => import('../views/CreateGuide.vue'),
           beforeEnter: async (to, from) => {
             let userStore = useAuth()
             if (!localStorage.getItem('token') || !userStore.isAuth)
@@ -293,6 +293,20 @@ const router = createRouter({
             // if (!userStore.user?.roles?.includes('manager')) {
             //   return false
             // }
+          }
+        },
+        {
+          path: 'edit-guide',
+          name: 'EditGuide',
+          component: () => import('../views/EditGuide.vue'),
+                    beforeEnter: async (to, from) => {
+            let userStore = useAuth()
+            if (!localStorage.getItem('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+
+            if (!userStore.isAuth)
+              return '/auth'
+            return true
           }
         },
         {
@@ -459,11 +473,6 @@ const router = createRouter({
               component: () => import('../components/_cabinet/ExcursionBookings.vue'),
             },
             {
-              path: 'edit-guide',
-              name: 'EditGuide',
-              component: () => import('../components/_cabinet/EditGuide.vue'),
-            },
-              {
               path: 'cabinet-guides',
               name: 'CabinetGuides',
               component: () => import('../components/_cabinet/CabinetGuides.vue'),

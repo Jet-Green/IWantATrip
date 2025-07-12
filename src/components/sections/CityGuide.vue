@@ -40,10 +40,17 @@ let cards = ref([
 
   },
 
+  // {
+  //   title: "Фотобанк",
+  //   icon: "mdi-camera",
+  //   route: "/photos",
+  //   isShow: true,
+
+  // },
   {
-    title: "Фотобанк",
-    icon: "mdi-camera",
-    route: "/photos",
+    title: "Гиды",
+    icon: "mdi-nature-people",
+    route: "/guides",
     isShow: true,
 
   },
@@ -54,13 +61,6 @@ let cards = ref([
     isShow: false,
 
   },
-  // {
-  //   title: "Еда",
-  //   icon: "mdi-food-outline",
-  //   route: "/eat",
-  //   isShow: false,
-
-  // },
   {
     title: "Сувениры",
     icon: "mdi-gift-outline",

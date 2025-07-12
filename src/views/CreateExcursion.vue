@@ -10,11 +10,13 @@ import { useRouter } from 'vue-router';
 import { useExcursion } from '../stores/excursion'
 import { useAppState } from '../stores/appState'
 import { useAuth } from '../stores/auth'
+import { useGuide } from '../stores/guide'
 
 
 const excursionStore = useExcursion()
 const appStateStore = useAppState()
 const userStore = useAuth()
+const guideStore = useGuide()
 const router = useRouter()
 
 const user_id = userStore?.user._id
@@ -22,6 +24,11 @@ const user_id = userStore?.user._id
 let excursionTypes = appStateStore?.appState[0]?.excursionTypes || []
 let locationSearchRequest = ref("")
 let possibleLocations = ref([])
+
+let chosenGuides = ref([])
+let possibleGuides = ref([])
+let guidesFetching = ref(true)
+let previousGuide = ref('')
 
 let visibleCropperModal = ref(false);
 let previews = ref(localStorage.getItem('createExcursionImages') ? JSON.parse(localStorage.getItem('createExcursionImages')) : []);
@@ -46,9 +53,7 @@ let form = reactive(JSON.parse(localStorage.getItem('createExcursionForm')) || {
   duration: "",
   minPeople: 0,
   maxPeople: 0,
-  guides: [{
-    name: ''
-  }],
+  guides: [],
   excursionType: {},
   startPlace: "",
   prices: [],
@@ -70,7 +75,7 @@ let formSchema = yup.object({
   minAge: yup.number().required("заполните поле"),
   deadline: yup.string().required("заполните поле"),
   requirements: yup.string().required("заполните поле"),
-  guides: yup.string().required("заполните поле"),
+  guides: yup.array().required("заполните поле"),
   location: yup.string().required("заполните поле"),
   contacts: yup.object({
     email: yup.string().email('в формате gorodaivesi@mail.ru').required("заполните поле"),
@@ -128,7 +133,6 @@ function clearForm() {
   localStorage.removeItem('createExcursionForm')
 }
 async function submit() {
-  // console.log(form)
   form.author = user_id
   if (userStore.user?.tinkoffContract?.shopInfo) {
     let t = userStore.user.tinkoffContract
@@ -242,9 +246,73 @@ watch(
   },
   { deep: true }
 )
+
+// watch(guideSearchRequest, (oldValue, newValue) => () => {
+//   if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
+//     let suggestions = guideStore.getGuides(newValue)
+//     possibleGuides.value = []
+
+//     for (let s of suggestions) {
+//       let guide = {
+//         value: s.name,
+//         id: s._id
+//       }
+
+//       possibleGuides.value.push(guide)
+
+//     }
+//   }
+// })
+const fetchGuides = async (guide) => {
+  possibleGuides.guide = [];
+  guidesFetching.value = true;
+  if (guide.trim().length > 2 && guide.length > previousGuide.value.length) {
+    // console.log('fetching guide', guide);
+    let suggestions = await guideStore.getGuides({strQuery: guide, isModerated:true, isRejected:false})
+    // console.log('suggestions', suggestions);
+    possibleGuides.value = []
+    let count = 0
+    for (let s of suggestions?.data?.data) {
+      let option = {
+        label: s.name+' '+s.surname,
+        value: s._id,
+        icon: s.image,
+    }
+      count++
+
+      possibleGuides.value.push(option)
+    if (count==5){
+      break
+    }
+    }
+  }
+  previousGuide.value=guide
+  guidesFetching.value = false;
+};
+const selectGuide = async (guide) => {
+  form.guides.push(guide)
+}
+const removeGuide = async (guide) => {
+  const i = form.guides.indexOf(guide);
+  if (i !== -1) {
+    form.guides.splice(i, 1);
+  }
+}
+
 watch(form, (newValue) => {
   localStorage.setItem('createExcursionForm', JSON.stringify(newValue))
 }, { deep: true })
+onMounted(async()=>{
+  for (let id in form.guides){
+    let guide = await guideStore.getGuideById(form.guides[id])
+    // console.log(guide)
+    chosenGuides.value.push({
+        label: guide.data.name+' '+guide.data.surname,
+        value: guide.data._id,
+        icon: guide.data.image,
+    })
+  }
+})
 </script>
 <template>
   <div>
@@ -428,8 +496,30 @@ watch(form, (newValue) => {
             </a-col>
             <a-col :span="24">
               Экскурсовод
-              <Field name="guides" v-slot="{ value, handleChange }" v-model="form.guides[0].name">
-                <a-input placeholder="Александр Невский" @update:value="handleChange" :value="value" />
+              <Field name="guides" v-slot="{ value, handleChange }" v-model="chosenGuides">
+                <!-- v-model:value="" -->
+                <a-select :value="value"
+                @update:value="handleChange"
+                style="width: 100%"
+                mode="multiple"
+                :options="possibleGuides" 
+                :filter-option="false"
+                placeholder="Глазов" 
+                :not-found-content="guidesFetching ? undefined : null"
+                @search="fetchGuides"
+                @select="selectGuide"
+                @deselect="removeGuide"
+                >
+                <template #option="{ value: value, label, icon }" class="pa-0" style="align-items: center;">
+                    <a-avatar :src=icon></a-avatar>
+                        &nbsp;&nbsp;{{ label }}
+                      </template>
+
+                 <template v-if="guidesFetching" #notFoundContent>
+                  <a-spin size="small" />
+                 </template>
+
+                </a-select>
               
                 <!-- <a-input placeholder="Александр Невский" @update:value="handleChange" :value="value" /> -->
               </Field>
