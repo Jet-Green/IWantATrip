@@ -1,7 +1,7 @@
 <script setup>
 import { toRefs, computed, ref, onMounted, reactive } from 'vue';
 import { useRouter } from 'vue-router';
-// import PlaceCard from '../cards/PlaceCard.vue';
+
 
 let props = defineProps(['guide'])
 let emit = defineEmits(['refreshGuides'])
@@ -34,10 +34,10 @@ let status = computed(() => {
 })
 
 async function guideToDelete(_id) {
-  // let response = await guideStore.deletePlace(_id);
-  // if (response.status == 200) {
-  //   emit('refreshGuides')
-  // }
+  let response = await guideStore.deleteGuideById(_id); 
+  if (response.status == 200) {
+    emit('refreshGuides')
+  }
 }
 async function hideGuide(_id) {
   // let response = await guideStore.hidePlace(_id);
@@ -50,11 +50,13 @@ async function hideGuide(_id) {
 </script>
 <template>
   <a-card class="card" :class="[guide.isHidden ? 'overlay' : '']" v-if="guide._id">
-    <div style="width: 100%; height: 100%; text-align: center; font-weight: 700;">
+
+    <div style=" font-weight: 700;">
+      <img :src="guide.image" alt="" style="width: 20%; border-radius: 50%;"> 
       {{ guide.name }} {{ guide.surname }}
     </div>
     <div>тел. {{ guide.phone }}</div>
-     <div>локация {{ guide.location }}</div>
+    <div>локация {{ guide.location }}</div>
     <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
     <div class="actions">
       <div>

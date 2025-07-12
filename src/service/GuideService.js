@@ -6,12 +6,12 @@ export default {
         return $api.get(`/guide/get-all-elements?name=${name}`)
     },
 
-    async deleteGuide(_id) {
-        // guide elements
-        return $api.post('/guide/delete-by-id', _id)
-    },
+    // async deleteGuide(_id) {
+    //     // guide elements
+    //     return $api.post('/guide/delete-by-id', _id)
+    // },
     async deleteGuideById(_id) {
-        return $api.post('/guide/delete-guide', { _id })
+        return $api.post('/guide/delete-by-id', { _id })
     },
     async createGuideElement(element) {
         return $api.post('/guide/create-element', element)

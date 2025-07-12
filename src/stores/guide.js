@@ -134,9 +134,6 @@ export const useGuide = defineStore('guide', {
         async deleteGuideById(_id) {
             try {
                 let res = await GuideService.deleteGuideById(_id)
-                // if (res.status == 200) {
-                // await this.refreshState();
-                // }
                 return res
             } catch (error) {
                 console.log(error);

@@ -35,6 +35,7 @@ let morePlaces = async () => {
 
 
 async function refreshGuides() {
+  if (page == 1) guides.value = []
   let res = await guideStore.getGuidesByUserId(page, query)
   guides.value.push(...res.data)
 }
