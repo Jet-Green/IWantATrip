@@ -68,6 +68,7 @@ onUnmounted(() => {
                         <li>Программа тура: <a :href="`${API_URL}/trip?_id=${BILL.tripId._id}`"><b>{{
                             `${API_URL}/trip?_id=${BILL?.tripId._id}`}}</b></a> </li>
                         <li>В стоимость включено: <b>{{ BILL.tripId.includedInPrice }}</b></li>
+                          <li>Условия возврата: <b>{{ BILL.tripId.returnConditions }}</b></li>
                         <li>Туристы по данному заказу: <b>{{ (BILL?.touristsList.map((list) => list.fullname).join())
                                 }}</b>
                         </li>
