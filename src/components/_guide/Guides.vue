@@ -1,7 +1,9 @@
 <script setup>
-import BackButton from "../BackButton.vue";
-
 import { ref, onMounted, reactive } from 'vue'
+import BackButton from "../BackButton.vue";
+import PlaceFilter from "./PlaceFilter.vue";
+import GuideCard from "./guides/GuideCard.vue";
+
 import { useRouter } from 'vue-router';
 import { useGuide } from "../../stores/guide";
 
@@ -11,6 +13,7 @@ let guides = ref([])
 let dbSkip = ref(0)
 let limit = ref(true) // Initialize limit correctly
 let query = ref({strQuery:""})
+const backRoute = { name: 'Landing', hash: '#guide' };
 
 async function refreshGuides() {
     dbSkip.value = 0;
@@ -43,18 +46,21 @@ onMounted(async () => {
 // useGuideStore.fetchElementsByQuery('watch');
 </script>
 <template>
-  <div>
-    <BackButton />
-    <a-row type="flex" justify="center">
-      <a-col :xs="22" :lg="12">
-        <a-row :gutter="[16, 16]">
+ <div style="overflow-x: hidden" id="top">
+    <BackButton :backRoute="backRoute" />
+   <a-row class="justify-center d-flex">
+      <a-col :xs="22" :xl="16">
+  
           <h2>Гиды</h2>
-          <a-col v-for="g in guides" :key="g._id" :xs="24" class="mb-8" style="border: 5px solid #d9d9d9;">
-            {{ g }}
-          </a-col>
-        </a-row>
+          <PlaceFilter/>
+          <GuideCard v-for="guide in guides"  :key="guide._id" :guide="guide" />
+       
+   
         <a-button v-if="limit" type="primary" @click="loadMoreGuides">Загрузить еще</a-button>
       </a-col>
     </a-row>
   </div>
+
+
+
 </template>

@@ -71,10 +71,10 @@ let cards = ref([
 ]);
 
 
-watch(locationStore, () => {
+// watch(locationStore, () => {
 
-  locationStore.location.shortName == 'Глазов'&& locationStore.location.shortName? cards.value[5].isShow = true : cards.value[5].isShow = false
-})
+//   locationStore.location.shortName == 'Глазов'&& locationStore.location.shortName? cards.value[5].isShow = true : cards.value[5].isShow = false
+// })
 </script>
 
 <template>
