@@ -14,6 +14,7 @@ import { useHead } from "@unhead/vue";
 import { useRoute } from "vue-router";
 import { useExcursion } from "../stores/excursion.js";
 import { useAuth } from "../stores/auth";
+import { useGuide } from "../stores/guide";
 
 const route = useRoute();
 const _id = route.query._id;
@@ -21,6 +22,7 @@ const API_URL = import.meta.env.VITE_API_URL
 
 const excursionStore = useExcursion();
 const userStore = useAuth()
+const guideStore = useGuide()
 
 let excursion = ref({});
 let selectedDate = ref({})
@@ -148,6 +150,18 @@ async function order() {
 onMounted(async () => {
   let response = await excursionStore.getExcursionById(_id);
   excursion.value = response.data;
+  let guideList=[]
+  for (let id in excursion.value.guides){
+    let guide = await guideStore.getGuideById(excursion.value.guides[id])
+    guide=guide.data
+    console.log(guide)
+    guideList.push({
+      image:guide.image,
+      label: guide.name + ' ' + guide.surname
+    })
+  }
+  excursion.value.guides=guideList
+  console.log(excursion.value)
 
 if (userStore.isAuth) {
   fullinfo.fullname = userStore.user.fullinfo?.fullname || '',
@@ -236,7 +250,16 @@ if (userStore.isAuth) {
                 <span v-else>не доступно</span>
 
               </b>
+
             </div>
+            <div>
+              Гиды:
+              <div v-for="guide in excursion.guides" class="mr-8 mb-8">
+               <a-avatar size="large" :src="guide.image" class="mr-16"></a-avatar>
+               <b>{{ guide.label }}</b>
+              </div>
+            </div>
+
           </a-col>
         </a-row>
         <a-row class="mt-16">
