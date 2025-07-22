@@ -52,8 +52,8 @@ onMounted(async () => {
       <a-col :xs="22" :xl="16">
   
           <h2>Гиды</h2>
-          <PlaceFilter/>
-          <GuideCard v-for="guide in guides"  :key="guide._id" :guide="guide" />
+          <!-- <PlaceFilter/> -->
+          <GuideCard v-for="guide in guides"  :key="guide._id" :guide="guide" withButton/>
        
    
         <a-button v-if="limit" type="primary" @click="loadMoreGuides">Загрузить еще</a-button>

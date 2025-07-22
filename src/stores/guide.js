@@ -115,6 +115,14 @@ export const useGuide = defineStore('guide', {
                 console.log(error);
             }
         },
+        async getGuideExcursions(_id) {
+            try {
+                let res = await GuideService.getGuideExcursions(_id)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
+        },
         async moderateGuide(_id) {
             try {
                 let res = await GuideService.moderateGuide(_id)

@@ -64,6 +64,11 @@ const router = createRouter({
           component: () => import('../views/PlacePage.vue')
         },
         {
+          path: '/guide',
+          name: 'GuidePage',
+          component: () => import('../views/GuidePage.vue'),    
+        },
+        {
           path: '/edit-excursion',
           name: 'EditExcursion',
           component: () => import('../views/EditExcursion.vue')

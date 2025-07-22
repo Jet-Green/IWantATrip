@@ -47,6 +47,9 @@ export default {
     async getGuideById(_id) {
         return $api.post('/guide/get-guide-by-id', { _id })
     },
+    async getGuideExcursions(_id) {
+        return $api.post('/guide/get-guide-excursions', { _id })
+    },
     async moderateGuide(_id) {
         return $api.post('/guide/moderate-guide', { _id })
     },
