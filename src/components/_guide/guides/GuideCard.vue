@@ -6,29 +6,31 @@ let props = defineProps(['guide']);
         <a-row>
 
             <a-col :xs="24">
-                <p style=" font-size: clamp(1.125rem, 0.925rem + 0.8vw, 1.375rem);"> {{
+                <p style=" font-size: clamp(1.125rem, 0.925rem + 0.8vw, 1.375rem); margin-bottom: 0;"> {{
                     `${guide.name} ${guide.surname}` }}</p>
-                <h2></h2>
             </a-col>
             <a-col :xs="24">
                 {{ guide.offer }}
             </a-col>
-            <a-col :xs="24" :md="8"> <img :src="guide.image" class="pa-8" alt="Guide Image" style="width: 100%; border-radius: 50%;" />
+            <a-col :xs="24" :md="8"> <img :src="guide.image" class="pa-8" alt="Guide Image" style="width: 100%;" />
             </a-col>
             <a-col :xs="24" :md="16">
 
-                <p>{{ guide.location }}</p>
-                <p>{{ guide.phone }}</p>
-                <p>{{ guide.socialMedia }}</p>
-                <p>{{ guide.email }}</p>
+                <p> Локация: <b> {{ guide.location.name }}</b></p>
+                <p> Телефон: <b>{{ guide.phone }}</b></p>
+                <p> Соц. сеть: <b> {{ guide.socialMedia }}</b></p>
+                <p> Почта: <b>{{ guide.email }}</b></p>
+                <div class="d-flex justify-center">
+                    <a-button class="lets_go_btn ma-36" type="primary">Подробнее</a-button>
+                </div>
             </a-col>
-
+            <!-- 
             <a-col :xs="24">
                 <p>{{ guide.description }}</p>
             </a-col>
             <a-col :xs="24">
                 <p> {{ guide.excursionsIn }}</p>
-            </a-col>
+            </a-col> -->
 
         </a-row>
 

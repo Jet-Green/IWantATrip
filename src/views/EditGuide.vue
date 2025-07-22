@@ -336,7 +336,7 @@ onMounted(() => {
                                     Описание
                                     <a-textarea @update:value="handleChange" :value="value"
                                         placeholder="Расскажите подробнее о себе и своих услугах" :rows="5" allow-clear
-                                        show-count :maxlength="200" />
+                                        show-count :maxlength="1000" />
                                 </Field>
                                 <Transition name="fade">
                                     <ErrorMessage name="description" class="error-message" />
