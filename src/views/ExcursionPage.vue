@@ -11,12 +11,13 @@ import _ from "lodash"
 import { useHead } from "@unhead/vue";
 
 
-import { useRoute } from "vue-router";
+import { useRoute,useRouter } from "vue-router";
 import { useExcursion } from "../stores/excursion.js";
 import { useAuth } from "../stores/auth";
 import { useGuide } from "../stores/guide";
 
 const route = useRoute();
+const router = useRouter()
 const _id = route.query._id;
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -151,17 +152,16 @@ onMounted(async () => {
   let response = await excursionStore.getExcursionById(_id);
   excursion.value = response.data;
   let guideList=[]
-  for (let id in excursion.value.guides){
-    let guide = await guideStore.getGuideById(excursion.value.guides[id])
+  for (let guideId of excursion.value.guides){
+    let guide = await guideStore.getGuideById(guideId)
     guide=guide.data
-    console.log(guide)
     guideList.push({
       image:guide.image,
-      label: guide.name + ' ' + guide.surname
+      label: guide.name + ' ' + guide.surname,
+      _id: guideId
     })
   }
   excursion.value.guides=guideList
-  console.log(excursion.value)
 
 if (userStore.isAuth) {
   fullinfo.fullname = userStore.user.fullinfo?.fullname || '',
@@ -254,10 +254,10 @@ if (userStore.isAuth) {
             </div>
             <div>
               Гиды:
-              <div v-for="guide in excursion.guides" class="mr-8 mb-8">
+              <a-card v-for="guide in excursion.guides" class="mr-8 mb-8 text guide_button" hoverable @click="router.push(`/guide?_id=${guide._id}`)">
                <a-avatar size="large" :src="guide.image" class="mr-16"></a-avatar>
-               <b>{{ guide.label }}</b>
-              </div>
+               <b class="mr-4">{{ guide.label }}</b>
+              </a-card>
             </div>
 
           </a-col>
@@ -339,7 +339,11 @@ img {
   aspect-ratio: 270/175;
   object-fit: cover;
 }
-
+.guide_button{
+  cursor: pointer; 
+  border: black 1px solid;
+  width: fit-content;
+}
 // .order_container{
 //   display: flex;
 //   justify-content: center;

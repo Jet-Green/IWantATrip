@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from "vue";
 import BackButton from "../components/BackButton.vue";
 import GuideCard from "../components/_guide/guides/GuideCard.vue";
+import ExcursionCard from "../components/_guide/ExcursionCard.vue";
 
 import { useRoute,useRouter } from "vue-router";
 import { useHead } from "@unhead/vue";
@@ -62,7 +63,6 @@ onMounted(async () => {
           <h3>Экскурсии</h3>
           <a-row :gutter="[12, 16]">
             <a-col :span="24" :sm="12" :md="8" v-for="ex of excursions" :key="ex._id">
-
               <ExcursionCard :excursion="ex" @click="router.push(`/excursion?_id=${ex._id}`)" :id="ex._id" />
             </a-col>
           
