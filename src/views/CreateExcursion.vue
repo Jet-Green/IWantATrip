@@ -87,7 +87,29 @@ let formSchema = yup.object({
   }),
 
 })
+function selectStartLocation(selected) {
+  for (let l of possibleLocations.value) {
+    // l.value - name
+    if (l.value == selected) {
+      form.location = l.location
+    }
+  }
+}
 
+
+const removeCost = (item) => {
+  let index = form.prices.indexOf(item);
+  if (index !== -1) {
+    form.prices.splice(index, 1);
+  }
+};
+
+const addCost = () => {
+  form.prices.push({
+    type: "",
+    price: "",
+  });
+};
 function addPreview(blob) {
   // imagesFormData.append("image", blob, `product-${previews.value.length}`);
   visibleCropperModal.value = false;
@@ -106,28 +128,6 @@ function handleImgError(i) {
   images.splice(i, 1)
   localStorage.setItem('createExcursionImages', JSON.stringify(previews.value))
 }
-
-function selectStartLocation(selected) {
-  for (let l of possibleLocations.value) {
-    // l.value - name
-    if (l.value == selected) {
-      form.location = l.location
-    }
-  }
-}
-const removeCost = (item) => {
-  let index = form.prices.indexOf(item);
-  if (index !== -1) {
-    form.prices.splice(index, 1);
-  }
-};
-
-const addCost = () => {
-  form.prices.push({
-    type: "",
-    price: "",
-  });
-};
 function clearForm() {
   localStorage.removeItem('createExcursionImages')
   localStorage.removeItem('createExcursionForm')
@@ -303,9 +303,8 @@ watch(form, (newValue) => {
   localStorage.setItem('createExcursionForm', JSON.stringify(newValue))
 }, { deep: true })
 onMounted(async()=>{
-  for (let id in form.guides){
-    let guide = await guideStore.getGuideById(form.guides[id])
-    // console.log(guide)
+  for (let id of form.guides){
+    let guide = await guideStore.getGuideById(id)
     chosenGuides.value.push({
         label: guide.data.name+' '+guide.data.surname,
         value: guide.data._id,
@@ -319,7 +318,7 @@ onMounted(async()=>{
     <BackButton />
     <a-row type="flex" justify="center">
       <a-col :span="22" :md="12">
-        <Form :validation-schema="formSchema" @submit="submit">
+        <Form :validation-schema="formSchema">
           <a-row :gutter="[16, 16]">
             <a-col :span="24">
               <h2>Создать экскурсию</h2>
@@ -567,7 +566,7 @@ onMounted(async()=>{
             </a-col>
             <!-- кроппер для добавления картинок -->
             <a-col :span="24" class="d-flex justify-center">
-              <a-button class="lets_go_btn ma-36" type="primary" html-type="submit">Отправить</a-button>
+              <a-button class="lets_go_btn ma-36" type="primary" @click="submit">Отправить</a-button>
             </a-col>
           </a-row>
         </Form>

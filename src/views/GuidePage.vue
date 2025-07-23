@@ -61,14 +61,19 @@ onMounted(async () => {
         <p>{{ guide.description }}</p>
         <div>
           <h3>Экскурсии</h3>
-          <a-row :gutter="[12, 16]">
-            <a-col :span="24" :sm="12" :md="8" v-for="ex of excursions" :key="ex._id">
-              <ExcursionCard :excursion="ex" @click="router.push(`/excursion?_id=${ex._id}`)" :id="ex._id" />
-            </a-col>
-          
-          </a-row>
+               <a-card v-for="excursion in excursions" class="mr-8 mb-8 pa-4 text excursion_button" hoverable @click="router.push(`/excursion?_id=${excursion._id}`)">
+               <b class="mr-4">{{ excursion.name }}</b>
+              </a-card>
+
         </div>
       </a-col>
     </a-row>
   </div>
 </template>
+<style scoped>
+.excursion_button{
+  cursor: pointer; 
+  border: black 1px solid;
+  width: fit-content;
+}
+</style>

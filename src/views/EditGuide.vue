@@ -30,6 +30,7 @@ const guide = ref({
     location: null,
     type: "Знаток города",
     isModerated:false,
+    isRejected:false,
 });
 const guideTypes = ref([
     { label: "Знаток города", value: "Знаток города" },
@@ -81,6 +82,8 @@ async function fetchGuideData() {
 async function submit() {
     isSaving.value = true;
     try {
+        guide.value.isRejected=false
+        guide.value.isModerated=false
         let res = await guideStore.updateGuide(guide.value)
 
         if (res.status === 200 && res.data && res.data._id) {
