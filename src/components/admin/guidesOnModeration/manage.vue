@@ -3,30 +3,22 @@ import { ref, onMounted, reactive } from 'vue'
 import { useGuide } from '../../../stores/guide';
 import { useRouter } from "vue-router";
 import { message } from 'ant-design-vue';
-import ImageCropper from '../../../components/ImageCropper.vue'; // Import the cropper
 
 let guideStore = useGuide()
 const router = useRouter();
 
 let dbSkip = ref(0)
 let limit = ref(true) // Initialize limit correctly
-let query = ref({strQuery:""})
+let query = ref({ strQuery: "" })
 
 let guides = ref([])
 
-// --- Image Handling State (similar to CabinetGuide) ---
-let visibleCropperModal = ref(false);
-let previewImageUrl = ref(null); // For displaying the selected/cropped image preview
-let currentImgBlob = ref(null); // To store the actual Blob data for upload
-
-// --- Methods ---
 
 async function refreshGuides() {
-    // Reset state for potentially new search/load
     dbSkip.value = 0;
     guides.value = [];
-    limit.value = true; // Allow fetching again
-    await loadMoreGuides(); // Load initial batch
+    limit.value = true;
+    await loadMoreGuides();
 }
 
 async function loadMoreGuides() {
@@ -51,83 +43,65 @@ async function loadMoreGuides() {
 }
 
 
-// --- Image Handling Methods (adapted from CabinetGuide) ---
-
-function openImageCropper() {
-    visibleCropperModal.value = true;
-}
-
-// Called when ImageCropper emits 'addImage'
-function addPreview(blob) {
-    visibleCropperModal.value = false; // Close cropper modal
-    if (previewImageUrl.value) {
-        // Clean up previous blob URL if exists
-        URL.revokeObjectURL(previewImageUrl.value);
-    }
-    currentImgBlob.value = blob; // Store the actual blob
-    previewImageUrl.value = URL.createObjectURL(blob); // Create URL for preview <img>
-}
-
 const deleteGuide = async (_id) => {
     await guideStore.deleteGuideById(_id)
-    let x = await refreshGuides()
-    return x
+    await refreshGuides()
 };
 
-// --- Lifecycle Hooks ---
+const hideGuide = async (_id) => {
+    await guideStore.hideGuide(_id)
+    await refreshGuides()
+}
+
+
 onMounted(async () => {
-    await loadMoreGuides(); // Load initial guides on mount
+    await loadMoreGuides();
 })
 
 </script>
 
 <template>
     <a-col :span="24" class="d-flex space-between align-center mb-16 mt-16">
-        <!-- <div class="d-flex align-center">
-            <h2>Гиды</h2>
-            <a-button type="primary" @click="router.push('/create-guide');" style="border-radius: 18px" class="ml-8">
-                Добавить
-            </a-button>
-        </div> -->
+
         <div>
-            <a-input-search v-model:value="query.strQuery" placeholder="поиск по имени, email..." allow-clear enter-button
-                @search="refreshGuides" style="width: 250px" />
+            <a-input-search v-model:value="query.strQuery" placeholder="поиск по имени, email..." allow-clear
+                enter-button @search="refreshGuides" style="width: 250px" />
         </div>
     </a-col>
 
     <a-row :gutter="[16, 16]">
-        <a-col v-for="g in guides" :key="g._id" :xs="24" :sm="12" :lg="8" :xl="6" class="mb-8">
-            <a-card hoverable style="border-radius: 10px;" class="pa-4">
-                <a-card-meta>
-                    <template #title>
-                    <div class="d-flex" style="flex-wrap: wrap;">
-                            
-                            <div class="d-flex space-between" style="width: 100%;">
-                            <a-avatar :size="40" :src="g.image"/>
+        <a-col v-for="g in guides" :key="g._id" :xs="24" :sm="12" :lg="8" class="mb-8">
+            <a-card hoverable style="padding: 10px; height: 100%;">
 
-                            <a-popconfirm title="Удалить гида?" ok-text="Да" cancel-text="Нет"
-                                @confirm="deleteGuide(g._id)">
-                                <a-button type="primary" style="border-radius: 18px" class="mt-4">
-                                    <template #icon>
-                                        <span class="mdi mdi-delete"></span>
-                                    </template>
-                                </a-button>
-                            </a-popconfirm>
-                        </div>
-                        <span>{{ g.name + ' ' + g.surname }}</span>
-                    </div>
-                    </template>
-                    <!-- <template #avatar>
-                            <a-avatar :size="40" :src="g.image" class="mr-8" style=""/>
-                        </template> -->
-                </a-card-meta>
-                <div class="mt-8 card-content">
-                    <!-- <p><b>О себе:</b> {{ g.description }}</p> -->
-                    <div class="text-truncate"> {{ g.offer }}</div>
-                    <p v-if="g.location"><b>Локации:</b> {{ g.location }}</p>
-                    <!-- <p v-if="g.phone"><b>Тел:</b> {{ g.phone }}</p>
-                    <p v-if="g.email"><b>Email:</b> {{ g.email }}</p>
-                    <p v-if="g.socialMedia"><b>Соц.сеть:</b> <a :href="g.socialMedia" target="_blank" rel="noopener noreferrer">ссылка</a></p> -->
+
+                <div class="" style="width: 100%;">
+                    <a-avatar :size="40" :src="g.image" />
+
+                    <span style="font-weight: 700; margin: 4px;">{{ g.name + ' ' + g.surname }}</span>
+                </div>
+
+
+
+                <div class="mt-8 ">
+                    <div v-if="g.location"><b>Локации:</b> {{ g.location.name }}</div>
+                    <div v-if="g.phone"><b>Тел:</b> {{ g.phone }}</div>
+                    <div v-if="g.email"><b>Email:</b> {{ g.email }}</div>
+                    <div v-if="g.socialMedia"><b>Соц.сеть:</b> <a :href="g.socialMedia" target="_blank"
+                            rel="noopener noreferrer">{{ g.socialMedia }}</a></div>
+                </div>
+                <a-divider class="ma-4" style="border-color: #205f79"></a-divider>
+                <div class="actions d-flex justify-center">
+                    <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="deleteGuide(g._id)">
+                        <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+                    </a-popconfirm>
+                    <a-popconfirm title="Скрыть/показать?" ok-text="Да" cancel-text="Нет"
+                        @confirm="hideGuide(g._id)">
+                        <span v-if="!g.isHidden" class="mdi mdi-eye-outline"></span>
+                        <span v-else class="mdi mdi-eye-off-outline"></span>
+                    </a-popconfirm>
+
+                    <span class="mdi mdi-pencil" @click="router.push(`/edit-place?_id=${place._id}&is_admin=${true}`)"
+                        style="color: #245159; cursor: pointer"></span>
                 </div>
             </a-card>
         </a-col>
@@ -144,75 +118,16 @@ onMounted(async () => {
         </a-col>
     </a-row>
 
-    <!-- Add Guide Modal -->
-
-    <!-- Cropper Modal -->
-    <a-modal v-model:open="visibleCropperModal" :footer="null" :destroyOnClose="true" title="Обрезать фото">
-        <ImageCropper @addImage="addPreview" :aspectRatio="1 / 1" /> <!-- Aspect ratio 1:1 for avatar-like photos -->
-    </a-modal>
-
 </template>
 
-<style scoped>
-/* Added margin for button spacing */
-.mr-1 {
-    margin-right: 4px;
-}
+<style scoped lang="scss">
+.actions {
+    font-size: 20px;
+    position: relative;
 
-/* Added margin for icon spacing */
-.text-right {
-    text-align: right;
-}
-
-/* Added for modal buttons */
-
-.card-content p {
-    margin-bottom: 4px;
-    font-size: 0.9em;
-}
-
-.text-truncate {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.image-preview-container {
-    width: 100%;
-    max-width: 200px;
-    /* Limit preview size */
-    aspect-ratio: 1 / 1;
-    /* Maintain square aspect ratio */
-    border: 1px dashed #d9d9d9;
-    border-radius: 4px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #fafafa;
-}
-
-.preview-image {
-    display: block;
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: cover;
-    height: 100%;
-    width: 100%;
-}
-
-/* Ensure Ant form items handle validation states correctly */
-:deep(.ant-form-item-has-error .ant-input),
-:deep(.ant-form-item-has-error .ant-input-affix-wrapper),
-:deep(.ant-form-item-has-error .ant-input:hover),
-:deep(.ant-form-item-has-error .ant-input-affix-wrapper:hover),
-:deep(.ant-form-item-has-error .ant-input-number),
-:deep(.ant-form-item-has-error .ant-picker),
-:deep(.ant-form-item-has-error .ant-select-selector) {
-    border-color: #ff4d4f !important;
-}
-
-:deep(.ant-form-item-explain-error) {
-    font-size: 0.85em;
+    * {
+        margin: 4px;
+        cursor: pointer;
+    }
 }
 </style>

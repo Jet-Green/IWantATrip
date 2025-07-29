@@ -11,7 +11,7 @@ import _ from "lodash"
 import { useHead } from "@unhead/vue";
 
 
-import { useRoute,useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useExcursion } from "../stores/excursion.js";
 import { useAuth } from "../stores/auth";
 import { useGuide } from "../stores/guide";
@@ -68,7 +68,7 @@ useHead(computed(() => ({
       name: "og:image",
       content: excursion?.value?.images,
     },
-  
+
     {
       name: "og:url",
       content: `${API_URL}/excursion?_id=${excursion.value?._id}`,
@@ -89,7 +89,7 @@ async function startShare() {
 }
 
 function openBuyDialog(timeInfo) {
- 
+
   if (selectedDate.value._id) return
   for (let date of excursion.value.dates) {
     for (let t of date.times) {
@@ -151,22 +151,22 @@ async function order() {
 onMounted(async () => {
   let response = await excursionStore.getExcursionById(_id);
   excursion.value = response.data;
-  let guideList=[]
-  for (let guideId of excursion.value.guides){
+  let guideList = []
+  for (let guideId of excursion.value.guides) {
     let guide = await guideStore.getGuideById(guideId)
-    guide=guide.data
+    guide = guide.data
     guideList.push({
-      image:guide.image,
+      image: guide.image,
       label: guide.name + ' ' + guide.surname,
       _id: guideId
     })
   }
-  excursion.value.guides=guideList
+  excursion.value.guides = guideList
 
-if (userStore.isAuth) {
-  fullinfo.fullname = userStore.user.fullinfo?.fullname || '',
-  fullinfo.phone = userStore.user.fullinfo?.phone || ''
-}
+  if (userStore.isAuth) {
+    fullinfo.fullname = userStore.user.fullinfo?.fullname || '',
+      fullinfo.phone = userStore.user.fullinfo?.phone || ''
+  }
 });
 </script>
 <template>
@@ -252,12 +252,20 @@ if (userStore.isAuth) {
               </b>
 
             </div>
+
+
             <div>
               Гиды:
-              <a-card v-for="guide in excursion.guides" class="mr-8 mb-8 text guide_button" hoverable @click="router.push(`/guide?_id=${guide._id}`)">
-               <a-avatar size="large" :src="guide.image" class="mr-16"></a-avatar>
-               <b class="mr-4">{{ guide.label }}</b>
-              </a-card>
+              <div class="d-flex flex-wrap">
+                <a-card v-for="guide in excursion.guides" style="border: #239FCC 1px solid;" class="ma-8 text guide_button" hoverable
+                  @click="router.push(`/guide?_id=${guide._id}`)">
+                  <a-avatar size="large" :src="guide.image" class="mr-16"></a-avatar>
+                  <b class="mr-4">{{ guide.label }}</b>
+                </a-card>
+              </div>
+
+
+
             </div>
 
           </a-col>
@@ -291,7 +299,7 @@ if (userStore.isAuth) {
           </a-col>
         </a-row>
         <a-modal v-model:open="open" :footer="null">
-    
+
           <div class="mt-16 mb-16">
             <div>
               ФИО
@@ -339,11 +347,13 @@ img {
   aspect-ratio: 270/175;
   object-fit: cover;
 }
-.guide_button{
-  cursor: pointer; 
+
+.guide_button {
+  cursor: pointer;
   border: black 1px solid;
   width: fit-content;
 }
+
 // .order_container{
 //   display: flex;
 //   justify-content: center;

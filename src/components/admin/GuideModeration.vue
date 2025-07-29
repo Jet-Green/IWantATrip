@@ -55,53 +55,45 @@ onMounted(async () => {
     <BackButton />
     <a-row class="justify-center d-flex">
       <a-col :xs="22" :xl="16">
-     <a-card hoverable style="border-radius: 10px;" class="pa-4">
-                <a-card-meta>
-                    <template #title>
-                    <div class="d-flex" style="flex-wrap: wrap;">
-                            
-                            <div class="d-flex space-between" style="width: 100%;">
-                            <a-avatar :size="40" :src="guide.image"/>
-                        </div>
-                        <span>{{ guide.name + ' ' + guide.surname }}</span>
-                    </div>
-                    </template>
-                    <!-- <template #avatar>
-                            <a-avatar :size="40" :src="guide.image" class="mr-8" style=""/>
-                        </template> -->
-                </a-card-meta>
-                <div class="mt-8 card-content">
-                    <div><b>О себе:</b> {{ guide.description }}</div>
-                    <div> {{ guide.offer }}</div>
-                    
-                    <div v-if="guide.location"><b>Локации:</b> {{ guide.location }}</div>
-                    <div v-if="guide.phone"><b>Тел:</b> {{ guide.phone }}</div>
-                    <div v-if="guide.email"><b>Email:</b> {{ guide.email }}</div>
-                    <div v-if="guide.socialMedia"><b>Соц.сеть:</b> <a :href="guide.socialMedia" target="_blank" rel="noopener noreferrer">ссылка</a></div>
+        <a-card hoverable style="border-radius: 10px;" class="pa-4">
+          <a-card-meta>
+            <template #title>
+              <div class="d-flex" style="flex-wrap: wrap;">
+
+                <div class="d-flex space-between" style="width: 100%;">
+                  <a-avatar :size="40" :src="guide.image" />
                 </div>
-            </a-card>
-            </a-col>
-            </a-row>
+                <span>{{ guide.name + ' ' + guide.surname }}</span>
+              </div>
+            </template>
+
+          </a-card-meta>
+          <div class="mt-8 card-content">
+            <div><b>О себе:</b> {{ guide.description }}</div>
+            <div> {{ guide.offer }}</div>
+
+            <div v-if="guide.location"><b>Локации:</b> {{ guide.location }}</div>
+            <div v-if="guide.phone"><b>Тел:</b> {{ guide.phone }}</div>
+            <div v-if="guide.email"><b>Email:</b> {{ guide.email }}</div>
+            <div v-if="guide.socialMedia"><b>Соц.сеть:</b> <a :href="guide.socialMedia" target="_blank"
+                rel="noopener noreferrer">{{ guide.socialMedia }}</a></div>
+          </div>
+        </a-card>
+      </a-col>
+    </a-row>
 
     <a-row class="justify-center d-flex">
       <a-col :xs="22" :xl="16" class="justify-center d-flex">
-        <a-button :loading="isLoading" :disabled="isModerated" @click="moderateGuide(guide._id)" class="lets_go_btn ma-36"
-          type="primary">
+        <a-button :loading="isLoading" :disabled="isModerated" @click="moderateGuide(guide._id)"
+          class="lets_go_btn ma-36" type="primary">
           <span v-if="!isModerated">принять</span>
           <span v-else class="mdi mdi-check-outline"></span>
         </a-button>
+        <a-button :disabled="isModerated" @click="sendGuideModerationMessage"
+          class="btn_light ma-36">Отказать</a-button>
       </a-col>
     </a-row>
-    <a-row class="justify-center d-flex">
-      <a-col :xs="22" :xl="16">
-        <a-textarea placeholder="Комментарии" v-model:value="moderationMessage">
-        </a-textarea>
-        <div class="justify-center d-flex">
-          <a-button :disabled="isModerated" @click="sendGuideModerationMessage" class="btn_light ma-36">отправить на
-            доработку</a-button>
-        </div>
-      </a-col>
-    </a-row>
+
   </div>
 </template>
 <style lang="scss" scoped>

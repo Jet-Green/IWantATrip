@@ -72,13 +72,11 @@ onMounted(async () => {
       </div>
 
     </div>
-    {{ guides }}
     <a-row :gutter="[8, 8]">
       <a-col v-for="guide in guides" :span="24" :sm="12" :lg="8">
 
         <MyGuideCard @refreshGuides="refreshGuides()" :guide="guide">
         </MyGuideCard>
-
       </a-col>
       <a-col :span="24" class="justify-center d-flex" @click="morePlaces()" v-if="showMoreButton">
         <a-button>Ещё</a-button></a-col>

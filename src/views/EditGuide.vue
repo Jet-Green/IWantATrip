@@ -34,7 +34,7 @@ const guide = ref({
 });
 const guideTypes = ref([
     { label: "Знаток города", value: "Знаток города" },
-    { label: "Аккредитованный", value: "Аккредитованный" },
+    { label: "Аккредитован", value: "Аккредитован" },
 ])
 let formSchema = yup.object({
     name: yup.string().required("заполните поле"),

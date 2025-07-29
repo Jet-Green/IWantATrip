@@ -46,7 +46,7 @@ onMounted(async () => {
 // useGuideStore.fetchElementsByQuery('watch');
 </script>
 <template>
- <div style="overflow-x: hidden" id="top">
+ <div style="overflow-x: hidden; margin-bottom: 48px;" id="top">
     <BackButton :backRoute="backRoute" />
    <a-row class="justify-center d-flex">
       <a-col :xs="22" :xl="16">

@@ -34,7 +34,7 @@ let status = computed(() => {
 })
 
 async function guideToDelete(_id) {
-  let response = await guideStore.deleteGuideById(_id); 
+  let response = await guideStore.deleteGuideById(_id);
   if (response.status == 200) {
     emit('refreshGuides')
   }
@@ -52,11 +52,12 @@ async function hideGuide(_id) {
   <a-card class="card" :class="[guide.isHidden ? 'overlay' : '']" v-if="guide._id">
 
     <div style=" font-weight: 700;">
-      <img :src="guide.image" alt="" style="width: 20%; border-radius: 50%;"> 
+      <img :src="guide.image" alt="" style="width: 20%; border-radius: 50%;">
       {{ guide.name }} {{ guide.surname }}
     </div>
     <div>тел. {{ guide.phone }}</div>
-    <div>локация {{ guide.location }}</div>
+    <div>почта: <b>{{ guide.email }}</b></div>
+    <div>локация: <b> {{ guide.location.name }}</b></div>
     <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
     <div class="actions">
       <div>
@@ -73,7 +74,7 @@ async function hideGuide(_id) {
           @confirm="router.push(`/edit-guide?_id=${guide._id}`)">
           <span class="mdi mdi-pen"></span>
         </a-popconfirm>
-        <span class="mdi mdi-information-outline" @click="show = !show"></span>
+        <span class="mdi mdi-information-outline" @click="router.push(`/guide?_id=${guide._id}`)"></span>
       </div>
       <div :style="{ color }" style="font-size:14px">
         {{ status }}

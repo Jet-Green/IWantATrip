@@ -24,7 +24,7 @@ onMounted(() => {
 <template>
     <a-row>
         <a-col :span="24">
-            <h3>Туры на модерации</h3>
+            <h3>Гиды на модерации</h3>
             <a-radio-group v-model:value="tripsStatus">
                 <a-radio value="guidesOnModeration">На модерации</a-radio>
                 <a-radio value="rejected">Откaзaнные</a-radio>
