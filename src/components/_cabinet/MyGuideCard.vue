@@ -39,11 +39,11 @@ async function guideToDelete(_id) {
     emit('refreshGuides')
   }
 }
-async function hideGuide(_id) {
-  // let response = await guideStore.hidePlace(_id);
-  // if (response.status == 200) {
-  //   emit('refreshGuides')
-  // }
+async function hideGuide(_id,isHidden) {
+  let response = await guideStore.hideGuide(_id, isHidden);
+  if (response.status == 200) {
+    emit('refreshGuides')
+  }
 }
 
 
@@ -66,7 +66,7 @@ async function hideGuide(_id) {
           <span class="mdi mdi-delete" style="color: #ff6600;"></span>
         </a-popconfirm>
 
-        <a-popconfirm title="Скрыть/показать?" ok-text="Да" cancel-text="Нет" @confirm="hideGuide(guide._id)">
+        <a-popconfirm title="Скрыть/показать?" ok-text="Да" cancel-text="Нет" @confirm="hideGuide(guide._id,guide.isHidden)">
           <span v-if="!guide.isHidden" class="mdi mdi-eye-outline"></span>
           <span v-else class="mdi mdi-eye-off-outline"></span>
         </a-popconfirm>

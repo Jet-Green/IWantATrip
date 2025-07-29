@@ -131,6 +131,14 @@ export const useGuide = defineStore('guide', {
                 console.log(error);
             }
         },
+        async hideGuide(_id, isHidden) {
+            try {
+                let res = await GuideService.hideGuide(_id, isHidden)
+                return res
+            } catch (error) {
+                console.log(error);
+            }
+        },
         async sendGuideModerationMessage(_id, msg) {
             try {
                 let res = await GuideService.sendGuideModerationMessage(_id, msg)

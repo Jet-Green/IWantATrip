@@ -53,6 +53,9 @@ export default {
     async moderateGuide(_id) {
         return $api.post('/guide/moderate-guide', { _id })
     },
+    async hideGuide(_id, isHidden) {
+        return $api.post('/guide/hide-guide', { _id, isHidden })
+    },
     async sendGuideModerationMessage(_id, msg) {
         return $api.post('/guide/send-guide-moderation-message', { _id, msg })
     },
