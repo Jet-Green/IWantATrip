@@ -12,7 +12,7 @@ let guideStore = useGuide()
 let guides = ref([])
 let dbSkip = ref(0)
 let limit = ref(true) // Initialize limit correctly
-let query = ref({strQuery:""})
+let query = ref({strQuery:"",isHidden:false})
 const backRoute = { name: 'Landing', hash: '#guide' };
 
 async function refreshGuides() {

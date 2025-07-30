@@ -268,7 +268,7 @@ const fetchGuides = async (guide) => {
   guidesFetching.value = true;
   if (guide.trim().length > 2 && guide.length > previousGuide.value.length) {
     // console.log('fetching guide', guide);
-    let suggestions = await guideStore.getGuides({strQuery: guide, isModerated:true, isRejected:false})
+    let suggestions = await guideStore.getGuides({strQuery: guide, isModerated:true, isRejected:false, isHidden:false})
     // console.log('suggestions', suggestions);
     possibleGuides.value = []
     let count = 0
