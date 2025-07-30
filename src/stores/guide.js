@@ -1,10 +1,24 @@
 import { defineStore } from 'pinia'
-
+import _ from 'lodash'
 import GuideService from '../service/GuideService.js'
 
 export const useGuide = defineStore('guide', {
     state: () => ({
-        watch: []
+        guides: [],
+        isFetching: false,
+        filter: {
+            isHidden:false,
+            isModerated: true,
+            isRejected: false,
+            location:{
+                name:"",
+                shortName:"",
+                type:"Point",
+                coordinates:[]
+            },
+            locationRadius: 0,
+            search:"",
+        }
     }),
     getters: {
 
@@ -66,12 +80,24 @@ export const useGuide = defineStore('guide', {
                 console.log(error);
             }
         },
-        async getGuides(query, dbSkip) {
+        async getGuides(page, filter) {
+            if (page == 1) {
+                this.guides = [];
+            }
             try {
-                let res = await GuideService.getGuides(query, dbSkip)
-                return res
-            } catch (error) {
-                console.log(error);
+                if (!this.isFetching) {
+                this.isFetching = true
+                let response = await GuideService.getGuides(
+                    page, filter
+                );
+                this.isFetching = false
+
+                this.guides.push(...response.data);
+                this.guides = _.uniqBy(this.guides, '_id')
+                return this.guides
+                }
+            } catch (err) {
+                console.log(err);
             }
         },
         async getGuidesByUserId(page, query) {

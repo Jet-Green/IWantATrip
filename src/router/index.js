@@ -52,6 +52,11 @@ const router = createRouter({
           name: 'Poster',
           component: () => import('../components/_guide/Poster.vue')
         },
+        {
+          path: '/guides',
+          name: 'Guides',
+          component: () => import('../components/_guide/Guides.vue')
+        },
       ]
     },
     {
@@ -395,11 +400,6 @@ const router = createRouter({
           path: '/relax',
           name: 'Relax',
           component: () => import('../components/_guide/Relax.vue')
-        },
-        {
-          path: '/guides',
-          name: 'Guides',
-          component: () => import('../components/_guide/Guides.vue')
         },
         {
           path: '/souvenirs',

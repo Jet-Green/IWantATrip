@@ -32,8 +32,8 @@ export default {
     async addGuide(guide) {
         return $api.post('/guide/add-guide', { guide })
     },
-    async getGuides(query, dbSkip) {
-        return $api.post('/guide/get-guides', { query, dbSkip })
+    async getGuides(page, filter) {
+        return $api.post('/guide/get-guides', { page, filter })
     },
     async getGuidesByUserId(page, query) {
         return $api.post('/guide/get-guides-by-user-id', { page, query})

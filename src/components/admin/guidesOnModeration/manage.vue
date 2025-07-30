@@ -48,8 +48,8 @@ const deleteGuide = async (_id) => {
     await refreshGuides()
 };
 
-const hideGuide = async (_id) => {
-    await guideStore.hideGuide(_id)
+const hideGuide = async (_id,isHidden) => {
+    await guideStore.hideGuide(_id,isHidden)
     await refreshGuides()
 }
 
@@ -95,7 +95,7 @@ onMounted(async () => {
                         <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
                     </a-popconfirm>
                     <a-popconfirm title="Скрыть/показать?" ok-text="Да" cancel-text="Нет"
-                        @confirm="hideGuide(g._id)">
+                        @confirm="hideGuide(g._id,g.isHidden)">
                         <span v-if="!g.isHidden" class="mdi mdi-eye-outline"></span>
                         <span v-else class="mdi mdi-eye-off-outline"></span>
                     </a-popconfirm>

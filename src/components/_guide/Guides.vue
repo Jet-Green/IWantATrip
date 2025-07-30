@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
 import BackButton from "../BackButton.vue";
-import PlaceFilter from "./PlaceFilter.vue";
+import GuideFilter from "./GuideFilter.vue";
 import GuideCard from "./guides/GuideCard.vue";
 
 import { useRouter } from 'vue-router';
@@ -10,38 +10,42 @@ import { useGuide } from "../../stores/guide";
 const router = useRouter()
 let guideStore = useGuide()
 let guides = ref([])
-let dbSkip = ref(0)
-let limit = ref(true) // Initialize limit correctly
-let query = ref({strQuery:"",isHidden:false})
+let query = reactive({
+  isModerated: true,
+  isRejected: false,
+  isHidden: false,
+})
 const backRoute = { name: 'Landing', hash: '#guide' };
+let showMoreButton = ref(true)
+let postersLength = 0
+let page = 1
 
-async function refreshGuides() {
-    dbSkip.value = 0;
-    guides.value = [];
-    limit.value = true; 
-    await loadMoreGuides();
+let moreGuides = async () => {
+  page++
+  let res = await guideStore.getGuides(page, query)
+
+  if (res.length == postersLength) {
+    showMoreButton.value = false
+  }
+  postersLength = res.length
+
 }
-async function loadMoreGuides() {
-    if (!limit.value) return;
-    try {
-        let res = await guideStore.getGuides(query.value, dbSkip.value)
-        if (res.data && res.data.data) {
-            dbSkip.value = res.data.dbSkip
-            guides.value.push(...res.data.data)
-            if (res.data.ended) {
-                limit.value = false 
-            }
-        } else {
-            limit.value = false; 
-        }
-    } catch (error) {
-        console.error("Error fetching guides:", error);
-        message.error("Не удалось загрузить гидов.");
-        limit.value = false; 
-    }
+let refreshGuides = async () => {
+  Object.assign(query, guideStore.filter)
+  page = 1
+  postersLength = 0
+  await guideStore.getGuides(page, query)
+  if (guideStore.guides.length < 20) {
+    showMoreButton.value = false
+  } else {
+    showMoreButton.value = true
+  }
 }
 onMounted(async () => {
-    await loadMoreGuides();
+await refreshGuides()
+  if (guideStore.guides.length < 20) {
+    showMoreButton.value = false
+  }
 })
 // useGuideStore.fetchElementsByQuery('watch');
 </script>
@@ -52,11 +56,11 @@ onMounted(async () => {
       <a-col :xs="22" :xl="16">
   
           <h2>Гиды</h2>
-          <!-- <PlaceFilter/> -->
+          <GuideFilter @refreshGuides=refreshGuides />
           <GuideCard v-for="guide in guides"  :key="guide._id" :guide="guide" withButton/>
        
    
-        <a-button v-if="limit" type="primary" @click="loadMoreGuides">Загрузить еще</a-button>
+        <a-button v-if="showMoreButton" type="primary" @click="moreGuides">Загрузить еще</a-button>
       </a-col>
     </a-row>
   </div>
