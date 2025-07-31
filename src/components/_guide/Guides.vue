@@ -9,7 +9,6 @@ import { useGuide } from "../../stores/guide";
 
 const router = useRouter()
 let guideStore = useGuide()
-let guides = ref([])
 let query = reactive({
   isModerated: true,
   isRejected: false,
@@ -57,7 +56,7 @@ await refreshGuides()
   
           <h2>Гиды</h2>
           <GuideFilter @refreshGuides=refreshGuides />
-          <GuideCard v-for="guide in guides"  :key="guide._id" :guide="guide" withButton/>
+          <GuideCard v-for="guide in guideStore.guides"  :key="guide._id" :guide="guide" withButton/>
        
    
         <a-button v-if="showMoreButton" type="primary" @click="moreGuides">Загрузить еще</a-button>

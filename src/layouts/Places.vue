@@ -1,9 +1,21 @@
 <script setup>
+import { computed } from 'vue'
 import PlacesHeader from "../components/PlacesHeader.vue";
 import { useHead } from '@unhead/vue'
+import { useRoute } from "vue-router"
+const route = useRoute();
+let title = computed(()=>{
+  if (route.path=='/guides'){
+    return 'Гиды'
+  }
+  if (route.path=='/poster'){
+    return 'Афиши'
+  }
+  return 'Места'
+})
 const VITE_API_URL = import.meta.env.VITE_API_URL
 useHead({
-  title: 'Места: города и веси',
+  title: `${title.value}: города и веси`,
   meta: [
     {
       name: 'description',

@@ -49,13 +49,11 @@ function resetForm() {
 
 let filterString = computed(() => {
   let keyString = ''
-
   let guideFilter = guideStore.filter
+
   for (let key in guideFilter) {
     if (key == 'location' && guideFilter[key]) {
-     
       keyString = keyString + ` ${guideFilter[key].shortName} `
-  
       continue;
     }
     if (key == 'locationRadius' && guideFilter[key]) {
@@ -63,9 +61,9 @@ let filterString = computed(() => {
 
       continue;
     }
-    if (key != 'isHidden' && key != 'isModerated' && key != 'isRejected') {
+    if (key != 'isHidden' && key != 'isModerated' && key != 'isRejected' && guideFilter[key]) {
       keyString = keyString + `${guideFilter[key]}, `
- 
+
     }
   }
   return keyString.trim().slice(0, -1)

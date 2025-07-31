@@ -7,9 +7,7 @@ export const useGuide = defineStore('guide', {
         guides: [],
         isFetching: false,
         filter: {
-            isHidden:false,
-            isModerated: true,
-            isRejected: false,
+            search:"",
             location:{
                 name:"",
                 shortName:"",
@@ -17,7 +15,9 @@ export const useGuide = defineStore('guide', {
                 coordinates:[]
             },
             locationRadius: 0,
-            search:"",
+            isHidden:false,
+            isModerated: true,
+            isRejected: false,
         }
     }),
     getters: {
@@ -86,12 +86,12 @@ export const useGuide = defineStore('guide', {
             }
             try {
                 if (!this.isFetching) {
-                this.isFetching = true
-                let response = await GuideService.getGuides(
-                    page, filter
+                    this.isFetching = true
+                    let response = await GuideService.getGuides(
+                        page, filter
                 );
                 this.isFetching = false
-
+                
                 this.guides.push(...response.data);
                 this.guides = _.uniqBy(this.guides, '_id')
                 return this.guides

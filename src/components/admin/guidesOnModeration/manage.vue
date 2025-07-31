@@ -2,44 +2,46 @@
 import { ref, onMounted, reactive } from 'vue'
 import { useGuide } from '../../../stores/guide';
 import { useRouter } from "vue-router";
-import { message } from 'ant-design-vue';
 
 let guideStore = useGuide()
 const router = useRouter();
 
-let dbSkip = ref(0)
-let limit = ref(true) // Initialize limit correctly
-let query = ref({ strQuery: "" })
+let query = reactive({
+    search: "",
+    location: {
+        name: "",
+        shortName: "",
+        type: "Point",
+        coordinates: []
+    },
+    locationRadius: 0,
+    isModerated: true,
+    isRejected: false,
+})
 
-let guides = ref([])
+let showMoreButton = ref(true)
+let postersLength = 0
+let page = 1
 
+let moreGuides = async () => {
+  page++
+  let res = await guideStore.getGuides(page, query)
 
-async function refreshGuides() {
-    dbSkip.value = 0;
-    guides.value = [];
-    limit.value = true;
-    await loadMoreGuides();
+  if (res.length == postersLength) {
+    showMoreButton.value = false
+  }
+  postersLength = res.length
+
 }
-
-async function loadMoreGuides() {
-    if (!limit.value) return; // Stop if server indicated no more data
-
-    try {
-        let res = await guideStore.getGuides(query.value, dbSkip.value)
-        if (res.data && res.data.data) {
-            dbSkip.value = res.data.dbSkip
-            guides.value.push(...res.data.data)
-            if (res.data.ended) {
-                limit.value = false // No more data to load
-            }
-        } else {
-            limit.value = false; // Assume end if data is unexpected
-        }
-    } catch (error) {
-        console.error("Error fetching guides:", error);
-        message.error("Не удалось загрузить гидов.");
-        limit.value = false; // Stop trying on error
-    }
+let refreshGuides = async () => {
+  page = 1
+  postersLength = 0
+  await guideStore.getGuides(page, query)
+  if (guideStore.guides.length < 20) {
+    showMoreButton.value = false
+  } else {
+    showMoreButton.value = true
+  }
 }
 
 
@@ -55,7 +57,10 @@ const hideGuide = async (_id,isHidden) => {
 
 
 onMounted(async () => {
-    await loadMoreGuides();
+  await refreshGuides()
+  if (guideStore.guides.length < 20) {
+    showMoreButton.value = false
+  }
 })
 
 </script>
@@ -64,13 +69,13 @@ onMounted(async () => {
     <a-col :span="24" class="d-flex space-between align-center mb-16 mt-16">
 
         <div>
-            <a-input-search v-model:value="query.strQuery" placeholder="поиск по имени, email..." allow-clear
+            <a-input-search v-model:value="query.search" placeholder="поиск по имени, email..." allow-clear
                 enter-button @search="refreshGuides" style="width: 250px" />
         </div>
     </a-col>
 
     <a-row :gutter="[16, 16]">
-        <a-col v-for="g in guides" :key="g._id" :xs="24" :sm="12" :lg="8" class="mb-8">
+        <a-col v-for="g in guideStore.guides" :key="g._id" :xs="24" :sm="12" :lg="8" class="mb-8">
             <a-card hoverable style="padding: 10px; height: 100%;">
 
 
@@ -105,14 +110,14 @@ onMounted(async () => {
                 </div>
             </a-card>
         </a-col>
-        <a-col v-if="guides.length === 0 && !limit" :span="24">
+        <a-col v-if="guideStore.guides?.length === 0 && !showMoreButton" :span="24">
             <a-empty description="Гиды не найдены" />
         </a-col>
     </a-row>
 
-    <a-row v-if="limit" justify="center" class="mt-16 mb-16">
+    <a-row v-if="showMoreButton" justify="center" class="mt-16 mb-16">
         <a-col>
-            <a-button @click="loadMoreGuides()">
+            <a-button @click="moreGuides()">
                 Загрузить ещё
             </a-button>
         </a-col>

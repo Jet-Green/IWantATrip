@@ -1,46 +1,53 @@
 <script setup>
-import { onMounted, ref } from "vue"
+import { onMounted, ref,reactive } from "vue"
 import { useGuide } from "../../../stores/guide"
 import { useRouter } from "vue-router"
 
 const guideStore = useGuide()
-let guidesOnModeration = ref([])
 let router = useRouter()
+let query = reactive({
+    search: "",
+    location: {
+        name: "",
+        shortName: "",
+        type: "Point",
+        coordinates: []
+    },
+    locationRadius: 0,
+    isModerated: false,
+    isRejected: false,
+})
 
-let dbSkip = ref(0)
-let limit = ref(true) // Initialize limit correctly
-let query = ref({strQuery: "", isModerated:false, isRejected:false})
+let showMoreButton = ref(true)
+let postersLength = 0
+let page = 1
 
-async function refreshGuidesOnModeration() {
-  // Reset state for potentially new search/load
-  dbSkip.value = 0;
-  guidesOnModeration.value = [];
-  limit.value = true; // Allow fetching again
-  await loadMoreGuides(); // Load initial batch
-}
-async function loadMoreGuides() {
-  if (!limit.value) return; // Stop if server indicated no more data
+// let moreGuides = async () => {
+//   page++
+//   let res = await guideStore.getGuides(page, query)
 
-  try {
-      let res = await guideStore.getGuides(query.value, dbSkip.value)
-      if (res.data && res.data.data) {
-          dbSkip.value = res.data.dbSkip
-          guidesOnModeration.value.push(...res.data.data)
-          if (res.data.ended) {
-              limit.value = false // No more data to load
-          }
-      } else {
-          limit.value = false; // Assume end if data is unexpected
-      }
-  } catch (error) {
-      console.error("Error fetching guides:", error);
-      message.error("Не удалось загрузить гидов.");
-      limit.value = false; // Stop trying on error
+//   if (res.length == postersLength) {
+//     showMoreButton.value = false
+//   }
+//   postersLength = res.length
+// }
+
+let refreshGuides = async () => {
+  page = 1
+  postersLength = 0
+  await guideStore.getGuides(page, query)
+  if (guideStore.guides.length < 20) {
+    showMoreButton.value = false
+  } else {
+    showMoreButton.value = true
   }
 }
 
 onMounted(async () => {
-  await refreshGuidesOnModeration()
+  await refreshGuides()
+  if (guideStore.guides.length < 20) {
+    showMoreButton.value = false
+  }
 })
 </script>
 <template>
@@ -49,8 +56,8 @@ onMounted(async () => {
       :lg="8"
       :sm="12"
       :xs="24"
-      v-if="guidesOnModeration.length > 0"
-      v-for="(guide, index) of guidesOnModeration"
+      v-if="guideStore.guides.length > 0"
+      v-for="(guide, index) of guideStore.guides"
       :key="index"
     >
     <a-card hoverable style="border-radius: 10px;" class="pa-4">
