@@ -250,10 +250,7 @@ onMounted(async () => {
                 <span v-else>не доступно</span>
 
               </b>
-
             </div>
-
-
             <div>
               Гиды:
               <div class="d-flex flex-wrap">
@@ -263,11 +260,7 @@ onMounted(async () => {
                   <b class="mr-4">{{ guide.label }}</b>
                 </a-card>
               </div>
-
-
-
             </div>
-
           </a-col>
         </a-row>
         <a-row class="mt-16">
