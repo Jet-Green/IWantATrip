@@ -18,6 +18,13 @@ let cards = ref([
     isShow: true,
 
   },
+   {
+    title: "Гиды",
+    icon: "mdi-account-tie-voice-outline",
+    route: "/guides",
+    isShow: true,
+
+  },
   {
     title: "Афиша",
     icon: "mdi-movie-roll",
@@ -47,27 +54,21 @@ let cards = ref([
   //   isShow: true,
 
   // },
-  {
-    title: "Гиды",
-    icon: "mdi-nature-people",
-    route: "/guides",
-    isShow: true,
+ 
+  // {
+  //   title: "Аренда",
+  //   icon: "mdi-tent",
+  //   route: "/enter",
+  //   isShow: false,
 
-  },
-  {
-    title: "Аренда",
-    icon: "mdi-tent",
-    route: "/enter",
-    isShow: false,
+  // },
+  // {
+  //   title: "Сувениры",
+  //   icon: "mdi-gift-outline",
+  //   route: "/souvenirs",
+  //   isShow: false,
 
-  },
-  {
-    title: "Сувениры",
-    icon: "mdi-gift-outline",
-    route: "/souvenirs",
-    isShow: false,
-
-  },
+  // },
 ]);
 
 
@@ -86,8 +87,8 @@ let cards = ref([
       </h3>
 
       <a-row :gutter="[8, 8]" class="justify-center">
-        <h3 class="in-work">
-          В разработке</h3>
+        <!-- <h3 class="in-work">
+          В разработке</h3> -->
         <a-col v-for="(card, index) in cards" :key="index" :xs="12" :md="8">
           <div class="d-flex" v-if="!card.isShow">
           </div>

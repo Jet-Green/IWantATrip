@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch, computed} from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 
 import { useGuide } from "../../stores/guide";
 import { useLocations } from "../../stores/locations";
@@ -31,10 +31,11 @@ function showFilter() {
 }
 function hideFilter() {
   isFilterShow.value = false
-  emit('refreshGuides');
+
 }
 
 function find() {
+  hideFilter()
   emit('refreshGuides');
 }
 function resetForm() {
@@ -70,7 +71,7 @@ let filterString = computed(() => {
 })
 
 let buttonTitle = computed(() => {
-  return filterString.value ? filterString.value : "Что и где посетить?"
+  return filterString.value ? filterString.value : "Найти гида?"
 }
 
 )
@@ -127,7 +128,9 @@ watch(locationSearchRequest, async (newValue, oldValue) => {
     }
   }
 })
-if (locationsStore?.location.name) {
+
+onMounted(async () => {
+  if (locationsStore?.location.name) {
     guideStore.filter.location.name = locationsStore?.location.name
     guideStore.filter.location.shortName = locationsStore?.location.shortName
     guideStore.filter.location.type = locationsStore?.location.type
@@ -135,8 +138,6 @@ if (locationsStore?.location.name) {
     locationSearchRequest.value = locationsStore?.location.name
     guideStore.filter.locationRadius = 50
   }
-onMounted(async () => {
-  find()
 });
 </script>
 
@@ -157,7 +158,7 @@ onMounted(async () => {
     </a-col>
   </a-row>
 
-  <a-modal v-model:open="isFilterShow" title="Поиск места" :zIndex=900>
+  <a-modal v-model:open="isFilterShow" title="Поиск гида" :zIndex=900>
 
 
 
@@ -165,7 +166,7 @@ onMounted(async () => {
       <a-col :span="24" class="d-flex direction-column">
 
 
-        <a-input v-model:value="guideStore.filter.search" guideholder="название места" name="search"
+        <a-input v-model:value="guideStore.filter.search" placeholder="Имя, тема экскурсии" name="search"
           style="z-index: 0; width: 100%; margin-bottom: 6px" allowClear />
 
       </a-col>
@@ -186,9 +187,8 @@ onMounted(async () => {
     </a-row>
 
     <template #footer>
-      <a-button key="submit" style="border-radius: 18px" type="primary"
-        @click="hideFilter(), find()">Показать</a-button>
-      <a-button key="back" style="border-radius: 18px" @click="resetForm(), hideFilter()">Очистить</a-button>
+      <a-button key="submit" style="border-radius: 18px" type="primary" @click=" find()">Показать</a-button>
+      <a-button key="back" style="border-radius: 18px" @click="resetForm()">Очистить</a-button>
     </template>
   </a-modal>
 </template>

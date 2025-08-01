@@ -32,19 +32,13 @@ const router = useRouter()
                     <div v-if="guide?.email"> Почта: <b>{{ guide?.email }}</b></div>
                      <div v-if="guide?.type"> Статус: <b>{{ guide?.type }}</b></div>
                     <div class="d-flex justify-center" >
-                        <a-button class="lets_go_btn ma-36" type="primary"
+                        <a-button class=" ma-36" 
                             @click="router.push(`/guide?_id=${guide._id}`)" v-if="withButton">Подробнее</a-button>
                     </div>
                 </div>
 
             </a-col>
-            <!-- 
-            <a-col :xs="24">
-                <p>{{ guide.description }}</p>
-            </a-col>
-            <a-col :xs="24">
-                <p> {{ guide.excursionsIn }}</p>
-            </a-col> -->
+       
 
         </a-row>
 

@@ -16,50 +16,47 @@ let query = reactive({
 })
 const backRoute = { name: 'Landing', hash: '#guide' };
 let showMoreButton = ref(true)
-let postersLength = 0
+let guidesLength = 0
 let page = 1
 
 let moreGuides = async () => {
   page++
   let res = await guideStore.getGuides(page, query)
 
-  if (res.length == postersLength) {
+  if (res.length == guidesLength || res.length < 20) {
     showMoreButton.value = false
   }
-  postersLength = res.length
+  guidesLength = res.length
 
 }
 let refreshGuides = async () => {
   Object.assign(query, guideStore.filter)
   page = 1
-  postersLength = 0
   await guideStore.getGuides(page, query)
-  if (guideStore.guides.length < 20) {
-    showMoreButton.value = false
-  } else {
-    showMoreButton.value = true
-  }
 }
 onMounted(async () => {
-await refreshGuides()
-  if (guideStore.guides.length < 20) {
-    showMoreButton.value = false
-  }
+
+  await refreshGuides()
+
+
+
 })
-// useGuideStore.fetchElementsByQuery('watch');
+
 </script>
 <template>
- <div style="overflow-x: hidden; margin-bottom: 48px;" id="top">
+  <div style="overflow-x: hidden; margin-bottom: 48px;" id="top">
     <BackButton :backRoute="backRoute" />
-   <a-row class="justify-center d-flex">
+    <a-row class="justify-center d-flex">
       <a-col :xs="22" :xl="16">
-  
-          <h2>Гиды</h2>
-          <GuideFilter @refreshGuides=refreshGuides />
-          <GuideCard v-for="guide in guideStore.guides"  :key="guide._id" :guide="guide" withButton/>
-       
-   
-        <a-button v-if="showMoreButton" type="primary" @click="moreGuides">Загрузить еще</a-button>
+
+        <h2>Гиды</h2>
+        <GuideFilter @refreshGuides=refreshGuides />
+        <GuideCard v-for="guide in guideStore.guides" :key="guide._id" :guide="guide" withButton />
+
+        <div class="d-flex justify-center">
+          <a-button v-if="showMoreButton" type="primary" @click="moreGuides">Загрузить еще</a-button>
+        </div>
+
       </a-col>
     </a-row>
   </div>
