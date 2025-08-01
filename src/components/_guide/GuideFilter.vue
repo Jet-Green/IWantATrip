@@ -43,6 +43,7 @@ function resetForm() {
   guideStore.filter.locationRadius = 0
   locationSearchRequest.value = ""
   guideStore.filter.location = { name: "", shortName: "", type: "Point", coordinates: [] }
+  locationsStore.location = { name: "", shortName: "", type: "Point", coordinates: [] }
   emit('refreshGuides');
 }
 
@@ -130,7 +131,7 @@ watch(locationSearchRequest, async (newValue, oldValue) => {
 })
 
 onMounted(async () => {
-  if (locationsStore?.location.name) {
+  if (locationsStore?.location.name && !guideStore.filter.location.name) {
     guideStore.filter.location.name = locationsStore?.location.name
     guideStore.filter.location.shortName = locationsStore?.location.shortName
     guideStore.filter.location.type = locationsStore?.location.type

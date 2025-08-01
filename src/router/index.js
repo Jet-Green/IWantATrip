@@ -57,6 +57,11 @@ const router = createRouter({
           name: 'Guides',
           component: () => import('../components/_guide/Guides.vue')
         },
+          {
+          path: '/guide',
+          name: 'GuidePage',
+          component: () => import('../views/GuidePage.vue'),    
+        }
       ]
     },
     {
@@ -68,11 +73,7 @@ const router = createRouter({
           name: 'PlacePage',
           component: () => import('../views/PlacePage.vue')
         },
-        {
-          path: '/guide',
-          name: 'GuidePage',
-          component: () => import('../views/GuidePage.vue'),    
-        },
+      
         {
           path: '/edit-excursion',
           name: 'EditExcursion',

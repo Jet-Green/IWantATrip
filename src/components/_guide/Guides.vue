@@ -1,13 +1,14 @@
 <script setup>
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, nextTick } from 'vue'
 import BackButton from "../BackButton.vue";
 import GuideFilter from "./GuideFilter.vue";
 import GuideCard from "./guides/GuideCard.vue";
 
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { useGuide } from "../../stores/guide";
 
 const router = useRouter()
+const route = useRoute();
 let guideStore = useGuide()
 let query = reactive({
   isModerated: true,
@@ -35,10 +36,13 @@ let refreshGuides = async () => {
   await guideStore.getGuides(page, query)
 }
 onMounted(async () => {
-
-  await refreshGuides()
-
-
+ await refreshGuides()
+  if (route.hash) {
+    let id = route.hash.slice(1)
+    await nextTick()
+    document.getElementById(id)?.scrollIntoView()
+ 
+  }
 
 })
 
@@ -51,7 +55,7 @@ onMounted(async () => {
 
         <h2>Гиды</h2>
         <GuideFilter @refreshGuides=refreshGuides />
-        <GuideCard v-for="guide in guideStore.guides" :key="guide._id" :guide="guide" withButton />
+        <GuideCard v-for="guide in guideStore.guides" :key="guide._id" :id="guide._id" :guide="guide" withButton />
 
         <div class="d-flex justify-center">
           <a-button v-if="showMoreButton" type="primary" @click="moreGuides">Загрузить еще</a-button>

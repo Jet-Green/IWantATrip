@@ -257,7 +257,7 @@ onMounted(async () => {
             <div>
               Гиды:
               <div class="d-flex flex-wrap">
-                <a-card v-for="guide in excursion.guides" style="border: #239FCC 1px solid;" class="ma-8 text guide_button" hoverable
+                <a-card v-for="guide in excursion.guides" style="border: #239FCC 1px solid;" class="ma-8 pa-4 text guide_button" hoverable
                   @click="router.push(`/guide?_id=${guide._id}`)">
                   <a-avatar size="large" :src="guide.image" class="mr-16"></a-avatar>
                   <b class="mr-4">{{ guide.label }}</b>
