@@ -99,10 +99,9 @@ let refreshPlaces = async () => {
 
 onMounted(async () => {
   await refreshPlaces()
-if (placeStore.places.length < 20) {
-  showMoreButton.value = false
-}
-
+  if (placeStore.places.length < 20) {
+    showMoreButton.value = false
+  }
 })
 const backRoute = { name: 'Landing', hash: '#guide' };
 </script>

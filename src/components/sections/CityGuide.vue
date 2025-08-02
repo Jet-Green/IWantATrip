@@ -18,6 +18,13 @@ let cards = ref([
     isShow: true,
 
   },
+   {
+    title: "Гиды",
+    icon: "mdi-account-tie-voice-outline",
+    route: "/guides",
+    isShow: true,
+
+  },
   {
     title: "Афиша",
     icon: "mdi-movie-roll",
@@ -40,41 +47,35 @@ let cards = ref([
 
   },
 
-  {
-    title: "Фотобанк",
-    icon: "mdi-camera",
-    route: "/photos",
-    isShow: true,
-
-  },
-  {
-    title: "Аренда",
-    icon: "mdi-tent",
-    route: "/enter",
-    isShow: false,
-
-  },
   // {
-  //   title: "Еда",
-  //   icon: "mdi-food-outline",
-  //   route: "/eat",
+  //   title: "Фотобанк",
+  //   icon: "mdi-camera",
+  //   route: "/photos",
+  //   isShow: true,
+
+  // },
+ 
+  // {
+  //   title: "Аренда",
+  //   icon: "mdi-tent",
+  //   route: "/enter",
   //   isShow: false,
 
   // },
-  {
-    title: "Сувениры",
-    icon: "mdi-gift-outline",
-    route: "/souvenirs",
-    isShow: false,
+  // {
+  //   title: "Сувениры",
+  //   icon: "mdi-gift-outline",
+  //   route: "/souvenirs",
+  //   isShow: false,
 
-  },
+  // },
 ]);
 
 
-watch(locationStore, () => {
+// watch(locationStore, () => {
 
-  locationStore.location.shortName == 'Глазов'&& locationStore.location.shortName? cards.value[5].isShow = true : cards.value[5].isShow = false
-})
+//   locationStore.location.shortName == 'Глазов'&& locationStore.location.shortName? cards.value[5].isShow = true : cards.value[5].isShow = false
+// })
 </script>
 
 <template>
@@ -86,8 +87,8 @@ watch(locationStore, () => {
       </h3>
 
       <a-row :gutter="[8, 8]" class="justify-center">
-        <h3 class="in-work">
-          В разработке</h3>
+        <!-- <h3 class="in-work">
+          В разработке</h3> -->
         <a-col v-for="(card, index) in cards" :key="index" :xs="12" :md="8">
           <div class="d-flex" v-if="!card.isShow">
           </div>

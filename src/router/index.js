@@ -52,6 +52,16 @@ const router = createRouter({
           name: 'Poster',
           component: () => import('../components/_guide/Poster.vue')
         },
+        {
+          path: '/guides',
+          name: 'Guides',
+          component: () => import('../components/_guide/Guides.vue')
+        },
+          {
+          path: '/guide',
+          name: 'GuidePage',
+          component: () => import('../views/GuidePage.vue'),    
+        }
       ]
     },
     {
@@ -63,6 +73,7 @@ const router = createRouter({
           name: 'PlacePage',
           component: () => import('../views/PlacePage.vue')
         },
+      
         {
           path: '/edit-excursion',
           name: 'EditExcursion',
@@ -279,6 +290,37 @@ const router = createRouter({
           }
         },
         {
+          path: '/create-guide',
+          name: 'CreateGuide',
+          component: () => import('../views/CreateGuide.vue'),
+          beforeEnter: async (to, from) => {
+            let userStore = useAuth()
+            if (!localStorage.getItem('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+
+            if (!userStore.isAuth)
+              return '/auth'
+            return true
+            // if (!userStore.user?.roles?.includes('manager')) {
+            //   return false
+            // }
+          }
+        },
+        {
+          path: 'edit-guide',
+          name: 'EditGuide',
+          component: () => import('../views/EditGuide.vue'),
+                    beforeEnter: async (to, from) => {
+            let userStore = useAuth()
+            if (!localStorage.getItem('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+
+            if (!userStore.isAuth)
+              return '/auth'
+            return true
+          }
+        },
+        {
           path: '/create-bus',
           component: () => import('../components/admin/CreateBus.vue'),
         },
@@ -361,11 +403,6 @@ const router = createRouter({
           component: () => import('../components/_guide/Relax.vue')
         },
         {
-          path: '/guides',
-          name: 'Guides',
-          component: () => import('../components/_guide/Guides.vue')
-        },
-        {
           path: '/souvenirs',
           name: 'Souvenirs',
           component: () => import('../components/_guide/Souvenirs.vue')
@@ -440,6 +477,11 @@ const router = createRouter({
               path: 'excursion-bookings',
               name: 'ExcursionBookings',
               component: () => import('../components/_cabinet/ExcursionBookings.vue'),
+            },
+            {
+              path: 'cabinet-guides',
+              name: 'CabinetGuides',
+              component: () => import('../components/_cabinet/CabinetGuides.vue'),
             },
             {
               path: 'created-trips',
@@ -605,6 +647,34 @@ const router = createRouter({
               ]
             },
             {
+              path: 'moderation-guides',
+              name: 'GuidesModeration',
+              component: () => import('../components/admin/GuidesOnModeration.vue'),
+              beforeEnter: () => {
+                let userStore = useAuth()
+                if (!userStore.user?.roles.includes('manager')) {
+                  return false
+                }
+              },
+              children: [
+                {
+                  path: 'on-moderation',
+                  name: 'GuidesOnModeration',
+                  component: () => import('../components/admin/guidesOnModeration/onModeration.vue'),
+                },
+                {
+                  path: 'rejected',
+                  name: 'RejectedGuides',
+                  component: () => import('../components/admin/guidesOnModeration/rejected.vue'),
+                },
+                {
+                  path: 'manage',
+                  name: 'ManageGuides',
+                  component: () => import('../components/admin/guidesOnModeration/manage.vue'),
+                },
+              ]
+            },
+            {
               path: 'interface',
               name: 'Interface',
               component: () => import('../components/admin/Interface.vue'),
@@ -633,6 +703,17 @@ const router = createRouter({
               beforeEnter: () => {
                 let userStore = useAuth()
                 if (!userStore.user?.roles.includes('manager')) {
+                  return false
+                }
+              }
+            },
+            {
+              path: 'guides',
+              name: 'AdminGuides',
+              component: () => import('../components/admin/Guide.vue'),
+              beforeEnter: () => {
+                let userStore = useAuth()
+                if (!userStore.user?.roles.includes('admin')) {
                   return false
                 }
               }
@@ -729,6 +810,19 @@ const router = createRouter({
           path: '/catalog-trip-moderation',
           name: 'CatalogTripModeration',
           component: () => import('../components/admin/CatalogTripModeration.vue'),
+          beforeEnter: async () => {
+            let userStore = useAuth()
+            if (!localStorage.getItem('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+            if (!userStore.user?.roles.includes('manager')) {
+              return false
+            }
+          }
+        },
+        {
+          path: '/guide-moderation',
+          name: 'GuideModeration',
+          component: () => import('../components/admin/GuideModeration.vue'),
           beforeEnter: async () => {
             let userStore = useAuth()
             if (!localStorage.getItem('token') || !userStore.isAuth)

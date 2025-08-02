@@ -8,6 +8,7 @@ export default {
     return $api.post('/places/delete', { id })
   },
   async uploadPlaceImages(images) {
+    // console.log(images)
     return $api.post('/places/upload-images', images)
   },
   getAll(page, query) {

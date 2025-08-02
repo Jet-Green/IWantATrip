@@ -137,6 +137,14 @@ onMounted(() => {
           создать экскурсию
         </a-button>
       </a-col>
+       <a-col>
+        <a-button
+          class="btn_light ma-8"
+          @click="router.push('/create-guide')"
+        >
+          добавить гида
+        </a-button>
+      </a-col>
       <a-col>
         <a-button class="btn_light ma-8" @click="router.push('/create-place')">
           создать место

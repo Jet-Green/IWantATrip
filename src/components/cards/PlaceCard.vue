@@ -49,7 +49,7 @@ onMounted(async () => {
 
   <Transition name="fade">
     <div v-show="isVisible">
-      <p style="text-align: center; font-size: clamp(1.125rem, 0.925rem + 0.8vw, 1.375rem);" @click="toggleCols"> {{ place?.name }}</p>
+      <p style="text-align: center; font-size: clamp(1.125rem, 0.925rem + 0.8vw, 1.375rem); font-weight: 700;" @click="toggleCols"> {{ place?.name }}</p>
       <div class="text" style="text-align: center">{{ place?.category?.toLowerCase() }} </div>
       <p @click="toggleCols" class="text"><i>{{ place?.shortDescription }}</i> </p>
 

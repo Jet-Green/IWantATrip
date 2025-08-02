@@ -7,6 +7,7 @@ import _ from "lodash"
 
 import { useRoute, useRouter } from "vue-router";
 import { useExcursion } from "../../stores/excursion";
+import { useGuide } from "../../stores/guide";
 
 
 const route = useRoute();
@@ -14,6 +15,7 @@ const router = useRouter();
 const _id = route.query._id;
 
 const excursionStore = useExcursion();
+const guideStore = useGuide()
 
 
 let excursion = ref({});
@@ -33,6 +35,18 @@ function getImg(index) {
 onMounted(async () => {
   let response = await excursionStore.getExcursionById(_id);
   excursion.value = response.data;
+  let guideList=[]
+  for (let guideId of excursion.value.guides){
+    let guide = await guideStore.getGuideById(guideId)
+    guide=guide.data
+    // console.log(guide,guideId)
+    guideList.push({
+      image:guide.image,
+      label: guide.name + ' ' + guide.surname,
+      _id: guideId
+    })
+  }
+  excursion.value.guides=guideList
 });
 </script>
 <template>
@@ -80,11 +94,12 @@ onMounted(async () => {
               Продолжительность: <b>{{ excursion.duration }}</b>
             </div>
 
-            <div class="d-flex">
-              Гиды: &nbsp
-              <div v-for="guide in excursion.guides">
-                <b>{{ guide.name }} </b>
-              </div>
+            <div>
+              Гиды:
+              <a-card v-for="guide in excursion.guides" class="mr-8 mb-8 text guide_button" hoverable @click="router.push(`/guide?_id=${guide._id}`)">
+               <a-avatar size="large" :src="guide.image" class="mr-16"></a-avatar>
+               <b class="mr-4">{{ guide.label }}</b>
+              </a-card>
             </div>
 
             <div class="d-flex">
@@ -141,5 +156,10 @@ onMounted(async () => {
 .month {
   font-weight: 600;
   font-size: clamp(0.9375rem, 0.6889rem + 0.7102vw, 1.25rem);
+}
+.guide_button{
+  cursor: pointer; 
+  border: black 1px solid;
+  width: fit-content;
 }
 </style>
