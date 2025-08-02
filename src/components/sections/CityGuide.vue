@@ -26,7 +26,7 @@ let cards = ref([
 
   },
   {
-    title: "Афиша",
+    title: "Афиши",
     icon: "mdi-movie-roll",
     route: "/poster",
     isShow: true,
