@@ -8,8 +8,9 @@ import { useGuide } from '../stores/guide';
 import { useAuth } from '../stores/auth';
 import ImageCropper from '../components/ImageCropper.vue';
 
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 const router = useRouter();
+const route = useRoute()
 
 let guideStore = useGuide()
 let userStore = useAuth()
@@ -20,6 +21,7 @@ const errorMsg = ref('');
 const guide = ref({
     _id: '',
     name: '',
+    user:'',
     surname: '',
     image: '',
     email: '',
@@ -28,7 +30,7 @@ const guide = ref({
     socialMedia: '',
     description: '',
     location: null,
-    type: "Знаток города",
+    type: "",
     isModerated:false,
     isRejected:false,
 });
@@ -39,8 +41,8 @@ const guideTypes = ref([
 let formSchema = yup.object({
     name: yup.string().required("заполните поле"),
     surname: yup.string().required("заполните поле"),
-    email: yup.string().required("заполните поле").email('неверный формат'),
-    phone: yup.string().required("заполните поле"),
+    // email: yup.string().required("заполните поле").email('неверный формат'),
+    // phone: yup.string().required("заполните поле"),
     offer: yup.string().required("заполните поле"),
     description: yup.string().required("заполните поле"),
 });
@@ -60,8 +62,9 @@ async function fetchGuideData() {
     isLoading.value = true;
     errorMsg.value = '';
     clearNewImageSelection();
+    let _id = route.query._id
     try {
-        const response = await guideStore.getGuideByEmail(userStore.user.email);
+        const response = await guideStore.getGuideById(_id);
         if (response.data) {
             guide.value = Object.assign(guide.value,response.data);
             guide.value.isModerated = false
@@ -232,7 +235,7 @@ onMounted(() => {
                         <a-row :gutter="[16, 16]">
 
                             <a-col :span="24">
-                                <h4>Фотография</h4>
+                                <h4>Фотография *</h4>
                                 <div class="image-preview-container mb-8" v-if="imageUrl">
                                     <img :src="imageUrl" alt="Предпросмотр фото" class="preview-image"
                                         @error="handleImgError" />
@@ -246,8 +249,8 @@ onMounted(() => {
 
                             <a-col :span="24">
                                 <Field name="name" v-slot="{ value, handleChange }" v-model="guide.name">
-                                    Имя
-                                    <a-input placeholder="Введите имя" @update:value="handleChange" :value="value"
+                                    Имя *
+                                    <a-input placeholder="Иван" @update:value="handleChange" :value="value"
                                         allow-clear></a-input>
                                 </Field>
                                 <Transition name="fade">
@@ -257,8 +260,8 @@ onMounted(() => {
 
                             <a-col :span="24">
                                 <Field name="surname" v-slot="{ value, handleChange }" v-model="guide.surname">
-                                    Фамилия
-                                    <a-input placeholder="Введите фамилию" @update:value="handleChange" :value="value"
+                                    Фамилия *
+                                    <a-input placeholder="Петров" @update:value="handleChange" :value="value"
                                         allow-clear></a-input>
                                 </Field>
                                 <Transition name="fade">
@@ -269,7 +272,7 @@ onMounted(() => {
                             <a-col :span="24">
                                 <Field name="email" v-slot="{ value, handleChange }" v-model="guide.email">
                                     Email (Логин)
-                                    <a-input placeholder="Email пользователя" :value="value" disabled></a-input>
+                                    <a-input placeholder="petrov@yandex.ru" :value="value" disabled></a-input>
                                 </Field>
                                 <Transition name="fade">
                                     <ErrorMessage name="email" class="error-message" />
@@ -279,7 +282,7 @@ onMounted(() => {
                             <a-col :span="24">
                                 <Field name="phone" v-slot="{ value, handleChange }" v-model="guide.phone">
                                     Телефон
-                                    <a-input placeholder="+7 (XXX) XXX-XX-XX" @update:value="handleChange" :value="value"
+                                    <a-input placeholder="89099099090" @update:value="handleChange" :value="value"
                                         allow-clear></a-input>
                                 </Field>
                                 <Transition name="fade">
@@ -289,7 +292,7 @@ onMounted(() => {
 
                             <a-col :span="24">
                                 <Field name="location" v-slot="{ value, handleChange }" v-model="locationSearchRequest">
-                                    Локация / Город
+                                    Локация / Город *
                                     <a-auto-complete :value="value" @update:value="handleChange" style="width: 100%"
                                         :options="possibleLocations" placeholder="Город или регион работы"
                                         @select="selectLocation">
@@ -302,7 +305,7 @@ onMounted(() => {
 
                             <a-col :span="24">
                                 <Field name="type" v-slot="{ value, handleChange }" v-model="guide.type">
-                                    Тип
+                                    Тип *
                                     <a-radio-group @update:value="handleChange" :value="value" :options="guideTypes"
                                         style="width: 100%;" />
                                 </Field>
@@ -324,7 +327,7 @@ onMounted(() => {
 
                             <a-col :span="24">
                                 <Field name="offer" v-slot="{ value, handleChange }" v-model="guide.offer">
-                                    Краткое описание
+                                    Краткое описание *
                                     <a-textarea @update:value="handleChange" :value="value"
                                         placeholder="Например: Исторические туры по центру города, Гастрономические экскурсии"
                                         :rows="2" allow-clear show-count :maxlength="60" />
@@ -336,7 +339,7 @@ onMounted(() => {
 
                             <a-col :span="24">
                                 <Field name="description" v-slot="{ value, handleChange }" v-model="guide.description">
-                                    Описание
+                                    Описание *
                                     <a-textarea @update:value="handleChange" :value="value"
                                         placeholder="Расскажите подробнее о себе и своих услугах" :rows="5" allow-clear
                                         show-count :maxlength="1000" />

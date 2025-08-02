@@ -7,15 +7,9 @@ const guideStore = useGuide()
 let router = useRouter()
 let query = reactive({
     search: "",
-    location: {
-        name: "",
-        shortName: "",
-        type: "Point",
-        coordinates: []
-    },
-    locationRadius: 0,
     isModerated: false,
     isRejected: true,
+     isHidden: { $exists: true }
 })
 
 let showMoreButton = ref(true)
@@ -40,18 +34,12 @@ let refreshGuides = async () => {
   page = 1
   postersLength = 0
   await guideStore.getGuides(page, query)
-  if (guideStore.guides.length < 20) {
-    showMoreButton.value = false
-  } else {
-    showMoreButton.value = true
-  }
+
 }
 
 onMounted(async () => {
   await refreshGuides()
-  if (guideStore.guides.length < 20) {
-    showMoreButton.value = false
-  }
+
 })
 </script>
 <template>

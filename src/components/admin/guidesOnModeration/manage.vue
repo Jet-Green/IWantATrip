@@ -8,40 +8,26 @@ const router = useRouter();
 
 let query = reactive({
     search: "",
-    location: {
-        name: "",
-        shortName: "",
-        type: "Point",
-        coordinates: []
-    },
-    locationRadius: 0,
     isModerated: true,
     isRejected: false,
+    isHidden: { $exists: true }
 })
 
 let showMoreButton = ref(true)
-let postersLength = 0
 let page = 1
 
 let moreGuides = async () => {
   page++
   let res = await guideStore.getGuides(page, query)
 
-  if (res.length == postersLength) {
-    showMoreButton.value = false
-  }
-  postersLength = res.length
+
 
 }
 let refreshGuides = async () => {
   page = 1
-  postersLength = 0
+
   await guideStore.getGuides(page, query)
-  if (guideStore.guides.length < 20) {
-    showMoreButton.value = false
-  } else {
-    showMoreButton.value = true
-  }
+
 }
 
 
@@ -58,9 +44,7 @@ const hideGuide = async (_id,isHidden) => {
 
 onMounted(async () => {
   await refreshGuides()
-  if (guideStore.guides.length < 20) {
-    showMoreButton.value = false
-  }
+
 })
 
 </script>
@@ -105,7 +89,7 @@ onMounted(async () => {
                         <span v-else class="mdi mdi-eye-off-outline"></span>
                     </a-popconfirm>
 
-                    <span class="mdi mdi-pencil" @click="router.push(`/edit-place?_id=${place._id}&is_admin=${true}`)"
+                    <span class="mdi mdi-pencil" @click="router.push(`/edit-guide?_id=${g._id}&is_admin=${true}`)"
                         style="color: #245159; cursor: pointer"></span>
                 </div>
             </a-card>

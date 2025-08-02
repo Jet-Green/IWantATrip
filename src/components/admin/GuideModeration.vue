@@ -43,7 +43,6 @@ async function sendGuideModerationMessage() {
 onMounted(async () => {
   let { data } = await guideStore.getGuideById(route.query._id);
   // let { data } = await guideStore.getGuideByEmail('qwerty@qwerty');
-  console.log(data)
   guide.value = data;
   isModerated.value = guide.value.isModerated;
   moderationMessage.value = guide.value.moderationMessage;
@@ -69,10 +68,11 @@ onMounted(async () => {
 
           </a-card-meta>
           <div class="mt-8 card-content">
-            <div><b>О себе:</b> {{ guide.description }}</div>
-            <div> {{ guide.offer }}</div>
+            <div><b>Краткое описание:</b> {{ guide.offer }}</div>
+            <div><b>Описание:</b> {{ guide.description }}</div>
 
-            <div v-if="guide.location"><b>Локации:</b> {{ guide.location }}</div>
+            <div v-if="guide.type"><b>Статус:</b> {{ guide.type }}</div>
+            <div v-if="guide.location"><b>Локации:</b> {{ guide.location.name }}</div>
             <div v-if="guide.phone"><b>Тел:</b> {{ guide.phone }}</div>
             <div v-if="guide.email"><b>Email:</b> {{ guide.email }}</div>
             <div v-if="guide.socialMedia"><b>Соц.сеть:</b> <a :href="guide.socialMedia" target="_blank"

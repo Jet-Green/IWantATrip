@@ -7,19 +7,13 @@ const guideStore = useGuide()
 let router = useRouter()
 let query = reactive({
     search: "",
-    location: {
-        name: "",
-        shortName: "",
-        type: "Point",
-        coordinates: []
-    },
-    locationRadius: 0,
     isModerated: false,
     isRejected: false,
+    isHidden:false
 })
 
 let showMoreButton = ref(true)
-let postersLength = 0
+
 let page = 1
 
 // let moreGuides = async () => {
@@ -34,20 +28,14 @@ let page = 1
 
 let refreshGuides = async () => {
   page = 1
-  postersLength = 0
+
   await guideStore.getGuides(page, query)
-  if (guideStore.guides.length < 20) {
-    showMoreButton.value = false
-  } else {
-    showMoreButton.value = true
-  }
+
 }
 
 onMounted(async () => {
   await refreshGuides()
-  if (guideStore.guides.length < 20) {
-    showMoreButton.value = false
-  }
+
 })
 </script>
 <template>
@@ -93,7 +81,7 @@ onMounted(async () => {
                     </div>
             </a-card>
     </a-col>
-    <a-col :span="24" v-else> Нет мест на модерации </a-col>
+    <a-col :span="24" v-else> Нет гидов на модерации </a-col>
   </a-row>
 </template>
 <style scoped lang="scss">

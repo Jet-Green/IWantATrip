@@ -2,10 +2,10 @@
 import { ref, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
 
-let tripsStatus = ref('guidesOnModeration')
+let guidesStatus = ref('guidesOnModeration')
 let router = useRouter();
 
-watch(tripsStatus, (status) => {
+watch(guidesStatus, (status) => {
     localStorage.setItem("moderationGuidesStatus", status)
     if (status === 'guidesOnModeration') {
         return router.push('/cabinet/moderation-guides/on-moderation')
@@ -18,14 +18,14 @@ watch(tripsStatus, (status) => {
     }
 });
 onMounted(() => {
-    tripsStatus.value = localStorage.getItem("moderationGuidesStatus") ? localStorage.getItem("moderationGuidesStatus") : 'guidesOnModeration'
+    guidesStatus.value = localStorage.getItem("moderationGuidesStatus") ? localStorage.getItem("moderationGuidesStatus") : 'guidesOnModeration'
 });
 </script>
 <template>
     <a-row>
         <a-col :span="24">
             <h3>Гиды на модерации</h3>
-            <a-radio-group v-model:value="tripsStatus">
+            <a-radio-group v-model:value="guidesStatus">
                 <a-radio value="guidesOnModeration">На модерации</a-radio>
                 <a-radio value="rejected">Откaзaнные</a-radio>
                 <a-radio value="manage">Управление</a-radio>

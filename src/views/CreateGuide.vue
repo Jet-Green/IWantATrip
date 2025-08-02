@@ -24,6 +24,7 @@ const guide = ref({
     image: '',
     email: '',
     phone: '',
+    user: userStore.user._id,
     offer: '',
     socialMedia: '',
     description: '',
@@ -37,8 +38,8 @@ const guideTypes = ref([
 let formSchema = yup.object({
     name: yup.string().required("заполните поле"),
     surname: yup.string().required("заполните поле"),
-    email: yup.string().required("заполните поле").email('неверный формат'),
-    phone: yup.string().required("заполните поле"),
+    // email: yup.string().required("заполните поле").email('неверный формат'),
+    // phone: yup.string().required("заполните поле"),
     offer: yup.string().required("заполните поле"),
     description: yup.string().required("заполните поле"),
 });
@@ -215,7 +216,7 @@ function handleImgError() {
 
 
                         <a-col :span="24">
-                            <h4>Фотография</h4>
+                            <h4>Фотография *</h4>
                             <div class="image-preview-container mb-8" v-if="imageUrl">
                                 <img :src="imageUrl" alt="Предпросмотр фото" class="preview-image"
                                     @error="handleImgError" />
@@ -229,8 +230,8 @@ function handleImgError() {
 
                         <a-col :span="24">
                             <Field name="name" v-slot="{ value, handleChange }" v-model="guide.name">
-                                Имя
-                                <a-input placeholder="Введите имя" @update:value="handleChange" :value="value"
+                                Имя *
+                                <a-input placeholder="Иван" @update:value="handleChange" :value="value"
                                     allow-clear></a-input>
                             </Field>
                             <Transition name="fade">
@@ -240,8 +241,8 @@ function handleImgError() {
 
                         <a-col :span="24">
                             <Field name="surname" v-slot="{ value, handleChange }" v-model="guide.surname">
-                                Фамилия
-                                <a-input placeholder="Введите фамилию" @update:value="handleChange" :value="value"
+                                Фамилия *
+                                <a-input placeholder="Петров" @update:value="handleChange" :value="value"
                                     allow-clear></a-input>
                             </Field>
                             <Transition name="fade">
@@ -252,7 +253,7 @@ function handleImgError() {
                         <a-col :span="24">
                             <Field name="email" v-slot="{ value, handleChange }" v-model="guide.email">
                                 Email (Логин)
-                                <a-input placeholder="Email пользователя" @update:value="handleChange" :value="value"
+                                <a-input placeholder="petrov@yandex.ru" @update:value="handleChange" :value="value"
                                     allow-clear></a-input>
                             </Field>
                             <Transition name="fade">
@@ -263,7 +264,7 @@ function handleImgError() {
                         <a-col :span="24">
                             <Field name="phone" v-slot="{ value, handleChange }" v-model="guide.phone">
                                 Телефон
-                                <a-input placeholder="+7 (XXX) XXX-XX-XX" @update:value="handleChange" :value="value"
+                                <a-input placeholder="89099099090" @update:value="handleChange" :value="value"
                                     allow-clear></a-input>
                             </Field>
                             <Transition name="fade">
@@ -273,7 +274,7 @@ function handleImgError() {
 
                         <a-col :span="24">
                             <Field name="location" v-slot="{ value, handleChange }" v-model="locationSearchRequest">
-                                Локация / Город
+                                Локация / Город *
                                 <a-auto-complete :value="value" @update:value="handleChange" style="width: 100%"
                                     :options="possibleLocations" placeholder="Город или регион работы"
                                     @select="selectLocation">
@@ -286,7 +287,7 @@ function handleImgError() {
 
                         <a-col :span="24">
                             <Field name="type" v-slot="{ value, handleChange }" v-model="guide.type">
-                                Тип
+                                Тип *
                                 <a-radio-group @update:value="handleChange" :value="value" :options="guideTypes"
                                     style="width: 100%;" />
                             </Field>
@@ -308,7 +309,7 @@ function handleImgError() {
 
                         <a-col :span="24">
                             <Field name="offer" v-slot="{ value, handleChange }" v-model="guide.offer">
-                                Краткое описание
+                                Краткое описание *
                                 <a-textarea @update:value="handleChange" :value="value"
                                     placeholder="Например: Исторические туры по центру города, Гастрономические экскурсии"
                                     :rows="2" allow-clear show-count :maxlength="60" />
@@ -320,7 +321,7 @@ function handleImgError() {
 
                         <a-col :span="24">
                             <Field name="description" v-slot="{ value, handleChange }" v-model="guide.description">
-                                Описание
+                                Описание *
                                 <a-textarea @update:value="handleChange" :value="value"
                                     placeholder="Расскажите подробнее о себе и своих услугах" :rows="5" allow-clear
                                     show-count :maxlength="1000" />
@@ -334,7 +335,7 @@ function handleImgError() {
                     <a-col :span="24" class="d-flex justify-center">
 
                         <a-button class="lets_go_btn ma-36" type="primary" html-type="submit"
-                            :disabled="!meta.valid || !isLocationValid || !/^\d{11}$/.test(guide.phone)">Добавить гида
+                            :disabled="!meta.valid || !isLocationValid">Добавить гида
                         </a-button>
                     </a-col>
                 </Form>
