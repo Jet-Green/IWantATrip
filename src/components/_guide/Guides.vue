@@ -16,8 +16,8 @@ let query = reactive({
   isHidden: false,
 })
 const backRoute = { name: 'Landing', hash: '#guide' };
-let showMoreButton = ref(true)
 let guidesLength = 0
+let showMoreButton = ref(true)
 let page = 1
 
 let moreGuides = async () => {

@@ -246,11 +246,11 @@ const fetchGuides = async (guide) => {
   guidesFetching.value = true;
   if (guide.trim().length > 2 && guide.length > previousGuide.value.length) {
     // console.log('fetching guide', guide);
-    let suggestions = await guideStore.getGuides({strQuery: guide, isModerated:true, isRejected:false, isHidden:false})
+    let suggestions = await guideStore.getGuides(1,{strQuery: guide, isModerated:true, isRejected:false, isHidden:false})
     // console.log('suggestions', suggestions);
     possibleGuides.value = []
     let count = 0
-    for (let s of suggestions?.data?.data) {
+    for (let s of suggestions) {
       let option = {
         label: s.name+' '+s.surname,
         value: s._id,

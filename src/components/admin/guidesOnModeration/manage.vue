@@ -19,15 +19,10 @@ let page = 1
 let moreGuides = async () => {
   page++
   let res = await guideStore.getGuides(page, query)
-
-
-
 }
 let refreshGuides = async () => {
   page = 1
-
   await guideStore.getGuides(page, query)
-
 }
 
 
