@@ -243,7 +243,7 @@ onMounted(async () => {
           <a-row :gutter="[16, 16]">
             <a-col :span="24">
               <h2>Редактировать тур из каталога</h2>
-              {{ form.images }}
+            
               <Field name="name" v-slot="{ value, handleChange }" v-model="form.name">
                 Название
                 <a-input placeholder="Название тура" @update:value="handleChange" :value="value" :maxlength="50"
