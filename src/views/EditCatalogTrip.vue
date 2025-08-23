@@ -41,6 +41,7 @@ let previews = ref([]);
 // отправляем на сервер
 let images = []; // type: blob
 let locationSearchRequest = ref("")
+let clearingImg = true
 // необходимо добавить поле количество людей в туре
 let form = ref({
   _id: "",
@@ -108,9 +109,10 @@ async function submit() {
   }
   form.value.isModerated = false
   if (!clearingImg) {
-    await uploadTripImages(form.value._id)
+    uploadTripImages(form.value._id)
+    delete form.value.images
   }
-  delete form.value.images
+  
 
   TripStore.editCatalogTrip(form.value._id, form.value).then(() => {
     message.config({ duration: 1.5, top: "70vh" });
@@ -123,7 +125,7 @@ async function submit() {
 
 }
 
-let clearingImg = true
+
 function addPreview(blob) {
   if (clearingImg) {
     clearingImg = false;
@@ -222,9 +224,8 @@ onMounted(async () => {
   const tripId = route.query.id;
   let res = await TripStore.getFullCatalogById(tripId)
   form.value = res.data
-  if (form?.value?.startLocation?.name)
-  {locationSearchRequest.value = form.value.startLocation.name}
-  else{
+  if (form?.value?.startLocation?.name) { locationSearchRequest.value = form.value.startLocation.name }
+  else {
     locationSearchRequest.value = ""
   }
 
@@ -242,6 +243,7 @@ onMounted(async () => {
           <a-row :gutter="[16, 16]">
             <a-col :span="24">
               <h2>Редактировать тур из каталога</h2>
+              {{ form.images }}
               <Field name="name" v-slot="{ value, handleChange }" v-model="form.name">
                 Название
                 <a-input placeholder="Название тура" @update:value="handleChange" :value="value" :maxlength="50"
@@ -252,6 +254,7 @@ onMounted(async () => {
               </Transition>
             </a-col>
             <a-col :xs="24">
+
               Фотографии
               <div class="d-flex" style="overflow-x: scroll">
                 <img v-for="(pr, i) in form.images" :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
@@ -282,7 +285,7 @@ onMounted(async () => {
                 Тип тура
                 <div>
                   <a-select @update:value="handleChange" :value="value" style="width: 100%">
-                    <a-select-option v-for="   tripType in appStore.appState[0].tripType   " :value="tripType">{{
+                    <a-select-option v-for="tripType in appStore.appState[0].tripType" :value="tripType">{{
                       tripType
                       }}</a-select-option>
                   </a-select>
