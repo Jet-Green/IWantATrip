@@ -27,6 +27,30 @@ export const useLocations = defineStore('locations', {
                 console.log(err);
             }
         },
+        async createLocation(location) {
+            try {
+                const response = await LocationService.createLocation(location);
+                return response
+            } catch (err) {
+                console.log(err);
+            }
+        },
+        async searchLocation(name) {
+            try {
+                const response = await LocationService.searchLocation(name);
+                return response
+            } catch (err) {
+                console.log(err);
+            }
+        },
+        async uploadImage(image) {
+            try {
+                const response = await LocationService.uploadImage(image);
+                return response
+            } catch (err) {
+                console.log(err);
+            }
+        },
         /*  newLocation:
             _id
             name
