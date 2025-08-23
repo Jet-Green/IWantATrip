@@ -141,10 +141,6 @@ const handleImageChange = async (event) => {
     };
   }
 };
-onMounted(async()=>{
-  let sus = await locationStore.searchLocation("Свердловская обл, г Североуральск, тер В районе улиц Малышева-Островского")
-  console.log(sus)
-})
 </script>
 
 <template>
