@@ -1,10 +1,11 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted,watch } from 'vue'
 import { useRouter } from 'vue-router';
 import { useAppState } from '../../stores/appState';
 import Bus from '../Bus.vue';
 import { useBus } from '../../stores/bus';
 import ExcursionTypes from './ExcursionTypes.vue';
+import LocationsImage from './LocationsImage.vue';
 
 import { message } from 'ant-design-vue';
 
@@ -84,6 +85,7 @@ async function deleteTripRegion(tripRegionName) {
     }
 }
 
+
 onMounted(async () => {
     if (!appStateStore.appState) {
         await appStateStore.refreshState();
@@ -147,6 +149,10 @@ onMounted(async () => {
             </a-popconfirm>
         </a-col>
     </a-row>
+    <a-row class="mb-24">
+        <LocationsImage />
+    </a-row>
+
 
     <a-row class="mb-24">
         <a-col :span="24">

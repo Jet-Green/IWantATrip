@@ -9,5 +9,11 @@ export default {
     },
     selectUserLocation(location, userId) {
         return $api.post(`/location/select-user-location?user_id=${userId}`, location)
-    }
+    },
+    createLocation(location) {
+        return $api.post(`/location/create-location`, {location})
+    },
+    uploadImage(image) {
+        return $api.post(`/location/upload-image`, image)
+    },
 }
