@@ -5,6 +5,7 @@ import ImageCropper from "../components/ImageCropper.vue";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import _ from 'lodash';
+import { message } from "ant-design-vue";
 
 import { useRouter } from 'vue-router';
 import { useExcursion } from '../stores/excursion'
@@ -31,8 +32,8 @@ let guidesFetching = ref(true)
 let previousGuide = ref('')
 
 let visibleCropperModal = ref(false);
-let previews = ref(localStorage.getItem('createExcursionImages') ? JSON.parse(localStorage.getItem('createExcursionImages')) : []);
-let images = localStorage.getItem('createExcursionImages') ? JSON.parse(localStorage.getItem('createExcursionImages')) : []; // type: blob
+let previews = ref([]);
+let images = []; // type: blob
 const delPhotoDialog = ref(false);
 // add img
 let targetIndex = ref()
@@ -115,25 +116,36 @@ function addPreview(blob) {
   visibleCropperModal.value = false;
   images.push(blob);
   previews.value.push(URL.createObjectURL(blob));
-  localStorage.setItem('createExcursionImages', JSON.stringify(previews.value))
+  // localStorage.setItem('createExcursionImages', JSON.stringify(previews.value))
 }
 const delPhoto = () => {
   previews.value.splice(targetIndex.value, 1);
   images.splice(targetIndex.value, 1);
   delPhotoDialog.value = false;
-  localStorage.setItem('createExcursionImages', JSON.stringify(previews.value))
+  // localStorage.setItem('createExcursionImages', JSON.stringify(previews.value))
 };
 function handleImgError(i) {
   previews.value.splice(i, 1)
   images.splice(i, 1)
-  localStorage.setItem('createExcursionImages', JSON.stringify(previews.value))
+  // localStorage.setItem('createExcursionImages', JSON.stringify(previews.value))
 }
 function clearForm() {
   localStorage.removeItem('createExcursionImages')
   localStorage.removeItem('createExcursionForm')
 }
 async function submit() {
+  if (!images.length) {
+    message.config({ duration: 1.5, top: "70vh" });
+    message.error({
+      content: "Добавьте фото", onClose: () => {
+        close()
+        localStorage.setItem('CreatingTrip', form)
+      },
+    });
+    return
+  }
   form.author = user_id
+
   if (userStore.user?.tinkoffContract?.shopInfo) {
     let t = userStore.user.tinkoffContract
     form.tinkoffContract = {
@@ -146,6 +158,7 @@ async function submit() {
   let excursionCb = await excursionStore.create(form)
   const _id = excursionCb.data._id
   let imagesFormData = new FormData();
+
   for (let i = 0; i < images.length; i++) {
     imagesFormData.append(
       "excursion-image",
@@ -156,8 +169,8 @@ async function submit() {
   let res = await excursionStore.uploadImages(imagesFormData)
   if (res.status == 200) {
     router.push('/cabinet/me')
-    clearForm()
   }
+   clearForm()
 }
 
 let getExcursionDirections = computed(() => {
@@ -268,26 +281,26 @@ const fetchGuides = async (guide) => {
   guidesFetching.value = true;
   if (guide.trim().length > 2 && guide.length > previousGuide.value.length) {
     // console.log('fetching guide', guide);
-    let suggestions = await guideStore.getGuides(1,{search: guide, isModerated:true, isRejected:false, isHidden:false})
+    let suggestions = await guideStore.getGuides(1, { search: guide, isModerated: true, isRejected: false, isHidden: false })
     // console
     // console.log('suggestions', suggestions);
     possibleGuides.value = []
     let count = 0
     for (let s of suggestions) {
       let option = {
-        label: s.name+' '+s.surname,
+        label: s.name + ' ' + s.surname,
         value: s._id,
         icon: s.image,
-    }
+      }
       count++
 
       possibleGuides.value.push(option)
-    if (count==5){
-      break
-    }
+      if (count == 5) {
+        break
+      }
     }
   }
-  previousGuide.value=guide
+  previousGuide.value = guide
   guidesFetching.value = false;
 };
 const selectGuide = async (guide) => {
@@ -303,13 +316,14 @@ const removeGuide = async (guide) => {
 watch(form, (newValue) => {
   localStorage.setItem('createExcursionForm', JSON.stringify(newValue))
 }, { deep: true })
-onMounted(async()=>{
-  for (let id of form.guides){
+
+onMounted(async () => {
+  for (let id of form.guides) {
     let guide = await guideStore.getGuideById(id)
     chosenGuides.value.push({
-        label: guide.data.name+' '+guide.data.surname,
-        value: guide.data._id,
-        icon: guide.data.image,
+      label: guide.data.name + ' ' + guide.data.surname,
+      value: guide.data._id,
+      icon: guide.data.image,
     })
   }
 })
@@ -498,29 +512,21 @@ onMounted(async()=>{
               Экскурсовод
               <Field name="guides" v-slot="{ value, handleChange }" v-model="chosenGuides">
                 <!-- v-model:value="" -->
-                <a-select :value="value"
-                @update:value="handleChange"
-                style="width: 100%"
-                mode="multiple"
-                :options="possibleGuides" 
-                :filter-option="false"
-                placeholder="Глазов" 
-                :not-found-content="guidesFetching ? undefined : null"
-                @search="fetchGuides"
-                @select="selectGuide"
-                @deselect="removeGuide"
-                >
-                <template #option="{ value: value, label, icon }" class="pa-0" style="align-items: center;">
+                <a-select :value="value" @update:value="handleChange" style="width: 100%" mode="multiple"
+                  :options="possibleGuides" :filter-option="false" placeholder="Глазов"
+                  :not-found-content="guidesFetching ? undefined : null" @search="fetchGuides" @select="selectGuide"
+                  @deselect="removeGuide">
+                  <template #option="{ value: value, label, icon }" class="pa-0" style="align-items: center;">
                     <a-avatar :src=icon></a-avatar>
-                        &nbsp;&nbsp;{{ label }}
-                      </template>
+                    &nbsp;&nbsp;{{ label }}
+                  </template>
 
-                 <template v-if="guidesFetching" #notFoundContent>
-                  <a-spin size="small" />
-                 </template>
+                  <template v-if="guidesFetching" #notFoundContent>
+                    <a-spin size="small" />
+                  </template>
 
                 </a-select>
-              
+
                 <!-- <a-input placeholder="Александр Невский" @update:value="handleChange" :value="value" /> -->
               </Field>
               <Transition name="fade">

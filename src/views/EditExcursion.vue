@@ -32,8 +32,8 @@ let guidesFetching = ref(true)
 let previousGuide = ref('')
 
 let visibleCropperModal = ref(false);
-let previews = ref(localStorage.getItem('createExcursionImages') ? JSON.parse(localStorage.getItem('createExcursionImages')) : []);
-let images = localStorage.getItem('createExcursionImages') ? JSON.parse(localStorage.getItem('createExcursionImages')) : []; // type: blob
+let previews = ref([]);
+let images = ref([]); // type: blob
 
 let delPhotoDialog = ref(false);
 let targetIndex = ref()
@@ -106,23 +106,20 @@ const addCost = () => {
   });
 };
 function addPreview(blob) {
-  // imagesFormData.append("image", blob, `product-${previews.value.length}`);
   visibleCropperModal.value = false;
-  images.push(blob);
-  previews.value.push(URL.createObjectURL(blob));
-  localStorage.setItem('createExcursionImages', JSON.stringify(previews.value))
+  images.value.push(blob);
+  previews.value.push(URL.createObjectURL(blob)); 
 }
 const delPhoto = () => {
   previews.value.splice(targetIndex.value, 1);
-  images.splice(targetIndex.value, 1);
+  form.images.splice(targetIndex.value, 1);
   delPhotoDialog.value = false;
-  localStorage.setItem('createExcursionImages', JSON.stringify(previews.value))
 };
-function handleImgError(i) {
-  previews.value.splice(i, 1)
-  images.splice(i, 1)
-  localStorage.setItem('createExcursionImages', JSON.stringify(previews.value))
-}
+// function handleImgError(i) {
+//   previews.value.splice(i, 1)
+//   images.splice(i, 1)
+//   localStorage.setItem('createExcursionImages', JSON.stringify(previews.value))
+// }
 function clearForm() {
   localStorage.removeItem('createExcursionImages')
   localStorage.removeItem('createExcursionForm')
@@ -138,21 +135,23 @@ async function submit() {
       Inn: t.inn
     }
   }
+ 
   let excursionCb = await excursionStore.edit(form)
+
   const _id = excursionCb.data._id
   let imagesFormData = new FormData();
-  for (let i = 0; i < images.length; i++) {
+  for (let i = 0; i < images.value.length; i++) {
     imagesFormData.append(
       "excursion-image",
-      new File([images[i]], _id + "_" + i + ".jpg"),
-      _id + "_" + i + ".jpg"
+     images.value[i] ,
+      _id +  '_' + Date.now() + '_'+ i + ".jpg"
     );
   }
   let res = await excursionStore.uploadImages(imagesFormData)
   if (res.status == 200) {
     router.push('/cabinet/me')
-    clearForm()
   }
+     clearForm()
 }
 
 let getExcursionDirections = computed(() => {
@@ -285,8 +284,9 @@ onMounted(async () => {
   let excursionId = route.query._id
   let response = await excursionStore.getExcursionById(excursionId)
   Object.assign(form,response.data)
-  images = form.images
-  previews = form.images
+ 
+ previews.value = [...response.data.images]
+
   if (typeof form.guides[0]=='string'){
     for (let id of form.guides){
       let guide = await guideStore.getGuideById(id)
@@ -364,7 +364,7 @@ onMounted(async () => {
               <div class="d-flex" style="overflow-x: scroll">
                 <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
                   @click="delPhotoDialog = true;
-                  targetIndex = i;" @error="handleImgError(i)" />
+                  targetIndex = i;"  />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
                 <span class="mdi mdi-12px mdi-plus"></span>
