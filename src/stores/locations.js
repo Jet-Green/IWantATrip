@@ -51,12 +51,16 @@ export const useLocations = defineStore('locations', {
                 console.log(err);
             }
         },
-        /*  newLocation:
-            _id
-            name
-            shortName 
-            coordinates
-        */
+        async deletePhotoFromLocation(_id) {
+           
+            try {
+                const response = await LocationService.deletePhotoFromLocation(_id);
+                return response
+            } catch (err) {
+                console.log(err);
+            }
+        },
+
         async setLocation(newLocation) {
 
             localStorage.setItem('location', JSON.stringify(newLocation))

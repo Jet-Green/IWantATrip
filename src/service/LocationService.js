@@ -16,4 +16,7 @@ export default {
     uploadImage(image) {
         return $api.post(`/location/upload-image`, image)
     },
+    deletePhotoFromLocation(_id) {
+          return $api.post(`/location/delete-photo`, {_id})
+    }
 }

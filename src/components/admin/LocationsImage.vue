@@ -1,8 +1,9 @@
 <script setup>
-import { ref,watch,onMounted } from 'vue';
+import { ref, watch, onMounted, computed } from 'vue';
 import { useLocations } from '../../stores/locations';
 
-let locationStore= useLocations()
+let locationStore = useLocations()
+
 let locationSearchRequest = ref("");
 let possibleLocations = ref([]);
 let location = ref({});
@@ -10,14 +11,30 @@ let image = ref({});
 let imageURL = ref({});
 let showImage = ref(false);
 
+let addImageDialog = ref(false)
+
+
 function selectStartLocation(selected) {
   for (let l of possibleLocations.value) {
     // l.value - name
     if (l.value == selected) {
-       location.value = l.location
+      location.value = l.location
     }
   }
 }
+function clear() {
+  location = ref({});
+  image = ref({});
+  imageURL = ref({});
+  showImage = ref(false);
+  addImageDialog.value = false
+}
+let locationWithImg = computed(() => {
+  return locationStore.locations.filter((location) => {
+    if (location.image) return location
+
+  })
+})
 
 watch(locationSearchRequest, async (newValue, oldValue) => {
   if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
@@ -74,65 +91,76 @@ watch(locationSearchRequest, async (newValue, oldValue) => {
   }
 })
 
-async function addPhotoToLocation(){
+async function addPhotoToLocation() {
+
   await locationStore.createLocation(location.value)
   let res = await locationStore.searchLocation(location.value.name)
-  let _id= res.data[0]?._id
+  let _id = res.data[0]?._id
   let imagesFormData = new FormData();
+  let timeStamp = Date.now()
   imagesFormData.append(
     "location-image",
-    new File([image.value], _id + "_" + 0 + ".jpg"),
-    _id + "_" + 0 + ".jpg"
+    new File([image.value], _id + "_" + timeStamp + ".jpg"),
+    _id + "_" + timeStamp + ".jpg"
   );
   await locationStore.uploadImage(imagesFormData)
+  await locationStore.fetchLocations()
+  clear()
+}
+
+async function deletePhotoFromLocation(_id) {
+
+  let res = await locationStore.deletePhotoFromLocation(_id)
+  if (res.status == 200) {
+    await locationStore.fetchLocations()
+  }
 }
 
 const handleImageChange = async (event) => {
   const file = event.target.files[0];
   if (file) {
-    image.value = file;
+    // Сохраняем оригинальный файл, если это необходимо
+    // image.value = file;
 
-    // Create an Image object to load the file
+    // Создаем объект Image для загрузки файла
     const img = new Image();
     const objectUrl = URL.createObjectURL(file);
     img.src = objectUrl;
 
     img.onload = () => {
-      // Define the crop dimensions for 16:9 aspect ratio
-      const cropWidth = 320; // Example width
-      const cropHeight = cropWidth * 9 / 16; // Height for 16:9 ratio (e.g., 180 for 320 width)
+      const maxWidth = 1000; // Желаемая ширина
+      let newWidth = img.width;
+      let newHeight = img.height;
 
-      // Create a canvas for cropping
+      // Если текущая ширина больше желаемой, уменьшаем ее
+      if (img.width > maxWidth) {
+        newWidth = maxWidth;
+        newHeight = img.height * (maxWidth / img.width); // Пропорционально уменьшаем высоту
+      }
+
+      // Создаем canvas для ресайза
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
 
-      // Calculate the center crop coordinates
-      const sourceWidth = img.width;
-      const sourceHeight = img.height;
-      const cropX = (sourceWidth - cropWidth) / 2; // Center horizontally
-      const cropY = (sourceHeight - cropHeight) / 2; // Center vertically
+      // Устанавливаем размеры canvas по новым значениям
+      canvas.width = newWidth;
+      canvas.height = newHeight;
 
-      // Set canvas size to the crop dimensions
-      canvas.width = cropWidth;
-      canvas.height = cropHeight;
+      // Отрисовываем изображение на canvas с новыми размерами
+      ctx.drawImage(img, 0, 0, newWidth, newHeight);
 
-      // Draw the cropped portion of the image
-      ctx.drawImage(
-        img,
-        cropX, cropY, cropWidth, cropHeight, // Source rectangle
-        0, 0, cropWidth, cropHeight // Destination rectangle
-      );
-
-      // Convert canvas to Blob and create a new URL
+      // Конвертируем canvas в Blob и создаем новый URL
       canvas.toBlob((blob) => {
-        image.value=blob
-        const croppedUrl = URL.createObjectURL(blob);
-        imageURL.value = croppedUrl;
+        image.value = blob; // Теперь image.value будет содержать Blob ресайзнутого изображения
+        const resizedUrl = URL.createObjectURL(blob);
+        imageURL.value = resizedUrl;
         showImage.value = true;
 
-        // Clean up the original object URL
+        // Очищаем оригинальный URL объекта
         URL.revokeObjectURL(objectUrl);
-      }, 'image/jpg', 1); // Use JPEG with 80% quality
+      }, 'image/jpeg', 0.8); // Используем JPEG с качеством 80%
+
+
     };
 
     img.onerror = () => {
@@ -144,66 +172,55 @@ const handleImageChange = async (event) => {
 </script>
 
 <template>
-  <a-col :span="24">
-    <h3>Добавить изображение к локации</h3>
-  </a-col>
-  <a-col :span="24">
-    <div class="inputs-container">
-      <div class="d-flex align-center space-between">
-        <a-auto-complete
-          v-model:value="locationSearchRequest"
-          size="large"
-          style="width: 100%;"
-          :options="possibleLocations"
-          placeholder="Глазов"
-          @select="selectStartLocation"
-        ></a-auto-complete>
-        <a-button type="primary" class="ml-12 lets_go_btn" @click="addPhotoToLocation">добавить</a-button>
-      </div>
-      <div class="upload-container mt-16">
-        <label for="image_uploads" class="image-select-button mr-16">Выберите фотографию для локации</label>
-        <input
-          type="file"
-          id="image_uploads"
-          name="image_uploads"
-          accept="image/png, image/jpeg, image/jpg"
-          @change="handleImageChange"
-          class="hide-btn mr-16"
-        />
-        <img v-if="showImage" :src="imageURL" alt="Cropped Image" />
-      </div>
+  <h3>Добавить изображение к локации</h3>
+  <a-col :span="24" class="d-flex">
+
+
+    <div style="width: 100px; margin: 2px;" v-for="location, index in locationWithImg" :key="index">
+      <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"
+        @confirm="() => { deletePhotoFromLocation(location._id) }">
+        <div>
+          <img style="width: 100%;" :src="location.image" alt="">
+
+        </div>
+        <div style="font-size: 8px; text-align: center;">{{ location.shortName }}</div>
+      </a-popconfirm>
     </div>
+
   </a-col>
+  <a-col :span="24" class="d-flex justify-end"><a-button type="primary" class="ml-12 lets_go_btn"
+      @click="addImageDialog = true">добавить</a-button></a-col>
+  <a-modal v-model:open="addImageDialog" :footer="null" @cancel="addImageDialog = false">
+
+    <h3>Добавить фотографию для локации</h3>
+    <div>Локация</div>
+    <div class="d-flex">
+      <a-auto-complete v-model:value="locationSearchRequest" size="large" style="width: 100%;"
+        :options="possibleLocations" placeholder="Глазов" @select="selectStartLocation"></a-auto-complete>
+    </div>
+    <div class="upload-container mt-16">
+      <label for="image_uploads"> <span class="mdi mdi-24px mdi-paperclip" style="cursor: pointer"></span>Выбери
+        фотографию
+      </label>
+      <input type="file" id="image_uploads" name="image_uploads" accept="image/png, image/jpeg, image/jpg"
+        @change="handleImageChange" class="hide-btn mr-16" />
+      <img v-if="showImage" :src="imageURL" alt="Cropped Image" />
+    </div>
+    <div class="d-flex justify-center">
+      <a-button type="primary" class="ma-12 lets_go_btn" @click="addPhotoToLocation">отправить</a-button>
+    </div>
+
+  </a-modal>
+
 </template>
 
 <style scoped>
 .hide-btn {
   display: none;
 }
+
 img {
   aspect-ratio: initial;
-  width: 320px;
-}
-.image-select-button {
-  border-style: solid;
-  border-width: 2px;
-  border-color: rgb(200, 200, 200);
-  width: fit-content;
-  padding: 4px;
-  transition: border-color 0.5s, transform 0.5s;
-}
-.image-select-button:hover {
-  cursor: pointer;
-  transform-origin: center;
-  border-color: orange;
-  transform: scale(1.01);
-}
-.inputs-container {
-  width: 100%;
-}
-.upload-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+  width: 300px;
 }
 </style>
