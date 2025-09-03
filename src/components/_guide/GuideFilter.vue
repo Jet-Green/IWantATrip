@@ -131,7 +131,7 @@ watch(locationSearchRequest, async (newValue, oldValue) => {
 })
 
 onMounted(async () => {
-  if (locationsStore?.location.name && !guideStore.filter.location.name) {
+  if (locationsStore?.location.name) {
     guideStore.filter.location.name = locationsStore?.location.name
     guideStore.filter.location.shortName = locationsStore?.location.shortName
     guideStore.filter.location.type = locationsStore?.location.type
