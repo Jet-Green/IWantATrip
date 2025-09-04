@@ -312,7 +312,7 @@ function handleImgError() {
                                 Краткое описание *
                                 <a-textarea @update:value="handleChange" :value="value"
                                     placeholder="Например: Исторические туры по центру города, Гастрономические экскурсии"
-                                    :rows="2" allow-clear show-count :maxlength="60" />
+                                    :rows="2" allow-clear show-count :maxlength="180" />
                             </Field>
                             <Transition name="fade">
                                 <ErrorMessage name="offer" class="error-message" />
