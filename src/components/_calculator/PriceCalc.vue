@@ -30,6 +30,7 @@ let form = reactive({
   commissionState: 0,
   profitabilityPlan: 0,
   profitPlan: 0,
+  _id: null,
 });
 
 let select = reactive({
@@ -88,6 +89,9 @@ const clear = () => {
   select.transport = {};
   form.profitabilityPlan = 0;
   form.profitPlan = 0;
+  form._id= null;
+  localStorage.removeItem("tripCalc");
+ 
 };
 
 const createPrice = () => {
@@ -139,42 +143,6 @@ const transportCost = (tourists) => {
   }
 };
 
-// const transportCostForOne = computed(() => {
-//   let transports = [];
-//   let arr = [];
-//   let prevTransportCapacity = 1;
-//   let minCost = null;
-
-//   Object.assign(transports, form.transportCost);
-//   transports.sort(function (a, b) {
-//     if (a.price > b.price) {
-//       return 1;
-//     }
-//     if (a.price < b.price) {
-//       return -1;
-//     }
-//     return 0;
-//   });
-//   transports.forEach((transport, index) => {
-//     let obj = {};
-//     for (let i = prevTransportCapacity; i <= transport.capacity; i++) {
-//       if (index == 0) {
-//         minCost = (transport.price / transport.capacity).toFixed(0);
-//         break;
-//       }
-//       if (minCost >= transport.price / i) {
-//         obj.amount = i;
-//         obj.price = (transport.price / i).toFixed(0);
-//         minCost = (transport.price / transport.capacity).toFixed(0);
-//         arr.push(obj);
-//         break;
-//       }
-//     }
-//     prevTransportCapacity = transport.capacity + 1;
-//   });
-
-//   return arr;
-// });
 
 const sliderMarks = computed(() => {
   let obj = {};
@@ -234,6 +202,7 @@ const result = (tourists) => {
 };
 
 function addTripCalc() {
+  console.log("Adding trip calculation:", form._id);
   userStore.addTripCalc(form)
 }
 function deleteTripType(_id) {
@@ -264,8 +233,7 @@ watch(
 );
 
 watch(form, (newValue, oldValue) => {
-  if (localStorage.getItem("tripCalcPreview")) return
-  
+ 
   localStorage.setItem("tripCalc", JSON.stringify(form));
   if (!form.tourists) {
     form.tourists = 1;
@@ -281,14 +249,12 @@ watch(form, (newValue, oldValue) => {
 });
 
 onMounted(async () => {
-  let readData = JSON.parse(localStorage.getItem("tripCalcPreview")) ?? JSON.parse(localStorage.getItem("tripCalc"));
+  let readData = JSON.parse(localStorage.getItem("tripCalc"));
   if (readData) {
     Object.assign(form, readData);
   }
 });
-onUnmounted(() => {
-  localStorage.removeItem("tripCalcPreview")
-})
+
 </script>
 <template>
   <div>
@@ -521,7 +487,6 @@ onUnmounted(() => {
             </a-tooltip>
 
           </div>
-
           <a-row v-if="userStore.user.tripCalc.length">
             <a-collapse v-model:activeKey="activeKey" block style="width: 100%; border: none; background: white">
               <a-collapse-panel key="2" header="Сохраненные туры">

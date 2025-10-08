@@ -46,6 +46,7 @@ let sortCustomersByStartLocation = computed(() => {
     <h4 style="text-align:center">с {{ clearData(trip.start) }} по {{ clearData(trip.end) }} </h4>
     <h2 style="text-align:center">Список туристов</h2>
     <table style="width:100%">
+        <tbody>
         <tr style="text-align:left; ">
             <th style="border-bottom: 1px solid black;">п/н</th>
             <th style="border-bottom: 1px solid black;">Имя</th>
@@ -95,6 +96,7 @@ let sortCustomersByStartLocation = computed(() => {
             
             </td>
         </tr> -->
+        </tbody>
     </table>
     <span v-if="total">
         <h3 style="text-align:end; padding:16px">

@@ -165,7 +165,7 @@ export const useAuth = defineStore('auth', {
             return await LocationService.selectUserLocation(location, this.user._id)
         },
         async addTripCalc(tripCalc) {
-            delete tripCalc._id
+    
             delete tripCalc.__v
             let res = await UserService.addTripCalc(this.user._id, tripCalc)
             this.user.tripCalc = res.data.tripCalc
