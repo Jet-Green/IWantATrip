@@ -170,18 +170,18 @@ function selectStartLocation(selected) {
     }
 }
 const handlePlacesSearch = async (val) => {
- 
+
     if (val.length > 2) {
-      try {
-        const res = await placesStore.getForCreateTrip(val)
-        if (res.status === 200) {
-          places.value = res.data
+        try {
+            const res = await placesStore.getForCreateTrip(val)
+            if (res.status === 200) {
+                places.value = res.data
+            }
+        } catch (e) {
+            console.error('Ошибка при загрузке мест:', e)
         }
-      } catch (e) {
-        console.error('Ошибка при загрузке мест:', e)
-      }
     } else {
-      places.value = []
+        places.value = []
     }
 
 }
@@ -385,18 +385,22 @@ let formSchema = yup.object({
 
                         <a-col :span="24">
                             Цены
-                            <div v-for="item in form.cost" :key="item.type" style="display: flex"
-                                align="baseline" class="mb-16">
+                            <div v-for="item in form.cost" :key="item.type" style="display: flex" align="baseline"
+                                class="mb-16">
                                 <a-input v-model:value="item.first" placeholder="Для кого" />
 
                                 <a-input-number v-model:value="item.price" style="width: 100%" placeholder="Цена"
                                     :min="0" :step="0.01" class="ml-16 mr-16" />
+                                <a-input-number v-model:value="item.limit" style="width: 100%" placeholder="Максимум"
+                                    type="number" :min="0" />
 
                                 <a-button @click=" removeCost(item)" shape="circle">
                                     <span class="mdi mdi-minus" style="cursor: pointer"></span>
                                 </a-button>
                             </div>
-
+                            <div style="font-size: 8px; color: #ff6600;">! Оставьте третью колонку 'максимум' пустой,
+                                если нет
+                                ограничения</div>
                             <a-button type="dashed" block @click="addCost" class="ma-8">
                                 <span class="mdi mdi-12px mdi-plus"></span>
                                 Добавить цены
@@ -405,8 +409,8 @@ let formSchema = yup.object({
 
                         <a-col :span="24">
                             Бонусы и скидки
-                            <div v-for="item in form.bonuses" :key="item" style="display: flex"
-                                align="baseline" class="mb-16">
+                            <div v-for="item in form.bonuses" :key="item" style="display: flex" align="baseline"
+                                class="mb-16">
                                 <a-input v-model:value="item.type" placeholder="Количество человек" />
 
                                 <a-input v-model:value="item.bonus" style="width: 100%" placeholder="Бонусы или скидки"

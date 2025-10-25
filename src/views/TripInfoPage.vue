@@ -81,7 +81,7 @@ async function startShare() {
 async function updateSeats() {
     if (!bus.value) return
     let bought_seats = await tripStore.getBoughtSeats(selectedDate.value._id)
-   free_seats.value = bus.value.seats.map(seat => seat.number).filter(seat => !bought_seats.includes(seat) && !bus.value.stuff.includes(seat))
+    free_seats.value = bus.value.seats.map(seat => seat.number).filter(seat => !bought_seats.includes(seat) && !bus.value.stuff.includes(seat))
     selected_seats.value = selected_seats.value.filter(seat => free_seats.value.includes(seat))
 }
 
@@ -193,6 +193,20 @@ function getCustomersCount(billsList) {
     return res;
 }
 
+const customersByCostType = computed(() => {
+    const result = {};
+    const bills = selectedDate.value?.billsList ?? [];
+    for (const bill of bills) {
+        const cart = bill?.cart ?? [];
+        for (const item of cart) {
+            const type = item?.costType ?? 'Без типа';
+            const count = Number(item?.count) || 0;
+            result[type] = (result[type] || 0) + count;
+        }
+    }
+    return result;
+});
+
 let getCurrentCustomerNumber = computed(() => {
     return getCustomersCount(selectedDate.value.billsList) +
         selectedDate.value.selectedCosts.reduce((acc, cost) => {
@@ -255,22 +269,22 @@ const print = async () => {
 };
 
 let getStartLocationNames = computed(() => {
-    if (trip.value.includedLocations){
+    if (trip.value.includedLocations) {
         let starts = trip.value.includedLocations.coordinates
-    
+
         let results = []
         for (let i = 0; i < starts.length; i++) {
             for (let j = 0; j < locationStore.locations.length; j++) {
-    
+
                 if (starts[i][0] == locationStore.locations[j].coordinates[0]) {
-    
+
                     results.push(locationStore.locations[j].shortName)
                 }
             }
         }
         return results.join(', ')
     }
-    else{ return "" }
+    else { return "" }
 })
 
 let getSelectedUsersCount = computed(() => {
@@ -284,31 +298,31 @@ let getSelectedUsersCount = computed(() => {
 })
 
 useHead(computed(() => ({
-  title: trip.value?.name,
-  meta: [
-    {
-      name: "description",
-      content: trip.value?.offer,
-    },
-    {
-      property: "og:title",
-      content: trip.value?.name,
-    },
-    {
-      name: "og:description",
-      content: trip.value?.offer,
-    },
-    {
-      name: "og:image",
-      content: trip?.value?.images,
-    },
-  
-    {
-      name: "og:url",
-      content: `${API_URL}/trip?_id=${trip.value?._id}`,
-    },
-  ],
-  link: [{ rel: "canonical", href: `${API_URL}/trip?_id=${trip.value?._id}` }],
+    title: trip.value?.name,
+    meta: [
+        {
+            name: "description",
+            content: trip.value?.offer,
+        },
+        {
+            property: "og:title",
+            content: trip.value?.name,
+        },
+        {
+            name: "og:description",
+            content: trip.value?.offer,
+        },
+        {
+            name: "og:image",
+            content: trip?.value?.images,
+        },
+
+        {
+            name: "og:url",
+            content: `${API_URL}/trip?_id=${trip.value?._id}`,
+        },
+    ],
+    link: [{ rel: "canonical", href: `${API_URL}/trip?_id=${trip.value?._id}` }],
 })));
 
 
@@ -542,10 +556,10 @@ onMounted(async () => {
 
                         </div>
 
-                        <div v-if="getStartLocationNames !=''">
+                        <div v-if="getStartLocationNames != ''">
                             Старт: <b> {{ getStartLocationNames }}</b>
                         </div>
-                        <div v-if="trip.tripRegion !=''">
+                        <div v-if="trip.tripRegion != ''">
                             Куда: <b> {{ trip.tripRegion }}</b>
                         </div>
 
@@ -567,11 +581,14 @@ onMounted(async () => {
                                         {{ clearData(date.end) }}
                                     </b>
                                     ({{ getCustomersCount(date.billsList) + "/" + trip.maxPeople }} чел.)
+
                                 </a-checkable-tag>
                             </div>
                         </div>
                         <div v-if="tripDates.length < 2">
                             <div>Количество человек:</div>
+
+
                             <div style="width: 50%">
                                 <b>
                                     <a-progress
@@ -585,7 +602,10 @@ onMounted(async () => {
                             Цена:&nbsp
                             <div>
                                 <div v-for="(item, index) in trip.cost" :key="index" class="cost">
-                                    {{ item.first }}: <b>{{ item.price }} руб.</b>
+                                    {{ item.first }}: <b>{{ item.price }} руб.</b> <span v-if="item.limit"> ( {{
+                                        customersByCostType[item.first] }}/{{
+                                            `${item.limit}
+                                        мест`}})</span>
                                 </div>
                             </div>
 
@@ -631,8 +651,9 @@ onMounted(async () => {
                         <div>
                             <b>Мы посетим: </b>
                             <div class="d-flex flex-wrap">
-                                <a-card v-for="place, index of trip.places" :key="index" class="pa-8 ml-8 mb-8 text " hoverable
-                                    @click="goToPlacePage(place._id)" style="cursor: pointer; border: #239FCC 1px solid;">
+                                <a-card v-for="place, index of trip.places" :key="index" class="pa-8 ml-8 mb-8 text "
+                                    hoverable @click="goToPlacePage(place._id)"
+                                    style="cursor: pointer; border: #239FCC 1px solid;">
                                     {{ place?.name }}
                                 </a-card>
                             </div>
@@ -786,7 +807,8 @@ onMounted(async () => {
                         <div v-if="isInWaitingList && trip?.transports?.length" style="color: #ff6600">
                             Вы в листе ожидания
                         </div>
-                        <div class="d-flex space-between align-center" v-for="cost of selectedDate.selectedCosts">
+                        <div class="d-flex space-between align-center"
+                            v-for="cost, index of selectedDate.selectedCosts">
 
                             <div>
                                 {{ cost.costType }}
@@ -796,11 +818,19 @@ onMounted(async () => {
                             </div>
                             <div v-else>{{ cost.cost }} руб.</div> -->
                             <div>{{ cost.cost }} руб.</div>
+
                             <div class="d-flex direction-column">
-                                <span style="font-size: 8px">кол-во</span>
+                                <div> <span style="font-size: 8px">кол-во</span>
+                                    <span style="font-size: 8px" v-if="trip.cost[index].limit"> ( {{
+                                        customersByCostType[cost.costType] }}/{{
+                                            trip.cost[index].limit
+                                        }})</span>
+                                </div>
                                 <a-input-number v-model:value="cost.count" :min="0"
-                                    :max="trip.maxPeople - getCustomersCount(selectedDate.billsList)"
-                                    placeholder="чел"></a-input-number>
+                                    :disabled="trip.cost[index].limit && customersByCostType[cost.costType] >= trip.cost[index].limit"
+                                    :max="trip.cost[index].limit ? trip.cost[index].limit - customersByCostType[cost.costType] : trip.maxPeople - getCustomersCount(selectedDate.billsList)"
+                                    placeholder="чел">
+                                </a-input-number>
                             </div>
                         </div>
                     </a-col>

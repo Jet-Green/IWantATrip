@@ -88,6 +88,21 @@ let tripStat = computed(() => {
     return statistic
 })
 
+// Количество уже занятых мест по каждому типу стоимости
+const customersByCostType = computed(() => {
+    const result = {}
+    const bills = trip.value?.billsList ?? []
+    for (const bill of bills) {
+        const cart = bill?.cart ?? []
+        for (const item of cart) {
+            const type = item?.costType ?? 'Без типа'
+            const count = Number(item?.count) || 0
+            result[type] = (result[type] || 0) + count
+        }
+    }
+    return result
+})
+
 let finalCost = computed(() => {
     let sum = 0;
     if (selectedByUser.value.length) {
@@ -633,10 +648,19 @@ onMounted(async () => {
                     <div class="d-flex space-between align-center" v-for="(cost, index) of trip.cost" :key="index">
                         {{ cost.first }}<span>{{ cost.price }} руб. </span>
                         <div class="d-flex direction-column">
-                            <span style="font-size: 8px">кол-во</span>
-
-                            <a-input-number v-model:value="selectedByUser[index].count" :min="0"
-                                :max="trip.maxPeople - tripStat.amount" placeholder="чел"></a-input-number>
+                            <div >
+                                <span style="font-size: 8px">кол-во</span>
+                                <span style="font-size: 8px" v-if="cost.limit">
+                                    ( {{ customersByCostType[cost.first] || 0 }} / {{ cost.limit }} )
+                                </span>
+                            </div>
+                            <a-input-number
+                                v-model:value="selectedByUser[index].count"
+                                :min="0"
+                                :disabled="cost.limit && (customersByCostType[cost.first] || 0) >= cost.limit"
+                                :max="cost.limit ? Math.max(0, cost.limit - (customersByCostType[cost.first] || 0)) : (trip.maxPeople - tripStat.amount)"
+                                placeholder="чел"
+                            />
                         </div>
                     </div>
                     <div v-if='isSupervisor' class="d-flex space-between align-center">
