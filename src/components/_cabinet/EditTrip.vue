@@ -304,7 +304,7 @@ let formSchema = yup.object({
     offer: yup.string().required("заполните поле"),
     tripRoute: yup.string().required("заполните поле"),
     duration: yup.string().required("заполните поле"),
-    returnConditions: yup.string().required("заполните поле"),
+    // returnConditions: yup.string().required("заполните поле"),
     notNecessarily: yup.string(),
     tripRegion: yup.string().required("заполните поле"),
 })
@@ -398,8 +398,8 @@ let formSchema = yup.object({
                                     <span class="mdi mdi-minus" style="cursor: pointer"></span>
                                 </a-button>
                             </div>
-                             <div class="text-caption">*Оставьте третью колонку 'максимум' пустой, если нет
-                ограничения</div>
+                            <div class="text-caption">*Оставьте третью колонку 'максимум' пустой, если нет
+                                ограничения</div>
                             <a-button type="dashed" block @click="addCost" class="ma-8">
                                 <span class="mdi mdi-12px mdi-plus"></span>
                                 Добавить цены
@@ -585,16 +585,17 @@ let formSchema = yup.object({
                                 <ErrorMessage name="notNecessarily" class="error-message" />
                             </Transition>
                         </a-col>
-                        <a-col :span="24">
-                            <Field name="returnConditions" v-slot="{ value, handleChange }"
-                                v-model="form.returnConditions">
-                                Условия возврата
-                                <a-textarea @update:value="handleChange" :value="value" placeholder="" size="large">
-                                </a-textarea>
-                            </Field>
-                            <Transition name="fade">
-                                <ErrorMessage name="offer" class="error-message" />
-                            </Transition>
+                        <a-col :span="24" style="display: flex; flex-direction: column">
+                            Условия возврата
+                            <QuillEditor class="ql-editor" theme="snow" v-model:content="form.returnConditions"
+                                contentType="html" :toolbar="[
+                                    ['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }],
+
+                                    [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
+
+                                    ['link'], ['clean']
+                                ]
+                                    " />
                         </a-col>
                         <a-col :span="24" class="d-flex justify-center">
                             <a-button :disabled="!meta.valid" class="lets_go_btn ma-36" type="primary"

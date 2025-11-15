@@ -52,9 +52,9 @@ onUnmounted(() => {
                 <div class="contract" id="printMe">
                     <h3 style="text-align: center; margin: 40px;">Договор от <b>{{ clearData(BILL?.date) }}</b> </h3>
                     <p class="info-block"> <b>{{ BILL?.seller.name }} (ИНН:{{ BILL?.seller.inn }})</b>, в дальнейшем
-                        “Продавец”, с
+                        "Продавец", с
                         одной стороны и
-                        <b>{{ BILL?.touristsList[0]?.fullname }}</b>,в дальнейшем “Покупатель”, с другой стороны,
+                        <b>{{ BILL?.touristsList[0]?.fullname || '_____________________________________' }}</b>,в дальнейшем "Покупатель", с другой стороны,
                         заключили
                         настоящий Договор о нижеследующем:
                     </p>
@@ -68,7 +68,7 @@ onUnmounted(() => {
                         <li>Программа тура: <a :href="`${API_URL}/trip?_id=${BILL.tripId._id}`"><b>{{
                             `${API_URL}/trip?_id=${BILL?.tripId._id}`}}</b></a> </li>
                         <li>В стоимость включено: <b>{{ BILL.tripId.includedInPrice }}</b></li>
-                          <li>Условия возврата: <b>{{ BILL.tripId.returnConditions }}</b></li>
+                          <li>Условия возврата: <b v-html="BILL.tripId.returnConditions"></b></li>
                         <li>Туристы по данному заказу: <b>{{ (BILL?.touristsList.map((list) => list.fullname).join())
                                 }}</b>
                         </li>

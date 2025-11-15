@@ -390,7 +390,7 @@ let formSchema = yup.object({
   offer: yup.string().required("заполните поле"),
   tripRoute: yup.string().required("заполните поле"),
   // startLocation: yup.string().required("заполните поле"),
-  returnConditions: yup.string().required("заполните поле"),
+  // returnConditions: yup.string().required("заполните поле"),
   notNecessarily: yup.string(),
   tripRegion: yup.string().required("заполните поле"),
   // https://vee-validate.logaretm.com/v4/examples/array-fields/
@@ -702,15 +702,17 @@ onMounted(async () => {
             </a-col>
 
 
-            <a-col :span="24">
-              <Field name="returnConditions" v-slot="{ value, handleChange }" v-model="form.returnConditions">
-                Условия возврата
-                <a-textarea autoSize @update:value="handleChange" :value="value" placeholder="" size="large">
-                </a-textarea>
-              </Field>
-              <Transition name="fade">
-                <ErrorMessage name="offer" class="error-message" />
-              </Transition>
+            <a-col :span="24" style="display: flex; flex-direction: column">
+                Условия возврата         
+                <QuillEditor class="ql-editor" theme="snow" v-model:content="form.returnConditions"
+                  contentType="html" :toolbar="[
+                    ['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }],
+
+                    [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
+
+                    ['link'], ['clean']
+                  ]
+                    " />
             </a-col>
             <a-col :span="24" :md="12">
               <Field name="partner" v-slot="{ value, handleChange }" v-model="form.partner">

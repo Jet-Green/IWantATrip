@@ -178,7 +178,8 @@ function getImg(index) {
           </a-col>
 
           <a-col :xs="24" v-if="trip.returnConditions" class="mb-16">
-            <b>Условия возврата:</b> {{ trip.returnConditions }}
+            <b>Условия возврата:</b>
+            <div v-html="trip.returnConditions"></div>
           </a-col>
           <a-col :xs="24" v-if="trip.partner" class="mb-16">
             <b>Это тур партнера:</b> {{ trip.partner }}, {{ trip.canSellPartnerTour ? "с возможностью продажи" : "без возможности продажи" }} на платформе

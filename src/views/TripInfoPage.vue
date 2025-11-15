@@ -688,7 +688,8 @@ onMounted(async () => {
                     </a-col>
 
                     <a-col :xs="24" v-if="trip.returnConditions" class="mb-16">
-                        <b>Условия возврата:</b> {{ trip.returnConditions }}
+                        <b>Условия возврата:</b>
+                        <div v-html="trip.returnConditions"></div>
                     </a-col>
 
                     <div id="printMe" style="display: none">
@@ -750,7 +751,8 @@ onMounted(async () => {
                         </div>
 
                         <div v-if="trip.returnConditions">
-                            <b>Условия возврата:</b> {{ trip.returnConditions }}
+                            <b>Условия возврата:</b>
+                           <div v-html="trip.returnConditions"></div>
                         </div>
                     </div>
                 </a-row>
