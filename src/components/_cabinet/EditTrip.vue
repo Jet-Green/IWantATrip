@@ -398,9 +398,8 @@ let formSchema = yup.object({
                                     <span class="mdi mdi-minus" style="cursor: pointer"></span>
                                 </a-button>
                             </div>
-                            <div style="font-size: 8px; color: #ff6600;">! Оставьте третью колонку 'максимум' пустой,
-                                если нет
-                                ограничения</div>
+                             <div class="text-caption">*Оставьте третью колонку 'максимум' пустой, если нет
+                ограничения</div>
                             <a-button type="dashed" block @click="addCost" class="ma-8">
                                 <span class="mdi mdi-12px mdi-plus"></span>
                                 Добавить цены

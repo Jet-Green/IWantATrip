@@ -600,10 +600,12 @@ onMounted(async () => {
 
                         <div class="d-flex">
                             Цена:&nbsp
-                            <div>
+                            <div style="font-size: 0.9em;">
                                 <div v-for="(item, index) in trip.cost" :key="index" class="cost">
-                                    {{ item.first }}: <b>{{ item.price }} руб.</b> <span v-if="item.limit"> ( {{
-                                        customersByCostType[item.first] }}/{{
+                                    {{ item.first }}: <b>{{ item.price }} руб.</b> <span v-if="item.limit"> ( 
+                                       <span v-if="customersByCostType[item.first]">{{
+                                        customersByCostType[item.first] }}/</span> 
+                                        {{
                                             `${item.limit}
                                         мест`}})</span>
                                 </div>
@@ -613,7 +615,7 @@ onMounted(async () => {
                         </div>
                         <div v-if="trip.bonuses.length" class="d-flex">
                             Бонусы:&nbsp
-                            <div>
+                            <div style="font-size: 0.9em;">
                                 <div v-for="(item, index) in trip.bonuses" :key="index">
                                     <i> {{ item.type }} <b>{{ item.bonus }}</b> </i>
                                 </div>
@@ -821,8 +823,10 @@ onMounted(async () => {
 
                             <div class="d-flex direction-column">
                                 <div> <span style="font-size: 8px">кол-во</span>
-                                    <span style="font-size: 8px" v-if="trip.cost[index].limit"> ( {{
-                                        customersByCostType[cost.costType] }}/{{
+                                    <span style="font-size: 8px" v-if="trip.cost[index].limit"> ( 
+                                     <span v-if="customersByCostType[cost.costType]"> {{
+                                        customersByCostType[cost.costType] }}/</span>
+                                        {{
                                             trip.cost[index].limit
                                         }})</span>
                                 </div>
