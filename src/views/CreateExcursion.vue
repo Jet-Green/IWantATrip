@@ -145,7 +145,7 @@ async function submit() {
     return
   }
   form.author = user_id
-
+ delete form._id;
   if (userStore.user?.tinkoffContract?.shopInfo) {
     let t = userStore.user.tinkoffContract
     form.tinkoffContract = {
