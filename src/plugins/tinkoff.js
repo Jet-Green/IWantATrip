@@ -4,17 +4,28 @@ import axios from 'axios'
 const VITE_TINKOFF_TERMINAL_ID = import.meta.env.VITE_TINKOFF_TERMINAL_ID
 const VITE_TINKOFF_TERMINAL_PASS = import.meta.env.VITE_TINKOFF_TERMINAL_PASS
 
-// https://securepay.tinkoff.ru/v2/Init
-async function cancelPayment() {
-    let payload =
-    {
+/**
+ * Отменяет платеж полностью или частично
+ * @param {string} paymentId - ID платежа в системе Т‑Бизнес
+ * @param {number} [amount] - Сумма отмены в копейках (если не указана - полная отмена)
+ * @param {object} [receipt] - Объект чека для частичной отмены
+ * @param {object} [shopInfo] - Объект с данными магазина {ShopCode, Name, Phones, Inn}
+ * @param {string} [ip] - IP-адрес покупателя
+ * @returns {Promise} - Результат отмены платежа
+ */
+async function cancelPayment(paymentId, amount = null, receipt = null, shopInfo = null, ip = null) {
+    let payload = {
         "Password": VITE_TINKOFF_TERMINAL_PASS,
-        "PaymentId": "3388583831",
+        "PaymentId": paymentId,
         "TerminalKey": VITE_TINKOFF_TERMINAL_ID
     }
 
+    if (amount !== null) {
+        payload.Amount = amount
+    }
+
     let stringPayload = ''
-    for (let key of Object.keys(payload)) {
+    for (let key of Object.keys(payload).sort()) {
         stringPayload += payload[key]
     }
 
@@ -22,20 +33,38 @@ async function cancelPayment() {
 
     let cancelConfig = {
         "TerminalKey": VITE_TINKOFF_TERMINAL_ID,
-        // получается из Init
-        "PaymentId": "3388583831",
-        "Token": Token,
-        // В случае полной отмены структура чека не передается. В случае частичной отмены необходимо передавать те товары, которые нужно отменить.
+        "PaymentId": paymentId,
+        "Token": Token
     }
-    let res = await axios.post('https://securepay.tinkoff.ru/v2/Cancel', cancelConfig)
 
+    if (amount !== null) {
+        cancelConfig.Amount = amount
+    }
+
+    if (ip) {
+        cancelConfig.IP = ip
+    }
+
+    if (receipt) {
+        cancelConfig.Receipt = receipt
+    }
+
+    if (shopInfo && amount !== null) {
+        cancelConfig.Shops = [
+            {
+                "ShopCode": String(shopInfo.ShopCode),
+                "Amount": amount,
+            }
+        ]
+    }
+
+    let res = await axios.post('https://securepay.tinkoff.ru/v2/Cancel', cancelConfig)
     return res
 }
 
 async function checkPayment(paymentId) {
     let tokentr = VITE_TINKOFF_TERMINAL_PASS + paymentId + VITE_TINKOFF_TERMINAL_ID
     let token = sha256(tokentr)
-    // https://securepay.tinkoff.ru/v2/GetState
     const config = {
         "TerminalKey": VITE_TINKOFF_TERMINAL_ID,
         "PaymentId": paymentId,
@@ -229,9 +258,7 @@ async function initExcursionPayment(orderId, cart, clientEmail, shopInfo, excurs
     return { data: res.data, token: Token, success: res.data.Success }
 }
 async function sendClosingReceipt(PaymentId, Amount) {
-    let payload =
-    {
-        // "Amount": Amount,
+    let payload = {
         "Password": VITE_TINKOFF_TERMINAL_PASS,
         "PaymentId": PaymentId,
         "TerminalKey": VITE_TINKOFF_TERMINAL_ID
@@ -265,21 +292,15 @@ async function sendClosingReceipt(PaymentId, Amount) {
             ]
         }
     }
-    // console.log(config);
-    // return
     let res = await axios.post('https://securepay.tinkoff.ru/v2/SendClosingReceipt', config)
-
-
 }
 
 async function registerShop(shopData) {
-    // https://sm-register.tinkoff.ru/register
     let res = await axios.post('https://sm-register.tinkoff.ru/register', shopData, { headers: { Authorization: `Bearer + ${import.meta.env.VITE_TINKOFF_SM_REGISTER_ACCESS_TOKEN}` } })
     console.log(res);
 }
 
 async function updateContract(contract) {
-    // это обновит контракт, не трогать
     let accessToken = localStorage.getItem('tinkoffAccessToken')
     let stringShopCode = contract.shopInfo.code
     let res = await axios.patch(`https://sm-register.tinkoff.ru/register/${stringShopCode}`, contract, { headers: { Authorization: `Bearer + ${accessToken}` } })

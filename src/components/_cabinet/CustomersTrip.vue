@@ -39,6 +39,11 @@ let addCustomerDialog = ref(false)
 let setPaymentDialog = ref(false)
 let addTouristsDialog = ref(false)
 let editUserCommentDialog = ref(false)
+// Refund (Tinkoff) modal state
+let refundDialog = ref(false)
+let refundMode = ref('full') // 'full' | 'partial'
+let refundCart = ref([])
+let refundServices = ref([])
 
 let currentBill = ref(null)
 
@@ -262,6 +267,7 @@ async function updateTripInfo() {
 
     for (let b of data.billsList) {
         if (b.tinkoff) {
+              b.purchasedByTinkoff = true
             let res = await tinkoffPlugin.checkPayment(b.tinkoff.paymentId, b.tinkoff.token)
             if (res.data.Status == "CONFIRMED") {
                 b.payment.amount = Number(res.data.Amount / 100)
@@ -357,6 +363,161 @@ onMounted(async () => {
     loading.value = false
 
 });
+
+// Computed refund total (rubles)
+let refundTotal = computed(() => {
+    if (!currentBill.value) return 0
+    if (refundMode.value === 'full') return billTotal(currentBill.value)
+    let total = 0
+    for (const item of refundCart.value) {
+        const count = Number(item.refundCount) || 0
+        total += count * item.cost
+    }
+    for (const svc of refundServices.value) {
+        const count = Number(svc.refundCount) || 0
+        total += count * svc.price
+    }
+    return total
+})
+
+// Open refund dialog for a bill
+function cancelPayment() {
+    if (!currentBill.value || !currentBill.value.tinkoff) {
+        message.error({ content: 'Нет данных Тинькофф для возврата' })
+        return
+    }
+    refundMode.value = 'full'
+    // Seed editable copies for partial refunds
+    refundCart.value = (currentBill.value.cart || []).map(c => ({
+        costType: c.costType,
+        cost: c.cost,
+        count: c.count,
+        refundCount: 0,
+    }))
+    refundServices.value = (currentBill.value.additionalServices || []).map(s => ({
+        name: s.name,
+        price: s.price,
+        count: Number(s.count) || 0,
+        refundCount: 0,
+    }))
+    refundDialog.value = true
+}
+
+// Submit refund to Tinkoff
+async function confirmCancelPayment() {
+    if (!currentBill.value?.tinkoff?.paymentId) {
+        message.error({ content: 'Не найден PaymentId' })
+        return
+    }
+
+    // Проверяем наличие ShopCode
+    const shopCode = trip.value.tinkoffContract?.ShopCode
+    if (!shopCode) {
+        message.error({ content: 'Не найден ShopCode для возврата' })
+        return
+    }
+
+    try {
+        let res
+        if (refundMode.value === 'full') {
+            // Полный возврат
+            res = await tinkoffPlugin.cancelPayment(currentBill.value.tinkoff.paymentId)
+        } else {
+            // Частичный возврат: строим Receipt.Items и сумму в копейках
+            const items = []
+            const contractInfo = trip.value.tinkoffContract
+            // Cart items
+            for (const item of refundCart.value) {
+                const qty = Number(item.refundCount) || 0
+                if (qty > 0) {
+                    items.push({
+                        // Платформа Союз (агент)
+                        AgentData: {
+                            AgentSign: 'another',
+                            OperationName: `"${item.costType}":${trip.value.name}`.slice(0, 24),
+                            Phones: ['+79128523316'],
+                            ReceiverPhones: ['+79128523316'],
+                            OperatorName: 'Платформа Союз',
+                            OperatorAddress: 'г.Глазов',
+                            OperatorInn: '1837013960'
+                        },
+                        // Поставщик тура
+                        SupplierInfo: {
+                            Phones: contractInfo.Phones,
+                            Name: contractInfo.Name,
+                            Inn: contractInfo.Inn
+                        },
+                        Name: item.costType,
+                        Price: item.cost * 100,
+                        Quantity: qty,
+                        Amount: item.cost * 100 * qty,
+                        Tax: 'none',
+                        PaymentMethod: 'full_payment',
+                        PaymentObject: 'service',
+                        ShopCode: String(shopCode),
+                        MeasurementUnit: 'шт'
+                    })
+                }
+            }
+            // Additional services
+            for (const svc of refundServices.value) {
+                const qty = Number(svc.refundCount) || 0
+                if (qty > 0) {
+                    items.push({
+                        // Платформа Союз (агент)
+                        AgentData: {
+                            AgentSign: 'another',
+                            OperationName: `"${svc.name}":${trip.value.name}`.slice(0, 24),
+                            Phones: ['+79128523316'],
+                            ReceiverPhones: ['+79128523316'],
+                            OperatorName: 'Платформа Союз',
+                            OperatorAddress: 'г.Глазов',
+                            OperatorInn: '1837013960'
+                        },
+                        // Поставщик тура
+                        SupplierInfo: {
+                            Phones: contractInfo.Phones,
+                            Name: contractInfo.Name,
+                            Inn: contractInfo.Inn
+                        },
+                        Name: svc.name,
+                        Price: svc.price * 100,
+                        Quantity: qty,
+                        Amount: svc.price * 100 * qty,
+                        Tax: 'none',
+                        PaymentMethod: 'full_payment',
+                        PaymentObject: 'service',
+                        ShopCode: String(shopCode),
+                        MeasurementUnit: 'шт'
+                    })
+                }
+            }
+            const amountKopecks = Math.round(refundTotal.value * 100)
+            if (amountKopecks <= 0 || items.length === 0) {
+                message.error({ content: 'Выберите позиции для частичного возврата' })
+                return
+            }
+            res = await tinkoffPlugin.cancelPayment(
+                currentBill.value.tinkoff.paymentId,
+                amountKopecks,
+                { Items: items, Taxation: 'usn_income', FfdVersion: '1.05' },
+                trip.value.tinkoffContract
+            )
+        }
+
+        if (res?.status === 200 && res.data?.Success) {
+            message.success({ content: 'Возврат выполнен' })
+            refundDialog.value = false
+            await updateTripInfo()
+        } else {
+            const errText = res?.data?.Message || 'Ошибка выполнения возврата'
+            message.error({ content: errText })
+        }
+    } catch (e) {
+        console.error(e)
+        message.error({ content: 'Не удалось выполнить возврат' })
+    }
+}
 </script>
 
 <template>
@@ -394,6 +555,7 @@ onMounted(async () => {
 
                 <a-col :lg="8" :sm="12" :xs="24" v-for="(BILL, index) of trip.billsList">
                     <div>
+                
                         <a-card hoverable class="card">
                             <div class="d-flex space-between">
                                 <div style="color:#ff6600"><span v-if="BILL?.isWaitingList"> Лист ожидания</span></div>
@@ -478,7 +640,8 @@ onMounted(async () => {
                                 </div>
 
                                 <b v-if="BILL.purchasedByTinkoff">
-                                    <img :src="TinkoffLogo" class="tinkoff-logo">
+                                    <div> <img :src="TinkoffLogo" class="tinkoff-logo"></div>
+                                    <a-button @click="() => { currentBill = BILL; cancelPayment() }">Возврат</a-button>
                                 </b>
                                 <b v-else>
                                     <span v-if="billTotal(BILL) == BILL.payment.amount" style="color: #bcc662">
@@ -519,6 +682,7 @@ onMounted(async () => {
 
 
         <!-- ALL MODALS -->
+
         <a-modal v-model:open="editUserCommentDialog" :footer="null" title="Изменить комментарий">
             <div>
                 <span class="mdi mdi-account-outline" style=""></span>
@@ -599,6 +763,60 @@ onMounted(async () => {
                     <a-button @click="addTouristsDialog = false">отмена</a-button>
                     <a-button type="primary" class="lets_go_btn ml-8"
                         @click="updateTourists(currentBill)">отправить</a-button>
+                </a-col>
+            </a-row>
+        </a-modal>
+        <!-- Refund (Tinkoff) modal -->
+        <a-modal v-model:open="refundDialog" :footer="null" title="Возврат по Тинькофф">
+            <a-row :gutter="[8,8]">
+                <a-col :span="24">
+                    <div>
+                        <span class="mdi mdi-account-outline"></span>
+                        {{ currentBill?.userInfo?.fullname }}
+                    </div>
+                    <div v-if="currentBill?.selectedStartLocation">
+                        <span class="mdi mdi-map-marker-outline"></span>
+                        {{ currentBill.selectedStartLocation }}
+                    </div>
+                    <div>
+                        <span class="mdi mdi-phone-outline"></span>
+                        <a :href="getPhoneNumber(currentBill?.userInfo?.phone)">{{ currentBill?.userInfo?.phone }}</a>
+                    </div>
+                </a-col>
+
+                <a-col :span="24" class="mt-8">
+                    <a-radio-group v-model:value="refundMode">
+                        <a-radio value="full">Полный возврат</a-radio>
+                        <a-radio value="partial">Частичный возврат</a-radio>
+                    </a-radio-group>
+                </a-col>
+
+                <a-col v-if="refundMode==='partial'" :span="24" class="mt-8">
+                    <div>Товары корзины</div>
+                    <div v-for="(item, idx) in refundCart" :key="'rc'+idx" class="d-flex space-between align-center">
+                        <span>{{ item.costType }} — {{ item.count }} шт. × {{ item.cost }} руб.</span>
+                        <div class="d-flex direction-column">
+                            <span style="font-size: 8px">к возврату</span>
+                            <a-input-number v-model:value="item.refundCount" :min="0" :max="item.count" />
+                        </div>
+                    </div>
+                    <div v-if="refundServices.length" class="mt-8">Доп. услуги</div>
+                    <div v-for="(svc, sidx) in refundServices" :key="'rs'+sidx" class="d-flex space-between align-center">
+                        <span>{{ svc.name }} — {{ svc.count }} шт. × {{ svc.price }} руб.</span>
+                        <div class="d-flex direction-column">
+                            <span style="font-size: 8px">к возврату</span>
+                            <a-input-number v-model:value="svc.refundCount" :min="0" :max="svc.count" />
+                        </div>
+                    </div>
+                </a-col>
+
+                <a-col :span="24" class="d-flex justify-end mt-12">
+                    <span>К возврату: </span>&nbsp;<b>{{ refundTotal }} руб.</b>
+                </a-col>
+
+                <a-col :span="24" class="d-flex justify-center mt-8">
+                    <a-button @click="refundDialog=false">отмена</a-button>
+                    <a-button type="primary" class="lets_go_btn ml-8" @click="confirmCancelPayment">подтвердить</a-button>
                 </a-col>
             </a-row>
         </a-modal>
