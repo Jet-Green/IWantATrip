@@ -95,6 +95,11 @@ const router = createRouter({
           component: () => import('../components/WaitingList.vue'),
         },
         {
+          path: '/track',
+          name: 'TrackPage',
+          component: () => import('../views/TrackPage.vue'),
+        },
+        {
           path: '/trips',
           name: 'TripsPage',
           component: () => import('../components/_tripsPage/TripsList.vue'),
