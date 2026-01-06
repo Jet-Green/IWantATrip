@@ -100,6 +100,21 @@ const router = createRouter({
           component: () => import('../views/TrackPage.vue'),
         },
         {
+          path: '/tracks',
+          name: 'TracksPage',
+          component: () => import('../views/TracksPage.vue'),
+        },
+        {
+          path: '/create-track',
+          name: 'CreateTrack',
+          component: () => import('../views/CreateTrack.vue'),
+        },
+        {
+          path: '/edit-track/:id',
+          name: 'EditTrack',
+          component: () => import('../views/EditTrack.vue'),
+        },
+        {
           path: '/trips',
           name: 'TripsPage',
           component: () => import('../components/_tripsPage/TripsList.vue'),
@@ -389,6 +404,11 @@ const router = createRouter({
           path: '/excursion',
           name: 'ExcursionPage',
           component: () => import('../views/ExcursionPage.vue')
+        },
+        {
+          path: '/tracks-list',
+          name: 'TracksPage',
+          component: () => import('../components/_guide/Tracks.vue')
         },
         {
           path: '/excursion-moderation',
