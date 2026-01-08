@@ -121,7 +121,7 @@ async function submit() {
   };
 
   function close() {
-    router.push("/tracks");
+    router.push("/tracks-list");
     clearForm();
   }
 
@@ -243,9 +243,8 @@ onMounted(() => {
             </a-col>
 
             <a-col :span="24">
-              <div class="places-section">
-                <h3>Места в маршруте (минимум 2)</h3>
-                
+              Места в маршруте (минимум 2)
+              <div class="places-section">  
                 <!-- Поиск мест -->
                 <div class="place-search">
                   <a-auto-complete
@@ -374,7 +373,7 @@ onMounted(() => {
 }
 
 :deep(.ql-editor) {
-  min-height: 200px;
+  min-height: 120px;
   background: white;
 }
 

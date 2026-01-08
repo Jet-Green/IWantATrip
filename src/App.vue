@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 
 
 import { useLocations } from './stores/locations'
@@ -10,20 +10,19 @@ import { useAppState } from './stores/appState'
 const userStore = useAuth()
 const appStateStore = useAppState()
 const locationStore = useLocations()
+const isInitialized = ref(false)
 
 
-onMounted(async () => {
+onBeforeMount(async () => {
   await appStateStore.refreshState()
-  if (localStorage.getItem('token')) {
-    await userStore.checkAuth()
-  }
+  // Всегда проверяем auth - восстанавливаем access token из refresh token в cookies
+  await userStore.checkAuth()
   // вся логика локации тут
   await locationStore.fetchLocations()
   if (localStorage.getItem('location')) {
     locationStore.location = JSON.parse(localStorage.getItem('location'))
   }
-
-
+  isInitialized.value = true
 })
 
 
@@ -44,7 +43,7 @@ onMounted(async () => {
     },
   }">
   
-          <router-view v-slot="{ Component }">        
+          <router-view v-if="isInitialized" v-slot="{ Component }">        
               <component :is="Component" />
           </router-view>
  

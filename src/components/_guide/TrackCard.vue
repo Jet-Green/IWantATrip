@@ -33,6 +33,13 @@ const previewImage = computed(() => {
     }
     return null
 })
+
+const placesNames = computed(() => {
+    if (Array.isArray(track.places) && track.places.length > 0) {
+        return track.places.map(place => place.title || place.name).join(' - ')
+    }
+    return ''
+})
 </script>
 
 <template>
@@ -42,7 +49,6 @@ const previewImage = computed(() => {
                 <span class="mdi mdi-map-marker-path"></span>
             </div>
         </div>
-
         <div class="content">
             <div class="meta">
                 <span class="type">{{ track.type || 'пешком' }}</span>
@@ -50,9 +56,11 @@ const previewImage = computed(() => {
                 <span v-if="track.length" class="detail">{{ track.length }} км</span>
                 <span v-if="track.duration" class="sep">•</span>
                 <span v-if="track.duration" class="detail">{{ formatDuration(track.duration) }}</span>
+
             </div>
 
             <div class="title">{{ track.title }}</div>
+            <div v-if="placesNames" class="places">{{ placesNames }}</div>
         </div>
     </div>
 </template>
@@ -63,7 +71,7 @@ const previewImage = computed(() => {
     cursor: pointer;
     height: 100%;
     border: 1px solid #e8e8e8;
-    border-radius: 8px;
+
     transition: all 0.3s;
     background: #fff;
 
@@ -118,6 +126,17 @@ const previewImage = computed(() => {
     font-weight: 600;
     color: #333;
     margin-bottom: 4px;
+}
+
+.places {
+    font-size: 12px;
+    color: #888;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 
 </style>

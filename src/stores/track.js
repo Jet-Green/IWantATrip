@@ -8,13 +8,17 @@ export const useTracks = defineStore('tracks', {
     tracks: [],
     filter: {
       search: '',
+      location: { name: "", shortName: "", type: "Point", coordinates: [] },
+      locationRadius: 0,
       type: ''
     }
+
   }),
   getters: {
   },
   actions: {
-    async getAll(page, query) {
+    async getAll(page,filter) {
+        console.log(filter)
       if (page == 1) {
         this.tracks = [];
       }
@@ -22,7 +26,7 @@ export const useTracks = defineStore('tracks', {
         if (!this.isFetching) {
           this.isFetching = true
           let response = await TrackService.getAll(
-            page, query
+            page, filter
           );
           this.isFetching = false
 
@@ -55,6 +59,7 @@ export const useTracks = defineStore('tracks', {
     },
     async edit(track) {
       try {
+        console.log('track to edit:', track);
         const response = await TrackService.edit(track);
         return response
       } catch (err) {
@@ -69,5 +74,21 @@ export const useTracks = defineStore('tracks', {
         console.log(err);
       }
     },
+    async moderateTrack(id) {
+      try {
+        const response = await TrackService.moderateTrack(id);
+        return response
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async rejectTrack(id) {
+      try {
+        const response = await TrackService.rejectTrack(id);
+        return response
+      } catch (err) {
+        console.log(err);
+      }
+    }
   }
 });

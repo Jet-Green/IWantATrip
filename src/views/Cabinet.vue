@@ -98,6 +98,10 @@ onMounted(async () => {
             <span v-if=!sm>Места</span>
             <span v-else class="mdi mdi-24px mdi-map-marker-outline" style="color: #245159;"></span>
           </a-menu-item>
+          <a-menu-item key="/cabinet/my-tracks">
+            <span v-if=!sm>Маршруты</span>
+            <span v-else class="mdi mdi-24px mdi-routes" style="color: #245159;"></span>
+          </a-menu-item>
           <a-sub-menu key="sub4" v-if="isTasksManager || isCreator">
             <template #title>
               <span ref='crm' v-if=!sm>CRM</span>
@@ -131,6 +135,7 @@ onMounted(async () => {
               <a-menu-item key="/cabinet/moderation-companions">Попутчики</a-menu-item>
               <a-menu-item key="/cabinet/moderation-excursions">Экскурсии</a-menu-item>
               <a-menu-item key="/cabinet/moderation-places/on-moderation">Места</a-menu-item>
+              <a-menu-item key="/cabinet/moderation-tracks/on-moderation">Маршруты</a-menu-item>
               <a-menu-item key="/cabinet/moderation-guides/on-moderation">Гиды</a-menu-item>
             </a-sub-menu>
             <a-menu-item key="/cabinet/orders">Заказы</a-menu-item>

@@ -17,5 +17,12 @@ export default {
     let trackId = toSend._id;
     delete toSend._id;
     return $api.post(`/tracks/edit`, { trackId, track: toSend })
+  },
+  moderateTrack(id) {
+    console.log('Moderating track with id:', id);
+    return $api.post('/tracks/moderate', { id })
+  },
+  rejectTrack(id) {
+    return $api.post('/tracks/reject', { id })
   }
 }

@@ -6,21 +6,40 @@ import { onMounted, ref } from "vue"
 import { useRouter } from 'vue-router';
 import { useRoute } from 'vue-router';
 import { useTracks } from "../../stores/track";
+import TrackFilter from "./TrackFilter.vue";
 
-const backRoute = { name: 'Landing' };
+const backRoute = { name: 'Landing', hash: '#guide' };
 const router = useRouter()
 const route = useRoute();
 const trackStore = useTracks()
 
-const searchQuery = ref('');
+// search stored in trackStore.filter.search
 const isLoading = ref(false);
+
+const conditions = () => {
+  const c = {}
+  if (trackStore.filter.location?.coordinates?.length) {
+    c.location = trackStore.filter.location
+  }
+  if (trackStore.filter.locationRadius) {
+    c.locationRadius = trackStore.filter.locationRadius
+  }
+  return Object.keys(c).length ? c : undefined
+}
 
 const loadTracks = async () => {
   isLoading.value = true;
+      const filter = {
+      search: trackStore.filter.search,
+      type: trackStore.filter.type,
+      isActive: true,
+      isModeration: true,
+      isRejected: false,
+      isHidden: false,
+      conditions: conditions()
+    };
   try {
-    await trackStore.getAll(1, {
-      search: searchQuery.value
-    });
+    await trackStore.getAll(1, filter);
   } catch (error) {
     console.error('Ошибка загрузки маршрутов:', error);
   } finally {
@@ -30,7 +49,7 @@ const loadTracks = async () => {
 
 onMounted(async () => {
   if (route.query.search) {
-    searchQuery.value = route.query.search;
+    trackStore.filter.search = route.query.search;
   }
   await loadTracks();
 
@@ -48,17 +67,8 @@ onMounted(async () => {
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="16">
         <h2>Маршруты</h2>
+        <TrackFilter @refreshTracks="loadTracks" />
         
-        <div class="search-section mb-4">
-          <a-input-search
-            v-model:value="searchQuery"
-            placeholder="Поиск маршрутов..."
-            size="large"
-            @search="loadTracks"
-            allow-clear
-          />
-        </div>
-
         <a-spin v-if="isLoading" size="large" style="display: flex; justify-content: center; margin: 40px 0;" />
 
         <a-row v-else :gutter="[12, 16]">
@@ -78,7 +88,5 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.search-section {
-  margin: 20px 0;
-}
+
 </style>

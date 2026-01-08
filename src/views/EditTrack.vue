@@ -125,14 +125,14 @@ async function submit() {
   };
 
   function close() {
-    router.push("/tracks");
+    router.push("/tracks-list");
   }
 
   let response = await trackStore.edit(toSend);
   if (response.status == 200) {
     message.config({ duration: 1.5, top: "70vh" });
     message.success({
-      content: "Маршрут обновлен!", 
+      content: "Маршрут обновлен!",
       onClose: () => {
         close();
       },
@@ -142,7 +142,7 @@ async function submit() {
 
 // Загрузка данных маршрута
 onMounted(async () => {
-  const trackId = route.params.id;
+  const trackId = route.query._id || route.params.id;
   if (trackId) {
     try {
       const response = await trackStore.getById(trackId);
@@ -153,7 +153,7 @@ onMounted(async () => {
         form.subtitle = track.subtitle || '';
         form.description = track.description || '';
         form.type = track.type || 'пешком';
-        
+
         // Загружаем полную информацию о местах
         if (track.places && Array.isArray(track.places)) {
           // Если places содержит объекты
@@ -193,7 +193,7 @@ onMounted(async () => {
     <a-row type="flex" justify="center">
       <a-col :xs="22" :lg="12">
         <h2>Редактировать маршрут</h2>
-        
+
         <div v-if="isLoading" class="loading-container">
           <a-spin size="large" />
         </div>
@@ -203,14 +203,8 @@ onMounted(async () => {
             <a-col :span="24">
               <Field name="title" v-slot="{ value, handleChange }" v-model="form.title">
                 Название маршрута
-                <a-input 
-                  placeholder="Название маршрута" 
-                  @update:value="handleChange" 
-                  :value="value" 
-                  :maxlength="100"
-                  allow-clear 
-                  show-count
-                />
+                <a-input placeholder="Название маршрута" @update:value="handleChange" :value="value" :maxlength="100"
+                  allow-clear show-count />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="title" class="error-message" />
@@ -220,14 +214,8 @@ onMounted(async () => {
             <a-col :span="24">
               <Field name="subtitle" v-slot="{ value, handleChange }" v-model="form.subtitle">
                 Подзаголовок
-                <a-input 
-                  placeholder="Краткое описание маршрута" 
-                  @update:value="handleChange" 
-                  :value="value" 
-                  :maxlength="150"
-                  allow-clear 
-                  show-count
-                />
+                <a-input placeholder="Краткое описание маршрута" @update:value="handleChange" :value="value"
+                  :maxlength="150" allow-clear show-count />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="subtitle" class="error-message" />
@@ -236,31 +224,20 @@ onMounted(async () => {
 
             <a-col :span="24" style="display: flex; flex-direction: column">
               Подробное описание маршрута
-              <QuillEditor 
-                class="ql-editor" 
-                theme="snow" 
-                v-model:content="form.description"
-                contentType="html" 
+              <QuillEditor class="ql-editor" theme="snow" v-model:content="form.description" contentType="html"
                 :toolbar="[
                   ['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }],
                   [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
-                  ['link'], 
+                  ['link'],
                   ['clean']
-                ]"
-              />
+                ]" />
             </a-col>
 
             <a-col :span="24">
               <Field name="type" v-slot="{ value, handleChange }" v-model="form.type">
                 Тип маршрута
-                <a-select 
-                  :value="value" 
-                  @update:value="handleChange" 
-                  style="width: 100%" 
-                  :options="trackTypes"
-                  placeholder="Выберите тип маршрута"
-                  allowClear
-                />
+                <a-select :value="value" @update:value="handleChange" style="width: 100%" :options="trackTypes"
+                  placeholder="Выберите тип маршрута" allowClear />
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="type" class="error-message" />
@@ -268,19 +245,14 @@ onMounted(async () => {
             </a-col>
 
             <a-col :span="24">
-              <div class="places-section">
-                <h3>Места в маршруте (минимум 2)</h3>
-                
+              <Места в маршруте (минимум 2) <div class="places-section">
+
+
                 <!-- Поиск мест -->
                 <div class="place-search">
-                  <a-auto-complete
-                    v-model:value="placeSearchQuery"
-                    :options="availablePlaces"
-                    placeholder="Начните вводить название места..."
-                    style="width: 100%"
-                    :loading="isLoadingPlaces"
-                    @select="addPlace"
-                  >
+                  <a-auto-complete v-model:value="placeSearchQuery" :options="availablePlaces"
+                    placeholder="Начните вводить название места..." style="width: 100%" :loading="isLoadingPlaces"
+                    @select="addPlace">
                     <template #option="item">
                       <div>{{ item.label }}</div>
                     </template>
@@ -293,28 +265,15 @@ onMounted(async () => {
                     <template #renderItem="{ item, index }">
                       <a-list-item>
                         <template #actions>
-                          <a-button 
-                            size="small" 
-                            @click="moveUp(index)" 
-                            :disabled="index === 0"
-                            title="Переместить вверх"
-                          >
+                          <a-button size="small" @click="moveUp(index)" :disabled="index === 0"
+                            title="Переместить вверх">
                             ↑
                           </a-button>
-                          <a-button 
-                            size="small" 
-                            @click="moveDown(index)" 
-                            :disabled="index === form.selectedPlaces.length - 1"
-                            title="Переместить вниз"
-                          >
+                          <a-button size="small" @click="moveDown(index)"
+                            :disabled="index === form.selectedPlaces.length - 1" title="Переместить вниз">
                             ↓
                           </a-button>
-                          <a-button 
-                            size="small" 
-                            danger 
-                            @click="removePlace(index)"
-                            title="Удалить"
-                          >
+                          <a-button size="small" danger @click="removePlace(index)" title="Удалить">
                             ✕
                           </a-button>
                         </template>
@@ -334,23 +293,19 @@ onMounted(async () => {
                 <div v-else class="empty-places mt-4">
                   <a-empty description="Добавьте места в маршрут" />
                 </div>
-              </div>
-            </a-col>
+  </div>
+  </a-col>
 
-            <a-col :span="24" class="d-flex justify-center">
-              <a-button 
-                class="lets_go_btn ma-36" 
-                type="primary" 
-                html-type="submit"
-                :disabled="!meta.valid || form.description.length < 3 || !isValid"
-              >
-                Сохранить изменения
-              </a-button>
-            </a-col>
-          </a-row>
-        </Form>
-      </a-col>
-    </a-row>
+  <a-col :span="24" class="d-flex justify-center">
+    <a-button class="lets_go_btn ma-36" type="primary" html-type="submit"
+      :disabled="!meta.valid || form.description.length < 3 || !isValid">
+      Сохранить изменения
+    </a-button>
+  </a-col>
+  </a-row>
+  </Form>
+  </a-col>
+  </a-row>
   </div>
 </template>
 
@@ -397,16 +352,18 @@ onMounted(async () => {
   margin-top: 4px;
 }
 
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 0.3s;
 }
 
-.fade-enter-from, .fade-leave-to {
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
 }
 
 :deep(.ql-editor) {
-  min-height: 200px;
+  min-height: 120px;
   background: white;
 }
 

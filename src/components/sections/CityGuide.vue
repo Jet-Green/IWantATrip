@@ -11,6 +11,13 @@ let cards = ref([
     isShow: true,
 
   },
+    {
+    title: "Маршруты",
+    icon: "mdi-routes",
+    route: "/tracks-list",
+    isShow: true,
+
+  },
   {
     title: "Экскурсии",
     icon: "mdi-crowd",
@@ -46,6 +53,7 @@ let cards = ref([
     isShow: true,
 
   },
+
 
   // {
   //   title: "Фотобанк",
@@ -83,7 +91,7 @@ let cards = ref([
     <a-col :xs="24" :md="20" :xl="16">
       <h2 style="text-align: center; margin-bottom: 0">В городе</h2>
       <h3 class="d-flex justify-center align-center">
-        {{ locationStore.location.shortName }}
+        {{ locationStore.location?.shortName || 'Выберите город' }}
       </h3>
 
       <a-row :gutter="[8, 8]" class="justify-center">

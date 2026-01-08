@@ -2,6 +2,20 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuth } from '../stores/auth'
 import tinkoffPlugin from '../plugins/tinkoff'
 
+// Helper function to get cookie value
+function getCookie(name) {
+  const nameEQ = name + "=";
+  const cookies = document.cookie.split(';');
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i].trim();
+    if (cookie.indexOf(nameEQ) === 0) {
+      return cookie.substring(nameEQ.length, cookie.length);
+    }
+  }
+  return null;
+}
+
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -57,11 +71,21 @@ const router = createRouter({
           name: 'Guides',
           component: () => import('../components/_guide/Guides.vue')
         },
-          {
+        {
           path: '/guide',
           name: 'GuidePage',
-          component: () => import('../views/GuidePage.vue'),    
-        }
+          component: () => import('../views/GuidePage.vue'),
+        },
+        {
+          path: '/tracks-list',
+          name: 'TracksPage',
+          component: () => import('../components/_guide/Tracks.vue')
+        },
+        {
+          path: '/track',
+          name: 'TrackPage',
+          component: () => import('../views/TrackPage.vue'),
+        },
       ]
     },
     {
@@ -73,7 +97,7 @@ const router = createRouter({
           name: 'PlacePage',
           component: () => import('../views/PlacePage.vue')
         },
-      
+
         {
           path: '/edit-excursion',
           name: 'EditExcursion',
@@ -94,23 +118,14 @@ const router = createRouter({
           name: 'WaitingList',
           component: () => import('../components/WaitingList.vue'),
         },
-        {
-          path: '/track',
-          name: 'TrackPage',
-          component: () => import('../views/TrackPage.vue'),
-        },
-        {
-          path: '/tracks',
-          name: 'TracksPage',
-          component: () => import('../views/TracksPage.vue'),
-        },
+
         {
           path: '/create-track',
           name: 'CreateTrack',
           component: () => import('../views/CreateTrack.vue'),
         },
         {
-          path: '/edit-track/:id',
+          path: '/edit-track',
           name: 'EditTrack',
           component: () => import('../views/EditTrack.vue'),
         },
@@ -136,7 +151,7 @@ const router = createRouter({
           component: () => import('../views/CreateTripWithHelp.vue'),
           beforeEnter: async (to, from) => {
             let userStore = useAuth()
-            if (!localStorage.getItem('token') || !userStore.isAuth)
+            if (!getCookie('token') || !userStore.isAuth)
               await userStore.checkAuth()
 
             if (!userStore.isAuth)
@@ -149,7 +164,7 @@ const router = createRouter({
           component: () => import('../components/_cabinet/CreatePlace.vue'),
           beforeEnter: async (to, from) => {
             let userStore = useAuth()
-            if (!localStorage.getItem('token') || !userStore.isAuth)
+            if (!getCookie('token') || !userStore.isAuth)
               await userStore.checkAuth()
 
             if (!userStore.isAuth)
@@ -162,7 +177,7 @@ const router = createRouter({
           component: () => import('../components/_cabinet/crm/CreatePartner.vue'),
           beforeEnter: async (to, from) => {
             let userStore = useAuth()
-            if (!localStorage.getItem('token') || !userStore.isAuth)
+            if (!getCookie('token') || !userStore.isAuth)
               await userStore.checkAuth()
 
             if (!userStore.isAuth)
@@ -175,7 +190,7 @@ const router = createRouter({
           component: () => import('../components/_cabinet/crm/CreateTask.vue'),
           beforeEnter: async (to, from) => {
             let userStore = useAuth()
-            if (!localStorage.getItem('token') || !userStore.isAuth)
+            if (!getCookie('token') || !userStore.isAuth)
               await userStore.checkAuth()
 
             if (!userStore.isAuth)
@@ -183,14 +198,14 @@ const router = createRouter({
           }
         },
 
-       
+
         {
           path: '/create-no-help',
           name: 'CreateTripNoHelp',
           component: () => import('../views/CreateTripNoHelp.vue'),
           beforeEnter: async (to, from) => {
             let userStore = useAuth()
-            if (!localStorage.getItem('token') || !userStore.isAuth)
+            if (!getCookie('token') || !userStore.isAuth)
               await userStore.checkAuth()
 
             if (!userStore.isAuth)
@@ -208,7 +223,7 @@ const router = createRouter({
           component: () => import('../views/CreateCatalogTrip.vue'),
           beforeEnter: async (to, from) => {
             let userStore = useAuth()
-            if (!localStorage.getItem('token') || !userStore.isAuth)
+            if (!getCookie('token') || !userStore.isAuth)
               await userStore.checkAuth()
 
             if (!userStore.isAuth)
@@ -226,7 +241,7 @@ const router = createRouter({
           component: () => import('../views/EditCatalogTrip.vue'),
           beforeEnter: async (to, from) => {
             let userStore = useAuth()
-            if (!localStorage.getItem('token') || !userStore.isAuth)
+            if (!getCookie('token') || !userStore.isAuth)
               await userStore.checkAuth()
 
             if (!userStore.isAuth)
@@ -240,7 +255,7 @@ const router = createRouter({
           component: () => import('../views/CopyTrip.vue'),
           beforeEnter: async (to, from) => {
             let userStore = useAuth()
-            if (!localStorage.getItem('token') || !userStore.isAuth)
+            if (!getCookie('token') || !userStore.isAuth)
               await userStore.checkAuth()
 
             if (!userStore.isAuth)
@@ -253,7 +268,7 @@ const router = createRouter({
           component: () => import('../views/SendIdea.vue'),
           beforeEnter: async (to, from) => {
             let userStore = useAuth()
-            if (!localStorage.getItem('token') || !userStore.isAuth)
+            if (!getCookie('token') || !userStore.isAuth)
               await userStore.checkAuth()
 
             if (!userStore.isAuth)
@@ -266,7 +281,7 @@ const router = createRouter({
           component: () => import('../views/CatalogTripToActive.vue'),
           beforeEnter: async (to, from) => {
             let userStore = useAuth()
-            if (!localStorage.getItem('token') || !userStore.isAuth)
+            if (!getCookie('token') || !userStore.isAuth)
               await userStore.checkAuth()
 
             if (!userStore.isAuth)
@@ -284,7 +299,7 @@ const router = createRouter({
           component: () => import('../views/AddCompanion.vue'),
           beforeEnter: async (to, from) => {
             let userStore = useAuth()
-            if (!localStorage.getItem('token') || !userStore.isAuth)
+            if (!getCookie('token') || !userStore.isAuth)
               await userStore.checkAuth()
 
             if (!userStore.isAuth)
@@ -302,7 +317,7 @@ const router = createRouter({
           component: () => import('../views/AddGuideElement.vue'),
           beforeEnter: async (to, from) => {
             let userStore = useAuth()
-            if (!localStorage.getItem('token') || !userStore.isAuth)
+            if (!getCookie('token') || !userStore.isAuth)
               await userStore.checkAuth()
 
             if (!userStore.isAuth)
@@ -315,7 +330,7 @@ const router = createRouter({
           component: () => import('../views/CreateGuide.vue'),
           beforeEnter: async (to, from) => {
             let userStore = useAuth()
-            if (!localStorage.getItem('token') || !userStore.isAuth)
+            if (!getCookie('token') || !userStore.isAuth)
               await userStore.checkAuth()
 
             if (!userStore.isAuth)
@@ -330,9 +345,9 @@ const router = createRouter({
           path: 'edit-guide',
           name: 'EditGuide',
           component: () => import('../views/EditGuide.vue'),
-                    beforeEnter: async (to, from) => {
+          beforeEnter: async (to, from) => {
             let userStore = useAuth()
-            if (!localStorage.getItem('token') || !userStore.isAuth)
+            if (!getCookie('token') || !userStore.isAuth)
               await userStore.checkAuth()
 
             if (!userStore.isAuth)
@@ -389,7 +404,7 @@ const router = createRouter({
           name: 'Sport',
           component: () => import('../components/_guide/Sport.vue')
         },
-     
+
         {
           path: '/photos',
           name: 'Photos',
@@ -405,11 +420,7 @@ const router = createRouter({
           name: 'ExcursionPage',
           component: () => import('../views/ExcursionPage.vue')
         },
-        {
-          path: '/tracks-list',
-          name: 'TracksPage',
-          component: () => import('../components/_guide/Tracks.vue')
-        },
+
         {
           path: '/excursion-moderation',
           name: 'ExcursionModeration',
@@ -487,6 +498,11 @@ const router = createRouter({
               path: 'my-places',
               name: 'MyPlaces',
               component: () => import('../components/_cabinet/MyPlaces.vue'),
+            },
+            {
+              path: 'my-tracks',
+              name: 'MyTracks',
+              component: () => import('../components/_cabinet/MyTracks.vue'),
             },
             {
               path: 'partners',
@@ -672,6 +688,34 @@ const router = createRouter({
               ]
             },
             {
+              path: 'moderation-tracks',
+              name: 'TracksModeration',
+              component: () => import('../components/admin/TracksOnModeration.vue'),
+              beforeEnter: () => {
+                let userStore = useAuth()
+                if (!userStore.user?.roles.includes('manager')) {
+                  return false
+                }
+              },
+              children: [
+                {
+                  path: 'on-moderation',
+                  name: 'TracksOnModeration',
+                  component: () => import('../components/admin/tracksOnModeration/onModeration.vue'),
+                },
+                {
+                  path: 'rejected',
+                  name: 'RejectedTracks',
+                  component: () => import('../components/admin/tracksOnModeration/rejected.vue'),
+                },
+                {
+                  path: 'manage',
+                  name: 'ManageTracks',
+                  component: () => import('../components/admin/tracksOnModeration/manage.vue'),
+                },
+              ]
+            },
+            {
               path: 'moderation-guides',
               name: 'GuidesModeration',
               component: () => import('../components/admin/GuidesOnModeration.vue'),
@@ -791,7 +835,7 @@ const router = createRouter({
           ],
           beforeEnter: async (to, from) => {
             let userStore = useAuth()
-            if (!localStorage.getItem('token') || !userStore.isAuth)
+            if (!getCookie('token') || !userStore.isAuth)
               await userStore.checkAuth()
 
             if (!userStore.isAuth)
@@ -805,7 +849,7 @@ const router = createRouter({
           component: () => import('../components/admin/UpdateContract.vue'),
           beforeEnter: async () => {
             let userStore = useAuth()
-            if (!localStorage.getItem('token') || !userStore.isAuth)
+            if (!getCookie('token') || !userStore.isAuth)
               await userStore.checkAuth()
 
             if (!userStore.user?.roles?.includes('admin')) {
@@ -824,7 +868,7 @@ const router = createRouter({
           component: () => import('../components/admin/TripModeration.vue'),
           beforeEnter: async () => {
             let userStore = useAuth()
-            if (!localStorage.getItem('token') || !userStore.isAuth)
+            if (!getCookie('token') || !userStore.isAuth)
               await userStore.checkAuth()
             if (!userStore.user?.roles.includes('manager')) {
               return false
@@ -837,7 +881,7 @@ const router = createRouter({
           component: () => import('../components/admin/CatalogTripModeration.vue'),
           beforeEnter: async () => {
             let userStore = useAuth()
-            if (!localStorage.getItem('token') || !userStore.isAuth)
+            if (!getCookie('token') || !userStore.isAuth)
               await userStore.checkAuth()
             if (!userStore.user?.roles.includes('manager')) {
               return false
@@ -850,7 +894,7 @@ const router = createRouter({
           component: () => import('../components/admin/GuideModeration.vue'),
           beforeEnter: async () => {
             let userStore = useAuth()
-            if (!localStorage.getItem('token') || !userStore.isAuth)
+            if (!getCookie('token') || !userStore.isAuth)
               await userStore.checkAuth()
             if (!userStore.user?.roles.includes('manager')) {
               return false
@@ -878,7 +922,7 @@ const router = createRouter({
           component: () => import('../components/_cabinet/EditTrip.vue'),
           beforeEnter: async (to, from) => {
             let userStore = useAuth()
-            if (!localStorage.getItem('token') || !userStore.isAuth)
+            if (!getCookie('token') || !userStore.isAuth)
               await userStore.checkAuth()
 
             if (!userStore.isAuth)
@@ -912,7 +956,7 @@ const router = createRouter({
           component: () => import('../views/CreateExcursion.vue'),
           beforeEnter: async (to, from) => {
             let userStore = useAuth()
-            if (!localStorage.getItem('token') || !userStore.isAuth)
+            if (!getCookie('token') || !userStore.isAuth)
               await userStore.checkAuth()
             if (!userStore.isAuth)
               return '/auth'
@@ -924,7 +968,20 @@ const router = createRouter({
           component: () => import('../components/admin/ModeratePlace.vue'),
           beforeEnter: async () => {
             let userStore = useAuth()
-            if (!localStorage.getItem('token') || !userStore.isAuth)
+            if (!getCookie('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+            if (!userStore.user?.roles.includes('manager')) {
+              return false
+            }
+          }
+        },
+        {
+          path: "/moderate-track",
+          name: "ModerateTrack",
+          component: () => import('../components/admin/ModerateTrack.vue'),
+          beforeEnter: async () => {
+            let userStore = useAuth()
+            if (!getCookie('token') || !userStore.isAuth)
               await userStore.checkAuth()
             if (!userStore.user?.roles.includes('manager')) {
               return false
@@ -937,7 +994,7 @@ const router = createRouter({
           component: () => import('../views/EditPlace.vue'),
           beforeEnter: async () => {
             let userStore = useAuth()
-            if (!localStorage.getItem('token') || !userStore.isAuth)
+            if (!getCookie('token') || !userStore.isAuth)
               await userStore.checkAuth()
           }
         },
@@ -945,18 +1002,30 @@ const router = createRouter({
     },
   ],
   scrollBehavior(to, from, savedPosition) {
-    if (to.path === '/places' ) {
+    if (to.path === '/places') {
       // Scroll to the element with id "top" on /places route
       return { el: '#top' };
     } else if (savedPosition) {
       return savedPosition;
-    } 
+    }
     else {
       // Default behavior for other routes
       return { x: 0, y: 0 };
     }
   },
 
+})
+
+// Глобальный guard для проверки авторизации перед каждым переходом
+router.beforeEach(async (to, from, next) => {
+  const userStore = useAuth()
+
+  // Если store еще не инициализирован и есть refresh token, ждем проверки авторизации
+  if (!userStore.isAuth && !userStore.isRefreshing && document.cookie.includes('refreshToken')) {
+    await userStore.checkAuth()
+  }
+
+  next()
 })
 
 // // яндекс аналитика

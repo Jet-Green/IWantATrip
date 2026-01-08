@@ -77,13 +77,35 @@ const formatDuration = (minutes) => {
     return `${mins} мин`
 }
 
+const getRouteProfile = (trackType) => {
+    const type = trackType || 'пешком'
+
+    switch (type) {
+        case 'на велосипеде':
+            return { profile: 'cycling', speed: 15 }
+        case 'на автомобиле':
+            return { profile: 'driving', speed: 50 }
+        case 'на общественном транспорте':
+            return { profile: 'driving', speed: 30 }
+        case 'пешком':
+            return { profile: 'walking', speed: 4 }
+        default:
+            return { profile: 'walking', speed: 4 }
+    }
+}
+
 const buildRoute = async () => {
     if (!trackData.value.places || trackData.value.places.length < 2) {
         return
     }
 
-    const coords = trackData.value.places.map(p => p.location.coordinates.join(',')).join(';')
-    const url = `https://router.project-osrm.org/route/v1/foot/${coords}?overview=full&geometries=geojson`
+    const coords = trackData.value.places
+        .map(p => p.location.coordinates.join(','))
+        .join(';')
+
+    const { profile, speed } = getRouteProfile(trackData.value.type)
+
+    const url = `https://router.project-osrm.org/route/v1/${profile}/${coords}?overview=full&geometries=geojson`
 
     try {
         const res = await fetch(url)
@@ -91,15 +113,34 @@ const buildRoute = async () => {
 
         if (data.routes && data.routes[0]) {
             const route = data.routes[0].geometry
-
-            // Обновляем длину маршрута (из метров в км)
             const distanceKm = data.routes[0].distance / 1000
-            trackData.value.length = distanceKm.toFixed(2)
+            const durationHours = distanceKm / speed
+            const duration = Math.round(durationHours * 60)
 
-            // Рассчитываем время с учетом средней скорости пешехода (5 км/ч)
-            const pedestrianSpeed = 3.5 // км/ч
-            const durationHours = distanceKm / pedestrianSpeed
-            trackData.value.duration = Math.round(durationHours * 60) // в минуты
+            const prevLength = Number(trackData.value.length)
+            const prevDuration = Number(trackData.value.duration)
+
+            const newLength = Number(distanceKm.toFixed(2))
+            const newDuration = duration
+
+            trackData.value.length = newLength.toFixed(2)
+            trackData.value.duration = newDuration
+
+            // Сохраняем на сервер, если значения изменились или были пустыми
+            const lengthChanged = Number.isNaN(prevLength) || prevLength !== newLength
+            const durationChanged = Number.isNaN(prevDuration) || prevDuration !== newDuration
+
+            if (lengthChanged || durationChanged) {
+                try {
+                    await trackStore.edit({
+                        _id: trackData.value._id,
+                        length: newLength,
+                        duration: newDuration
+                    })
+                } catch (error) {
+                    console.error('Ошибка при сохранении маршрута:', error)
+                }
+            }
 
             map.addSource('route', { type: 'geojson', data: route })
 
@@ -182,30 +223,17 @@ const getUserLocation = () => {
 }
 
 onMounted(async () => {
-    // Загружаем данные маршрута
     try {
         const response = await trackStore.getById(_id)
         if (response.status === 200 && response.data) {
             trackData.value = response.data
 
-            // Проверяем, нужно ли загружать полную информацию о местах
-            if (trackData.value.places && Array.isArray(trackData.value.places)) {
-                // Если первый элемент - строка (ID), загружаем места
-                if (trackData.value.places.length > 0 && typeof trackData.value.places[0] === 'string') {
-                    const placesWithDetails = []
-                    for (let placeId of trackData.value.places) {
-                        try {
-                            const placeResponse = await PlaceService.getById(placeId)
-                            if (placeResponse.status === 200 && placeResponse.data) {
-                                placesWithDetails.push(placeResponse.data)
-                            }
-                        } catch (error) {
-                            console.error(`Ошибка загрузки места ${placeId}:`, error)
-                        }
-                    }
-                    trackData.value.places = placesWithDetails
-                }
-                // Иначе места уже загружены с сервера как объекты
+            // Загружаем полную информацию о местах, если это ID
+            if (trackData.value.places?.length > 0 && typeof trackData.value.places[0] === 'string') {
+                const placePromises = trackData.value.places.map(placeId =>
+                    PlaceService.getById(placeId).then(res => res.data).catch(() => null)
+                )
+                trackData.value.places = (await Promise.all(placePromises)).filter(Boolean)
             }
         }
     } catch (error) {
@@ -218,7 +246,7 @@ onMounted(async () => {
     await new Promise(resolve => setTimeout(resolve, 100))
 
     // Инициализация карты после загрузки данных
-    if (trackData.value.places && trackData.value.places.length > 0 && mapContainer.value) {
+    if (trackData.value.places?.length > 0 && mapContainer.value) {
         initMap()
     }
 })
@@ -290,30 +318,26 @@ onBeforeUnmount(() => {
             <a-spin v-if="isLoading" size="large"></a-spin>
 
             <a-col :xs="22" :xl="16" class="mb-32" v-else-if="trackData._id">
-                <h2>{{ trackData.title }}</h2>
+                <h2>{{ trackData.title }}
+                    <div style="float: right;">
+                        <span v-if="isSupported" style="opacity: 0.7; cursor: pointer;"
+                            class="mdi mdi-24px mdi-share-variant-outline" @click="startShare()"></span>
+                    </div>
+                </h2>
                 <div class="track-subtitle">{{ trackData.subtitle }}</div>
 
-                <a-row :gutter="[12, 12]" class="text justify-center d-flex mt-4">
-                    <a-col :xs="24" class="track-info-card">
-                        <div style="float: right;">
-                            <span v-if="isSupported" style="opacity: 0.7; cursor: pointer;"
-                                class="mdi mdi-24px mdi-share-variant-outline" @click="startShare()"></span>
-                        </div>
-
-
-                        <div>
-
-                            {{ trackData.type || 'пешком' }}  {{ trackData.length }} км  {{
-                            formatDuration(trackData.duration) }} </div>
-
-
-                        <div>
-                            <span v-for="(place, index) in trackData.places" :key="place._id">
+                <a-row :gutter="[12, 12]" class=" mt-4">
+                    <a-col :xs="24">
+                        <div class="track-info-card">
+                            {{ trackData.type || 'пешком' }} • {{ trackData.length }} км • {{
+                                formatDuration(trackData.duration) }} </div>
+                        <div class="mt-8">
+                            <b v-for="(place, index) in trackData.places" :key="place._id">
                                 <a @click="router.push(`/place?_id=${place._id}`)" class="place-link">
                                     {{ place.name }}
                                 </a>
                                 <span v-if="index < trackData.places.length - 1"> - </span>
-                            </span>
+                            </b>
                         </div>
 
 
@@ -363,6 +387,7 @@ onBeforeUnmount(() => {
 .map-container {
     width: 100%;
     height: 500px;
+    max-height: 50dvh;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -474,5 +499,14 @@ onBeforeUnmount(() => {
         transform: translate(-50%, -50%) scale(1.5);
         opacity: 0;
     }
+}
+
+.track-info-card {
+    background-color: #f9f9f9;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    display: inline-block;
 }
 </style>
