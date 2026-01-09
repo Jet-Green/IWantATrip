@@ -40,7 +40,6 @@ const trackTypes = [
   { value: 'пешком' },
   { value: 'на велосипеде' },
   { value: 'на автомобиле' },
-  { value: 'на общественном транспорте' }
 ];
 
 let formSchema = yup.object({

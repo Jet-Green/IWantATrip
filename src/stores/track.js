@@ -66,6 +66,14 @@ export const useTracks = defineStore('tracks', {
         console.log(err);
       }
     },
+    async editStats(data) {
+      try {
+        const response = await TrackService.editStats(data);
+        return response
+      } catch (err) {
+        console.log(err);
+      }
+    },
     async getById(_id) {
       try {
         const response = await TrackService.getById(_id);

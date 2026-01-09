@@ -18,6 +18,10 @@ export default {
     delete toSend._id;
     return $api.post(`/tracks/edit`, { trackId, track: toSend })
   },
+  editStats(data) {
+    const { _id, length, duration } = data;
+    return $api.post('/tracks/edit-stats', { trackId: _id, track: { length, duration } })
+  },
   moderateTrack(id) {
     console.log('Moderating track with id:', id);
     return $api.post('/tracks/moderate', { id })

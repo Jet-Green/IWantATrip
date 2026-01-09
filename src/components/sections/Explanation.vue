@@ -23,9 +23,9 @@ onMounted(() => {
   <a-row style="background:#64bed8; ">
     <a-col :span="24" style="text-align: center; ">
       <div v-if="!location?.image" class="slogan">Cообщество гостеприимных территорий</div>
-      <StartImage v-if="!location?.image" style="width: 100%;"></StartImage>
+      <StartImage  style="width: 100%;"></StartImage>
 
-      <img v-if="location?.image" :src="location?.image" alt="" class="location_img">
+      <!-- <img v-if="location?.image" :src="location?.image" alt="" class="location_img"> -->
     </a-col>
   </a-row>
 </template>

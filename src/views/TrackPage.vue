@@ -77,20 +77,36 @@ const formatDuration = (minutes) => {
     return `${mins} мин`
 }
 
+const routeProfiles = {
+    bike: {
+        baseUrl: 'https://routing.openstreetmap.de/routed-bike/route/v1',
+        profile: 'bicycle',
+        speed: 15,
+    },
+    car: {
+        baseUrl: 'https://routing.openstreetmap.de/routed-car/route/v1',
+        profile: 'driving',
+        speed: 50,
+    },
+    foot: {
+        baseUrl: 'https://routing.openstreetmap.de/routed-foot/route/v1',
+        profile: 'foot',
+        speed: 4,
+    },
+}
+
 const getRouteProfile = (trackType) => {
     const type = trackType || 'пешком'
 
     switch (type) {
         case 'на велосипеде':
-            return { profile: 'cycling', speed: 15 }
+            return routeProfiles.bike
         case 'на автомобиле':
-            return { profile: 'driving', speed: 50 }
-        case 'на общественном транспорте':
-            return { profile: 'driving', speed: 30 }
+            return routeProfiles.car
+
         case 'пешком':
-            return { profile: 'walking', speed: 4 }
         default:
-            return { profile: 'walking', speed: 4 }
+            return routeProfiles.foot
     }
 }
 
@@ -103,9 +119,9 @@ const buildRoute = async () => {
         .map(p => p.location.coordinates.join(','))
         .join(';')
 
-    const { profile, speed } = getRouteProfile(trackData.value.type)
+    const { baseUrl, profile, speed } = getRouteProfile(trackData.value.type)
 
-    const url = `https://router.project-osrm.org/route/v1/${profile}/${coords}?overview=full&geometries=geojson`
+    const url = `${baseUrl}/${profile}/${coords}?overview=full&geometries=geojson`
 
     try {
         const res = await fetch(url)
@@ -132,7 +148,7 @@ const buildRoute = async () => {
 
             if (lengthChanged || durationChanged) {
                 try {
-                    await trackStore.edit({
+                    await trackStore.editStats({
                         _id: trackData.value._id,
                         length: newLength,
                         duration: newDuration

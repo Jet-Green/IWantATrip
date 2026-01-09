@@ -35,8 +35,7 @@ const form = reactive({
 const trackTypes = [
   { value: 'пешком' },
   { value: 'на велосипеде' },
-  { value: 'на автомобиле' },
-  { value: 'на общественном транспорте' }
+  { value: 'на автомобиле' }
 ];
 
 let formSchema = yup.object({
