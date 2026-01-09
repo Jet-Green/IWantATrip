@@ -166,7 +166,7 @@ const buildRoute = async () => {
                 source: 'route',
                 paint: {
                     'line-width': 5,
-                    'line-color': '#ff0000'
+                    'line-color': '#ff6600'
                 }
             })
 
@@ -372,7 +372,7 @@ onBeforeUnmount(() => {
                         <div class="map-container">
                             <div ref="mapContainer" class="map"></div>
                             <button @click="getUserLocation" class="location-button"
-                                title="Показать моё местоположение">
+                                title="Где я?">
                                 📍
                             </button>
                             <div v-if="locationError" class="location-error">
@@ -457,7 +457,7 @@ onBeforeUnmount(() => {
 }
 
 :deep(.custom-marker) {
-    background-color: #4285F4;
+    background-color: #219FCF;
     color: white;
     border-radius: 50%;
     width: 30px;
@@ -483,7 +483,7 @@ onBeforeUnmount(() => {
 }
 
 :deep(.user-location-marker) {
-    background-color: #1976D2;
+    background-color: #5B7320;
     border-radius: 50%;
     width: 20px;
     height: 20px;
