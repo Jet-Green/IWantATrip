@@ -347,7 +347,9 @@ onBeforeUnmount(() => {
                         <div class="track-info-card">
                             {{ trackData.type || 'пешком' }} • {{ trackData.length }} км • {{
                                 formatDuration(trackData.duration) }} </div>
-                        <div class="mt-8">
+                    </a-col>
+                    <a-col :xs="24">
+                        <div class="mt-8 text">
                             <b v-for="(place, index) in trackData.places" :key="place._id">
                                 <a @click="router.push(`/place?_id=${place._id}`)" class="place-link">
                                     {{ place.name }}
@@ -355,15 +357,12 @@ onBeforeUnmount(() => {
                                 <span v-if="index < trackData.places.length - 1"> - </span>
                             </b>
                         </div>
-
-
-
                     </a-col>
                 </a-row>
 
                 <a-row class="mt-16" v-if="trackData.description">
                     <a-col :span="24">
-                        <div class="text track-description" v-html="trackData.description"></div>
+                        <div class="text" v-html="trackData.description"></div>
                     </a-col>
                 </a-row>
 
@@ -371,8 +370,7 @@ onBeforeUnmount(() => {
                     <a-col :span="24">
                         <div class="map-container">
                             <div ref="mapContainer" class="map"></div>
-                            <button @click="getUserLocation" class="location-button"
-                                title="Где я?">
+                            <button @click="getUserLocation" class="location-button" title="Где я?">
                                 📍
                             </button>
                             <div v-if="locationError" class="location-error">
@@ -518,7 +516,7 @@ onBeforeUnmount(() => {
 }
 
 .track-info-card {
-    background-color: #f9f9f9;
+    background-color: #dbdbdb;
     padding: 16px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
