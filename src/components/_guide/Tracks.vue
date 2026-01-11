@@ -15,6 +15,9 @@ const trackStore = useTracks()
 
 // search stored in trackStore.filter.search
 const isLoading = ref(false);
+const showMoreButton = ref(true);
+let page = 1;
+let tracksLength = 0;
 
 const conditions = () => {
   const c = {}
@@ -29,17 +32,24 @@ const conditions = () => {
 
 const loadTracks = async () => {
   isLoading.value = true;
-      const filter = {
-      search: trackStore.filter.search,
-      type: trackStore.filter.type,
-      isActive: true,
-      isModeration: true,
-      isRejected: false,
-      isHidden: false,
-      conditions: conditions()
-    };
+  page = 1;
+  tracksLength = 0;
+  const filter = {
+    search: trackStore.filter.search,
+    type: trackStore.filter.type,
+    isActive: true,
+    isModeration: true,
+    isRejected: false,
+    isHidden: false,
+    conditions: conditions()
+  };
   try {
     await trackStore.getAll(1, filter);
+    if (trackStore.tracks.length < 20) {
+      showMoreButton.value = false;
+    } else {
+      showMoreButton.value = true;
+    }
   } catch (error) {
     console.error('Ошибка загрузки маршрутов:', error);
   } finally {
@@ -47,11 +57,35 @@ const loadTracks = async () => {
   }
 };
 
+const moreTracks = async () => {
+  page++;
+  const filter = {
+    search: trackStore.filter.search,
+    type: trackStore.filter.type,
+    isActive: true,
+    isModeration: true,
+    isRejected: false,
+    isHidden: false,
+    conditions: conditions()
+  };
+  
+  let res = await trackStore.getAll(page, filter);
+  
+  if (res.length == tracksLength) {
+    showMoreButton.value = false;
+  }
+  tracksLength = res.length;
+};
+
 onMounted(async () => {
   if (route.query.search) {
     trackStore.filter.search = route.query.search;
   }
   await loadTracks();
+  
+  if (trackStore.tracks.length < 20) {
+    showMoreButton.value = false;
+  }
 
   if (route.hash) {
     let id = route.hash.slice(1)
@@ -82,6 +116,10 @@ onMounted(async () => {
             <h3 style="text-align: center;">Маршруты не найдены!</h3>
           </a-col>
         </a-row>
+
+        <div class="justify-center d-flex ma-16" @click="moreTracks()" v-if="showMoreButton && !isLoading">
+          <a-button>Ещё</a-button>
+        </div>
       </a-col>
     </a-row>
   </div>

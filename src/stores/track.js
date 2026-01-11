@@ -18,7 +18,7 @@ export const useTracks = defineStore('tracks', {
   },
   actions: {
     async getAll(page,filter) {
-        console.log(filter)
+     
       if (page == 1) {
         this.tracks = [];
       }
