@@ -350,12 +350,12 @@ onBeforeUnmount(() => {
                     </a-col>
                     <a-col :xs="24">
                         <div class="mt-8 text" style="font-weight: 500;">
-                            v-for="(place, index) in trackData.places" :key="place._id">
+                           <span v-for="(place, index) in trackData.places" :key="place._id">
                                 <a @click="router.push(`/place?_id=${place._id}`)" class="place-link">
                                     {{ place.name }}
                                 </a>
                                 <span v-if="index < trackData.places.length - 1"> - </span>
-                            
+                           </span>
                         </div>
                     </a-col>
                 </a-row>

@@ -165,9 +165,10 @@ export const useAuth = defineStore('auth', {
             return await LocationService.selectUserLocation(location, this.user._id)
         },
         async addTripCalc(tripCalc) {
-    
+           
             delete tripCalc.__v
             let res = await UserService.addTripCalc(this.user._id, tripCalc)
+       
             this.user.tripCalc = res.data.tripCalc
             return
         },
@@ -199,7 +200,7 @@ export const useAuth = defineStore('auth', {
                 console.log(error);
             }
         },
- 
+
         async setTripCalculator(calcId, tripId) {
             try {
                 let res = await UserService.setTripCalculator({ calcId, tripId })
