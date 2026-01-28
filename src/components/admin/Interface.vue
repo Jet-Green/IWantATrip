@@ -109,7 +109,7 @@ onMounted(async () => {
                     <a-input placeholder="Пляжный" size="large" v-model:value="tripType"></a-input>
                     <a-button type="primary" class="ml-12 lets_go_btn" @click="addTripType">добавить</a-button>
                 </a-col>
-                <a-col v-for="t of appStateStore.appState[0].tripType" class="ma-8" style="cursor: pointer">
+                <a-col v-for="t of appStateStore?.appState[0]?.tripType" class="ma-8" style="cursor: pointer">
                     <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"
                         @confirm="() => { appStateStore.deleteTripType(t) }">
                         <div class="name-wrapper">{{ t }}</div>
@@ -126,7 +126,7 @@ onMounted(async () => {
             <a-input placeholder="На море, Кавказ, Урал, Кунгурские пещеры" size="large" v-model:value="tripRegion"></a-input>
             <a-button type="primary" class="ml-12 lets_go_btn" @click="addTripRegion">добавить</a-button>
         </a-col>
-        <a-col v-for="region of appStateStore.appState[0].tripRegions" class="ma-8" style="cursor: pointer">
+        <a-col v-for="region of appStateStore?.appState[0]?.tripRegions" class="ma-8" style="cursor: pointer">
             <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"
                 @confirm="() => { deleteTripRegion(region) }">
                 <div class="name-wrapper">{{ region }}</div>
@@ -142,7 +142,7 @@ onMounted(async () => {
             <a-input placeholder="Памятник, музей, водопад" size="large" v-model:value="placeCategory"></a-input>
             <a-button type="primary" class="ml-12 lets_go_btn" @click="addPlaceCategory()">добавить</a-button>
         </a-col>
-        <a-col v-for="place of appStateStore.appState[0].placeCategory" class="ma-8" style="cursor: pointer">
+        <a-col v-for="place of appStateStore?.appState[0]?.placeCategory" class="ma-8" style="cursor: pointer">
             <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"
                 @confirm="() => { deletePlaceCategory(place) }">
                 <div class="name-wrapper">{{ place }}</div>

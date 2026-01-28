@@ -10,13 +10,13 @@ let directionPlace = ref("")
 
 let types = ref([])
 async function refreshTypes() {
-  if (!appStateStore.appState[0].excursionTypes)
+  if (!appStateStore?.appState[0]?.excursionTypes)
     await appStateStore.refreshState()
 
-  let typesFromDb = appStateStore.appState[0].excursionTypes
+  let typesFromDb = appStateStore?.appState[0]?.excursionTypes
   let treeData = []
 
-  for (let i = 0; i < typesFromDb.length; i++) {
+  for (let i = 0; i < typesFromDb?.length; i++) {
     treeData.push({
       title: typesFromDb[i].type,
       key: `${i}`,
