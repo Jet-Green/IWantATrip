@@ -268,6 +268,14 @@ onMounted(async () => {
             <div class="text"> {{ excursion.description }}</div>
           </a-col>
         </a-row>
+         <a-row class="mt-8">
+          <a-col :span="24">
+            <div>Рекомендации</div>
+            <div class="text"> {{ excursion.requirements }}</div>
+          </a-col>
+        </a-row>
+
+
         <a-row style="margin-top: 30px;">
           <a-col :span="24">
             <h3>Расписание</h3>

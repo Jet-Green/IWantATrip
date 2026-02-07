@@ -580,7 +580,7 @@ onMounted(async () => {
                                         {{ clearData(date.start) }} -
                                         {{ clearData(date.end) }}
                                     </b>
-                                    ({{ getCustomersCount(date.billsList) + "/" + trip.maxPeople }} чел.)
+                                    ({{ getCustomersCount(date.billsList) + " из " + trip.maxPeople }} чел.)
 
                                 </a-checkable-tag>
                             </div>
@@ -593,7 +593,7 @@ onMounted(async () => {
                                 <b>
                                     <a-progress
                                         :percent="(getCustomersCount(selectedDate.billsList) / trip.maxPeople) * 100"
-                                        :format="() => `${getCustomersCount(selectedDate.billsList)}/${trip.maxPeople} чел`">
+                                        :format="() => `${getCustomersCount(selectedDate.billsList)} из ${trip.maxPeople} чел`">
                                     </a-progress></b>
                             </div>
                         </div>
@@ -602,13 +602,19 @@ onMounted(async () => {
                             Цена:&nbsp
                             <div style="font-size: 0.9em;">
                                 <div v-for="(item, index) in trip.cost" :key="index" class="cost">
-                                    {{ item.first }}: <b>{{ item.price }} руб.</b> <span v-if="item.limit"> ( 
-                                       <span v-if="customersByCostType[item.first]">{{
-                                        customersByCostType[item.first] }}/</span> 
-                                        {{
-                                            `${item.limit}
-                                        мест`}})</span>
+
+                                    <div
+                                        v-if="item.limit - (isNaN(customersByCostType[item.first]) ? 0 : customersByCostType[item.first]) !== 0">
+                                        {{ item.first }}: <b>{{ item.price }} руб.</b>
+                                        <span>
+                                            <span> | мест - {{
+                                                item.limit - (isNaN(customersByCostType[item.first]) ? 0 :
+                                                customersByCostType[item.first])
+                                                }}</span>
+                                        </span>
+                                    </div>
                                 </div>
+
                             </div>
 
 
@@ -752,7 +758,7 @@ onMounted(async () => {
 
                         <div v-if="trip.returnConditions">
                             <b>Условия возврата:</b>
-                           <div v-html="trip.returnConditions"></div>
+                            <div v-html="trip.returnConditions"></div>
                         </div>
                     </div>
                 </a-row>
@@ -825,9 +831,9 @@ onMounted(async () => {
 
                             <div class="d-flex direction-column">
                                 <div> <span style="font-size: 8px">кол-во</span>
-                                    <span style="font-size: 8px" v-if="trip.cost[index].limit"> ( 
-                                     <span v-if="customersByCostType[cost.costType]"> {{
-                                        customersByCostType[cost.costType] }}/</span>
+                                    <span style="font-size: 8px" v-if="trip.cost[index].limit"> (
+                                        <span v-if="customersByCostType[cost.costType]"> {{
+                                            customersByCostType[cost.costType] }}/</span>
                                         {{
                                             trip.cost[index].limit
                                         }})</span>
