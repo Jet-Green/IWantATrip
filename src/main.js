@@ -17,7 +17,7 @@ import { ConfigProvider } from 'ant-design-vue';
 import { createHead } from '@unhead/vue/client'
 
 
-
+import Icon from './components/Icon.vue'; // Your wrapper
 
 
 
@@ -37,16 +37,16 @@ const updateSW = registerSW({
 
 const pinia = createPinia()
 const head = createHead()
-
-createApp(App)
-    .use(pinia)
-    .use(head)
-    .use(router)
-    .use(ANTD)
-    .use(VueSocialSharing)
-    .use(VueHtmlToPaper)
-    .use(MasonryWall)
-    // .use(yandexMetrika, { id: 98607105 })
-    .use(ConfigProvider)
-    .mount('#app')
+const app = createApp(App)
+.use(pinia)
+.use(head)
+.use(router)
+.use(ANTD)
+.use(VueSocialSharing)
+.use(VueHtmlToPaper)
+.use(MasonryWall)
+// .use(yandexMetrika, { id: 98607105 })
+.use(ConfigProvider)
+app.component('MdiIcon', Icon); // Use <MdiIcon> everywhere
+app.mount('#app')
 
