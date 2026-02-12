@@ -190,7 +190,7 @@ onMounted(async () => {
                 </a>
               </template> -->
               <div v-for="(item, i) in excursion.images" :key="i">
-                <img :src="item" alt="" srcset="" />
+                <img :src="item" alt="not found" srcset="" />
               </div>
               <template #prevArrow>
                 <div class="custom-slick-arrow" style="left: 10px; z-index: 1">

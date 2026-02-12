@@ -117,7 +117,7 @@ const ageString = (age) => {
           <a-col v-else style="text-align: center" :span="24">
             <div style="display: flex; flex-direction: column; margin-top: 16px;">
               <div class="d-flex justify-center">
-                <img src="../assets/images/notfound.jpg" alt="" style="height: 150px;">
+                <img src="../assets/images/notfound.jpg" alt="not found" style="height: 150px;">
               </div>
               <h3>извини, я не нашёл</h3>
             </div>

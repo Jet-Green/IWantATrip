@@ -125,10 +125,10 @@ onMounted(() => {
   <div>
     <BackButton />
 
-    <img v-if="!sm" src="../assets/images/booking_left.webp"
+    <img v-if="!sm" src="../assets/images/booking_left.webp" alt="not found"
       style="position: fixed; left: 0px; bottom: 0px;  width: 20%;" />
 
-    <img v-if="!sm" src="../assets/images/booking_right.webp"
+    <img v-if="!sm" src="../assets/images/booking_right.webp" alt="not found"
       style="position: fixed; right: 0px; bottom: 0px; width: 20% " />
 
     <Form :validation-schema="formSchema" v-slot="{ meta }" @submit="submit">

@@ -445,7 +445,7 @@ onMounted(() => {
           </a-button>
         </div>
         <div class="d-flex justify-center">
-          <img :src="TinkoffLogo" class="tinkoff-logo" />
+          <img :src="TinkoffLogo" class="tinkoff-logo" alt="tinkoff"/>
         </div>
       </div>
     </div>

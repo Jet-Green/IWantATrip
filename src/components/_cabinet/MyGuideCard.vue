@@ -52,7 +52,7 @@ async function hideGuide(_id,isHidden) {
   <a-card class="card" :class="[guide.isHidden ? 'overlay' : '']" v-if="guide._id">
 
     <div style=" font-weight: 700;">
-      <img :src="guide.image" alt="" style="width: 20%; border-radius: 50%;">
+      <img :src="guide.image" alt="not found" style="width: 20%; border-radius: 50%;">
       {{ guide.name }} {{ guide.surname }}
     </div>
     <div>тел. {{ guide.phone }}</div>

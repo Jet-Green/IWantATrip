@@ -101,7 +101,7 @@ onMounted(() => {
             <img
               src="../assets/images/logo.webp"
               style="height: 60px; cursor: pointer"
-              alt=""
+              alt="not found"
               @click="toComponentFromMenu('Landing')"
             />
           </a-col>
@@ -144,11 +144,11 @@ onMounted(() => {
             </div> -->
 
             <div class="ma-4">
-              <a href="https://vk.com/gorodaivesi_udm" target="_blank"><img src="../assets/icons/vk.svg" alt="" /></a>
+              <a href="https://vk.com/gorodaivesi_udm" target="_blank" aria-label="vk"><img src="../assets/icons/vk.svg" alt="not found" /></a>
             </div>
             <div class="ma-4">
-              <a href="https://t.me/gorodaivesi_ru" target="_blank"
-                ><img src="../assets/icons/telegram.svg" alt=""
+              <a href="https://t.me/gorodaivesi_ru" target="_blank" aria-label="tg"
+                ><img src="../assets/icons/telegram.svg" alt="not found"
               /></a>
             </div>
 
@@ -244,12 +244,12 @@ onMounted(() => {
         <div @click="toComponentFromMenu('Contacts')" class="route ma-8">контакты</div>
         <div @click="toComponentFromMenu('Documents')" class="route ma-8">документы</div>
         <div style="text-align: center">
-          <a href="https://vk.com/gorodaivesi_udm" target="_blank"
-            ><img class="ma-4" src="../assets/icons/vk.svg" alt=""
+          <a href="https://vk.com/gorodaivesi_udm" target="_blank" aria-label="vk"
+            ><img class="ma-4" src="../assets/icons/vk.svg" alt="not found"
           /></a>
 
-          <a href="https://t.me/gorodaivesi_ru" target="_blank"
-            ><img class="ma-4" src="../assets/icons/telegram.svg" alt=""
+          <a href="https://t.me/gorodaivesi_ru" target="_blank" aria-label="tg"
+            ><img class="ma-4" src="../assets/icons/telegram.svg" alt="not found"
           /></a>
         </div>
         <img

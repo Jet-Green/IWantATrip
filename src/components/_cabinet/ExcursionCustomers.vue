@@ -88,7 +88,7 @@ onMounted(async () => {
 
 <template>
   <div v-if="loading" class="d-flex justify-center">
-    <img src="../../assets/images/founddog.webp" alt="" style="height: 150px; margin-top: 50px;">
+    <img src="../../assets/images/founddog.webp" alt="not found" style="height: 150px; margin-top: 50px;">
   </div>
   <div v-else>
     <a-breadcrumb class="mb-16">

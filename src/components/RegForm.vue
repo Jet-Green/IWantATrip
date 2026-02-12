@@ -117,9 +117,9 @@ const formSchema = yup.object({
 <template>
   <div>
     <BackButton />
-    <img v-if="!sm" src="../assets/images/auth_left.webp" style="position: fixed; left: 0px; bottom: 0px;  width: 20%;" />
+    <img v-if="!sm" src="../assets/images/auth_left.webp" alt="not found" style="position: fixed; left: 0px; bottom: 0px;  width: 20%;" />
 
-    <img v-if="!sm" src="../assets/images/auth_right.webp"
+    <img v-if="!sm" src="../assets/images/auth_right.webp" alt="not found"
       style="position: fixed; right: 0px; bottom: 0px; width: 20% " />
     <a-row type="flex" justify="center">
       <a-col :span="24" :md="8" class="pa-16">

@@ -144,11 +144,11 @@ onMounted(() => {
             </div> -->
 
             <div class="ma-4">
-              <a href="https://vk.com/gorodaivesi_udm" target="_blank"><img src="../assets/icons/vk.svg" alt="" /></a>
+              <a href="https://vk.com/gorodaivesi_udm" target="_blank"><img src="../assets/icons/vk.svg" alt="not found" /></a>
             </div>
             <div class="ma-4">
               <a href="https://t.me/gorodaivesi_ru" target="_blank"
-                ><img src="../assets/icons/telegram.svg" alt=""
+                ><img src="../assets/icons/telegram.svg" alt="not found"
               /></a>
             </div>
 

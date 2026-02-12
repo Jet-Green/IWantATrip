@@ -115,11 +115,11 @@ onMounted(async () => {
                         <a-carousel arrows dots-class="slick-dots slick-thumb">
                             <template #customPaging="props">
                                 <a>
-                                    <img :src="getImg(props.i)" />
+                                    <img :src="getImg(props.i)" alt="not found" />
                                 </a>
                             </template>
                             <div v-for="(item, i) in trip.images" :key="i">
-                                <img :src="item" alt="" srcset="" />
+                                <img :src="item" alt="not found" srcset="" />
                             </div>
                             <template #prevArrow>
                                 <div class="custom-slick-arrow" style="left: 10px; z-index: 1">

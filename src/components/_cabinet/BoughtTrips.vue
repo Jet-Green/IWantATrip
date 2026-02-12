@@ -140,7 +140,7 @@ onMounted(async () => {
 <template>
     <a-row v-if="loading">
         <a-col :span="24" class="d-flex justify-center mt-16">
-            <img src="../../assets/images/founddog.webp" alt="" style="height: 150px;">
+            <img src="../../assets/images/founddog.webp" alt="not found" style="height: 150px;">
         </a-col>
     </a-row>
     <a-row v-else :gutter="[8, 8]">
@@ -207,7 +207,7 @@ onMounted(async () => {
                                     </a-button>
                                 </div>
                                 <div class="d-flex justify-center">
-                                    <img :src="TinkoffLogo" class="tinkoff-logo">
+                                    <img :src="TinkoffLogo" class="tinkoff-logo" alt="tinkoff">
                                 </div>
                             </div>
                         </span>

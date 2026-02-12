@@ -640,7 +640,7 @@ async function confirmCancelPayment() {
                                 </div>
 
                                 <b v-if="BILL.purchasedByTinkoff">
-                                    <div> <img :src="TinkoffLogo" class="tinkoff-logo"></div>
+                                    <div> <img :src="TinkoffLogo" alt="tinkoff" class="tinkoff-logo"></div>
                                     <a-button @click="() => { currentBill = BILL; cancelPayment() }">Возврат</a-button>
                                 </b>
                                 <b v-else>
@@ -676,7 +676,7 @@ async function confirmCancelPayment() {
             </div>
         </a-col>
         <a-col v-else :span="24" class="d-flex justify-center">
-            <img src="../../assets/images/founddog.webp" alt="" style="height: 150px; margin-top: 50px;">
+            <img src="../../assets/images/founddog.webp" alt="not found" style="height: 150px; margin-top: 50px;">
         </a-col>
 
 

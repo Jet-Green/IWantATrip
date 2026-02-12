@@ -50,7 +50,7 @@ function getDate() {
     <a-badge-ribbon :text="`${trip.cost.length ? trip.cost[0].price : 0} руб`">
       <a-card hoverable style="text-align: center;">
         <div>
-          <img :src="trip.images[0]" style="object-fit: cover; width: 100%; height: 175px" />
+          <img :src="trip.images[0]" alt="not found" style="object-fit: cover; width: 100%; height: 175px" />
         </div>
         <span>
           <strong>{{ getDate() }}</strong>

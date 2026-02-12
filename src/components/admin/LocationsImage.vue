@@ -180,7 +180,7 @@ const handleImageChange = async (event) => {
       <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"
         @confirm="() => { deletePhotoFromLocation(location._id) }">
         <div>
-          <img style="width: 100%;" :src="location.image" alt="">
+          <img style="width: 100%;" :src="location.image" alt="not found">
 
         </div>
         <div style="font-size: 8px; text-align: center;">{{ location.shortName }}</div>

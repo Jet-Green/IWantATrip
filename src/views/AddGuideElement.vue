@@ -95,7 +95,7 @@ function submit() {
                 добавить фото
               </a-button>
               <div class="d-flex ma-2" style="overflow-x: scroll">
-                <img :src="preview" alt="" class="ma-4" style="max-width: 200px; cursor: pointer;"
+                <img :src="preview" alt="not found" class="ma-4" style="max-width: 200px; cursor: pointer;"
                   @click="delPhotoDialog = true;" />
                 <a-modal v-model:visible="delPhotoDialog" :footer="null">
                   <h3>Удалить фото?</h3>

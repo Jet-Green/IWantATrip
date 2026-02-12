@@ -22,7 +22,7 @@ function goToCatalogPage() {
 
         <a-card hoverable>
             <div>
-                <img :src="trip.images[0]" style="object-fit: cover; width: 100%; height: 175px" />
+                <img :src="trip.images[0]" alt="not found" style="object-fit: cover; width: 100%; height: 175px" />
             </div>
 
         </a-card>

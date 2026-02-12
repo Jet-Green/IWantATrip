@@ -60,7 +60,7 @@ onMounted(async () => {
           <a-carousel arrows dots-class="slick-dots slick-thumb"  autoplay>
 
             <div v-for="item, index in place?.images" :key="index">
-              <img :src="item" @click="toggleCols"  loading="lazy"
+              <img :src="item" @click="toggleCols"  loading="lazy" alt="not found"
               />
             </div>
           </a-carousel>

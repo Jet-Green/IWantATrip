@@ -66,7 +66,7 @@ async function deleteExcursionBill(_id) {
         Итого: {{ getBillSum(bill) }}₽
       </div>
       <div v-if="payedByTinkoff" class="d-flex justify-end">
-        <img :src="TinkoffLogo" class="tinkoff-logo">
+        <img :src="TinkoffLogo" alt="tinkoff" class="tinkoff-logo">
       </div>
     </div>
     <div class="actions d-flex">
