@@ -26,7 +26,6 @@ onMounted (()=>{
 </script>
 <template>
   <div>
-  <MdiIcon name="account" />
     <Explanation />
     <ButtonsRow />
     <!-- <ToTrips /> -->

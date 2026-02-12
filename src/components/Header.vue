@@ -256,7 +256,7 @@ onMounted(() => {
           src="../assets/images/logo.webp"
           class="ma-8"
           style="height: 60px; cursor: pointer"
-          alt=""
+          alt="not found"
           @click="toComponentFromMenu('Landing')"
         />
       </div>
