@@ -222,7 +222,7 @@ function handleImgError() {
                                     @error="handleImgError" />
                             </div>
                             <a-button type="dashed" block @click="openImageCropper">
-                                <span class="mdi mdi-camera mr-1"></span>
+                                <MdiIcon name="camera" class="mr-1" />
                                 Изменить фото
                             </a-button>
                         </a-col>

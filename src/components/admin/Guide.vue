@@ -121,7 +121,7 @@ onMounted(async () => {
                                 @confirm="deleteGuide(g._id)">
                                 <a-button type="primary" style="border-radius: 18px" class="mt-4">
                                     <template #icon>
-                                        <span class="mdi mdi-delete"></span>
+                                        <MdiIcon name="delete" />
                                     </template>
                                 </a-button>
                             </a-popconfirm>

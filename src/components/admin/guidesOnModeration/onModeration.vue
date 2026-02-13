@@ -74,7 +74,7 @@ onMounted(async () => {
                     <div class="d-flex justify-center">
                     <a-button type="primary" style="border-radius: 18px; text-align: center;" class="mt-4" @click="router.push('/guide-moderation/?_id=' + guide._id)" >
                             <template #icon>
-                                <span class="mdi mdi-check-decagram-outline"></span>
+                                <MdiIcon name="check-decagram-outline" />
                             </template>
                             проверить
                       </a-button>

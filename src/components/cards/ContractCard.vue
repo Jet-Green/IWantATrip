@@ -53,7 +53,7 @@ function checkContract() {
             <a-button shape="circle" type="dashed" size="small"
                 @click="router.push({ name: 'UpdateContract', query: { _id: contract._id } })">
                 <template #icon>
-                    <span class="mdi mdi-pencil"></span>
+                    <MdiIcon name="pencil" />
                 </template>
             </a-button>
         </div>
@@ -87,7 +87,7 @@ function checkContract() {
             email }}</a-tag>
 
             <a-button size="small" @click="addContractEmailDialog = true">
-                <span class="mdi mdi-plus"></span>
+                <MdiIcon name="plus" />
             </a-button>
         </div>
     </a-card>

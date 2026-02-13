@@ -92,8 +92,8 @@ onMounted(() => {
         <a-col :xs="24" class="d-flex">
           <a-input-search v-model:value="query.strQuery" placeholder="поиск" enter-button style="z-index: 0"
             @search="find()" />
-          <span class="mdi mdi-24px mdi-filter-outline ml-16" :class="{ active_filter: visible, filter: !visible }"
-            @click="visible = !visible"></span>
+          <MdiIcon :class="{ active_filter: visible, filter: !visible }"
+            @click="visible = !visible" name="filter-outline" size="24px" class="ml-16" />
         </a-col>
 
       </a-row>

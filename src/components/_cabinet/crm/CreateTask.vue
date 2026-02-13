@@ -322,19 +322,19 @@ onMounted(async () => {
                 class="mb-16">
                 <a-input v-model:value="managersEmails[index]" placeholder="manager@mail.ru" class="mr-8" />
 
-                <span v-if="emailExists[index]" class="mdi mdi-check"
-                  style="font-size: 24px; font-weight: bold; color: #219fcf"></span>
+                <MdiIcon v-if="emailExists[index]"
+                  style="font-size: 24px; font-weight: bold; color: #219fcf" name="check" />
 
-                <span v-else class="mdi mdi-not-equal-variant"
-                  style="font-size: 24px; font-weight: bold; color: #ff6600"></span>
+                <MdiIcon v-else
+                  style="font-size: 24px; font-weight: bold; color: #ff6600" name="not-equal-variant" />
 
                 <a-button @click="removeManager(index)" shape="circle" class="ml-4">
-                  <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                  <MdiIcon style="cursor: pointer" name="minus" />
                 </a-button>
               </div>
 
               <a-button type="dashed" block @click="addManager">
-                <span class="mdi mdi-12px mdi-plus"></span>
+                <MdiIcon name="plus" size="12px" />
                 Добавить менеджера
               </a-button>
             </a-col>

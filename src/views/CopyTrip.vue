@@ -441,7 +441,7 @@ let formSchema = yup.object({
             targetIndex = i;" />
                             </div>
                             <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
-                                <span class="mdi mdi-12px mdi-plus"></span>
+                                <MdiIcon name="plus" size="12px" />
                                 Добавить фото
                             </a-button>
                         </a-col>
@@ -494,8 +494,8 @@ let formSchema = yup.object({
                             <div class="d-flex space-between ">Цены
                                 <a-tooltip>
                                     <template #title>калькулятор</template>
-                                    <span class="mdi mdi-calculator" @click="goToPriceCalc()"
-                                        style="cursor: pointer; font-size: 24px; color:#ff6600"></span>
+                                    <MdiIcon @click="goToPriceCalc()"
+                                        style="cursor: pointer; font-size: 24px; color:#ff6600" name="calculator" />
                                 </a-tooltip>
                             </div>
 
@@ -508,12 +508,12 @@ let formSchema = yup.object({
                                     :min="0" :step="0.01" class="ml-16 mr-16" />
 
                                 <a-button @click="removeCost(item)" shape="circle">
-                                    <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                                    <MdiIcon style="cursor: pointer" name="minus" />
                                 </a-button>
                             </div>
 
                             <a-button type="dashed" block @click="addCost" class="ma-8">
-                                <span class="mdi mdi-12px mdi-plus"></span>
+                                <MdiIcon name="plus" size="12px" />
                                 Добавить цены
                             </a-button>
                         </a-col>
@@ -528,12 +528,12 @@ let formSchema = yup.object({
                                     class="ml-16 mr-16" />
 
                                 <a-button @click="removeBonuses(item)" shape="circle">
-                                    <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                                    <MdiIcon style="cursor: pointer" name="minus" />
                                 </a-button>
                             </div>
 
                             <a-button type="dashed" block @click="addBonuses" class="ma-8">
-                                <span class="mdi mdi-12px mdi-plus"></span>
+                                <MdiIcon name="plus" size="12px" />
                                 Добавить бонусы и скидки
                             </a-button>
                         </a-col>

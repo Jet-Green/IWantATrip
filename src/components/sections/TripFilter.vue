@@ -257,9 +257,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- <span class="ml-16 mdi mdi-24px mdi-filter-outline" :class="{ active_filter: visible, filter: !visible }"
-    @click="visible = !visible">
-  </span> -->
+  <!-- <MdiIcon :class="{ active_filter: visible, filter: !visible }"
+    @click="visible = !visible" name="filter-outline" size="24px" class="ml-16" /> -->
 
   <a-row type="flex" justify="center" class="section_bg">
     <a-col :xs="22" :lg="16">
@@ -273,7 +272,7 @@ onMounted(() => {
             <!-- Если будет что-то в фильтре показывать  -->
             <a-button type="primary" shape="circle" class="ml-8" @click="resetForm"
               v-if="tripRegion || Number(locationRadius) || type.length > 0 || time?.length > 0">
-              <span class="mdi mdi-close"></span>
+              <MdiIcon name="close" />
             </a-button>
           </div>
         </a-col>
@@ -292,7 +291,7 @@ onMounted(() => {
           <a-col :span="24" class="subtitle">Откуда: место начала</a-col>
           <a-col :span="24" v-if="locationStore.location?._id">
             <div class="start-location-container" @click="selectLocationDialog = !selectLocationDialog">
-              <span class="mdi mdi-map-marker-radius-outline"></span>
+              <MdiIcon name="map-marker-radius-outline" />
               {{ locationStore.location.shortName }}
             </div>
             <div>
@@ -304,7 +303,7 @@ onMounted(() => {
           <!-- если нет локации - выбираем её, потом радиус и появится -->
           <a-col v-else :span="24">
             <div class="no-location" @click="selectLocationDialog = !selectLocationDialog">
-              <span class="mdi mdi-map-marker-outline"></span>
+              <MdiIcon name="map-marker-outline" />
               <span> Ваш город </span>    
             </div>
             <div> начало из любого города </div>
@@ -344,7 +343,7 @@ onMounted(() => {
                     {{ region }}
                   </div>
                   <div>
-                    <span class="mdi mdi-check"></span>
+                    <MdiIcon name="check" />
                   </div>
                 </div>
               </div>

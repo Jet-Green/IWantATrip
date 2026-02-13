@@ -58,7 +58,7 @@ watch([dates, times], () => {
         calendar-cell-class-name="dp-custom-cell" cancel-text="отмена" select-text="выбрать" :min-date="new Date()"
         :enable-time-picker="false" format="dd/MM/yyyy">
         <template #input-icon>
-          <span style="font-size: 20px; color: rgba(95, 95, 95, 0.65);" class="mdi mdi-calendar-outline ml-8"></span>
+          <MdiIcon style="font-size: 20px; color: rgba(95, 95, 95, 0.65);" name="calendar-outline" class="ml-8" />
         </template>
       </VueDatePicker> -->
       <VueDatePicker 
@@ -77,7 +77,7 @@ watch([dates, times], () => {
       >
         <template #dp-input>
             <a-button class="d-flex lets_go_btn justify-center align-center text-center ml-8" type="primary">
-              <span style="font-size: 18px; padding-right: 4px;" class="mdi mdi-plus"></span> добавить
+              <MdiIcon style="font-size: 18px; padding-right: 4px;" name="plus" /> добавить
             </a-button>
           </template>
       </VueDatePicker>
@@ -97,8 +97,7 @@ watch([dates, times], () => {
                   <VueDatePicker v-model="times[i][j]" placeholder="Время" time-picker cancel-text="отмена"
                     select-text="выбрать" @cleared="times[i].splice(j, 1)">
                     <template #input-icon>
-                      <span style="font-size: 20px; color: rgba(95, 95, 95, 0.65);"
-                        class="mdi mdi-calendar-outline ml-8"></span>
+                      <MdiIcon style="font-size: 20px; color: rgba(95, 95, 95, 0.65);" name="calendar-outline" class="ml-8" />
                     </template>
                   </VueDatePicker>
                 </a-col>
@@ -110,7 +109,7 @@ watch([dates, times], () => {
               </a-row>
               <div style="width: 100%;" class="d-flex justify-center">
                 <a-button type="dashed" class="d-flex align-center" @click="times[i].push(null)">
-                  <span class="mdi mdi-clock-outline mdi-18px mr-4"></span>
+                  <MdiIcon name="clock-outline" size="18px" class="mr-4" />
                   добавить время
                 </a-button>
               </div>

@@ -91,7 +91,7 @@ function submit() {
             </a-col>
             <a-col :span="24">
               <a-button @click="visibleCropperModal = true" class="mb-8" type="dashed" block>
-                <span class="mdi mdi-12px mdi-plus"></span>
+                <MdiIcon name="plus" size="12px" />
                 добавить фото
               </a-button>
               <div class="d-flex ma-2" style="overflow-x: scroll">

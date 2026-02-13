@@ -262,7 +262,7 @@ onMounted(async () => {
                   targetIndex = i;" />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
-                <span class="mdi mdi-12px mdi-plus"></span>
+                <MdiIcon name="plus" size="12px" />
                 Добавить фото
               </a-button>
             </a-col>

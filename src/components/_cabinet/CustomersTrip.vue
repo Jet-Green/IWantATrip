@@ -564,16 +564,16 @@ async function confirmCancelPayment() {
                                     }}</b>
                             </div>
                             <div>
-                                <span class="mdi mdi-account-outline" style=""></span>
+                                <MdiIcon style="" name="account-outline" />
                                 {{ BILL.userInfo.fullname }}
 
                             </div>
                             <div v-if="BILL.selectedStartLocation">
-                                <span class="mdi mdi-map-marker-outline" style=""></span>
+                                <MdiIcon style="" name="map-marker-outline" />
                                 {{ BILL.selectedStartLocation }}
                             </div>
                             <div>
-                                <span class="mdi mdi-phone-outline" style=""></span>
+                                <MdiIcon style="" name="phone-outline" />
                                 <a :href="getPhoneNumber(BILL.userInfo.phone)">
                                     {{ BILL.userInfo.phone }}</a>
                             </div>
@@ -619,23 +619,24 @@ async function confirmCancelPayment() {
                             </div>
                             <div style="display: flex; justify-content: space-between;">
                                 <div style="font-size: 20px">
-                                    <span @click="() => { setPaymentDialog = true; currentBill = BILL }"
+                                    <!-- <span @click="() => { setPaymentDialog = true; currentBill = BILL }"
                                         v-if="billTotal(BILL) > BILL.payment.amount" class="mdi mdi-cart-plus"
-                                        style="color: #245159; cursor: pointer; margin-right:8px"></span>
+                                        style="color: #245159; cursor: pointer; margin-right:8px"></span> -->
+                                        <MdiIcon name="cart-plus" @click="() => { setPaymentDialog = true; currentBill = BILL }"
+                                        v-if="billTotal(BILL) > BILL.payment.amount"
+                                        style="color: #245159; cursor: pointer; margin-right:8px" />
                                     <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"
                                         @confirm="deletePayment(BILL)">
-                                        <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+                                        <MdiIcon style="color: #ff6600; cursor: pointer" name="delete" />
                                     </a-popconfirm>
-                                    <span class="mdi mdi-account-plus-outline ml-4"
-                                        @click="showAddTouristsDialog(BILL)"></span>
+                                    <MdiIcon @click="showAddTouristsDialog(BILL)" name="account-plus-outline" class="ml-4" />
                                     <a-badge :dot="true" v-if="BILL.userComment?.length > 0">
-                                        <span class="mdi mdi-18px mdi-comment-edit-outline ml-4"
-                                            @click="showEditUserCommentDialog(BILL)"></span>
+                                        <MdiIcon @click="showEditUserCommentDialog(BILL)" name="comment-edit-outline" size="18px" class="ml-4" />
                                     </a-badge>
-                                    <span v-else class="mdi mdi-18px mdi-comment-edit-outline ml-4"
-                                        @click="showEditUserCommentDialog(BILL)"></span>
+                                    <MdiIcon v-else
+                                        @click="showEditUserCommentDialog(BILL)" name="comment-edit-outline" size="18px" class="ml-4" />
 
-                                    <span class="mdi mdi-printer-outline ml-4" style=" cursor: pointer" @click="printContract(BILL)"></span>
+                                    <MdiIcon style=" cursor: pointer" @click="printContract(BILL)" name="printer-outline" class="ml-4" />
 
                                 </div>
 
@@ -645,17 +646,17 @@ async function confirmCancelPayment() {
                                 </b>
                                 <b v-else>
                                     <span v-if="billTotal(BILL) == BILL.payment.amount" style="color: #bcc662">
-                                        <span class="mdi mdi-check-all" style="font-size: 20px"></span>
+                                        <MdiIcon name="check-all" size="20px" />
                                         оплачен
                                     </span>
                                     <span v-if="billTotal(BILL) != BILL.payment.amount"
                                         style="display: flex; align-items: center">
                                         <div v-if="BILL.payment.amount == 0" style="color: #ff6600">
-                                            <span class="mdi mdi-close" style="font-size: 20px; "></span>
+                                            <MdiIcon name="close" size="20px" />
                                             не оплачен
                                         </div>
                                         <div v-else style="color: #20A0CE">
-                                            <span class="mdi mdi-check" style="font-size: 20px"></span>
+                                            <MdiIcon style="font-size: 20px" name="check" />
                                             частично
                                         </div>
                                     </span>
@@ -671,7 +672,7 @@ async function confirmCancelPayment() {
             </div>
             <div class="d-flex justify-center">
                 <a-button @click="print()" type="primary" class="lets_go_btn ma-8">
-                    <span class="mdi mdi-printer-outline mr-4"></span> Печать
+                    <MdiIcon name="printer-outline" class="mr-4" /> Печать
                 </a-button>
             </div>
         </a-col>
@@ -685,16 +686,16 @@ async function confirmCancelPayment() {
 
         <a-modal v-model:open="editUserCommentDialog" :footer="null" title="Изменить комментарий">
             <div>
-                <span class="mdi mdi-account-outline" style=""></span>
+                <MdiIcon style="" name="account-outline" />
                 {{ currentBill.userInfo.fullname }}
 
             </div>
             <div v-if="currentBill.selectedStartLocation">
-                <span class="mdi mdi-map-marker-outline" style=""></span>
+                <MdiIcon style="" name="map-marker-outline" />
                 {{ currentBill.selectedStartLocation }}
             </div>
             <div>
-                <span class="mdi mdi-phone-outline" style=""></span>
+                <MdiIcon style="" name="phone-outline" />
                 <a :href="getPhoneNumber(currentBill.userInfo.phone)">
                     {{ currentBill.userInfo.phone }}</a>
             </div>
@@ -743,8 +744,8 @@ async function confirmCancelPayment() {
                         </a-col>
                         <a-col :span="12" class="d-flex">
                             <a-input style="width: 100%" v-model:value="tourist.phone" placeholder="89127528877" />
-                            <span class="mdi mdi-close" style="font-size: 20px; color: #ff6600 "
-                                @click="currentBill.touristsList.splice(index, 1)"></span>
+                            <MdiIcon style="font-size: 20px; color: #ff6600 "
+                                @click="currentBill.touristsList.splice(index, 1)" name="close" />
                         </a-col>
                     </a-row>
                 </a-col>
@@ -771,15 +772,15 @@ async function confirmCancelPayment() {
             <a-row :gutter="[8,8]">
                 <a-col :span="24">
                     <div>
-                        <span class="mdi mdi-account-outline"></span>
+                        <MdiIcon name="account-outline" />
                         {{ currentBill?.userInfo?.fullname }}
                     </div>
                     <div v-if="currentBill?.selectedStartLocation">
-                        <span class="mdi mdi-map-marker-outline"></span>
+                        <MdiIcon name="map-marker-outline" />
                         {{ currentBill.selectedStartLocation }}
                     </div>
                     <div>
-                        <span class="mdi mdi-phone-outline"></span>
+                        <MdiIcon name="phone-outline" />
                         <a :href="getPhoneNumber(currentBill?.userInfo?.phone)">{{ currentBill?.userInfo?.phone }}</a>
                     </div>
                 </a-col>

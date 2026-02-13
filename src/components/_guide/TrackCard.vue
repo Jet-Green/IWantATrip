@@ -46,7 +46,7 @@ const placesNames = computed(() => {
     <div class="card">
         <div class="track-preview" :style="previewImage ? { backgroundImage: `url(${previewImage})` } : null">
             <div v-if="!previewImage" class="track-icon">
-                <span class="mdi mdi-map-marker-path"></span>
+                <MdiIcon name="map-marker-path" />
             </div>
         </div>
         <div class="content">

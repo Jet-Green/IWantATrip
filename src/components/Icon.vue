@@ -3,12 +3,11 @@ import {computed, defineProps} from 'vue'
 import { Icon } from '@iconify/vue';
 
 const props = defineProps({
-  name: { type: String, required: true }, // e.g., "chevron-right"
-  size: { type: [Number, String], default: 24 }, // Supports 24 or '24px'
-  spin: Boolean // Optional: for loading spinners
+  name: { type: String, required: true },
+  size: { type: [Number, String], default: 16 },
+  spin: Boolean 
 });
 
-// Optional: Auto-add spin animation class
 const style = computed(() => 
   props.spin ? { animation: 'icon-spin 2s linear infinite' } : {}
 );
@@ -20,7 +19,7 @@ const style = computed(() =>
     :width="size" 
     :height="size"
     :style="style"
-    v-bind="$attrs"
+    :inline="true"
   />
 </template>
 

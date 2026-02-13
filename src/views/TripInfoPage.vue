@@ -535,12 +535,12 @@ onMounted(async () => {
                             </div>
                             <template #prevArrow>
                                 <div class="custom-slick-arrow" style="left: 10px; z-index: 1">
-                                    <span class="mdi mdi-48px mdi-chevron-left"></span>
+                                    <MdiIcon name="chevron-left" size="48px" />
                                 </div>
                             </template>
                             <template #nextArrow>
                                 <div class="custom-slick-arrow" style="right: 10px">
-                                    <span class="mdi mdi-48px mdi-chevron-right"></span>
+                                    <MdiIcon name="chevron-right" size="48px" />
                                 </div>
                             </template>
                         </a-carousel>
@@ -548,11 +548,11 @@ onMounted(async () => {
                     <a-col :xs="24" :md="12" class="pa-8">
 
                         <div style="float: right;">
-                            <span style="opacity: 0.7; cursor: pointer;" class="mdi mdi-24px mdi-printer ma-8 "
-                                @click="print()"></span>
+                            <MdiIcon style="opacity: 0.7; cursor: pointer;"
+                                @click="print()" name="printer" size="24px" class="ma-8 " />
 
-                            <span style="opacity: 0.7;" class="mdi mdi-24px mdi-share-variant-outline ma-8"
-                                @click="startShare()"></span>
+                            <MdiIcon style="opacity: 0.7;"
+                                @click="startShare()" name="share-variant-outline" size="24px" class="ma-8" />
 
                         </div>
 

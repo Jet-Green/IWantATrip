@@ -65,7 +65,7 @@ watch(propsDialog, (newDialog) => {
 <template>
   <a-modal v-model:open="dialog" @cancel="emit('close')">
     <template #title>
-      <span class="mdi mdi-plus"></span>
+      <MdiIcon name="plus" />
       Добавить результат общения
     </template>
 

@@ -194,12 +194,12 @@ onMounted(async () => {
               </div>
               <template #prevArrow>
                 <div class="custom-slick-arrow" style="left: 10px; z-index: 1">
-                  <span class="mdi mdi-48px mdi-chevron-left"></span>
+                  <MdiIcon name="chevron-left" size="48px" />
                 </div>
               </template>
               <template #nextArrow>
                 <div class="custom-slick-arrow" style="right: 10px">
-                  <span class="mdi mdi-48px mdi-chevron-right"></span>
+                  <MdiIcon name="chevron-right" size="48px" />
                 </div>
               </template>
             </a-carousel>
@@ -207,8 +207,8 @@ onMounted(async () => {
 
           <a-col :xs="24" :md="12" class="pa-8">
             <div style="float: right;">
-              <span style="opacity: 0.7; cursor: pointer;" class="mdi mdi-24px mdi-share-variant-outline ma-8"
-                @click="startShare()"></span>
+              <MdiIcon style="opacity: 0.7; cursor: pointer;"
+                @click="startShare()" name="share-variant-outline" size="24px" class="ma-8" />
             </div>
             <div>
               Место начала: <b> {{ excursion.startPlace }}</b>
@@ -316,8 +316,7 @@ onMounted(async () => {
                 placeholder="выберите дату" calendar-cell-class-name="dp-custom-cell" cancel-text="отмена"
                 select-text="выбрать" :min-date="new Date()" :enable-time-picker="false" format="dd/MM/yyyy">
                 <template #input-icon>
-                  <span style="font-size: 20px; color: rgba(95, 95, 95, 0.65);"
-                    class="mdi mdi-calendar-outline ml-8"></span>
+                  <MdiIcon style="font-size: 20px; color: rgba(95, 95, 95, 0.65);" name="calendar-outline" class="ml-8" />
                 </template>
               </VueDatePicker>
             </div>

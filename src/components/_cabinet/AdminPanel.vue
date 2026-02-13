@@ -46,26 +46,26 @@ const clearData = (dataString) => {
           </div>
           <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
           <div>
-            <span class="mdi mdi-compass-outline"></span>{{ trip.location }}
+            <MdiIcon name="compass-outline" />{{ trip.location }}
           </div>
           <div>
-            <span class="mdi mdi-calendar-arrow-right"></span>
+            <MdiIcon name="calendar-arrow-right" />
             {{ `c ${clearData(trip.start)}` }}
-            <span class="mdi mdi-calendar-arrow-left"></span>
+            <MdiIcon name="calendar-arrow-left" />
             {{ `по ${clearData(trip.end)}` }}
           </div>
 
           <div class="actions d-flex justify-center">
             <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="tripToDelete(trip._id)"
               v-if="!trip.billsList.length > 0">
-              <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+              <MdiIcon style="color: #ff6600; cursor: pointer" name="delete" />
             </a-popconfirm>
             <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="editTrip(trip._id)">
-              <span class="mdi mdi-pen" style="color: #245159; cursor: pointer"></span>
+              <MdiIcon style="color: #245159; cursor: pointer" name="pen" />
             </a-popconfirm>
             <a-popconfirm title="Всё правильно?" ok-text="Да" cancel-text="Нет"
               @confirm="tripStore.moderateTrip(trip._id)">
-              <span class="mdi mdi-shield-plus-outline" style="color: #245159; cursor: pointer"></span>
+              <MdiIcon style="color: #245159; cursor: pointer" name="shield-plus-outline" />
             </a-popconfirm>
           </div>
         </a-card>

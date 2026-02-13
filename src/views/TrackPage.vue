@@ -336,8 +336,7 @@ onBeforeUnmount(() => {
             <a-col :xs="22" :xl="16" class="mb-32" v-else-if="trackData._id">
                 <h2>{{ trackData.title }}
                     <div style="float: right;">
-                        <span v-if="isSupported" style="opacity: 0.7; cursor: pointer;"
-                            class="mdi mdi-24px mdi-share-variant-outline" @click="startShare()"></span>
+                        <MdiIcon v-if="isSupported" style="opacity: 0.7; cursor: pointer;" @click="startShare()" name="share-variant-outline" size="24px" />
                     </div>
                 </h2>
                 <div class="track-subtitle">{{ trackData.subtitle }}</div>

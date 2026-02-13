@@ -92,7 +92,7 @@ watch(preview, () => {
                 <label for="upload">
                     <div v-if="!loadedImages.length" class="d-flex justify-center align-center flex-column"
                         style="height: 50vh; cursor: pointer">
-                        <span class="mdi mdi-24px mdi-camera"></span>
+                        <MdiIcon name="camera" size="24px" />
                         <span> выбери фото</span>
                     </div>
                 </label>

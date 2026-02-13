@@ -104,7 +104,7 @@ onMounted(async () => {
       <a-col :span="12" class="d-flex justify-center">
         <a-card hoverable class="button-card ">
           <div class="row">
-            <span class="mdi mdi-clock-outline mr-4 icon"></span>
+            <MdiIcon name="clock-outline" class="mr-4 icon" />
             <b>
               {{ getTime(time) }}
             </b>&nbsp;
@@ -113,12 +113,12 @@ onMounted(async () => {
             </b>
           </div>
           <div class="row">
-            <span class="mdi mdi-account-multiple-outline mr-4 icon"></span>
+            <MdiIcon name="account-multiple-outline" class="mr-4 icon" />
             <b>{{ getPeopleCount(time.bills) }}</b>&nbsp;чел.
           </div>
           <div class="row space-between">
             <div>
-              <span class="mdi mdi-cash-multiple mr-4 icon"></span>
+              <MdiIcon name="cash-multiple" class="mr-4 icon" />
               <b>{{ getBillsSum(time.bills) }}₽</b>
             </div>
             <div>
@@ -127,7 +127,7 @@ onMounted(async () => {
                   :time="getTime(time)" />
               </div>
               <a-button @click="print()" class="d-flex justify-center align-center" type="primary" shape="circle">
-                <span style="font-size:18px" class="mdi mdi-printer-outline"></span>
+                <MdiIcon style="font-size:18px" name="printer-outline" />
               </a-button>
             </div>
           </div>

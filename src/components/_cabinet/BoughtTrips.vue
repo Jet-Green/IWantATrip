@@ -195,7 +195,7 @@ onMounted(async () => {
                     </div>
                     <div style="display: flex; align-items: start; justify-content: space-between;">
                         <span v-if="billTotal(BILL) == BILL.payment.amount" style="color: #bcc662">
-                            <span class="mdi mdi-check-all" style="font-size: 20px"></span>
+                            <MdiIcon name="check-all" size="20px" />
                             оплачен
                         </span>
                         <span v-if="billTotal(BILL) != BILL.payment.amount && BILL.payment.amount == 0"
@@ -212,14 +212,14 @@ onMounted(async () => {
                             </div>
                         </span>
 
-                        <span class="mdi mdi-24px mdi-printer-outline" @click="print(BILL)"></span>
+                        <MdiIcon @click="print(BILL)" name="printer-outline" size="24px" />
 
                        
 
 
                         <a-popconfirm v-if="BILL.payment.amount == 0" title="Удалить?" ok-text="Да" cancel-text="Нет"
                             @confirm="cancelTrip(BILL._id, userStore.user._id)">
-                            <span class="mdi mdi-24px mdi-delete" style="color: #ff6600"></span>
+                            <MdiIcon style="color: #ff6600" name="delete" size="24px" />
                         </a-popconfirm>
                     </div>
 

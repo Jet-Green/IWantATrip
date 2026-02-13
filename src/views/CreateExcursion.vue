@@ -396,7 +396,7 @@ onMounted(async () => {
                   targetIndex = i;" @error="handleImgError(i)" />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
-                <span class="mdi mdi-12px mdi-plus"></span>
+                <MdiIcon name="plus" size="12px" />
                 Добавить фото
               </a-button>
             </a-col>
@@ -426,12 +426,12 @@ onMounted(async () => {
                   :step="1" class="ml-16 mr-16" />
 
                 <a-button @click="removeCost(item)" shape="circle">
-                  <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                  <MdiIcon style="cursor: pointer" name="minus" />
                 </a-button>
               </div>
 
               <a-button type="dashed" block @click="addCost" class="ma-8">
-                <span class="mdi mdi-12px mdi-plus"></span>
+                <MdiIcon name="plus" size="12px" />
                 Добавить цены
               </a-button>
               <div v-if="!userStore.user?.tinkoffContract?.shopInfo" class="payment-caption">

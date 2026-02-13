@@ -87,7 +87,7 @@ onMounted(async () => {
         <a-button :loading="isLoading" :disabled="isModerated" @click="moderateGuide(guide._id)"
           class="lets_go_btn ma-36" type="primary">
           <span v-if="!isModerated">принять</span>
-          <span v-else class="mdi mdi-check-outline"></span>
+          <MdiIcon v-else name="check-outline" />
         </a-button>
         <a-button :disabled="isModerated" @click="sendGuideModerationMessage"
           class="btn_light ma-36">Отказать</a-button>
