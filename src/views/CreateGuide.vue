@@ -1,12 +1,15 @@
 <script setup>
-import { ref, reactive, onMounted, watch, computed } from 'vue';
+import { ref, reactive, onMounted, watch, computed,defineAsyncComponent } from 'vue';
 import BackButton from '../components/BackButton.vue';
 import { message } from 'ant-design-vue'; // For user feedback
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import { useGuide } from '../stores/guide';
 import { useAuth } from '../stores/auth'; // Import useAuth
-import ImageCropper from '../components/ImageCropper.vue'; // Assuming ImageCropper is in the same directory or adjust path
+// import ImageCropper from '../components/ImageCropper.vue'; // Assuming ImageCropper is in the same directory or adjust path
+const ImageCropper = defineAsyncComponent(() =>
+  import("../components/ImageCropper.vue")
+)
 
 import { useRouter } from "vue-router";
 const router = useRouter();

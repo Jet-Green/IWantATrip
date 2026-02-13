@@ -1,8 +1,10 @@
 <script setup>
 import BackButton from "../components/BackButton.vue";
-import ImageCropper from "../components/ImageCropper.vue";
-
-import { ref, onMounted, computed, reactive ,watch } from "vue";
+// import ImageCropper from "../components/ImageCropper.vue";
+const ImageCropper = defineAsyncComponent(() =>
+  import("../components/ImageCropper.vue")
+)
+import { ref, onMounted, computed, reactive ,watch,defineAsyncComponent } from "vue";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import { message } from 'ant-design-vue';

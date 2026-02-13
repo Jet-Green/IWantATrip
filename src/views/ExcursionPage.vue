@@ -5,8 +5,14 @@ import { useShare } from '@vueuse/core'
 import { message } from "ant-design-vue";
 import '@vuepic/vue-datepicker/dist/main.css'
 import BackButton from "../components/BackButton.vue";
-import BuyExcursionDates from "../components/BuyExcursionDates.vue";
-import BuyExcursionDialog from "../components/BuyExcursionDialog.vue";
+// import BuyExcursionDates from "../components/BuyExcursionDates.vue";
+// import BuyExcursionDialog from "../components/BuyExcursionDialog.vue";
+const BuyExcursionDates = defineAsyncComponent(() =>
+  import("../components/BuyExcursionDates.vue")
+)
+const BuyExcursionDialog = defineAsyncComponent(() =>
+  import("../components/BuyExcursionDialog.vue")
+)
 import _ from "lodash"
 import { useHead } from "@unhead/vue";
 

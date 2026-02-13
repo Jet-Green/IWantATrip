@@ -1,7 +1,10 @@
 <script setup>
-import { watch, ref, reactive, computed, onMounted } from "vue";
+import { watch, ref, reactive, computed, onMounted,defineAsyncComponent } from "vue";
 import BackButton from '../components/BackButton.vue';
-import ImageCropper from "../components/ImageCropper.vue";
+// import ImageCropper from "../components/ImageCropper.vue";
+const ImageCropper = defineAsyncComponent(() =>
+  import("../components/ImageCropper.vue")
+)
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import _ from 'lodash';

@@ -36,4 +36,8 @@ onMounted (()=>{
   
   </div>
 </template>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+body {
+  font-family: "Montserrat", sans-serif;
+}
+</style>

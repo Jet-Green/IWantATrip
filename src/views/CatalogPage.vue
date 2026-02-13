@@ -1,8 +1,16 @@
 <script setup>
-import CatalogFilter from "../components/sections/CatalogFilter.vue";
+import { defineAsyncComponent } from 'vue'
+
+const CatalogFilter = defineAsyncComponent(() =>
+  import("../components/sections/CatalogFilter.vue")
+)
+const CatalogList = defineAsyncComponent(() =>
+  import("../components/CatalogList.vue")
+)
+// import CatalogFilter from "../components/sections/CatalogFilter.vue";
 import BackButton from "../components/BackButton.vue";
 import { useRoute } from "vue-router";
-import CatalogList from "../components/CatalogList.vue";
+// import CatalogList from "../components/CatalogList.vue";
 
 
 const route = useRoute();

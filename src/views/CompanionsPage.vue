@@ -1,10 +1,12 @@
 <script setup>
-import { onMounted } from "vue";
+import { onMounted,defineAsyncComponent } from "vue";
 import { useRouter } from "vue-router";
 import { useCompanions } from "../stores/companions";
 import BackButton from "../components/BackButton.vue";
-import CompanionFilter from "../components/CompanionFilter.vue";
-
+// import CompanionFilter from "../components/CompanionFilter.vue";
+const CompanionFilter = defineAsyncComponent(() =>
+  import("../components/CompanionFilter.vue")
+)
 const companionStore = useCompanions();
 let router = useRouter();
 

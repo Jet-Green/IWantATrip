@@ -1,8 +1,10 @@
 <script setup>
 import BackButton from "../components/BackButton.vue";
-import ImageCropper from "../components/ImageCropper.vue";
-
-import { watch, nextTick, ref, reactive, onMounted, computed } from "vue";
+// import ImageCropper from "../components/ImageCropper.vue";
+const ImageCropper = defineAsyncComponent(() =>
+  import("../components/ImageCropper.vue")
+)
+import { watch, nextTick, ref, reactive, onMounted, computed,defineAsyncComponent } from "vue";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 

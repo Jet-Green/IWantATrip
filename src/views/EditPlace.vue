@@ -1,10 +1,13 @@
 <script setup>
-import { reactive, ref, watch, onMounted, computed } from "vue"
+import { reactive, ref, watch, onMounted, computed,defineAsyncComponent } from "vue"
 import { Form, Field, ErrorMessage } from "vee-validate"
 import * as yup from "yup"
 import { QuillEditor } from "@vueup/vue-quill"
 import "@vueup/vue-quill/dist/vue-quill.snow.css"
-import ImageCropper from "../components/ImageCropper.vue"
+// import ImageCropper from "../components/ImageCropper.vue"
+const ImageCropper = defineAsyncComponent(() =>
+  import("../components/ImageCropper.vue")
+)
 import { message } from "ant-design-vue"
 
 import { useRouter, useRoute } from "vue-router"

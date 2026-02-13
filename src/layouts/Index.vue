@@ -10,7 +10,7 @@ import Header from "../components/Header.vue";
         <Suspense>
           <router-view v-slot="{ Component }">
             <transition name="fade" mode="out-in">
-              <component :is="Component" />
+              <component style="min-height: 100vh;" :is="Component" />
             </transition>
           </router-view>
         </Suspense>
