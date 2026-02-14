@@ -99,12 +99,7 @@ export default defineConfig(({ command, mode }) => {
       }),
       compression({
         algorithms: [
-          defineAlgorithm("gzip", { level: 9 }),
-          defineAlgorithm("brotliCompress", {
-            params: {
-              [require("zlib").constants.BROTLI_PARAM_QUALITY]: 11,
-            },
-          }),
+          defineAlgorithm("gzip"),
         ],
       }),
     ],
