@@ -98,7 +98,6 @@ export default defineConfig(({ command, mode }) => {
         },
       }),
       compression({
-        threshold: 1024,
         algorithms: [
           defineAlgorithm("gzip", { level: 9 }),
           defineAlgorithm("brotliCompress", {
