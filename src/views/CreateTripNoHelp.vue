@@ -1,8 +1,10 @@
 <script setup>
 import BackButton from "../components/BackButton.vue";
-import ImageCropper from "../components/ImageCropper.vue";
-
-import { watch, nextTick, ref, reactive, onMounted, computed } from "vue";
+// import ImageCropper from "../components/ImageCropper.vue";
+const ImageCropper = defineAsyncComponent(() =>
+  import("../components/ImageCropper.vue")
+)
+import { watch, nextTick, ref, reactive, onMounted, computed,defineAsyncComponent } from "vue";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 
@@ -428,12 +430,12 @@ onMounted(async () => {
             <a-col :xs="24">
               Фотографии
               <div class="d-flex" style="overflow-x: scroll">
-                <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
+                <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="not found" class="ma-4" style="max-width: 200px;"
                   @click="delPhotoDialog = true;
                   targetIndex = i;" @error="handleImgError(i)" />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
-                <span class="mdi mdi-12px mdi-plus"></span>
+                <MdiIcon name="plus" size="12px" />
                 Добавить фото
               </a-button>
             </a-col>
@@ -487,7 +489,7 @@ onMounted(async () => {
                 <a-tooltip>
                   <template #title>калькулятор</template>
                   <router-link :to="{ name: 'PriceCalc' }" target="_blank">
-                    <span class="mdi mdi-calculator" style="cursor: pointer; font-size: 24px; color:#ff6600"></span>
+                    <MdiIcon style="cursor: pointer; font-size: 24px; color:#ff6600" name="calculator" />
                   </router-link>
                 </a-tooltip>
               </div>
@@ -504,13 +506,13 @@ onMounted(async () => {
 
 
                 <a-button @click="removeCost(item)" shape="circle">
-                  <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                  <MdiIcon style="cursor: pointer" name="minus" />
                 </a-button>
               </div>
               <div class="text-caption">*Оставьте третью колонку 'максимум' пустой, если нет
                 ограничения</div>
               <a-button type="dashed" block @click="addCost" class="ma-8">
-                <span class="mdi mdi-12px mdi-plus"></span>
+                <MdiIcon name="plus" size="12px" />
                 Добавить цены
               </a-button>
 
@@ -525,12 +527,12 @@ onMounted(async () => {
                   class="ml-16 mr-16" />
 
                 <a-button @click="removeBonuses(item)" shape="circle">
-                  <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                  <MdiIcon style="cursor: pointer" name="minus" />
                 </a-button>
               </div>
 
               <a-button type="dashed" block @click="addBonuses" class="ma-8">
-                <span class="mdi mdi-12px mdi-plus"></span>
+                <MdiIcon name="plus" size="12px" />
                 бонусы и скидки
               </a-button>
             </a-col>
@@ -649,7 +651,7 @@ onMounted(async () => {
 
                 <div><b>День {{ datePlugin.excursions.getNumeralDay(index) }}</b> <a-button @click="removeDay(index)"
                     shape="circle">
-                    <span class="mdi mdi-minus"></span>
+                    <MdiIcon name="minus" />
                   </a-button></div>
                 <QuillEditor class="ql-editor" theme="snow" v-model:content="form.dayByDayDescription[index]"
                   contentType="html" :toolbar="[
@@ -665,7 +667,7 @@ onMounted(async () => {
 
               </a-col>
               <a-button type="dashed" block @click="addDay" class="ma-8">
-                <span class="mdi mdi-12px mdi-plus"></span>
+                <MdiIcon name="plus" size="12px" />
                 добавить день
               </a-button>
             </a-col>

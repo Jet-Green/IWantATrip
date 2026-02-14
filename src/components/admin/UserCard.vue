@@ -61,7 +61,7 @@ watch(clickCount, (newClickCount) => {
         <a-row>
             <a-col class="d-flex justify-center align-center" v-if="userFromDb.modified">
                 <a-button size="small" shape="round" @click="changeUserRole">
-                    <span class="mdi mdi-check"></span>
+                    <MdiIcon name="check" />
                 </a-button>
             </a-col>
         </a-row>

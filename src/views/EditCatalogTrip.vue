@@ -1,8 +1,10 @@
 <script setup>
 import BackButton from "../components/BackButton.vue";
-import ImageCropper from "../components/ImageCropper.vue";
-
-import { watch, nextTick, ref, reactive, onMounted } from "vue";
+// import ImageCropper from "../components/ImageCropper.vue";
+const ImageCropper = defineAsyncComponent(() =>
+  import("../components/ImageCropper.vue")
+)
+import { watch, nextTick, ref, reactive, onMounted,defineAsyncComponent } from "vue";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 
@@ -257,12 +259,12 @@ onMounted(async () => {
 
               Фотографии
               <div class="d-flex" style="overflow-x: scroll">
-                <img v-for="(pr, i) in form.images" :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
+                <img v-for="(pr, i) in form.images" :key="i" :src="pr" alt="not found" class="ma-4" style="max-width: 200px;"
                   @click="delPhotoDialog = true;
                   targetIndex = i;" />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
-                <span class="mdi mdi-12px mdi-plus"></span>
+                <MdiIcon name="plus" size="12px" />
                 Добавить фото
               </a-button>
             </a-col>

@@ -54,7 +54,7 @@ onMounted(() => {
   <a-card class="card" :class="[excursion.isHidden ? 'overlay' : '']" v-if="excursion._id">
     <div v-if="excursion.prices.length > 0" class="money-indicator">
       <a-tooltip placement="top" title="Платная">
-        <span class="mdi mdi-cash"></span>
+        <MdiIcon name="cash" />
       </a-tooltip>
     </div>
     <div style="width: 100%; text-align: center;">
@@ -64,32 +64,31 @@ onMounted(() => {
       {{ excursion?.excursionType?.type }}
     </div>
     <div v-if="excursion?.excursionType?.directionType && excursion.excursionType" class="type">
-      <span class="mdi mdi-directions-fork"></span>{{ excursion.excursionType.directionType }}
+      <MdiIcon name="directions-fork" />{{ excursion.excursionType.directionType }}
 
-      <span class="mdi mdi-map-marker-outline"></span>{{ excursion.excursionType.directionPlace }}
+      <MdiIcon name="map-marker-outline" />{{ excursion.excursionType.directionPlace }}
     </div>
     <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
     <div class="actions">
-      <span class="mdi mdi-calendar-month-outline" @click="openAddDates(excursion._id)"></span>
+      <MdiIcon @click="openAddDates(excursion._id)" name="calendar-month-outline" />
       <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="excursionToDelete(excursion._id)">
-        <span class="mdi mdi-delete" style="color: #ff6600;"></span>
+        <MdiIcon style="color: #ff6600;" name="delete" />
       </a-popconfirm>
       <a-popconfirm title="Скрыть?" ok-text="Да" cancel-text="Нет"
         @confirm="hideExcursion(excursion._id, !excursion.isHidden)">
-        <span v-if="!excursion.isHidden" class="mdi mdi-eye-outline"></span>
-        <span v-else class="mdi mdi-eye-off-outline"></span>
+        <MdiIcon v-if="!excursion.isHidden" name="eye-outline" />
+        <MdiIcon v-else name="eye-off-outline" />
       </a-popconfirm>
       <a-popconfirm title="Редактировать?" ok-text="Да" cancel-text="Нет"
         @confirm="router.push(`/edit-excursion?_id=${excursion._id}`)">
-        <span class="mdi mdi-pen"></span>
+        <MdiIcon name="pen" />
       </a-popconfirm>
-      <span class="mdi mdi-information-outline" @click="excursionInfo(excursion._id)"></span>
+      <MdiIcon @click="excursionInfo(excursion._id)" name="information-outline" />
       <a-badge :dot="true" v-if="excursion.comment?.length > 0">
-        <span class="mdi mdi-18px mdi-comment-edit-outline"
-          @click="editCommentDialog = !editCommentDialog; comment = excursion.comment"></span>
+        <MdiIcon @click="editCommentDialog = !editCommentDialog; comment = excursion.comment" name="comment-edit-outline" size="18px" />
       </a-badge>
-      <span v-else class="mdi mdi-18px mdi-comment-edit-outline"
-        @click="editCommentDialog = !editCommentDialog; comment = excursion.comment"></span>
+      <MdiIcon v-else
+        @click="editCommentDialog = !editCommentDialog; comment = excursion.comment" name="comment-edit-outline" size="18px" />
 
     </div>
     <a-modal v-model:open="editCommentDialog" title="Изменить комментарий" okText="Отправить" cancelText="Отмена"

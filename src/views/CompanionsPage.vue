@@ -1,10 +1,12 @@
 <script setup>
-import { onMounted } from "vue";
+import { onMounted,defineAsyncComponent } from "vue";
 import { useRouter } from "vue-router";
 import { useCompanions } from "../stores/companions";
 import BackButton from "../components/BackButton.vue";
-import CompanionFilter from "../components/CompanionFilter.vue";
-
+// import CompanionFilter from "../components/CompanionFilter.vue";
+const CompanionFilter = defineAsyncComponent(() =>
+  import("../components/CompanionFilter.vue")
+)
 const companionStore = useCompanions();
 let router = useRouter();
 
@@ -61,55 +63,52 @@ const ageString = (age) => {
             v-for="(companion, i) in companionStore.companions" :key="i">
             <a-card class="card" hoverable>
               <div>
-                <span class="mdi mdi-human-male-female"></span>{{ companion.name }} <span
-                  class="mdi mdi-human-male-height"></span>{{ ageString(companion.age) }}
+                <MdiIcon name="human-male-female" />{{ companion.name }}
+                <MdiIcon name="human-male-height" />{{ ageString(companion.age) }}
               </div>
 
               <div>
-                <span class="mdi mdi-map-marker-outline"></span>{{ companion.startLocation.shortName }}
+                <MdiIcon name="map-marker-outline" />{{ companion.startLocation.shortName }}
               </div>
 
               <div>
-                <span class="mdi mdi-compass-outline"></span>{{ companion.direction }}
+                <MdiIcon name="compass-outline" />{{ companion.direction }}
               </div>
               <div :class="[
-        companion.companionGender == 'Мужчина'
-          ? 'male'
-          : companion.companionGender == 'Женщина'
-            ? 'female'
-            : 'not-matter',
-      ]">
-                <span :class="companion.companionGender == 'Женщина'
-        ? 'mdi mdi-gender-female'
-        : companion.companionGender == 'Мужчина'
-          ? 'mdi mdi-gender-male'
-          : 'mdi mdi-human-male-female'
-        "></span>
+                companion.companionGender == 'Мужчина'
+                  ? 'male'
+                  : companion.companionGender == 'Женщина'
+                    ? 'female'
+                    : 'not-matter',
+              ]">
+                <MdiIcon v-if="request.gender == Female" name="gender-female" />
+                <MdiIcon v-if="request.gender == Male" name="gender-female" />
+                <MdiIcon v-else name="human-male-female" />
                 {{ companion.companionGender == "Мужчина" ? "Мужчину" : companion.companionGender ==
-        "Женщина" ? "Женщину" : "Не важно"
+                  "Женщина" ? "Женщину" : "Не важно"
                 }}
               </div>
               <div>
-                <span class="mdi mdi-calendar-arrow-right"></span>
+                <MdiIcon name="calendar-arrow-right" />
                 {{ `c ${clearData(companion.start)}` }}
-                <span class="mdi mdi-calendar-arrow-left"></span>
+                <MdiIcon name="calendar-arrow-left" />
                 {{ `по ${clearData(companion.end)}` }}
               </div>
 
               <div>
-                <span class="mdi mdi-list-status"></span>{{ companion.description }}
+                <MdiIcon name="list-status" />{{ companion.description }}
               </div>
               <a-tooltip placement="bottom">
                 <template #title>
                   <span>отклик</span>
                 </template>
                 <a-button shape="circle" class="accept" @click="
-        router.push({
-          path: '/add-feedback',
-          query: { companion_id: companion._id },
-        })
-        ">
-                  <span class="mdi mdi-thumb-up-outline"></span>
+                  router.push({
+                    path: '/add-feedback',
+                    query: { companion_id: companion._id },
+                  })
+                  ">
+                  <MdiIcon name="thumb-up-outline" />
                 </a-button>
               </a-tooltip>
             </a-card>
@@ -117,7 +116,7 @@ const ageString = (age) => {
           <a-col v-else style="text-align: center" :span="24">
             <div style="display: flex; flex-direction: column; margin-top: 16px;">
               <div class="d-flex justify-center">
-                <img src="../assets/images/notfound.jpg" alt="" style="height: 150px;">
+                <img src="../assets/images/notfound.jpg" alt="not found" style="height: 150px;">
               </div>
               <h3>извини, я не нашёл</h3>
             </div>

@@ -94,16 +94,16 @@ async function openTask() {
 <template>
   <a-card class="pa-8" v-if="task._id">
     <div class="status">
-      <span class="mdi mdi-checkbox-blank-outline open-status" @click="closeTask"
-        v-if="task.status == 'open' && !isStatusSetting"></span>
+      <MdiIcon @click="closeTask"
+        v-if="task.status == 'open' && !isStatusSetting" name="checkbox-blank-outline" class="open-status" />
       <a-spin v-else-if="isStatusSetting" />
-      <span @click="openTask" class="mdi mdi-checkbox-marked closed-status"
-        v-if="task.status == 'closed' && !isStatusSetting"></span>
+      <MdiIcon @click="openTask"
+        v-if="task.status == 'closed' && !isStatusSetting" name="checkbox-marked" class="closed-status" />
     </div>
     <div style="font-weight: 600; font-size:18px">{{ taskDate }} до {{ taskTime }} </div>
     <div class="task-name pa-4 ma-4" @click="router.push(`/create-task?_id=${task._id}`)">
       {{ task.name }}
-      <!-- <span @click="router.push(`/create-task?_id=${task._id}`)" class="mdi mdi-pen"></span> -->
+      <!-- <MdiIcon @click="router.push(`/create-task?_id=${task._id}`)" name="pen" /> -->
     </div>
     <div v-if="task.trip" style="font-weight: 500;" class="pa-4 ma-4"> {{ task.tripInfo.name }} от {{
       dayjs(task.trip.start +
@@ -147,7 +147,7 @@ async function openTask() {
           Действия
         </a-button>
         <a-button @click="addNewInteraction" style="margin-left: 4px;">
-          <span class="mdi mdi-plus"></span>
+          <MdiIcon name="plus" />
         </a-button>
       </div>
       <div style="min-width: 200px; padding-top:5px" class="d-flex justify-center">
@@ -159,15 +159,14 @@ async function openTask() {
           </div>
         </a-button>
         <a-button @click="addPaymentDialog = true" v-if="task.payAmount" style="margin-left: 4px;">
-          <span class="mdi mdi-plus"></span>
+          <MdiIcon name="plus" />
         </a-button>
       </div>
     </div>
     <div style="position:relative; line-height: 24px; padding: 4px;">
       <i>{{task.comment }}</i> 
       <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="taskToDelete(task._id)" v-if="isCreator">
-        <span class="mdi mdi-delete"
-          style="color:#ff6600; font-size: 24px; position: absolute;   right: 0px;  bottom: 0px;"></span>
+        <MdiIcon style="color:#ff6600; font-size: 24px; position: absolute;   right: 0px;  bottom: 0px;" name="delete" />
       </a-popconfirm>
     </div>
 

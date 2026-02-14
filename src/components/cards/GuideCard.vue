@@ -17,12 +17,9 @@ async function guideToDelete() {
 <template>
   <a-card size="small" :title="props.element.name" hoverable style="max-width: 200px;">
     <template #extra>
-      <span
-        class="mdi mdi-16px mdi-close"
-        style="color: #245159; cursor: pointer;padding: 0px 0 !important;
+      <MdiIcon style="color: #245159; cursor: pointer;padding: 0px 0 !important;
     margin: 0px 0 !important; "
-        @click="guideToDelete">
-      </span>
+        @click="guideToDelete" name="close" size="16px" />
     </template>
 
     <template #cover>

@@ -43,18 +43,18 @@ onMounted(async () => {
         <a-col :span="24" class="mb-8 d-flex space-between">
             <h2>Такси</h2>
             <a-button @click="addTaxiModal = true" type="primary" class="lets_go_btn mt-8">
-                <span class="mdi mdi-taxi mr-4"></span> Добавить
+                <MdiIcon name="taxi" class="mr-4" /> Добавить
             </a-button>
         </a-col>
         <a-row v-if="localTaxi" :gutter="[16, 16]" class="mt-3" type="flex" justify="center">
             <a-col v-for="(t, i) in localTaxi" :xs="12" :md="6" :lg="6">
                 <a-card hoverable style="padding:10px 10px; border-radius: 10px; font-size:18px;">
                     <b>{{ t.name }}</b> <br />
-                    <span class="mdi mdi-phone-in-talk"></span> {{ t.phone }}<br />
+                    <MdiIcon name="phone-in-talk" /> {{ t.phone }}<br />
                     {{ t?.location?.name }}
                     <div class="actions d-flex justify-center">
                         <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="deleteTaxi(t._id)">
-                            <span class="mdi mdi-delete" style=" cursor: pointer"></span>
+                            <MdiIcon style=" cursor: pointer" name="delete" />
                         </a-popconfirm>
                     </div>
                 </a-card>

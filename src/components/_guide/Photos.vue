@@ -51,7 +51,7 @@ onMounted(async () => {
                 </masonry-wall>
                 <div style="display: none; ">
                     <a-image-preview-group :preview="{ visible, onVisibleChange: vis => (visible = vis) }">
-                        <a-image :src="activePhoto" />
+                        <a-image :src="activePhoto" alt="not found" />
                     </a-image-preview-group>
                 </div>
             </a-col>

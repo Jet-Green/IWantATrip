@@ -59,8 +59,7 @@ onMounted(async () => {
       <a-col :xs="22" :sm="16">
         <h2>
           Кабинет
-          <span @click="logOut()" class="mdi mdi-24px mdi-logout" style="cursor: pointer; float: right">
-          </span>
+          <MdiIcon @click="logOut()" style="cursor: pointer; float: right" name="logout" size="24px" />
         </h2>
       </a-col>
     </a-row>
@@ -69,16 +68,16 @@ onMounted(async () => {
         <a-menu v-model:selectedKeys="current" mode="horizontal">
           <a-menu-item key="/cabinet/me">
             <span ref='cab' v-if=!sm>О пользователе</span>
-            <span v-else class="mdi mdi-24px mdi-account-outline" style="color: #245159; "></span>
+            <MdiIcon v-else style="color: #245159; " name="account-outline" size="24px" />
           </a-menu-item>
           <a-menu-item key="/cabinet/my-companions">
             <span ref='companions' v-if=!sm>Попутчики</span>
-            <span v-else class="mdi mdi-24px mdi-human-capacity-decrease" style="color: #245159; "></span>
+            <MdiIcon v-else style="color: #245159; " name="human-capacity-decrease" size="24px" />
           </a-menu-item>
           <a-sub-menu key="sub1">
             <template #title>
               <span ref='tur' v-if=!sm>Туры</span>
-              <span v-else class="mdi mdi-24px mdi-map-outline" style="color: #245159; "></span>
+              <MdiIcon v-else style="color: #245159; " name="map-outline" size="24px" />
             </template>
             <a-menu-item v-if="isCreator" key="/cabinet/created-trips">Созданные</a-menu-item>
             <a-menu-item key="/cabinet/bought-trips">Купленные</a-menu-item>
@@ -88,24 +87,24 @@ onMounted(async () => {
           </a-sub-menu>
           <a-menu-item key="/cabinet/excursions">
             <span v-if=!sm>Экскурсии</span>
-            <span v-else class="mdi mdi-24px mdi-account-group" style="color: #245159;"></span>
+            <MdiIcon v-else style="color: #245159;" name="account-group" size="24px" />
           </a-menu-item>
           <a-menu-item key="/cabinet/cabinet-guides">
             <span ref='cabinetGuide' v-if=!sm>Гиды</span>
-            <span v-else class="mdi mdi-24px mdi-nature-people" style="color: #245159; "></span>
+            <MdiIcon v-else style="color: #245159; " name="nature-people" size="24px" />
           </a-menu-item>
           <a-menu-item key="/cabinet/my-places">
             <span v-if=!sm>Места</span>
-            <span v-else class="mdi mdi-24px mdi-map-marker-outline" style="color: #245159;"></span>
+            <MdiIcon v-else style="color: #245159;" name="map-marker-outline" size="24px" />
           </a-menu-item>
           <a-menu-item key="/cabinet/my-tracks">
             <span v-if=!sm>Маршруты</span>
-            <span v-else class="mdi mdi-24px mdi-routes" style="color: #245159;"></span>
+            <MdiIcon v-else style="color: #245159;" name="routes" size="24px" />
           </a-menu-item>
           <a-sub-menu key="sub4" v-if="isTasksManager || isCreator">
             <template #title>
               <span ref='crm' v-if=!sm>CRM</span>
-              <span v-else class="mdi mdi-24px mdi-calendar-check-outline" style="color: #245159; "></span>
+              <MdiIcon v-else style="color: #245159; " name="calendar-check-outline" size="24px" />
             </template>
             <a-menu-item key="/cabinet/tasks">Задачи</a-menu-item>
             <a-menu-item v-if="isCreator" key="/cabinet/partners">Партнеры</a-menu-item>
@@ -116,14 +115,14 @@ onMounted(async () => {
 
           <a-menu-item key="/cabinet/booking-notifications" v-if="showBookingNotifications">
             <span v-if=!sm>Заказы</span>
-            <span v-else class="mdi mdi-24px mdi-hand-wave-outline" style="color: #245159; "></span>
+            <MdiIcon v-else style="color: #245159; " name="hand-wave-outline" size="24px" />
           </a-menu-item>
           <a-sub-menu key="sub2" v-if="isAdmin || isManager">
 
 
             <template #title>
               <span v-if=!sm>Админ</span>
-              <span v-else class="mdi mdi-24px mdi-cog-outline" style="color: #245159; cursor: pointer"></span>
+              <MdiIcon v-else style="color: #245159; cursor: pointer" name="cog-outline" size="24px" />
             </template>
             <a-sub-menu key="sub01">
 

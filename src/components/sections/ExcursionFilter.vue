@@ -226,7 +226,7 @@ onMounted(async () => {
           {{ buttonTitle }}
         </div>
         <a-button type="primary" shape="circle" class="ml-8" v-if="filterString" @click="resetForm">
-          <span class="mdi mdi-close"></span>
+          <MdiIcon name="close" />
         </a-button>
       </div>
     </a-col>
@@ -289,8 +289,7 @@ onMounted(async () => {
               placeholder="дата" calendar-cell-class-name="dp-custom-cell" cancel-text="отмена" select-text="выбрать"
               :min-date="new Date()" :enable-time-picker="false" format="dd/MM/yyyy" auto-apply>
               <template #input-icon>
-                <span style="font-size: 20px; color: rgba(95, 95, 95, 0.65)"
-                  class="mdi mdi-calendar-outline ml-8"></span>
+                <MdiIcon style="font-size: 20px; color: rgba(95, 95, 95, 0.65)" name="calendar-outline" class="ml-8" />
               </template>
             </VueDatePicker>
           </div>
@@ -307,8 +306,7 @@ onMounted(async () => {
               placeholder="дата" calendar-cell-class-name="dp-custom-cell" cancel-text="отмена" select-text="выбрать"
               :min-date="new Date()" :enable-time-picker="false" format="dd/MM/yyyy" auto-apply>
               <template #input-icon>
-                <span style="font-size: 20px; color: rgba(95, 95, 95, 0.65)"
-                  class="mdi mdi-calendar-outline ml-8"></span>
+                <MdiIcon style="font-size: 20px; color: rgba(95, 95, 95, 0.65)" name="calendar-outline" class="ml-8" />
               </template>
             </VueDatePicker>
           </div>

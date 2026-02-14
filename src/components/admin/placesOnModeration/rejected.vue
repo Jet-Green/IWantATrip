@@ -42,19 +42,17 @@ onMounted(async () => {
         </div>
         <a-divider class="ma-4" style="border-color: #205f79"></a-divider>
         <div>
-          <span class="mdi mdi-compass-outline"></span>
+          <MdiIcon name="compass-outline" />
           {{ place.dadataLocation?.name ? place.dadataLocation?.name : place.name }}
         </div>
 
         <div class="actions d-flex justify-center">
           <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="deletePlace(place._id)">
-            <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+            <MdiIcon style="color: #ff6600; cursor: pointer" name="delete" />
           </a-popconfirm>
-          <span
-            class="mdi mdi-check-decagram-outline"
-            @click="router.push(`/moderate-place?_id=${place._id}`)"
+          <MdiIcon @click="router.push(`/moderate-place?_id=${place._id}`)"
             style="color: #245159; cursor: pointer"
-          ></span>
+           name="check-decagram-outline" />
         </div>
       </a-card>
     </a-col>

@@ -33,21 +33,21 @@ function routeTo(buttonRoute) {
             Общественный транспорт
 
           </a-col>
-          <a-col :xs="4" class="img"><img src="../../assets/images/ship.webp" alt="" style="height: 30%" /></a-col>
+          <a-col :xs="4" class="img"><img src="../../assets/images/ship.webp" alt="not found" style="height: 30%" /></a-col>
           <a-col :xs="10" class="big-button order" @click="routeTo('/orderTransport')">
             <div>Заказать транспорт</div>
             <div class="help-text">
 
             </div>
           </a-col>
-          <a-col :xs="7" class="img"><img src="../../assets/images/car.webp" alt="" style="height: 25%" /></a-col>
+          <a-col :xs="7" class="img"><img src="../../assets/images/car.webp" alt="not found" style="height: 25%" /></a-col>
           <a-col :xs="10" class="big-button taxi" @click="routeTo('/taxi')">
             <div>Такси</div>
             <div class="help-text">
 
             </div>
           </a-col>
-          <a-col :xs="4" class="img"><img src="../../assets/images/trees.webp" alt="" style="height: 30%" /></a-col>
+          <a-col :xs="4" class="img"><img src="../../assets/images/trees.webp" alt="not found" style="height: 30%" /></a-col>
 
         </a-row>
       </a-col>

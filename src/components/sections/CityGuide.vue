@@ -6,49 +6,49 @@ const locationStore = useLocations()
 let cards = ref([
   {
     title: "Места",
-    icon: "mdi-map-marker-outline",
+    icon: "map-marker-outline",
     route: { name: 'Places', hash: '#top' },
     isShow: true,
 
   },
     {
     title: "Маршруты",
-    icon: "mdi-routes",
+    icon: "routes",
     route: "/tracks-list",
     isShow: true,
 
   },
   {
     title: "Экскурсии",
-    icon: "mdi-crowd",
+    icon: "crowd",
     route: "/excursions",
     isShow: true,
 
   },
    {
     title: "Гиды",
-    icon: "mdi-account-tie-voice-outline",
+    icon: "account-tie-voice-outline",
     route: "/guides",
     isShow: true,
 
   },
   {
     title: "Афиши",
-    icon: "mdi-movie-roll",
+    icon: "movie-roll",
     route: "/poster",
     isShow: true,
 
   },
   {
     title: "Транспорт",
-    icon: "mdi mdi-train-car",
+    icon: "train-car",
     route: "/transport",
     isShow: true,
 
   },
   {
     title: "Гостиницы",
-    icon: "mdi-home-city-outline",
+    icon: "home-city-outline",
     route: "/stay",
     isShow: true,
 
@@ -103,7 +103,8 @@ let cards = ref([
           <router-link :to="card.isShow ? card.route : ''">
             <a-card hoverable class="guide-card" :class="{ opacity: !card.isShow }">
               <div>
-                <span class="mdi" :class="card.icon"> </span>
+                <!-- <span class="mdi" :class="card.icon"> </span> -->
+                <MdiIcon :name="card.icon" size="24px"/>
                 <span>
                   {{ card.title }}
                 </span>

@@ -2,7 +2,7 @@
 <template>
   <div class="card">
     <div class="avatar">
-      <span class="mdi mdi-account"></span>
+      <MdiIcon name="account" />
     </div>
     <div></div>
   </div>

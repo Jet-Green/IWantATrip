@@ -75,12 +75,12 @@ onMounted(async () => {
               </div>
               <template #prevArrow>
                 <div class="custom-slick-arrow" style="left: 10px; z-index: 1">
-                  <span class="mdi mdi-48px mdi-chevron-left"></span>
+                  <MdiIcon name="chevron-left" size="48px" />
                 </div>
               </template>
               <template #nextArrow>
                 <div class="custom-slick-arrow" style="right: 10px">
-                  <span class="mdi mdi-48px mdi-chevron-right"></span>
+                  <MdiIcon name="chevron-right" size="48px" />
                 </div>
               </template>
             </a-carousel>

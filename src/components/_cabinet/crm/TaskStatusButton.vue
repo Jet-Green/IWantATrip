@@ -73,7 +73,7 @@ onMounted(async () => {
 <template>
     <div class="d-flex justify-end">
         <a-button size='small' shape="round" @click="goToTasks()" :class="taskClass">
-            <span class="mdi mdi-calendar-check-outline"> </span>
+            <MdiIcon name="calendar-check-outline" />
             {{ tasksStatus.closed }}/{{ tasks.length }}</a-button>
     </div>
 </template>

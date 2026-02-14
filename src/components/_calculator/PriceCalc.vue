@@ -276,7 +276,7 @@ onMounted(async () => {
             </a-col>
             <a-col :xs="4" class="d-flex justify-center">
               <a-button @click="addIndividualCost" shape="circle">
-                <span class="mdi mdi-plus" style="cursor: pointer"></span>
+                <MdiIcon style="cursor: pointer" name="plus" />
               </a-button>
             </a-col>
           </a-row>
@@ -300,7 +300,7 @@ onMounted(async () => {
 
             <a-col :xs="4" class="d-flex justify-center">
               <a-button @click="removeIndividualCost(item)" shape="circle">
-                <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                <MdiIcon style="cursor: pointer" name="minus" />
               </a-button>
             </a-col>
           </a-row>
@@ -316,7 +316,7 @@ onMounted(async () => {
             </a-col>
             <a-col :xs="4" class="d-flex justify-center">
               <a-button @click="addGroupCost" shape="circle">
-                <span class="mdi mdi-plus" style="cursor: pointer"></span>
+                <MdiIcon style="cursor: pointer" name="plus" />
               </a-button>
             </a-col>
           </a-row>
@@ -338,7 +338,7 @@ onMounted(async () => {
             </a-col>
             <a-col :xs="4" class="d-flex justify-center">
               <a-button @click="removeGroupCost(item)" shape="circle">
-                <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                <MdiIcon style="cursor: pointer" name="minus" />
               </a-button>
             </a-col>
           </a-row>
@@ -354,7 +354,7 @@ onMounted(async () => {
             </a-col>
             <a-col :xs="4" class="d-flex justify-center">
               <a-button @click="addTransportCost" shape="circle">
-                <span class="mdi mdi-plus" style="cursor: pointer"></span>
+                <MdiIcon style="cursor: pointer" name="plus" />
               </a-button>
             </a-col>
           </a-row>
@@ -377,7 +377,7 @@ onMounted(async () => {
             <a-col :xs="{ span: 4, offset: 0 }" :md="{ span: 4, offset: 0 }" class="d-flex justify-center align-center">
               <p class="ma-0 label"></p>
               <a-button @click="removeTransportCost(item)" shape="circle">
-                <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                <MdiIcon style="cursor: pointer" name="minus" />
               </a-button>
             </a-col>
           </a-row>
@@ -404,7 +404,7 @@ onMounted(async () => {
 
                 <a-col :xs="24">
                   <a-button type="dashed" block @click="createPrice()">
-                    <span class="mdi mdi-12px mdi-tray-arrow-down mr-4"></span>
+                    <MdiIcon name="tray-arrow-down" size="12px" class="mr-4" />
                     Установить цену
                   </a-button>
                 </a-col>
@@ -470,19 +470,19 @@ onMounted(async () => {
             <a-tooltip>
               <template #title>отчистить форму</template>
               <a-button @click="clear()" shape="circle" class="ma-4">
-                <span class="mdi mdi-content-cut" style="cursor: pointer"></span>
+                <MdiIcon style="cursor: pointer" name="content-cut" />
               </a-button>
             </a-tooltip>
             <a-tooltip>
               <template #title>сохранить</template>
               <a-button @click="addTripCalc()" shape="circle" class="ma-4">
-                <span class="mdi mdi-tray-arrow-down" style="cursor: pointer"></span>
+                <MdiIcon style="cursor: pointer" name="tray-arrow-down" />
               </a-button>
             </a-tooltip>
             <a-tooltip>
               <template #title>напечатать</template>
               <a-button @click="print()" shape="circle" class="ma-4">
-                <span class="mdi mdi-printer-outline" style="cursor: pointer"></span>
+                <MdiIcon style="cursor: pointer" name="printer-outline" />
               </a-button>
             </a-tooltip>
 
@@ -501,13 +501,13 @@ onMounted(async () => {
                       <a-tooltip>
                         <template #title>прочитать</template>
                         <a-button @click="read(trip._id)" shape="circle" class="ma-4">
-                          <span class="mdi mdi-tray-arrow-up" style="cursor: pointer"></span>
+                          <MdiIcon style="cursor: pointer" name="tray-arrow-up" />
                         </a-button>
                       </a-tooltip>
                       <a-tooltip>
                         <template #title>удалить</template>
                         <a-button @click="deleteTripType(trip._id)" shape="circle" class="ma-4">
-                          <span class="mdi mdi-close" style="cursor: pointer"></span>
+                          <MdiIcon style="cursor: pointer" name="close" />
                         </a-button>
                       </a-tooltip>
                     </div>

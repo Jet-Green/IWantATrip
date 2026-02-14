@@ -70,7 +70,7 @@ onMounted(async () => {
           </a-row>
           <a-row v-if="isRefreshing">
             <a-col :span="24" class="d-flex justify-center">
-              <img src="../../assets/images/founddog.webp" alt="" style="height: 150px;">
+              <img src="../../assets/images/founddog.webp" alt="not found" style="height: 150px;">
             </a-col>
           </a-row>
           <a-row v-if="!tripStore.trips.length && !tripStore.isFetching">
@@ -79,7 +79,7 @@ onMounted(async () => {
                 <h3 style="text-align: center;">я ничего не нашёл</h3>
                 <div class="d-flex justify-center">
 
-                  <img src="../../assets/images/notfound.jpg" alt="" style="height: 150px;">
+                  <img src="../../assets/images/notfound.jpg" alt="not found" style="height: 150px;">
                 </div>
 
                 <h3 style="text-align: center;">Закажите из каталога туров <br>

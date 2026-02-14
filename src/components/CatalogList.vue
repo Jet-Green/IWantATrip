@@ -64,14 +64,14 @@ onMounted(async () => {
                     </a-row>
                     <a-row v-else-if="isRefreshing">
                         <a-col :span="24" class="d-flex justify-center">
-                            <img src="../assets/images/founddog.webp" alt="" style="height: 150px;">
+                            <img src="../assets/images/founddog.webp" alt="not found" style="height: 150px;">
                         </a-col>
                     </a-row>
                     <a-row v-else>
                         <a-col :span="24" class="d-flex justify-center">
                             <div style="display: flex; flex-direction: column;">
                                 <div class="d-flex justify-center">
-                                    <img src="../assets/images/notfound.jpg" alt="" style="height: 150px;">
+                                    <img src="../assets/images/notfound.jpg" alt="not found" style="height: 150px;">
                                 </div>
                                 <h3>я ничего не нашёл</h3>
                             </div>

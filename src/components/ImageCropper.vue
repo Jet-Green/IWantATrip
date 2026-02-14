@@ -87,12 +87,12 @@ watch(preview, () => {
 
         <a-row>
             <a-col :span="24" class="pa-0">
-                <img v-if="loadedImages.length" ref="previewImage" style="width: 50vw; height: 50vh" />
+                <img v-if="loadedImages.length" ref="previewImage" style="width: 50vw; height: 50vh" alt="not found"/>
                 <div style="width: 50vw"></div>
                 <label for="upload">
                     <div v-if="!loadedImages.length" class="d-flex justify-center align-center flex-column"
                         style="height: 50vh; cursor: pointer">
-                        <span class="mdi mdi-24px mdi-camera"></span>
+                        <MdiIcon name="camera" size="24px" />
                         <span> выбери фото</span>
                     </div>
                 </label>

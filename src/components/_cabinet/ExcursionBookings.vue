@@ -76,7 +76,7 @@ onMounted(async () => {
 </script>
 <template>
   <div v-if="loading" class="d-flex justify-center">
-    <img src="../../assets/images/founddog.webp" alt="" style="height: 150px; margin-top: 50px;">
+    <img src="../../assets/images/founddog.webp" alt="not found" style="height: 150px; margin-top: 50px;">
   </div>
   <div v-else>
     <a-breadcrumb class="mb-16">
@@ -92,7 +92,7 @@ onMounted(async () => {
       <a-col :span="12" class="d-flex justify-center">
         <a-card hoverable class="button-card ">
           <div class="row">
-            <span class="mdi mdi-clock-outline mr-4 icon"></span>
+            <MdiIcon name="clock-outline" class="mr-4 icon" />
             <b>
               {{ getTime(time) }}
             </b>&nbsp;
@@ -102,12 +102,12 @@ onMounted(async () => {
           </div>
           <div class="row space-between">
             <div>
-              <span class="mdi mdi-account-multiple-outline mr-4 icon"></span>
+              <MdiIcon name="account-multiple-outline" class="mr-4 icon" />
               <b>{{ getPeopleCount(time._id) }}</b>&nbsp;чел.
             </div>
             <div>
               <a-button @click="print()" class="d-flex justify-center align-center" type="primary" shape="circle">
-                <span style="font-size:18px" class="mdi mdi-printer-outline"></span>
+                <MdiIcon style="font-size:18px" name="printer-outline" />
               </a-button>
             </div>
           </div>

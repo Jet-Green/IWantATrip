@@ -68,12 +68,12 @@ onMounted(async () => {
                 <a-col :lg="8" :sm="12" :xs="24" v-for="companion in companions">
                     <a-card class="card" hoverable>
                         <div>
-                            <span class="mdi mdi-human-male-female"></span>{{ companion.name }} <span
-                                class="mdi mdi-human-cane"></span>{{ ageString(companion.age) }}
+                            <MdiIcon name="human-male-female" />{{ companion.name }}
+                            <MdiIcon name="human-cane" />{{ ageString(companion.age) }}
                         </div>
 
                         <div>
-                            <span class="mdi mdi-compass-outline"></span>{{ companion.direction }}
+                            <MdiIcon name="compass-outline" />{{ companion.direction }}
                         </div>
                         <div :class="[
                             companion.companionGender == 'Мужчина'
@@ -82,34 +82,31 @@ onMounted(async () => {
                                     ? 'female'
                                     : 'not-matter',
                         ]">
-                            <span :class="companion.companionGender == 'Женщина'
-                                ? 'mdi mdi-gender-female'
-                                : companion.companionGender == 'Мужчина'
-                                    ? 'mdi mdi-gender-male'
-                                    : 'mdi mdi-human-male-female'
-                                "></span>
+                            <MdiIcon v-if="request.gender == Female" name="gender-female" />
+                            <MdiIcon v-if="request.gender == Male" name="gender-female" />
+                            <MdiIcon v-else name="human-male-female" />
                             {{ companion.companionGender == "Мужчина" ? "Мужчину" : companion.companionGender ==
                                 "Женщина" ? "Женщину" : "Не важно"
                             }}
                         </div>
                         <div>
-                            <span class="mdi mdi-calendar-arrow-right"></span>
+                            <MdiIcon name="calendar-arrow-right" />
                             {{ `c ${clearData(companion.start)}` }}
-                            <span class="mdi mdi-calendar-arrow-left"></span>
+                            <MdiIcon name="calendar-arrow-left" />
                             {{ `по ${clearData(companion.end)}` }}
                         </div>
 
                         <div>
-                            <span class="mdi mdi-list-status"></span>{{ companion.description }}
+                            <MdiIcon name="list-status" />{{ companion.description }}
                         </div>
                         <div class="actions d-flex justify-center">
                             <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"
                                 @confirm="deleteCompanion(companion._id)">
-                                <span class="mdi mdi-delete" style="color: #ff6600;"></span>
+                                <MdiIcon style="color: #ff6600;" name="delete" />
                             </a-popconfirm>
                             <a-popconfirm title="Принять?" ok-text="Да" cancel-text="Нет"
                                 @confirm="acceptCompanion(companion._id)" class="d-flex align-center">
-                                <span class="mdi mdi-check-decagram-outline" style="color: #245159;"></span>
+                                <MdiIcon style="color: #245159;" name="check-decagram-outline" />
                             </a-popconfirm>
                         </div>
                     </a-card>

@@ -29,8 +29,8 @@
 
       <a-row type="flex" justify="center" class="mt-16">
         <a-col>
-          <a href="https://qbit-club.com/" target="_blank" style="user-select: none;">
-            <img src="../assets/images/madewithlove.webp" style="height: 60px;">
+          <a href="https://qbit-club.com/" target="_blank" style="user-select: none;" aria-label="qbit">
+            <img src="../assets/images/madewithlove.webp" alt="not found" style="height: 60px;">
             <!-- <b> Сделано в Кубит </b> -->
           </a>
         </a-col>

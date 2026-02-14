@@ -330,12 +330,12 @@ let formSchema = yup.object({
                         <a-col :xs="24">
                             Фотографии
                             <div class="d-flex" style="overflow-x: scroll">
-                                <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="" class="ma-4"
+                                <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="not found" class="ma-4"
                                     style="max-width: 200px; min-width: 50px; background:#ccc" @click="delPhotoDialog = true;
                                     targetIndex = i;" />
                             </div>
                             <a-button type="dashed" block @click=" visibleCropperModal = true" class="ma-8">
-                                <span class="mdi mdi-12px mdi-plus"></span>
+                                <MdiIcon name="plus" size="12px" />
                                 Добавить фото
                             </a-button>
                         </a-col>
@@ -395,13 +395,13 @@ let formSchema = yup.object({
                                     type="number" :min="0" />
 
                                 <a-button @click=" removeCost(item)" shape="circle">
-                                    <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                                    <MdiIcon style="cursor: pointer" name="minus" />
                                 </a-button>
                             </div>
                             <div class="text-caption">*Оставьте третью колонку 'максимум' пустой, если нет
                                 ограничения</div>
                             <a-button type="dashed" block @click="addCost" class="ma-8">
-                                <span class="mdi mdi-12px mdi-plus"></span>
+                                <MdiIcon name="plus" size="12px" />
                                 Добавить цены
                             </a-button>
                         </a-col>
@@ -416,12 +416,12 @@ let formSchema = yup.object({
                                     class="ml-16 mr-16" />
 
                                 <a-button @click=" removeBonuses(item)" shape="circle">
-                                    <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                                    <MdiIcon style="cursor: pointer" name="minus" />
                                 </a-button>
                             </div>
 
                             <a-button type="dashed" block @click="addBonuses" class="ma-8">
-                                <span class="mdi mdi-12px mdi-plus"></span>
+                                <MdiIcon name="plus" size="12px" />
                                 Добавить бонусы и скидки
                             </a-button>
                         </a-col>
@@ -529,7 +529,7 @@ let formSchema = yup.object({
 
                                 <div><b>День {{ datePlugin.excursions.getNumeralDay(index) }}</b> <a-button
                                         @click="removeDay(index)" shape="circle">
-                                        <span class="mdi mdi-minus"></span>
+                                        <MdiIcon name="minus" />
                                     </a-button></div>
                                 <QuillEditor class="ql-editor" theme="snow"
                                     v-model:content="form.dayByDayDescription[index]" contentType="html" :toolbar="[
@@ -545,7 +545,7 @@ let formSchema = yup.object({
 
                             </a-col>
                             <a-button type="dashed" block @click="addDay" class="ma-8">
-                                <span class="mdi mdi-12px mdi-plus"></span>
+                                <MdiIcon name="plus" size="12px" />
                                 добавить день
                             </a-button>
                         </a-col>

@@ -39,7 +39,7 @@ axios
 
       <a-col :xs="22" :md="6" :lg="5">
         <a-row display="flex">
-          <img :src="company.image" alt="" srcset="" />
+          <img :src="company.image" alt="not found" srcset="" />
         </a-row>
       </a-col>
       <a-col :xs="22" :md="12" :lg="10" class="content">

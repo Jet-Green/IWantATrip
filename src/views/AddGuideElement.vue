@@ -91,11 +91,11 @@ function submit() {
             </a-col>
             <a-col :span="24">
               <a-button @click="visibleCropperModal = true" class="mb-8" type="dashed" block>
-                <span class="mdi mdi-12px mdi-plus"></span>
+                <MdiIcon name="plus" size="12px" />
                 добавить фото
               </a-button>
               <div class="d-flex ma-2" style="overflow-x: scroll">
-                <img :src="preview" alt="" class="ma-4" style="max-width: 200px; cursor: pointer;"
+                <img :src="preview" alt="not found" class="ma-4" style="max-width: 200px; cursor: pointer;"
                   @click="delPhotoDialog = true;" />
                 <a-modal v-model:visible="delPhotoDialog" :footer="null">
                   <h3>Удалить фото?</h3>

@@ -60,7 +60,7 @@ onMounted(async () => {
           <a-carousel arrows dots-class="slick-dots slick-thumb"  autoplay>
 
             <div v-for="item, index in place?.images" :key="index">
-              <img :src="item" @click="toggleCols"  loading="lazy"
+              <img :src="item" @click="toggleCols"  loading="lazy" alt="not found"
               />
             </div>
           </a-carousel>
@@ -75,8 +75,7 @@ onMounted(async () => {
           </div>
           <div> Адрес/координаты: <br> <b> <a
                 :href="`https://yandex.ru/maps/?ll=${place?.location?.coordinates[0]}%2C${place?.location?.coordinates[1]}&z=16&pt=${place?.location?.coordinates[0]},${place?.location?.coordinates[1]}}`"
-                target="_blank"> {{ place?.location?.name || place?.location?.coordinates }} <span
-                  class="mdi  mdi-map-outline" style="font-size: 16px;"></span></a></b> </div>
+                target="_blank"> {{ place?.location?.name || place?.location?.coordinates }} <MdiIcon style="font-size: 16px;" name="map-outline" /></a></b> </div>
 
 
           <div @click="toggleCols()" style="text-align: center; width: 100%; cursor:pointer"><span class="mdi  "

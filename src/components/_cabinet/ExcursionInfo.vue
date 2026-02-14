@@ -77,17 +77,17 @@ onMounted(async () => {
           <a-col v-for="time in date.times" class="time-container">
             <div class="time-card" @click="router.push(`/cabinet/excursion-customers?excursion_id=${excursion._id}&time_id=${time._id}&date=${getDate(date.date).day+'_'+getDate(date.date).month+'_'+getDate(date.date).weekday}`)">
               <div class="row">
-                <span class="mdi mdi-clock-outline mr-4 icon"></span>
+                <MdiIcon name="clock-outline" class="mr-4 icon" />
                 <b>
                   {{ getTime(time) }}
                 </b>
               </div>
               <div class="row">
-                <span class="mdi mdi-account-multiple-outline mr-4 icon"></span>
+                <MdiIcon name="account-multiple-outline" class="mr-4 icon" />
                 <b>{{ getPeopleCount(time.bills) }}</b>&nbsp;чел.
               </div>
               <div class="row">
-                <span class="mdi mdi-cash-multiple mr-4 icon"></span>
+                <MdiIcon name="cash-multiple" class="mr-4 icon" />
                 <b>{{ getBillsSum(time.bills) }}₽</b>
               </div>
             </div>

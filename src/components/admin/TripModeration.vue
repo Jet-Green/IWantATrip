@@ -91,20 +91,20 @@ function getImg(index) {
             <a-carousel arrows dots-class="slick-dots slick-thumb">
               <template #customPaging="props">
                 <a>
-                  <img :src="getImg(props.i)" />
+                  <img :src="getImg(props.i)" alt="not found"/>
                 </a>
               </template>
               <div v-for="(item, i) in trip.images" :key="i">
-                <img :src="item" alt="" srcset="" />
+                <img :src="item" alt="not found" srcset="" />
               </div>
               <template #prevArrow>
                 <div class="custom-slick-arrow" style="left: 10px; z-index: 1">
-                  <span class="mdi mdi-48px mdi-chevron-left"></span>
+                  <MdiIcon name="chevron-left" size="48px" />
                 </div>
               </template>
               <template #nextArrow>
                 <div class="custom-slick-arrow" style="right: 10px">
-                  <span class="mdi mdi-48px mdi-chevron-right"></span>
+                  <MdiIcon name="chevron-right" size="48px" />
                 </div>
               </template>
             </a-carousel>
@@ -193,7 +193,7 @@ function getImg(index) {
         <a-button :loading="isLoading" :disabled="isModerated" @click="moderateTrip(trip._id)" class="lets_go_btn ma-36"
           type="primary">
           <span v-if="!isModerated">принять</span>
-          <span v-else class="mdi mdi-check-outline"></span>
+          <MdiIcon v-else name="check-outline" />
         </a-button>
       </a-col>
     </a-row>

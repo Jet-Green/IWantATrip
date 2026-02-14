@@ -43,9 +43,9 @@ onMounted(async () => {
                             <a-card hoverable style="padding:10px 10px; border-radius: 10px; position: relative;"
                                 :class='i % 2 == 0 ? "orange" : "blue"'>
                                 <div style="font-size:24px"><b>{{ t.name }}</b></div>
-                                <div style="font-size:18px"><span class="mdi mdi-phone-in-talk number"></span> {{ t.phone }}
+                                <div style="font-size:18px"><MdiIcon name="phone-in-talk" class="number" /> {{ t.phone }}
                                 </div>
-                                <span class="mdi mdi-taxi taxi" style="position: absolute; bottom: 5px; right: 5px;"></span>
+                                <MdiIcon style="position: absolute; bottom: 5px; right: 5px;" name="taxi" class="taxi" />
                             </a-card>
                         </a>
                     </a-col>
