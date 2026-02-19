@@ -45,6 +45,14 @@ const delPhotoDialog = ref(false);
 const targetIndex = ref(null);
 const router = useRouter();
 const duration = ref(null);
+const loyaltyProgramEnabled = ref(false);
+const loyaltyDiscountType = ref('money');
+const loyaltyFreeServices = ref([
+  {
+    peopleCount: null,
+    giftService: '',
+  },
+]);
 
 var author = ref()
 let possibleLocations = ref([])
@@ -120,6 +128,23 @@ const addBonuses = () => {
     type: "",
     bonus: "",
   });
+};
+
+const addLoyaltyFreeService = () => {
+  loyaltyFreeServices.value.push({
+    peopleCount: null,
+    giftService: '',
+  });
+};
+
+const removeLoyaltyFreeService = (item) => {
+  if (loyaltyFreeServices.value.length <= 1) {
+    return;
+  }
+  let index = loyaltyFreeServices.value.indexOf(item);
+  if (index !== -1) {
+    loyaltyFreeServices.value.splice(index, 1);
+  }
 };
 
 let submitCount = ref(0)
@@ -730,6 +755,68 @@ onMounted(async () => {
 
             </a-col>
 
+            <a-col :span="24">
+              <div class="d-flex align-center space-between">
+                <span>Программа лояльности</span>
+                <a-switch size="small" v-model:checked="loyaltyProgramEnabled" />
+              </div>
+            </a-col>
+
+            <a-col v-if="loyaltyProgramEnabled" :span="24">
+                <a-row :gutter="[16, 16]">
+                  <a-col :span="24" >
+                    <div>
+                      Тип скидки
+                    </div>
+                    <a-radio-group v-model:value="loyaltyDiscountType">
+                      <a-radio value="money">Денежная скидка</a-radio>
+                      <a-radio value="service">Бесплатные услуги</a-radio>
+                    </a-radio-group>
+                  </a-col>
+
+                  <template v-if="loyaltyDiscountType === 'money'">
+                    <a-col :xs="24" :md="12">
+                      Постоянная скидка-кэшбек
+                      <a-input placeholder="12" />
+                    </a-col>
+                    <a-col :xs="24" :md="12">
+                      Порядок оплаты
+                      <a-select style="width: 100%" placeholder="50/50">
+                        <a-select-option value="20/80">20/80</a-select-option>
+                        <a-select-option value="30/70">30/70</a-select-option>
+                        <a-select-option value="40/60">40/60</a-select-option>
+                        <a-select-option value="50/50">50/50</a-select-option>
+                        <a-select-option value="60/40">60/40</a-select-option>
+                        <a-select-option value="70/30">70/30</a-select-option>
+                        <a-select-option value="80/20">80/20</a-select-option>
+                      </a-select>
+                    </a-col>
+                  </template>
+
+                  <template v-else>
+                    <a-col :span="24">
+                      <div v-for="(item, index) in loyaltyFreeServices" :key="index" style="display: flex" align="baseline"
+                        class="mb-16">
+                        <a-input-number v-model:value="item.peopleCount" style="width: 100%" :min="1"
+                          placeholder="Кол-во человек для активации бесплатной услуги" />
+
+                        <a-input v-model:value="item.giftService" style="width: 100%" placeholder="Услуга в подарок"
+                          class="ml-16 mr-16" />
+
+                        <a-button @click="removeLoyaltyFreeService(item)" shape="circle"
+                          :disabled="loyaltyFreeServices.length <= 1">
+                          <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                        </a-button>
+                      </div>
+
+                      <a-button type="dashed" block @click="addLoyaltyFreeService" class="ma-8">
+                        <span class="mdi mdi-12px mdi-plus"></span>
+                        Добавить услугу
+                      </a-button>
+                    </a-col>
+                  </template>
+                </a-row>
+              </a-col>
 
             <a-col :span="24" class="d-flex justify-center ">
               <a-button class="lets_go_btn ma-36" type="primary" html-type="submit">Отправить
