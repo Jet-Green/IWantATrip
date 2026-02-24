@@ -18,7 +18,13 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  minProfit: {
+    type: [Number, null],
+    default: null,
+  },
 });
+
+const emit = defineEmits(["update:minProfit"]);
 
 const app = getCurrentInstance();
 const htmlToPaper = app.appContext.config.globalProperties.$htmlToPaper;
@@ -47,6 +53,14 @@ let select = reactive({
   acceptTourists: 0,
   wait: 0,
 });
+
+const normalizeMinProfit = (value) => {
+  if (value === "" || value === null || value === undefined) {
+    return null;
+  }
+  const numberValue = Number(value);
+  return Number.isFinite(numberValue) ? numberValue : null;
+};
 
 const addGroupCost = () => {
   form.groupCost.push({
@@ -95,9 +109,11 @@ const clear = () => {
   form.transportCost = [];
   select.transport = {};
   form.profitabilityPlan = 0;
-  form.profitPlan = 0;
+  form.profitPlan = props.embedded ? null : 0;
   form._id= null;
-  localStorage.removeItem("tripCalc");
+  if (!props.embedded) {
+    localStorage.removeItem("tripCalc");
+  }
  
 };
 
@@ -186,7 +202,7 @@ const resultArray = computed(() => {
 
   for (let i = 1; i <= form.max; i++) {
     profit.push(result(i).clearProfit);
-    profitPlan.push(form.profitPlan);
+    profitPlan.push(form.profitPlan ?? 0);
   }
   obj.profit = profit;
   obj.profitPlan = profitPlan;
@@ -241,7 +257,9 @@ watch(
 
 watch(form, (newValue, oldValue) => {
  
-  localStorage.setItem("tripCalc", JSON.stringify(form));
+  if (!props.embedded) {
+    localStorage.setItem("tripCalc", JSON.stringify(form));
+  }
   if (!form.tourists) {
     form.tourists = 1;
   }
@@ -256,11 +274,41 @@ watch(form, (newValue, oldValue) => {
 });
 
 onMounted(async () => {
-  let readData = JSON.parse(localStorage.getItem("tripCalc"));
-  if (readData) {
-    Object.assign(form, readData);
+  if (!props.embedded) {
+    let readData = JSON.parse(localStorage.getItem("tripCalc"));
+    if (readData) {
+      Object.assign(form, readData);
+    }
   }
 });
+
+watch(
+  () => props.minProfit,
+  (value) => {
+    if (!props.embedded) {
+      return;
+    }
+    const normalized = normalizeMinProfit(value);
+    if (normalized !== form.profitPlan) {
+      form.profitPlan = normalized;
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => form.profitPlan,
+  (value) => {
+    if (!props.embedded) {
+      return;
+    }
+    const normalized = normalizeMinProfit(value);
+    const current = normalizeMinProfit(props.minProfit);
+    if (normalized !== current) {
+      emit("update:minProfit", normalized);
+    }
+  }
+);
 
 </script>
 <template>

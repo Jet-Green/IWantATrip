@@ -962,14 +962,8 @@ onMounted(async () => {
                                     placeholder="2" :min="1" :max="daysToTripStart || undefined" :step="1" />
                   </a-col>
 
-                  <a-col :xs="24" :md="12">
-                    Минимальная прибыль, руб.
-                    <a-input-number v-model:value="form.loyalty.discount.minProfit" style="width: 100%" placeholder="5000"
-                      :min="0" :step="1" />
-                  </a-col>
-
                   <a-col :span="24">
-                    <PriceCalc :embedded="true" />
+                    <PriceCalc :embedded="true" v-model:minProfit="form.loyalty.discount.minProfit" />
                   </a-col>
                 </template>
 
