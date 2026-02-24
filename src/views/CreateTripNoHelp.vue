@@ -137,6 +137,8 @@ let form = reactive({
 });
 // для a-select с регионами тура
 let tripRegions = computed(() => appStore.appState[0]?.tripRegions.map((name) => { return { value: name } }) ?? [])
+const hasPartner = computed(() => String(form.partner || '').trim().length > 0);
+const canEnableLoyalty = computed(() => !hasPartner.value || Boolean(form.canSellPartnerTour));
 
 const daysToTripStart = computed(() => {
   return getDaysToTripStart(form.start);
@@ -539,6 +541,11 @@ watch(start, () => {
 watch(form, () => {
   localStorage.setItem('CreatingTrip', JSON.stringify(form))
 })
+watch(canEnableLoyalty, (allowed) => {
+  if (!allowed && form.loyalty.enabled) {
+    form.loyalty.enabled = false;
+  }
+}, { immediate: true });
 watch(end, () => {
   // округлить, чтобы при поиске мы точно попадали
   if (end.value) {
@@ -910,9 +917,17 @@ onMounted(async () => {
             </a-col>
 
             <a-col :span="24">
+              <a-alert
+                  v-if="!canEnableLoyalty"
+                  type="warning"
+                  show-icon
+                  class="mb-8"
+                  message="Модуль лояльности доступен только при оплате в приложении."
+              />
+
               <div class="d-flex align-center space-between">
                 <span>Модуль лояльности</span>
-                <a-switch size="small" v-model:checked="form.loyalty.enabled" />
+                <a-switch size="small" v-model:checked="form.loyalty.enabled" :disabled="!canEnableLoyalty" />
               </div>
             </a-col>
 
