@@ -11,29 +11,51 @@ import Explanation from "../components/sections/Explanation.vue";
 import ToTrips from "../components/sections/ToTrips.vue";
 // import Hello from '../components/sections/Hello.vue';
 import Footer from '../components/Footer.vue'
+
+
+import NearbyTrips from "../components/ladingPage/NearbyTrips.vue";
+import FirstSection from "../components/ladingPage/FirstSection.vue";
+import ExcursionsModule from "../components/ladingPage/ExcursionsModule.vue";
+
 import { useRoute } from "vue-router";
 
 
 const route = useRoute();
 
 
-onMounted (()=>{
-  if(route.hash) {
+onMounted(() => {
+  if (route.hash) {
     let id = route.hash.slice(1)
     document.getElementById(id)?.scrollIntoView()
   }
 })
 </script>
 <template>
-  <div>
-    <Explanation />
+  <div style="background-color: #FFFEF4;">
+    <FirstSection />
+    <NearbyTrips />
+
+    <a-row type="flex" justify="center" style="margin-top: 200px;">
+      <a-col :span="22">
+        <h2 class="big-text">Давайте спланируем <br> ваше путешествие</h2>
+      </a-col>
+    </a-row>
+
+    <ExcursionsModule />
+
+
+    <!-- <Explanation />
     <ButtonsRow />
-    <!-- <ToTrips /> -->
     <FindTrip />
-    <!-- <Companions /> -->
     <CityGuide id="guide"/>
-    <Footer/>
-  
+    <Footer/> -->
+
   </div>
 </template>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.big-text {
+  font-size: clamp(1.25rem, -0.8381rem + 5.9659vw, 3.875rem);
+  line-height: 1;
+  font-weight: 900;
+}
+</style>

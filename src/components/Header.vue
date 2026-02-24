@@ -93,118 +93,84 @@ onMounted(() => {
 </script>
 
 <template>
-  <a-layout-header :style="{ position: 'fixed', zIndex: 999, width: '100%', background: 'white' }">
+  <a-layout-header :style="{ position: 'fixed', zIndex: 999, width: '100%', background: 'transparent' }">
     <a-row type="flex" justify="center">
-      <a-col :xs="22" :lg="16">
+      <a-col :span="22">
         <a-row type="flex" justify="space-between">
           <a-col class="d-flex align-center">
-            <img
-              src="../assets/images/logo.webp"
-              style="height: 60px; cursor: pointer"
-              alt=""
-              @click="toComponentFromMenu('Landing')"
-            />
+            <img src="../assets/images/logo.webp" style="height: 60px; cursor: pointer" alt=""
+              @click="toComponentFromMenu('Landing')" />
           </a-col>
 
-          <a-col>
-            <div
-              ref="locationBar"
-              class="location"
-              @click="selectLocationDialog = !selectLocationDialog"
-              style="cursor: pointer; font-weight: bold"
-            >
+          <a-col class="top_menu">
+            <div ref="locationBar" class="location" @click="selectLocationDialog = !selectLocationDialog"
+              style="cursor: pointer; font-weight: bold">
               <span class="mdi mdi-map-marker-outline"></span>
               <span>
                 {{ locationSearchRequest ? locationSearchRequest : "Ваш город" }}
               </span>
             </div>
-            <a-modal :mask="false" v-model:open="selectLocationDialog" title="Местоположение" :footer="null" :zIndex=999>
-              <a-select v-model:value="locationSearchRequest" style="width: 100%" @change="handleChange" show-search >
+            <a-modal :mask="false" v-model:open="selectLocationDialog" title="Местоположение" :footer="null"
+              :zIndex=999>
+              <a-select v-model:value="locationSearchRequest" style="width: 100%" @change="handleChange" show-search>
                 <a-select-option value="Ваш город">Ваш город</a-select-option>
-                <a-select-option
-                  v-for="(location, index) of locationStore.locations"
-                  :key="index"
-                  :value="location.shortName"
-                  >{{ location.name }}</a-select-option
-                >
+                <a-select-option v-for="(location, index) of locationStore.locations" :key="index"
+                  :value="location.shortName">{{ location.name }}</a-select-option>
               </a-select>
             </a-modal>
           </a-col>
 
           <a-col class="top_menu">
-            <!-- <div ref='find' @click="toComponentFromMenu('TripsPage')" class="route">найти</div>
-            <div ref='order' @click="toComponentFromMenu('CreateTripWithHelp')" class="route">
-              заказать
-            </div>
-            <div ref='catalog' @click="toComponentFromMenu('CatalogPage')" class="route">
-              каталог
-            </div>
-            <div ref='companion' @click="toComponentFromMenu('CompanionsPage')" class="route">
-              попутчики
-            </div> -->
+            <div class="transparent-container hide-xs hide-sm hide-md hide-lg">
+              <div class="nav-btn">
+                Места
+              </div>
 
-            <div class="ma-4">
-              <a href="https://vk.com/gorodaivesi_udm" target="_blank"><img src="../assets/icons/vk.svg" alt="" /></a>
-            </div>
-            <div class="ma-4">
-              <a href="https://t.me/gorodaivesi_ru" target="_blank"
-                ><img src="../assets/icons/telegram.svg" alt=""
-              /></a>
+              <div class="nav-btn">
+                Маршруты
+              </div>
+
+              <div class="nav-btn">
+                Афиши
+              </div>
+
+              <div class="nav-btn">
+                Гостиницы
+              </div>
+
+              <div class="nav-btn">
+                Экскурсии
+              </div>
             </div>
 
-            <!-- <span ref='auth' v-if="userStore.isAuth" class="mdi mdi-24px mdi-home" @click="toComponentFromMenu('Me')"
-              style="cursor: pointer" cancelText="отмена">
-            </span>
-
-            <span ref='auth' v-if="!userStore.isAuth" class="mdi mdi-24px mdi-login"
-              @click="toComponentFromMenu('RegForm')" style="cursor: pointer">
-            </span> -->
+            <div class="transparent-container">
+              <!-- color: #245159; -->
+              <span class="mdi mdi-menu mdi-60px"
+                style="color: #FF6600; height: 40px !important; line-height: 40px; font-size: 40px; cursor: pointer"
+                @click="visibleDrawer = !visibleDrawer"></span>
+            </div>
           </a-col>
-          <a-col>
-            <span
-              class="mdi mdi-24px mdi-menu"
-              style="color: #245159; cursor: pointer"
-              @click="visibleDrawer = !visibleDrawer"
-            ></span>
-          </a-col>
+          <!-- <a-col class="d-flex align-center">
+          </a-col> -->
         </a-row>
       </a-col>
     </a-row>
 
-    <a-drawer
-      placement="right"
-      :closable="false"
-      :open="visibleDrawer"
-      @close="visibleDrawer = !visibleDrawer"
-      :width="drawerWidth"
-    >
+    <a-drawer placement="right" :closable="false" :open="visibleDrawer" @close="visibleDrawer = !visibleDrawer"
+      :width="drawerWidth">
       <div style="text-align: right">
-        <span
-          class="mdi mdi-24px mdi-close"
-          style="color: #245159; cursor: pointer"
-          @click="visibleDrawer = !visibleDrawer"
-        ></span>
+        <span class="mdi mdi-24px mdi-close" style="color: #245159; cursor: pointer"
+          @click="visibleDrawer = !visibleDrawer"></span>
       </div>
       <div class="right-drawer">
         <div @click="toComponentFromMenu('Me')" class="route ma-8" style="text-align: center; font-weight: bold">
           <div>
-            <span
-              ref="auth"
-              v-if="userStore.isAuth"
-              class="mdi mdi-24px mdi-home"
-              @click="toComponentFromMenu('Me')"
-              style="cursor: pointer"
-              cancelText="отмена"
-            >
+            <span ref="auth" v-if="userStore.isAuth" class="mdi mdi-24px mdi-home" @click="toComponentFromMenu('Me')"
+              style="cursor: pointer" cancelText="отмена">
             </span>
 
-            <span
-              ref="auth"
-              v-if="!userStore.isAuth"
-              class="mdi mdi-24px mdi-login"
-              @click="toComponentFromMenu('RegForm')"
-              style="cursor: pointer"
-            >
+            <span ref="auth" v-if="!userStore.isAuth" class="mdi mdi-24px mdi-login"
+              @click="toComponentFromMenu('RegForm')" style="cursor: pointer">
             </span>
           </div>
           <div class="mr-4">кабинет</div>
@@ -229,9 +195,9 @@ onMounted(() => {
           </span></h4> -->
 
           <div @click="toComponentFromMenu('ExcursionsPage')" class="route ma-8">экскурсии</div>
-          <div  @click="toComponentFromMenu('CreateExcursion')" class="route ma-8">создать экскурсию</div>
+          <div @click="toComponentFromMenu('CreateExcursion')" class="route ma-8">создать экскурсию</div>
           <div @click="toComponentFromMenu('Guides')" class="route ma-8">гиды</div>
-          <div  @click="toComponentFromMenu('CreateGuide')" class="route ma-8">добавить гида</div>
+          <div @click="toComponentFromMenu('CreateGuide')" class="route ma-8">добавить гида</div>
           <div @click="toComponentFromMenu('Poster')" class="route ma-8">афиши</div>
           <div @click="toComponentFromMenu('Places')" class="route ma-8">места</div>
           <div @click="toComponentFromMenu('Transport')" class="route ma-8">транспорт</div>
@@ -244,21 +210,14 @@ onMounted(() => {
         <div @click="toComponentFromMenu('Contacts')" class="route ma-8">контакты</div>
         <div @click="toComponentFromMenu('Documents')" class="route ma-8">документы</div>
         <div style="text-align: center">
-          <a href="https://vk.com/gorodaivesi_udm" target="_blank"
-            ><img class="ma-4" src="../assets/icons/vk.svg" alt=""
-          /></a>
+          <a href="https://vk.com/gorodaivesi_udm" target="_blank"><img class="ma-4" src="../assets/icons/vk.svg"
+              alt="" /></a>
 
-          <a href="https://t.me/gorodaivesi_ru" target="_blank"
-            ><img class="ma-4" src="../assets/icons/telegram.svg" alt=""
-          /></a>
+          <a href="https://t.me/gorodaivesi_ru" target="_blank"><img class="ma-4" src="../assets/icons/telegram.svg"
+              alt="" /></a>
         </div>
-        <img
-          src="../assets/images/logo.webp"
-          class="ma-8"
-          style="height: 60px; cursor: pointer"
-          alt=""
-          @click="toComponentFromMenu('Landing')"
-        />
+        <img src="../assets/images/logo.webp" class="ma-8" style="height: 60px; cursor: pointer" alt=""
+          @click="toComponentFromMenu('Landing')" />
       </div>
     </a-drawer>
   </a-layout-header>
@@ -270,13 +229,24 @@ onMounted(() => {
 
   .top_menu {
     display: flex;
-    justify-content: space-around;
-    font-size: clamp(0.625rem, -2.625rem + 4vw, 0.875rem);
-    position: relative;
+    align-items: center;
+    gap: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
   }
 }
 
 .location {
+  background-color: #ff6600;
+  color: white;
+  border-radius: 60px;
+  // height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  line-height: 1;
+  user-select: none;
+
   @media (min-width: 800px) {
     font-size: 16px;
   }
@@ -309,5 +279,32 @@ onMounted(() => {
   text-align: center;
   background-color: rgb(235, 234, 234);
   width: 100%;
+}
+
+.transparent-container {
+  background-color: rgba($color: #ffffff, $alpha: 0.4);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 60px;
+  height: 60px;
+}
+
+.nav-btn {
+  display: flex;
+  height: fit-content;
+  color: white;
+  font-weight: 600;
+  background-color: #63BED8;
+  border-radius: 50px;
+  line-height: 1;
+  padding: 14px 28px;
+  cursor: pointer;
+  user-select: none;
+
+  @media (max-width: 800px) {
+    font-size: 16px;
+  }
 }
 </style>
