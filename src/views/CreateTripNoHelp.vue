@@ -1,6 +1,7 @@
 <script setup>
 import BackButton from "../components/BackButton.vue";
 import ImageCropper from "../components/ImageCropper.vue";
+import PriceCalc from '../components/_calculator/PriceCalc.vue'
 
 import { watch, nextTick, ref, reactive, onMounted, computed } from "vue";
 import { QuillEditor } from "@vueup/vue-quill";
@@ -45,14 +46,54 @@ const delPhotoDialog = ref(false);
 const targetIndex = ref(null);
 const router = useRouter();
 const duration = ref(null);
-const loyaltyProgramEnabled = ref(false);
-const loyaltyDiscountType = ref('money');
-const loyaltyFreeServices = ref([
-  {
-    peopleCount: null,
-    giftService: '',
-  },
-]);
+
+const LOYALTY_TYPE = {
+  DISCOUNT: 'discount',
+  FREE_SERVICES: 'free_services',
+};
+
+const PAYMENT_ORDER = {
+  TWENTY_EIGHTY: '20/80',
+  THIRTY_SEVENTY: '30/70',
+  FORTY_SIXTY: '40/60',
+  HALF: '50/50',
+  SIXTY_FORTY: '60/40',
+  SEVENTY_THIRTY: '70/30',
+  EIGHTY_TWENTY: '80/20',
+};
+
+const PAYMENT_ORDER_VALUES = Object.values(PAYMENT_ORDER);
+
+const paymentOrderOptions = [
+  { value: PAYMENT_ORDER.TWENTY_EIGHTY, label: '20 / 80' },
+  { value: PAYMENT_ORDER.THIRTY_SEVENTY, label: '30 / 70' },
+  { value: PAYMENT_ORDER.FORTY_SIXTY, label: '40 / 60' },
+  { value: PAYMENT_ORDER.HALF, label: '50 / 50' },
+  { value: PAYMENT_ORDER.SIXTY_FORTY, label: '60 / 40' },
+  { value: PAYMENT_ORDER.SEVENTY_THIRTY, label: '70 / 30' },
+  { value: PAYMENT_ORDER.EIGHTY_TWENTY, label: '80 / 20' },
+];
+
+function getDefaultLoyalty() {
+  return {
+    enabled: false,
+    type: LOYALTY_TYPE.DISCOUNT,
+    discount: {
+      minProfit: null,
+      fixationDay: null,
+      baseDiscountPercent: null,
+      paymentOrder: PAYMENT_ORDER.HALF,
+    },
+    freeServices: {
+      levels: [
+        {
+          peopleCount: null,
+          service: '',
+        },
+      ],
+    },
+  };
+}
 
 var author = ref()
 let possibleLocations = ref([])
@@ -92,9 +133,14 @@ let form = reactive({
   travelRequirement: "",
   tripRegion: "",
   places: [],
+  loyalty: getDefaultLoyalty(),
 });
 // для a-select с регионами тура
 let tripRegions = computed(() => appStore.appState[0]?.tripRegions.map((name) => { return { value: name } }) ?? [])
+
+const daysToTripStart = computed(() => {
+  return getDaysToTripStart(form.start);
+});
 
 const removeCost = (item) => {
   let index = form.cost.indexOf(item);
@@ -131,21 +177,124 @@ const addBonuses = () => {
 };
 
 const addLoyaltyFreeService = () => {
-  loyaltyFreeServices.value.push({
+  form.loyalty.freeServices.levels.push({
     peopleCount: null,
-    giftService: '',
+    service: '',
   });
 };
 
 const removeLoyaltyFreeService = (item) => {
-  if (loyaltyFreeServices.value.length <= 1) {
+  if (form.loyalty.freeServices.levels.length <= 1) {
     return;
   }
-  let index = loyaltyFreeServices.value.indexOf(item);
+  let index = form.loyalty.freeServices.levels.indexOf(item);
   if (index !== -1) {
-    loyaltyFreeServices.value.splice(index, 1);
+    form.loyalty.freeServices.levels.splice(index, 1);
   }
 };
+
+function normalizePaymentOrder(value) {
+  return PAYMENT_ORDER_VALUES.includes(value) ? value : PAYMENT_ORDER.HALF;
+}
+
+function toNumberOrNull(value) {
+  if (value === '' || value === null || value === undefined) {
+    return null;
+  }
+
+  const numberValue = Number(value);
+  return Number.isFinite(numberValue) ? numberValue : null;
+}
+
+function getDaysToTripStart(startTimestamp) {
+  if (!startTimestamp) {
+    return null;
+  }
+
+  let today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return Math.max(0, Math.floor((Number(startTimestamp) - today.getTime()) / 86400000));
+}
+
+function normalizeLoyalty(loyaltyInput = {}, startTimestamp = null) {
+  const loyalty = getDefaultLoyalty();
+  loyalty.enabled = Boolean(loyaltyInput.enabled);
+  loyalty.type = loyaltyInput.type === LOYALTY_TYPE.FREE_SERVICES ? LOYALTY_TYPE.FREE_SERVICES : LOYALTY_TYPE.DISCOUNT;
+
+  if (!loyalty.enabled) {
+    return loyalty;
+  }
+
+  if (loyalty.type === LOYALTY_TYPE.DISCOUNT) {
+    const daysLimit = getDaysToTripStart(startTimestamp);
+    const minProfit = toNumberOrNull(loyaltyInput.discount?.minProfit);
+    const fixationDay = toNumberOrNull(loyaltyInput.discount?.fixationDay);
+    const baseDiscountPercent = toNumberOrNull(loyaltyInput.discount?.baseDiscountPercent);
+    const paymentOrder = normalizePaymentOrder(loyaltyInput.discount?.paymentOrder);
+
+    loyalty.discount.minProfit = minProfit === null ? null : Math.max(0, minProfit);
+    loyalty.discount.paymentOrder = paymentOrder;
+
+    if (fixationDay !== null) {
+      let normalizedFixationDay = Math.max(1, fixationDay);
+      if (daysLimit !== null && daysLimit > 0) {
+        normalizedFixationDay = Math.min(normalizedFixationDay, daysLimit);
+      }
+      loyalty.discount.fixationDay = normalizedFixationDay;
+    }
+
+    if (baseDiscountPercent !== null) {
+      loyalty.discount.baseDiscountPercent = Math.min(100, Math.max(0, baseDiscountPercent));
+    }
+
+    loyalty.freeServices = {
+      levels: [],
+    };
+    return loyalty;
+  }
+
+  const levels = Array.isArray(loyaltyInput.freeServices?.levels) ? loyaltyInput.freeServices.levels : [];
+  loyalty.freeServices.levels = levels
+    .map((item) => ({
+      peopleCount: toNumberOrNull(item?.peopleCount),
+      service: String(item?.service || item?.giftService || '').trim(),
+    }))
+    .filter((item) => item.peopleCount && item.peopleCount > 0 && item.service);
+
+  loyalty.discount = {
+    minProfit: null,
+    fixationDay: null,
+    baseDiscountPercent: null,
+    paymentOrder: PAYMENT_ORDER.HALF,
+  };
+
+  return loyalty;
+}
+
+function validateLoyaltyBeforeSubmit(loyalty) {
+  if (!loyalty.enabled) {
+    return true;
+  }
+
+  if (loyalty.type === LOYALTY_TYPE.DISCOUNT) {
+    if (loyalty.discount.minProfit === null) {
+      message.error({ content: "Укажите минимальную прибыль для программы лояльности" });
+      return false;
+    }
+    if (loyalty.discount.fixationDay === null) {
+      message.error({ content: "Укажите крайний день фиксации скидки" });
+      return false;
+    }
+    return true;
+  }
+
+  if (loyalty.type === LOYALTY_TYPE.FREE_SERVICES && loyalty.freeServices.levels.length === 0) {
+    message.error({ content: "Добавьте хотя бы одну услугу" });
+    return false;
+  }
+
+  return true;
+}
 
 let submitCount = ref(0)
 function submit() {
@@ -197,6 +346,7 @@ function submit() {
       canSellPartnerTour: null,
       tripRegion: "",
       places: [],
+      loyalty: getDefaultLoyalty(),
     });
     images = [];
     // pdf = [];
@@ -233,6 +383,11 @@ function submit() {
   form.author = userStore.user._id
   form.createdDay = Date.now()
   form.includedLocations = { type: 'GeometryCollection', geometries: [] }
+  form.loyalty = normalizeLoyalty(form.loyalty, form.start)
+  if (!validateLoyaltyBeforeSubmit(form.loyalty)) {
+    submitCount.value -= 1
+    return
+  }
 
   let t = userStore.user.tinkoffContract
   form.tinkoffContract = {
@@ -253,7 +408,6 @@ function submit() {
       message.success({
         content: "Тур создан!", onClose: () => {
           close()
-          localStorage.setItem('CreatingTrip', form)
         },
       });
     }
@@ -757,66 +911,84 @@ onMounted(async () => {
 
             <a-col :span="24">
               <div class="d-flex align-center space-between">
-                <span>Программа лояльности</span>
-                <a-switch size="small" v-model:checked="loyaltyProgramEnabled" />
+                <span>Модуль лояльности</span>
+                <a-switch size="small" v-model:checked="form.loyalty.enabled" />
               </div>
             </a-col>
 
-            <a-col v-if="loyaltyProgramEnabled" :span="24">
-                <a-row :gutter="[16, 16]">
-                  <a-col :span="24" >
-                    <div>
-                      Тип скидки
-                    </div>
-                    <a-radio-group v-model:value="loyaltyDiscountType">
-                      <a-radio value="money">Денежная скидка</a-radio>
-                      <a-radio value="service">Бесплатные услуги</a-radio>
-                    </a-radio-group>
+            <a-col v-if="form.loyalty.enabled" :span="24">
+              <a-row :gutter="[16, 16]">
+                <a-col :span="24">
+                  <div>
+                    Тип скидки
+                  </div>
+                  <a-radio-group v-model:value="form.loyalty.type">
+                    <a-radio :value="LOYALTY_TYPE.DISCOUNT">Денежная скидка</a-radio>
+                    <a-radio :value="LOYALTY_TYPE.FREE_SERVICES">Бесплатные услуги</a-radio>
+                  </a-radio-group>
+                </a-col>
+
+                <template v-if="form.loyalty.type === LOYALTY_TYPE.DISCOUNT">
+                  <a-col :xs="24" :md="12">
+                    Постоянная скидка-кэшбек (необязательное поле)
+                    <a-input-number v-model:value="form.loyalty.discount.baseDiscountPercent" style="width: 100%"
+                                    placeholder="10" :min="0" :max="100" :step="1" />
                   </a-col>
 
-                  <template v-if="loyaltyDiscountType === 'money'">
-                    <a-col :xs="24" :md="12">
-                      Постоянная скидка-кэшбек
-                      <a-input placeholder="12" />
-                    </a-col>
-                    <a-col :xs="24" :md="12">
-                      Порядок оплаты
-                      <a-select style="width: 100%" placeholder="50/50">
-                        <a-select-option value="20/80">20/80</a-select-option>
-                        <a-select-option value="30/70">30/70</a-select-option>
-                        <a-select-option value="40/60">40/60</a-select-option>
-                        <a-select-option value="50/50">50/50</a-select-option>
-                        <a-select-option value="60/40">60/40</a-select-option>
-                        <a-select-option value="70/30">70/30</a-select-option>
-                        <a-select-option value="80/20">80/20</a-select-option>
-                      </a-select>
-                    </a-col>
-                  </template>
+                  <a-col :xs="24" :md="12">
+                    Порядок оплаты
+                    <a-select v-model:value="form.loyalty.discount.paymentOrder" :options="paymentOrderOptions"
+                              style="width: 100%" />
+                  </a-col>
 
-                  <template v-else>
-                    <a-col :span="24">
-                      <div v-for="(item, index) in loyaltyFreeServices" :key="index" style="display: flex" align="baseline"
-                        class="mb-16">
+                  <a-col :xs="24" :md="12">
+                    Крайний день фиксации скидки
+                    <a-input-number v-model:value="form.loyalty.discount.fixationDay" style="width: 100%"
+                                    placeholder="2" :min="1" :max="daysToTripStart || undefined" :step="1" />
+                  </a-col>
+
+                  <a-col :xs="24" :md="12">
+                    Минимальная прибыль, руб.
+                    <a-input-number v-model:value="form.loyalty.discount.minProfit" style="width: 100%" placeholder="5000"
+                      :min="0" :step="1" />
+                  </a-col>
+
+                  <a-col :span="24">
+                    <PriceCalc :embedded="true" />
+                  </a-col>
+                </template>
+
+                <template v-else>
+                  <a-col :span="24">
+                    <a-row v-for="(item, index) in form.loyalty.freeServices.levels" :key="index" :gutter="[12, 12]"
+                      class="mb-16" align="middle">
+                      <a-col :xs="24" :md="10">
+                        Кол-во человек для активации бесплатной услуги
                         <a-input-number v-model:value="item.peopleCount" style="width: 100%" :min="1"
-                          placeholder="Кол-во человек для активации бесплатной услуги" />
+                          placeholder="12" />
+                      </a-col>
 
-                        <a-input v-model:value="item.giftService" style="width: 100%" placeholder="Услуга в подарок"
-                          class="ml-16 mr-16" />
+                      <a-col :xs="24" :md="12">
+                        Услуга в подарок
+                        <a-input v-model:value="item.service" style="width: 100%" placeholder="Бесплатный завтрак" />
+                      </a-col>
 
+                      <a-col :xs="24" :md="2" class="d-flex justify-center" style="padding-top: 24px;">
                         <a-button @click="removeLoyaltyFreeService(item)" shape="circle"
-                          :disabled="loyaltyFreeServices.length <= 1">
+                          :disabled="form.loyalty.freeServices.levels.length <= 1">
                           <span class="mdi mdi-minus" style="cursor: pointer"></span>
                         </a-button>
-                      </div>
+                      </a-col>
+                    </a-row>
 
-                      <a-button type="dashed" block @click="addLoyaltyFreeService" class="ma-8">
-                        <span class="mdi mdi-12px mdi-plus"></span>
-                        Добавить услугу
-                      </a-button>
-                    </a-col>
-                  </template>
-                </a-row>
-              </a-col>
+                    <a-button type="dashed" block @click="addLoyaltyFreeService" class="mt-8 mb-8">
+                      <span class="mdi mdi-12px mdi-plus"></span>
+                      Добавить услугу
+                    </a-button>
+                  </a-col>
+                </template>
+              </a-row>
+            </a-col>
 
             <a-col :span="24" class="d-flex justify-center ">
               <a-button class="lets_go_btn ma-36" type="primary" html-type="submit">Отправить

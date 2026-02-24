@@ -13,6 +13,13 @@ import Print from "./Print.vue"
 import Chart from "./Chart.vue";
 import { useAuth } from "../../stores/auth";
 
+const props = defineProps({
+  embedded: {
+    type: Boolean,
+    default: false,
+  },
+});
+
 const app = getCurrentInstance();
 const htmlToPaper = app.appContext.config.globalProperties.$htmlToPaper;
 const activeKey = ref(["0"]);
@@ -258,17 +265,19 @@ onMounted(async () => {
 </script>
 <template>
   <div>
-    <BackButton />
+    <BackButton v-if="!props.embedded" />
     <div class="main">
       <a-row class="d-flex justify-center">
-        <a-col :xs="22" :lg="12">
-          <h2 class="title">Калькулятор тура</h2>
-          <a-row class="justify-center">
-            <a-col :xs="22" :lg="12">
-              <a-input v-model:value="form.name" :bordered="false" placeholder="название"
-                style="text-align: center; font-size: 18px" />
-            </a-col>
-          </a-row>
+        <a-col :xs="props.embedded ? 24 : 22" :lg="props.embedded ? 24 : 12">
+          <template v-if="!props.embedded">
+            <h2 class="title">Калькулятор тура</h2>
+            <a-row class="justify-center">
+              <a-col :xs="22" :lg="12">
+                <a-input v-model:value="form.name" :bordered="false" placeholder="название"
+                  style="text-align: center; font-size: 18px" />
+              </a-col>
+            </a-row>
+          </template>
 
           <a-row :gutter="[4, 4]">
             <a-col :xs="20">
