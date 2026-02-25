@@ -589,12 +589,24 @@ onMounted(async () => {
                             <div>Количество человек:</div>
 
 
-                            <div style="width: 50%">
-                                <b>
+                            <div style="width: 50%" class="d-flex align-center">
+                                <b style="flex: 1;" class="mr-8">
                                     <a-progress
                                         :percent="(getCustomersCount(selectedDate.billsList) / trip.maxPeople) * 100"
-                                        :format="() => `${getCustomersCount(selectedDate.billsList)} из ${trip.maxPeople} чел`">
-                                    </a-progress></b>
+                                        :show-info="false"
+                                    />
+                                </b>
+                                <span style="font-size: 14px; font-weight: bold;" class="mr-8">
+                                  {{`${getCustomersCount(selectedDate.billsList)} из ${trip.maxPeople} чел`}}
+                                </span>
+                                <a-tooltip v-if="trip?.loyalty?.enabled && trip?.loyalty?.type === 'free_services'" placement="top">
+                                    <template #title>
+                                        <div v-for="(level, index) in trip.loyalty.freeServices?.levels" :key="index" style="font-size: 14px; line-height: 1; margin-bottom: 4px;">
+                                            При наборе {{ level.peopleCount }} человек, в подарок вы получите услугу «{{ level.service }}»
+                                        </div>
+                                    </template>
+                                  <span class="mdi mdi-information-outline"></span>
+                                </a-tooltip>
                             </div>
                         </div>
 
@@ -1009,5 +1021,9 @@ img {
 
 .btn {
     border-radius: 15px;
+}
+
+:deep(.ant-progress) {
+  margin-bottom: 0;
 }
 </style>
