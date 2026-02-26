@@ -654,13 +654,21 @@ onMounted(async () => {
                                 <span style="font-size: 14px; font-weight: bold;" class="mr-8">
                                   {{`${getCustomersCount(selectedDate.billsList)} из ${trip.maxPeople} чел`}}
                                 </span>
-                                <a-tooltip v-if="trip?.loyalty?.enabled && trip?.loyalty?.type === 'free_services'" placement="top">
+                                <a-tooltip v-if="trip?.loyalty?.enabled && trip?.loyalty?.type === 'free_services'" placement="right" color="#F0F0F0" :overlay-inner-style="{ borderRadius: '11px' }">
                                     <template #title>
-                                        <div v-for="(level, index) in trip.loyalty.freeServices?.levels" :key="index" style="font-size: 14px; line-height: 1; margin-bottom: 4px;">
-                                            При наборе {{ level.peopleCount }} человек, в подарок вы получите услугу «{{ level.service }}»
+                                        <div v-for="(level, index) in trip.loyalty.freeServices?.levels" :key="index" style="font-size: 14px; font-weight: 500; line-height: 1; margin-bottom: 4px; color: #434343;">
+                                            При наборе {{ level.peopleCount }} человек, в подарок вы получите услугу <span style="color: #FF6600;">«{{ level.service }}»</span>
                                         </div>
                                     </template>
-                                  <span class="mdi mdi-information-outline"></span>
+                                  <span class="mdi mdi-information-outline" style="color: #FF6600; cursor: pointer;"></span>
+                                </a-tooltip>
+                                <a-tooltip v-if="trip?.loyalty?.enabled && trip?.loyalty?.type === 'discount'" placement="right" color="#F0F0F0" :overlay-inner-style="{ borderRadius: '11px' }">
+                                    <template #title>
+                                        <div style="font-size: 14px; font-weight: 500; line-height: 1; color: #434343;">
+                                            Чем больше человек в туре, тем больше выгода
+                                        </div>
+                                    </template>
+                                  <span class="mdi mdi-information-outline" style="color: #FF6600; cursor: pointer;"></span>
                                 </a-tooltip>
                             </div>
                         </div>
