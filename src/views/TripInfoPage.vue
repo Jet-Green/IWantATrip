@@ -228,8 +228,21 @@ const firstPaymentPercentage = computed(() => {
     return firstPart / 100;
 })
 
+const loyaltyDiscountTotal = computed(() => {
+    if (!trip.value?.loyalty?.enabled || trip.value?.loyalty?.type !== 'discount') return 0
+    if (!trip.value.loyalty.discount?.isFixed) return 0
+    const discountPerPerson = trip.value.loyalty.discount?.fixedDiscountPerPerson || 0
+    if (discountPerPerson <= 0) return 0
+    const totalParticipants = selectedDate.value?.selectedCosts?.reduce((sum, c) => sum + (c.count || 0), 0) || 0
+    return discountPerPerson * totalParticipants
+})
+
+const discountedFinalCost = computed(() => {
+    return Math.max(0, finalCost.value - loyaltyDiscountTotal.value)
+})
+
 const firstPaymentCost = computed(() => {
-    return Math.round(finalCost.value * firstPaymentPercentage.value);
+    return Math.round(discountedFinalCost.value * firstPaymentPercentage.value);
 })
 
 async function refreshDates() {
@@ -405,7 +418,19 @@ async function buyTrip() {
 
                 const isLoyaltyDiscount = trip.value?.loyalty?.enabled && trip.value?.loyalty?.type === 'discount';
 
-                if (isLoyaltyDiscount && firstPaymentPercentage.value < 1) {
+                if (isLoyaltyDiscount && loyaltyDiscountTotal.value > 0 && finalCost.value > 0) {
+                    // Скидка зафиксирована — один платёж со скидкой
+                    const ratio = discountedFinalCost.value / finalCost.value;
+                    paymentCart = bill.cart.map(item => ({
+                        ...item,
+                        cost: Math.round(item.cost * ratio * 100) / 100
+                    }));
+                    addServices = addServices.map(service => ({
+                        ...service,
+                        price: Math.round(service.price * ratio * 100) / 100
+                    }));
+                } else if (isLoyaltyDiscount && firstPaymentPercentage.value < 1) {
+                    // Скидка не зафиксирована — первый платёж (часть суммы)
                     paymentCart = bill.cart.map(item => ({
                         ...item,
                         cost: Math.round(item.cost * firstPaymentPercentage.value * 100) / 100
@@ -914,6 +939,11 @@ onMounted(async () => {
                             <div>
                               Второй платеж будет доступен после фиксации скидки
                             </div>
+                        </div>
+                        <div v-else-if="loyaltyDiscountTotal > 0" class="d-flex direction-column align-end">
+                            <div style="text-decoration: line-through; opacity: 0.6;">{{ finalCost }} руб.</div>
+                            <div style="color: #22b0d6; font-size: 0.9em;">Скидка: {{ loyaltyDiscountTotal }} руб.</div>
+                            <b>Итого: {{ discountedFinalCost }} руб.</b>
                         </div>
                         <b v-else>Итого: {{ finalCost }} руб.</b>
                     </a-col>

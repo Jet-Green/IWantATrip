@@ -310,6 +310,8 @@ watch(
   }
 );
 
+defineExpose({ form });
+
 </script>
 <template>
   <div>

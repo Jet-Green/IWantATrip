@@ -84,6 +84,14 @@ const getFirstPaymentAmount = (bill) => {
   return Math.round(billTotal(bill) * percentage);
 }
 
+// Расчёт общей скидки по программе лояльности
+const getTotalDiscount = (bill) => {
+  const discountPerPerson = bill?.tripId?.loyalty?.discount?.fixedDiscountPerPerson || 0
+  if (discountPerPerson <= 0) return 0
+  const totalParticipants = bill.cart.reduce((sum, item) => sum + (item.count || 0), 0)
+  return discountPerPerson * totalParticipants
+}
+
 // Расчет суммы второго платежа
 const getSecondPaymentAmount = (bill) => {
   if (!isTwoStagePayment(bill)) {
@@ -92,7 +100,8 @@ const getSecondPaymentAmount = (bill) => {
 
   const totalAmount = billTotal(bill);
   const firstPayment = getFirstPaymentAmount(bill);
-  const secondPayment = totalAmount - firstPayment;
+  const discount = getTotalDiscount(bill);
+  const secondPayment = totalAmount - firstPayment - discount;
 
   return Math.max(0, secondPayment);
 }
@@ -111,8 +120,9 @@ const getRemainingPayment = (bill) => {
     return firstPayment - paidAmount;
   }
 
-  // Иначе оплачиваем второй платеж
-  return getSecondPaymentAmount(bill);
+  // Иначе оплачиваем второй платеж (уже с учётом скидки)
+  const secondPayment = getSecondPaymentAmount(bill);
+  return Math.max(0, secondPayment - (paidAmount - firstPayment));
 }
 
 async function updateBought() {
@@ -294,6 +304,10 @@ onMounted(async () => {
             <div class="d-flex justify-end" style="font-size: 0.9em;">
               <span>Второй платеж: </span>&nbsp;
               <b>{{ getSecondPaymentAmount(BILL) }} руб.</b>
+            </div>
+            <div v-if="getTotalDiscount(BILL) > 0" class="d-flex justify-end" style="font-size: 0.9em; color: #22b0d6;">
+              <span>Скидка: </span>&nbsp;
+              <b>{{ getTotalDiscount(BILL) }} руб.</b>
             </div>
           </div>
 

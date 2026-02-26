@@ -46,6 +46,7 @@ const delPhotoDialog = ref(false);
 const targetIndex = ref(null);
 const router = useRouter();
 const duration = ref(null);
+const priceCalcRef = ref(null);
 
 const LOYALTY_TYPE = {
   DISCOUNT: 'discount',
@@ -389,6 +390,23 @@ function submit() {
   if (!validateLoyaltyBeforeSubmit(form.loyalty)) {
     submitCount.value -= 1
     return
+  }
+
+  // Привязать данные калькулятора при активной скидочной лояльности
+  if (form.loyalty.enabled && form.loyalty.type === LOYALTY_TYPE.DISCOUNT && priceCalcRef.value?.form) {
+    const calcForm = priceCalcRef.value.form
+    form.calculatorData = {
+      name: calcForm.name,
+      max: calcForm.max,
+      tourists: calcForm.tourists,
+      individualCost: calcForm.individualCost,
+      groupCost: calcForm.groupCost,
+      transportCost: calcForm.transportCost,
+      tourePrice: calcForm.tourePrice,
+      commissionState: calcForm.commissionState,
+      profitabilityPlan: calcForm.profitabilityPlan,
+      profitPlan: calcForm.profitPlan,
+    }
   }
 
   let t = userStore.user.tinkoffContract
@@ -963,7 +981,7 @@ onMounted(async () => {
                   </a-col>
 
                   <a-col :span="24">
-                    <PriceCalc :embedded="true" v-model:minProfit="form.loyalty.discount.minProfit" />
+                    <PriceCalc ref="priceCalcRef" :embedded="true" v-model:minProfit="form.loyalty.discount.minProfit" />
                   </a-col>
                 </template>
 
