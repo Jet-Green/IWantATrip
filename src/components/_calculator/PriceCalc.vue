@@ -1,17 +1,9 @@
 <script setup>
-import {
-  ref,
-  reactive,
-  computed,
-  watch,
-  onMounted,
-  onUnmounted,
-  getCurrentInstance,
-} from "vue";
+import {computed, getCurrentInstance, onMounted, reactive, ref, watch,} from "vue";
 import BackButton from "../../components/BackButton.vue";
 import Print from "./Print.vue"
 import Chart from "./Chart.vue";
-import { useAuth } from "../../stores/auth";
+import {useAuth} from "../../stores/auth";
 
 const props = defineProps({
   embedded: {
@@ -110,17 +102,17 @@ const clear = () => {
   select.transport = {};
   form.profitabilityPlan = 0;
   form.profitPlan = props.embedded ? null : 0;
-  form._id= null;
+  form._id = null;
   if (!props.embedded) {
     localStorage.removeItem("tripCalc");
   }
- 
+
 };
 
 const createPrice = () => {
   form.tourePrice = Math.round(
-    (result(form.tourists).costForOne * (1 + form.profitabilityPlan / 100)) /
-    (1 - form.commissionState / 100)
+      (result(form.tourists).costForOne * (1 + form.profitabilityPlan / 100)) /
+      (1 - form.commissionState / 100)
   );
 };
 const print = async () => {
@@ -130,14 +122,14 @@ const print = async () => {
 
 const calcIndividualCost = computed(() => {
   return form.individualCost.reduce(
-    (sum, current) => Number(sum) + Number(current.price),
-    0
+      (sum, current) => Number(sum) + Number(current.price),
+      0
   );
 });
 const calcGroupCost = computed(() => {
   return form.groupCost.reduce(
-    (sum, current) => Number(sum) + Number(current.price),
-    0
+      (sum, current) => Number(sum) + Number(current.price),
+      0
   );
 });
 
@@ -186,7 +178,7 @@ const sliderMarks = computed(() => {
           transform: "translateY(10px) translateX(-25px)",
         },
         label: `${transport.type.slice(0, 3)}: ${result(transport.capacity).clearProfit
-          }`,
+        }`,
       };
     });
 
@@ -214,7 +206,7 @@ const result = (tourists) => {
 
   let costOfTransport = transportCost(tourists) ? transportCost(tourists) : 0;
   obj.cost =
-    calcIndividualCost.value * tourists + calcGroupCost.value + costOfTransport;
+      calcIndividualCost.value * tourists + calcGroupCost.value + costOfTransport;
   obj.costForOne = Math.round(obj.cost / tourists);
   obj.totalPrice = Math.round(tourists * form.tourePrice);
   obj.profit = Math.round(obj.totalPrice - obj.cost);
@@ -228,9 +220,11 @@ function addTripCalc() {
   console.log("Adding trip calculation:", form._id);
   userStore.addTripCalc(form)
 }
+
 function deleteTripType(_id) {
   userStore.deleteTripType(_id)
 }
+
 function read(_id) {
   for (let t of userStore.user.tripCalc) {
     if (t._id == _id) {
@@ -240,23 +234,23 @@ function read(_id) {
 }
 
 watch(
-  () => [...form.transportCost],
-  (newValue, oldValue) => {
-    if (form.transportCost.length) {
-      let max = 0;
-      form.transportCost.forEach((transport) => {
-        max >= transport.capacity ? (max = max) : (max = transport.capacity);
-      });
-      form.max = max;
-    } else {
-      form.max = 100;
-    }
-  },
-  { deep: true }
+    () => [...form.transportCost],
+    (newValue, oldValue) => {
+      if (form.transportCost.length) {
+        let max = 0;
+        form.transportCost.forEach((transport) => {
+          max >= transport.capacity ? (max = max) : (max = transport.capacity);
+        });
+        form.max = max;
+      } else {
+        form.max = 100;
+      }
+    },
+    {deep: true}
 );
 
 watch(form, (newValue, oldValue) => {
- 
+
   if (!props.embedded) {
     localStorage.setItem("tripCalc", JSON.stringify(form));
   }
@@ -283,39 +277,39 @@ onMounted(async () => {
 });
 
 watch(
-  () => props.minProfit,
-  (value) => {
-    if (!props.embedded) {
-      return;
-    }
-    const normalized = normalizeMinProfit(value);
-    if (normalized !== form.profitPlan) {
-      form.profitPlan = normalized;
-    }
-  },
-  { immediate: true }
+    () => props.minProfit,
+    (value) => {
+      if (!props.embedded) {
+        return;
+      }
+      const normalized = normalizeMinProfit(value);
+      if (normalized !== form.profitPlan) {
+        form.profitPlan = normalized;
+      }
+    },
+    {immediate: true}
 );
 
 watch(
-  () => form.profitPlan,
-  (value) => {
-    if (!props.embedded) {
-      return;
+    () => form.profitPlan,
+    (value) => {
+      if (!props.embedded) {
+        return;
+      }
+      const normalized = normalizeMinProfit(value);
+      const current = normalizeMinProfit(props.minProfit);
+      if (normalized !== current) {
+        emit("update:minProfit", normalized);
+      }
     }
-    const normalized = normalizeMinProfit(value);
-    const current = normalizeMinProfit(props.minProfit);
-    if (normalized !== current) {
-      emit("update:minProfit", normalized);
-    }
-  }
 );
 
-defineExpose({ form });
+defineExpose({form});
 
 </script>
 <template>
   <div>
-    <BackButton v-if="!props.embedded" />
+    <BackButton v-if="!props.embedded"/>
     <div class="main">
       <a-row class="d-flex justify-center">
         <a-col :xs="props.embedded ? 24 : 22" :lg="props.embedded ? 24 : 12">
@@ -324,7 +318,7 @@ defineExpose({ form });
             <a-row class="justify-center">
               <a-col :xs="22" :lg="12">
                 <a-input v-model:value="form.name" :bordered="false" placeholder="название"
-                  style="text-align: center; font-size: 18px" />
+                         style="text-align: center; font-size: 18px"/>
               </a-col>
             </a-row>
           </template>
@@ -349,12 +343,12 @@ defineExpose({ form });
             </a-col>
           </a-row>
           <a-row v-for="(item, index) in form.individualCost" :key="index" align="baseline" class="mb-4 d-flex"
-            :gutter="[4, 4]">
+                 :gutter="[4, 4]">
             <a-col :xs="10">
-              <a-input v-model:value="item.type" placeholder="завтрак" />
+              <a-input v-model:value="item.type" placeholder="завтрак"/>
             </a-col>
             <a-col :xs="10">
-              <a-input-number v-model:value="item.price" style="width: 100%" placeholder="200" :min="0" :step="1" />
+              <a-input-number v-model:value="item.price" style="width: 100%" placeholder="200" :min="0" :step="1"/>
             </a-col>
 
             <a-col :xs="4" class="d-flex justify-center">
@@ -388,12 +382,12 @@ defineExpose({ form });
             </a-col>
           </a-row>
           <a-row v-for="(item, index) in form.groupCost" :key="index" style="display: flex" align="baseline"
-            class="mb-4" :gutter="[4, 4]">
+                 class="mb-4" :gutter="[4, 4]">
             <a-col :xs="10">
-              <a-input v-model:value="item.type" placeholder="гид" />
+              <a-input v-model:value="item.type" placeholder="гид"/>
             </a-col>
             <a-col :xs="10">
-              <a-input-number v-model:value="item.price" style="width: 100%" placeholder="2500" :min="0" :step="1" />
+              <a-input-number v-model:value="item.price" style="width: 100%" placeholder="2500" :min="0" :step="1"/>
             </a-col>
             <a-col :xs="4" class="d-flex justify-center">
               <a-button @click="removeGroupCost(item)" shape="circle">
@@ -419,19 +413,19 @@ defineExpose({ form });
           </a-row>
 
           <a-row v-for="(item, index) in form.transportCost" :key="index" style="display: flex" align="baseline"
-            class="mb-4" :gutter="[4, 4]">
+                 class="mb-4" :gutter="[4, 4]">
             <a-col :xs="8" :md="10">
               <p class="ma-0 label" v-if="index == 0">вид</p>
-              <a-input v-model:value="item.type" placeholder="автобус" />
+              <a-input v-model:value="item.type" placeholder="автобус"/>
             </a-col>
             <a-col :xs="6" :md="5">
               <p class="ma-0 label" v-if="index == 0">вместимость</p>
-              <a-input-number v-model:value="item.capacity" style="width: 100%" placeholder="20" :min="0" :step="1" />
+              <a-input-number v-model:value="item.capacity" style="width: 100%" placeholder="20" :min="0" :step="1"/>
             </a-col>
 
             <a-col :xs="6" :md="5">
               <p class="ma-0 label" v-if="index == 0">стоимость</p>
-              <a-input-number v-model:value="item.price" style="width: 100%" placeholder="10000" :min="0" :step="1" />
+              <a-input-number v-model:value="item.price" style="width: 100%" placeholder="10000" :min="0" :step="1"/>
             </a-col>
             <a-col :xs="{ span: 4, offset: 0 }" :md="{ span: 4, offset: 0 }" class="d-flex justify-center align-center">
               <p class="ma-0 label"></p>
@@ -452,13 +446,13 @@ defineExpose({ form });
           <a-row v-if="result(form.tourists).cost">
             <a-col :xs="22" :lg="12">
               <a-row class="mb-4 align-center" :gutter="[4, 4]">
-                <a-col :xs="12"> Туристы, чел. </a-col>
+                <a-col :xs="12"> Туристы, чел.</a-col>
                 <a-col :xs="12" class="d-flex justify-end">
-                  <a-input-number v-model:value="form.tourists" :min="1" :max="form.max" placeholder="чел." />
+                  <a-input-number v-model:value="form.tourists" :min="1" :max="form.max" placeholder="чел."/>
                 </a-col>
-                <a-col :xs="12"> Рентабельность, % </a-col>
+                <a-col :xs="12"> Рентабельность, %</a-col>
                 <a-col :xs="12" class="d-flex justify-end">
-                  <a-input-number v-model:value="form.profitabilityPlan" placeholder="" :min="0" :step="1" />
+                  <a-input-number v-model:value="form.profitabilityPlan" placeholder="" :min="0" :step="1"/>
                 </a-col>
 
                 <a-col :xs="24">
@@ -470,7 +464,7 @@ defineExpose({ form });
 
                 <a-col :xs="12">Стоимость тура, руб.</a-col>
                 <a-col :xs="12" class="d-flex justify-end">
-                  <a-input-number v-model:value="form.tourePrice" placeholder="" :min="0" :step="1" />
+                  <a-input-number v-model:value="form.tourePrice" placeholder="" :min="0" :step="1"/>
                 </a-col>
 
 
@@ -496,10 +490,10 @@ defineExpose({ form });
               <div strong class="ma-0">
                 Рентабельность:
                 {{
-          result(form.tourists).profitability
-            ? result(form.tourists).profitability
-            : 0
-        }}%
+                  result(form.tourists).profitability
+                      ? result(form.tourists).profitability
+                      : 0
+                }}%
               </div>
             </a-col>
           </a-row>
@@ -518,9 +512,9 @@ defineExpose({ form });
 
                 Мин.прибыль, руб.
 
-                <a-input-number v-model:value="form.profitPlan" placeholder="" :min="0" :step="1" />
+                <a-input-number v-model:value="form.profitPlan" placeholder="" :min="0" :step="1"/>
 
-                <Chart :profitData="resultArray" />
+                <Chart :profitData="resultArray"/>
               </a-collapse-panel>
             </a-collapse>
           </a-row>
@@ -551,7 +545,7 @@ defineExpose({ form });
               <a-collapse-panel key="2" header="Сохраненные туры">
                 <a-row :gutter="[20, 0]">
                   <a-col :xs="24" :md="12" v-for="(trip, index) in userStore.user.tripCalc" :key="index"
-                    class="d-flex space-between align-center">
+                         class="d-flex space-between align-center">
                     <div>
                       {{ trip.name }}
                     </div>
@@ -583,7 +577,7 @@ defineExpose({ form });
 
     <div id="printMe" style="display: none">
       <Print :form="form" :calcIndividualCost="calcIndividualCost" :calcGroupCost="calcGroupCost"
-        :transportCost="transportCost(form.tourists)" :result="result(form.tourists)" :resultArray="resultArray" />
+             :transportCost="transportCost(form.tourists)" :result="result(form.tourists)" :resultArray="resultArray"/>
     </div>
   </div>
 </template>
@@ -614,7 +608,7 @@ datalist {
   font-size: 10px;
 }
 
-.ant-collapse-content>.ant-collapse-content-box {
+.ant-collapse-content > .ant-collapse-content-box {
   padding: 0px;
 }
 
@@ -635,5 +629,23 @@ datalist {
   // justify-content: center;
   // width: 100vw;
   // background: white;
+}
+
+:deep(.ant-input),
+:deep(.ant-input-number),
+:deep(.ant-input-number-input),
+:deep(.ant-select-selector),
+:deep(.ant-picker),
+:deep(.ant-input-affix-wrapper) {
+  border-radius: 51px !important;
+}
+
+:deep(.ant-btn-dashed) {
+  border-color: #ff6600;
+  border-style: solid;
+  border-width: 2px;
+  color: #ff6600;
+  border-radius: 51px;
+  font-weight: 600;
 }
 </style>
