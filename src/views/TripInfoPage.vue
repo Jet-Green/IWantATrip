@@ -214,6 +214,24 @@ let getCurrentCustomerNumber = computed(() => {
         }, 0)
 })
 
+const firstPaymentPercentage = computed(() => {
+    if (!trip.value?.loyalty?.enabled || trip.value?.loyalty?.type !== 'discount') {
+        return 1;
+    }
+
+    if (trip.value.loyalty.discount?.isFixed) {
+        return 1;
+    }
+
+    const paymentOrder = trip.value.loyalty.discount?.paymentOrder || "50/50";
+    const [firstPart] = paymentOrder.split('/').map(Number);
+    return firstPart / 100;
+})
+
+const firstPaymentCost = computed(() => {
+    return Math.round(finalCost.value * firstPaymentPercentage.value);
+})
+
 async function refreshDates() {
     let response = await tripStore.getTripById(_id);
     let tripFromDb = response.data;
@@ -382,7 +400,19 @@ async function buyTrip() {
 
             if (buyNow.value) {
                 const orderId = Date.now().toString()
-                let { data, token, success } = await tinkoffPlugin.initPayment(orderId, bill.cart, userStore.user.email, trip.value.tinkoffContract, trip.value.name, addServices)
+
+                let paymentCart = bill.cart;
+
+                const isLoyaltyDiscount = trip.value?.loyalty?.enabled && trip.value?.loyalty?.type === 'discount';
+
+                if (isLoyaltyDiscount && firstPaymentPercentage.value < 1) {
+                    paymentCart = bill.cart.map(item => ({
+                        ...item,
+                        cost: Math.round(item.cost * firstPaymentPercentage.value * 100) / 100
+                    }));
+                }
+
+                let { data, token, success } = await tinkoffPlugin.initPayment(orderId, paymentCart, userStore.user.email, trip.value.tinkoffContract, trip.value.name, addServices)
                 if (!success) {
                     message.config({ duration: 3, top: "90vh" });
                     message.error({ content: "Ошибка при оплате" });
@@ -875,8 +905,17 @@ onMounted(async () => {
                             </div>
                         </a-row>
                     </a-col>
-                    <a-col :span="24" class="d-flex justify-end">
-                        <b>Итого: {{ finalCost }} руб.</b>
+                    <a-col :span="24" class="d-flex direction-column align-end">
+                        <div v-if="trip?.loyalty?.enabled && trip?.loyalty?.type === 'discount' && !trip?.loyalty?.discount?.isFixed">
+                            <div>
+                                Полная стоимость: {{ finalCost }} руб.
+                            </div>
+                            <b>Первый платеж ({{ Math.round(firstPaymentPercentage * 100) }}%): {{ firstPaymentCost }} руб.</b>
+                            <div>
+                              Второй платеж будет доступен после фиксации скидки
+                            </div>
+                        </div>
+                        <b v-else>Итого: {{ finalCost }} руб.</b>
                     </a-col>
 
                     <div v-if="!trip?.canSellPartnerTour && trip.partner">

@@ -81,11 +81,11 @@ export const useAuth = defineStore('auth', {
                 console.log(error);
             }
         },
-        async payTinkoffBill(bill, tinkoffData, tripName, author) {
+        async payTinkoffBill(bill, tinkoffData, tripName, author, confirmedPreviousAmount = 0) {
             try {
                 const emailHtml = await render(BuyTripTemplate, { form: bill, tripName });
 
-                let response = await UserService.payTinkoffBill({ billId: bill._id, tinkoffData, emailHtml, author })
+                let response = await UserService.payTinkoffBill({ billId: bill._id, tinkoffData, emailHtml, author, confirmedPreviousAmount })
                 console.log(response);
             } catch (error) {
                 console.log(error);
