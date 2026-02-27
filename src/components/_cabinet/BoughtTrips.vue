@@ -305,7 +305,7 @@ onMounted(async () => {
               <span>Второй платеж: </span>&nbsp;
               <b>{{ getSecondPaymentAmount(BILL) }} руб.</b>
             </div>
-            <div v-if="getTotalDiscount(BILL) > 0" class="d-flex justify-end" style="font-size: 0.9em; color: #22b0d6;">
+            <div v-if="getTotalDiscount(BILL) > 0" class="d-flex justify-end" style="font-size: 0.9em; color: #f60;">
               <span>Скидка: </span>&nbsp;
               <b>{{ getTotalDiscount(BILL) }} руб.</b>
             </div>

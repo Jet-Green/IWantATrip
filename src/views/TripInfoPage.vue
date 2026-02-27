@@ -207,6 +207,14 @@ const customersByCostType = computed(() => {
     return result;
 });
 
+const firstAvailableCost = computed(() => {
+    if (!trip.value?.cost?.length) return null
+    return trip.value.cost.find(item => {
+        const bought = customersByCostType.value[item.first] || 0
+        return item.limit - bought > 0
+    }) || null
+})
+
 let getCurrentCustomerNumber = computed(() => {
     return getCustomersCount(selectedDate.value.billsList) +
         selectedDate.value.selectedCosts.reduce((acc, cost) => {
@@ -235,6 +243,13 @@ const loyaltyDiscountTotal = computed(() => {
     if (discountPerPerson <= 0) return 0
     const totalParticipants = selectedDate.value?.selectedCosts?.reduce((sum, c) => sum + (c.count || 0), 0) || 0
     return discountPerPerson * totalParticipants
+})
+
+const isMaxDiscount = computed(() => {
+    if (!trip.value?.loyalty?.enabled || trip.value?.loyalty?.type !== 'discount') return false
+    const current = trip.value.loyalty.discount?.currentDiscountPerPerson || 0
+    const max = trip.value.loyalty.discount?.maxDiscountPerPerson || 0
+    return max > 0 && current >= max
 })
 
 const discountedFinalCost = computed(() => {
@@ -640,7 +655,7 @@ onMounted(async () => {
                                 </a-checkable-tag>
                             </div>
                         </div>
-                        <div v-if="tripDates.length < 2">
+                        <div v-if="tripDates.length < 2 && !trip.loyalty?.enabled">
                             <div>Количество человек:</div>
 
 
@@ -654,22 +669,6 @@ onMounted(async () => {
                                 <span style="font-size: 14px; font-weight: bold;" class="mr-8">
                                   {{`${getCustomersCount(selectedDate.billsList)} из ${trip.maxPeople} чел`}}
                                 </span>
-                                <a-tooltip v-if="trip?.loyalty?.enabled && trip?.loyalty?.type === 'free_services'" placement="right" color="#F0F0F0" :overlay-inner-style="{ borderRadius: '11px' }">
-                                    <template #title>
-                                        <div v-for="(level, index) in trip.loyalty.freeServices?.levels" :key="index" style="font-size: 14px; font-weight: 500; line-height: 1; margin-bottom: 4px; color: #434343;">
-                                            При наборе {{ level.peopleCount }} человек, в подарок вы получите услугу <span style="color: #FF6600;">«{{ level.service }}»</span>
-                                        </div>
-                                    </template>
-                                  <span class="mdi mdi-information-outline" style="color: #FF6600; cursor: pointer;"></span>
-                                </a-tooltip>
-                                <a-tooltip v-if="trip?.loyalty?.enabled && trip?.loyalty?.type === 'discount'" placement="right" color="#F0F0F0" :overlay-inner-style="{ borderRadius: '11px' }">
-                                    <template #title>
-                                        <div style="font-size: 14px; font-weight: 500; line-height: 1; color: #434343;">
-                                            Чем больше человек в туре, тем больше выгода
-                                        </div>
-                                    </template>
-                                  <span class="mdi mdi-information-outline" style="color: #FF6600; cursor: pointer;"></span>
-                                </a-tooltip>
                             </div>
                         </div>
 
@@ -715,6 +714,66 @@ onMounted(async () => {
                                 @click="buyTripDialog()">
                                 Купить
                             </a-button>
+                        </div>
+
+                        <div v-if="trip.loyalty?.enabled && trip.loyalty?.type === 'discount'" class="loyalty-discount-card">
+                            <div class="loyalty-discount-card__row">
+                                <span class="loyalty-discount-card__label">Базовая скидка</span>
+                                <span class="loyalty-discount-card__value">{{ trip.loyalty.discount?.baseDiscountPercent || 0 }}%<span v-if="firstAvailableCost" class="loyalty-discount-card__hint"> ({{ Math.round(firstAvailableCost.price * (trip.loyalty.discount?.baseDiscountPercent || 0) / 100) }}₽)</span></span>
+                            </div>
+                            <div v-if="tripDates.length < 2" class="loyalty-discount-card__row" style="flex-direction: column; align-items: stretch; gap: 4px;">
+                                <span class="loyalty-discount-card__label">Количество человек в туре</span>
+                                <div class="d-flex space-between align-center" style="width: 100%;">
+                                    <span class="loyalty-discount-card__current">{{ getCustomersCount(selectedDate.billsList) }}</span>
+                                    <span class="loyalty-discount-card__max">максимум {{ trip.maxPeople }}</span>
+                                </div>
+                                <a-progress
+                                    :percent="(getCustomersCount(selectedDate.billsList) / trip.maxPeople) * 100"
+                                    :show-info="false"
+                                />
+                            </div>
+
+                            <div class="d-flex" style="gap: 10px;">
+                                <div v-if="firstAvailableCost" class="loyalty-discount-card__row" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+                                    <span class="loyalty-discount-card__label">Цена</span>
+                                    <span class="loyalty-discount-card__value">
+                                        <span class="loyalty-discount-card__new-price">
+                                            {{ Math.max(0, firstAvailableCost.price - (trip.loyalty.discount?.currentDiscountPerPerson || 0)) }} ₽
+                                        </span>
+                                        <span class="loyalty-discount-card__old-price">{{ firstAvailableCost.price }} ₽</span>
+                                    </span>
+                                </div>
+                                <div class="loyalty-discount-card__row" :class="{ 'loyalty-discount-card__row--max': isMaxDiscount }" style="flex: 1; gap: 4px;">
+                                    <div class="d-flex direction-column" style="flex: 1;">
+                                        <span v-if="!isMaxDiscount" class="loyalty-discount-card__label">Скидка</span>
+                                        <span class="loyalty-discount-card__subtitle" :class="{ 'loyalty-discount-card__subtitle--max': isMaxDiscount }">
+                                            {{ isMaxDiscount ? 'Вам доступна максимальная скидка' : 'Чем больше человек в туре, тем больше выгода' }}
+                                        </span>
+                                    </div>
+                                    <span class="loyalty-discount-card__value" style="text-align: right;">
+                                        <span class="loyalty-discount-card__current-discount" :class="{ 'loyalty-discount-card__current-discount--max': isMaxDiscount }">{{ trip.loyalty.discount?.currentDiscountPerPerson || 0 }}</span>
+                                        <br>
+                                        <span class="loyalty-discount-card__max-discount" :class="{ 'loyalty-discount-card__max-discount--max': isMaxDiscount }">/ {{ trip.loyalty.discount?.maxDiscountPerPerson || 0 }} ₽</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div v-if="trip.loyalty?.enabled && trip.loyalty?.type === 'free_services' && tripDates.length < 2" class="loyalty-discount-card">
+                            <div class="loyalty-discount-card__row" style="flex-direction: column; align-items: stretch; gap: 4px;">
+                                <span class="loyalty-discount-card__label">Количество человек в туре</span>
+                                <div class="d-flex space-between align-center" style="width: 100%;">
+                                    <span class="loyalty-discount-card__current">{{ getCustomersCount(selectedDate.billsList) }}</span>
+                                    <span class="loyalty-discount-card__max">максимум {{ trip.maxPeople }}</span>
+                                </div>
+                                <a-progress
+                                    :percent="(getCustomersCount(selectedDate.billsList) / trip.maxPeople) * 100"
+                                    :show-info="false"
+                                />
+                            </div>
+                            <div v-for="(level, index) in trip.loyalty.freeServices?.levels" :key="index" class="loyalty-discount-card__row">
+                                <span class="loyalty-discount-card__label">При наборе {{ level.peopleCount }} человек, в подарок вы получите услугу <span class="loyalty-discount-card__accent">«{{ level.service }}»</span></span>
+                            </div>
                         </div>
 
                         <div>
@@ -950,7 +1009,7 @@ onMounted(async () => {
                         </div>
                         <div v-else-if="loyaltyDiscountTotal > 0" class="d-flex direction-column align-end">
                             <div style="text-decoration: line-through; opacity: 0.6;">{{ finalCost }} руб.</div>
-                            <div style="color: #22b0d6; font-size: 0.9em;">Скидка: {{ loyaltyDiscountTotal }} руб.</div>
+                            <div style="color: #f60; font-size: 0.9em;">Скидка: {{ loyaltyDiscountTotal }} руб.</div>
                             <b>Итого: {{ discountedFinalCost }} руб.</b>
                         </div>
                         <b v-else>Итого: {{ finalCost }} руб.</b>
@@ -1100,7 +1159,125 @@ img {
     border-radius: 15px;
 }
 
-:deep(.ant-progress) {
-  margin-bottom: 0;
+
+.loyalty-discount-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-radius: 24px;
+  padding: 10px;
+  margin: 12px 0;
+  background: #e6e6e6;
+  max-width: 420px;
+
+  :deep(.ant-progress) {
+    margin: 0;
+  }
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 14px;
+    padding: 10px;
+    background: #fff;
+  }
+
+  &__label {
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 100%;
+    color: #434343;
+  }
+
+  &__value {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 100%;
+    color: #f60;
+  }
+
+  &__old-price {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 100%;
+    text-decoration: line-through;
+    color: #4d4d4d;
+    opacity: 0.5;
+  }
+
+  &__new-price {
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 100%;
+    color: #f60;
+  }
+
+  &__hint {
+    font-weight: 400;
+    color: #363636;
+  }
+
+  &__current {
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 100%;
+    color: #434343;
+  }
+
+  &__subtitle {
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 120%;
+    color: #434343;
+    opacity: 0.5;
+    margin-top: 8px;
+  }
+
+  &__max {
+    border-radius: 44px;
+    padding: 6px 8px;
+    background: #f5f5f5;
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 100%;
+    color: #434343;
+  }
+
+  &__current-discount {
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 120%;
+    color: #f60;
+
+    &--max {
+      color: #fff;
+    }
+  }
+
+  &__max-discount {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 120%;
+    color: #8696a9;
+
+    &--max {
+      color: rgba(255, 255, 255, 0.7);
+    }
+  }
+
+  &__row--max {
+    background: #f60;
+  }
+
+  &__subtitle--max {
+    color: #fff;
+    opacity: 1;
+  }
+
+  &__accent {
+    color: #f60;
+    font-weight: 600;
+  }
 }
 </style>
