@@ -1,14 +1,14 @@
 <script setup>
 import { computed } from 'vue'
-import PlacesHeader from "../components/PlacesHeader.vue";
+import Header from "../components/Header.vue";
 import { useHead } from '@unhead/vue'
 import { useRoute } from "vue-router"
 const route = useRoute();
-let title = computed(()=>{
-  if (route.path=='/guides'){
+let title = computed(() => {
+  if (route.path == '/guides') {
     return 'Гиды'
   }
-  if (route.path=='/poster'){
+  if (route.path == '/poster') {
     return 'Афиши'
   }
   return 'Места'
@@ -35,25 +35,25 @@ useHead({
     },
   ],
   link: [
-    { rel: 'canonical', href:`${VITE_API_URL}/places` }
+    { rel: 'canonical', href: `${VITE_API_URL}/places` }
   ]
 })
 
 </script>
 <template>
 
-    <a-layout>
-      <PlacesHeader></PlacesHeader>
-      <!-- в документации с margin'ом, чтобы предотвратить перекрывание контента хедром -->
-      <a-layout-content style="margin-top: 69px">
-        <Suspense>
-          <router-view v-slot="{ Component }">
-            <transition name="fade" mode="out-in">
-              <component :is="Component" />
-            </transition>
-          </router-view>
-        </Suspense>
-      </a-layout-content>
-    </a-layout>
+  <a-layout>
+    <Header></Header>
+    <!-- в документации с margin'ом, чтобы предотвратить перекрывание контента хедром -->
+    <a-layout-content style="margin-top: 69px">
+      <Suspense>
+        <router-view v-slot="{ Component }">
+          <transition name="fade" mode="out-in">
+            <component :is="Component" />
+          </transition>
+        </router-view>
+      </Suspense>
+    </a-layout-content>
+  </a-layout>
 </template>
 <style></style>

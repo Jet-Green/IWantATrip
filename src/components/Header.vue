@@ -1,5 +1,5 @@
 <script setup>
-import { useRouter } from "vue-router"
+import { useRouter, useRoute } from "vue-router"
 import { ref, watch, onMounted, computed } from "vue"
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core"
 import { useAuth } from "../stores/auth"
@@ -20,6 +20,7 @@ const tripStore = useTrips()
 let breakpoints = useBreakpoints(breakpointsTailwind)
 let sm = breakpoints.smaller("md")
 let router = useRouter()
+let route = useRoute()
 let visibleDrawer = ref(false)
 let { selectLocationDialog } = storeToRefs(locationStore)
 
@@ -29,6 +30,14 @@ let order = ref(null)
 let companion = ref(null)
 let catalog = ref(null)
 let auth = ref(null)
+
+let navBtns = ref([
+  { name: "Места", url: "/places", isActive: false },
+  { name: "Маршруты", url: "/tracks-list", isActive: false },
+  { name: "Афиши", url: "/poster", isActive: false },
+  { name: "Гостиницы", url: "/stay", isActive: false },
+  { name: "Экскурсии", url: "/excursions", isActive: false },
+])
 
 let locationSearchRequest = ref("Ваш город")
 
@@ -79,6 +88,16 @@ const handleChange = async () => {
   }
 }
 
+watch(
+  () => route.path,
+  (newPath) => {
+    navBtns.value.forEach(btn => {
+      btn.isActive = (btn.url === newPath)
+    })
+  },
+  { immediate: true }   // ← важно! чтобы сработало при монтировании
+)
+
 onMounted(() => {
   if (localStorage.getItem("location")) {
     try {
@@ -122,24 +141,9 @@ onMounted(() => {
 
           <a-col class="top_menu">
             <div class="transparent-container hide-xs hide-sm hide-md hide-lg">
-              <div class="nav-btn">
-                Места
-              </div>
-
-              <div class="nav-btn">
-                Маршруты
-              </div>
-
-              <div class="nav-btn">
-                Афиши
-              </div>
-
-              <div class="nav-btn">
-                Гостиницы
-              </div>
-
-              <div class="nav-btn">
-                Экскурсии
+              <div v-for="(btn, index) of navBtns" class="nav-btn" :class="btn.isActive ? 'active' : ''"
+                @click="router.push(btn.url)">
+                {{ btn.name }}
               </div>
             </div>
 
@@ -306,5 +310,17 @@ onMounted(() => {
   @media (max-width: 800px) {
     font-size: 16px;
   }
+
+  transition: all 0.25s ease-out;
+
+  &:hover {
+    transform: scale(1.02);
+  }
+
+  &.active {
+    background-color: #ff6600;
+    transform: scale(1.01);
+  }
+
 }
 </style>
