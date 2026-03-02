@@ -45,7 +45,7 @@ useHead({
   <a-layout>
     <Header></Header>
     <!-- в документации с margin'ом, чтобы предотвратить перекрывание контента хедром -->
-    <a-layout-content style="margin-top: 69px">
+    <a-layout-content style="padding-top: 80px;">
       <Suspense>
         <router-view v-slot="{ Component }">
           <transition name="fade" mode="out-in">
