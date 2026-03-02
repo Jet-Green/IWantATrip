@@ -33,9 +33,9 @@ onMounted(() => {
 <template>
   <div style="background-color: #FFFEF4;">
     <FirstSection />
-    <NearbyTrips />
+    <NearbyTrips style="margin-top: 100px;" />
 
-    <a-row type="flex" justify="center" style="margin-top: 200px;">
+    <a-row type="flex" justify="center" style="margin-top: 100px;">
       <a-col :span="22">
         <h2 class="big-text">Давайте спланируем <br> ваше путешествие</h2>
       </a-col>

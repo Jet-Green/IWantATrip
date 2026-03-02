@@ -79,7 +79,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <a-row v-if="trips.length" type="flex" justify="center" style="margin-top: 100px;">
+  <a-row v-if="trips.length" type="flex" justify="center">
     <a-col :span="22">
       <h3>Ближайшие туры</h3>
     </a-col>
