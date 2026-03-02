@@ -10,7 +10,7 @@ const excursion = props.excursion
 let getPrice = computed(() => {
   if (excursion.prices.length) {
     let min = _.minBy(excursion.prices, 'price')
-    return `От ${min.price} руб`
+    return `От ${min.price}₽`
   } else {
     return 'Бесплатно'
   }
@@ -18,21 +18,6 @@ let getPrice = computed(() => {
 
 }) 
 </script>
-<!--- <template>
-  <div class="card">
-    <div class=" d-flex direction-column space-between">
-
-      <p v-if="excursion.excursionType" class="ma-0 pr-4" style="font-size:10px; text-align:right; text-transform: uppercase; ">{{
-        excursion.excursionType.type }} {{ excursion.excursionType.directionType }}</p>
-      <p class="ma-0 pr-4" style="font-size:8px; text-align:right; text-transform: uppercase; ">{{ excursion.duration }}
-      </p>
-    </div>
-
-    <img :src="excursion.images[0]" alt="картинка">
-    <div class="title"> {{ excursion.name }}</div>
-    <div class="price"> {{ getPrice }}</div>
-  </div>
-</template> -->
 <template>
   <div class="excursion-card" :style="{ 'background-image': 'url(' + excursion.images[0] + ')' }">
     <div class="content">
@@ -44,7 +29,7 @@ let getPrice = computed(() => {
           {{ excursion.duration }}
         </span>
         <span class="price">
-          От {{ excursion.prices[0].price }}₽
+          {{ getPrice}}
         </span>
       </div>
     </div>
