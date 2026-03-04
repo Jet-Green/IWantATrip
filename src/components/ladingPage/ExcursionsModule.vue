@@ -41,9 +41,7 @@ function scrollRight() {
         </div>
         <div v-if="excursionStore.excursions.length > 0">
           <div class="scroll-container" :gutter="[16, 16]" ref="scrollContainer">
-            <div class="scroll-container-col"
-              v-for="ex of [...excursionStore.excursions, ...excursionStore.excursions, ...excursionStore.excursions, ...excursionStore.excursions, ...excursionStore.excursions]"
-              :key="ex._id">
+            <div class="scroll-container-col" v-for="ex of excursionStore.excursions" :key="ex._id">
               <ExcursionCard :excursion="ex" @click="router.push(`/excursion?_id=${ex._id}`)" :id="ex._id" />
             </div>
           </div>
