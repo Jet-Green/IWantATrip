@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useRouter } from "vue-router"
 import { useTrips } from '../../stores/trips'
 import TripCard from '../cards/TripCard.vue'
 
@@ -7,6 +8,7 @@ const tripStore = useTrips()
 const trips = computed(() => tripStore.trips)
 const cardsContainer = ref(null)
 const scrollContainer = ref(null)
+const router = useRouter()
 
 const width = ref(window.innerWidth)
 
@@ -124,7 +126,7 @@ onUnmounted(() => {
           </div>
         </a-col>
         <a-col :span="12" :md="8" class="d-flex justify-end">
-          <button class="see-all-btn unselectable">Смотреть все</button>
+          <button class="see-all-btn unselectable" @click="router.push('/trips')">Смотреть все</button>
         </a-col>
       </a-row>
     </a-col>
@@ -213,6 +215,17 @@ h3 {
   font-size: clamp(0.875rem, 0.179rem + 1.9886vw, 1.75rem);
   color: white;
   cursor: pointer;
+
+  transition: all 0.28s ease;
+  transform: scale(1);
+
+  &:hover {
+    transform: scale(1.01);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
 }
 
 .slider-btn {

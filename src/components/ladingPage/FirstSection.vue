@@ -1,4 +1,8 @@
-<script setup></script>
+<script setup>
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
+</script>
 <template>
   <div class="container">
     <a-row style="height: 100vh;" type="flex" justify="center" align="center">
@@ -10,7 +14,7 @@
       <a-col :span="22">
         <a-row class="d-flex space-between">
           <a-col :span="24" :order="2" :md="{ span: 6, order: 1 }" class="d-flex align-center">
-            <button class="select-trip-btn">
+            <button class="select-trip-btn" @click="router.push('/trips')">
               Выбрать тур
             </button>
           </a-col>
@@ -62,6 +66,16 @@
   border-radius: 100px;
   font-size: clamp(1rem, 0.1051rem + 2.5568vw, 2.125rem);
   padding: 20px 0px;
+  transition: all 0.28s ease;
+  transform: scale(1);
+
+  &:hover {
+    transform: scale(1.01);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
 }
 
 .quick-actions-container {
