@@ -20,8 +20,8 @@ const router = useRouter()
           </a-col>
           <a-col :span="24" :order="1" :md="{ span: 14, order: 2 }" class="relative">
             <!-- позиционирование иконок происходит относительно блока с карточками быстрого действия -->
-            <img src="src/assets/images/ship.svg" alt="" class="ship-icon absolute">
-            <img src="src/assets/images/double-tree.svg" alt="" class="double-tree-icon absolute">
+            <img src="../../assets/images/ship.svg" alt="" class="ship-icon absolute">
+            <img src="../../assets/images/double-tree.svg" alt="" class="double-tree-icon absolute">
             <div class="quick-actions-container">
               <div v-for="(item) in 7" :span="4" class="quick-action-card">
               </div>
