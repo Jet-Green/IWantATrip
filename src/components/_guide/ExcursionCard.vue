@@ -29,7 +29,7 @@ let getPrice = computed(() => {
           {{ excursion.duration }}
         </span>
         <span class="price">
-          {{ getPrice}}
+          {{ getPrice }}
         </span>
       </div>
     </div>
@@ -44,6 +44,12 @@ let getPrice = computed(() => {
   aspect-ratio: 4/3;
   border-radius: 10px;
   object-fit: contain;
+
+  transition: all 0.3s;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
 }
 
 .content {

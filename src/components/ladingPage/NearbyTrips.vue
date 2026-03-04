@@ -153,6 +153,7 @@ onUnmounted(() => {
   display: flex;
   // gap: 30px;
   justify-content: center;
+  padding: 10px;
   height: 70vh;
   flex: 0 0 50vw; // дефолт — 2 карточки на маленьких экранах
 
