@@ -606,7 +606,7 @@ onMounted(async () => {
                                     <div
                                         v-if="item.limit - (isNaN(customersByCostType[item.first]) ? 0 : customersByCostType[item.first]) !== 0">
                                         {{ item.first }}: <b>{{ item.price }} руб.</b>
-                                        <span>
+                                        <span v-if="item.limit">
                                             <span> | мест - {{
                                                 item.limit - (isNaN(customersByCostType[item.first]) ? 0 :
                                                     customersByCostType[item.first])
