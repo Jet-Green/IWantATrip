@@ -14,6 +14,7 @@ const backRoute = { name: 'Landing', hash: '#guide' };
 const router = useRouter()
 const route = useRoute();
 const excursionStore = useExcursion()
+const isLoading = ref(false);
 
 
 onMounted(async () => {
@@ -36,16 +37,18 @@ onMounted(async () => {
         <h2 class="title">Экскурсии</h2>
         <ExcursionFilter :search="route.query.search" />
 
-        <a-row :gutter="[12, 16]">
-          <a-col :span="24" :sm="12" :md="8" v-for="ex of excursionStore.excursions" :key="ex._id">
+        <a-spin v-if="isLoading" size="large" style="display: flex; justify-content: center; margin: 40px 0;" />
+
+        <a-row v-else :gutter="[12, 16]">
+          <a-col :span="24" :sm="12" :md="8" :lg="6" v-for="ex of excursionStore.excursions" :key="ex._id">
 
             <ExcursionCard :excursion="ex" @click="router.push(`/excursion?_id=${ex._id}`)" :id="ex._id" />
           </a-col>
 
         </a-row>
-        <a-row v-if="!excursionStore.excursions.length">
+        <a-row v-if="!excursionStore.excursions.length && !isLoading">
           <a-col :span="24">
-            <h3 style="text-align: center;">Мы ничего не нашли!</h3>
+            <h3 style="text-align: center;">Экскурсии не найдены!</h3>
           </a-col>
 
         </a-row>

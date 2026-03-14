@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, reactive, ref, watch, computed, nextTick } from "vue";
-import BackButton from "../components/BackButton.vue"
+import BackButtonAdaptive from "../components/BackButtonAdaptive.vue"
 import PlaceCard from "../components/cards/PlaceCard.vue"
 
 import PlaceFilter from "../components/_guide/PlaceFilter.vue";
@@ -38,6 +38,7 @@ useHead(computed(() => ({
 const placeStore = usePlaces();
 let showMoreButton = ref(true)
 let page = 1
+let isLoading = ref(false)
 
 
 let conditions = computed(() => {
@@ -83,7 +84,7 @@ let morePlaces = async () => {
 
 }
 let refreshPlaces = async () => {
-
+  isLoading.value = true
   page = 1
   postersLength = 0
   await placeStore.getAll(page, query)
@@ -92,7 +93,7 @@ let refreshPlaces = async () => {
   } else {
     showMoreButton.value = true
   }
-
+  isLoading.value = false
 
 }
 
@@ -107,16 +108,37 @@ const backRoute = { name: 'Landing', hash: '#guide' };
 </script>
 <template>
   <div style="overflow-x: hidden" id="top">
-    <BackButton :backRoute="backRoute" />
-    <a-row class="justify-center d-flex">
-      <a-col :xs="22" :xl="16">
-        <h2>Места</h2>
+    <a-row type="flex" justify="center">
+      <a-col :xs="22" :md="20" :xl="18">
+        <BackButtonAdaptive :backRoute="backRoute" />
+        
+        <h2 class="title">Места</h2>
         <PlaceFilter @refreshPlaces=refreshPlaces />
-        <PlaceCard :place="place" v-for="place, index in placeStore.places" :key="index" style="margin-bottom: 16px;" />
-        <div class="justify-center d-flex ma-16" @click="morePlaces()" v-if="showMoreButton"> <a-button>Ещё</a-button>
+        
+        <a-spin v-if="isLoading" size="large" style="display: flex; justify-content: center; margin: 40px 0;" />
+
+        <a-row v-else :gutter="[12, 16]">
+          <a-col :span="24" v-for="place in placeStore.places" :key="place._id">
+            <PlaceCard :place="place" />
+          </a-col>
+        </a-row>
+
+        <a-row v-if="!placeStore.places.length && !isLoading">
+          <a-col :span="24">
+            <h3 style="text-align: center;">Места не найдены!</h3>
+          </a-col>
+        </a-row>
+
+        <div class="justify-center d-flex ma-16" @click="morePlaces()" v-if="showMoreButton && !isLoading"> <a-button>Ещё</a-button>
         </div>
 
       </a-col>
     </a-row>
   </div>
 </template>
+
+<style scoped>
+.title {
+  font-weight: 900;
+}
+</style>
