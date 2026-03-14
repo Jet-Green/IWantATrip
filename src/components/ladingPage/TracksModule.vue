@@ -1,7 +1,7 @@
 <script setup>
 import TrackFilter from '../_guide/TrackFilter.vue';
 import TrackCard from '../_guide/TrackCard.vue';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useTracks } from '../../stores/track';
 
 import { useRouter } from 'vue-router';
@@ -10,6 +10,38 @@ const router = useRouter()
 const trackStore = useTracks()
 
 const scrollContainer = ref(null)
+
+const conditions = () => {
+  const c = {}
+  if (trackStore.filter.location?.coordinates?.length) {
+    c.location = trackStore.filter.location
+  }
+  if (trackStore.filter.locationRadius) {
+    c.locationRadius = trackStore.filter.locationRadius
+  }
+  return Object.keys(c).length ? c : undefined
+}
+
+const loadTracks = async () => {
+  const filter = {
+    search: trackStore.filter.search,
+    type: trackStore.filter.type,
+    isActive: true,
+    isModeration: true,
+    isRejected: false,
+    isHidden: false,
+    conditions: conditions()
+  };
+  try {
+    await trackStore.getAll(1, filter);
+  } catch (error) {
+    console.error('Ошибка загрузки маршрутов:', error);
+  }
+};
+
+onMounted(async () => {
+  await loadTracks();
+})
 
 function scrollLeft() {
   if (!scrollContainer.value) return
@@ -35,9 +67,8 @@ function scrollRight() {
       <div class="cols-22">
         <h3 v-if="trackStore.tracks.length > 0">Маршруты</h3>
         <h3 v-else>Маршруты не найдены...</h3>
-        <!-- это костыль) чтобы маршруты загрузились в стор и локация тоже учлась -->
-        <div v-show="false">
-          <TrackFilter />
+        <div style="display: none;">
+          <TrackFilter @refreshTracks="loadTracks" />
         </div>
         <div v-if="trackStore.tracks.length > 0">
           <div class="scroll-container" :gutter="[16, 16]" ref="scrollContainer">
@@ -48,7 +79,7 @@ function scrollRight() {
         </div>
 
         <div class="actions">
-          <button class="see-all-btn unselectable" @click="router.push('/tracks')">Смотреть все</button>
+          <button class="see-all-btn unselectable" @click="router.push('/tracks-list')">Смотреть все</button>
 
           <div class="slider-btns-container" v-if="trackStore.tracks.length > 0">
             <button class="slider-btn" @click="scrollLeft">
