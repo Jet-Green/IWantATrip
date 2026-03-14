@@ -16,6 +16,7 @@ import Footer from '../components/Footer.vue'
 import NearbyTrips from "../components/ladingPage/NearbyTrips.vue";
 import FirstSection from "../components/ladingPage/FirstSection.vue";
 import ExcursionsModule from "../components/ladingPage/ExcursionsModule.vue";
+import TracksModule from "../components/ladingPage/TracksModule.vue";
 
 import { useRoute } from "vue-router";
 
@@ -42,6 +43,8 @@ onMounted(() => {
     </a-row>
 
     <ExcursionsModule />
+
+    <TracksModule />
 
 
     <!-- <Explanation />

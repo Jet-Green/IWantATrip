@@ -35,7 +35,7 @@ let navBtns = ref([
   { name: "Места", url: "/places", isActive: false },
   { name: "Маршруты", url: "/tracks-list", isActive: false },
   { name: "Афиши", url: "/poster", isActive: false },
-  { name: "Гостиницы", url: "/stay", isActive: false },
+  { name: "Гиды", url: "/guides", isActive: false },
   { name: "Экскурсии", url: "/excursions", isActive: false },
 ])
 

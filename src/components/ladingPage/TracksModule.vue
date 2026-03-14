@@ -1,13 +1,13 @@
 <script setup>
-import ExcursionFilter from '../sections/ExcursionFilter.vue';
-import ExcursionCard from '../_guide/ExcursionCard.vue';
+import TrackFilter from '../_guide/TrackFilter.vue';
+import TrackCard from '../_guide/TrackCard.vue';
 import { ref } from 'vue';
-import { useExcursion } from '../../stores/excursion';
+import { useTracks } from '../../stores/track';
 
 import { useRouter } from 'vue-router';
 
 const router = useRouter()
-const excursionStore = useExcursion()
+const trackStore = useTracks()
 
 const scrollContainer = ref(null)
 
@@ -33,26 +33,24 @@ function scrollRight() {
   <div class="container">
     <div class="module-card">
       <div class="cols-22">
-        <h3 v-if="excursionStore.excursions.length > 0">Маршруты</h3>
+        <h3 v-if="trackStore.tracks.length > 0">Маршруты</h3>
         <h3 v-else>Маршруты не найдены...</h3>
-        <!-- это костыль) чтобы экскурсии загрузились в стор и локация тоже учлась -->
+        <!-- это костыль) чтобы маршруты загрузились в стор и локация тоже учлась -->
         <div v-show="false">
-          <ExcursionFilter />
+          <TrackFilter />
         </div>
-        <div v-if="excursionStore.excursions.length > 0">
+        <div v-if="trackStore.tracks.length > 0">
           <div class="scroll-container" :gutter="[16, 16]" ref="scrollContainer">
-            <div class="scroll-container-col"
-              v-for="ex of [...excursionStore.excursions, ...excursionStore.excursions, ...excursionStore.excursions, ...excursionStore.excursions, ...excursionStore.excursions]"
-              :key="ex._id">
-              <ExcursionCard :excursion="ex" @click="router.push(`/excursion?_id=${ex._id}`)" :id="ex._id" />
+            <div class="scroll-container-col" v-for="track of trackStore.tracks" :key="track._id">
+              <TrackCard :track="track" @click="router.push(`/track?_id=${track._id}`)" :id="track._id" />
             </div>
           </div>
         </div>
 
         <div class="actions">
-          <button class="see-all-btn unselectable" @click="router.push('/excursions')">Смотреть все</button>
+          <button class="see-all-btn unselectable" @click="router.push('/tracks')">Смотреть все</button>
 
-          <div class="slider-btns-container" v-if="excursionStore.excursions.length > 0">
+          <div class="slider-btns-container" v-if="trackStore.tracks.length > 0">
             <button class="slider-btn" @click="scrollLeft">
               <span class="mdi mdi-chevron-left"></span>
             </button>
