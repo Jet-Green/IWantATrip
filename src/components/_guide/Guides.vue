@@ -39,12 +39,12 @@ let refreshGuides = async () => {
   isLoading.value = false
 }
 onMounted(async () => {
- await refreshGuides()
+  await refreshGuides()
   if (route.hash) {
     let id = route.hash.slice(1)
     await nextTick()
     document.getElementById(id)?.scrollIntoView()
- 
+
   }
 
 })
@@ -62,7 +62,7 @@ onMounted(async () => {
         <a-spin v-if="isLoading" size="large" style="display: flex; justify-content: center; margin: 40px 0;" />
 
         <a-row v-else :gutter="[12, 16]">
-          <a-col :span="24" v-for="guide in guideStore.guides" :key="guide._id">
+          <a-col :span="24" :lg="6" v-for="guide in guideStore.guides" :key="guide._id">
             <GuideCard :id="guide._id" :guide="guide" withButton />
           </a-col>
         </a-row>
@@ -74,7 +74,7 @@ onMounted(async () => {
         </a-row>
 
         <div class="d-flex justify-center ma-16" v-if="showMoreButton && !isLoading">
-          <a-button type="primary" @click="moreGuides">Загрузить еще</a-button>
+          <a-button type="primary" @click="moreGuides" style="border-radius: 100px;">Загрузить еще</a-button>
         </div>
 
       </a-col>
