@@ -111,14 +111,14 @@ const backRoute = { name: 'Landing', hash: '#guide' };
     <a-row type="flex" justify="center">
       <a-col :xs="22" :md="20" :xl="18">
         <BackButtonAdaptive :backRoute="backRoute" />
-        
+
         <h2 class="title">Места</h2>
         <PlaceFilter @refreshPlaces=refreshPlaces />
-        
+
         <a-spin v-if="isLoading" size="large" style="display: flex; justify-content: center; margin: 40px 0;" />
 
         <a-row v-else :gutter="[12, 16]">
-          <a-col :span="24" v-for="place in placeStore.places" :key="place._id">
+          <a-col :span="24" :sm="12" :md="8" :xl="6" v-for="place in placeStore.places" :key="place._id">
             <PlaceCard :place="place" />
           </a-col>
         </a-row>
@@ -129,7 +129,8 @@ const backRoute = { name: 'Landing', hash: '#guide' };
           </a-col>
         </a-row>
 
-        <div class="justify-center d-flex ma-16" @click="morePlaces()" v-if="showMoreButton && !isLoading"> <a-button>Ещё</a-button>
+        <div class="justify-center d-flex ma-16" @click="morePlaces()" v-if="showMoreButton && !isLoading">
+          <a-button>Ещё</a-button>
         </div>
 
       </a-col>
