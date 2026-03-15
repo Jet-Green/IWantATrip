@@ -52,6 +52,7 @@ const router = useRouter()
   line-height: 1;
   font-weight: 900;
   color: white;
+  z-index: 100;
 }
 
 .select-trip-btn {

@@ -51,8 +51,8 @@ onMounted(() => {
     <ButtonsRow />
     <FindTrip />
     <CityGuide id="guide"/>
-    <Footer/> -->
-
+     -->
+    <Footer />
   </div>
 </template>
 <style lang="scss" scoped>
