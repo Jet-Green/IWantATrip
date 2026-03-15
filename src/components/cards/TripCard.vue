@@ -75,7 +75,7 @@ function getDate() {
   align-items: end;
   border-radius: 10px;
   cursor: pointer;
-  height: clamp(12.5rem, 8.629rem + 8.0645vw, 15rem); // 200 - 240
+  height: clamp(11.25rem, 8.267rem + 8.5227vw, 15rem); // 180 - 240
   background-color: #484848;
 }
 

@@ -90,7 +90,7 @@ onUnmounted(() => {
       <!-- ref здесь — на обычный div, а не на a-col -->
       <div ref="scrollContainer" class="scroll-wrapper">
         <div class="trip-list-container">
-          <div class="card-container image-bg" ref="cardsContainer">
+          <div class="card-container" ref="cardsContainer">
             <div v-for="(trip, i) in trips" :key="trip._id || i" class="card-col"
               :class="i % 2 === 0 ? 'top' : 'bottom'">
               <TripCard :trip="trip" :isPreview="true" />
@@ -141,6 +141,11 @@ onUnmounted(() => {
   height: 70vh;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  width: 100vw;
+  background-image: url("/src/assets/images/nearby-trips.svg");
+  background-repeat: repeat-x;
+  background-position: left top;
+  background-size: auto 100%;
 
   &::-webkit-scrollbar {
     display: none;
@@ -176,13 +181,6 @@ onUnmounted(() => {
 .top {
   align-items: start;
   padding-top: 5vh;
-}
-
-.image-bg {
-  background-image: url("/src/assets/images/nearby-trips.svg");
-  background-repeat: repeat-x;
-  background-position: left top;
-  background-size: auto 100%;
 }
 
 .card-container {
