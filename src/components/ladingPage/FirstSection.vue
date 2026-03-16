@@ -22,10 +22,10 @@ const router = useRouter()
             <!-- позиционирование иконок происходит относительно блока с карточками быстрого действия -->
             <img src="../../assets/images/ship.svg" alt="" class="ship-icon absolute">
             <img src="../../assets/images/double-tree.svg" alt="" class="double-tree-icon absolute">
-            <div class="quick-actions-container">
+            <!-- <div class="quick-actions-container">
               <div v-for="(item) in 7" :span="4" class="quick-action-card">
               </div>
-            </div>
+            </div> -->
           </a-col>
         </a-row>
       </a-col>
