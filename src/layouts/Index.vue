@@ -9,8 +9,7 @@ let route = useRoute()
   <a-layout>
     <Header></Header>
     <!-- в документации с margin'ом, чтобы предотвратить перекрывание контента хедром -->
-    <a-layout-content style="min-height: 100vh; background-color: #FFFEF4;"
-      :style="route.path == '/' ? '' : 'padding-top: 80px'">
+    <a-layout-content style="background-color: #FFFEF4;" :style="route.path == '/' ? '' : 'padding-top: 80px'">
       <Suspense>
         <router-view v-slot="{ Component }">
           <transition name="fade" mode="out-in">

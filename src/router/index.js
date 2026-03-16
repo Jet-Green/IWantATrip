@@ -90,8 +90,386 @@ const router = createRouter({
     },
     {
       path: '/',
-      component: () => import('../layouts/Cabinet.vue'),
+      component: () => import('../layouts/Index.vue'),
       children: [
+        {
+          path: '/place',
+          name: 'PlacePage',
+          component: () => import('../views/PlacePage.vue')
+        },
+
+        {
+          path: '/edit-excursion',
+          name: 'EditExcursion',
+          component: () => import('../views/EditExcursion.vue')
+        },
+        {
+          path: '/payment',
+          name: 'Payment',
+          component: () => import('../views/Payment.vue')
+        },
+        {
+          path: '/',
+          name: 'Landing',
+          component: () => import('../views/Landing.vue'),
+        },
+        {
+          path: '/wl',
+          name: 'WaitingList',
+          component: () => import('../components/WaitingList.vue'),
+        },
+
+        {
+          path: '/create-track',
+          name: 'CreateTrack',
+          component: () => import('../views/CreateTrack.vue'),
+        },
+        {
+          path: '/edit-track',
+          name: 'EditTrack',
+          component: () => import('../views/EditTrack.vue'),
+        },
+        {
+          path: '/trips',
+          name: 'TripsPage',
+          component: () => import('../components/_tripsPage/TripsList.vue'),
+          // component: TripsPage,
+        },
+        {
+          path: '/catalog',
+          name: 'CatalogPage',
+          component: () => import('../components/CatalogList.vue'),
+        },
+        {
+          path: '/company-info-page',
+          name: 'CompanyInfoPage',
+          component: () => import('../views/CompanyInfoPage.vue'),
+        },
+        {
+          path: '/create-with-help',
+          name: 'CreateTripWithHelp',
+          component: () => import('../views/CreateTripWithHelp.vue'),
+          beforeEnter: async (to, from) => {
+            let userStore = useAuth()
+            if (!getCookie('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+
+            if (!userStore.isAuth)
+              return '/auth'
+          }
+        },
+        {
+          path: '/create-place',
+          name: 'CreatePlace',
+          component: () => import('../components/_cabinet/CreatePlace.vue'),
+          beforeEnter: async (to, from) => {
+            let userStore = useAuth()
+            if (!getCookie('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+
+            if (!userStore.isAuth)
+              return '/auth'
+          }
+        },
+        {
+          path: '/create-partner',
+          name: 'CreatePartner',
+          component: () => import('../components/_cabinet/crm/CreatePartner.vue'),
+          beforeEnter: async (to, from) => {
+            let userStore = useAuth()
+            if (!getCookie('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+
+            if (!userStore.isAuth)
+              return '/auth'
+          }
+        },
+        {
+          path: '/create-task',
+          name: 'CreateTask',
+          component: () => import('../components/_cabinet/crm/CreateTask.vue'),
+          beforeEnter: async (to, from) => {
+            let userStore = useAuth()
+            if (!getCookie('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+
+            if (!userStore.isAuth)
+              return '/auth'
+          }
+        },
+
+
+        {
+          path: '/create-no-help',
+          name: 'CreateTripNoHelp',
+          component: () => import('../views/CreateTripNoHelp.vue'),
+          beforeEnter: async (to, from) => {
+            let userStore = useAuth()
+            if (!getCookie('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+
+            if (!userStore.isAuth)
+              return '/auth'
+
+            if (!userStore.user.tinkoffContract?._id) {
+              localStorage.setItem('fallbackMessage', JSON.stringify({ subtitle: 'Нужно заключить договор с платформой, чтобы создать тур', title: "Нет договора с \"Города и Веси\"", may_send_idea: true }))
+              return '/fourothree'
+            }
+          }
+        },
+        {
+          path: '/create-catalog-trip',
+          name: 'CreateCatalogTrip',
+          component: () => import('../views/CreateCatalogTrip.vue'),
+          beforeEnter: async (to, from) => {
+            let userStore = useAuth()
+            if (!getCookie('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+
+            if (!userStore.isAuth)
+              return '/auth'
+
+            if (!userStore.user.tinkoffContract?._id) {
+              localStorage.setItem('fallbackMessage', JSON.stringify({ subtitle: 'Нужно заключить договор с платформой, чтобы создать тур', title: "Нет договора с \"Города и Веси\"", may_send_idea: true }))
+              return '/fourothree'
+            }
+          }
+        },
+        {
+          path: '/edit-catalog-trip',
+          name: 'EditCatalogTrip',
+          component: () => import('../views/EditCatalogTrip.vue'),
+          beforeEnter: async (to, from) => {
+            let userStore = useAuth()
+            if (!getCookie('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+
+            if (!userStore.isAuth)
+              return '/auth'
+
+          }
+        },
+        {
+          path: '/copy-trip',
+          name: 'CopyTrip',
+          component: () => import('../views/CopyTrip.vue'),
+          beforeEnter: async (to, from) => {
+            let userStore = useAuth()
+            if (!getCookie('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+
+            if (!userStore.isAuth)
+              return '/auth'
+          }
+        },
+        {
+          path: '/send-idea',
+          name: 'SendIdea',
+          component: () => import('../views/SendIdea.vue'),
+          beforeEnter: async (to, from) => {
+            let userStore = useAuth()
+            if (!getCookie('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+
+            if (!userStore.isAuth)
+              return '/auth'
+          }
+        },
+        {
+          path: '/catalog-to-active',
+          name: 'CatalogTripToActive',
+          component: () => import('../views/CatalogTripToActive.vue'),
+          beforeEnter: async (to, from) => {
+            let userStore = useAuth()
+            if (!getCookie('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+
+            if (!userStore.isAuth)
+              return '/auth'
+          }
+        },
+        {
+          path: '/companions',
+          name: 'CompanionsPage',
+          component: () => import('../views/CompanionsPage.vue'),
+        },
+        {
+          path: '/add-companion',
+          name: 'AddCompanion',
+          component: () => import('../views/AddCompanion.vue'),
+          beforeEnter: async (to, from) => {
+            let userStore = useAuth()
+            if (!getCookie('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+
+            if (!userStore.isAuth)
+              return '/auth'
+          }
+        },
+        {
+          path: '/add-feedback',
+          name: 'AddFeedback',
+          component: () => import('../views/AddFeedback.vue'),
+        },
+        {
+          path: '/add-guide-element',
+          name: 'AddGuideElement',
+          component: () => import('../views/AddGuideElement.vue'),
+          beforeEnter: async (to, from) => {
+            let userStore = useAuth()
+            if (!getCookie('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+
+            if (!userStore.isAuth)
+              return '/auth'
+          }
+        },
+        {
+          path: '/create-guide',
+          name: 'CreateGuide',
+          component: () => import('../views/CreateGuide.vue'),
+          beforeEnter: async (to, from) => {
+            let userStore = useAuth()
+            if (!getCookie('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+
+            if (!userStore.isAuth)
+              return '/auth'
+            return true
+            // if (!userStore.user?.roles?.includes('manager')) {
+            //   return false
+            // }
+          }
+        },
+        {
+          path: 'edit-guide',
+          name: 'EditGuide',
+          component: () => import('../views/EditGuide.vue'),
+          beforeEnter: async (to, from) => {
+            let userStore = useAuth()
+            if (!getCookie('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+
+            if (!userStore.isAuth)
+              return '/auth'
+            return true
+          }
+        },
+        {
+          path: '/create-bus',
+          component: () => import('../components/admin/CreateBus.vue'),
+        },
+        {
+          path: '/trip',
+          name: 'TripInfoPage',
+          component: () => import('../views/TripInfoPage.vue')
+        },
+        {
+          path: '/catalog-trip',
+          name: 'CatalogInfoPage',
+          component: () => import('../views/CatalogInfoPage.vue')
+        },
+        {
+          path: '/watch',
+          name: 'ToWatch',
+          component: () => import('../components/_guide/ToWatch.vue')
+        },
+        {
+          path: '/transport',
+          name: 'Transport',
+          component: () => import('../components/_guide/Transport.vue')
+        },
+        {
+          path: '/taxi',
+          name: 'Taxi',
+          component: () => import('../components/_guide/Taxi.vue')
+        },
+        {
+          path: '/orderTransport',
+          name: 'OrderTransport',
+          component: () => import('../components/_guide/OrderTransport.vue')
+        },
+        {
+          path: '/eat',
+          name: 'ToEat',
+          component: () => import('../components/_guide/ToEat.vue')
+        },
+        {
+          path: '/stay',
+          name: 'ToStay',
+          component: () => import('../components/_guide/ToStay.vue')
+        },
+        {
+          path: '/sport',
+          name: 'Sport',
+          component: () => import('../components/_guide/Sport.vue')
+        },
+
+        {
+          path: '/photos',
+          name: 'Photos',
+          component: () => import('../components/_guide/Photos.vue')
+        },
+        {
+          path: '/excursions',
+          name: 'ExcursionsPage',
+          component: () => import('../components/_guide/Excursions.vue')
+        },
+        {
+          path: '/excursion',
+          name: 'ExcursionPage',
+          component: () => import('../views/ExcursionPage.vue')
+        },
+
+        {
+          path: '/excursion-moderation',
+          name: 'ExcursionModeration',
+          component: () => import('../components/admin/ExcursionModeration.vue')
+        },
+
+
+        {
+          path: '/enter',
+          name: 'Entertainment',
+          component: () => import('../components/_guide/Entertainment.vue')
+        },
+        {
+          path: '/relax',
+          name: 'Relax',
+          component: () => import('../components/_guide/Relax.vue')
+        },
+        {
+          path: '/souvenirs',
+          name: 'Souvenirs',
+          component: () => import('../components/_guide/Souvenirs.vue')
+        },
+        {
+          path: '/offer-trip',
+          name: 'OfferTrip',
+          component: () => import('../components/_cabinet/forms/OfferTrip.vue'),
+        },
+        {
+          path: '/offers',
+          name: 'OffersPage',
+          component: () => import('../components/_cabinet/OffersPage.vue'),
+          children: [
+            {
+              path: 'new',
+              name: 'NewOffers',
+              component: () => import('../components/_cabinet/offers/NewOffers.vue'),
+            },
+            {
+              path: 'accepted',
+              name: 'AcceptedOffers',
+              component: () => import('../components/_cabinet/offers/AcceptedOffers.vue'),
+            },
+            {
+              path: 'rejected',
+              name: 'RejectedOffers',
+              component: () => import('../components/_cabinet/offers/RejectedOffers.vue'),
+            }
+          ]
+        },
         {
           path: '/cabinet/',
           name: 'Cabinet',
@@ -522,390 +900,6 @@ const router = createRouter({
               return false
             }
           }
-        },
-      ]
-    },
-    {
-      path: '/',
-      component: () => import('../layouts/Index.vue'),
-      children: [
-        {
-          path: '/place',
-          name: 'PlacePage',
-          component: () => import('../views/PlacePage.vue')
-        },
-
-        {
-          path: '/edit-excursion',
-          name: 'EditExcursion',
-          component: () => import('../views/EditExcursion.vue')
-        },
-        {
-          path: '/payment',
-          name: 'Payment',
-          component: () => import('../views/Payment.vue')
-        },
-        {
-          path: '/',
-          name: 'Landing',
-          component: () => import('../views/Landing.vue'),
-        },
-        {
-          path: '/wl',
-          name: 'WaitingList',
-          component: () => import('../components/WaitingList.vue'),
-        },
-
-        {
-          path: '/create-track',
-          name: 'CreateTrack',
-          component: () => import('../views/CreateTrack.vue'),
-        },
-        {
-          path: '/edit-track',
-          name: 'EditTrack',
-          component: () => import('../views/EditTrack.vue'),
-        },
-        {
-          path: '/trips',
-          name: 'TripsPage',
-          component: () => import('../components/_tripsPage/TripsList.vue'),
-          // component: TripsPage,
-        },
-        {
-          path: '/catalog',
-          name: 'CatalogPage',
-          component: () => import('../components/CatalogList.vue'),
-        },
-        {
-          path: '/company-info-page',
-          name: 'CompanyInfoPage',
-          component: () => import('../views/CompanyInfoPage.vue'),
-        },
-        {
-          path: '/create-with-help',
-          name: 'CreateTripWithHelp',
-          component: () => import('../views/CreateTripWithHelp.vue'),
-          beforeEnter: async (to, from) => {
-            let userStore = useAuth()
-            if (!getCookie('token') || !userStore.isAuth)
-              await userStore.checkAuth()
-
-            if (!userStore.isAuth)
-              return '/auth'
-          }
-        },
-        {
-          path: '/create-place',
-          name: 'CreatePlace',
-          component: () => import('../components/_cabinet/CreatePlace.vue'),
-          beforeEnter: async (to, from) => {
-            let userStore = useAuth()
-            if (!getCookie('token') || !userStore.isAuth)
-              await userStore.checkAuth()
-
-            if (!userStore.isAuth)
-              return '/auth'
-          }
-        },
-        {
-          path: '/create-partner',
-          name: 'CreatePartner',
-          component: () => import('../components/_cabinet/crm/CreatePartner.vue'),
-          beforeEnter: async (to, from) => {
-            let userStore = useAuth()
-            if (!getCookie('token') || !userStore.isAuth)
-              await userStore.checkAuth()
-
-            if (!userStore.isAuth)
-              return '/auth'
-          }
-        },
-        {
-          path: '/create-task',
-          name: 'CreateTask',
-          component: () => import('../components/_cabinet/crm/CreateTask.vue'),
-          beforeEnter: async (to, from) => {
-            let userStore = useAuth()
-            if (!getCookie('token') || !userStore.isAuth)
-              await userStore.checkAuth()
-
-            if (!userStore.isAuth)
-              return '/auth'
-          }
-        },
-
-
-        {
-          path: '/create-no-help',
-          name: 'CreateTripNoHelp',
-          component: () => import('../views/CreateTripNoHelp.vue'),
-          beforeEnter: async (to, from) => {
-            let userStore = useAuth()
-            if (!getCookie('token') || !userStore.isAuth)
-              await userStore.checkAuth()
-
-            if (!userStore.isAuth)
-              return '/auth'
-
-            if (!userStore.user.tinkoffContract?._id) {
-              localStorage.setItem('fallbackMessage', JSON.stringify({ subtitle: 'Нужно заключить договор с платформой, чтобы создать тур', title: "Нет договора с \"Города и Веси\"", may_send_idea: true }))
-              return '/fourothree'
-            }
-          }
-        },
-        {
-          path: '/create-catalog-trip',
-          name: 'CreateCatalogTrip',
-          component: () => import('../views/CreateCatalogTrip.vue'),
-          beforeEnter: async (to, from) => {
-            let userStore = useAuth()
-            if (!getCookie('token') || !userStore.isAuth)
-              await userStore.checkAuth()
-
-            if (!userStore.isAuth)
-              return '/auth'
-
-            if (!userStore.user.tinkoffContract?._id) {
-              localStorage.setItem('fallbackMessage', JSON.stringify({ subtitle: 'Нужно заключить договор с платформой, чтобы создать тур', title: "Нет договора с \"Города и Веси\"", may_send_idea: true }))
-              return '/fourothree'
-            }
-          }
-        },
-        {
-          path: '/edit-catalog-trip',
-          name: 'EditCatalogTrip',
-          component: () => import('../views/EditCatalogTrip.vue'),
-          beforeEnter: async (to, from) => {
-            let userStore = useAuth()
-            if (!getCookie('token') || !userStore.isAuth)
-              await userStore.checkAuth()
-
-            if (!userStore.isAuth)
-              return '/auth'
-
-          }
-        },
-        {
-          path: '/copy-trip',
-          name: 'CopyTrip',
-          component: () => import('../views/CopyTrip.vue'),
-          beforeEnter: async (to, from) => {
-            let userStore = useAuth()
-            if (!getCookie('token') || !userStore.isAuth)
-              await userStore.checkAuth()
-
-            if (!userStore.isAuth)
-              return '/auth'
-          }
-        },
-        {
-          path: '/send-idea',
-          name: 'SendIdea',
-          component: () => import('../views/SendIdea.vue'),
-          beforeEnter: async (to, from) => {
-            let userStore = useAuth()
-            if (!getCookie('token') || !userStore.isAuth)
-              await userStore.checkAuth()
-
-            if (!userStore.isAuth)
-              return '/auth'
-          }
-        },
-        {
-          path: '/catalog-to-active',
-          name: 'CatalogTripToActive',
-          component: () => import('../views/CatalogTripToActive.vue'),
-          beforeEnter: async (to, from) => {
-            let userStore = useAuth()
-            if (!getCookie('token') || !userStore.isAuth)
-              await userStore.checkAuth()
-
-            if (!userStore.isAuth)
-              return '/auth'
-          }
-        },
-        {
-          path: '/companions',
-          name: 'CompanionsPage',
-          component: () => import('../views/CompanionsPage.vue'),
-        },
-        {
-          path: '/add-companion',
-          name: 'AddCompanion',
-          component: () => import('../views/AddCompanion.vue'),
-          beforeEnter: async (to, from) => {
-            let userStore = useAuth()
-            if (!getCookie('token') || !userStore.isAuth)
-              await userStore.checkAuth()
-
-            if (!userStore.isAuth)
-              return '/auth'
-          }
-        },
-        {
-          path: '/add-feedback',
-          name: 'AddFeedback',
-          component: () => import('../views/AddFeedback.vue'),
-        },
-        {
-          path: '/add-guide-element',
-          name: 'AddGuideElement',
-          component: () => import('../views/AddGuideElement.vue'),
-          beforeEnter: async (to, from) => {
-            let userStore = useAuth()
-            if (!getCookie('token') || !userStore.isAuth)
-              await userStore.checkAuth()
-
-            if (!userStore.isAuth)
-              return '/auth'
-          }
-        },
-        {
-          path: '/create-guide',
-          name: 'CreateGuide',
-          component: () => import('../views/CreateGuide.vue'),
-          beforeEnter: async (to, from) => {
-            let userStore = useAuth()
-            if (!getCookie('token') || !userStore.isAuth)
-              await userStore.checkAuth()
-
-            if (!userStore.isAuth)
-              return '/auth'
-            return true
-            // if (!userStore.user?.roles?.includes('manager')) {
-            //   return false
-            // }
-          }
-        },
-        {
-          path: 'edit-guide',
-          name: 'EditGuide',
-          component: () => import('../views/EditGuide.vue'),
-          beforeEnter: async (to, from) => {
-            let userStore = useAuth()
-            if (!getCookie('token') || !userStore.isAuth)
-              await userStore.checkAuth()
-
-            if (!userStore.isAuth)
-              return '/auth'
-            return true
-          }
-        },
-        {
-          path: '/create-bus',
-          component: () => import('../components/admin/CreateBus.vue'),
-        },
-        {
-          path: '/trip',
-          name: 'TripInfoPage',
-          component: () => import('../views/TripInfoPage.vue')
-        },
-        {
-          path: '/catalog-trip',
-          name: 'CatalogInfoPage',
-          component: () => import('../views/CatalogInfoPage.vue')
-        },
-        {
-          path: '/watch',
-          name: 'ToWatch',
-          component: () => import('../components/_guide/ToWatch.vue')
-        },
-        {
-          path: '/transport',
-          name: 'Transport',
-          component: () => import('../components/_guide/Transport.vue')
-        },
-        {
-          path: '/taxi',
-          name: 'Taxi',
-          component: () => import('../components/_guide/Taxi.vue')
-        },
-        {
-          path: '/orderTransport',
-          name: 'OrderTransport',
-          component: () => import('../components/_guide/OrderTransport.vue')
-        },
-        {
-          path: '/eat',
-          name: 'ToEat',
-          component: () => import('../components/_guide/ToEat.vue')
-        },
-        {
-          path: '/stay',
-          name: 'ToStay',
-          component: () => import('../components/_guide/ToStay.vue')
-        },
-        {
-          path: '/sport',
-          name: 'Sport',
-          component: () => import('../components/_guide/Sport.vue')
-        },
-
-        {
-          path: '/photos',
-          name: 'Photos',
-          component: () => import('../components/_guide/Photos.vue')
-        },
-        {
-          path: '/excursions',
-          name: 'ExcursionsPage',
-          component: () => import('../components/_guide/Excursions.vue')
-        },
-        {
-          path: '/excursion',
-          name: 'ExcursionPage',
-          component: () => import('../views/ExcursionPage.vue')
-        },
-
-        {
-          path: '/excursion-moderation',
-          name: 'ExcursionModeration',
-          component: () => import('../components/admin/ExcursionModeration.vue')
-        },
-
-
-        {
-          path: '/enter',
-          name: 'Entertainment',
-          component: () => import('../components/_guide/Entertainment.vue')
-        },
-        {
-          path: '/relax',
-          name: 'Relax',
-          component: () => import('../components/_guide/Relax.vue')
-        },
-        {
-          path: '/souvenirs',
-          name: 'Souvenirs',
-          component: () => import('../components/_guide/Souvenirs.vue')
-        },
-        {
-          path: '/offer-trip',
-          name: 'OfferTrip',
-          component: () => import('../components/_cabinet/forms/OfferTrip.vue'),
-        },
-        {
-          path: '/offers',
-          name: 'OffersPage',
-          component: () => import('../components/_cabinet/OffersPage.vue'),
-          children: [
-            {
-              path: 'new',
-              name: 'NewOffers',
-              component: () => import('../components/_cabinet/offers/NewOffers.vue'),
-            },
-            {
-              path: 'accepted',
-              name: 'AcceptedOffers',
-              component: () => import('../components/_cabinet/offers/AcceptedOffers.vue'),
-            },
-            {
-              path: 'rejected',
-              name: 'RejectedOffers',
-              component: () => import('../components/_cabinet/offers/RejectedOffers.vue'),
-            }
-          ]
         },
         {
           path: '/reg',
