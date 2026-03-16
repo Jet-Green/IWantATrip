@@ -1,16 +1,14 @@
 <script setup>
 import Header from "../components/Header.vue";
-import { useRoute } from "vue-router";
+import { useRoute } from "vue-router"
+const route = useRoute();
 
-let route = useRoute()
 </script>
 <template>
-
   <a-layout>
     <Header></Header>
     <!-- в документации с margin'ом, чтобы предотвратить перекрывание контента хедром -->
-    <a-layout-content style="min-height: 100vh; background-color: #FFFEF4;"
-      :style="route.path == '/' ? '' : 'padding-top: 80px'">
+    <a-layout-content style="padding-top: 80px; padding-bottom: 80px;">
       <Suspense>
         <router-view v-slot="{ Component }">
           <transition name="fade" mode="out-in">
