@@ -121,7 +121,7 @@ function getDate() {
   }
 
   .title {
-    font-size: clamp(1rem, 0.6023rem + 1.1364vw, 1.5rem);
+    font-size: clamp(1rem, 0.6023rem + 1.1364vw, 1.3rem);
     font-weight: 900;
     text-overflow: ellipsis;
   }
