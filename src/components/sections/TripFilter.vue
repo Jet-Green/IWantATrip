@@ -196,7 +196,7 @@ function resetForm() {
 
 watch(locationRadius, (newRadius) => {
 
-    localStorage.setItem("LocationRadius", newRadius)
+  localStorage.setItem("LocationRadius", newRadius)
 
 })
 
@@ -262,7 +262,7 @@ onMounted(() => {
   </span> -->
 
   <a-row type="flex" justify="center" class="section_bg">
-    <a-col :xs="22" :lg="16">
+    <a-col :xs="22" :md="20" :xl="18">
       <a-row class="d-flex justify-center">
         <a-col :xs="24" :lg="12" :md="16" class="pa-16">
           <div style="background: #239fca; padding: 10px; border-radius: 12px; display: flex; align-items: center">
@@ -284,8 +284,8 @@ onMounted(() => {
         <a-row :gutter="[16, 16]">
           <a-col :span="24">
             <!-- <div class="subtitle">Куда</div> -->
-            <a-input v-model:value="tripRegion" placeholder="Название, направление? " name="search" style="width: 100%" allowClear
-              autocomplete="off" autofocus size="large" />
+            <a-input v-model:value="tripRegion" placeholder="Название, направление? " name="search" style="width: 100%"
+              allowClear autocomplete="off" autofocus size="large" />
           </a-col>
 
           <!-- если есть локация, то можно показывать радиус -->
@@ -305,7 +305,7 @@ onMounted(() => {
           <a-col v-else :span="24">
             <div class="no-location" @click="selectLocationDialog = !selectLocationDialog">
               <span class="mdi mdi-map-marker-outline"></span>
-              <span> Ваш город </span>    
+              <span> Ваш город </span>
             </div>
             <div> начало из любого города </div>
           </a-col>
@@ -338,7 +338,7 @@ onMounted(() => {
           <a-col :span="24" v-if="suggestedRegions.length > 0">
             <div class="subtitle">Направления</div>
             <div class="suggestions-container">
-              <div  v-for="region of suggestedRegions">
+              <div v-for="region of suggestedRegions">
                 <div class="region-container" @click="selectRegion(region)">
                   <div>
                     {{ region }}
@@ -355,10 +355,10 @@ onMounted(() => {
             <div class="subtitle">Туры</div>
             <div v-if="foundTrips.length" v-for="fTrip of foundTrips" class="mb-8">
               <span class="trip-name" @click="router.push(`/trip?_id=${fTrip._id}`)">
-               - {{ fTrip.name }}
+                - {{ fTrip.name }}
               </span>
             </div>
-            <div  v-else>Ничего не нашлось</div>
+            <div v-else>Ничего не нашлось</div>
           </a-col>
         </a-row>
 
