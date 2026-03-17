@@ -32,7 +32,7 @@ let catalog = ref(null)
 let auth = ref(null)
 
 let navBtns = ref([
-  { name: "Места", url: "/places", isActive: false },
+  { name: "Туры", url: "/trips", isActive: false },
   { name: "Маршруты", url: "/tracks-list", isActive: false },
   { name: "Афиши", url: "/poster", isActive: false },
   { name: "Гиды", url: "/guides", isActive: false },

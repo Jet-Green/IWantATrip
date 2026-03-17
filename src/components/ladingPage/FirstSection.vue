@@ -40,7 +40,7 @@ const router = useRouter()
   border-bottom-right-radius: 70px;
   border-bottom-left-radius: 70px;
 
-  background-image: url('src/assets/images/spiral.svg');
+  background-image: url('../../assets/images/spiral.svg');
   background-repeat: no-repeat;
   background-position: bottom right;
   background-size: auto 50%;
