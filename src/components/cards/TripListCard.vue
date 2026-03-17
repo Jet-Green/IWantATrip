@@ -48,7 +48,6 @@ function getDate() {
     <a-badge-ribbon :text="`${trip.cost.length ? trip.cost[0].price : 0} руб`" placement="end">
       <div class="card" :style="{ 'background-image': 'url(' + trip.images[0] + ')' }">
         <div class="content">
-          <div class="trip-type">{{ trip.tripType }}</div>
           <div class="title"> {{ trip.name }} </div>
           <div class="date-row">
             <span class="date-text">{{ getDate() }}</span>
