@@ -88,7 +88,7 @@ let getPrice = computed(() => {
 
 .price {
   font-weight: 600;
-  font-size: 26px;
+  font-size: clamp(1.25rem, 0.9517rem + 0.8523vw, 1.625rem); // 20 -> 26
   line-height: 1.1;
 }
 </style>

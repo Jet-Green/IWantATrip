@@ -52,7 +52,7 @@ onMounted(async () => {
     <div class="wrapper" ref="wrapper">
       <a-row type="flex" justify="center">
         <a-col :xs="22" :md="20" :xl="18">
-          <BackButtonAdaptive :backRoute="backRoute" />
+          <BackButtonAdaptive :backRoute="'/'" />
 
           <h2 class="title">Туры</h2>
         </a-col>
@@ -62,8 +62,7 @@ onMounted(async () => {
       <a-row class="d-flex justify-center">
         <a-col :xs="22" :md="20" :xl="18">
           <a-row :gutter="[16, 18]" class="d-flex justify-center mt-8 pb-24" v-if="tripStore.trips.length">
-            <a-col :xs="24" :sm="12" :md="8" :xl="6" class="d-flex"
-              v-for="trip in [...tripStore.trips, ...tripStore.trips, ...tripStore.trips]" :key="trip.index">
+            <a-col :xs="24" :sm="12" :md="8" :xl="6" class="d-flex" v-for="trip in tripStore.trips" :key="trip.index">
               <TripListCard :trip="trip" />
             </a-col>
           </a-row>
