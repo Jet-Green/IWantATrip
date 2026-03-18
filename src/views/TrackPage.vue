@@ -4,7 +4,7 @@ import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { useShare } from '@vueuse/core'
 import { useHead } from "@unhead/vue"
-import BackButton from "../components/BackButton.vue"
+import BackButtonAdaptive from "../components/BackButtonAdaptive.vue"
 import { useRoute, useRouter } from "vue-router"
 import { useTracks } from "../stores/track"
 import PlaceService from '../service/PlaceService'
@@ -329,11 +329,13 @@ onBeforeUnmount(() => {
 </script>
 <template>
     <div style="overflow-x: hidden">
-        <BackButton :backRoute="backRoute" />
         <a-row class="justify-center d-flex">
+            <a-col :xs="22" :md="20" :xl="18">
+                <BackButtonAdaptive :backRoute="backRoute" />
+            </a-col>
             <a-spin v-if="isLoading" size="large"></a-spin>
 
-            <a-col :xs="22" :xl="16" class="mb-32" v-else-if="trackData._id">
+            <a-col :xs="22" :md="20" :xl="18" class="mb-32" v-else-if="trackData._id">
                 <h2>{{ trackData.title }}
                     <div style="float: right;">
                         <span v-if="isSupported" style="opacity: 0.7; cursor: pointer;"
@@ -349,13 +351,13 @@ onBeforeUnmount(() => {
                                 formatDuration(trackData.duration) }} </div>
                     </a-col>
                     <a-col :xs="24">
-                        <div class="mt-8 text">
-                            <b v-for="(place, index) in trackData.places" :key="place._id">
+                        <div class="mt-8 text" style="font-weight: 500;">
+                            <span v-for="(place, index) in trackData.places" :key="place._id">
                                 <a @click="router.push(`/place?_id=${place._id}`)" class="place-link">
                                     {{ place.name }}
                                 </a>
                                 <span v-if="index < trackData.places.length - 1"> - </span>
-                            </b>
+                            </span>
                         </div>
                     </a-col>
                 </a-row>
@@ -398,6 +400,10 @@ onBeforeUnmount(() => {
 
 
 <style scoped>
+h2 {
+    font-weight: 900;
+}
+
 .map-container {
     width: 100%;
     height: 500px;

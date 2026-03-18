@@ -159,15 +159,24 @@ onMounted(async () => {
       </a-col>
     </a-row>
     <template #footer>
-      <a-button key="submit" style="border-radius: 18px" type="primary" @click="hideFilter(), find()">Показать</a-button>
+      <a-button key="submit" style="border-radius: 18px" type="primary"
+        @click="hideFilter(), find()">Показать</a-button>
       <a-button key="back" style="border-radius: 18px" @click="resetForm(), hideFilter()">Очистить</a-button>
     </template>
   </a-modal>
 </template>
 
 <style lang="scss" scoped>
-.active_filter { color: #ff6600; cursor: pointer; }
-.filter { color: #227597; cursor: pointer; }
+.active_filter {
+  color: #ff6600;
+  cursor: pointer;
+}
+
+.filter {
+  color: #227597;
+  cursor: pointer;
+}
+
 .filter-button {
   background: white;
   border-color: #239fca;

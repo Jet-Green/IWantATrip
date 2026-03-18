@@ -5,11 +5,11 @@
 
 <template>
   <a-affix>
-    <a-layout-footer class="footer" >
+    <a-layout-footer class="footer">
       <!-- <a-divider /> -->
       <a-row type="flex" justify="center">
         <a-col :xs="24" :md="18">
-       
+
           <a-row class="bottom_menu d-flex space-around">
             <a-col class="d-flex align-center direction-column">
               <router-link to="/documents">
@@ -22,8 +22,13 @@
                 <b style="color: white"> Контакты </b>
               </router-link>
             </a-col>
+            <a-col class="d-flex align-center direction-column">
+              <a href="https://promo.plpo.ru" target="_blank">
+                <b style="color: white"> Партнерам </b>
+              </a>
+            </a-col>
           </a-row>
-      
+
         </a-col>
       </a-row>
 
@@ -41,10 +46,12 @@
 
 <style scoped>
 .bottom_menu {
-
-  font-size: clamp(12px, 2vw, 14px);
+  font-weight: 900;
+  font-size: clamp(12px, 2vw, 18px);
+  margin-bottom: 20px;
 }
-.footer{
+
+.footer {
   background: #64bed8;
 }
 </style>
