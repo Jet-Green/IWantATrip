@@ -218,7 +218,7 @@ async function refreshDates() {
     let response = await tripStore.getTripById(_id);
     let tripFromDb = response.data;
     additionalServices.value = []
-    for (let service of tripFromDb.additionalServices) {
+    for (let service of tripFromDb?.additionalServices) {
         additionalServices.value.push({ ...service, count: 0 })
     }
 
