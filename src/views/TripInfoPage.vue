@@ -496,6 +496,11 @@ async function updateBus() {
 }
 
 onMounted(async () => {
+    const script = document.createElement('script');
+    script.src = 'https://tpwdg.com/content?trs=493259&shmarker=585170&powered_by=false&train=true&plane=false&bus=true&hotel=false&defaultTab=train&fix_width=false&logo=false&menu_icon=false&promo_id=493259&campaign_id=45';
+    script.async = true;
+    script.charset = 'utf-8';
+    document.head.appendChild(script);
 
     await refreshDates();
 
@@ -505,7 +510,9 @@ onMounted(async () => {
         changeTouristsField()
         if (getCurrentCustomerNumber.value > trip.value.maxPeople) {
             message.config({ duration: 3, top: "90vh" });
-            message.success({ content: `Осталось всего ${trip.value.maxPeople - getCustomersCount(selectedDate.value.billsList)} мест` });
+            message.success({
+                content: `Осталось всего ${trip.value.maxPeople - getCustomersCount(selectedDate.value.billsList)}
+мест` });
         }
         selected_seats.value = []
     })
@@ -518,6 +525,15 @@ onMounted(async () => {
         <a-row class="justify-center d-flex">
             <a-col :xs="22" :xl="16" class="mb-32">
                 <h2 class="ma-0">{{ trip.name }}</h2>
+
+
+
+                тут виджет:
+                <div id="tpwl-search"></div>
+                <div id="tpwl-tickets"></div>
+
+
+
                 <p><i> {{ trip.offer }}</i> </p>
 
                 <a-spin v-if="!trip._id" size="large"></a-spin>
