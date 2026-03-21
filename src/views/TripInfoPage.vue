@@ -598,19 +598,19 @@ onMounted(async () => {
                             </div>
                         </div>
 
-                        <div class="d-flex">
-                            Цена:&nbsp
+                        <div>
+                            <div>Цена:&nbsp</div>
                             <div style="font-size: 0.9em;">
                                 <div v-for="(item, index) in trip.cost" :key="index" class="cost">
 
                                     <div
                                         v-if="item.limit - (isNaN(customersByCostType[item.first]) ? 0 : customersByCostType[item.first]) !== 0">
                                         {{ item.first }}: <b>{{ item.price }} руб.</b>
-                                        <span>
+                                        <span v-if="item.limit">
                                             <span> | мест - {{
                                                 item.limit - (isNaN(customersByCostType[item.first]) ? 0 :
-                                                customersByCostType[item.first])
-                                                }}</span>
+                                                    customersByCostType[item.first])
+                                            }}</span>
                                         </span>
                                     </div>
                                 </div>

@@ -22,6 +22,11 @@
                 <b style="color: white"> Контакты </b>
               </router-link>
             </a-col>
+              <a-col class="d-flex align-center direction-column">
+                <a href="https://promo.plpo.ru" target="_blank">
+                  <b style="color: white"> Партнерам </b>
+                </a>
+              </a-col>
           </a-row>
       
         </a-col>

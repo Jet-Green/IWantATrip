@@ -147,6 +147,9 @@ export default {
     editUserComment(body) {
         return $api.put('/trips/bill-user-comment', body)
     },
+    updateBillSeats(billId, seats) {
+        return $api.post('/trips/update-bill-seats', { billId, seats })
+    },
     getBoughtTrips(userId) {
         return $api.get(`/trips/bought?userId=${userId}`)
     },

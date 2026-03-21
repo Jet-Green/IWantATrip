@@ -129,6 +129,13 @@ function submit() {
     return
   }
 
+  if (!form.startLocation || !form.startLocation.coordinates?.length) {
+    message.config({ duration: 2, top: "70vh" });
+    message.error("Выберите место старта из списка");
+    submitCount.value = 0
+    return
+  }
+
   const regexEmoji = /(?![*#0-9]+)[\p{Emoji}\p{Emoji_Modifier}\p{Emoji_Component}\p{Emoji_Modifier_Base}\p{Emoji_Presentation}]/gu
   const regexSpaces = /[\n\r\s\t]+/g
 
@@ -273,6 +280,10 @@ const handlePlacesSearch = async (val) => {
 
 }
 watch(locationSearchRequest, async (newValue, oldValue) => {
+  if (form.startLocation?.name !== newValue) {
+    form.startLocation = null
+  }
+
   if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
     var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
 
@@ -389,7 +400,11 @@ let formSchema = yup.object({
   fromAge: yup.string().required("заполните поле"),
   offer: yup.string().required("заполните поле"),
   tripRoute: yup.string().required("заполните поле"),
-  // startLocation: yup.string().required("заполните поле"),
+  startLocation: yup.string().required("заполните поле").test(
+    "start-location-selected",
+    "выберите место из списка",
+    () => !!form.startLocation?.coordinates?.length
+  ),
   // returnConditions: yup.string().required("заполните поле"),
   notNecessarily: yup.string(),
   tripRegion: yup.string().required("заполните поле"),

@@ -39,6 +39,9 @@ let addCustomerDialog = ref(false)
 let setPaymentDialog = ref(false)
 let addTouristsDialog = ref(false)
 let editUserCommentDialog = ref(false)
+let editSeatsDialog = ref(false)
+let editingSeats = ref([])
+let editFreeSeats = ref([])
 // Refund (Tinkoff) modal state
 let refundDialog = ref(false)
 let refundMode = ref('full') // 'full' | 'partial'
@@ -243,6 +246,33 @@ function showEditUserCommentDialog(bill) {
     currentBill.value = bill
 }
 
+async function showEditSeatsDialog(bill) {
+    currentBill.value = bill
+    if (!bus.value) {
+        message.warning({ content: 'Автобус не выбран для тура' })
+        return
+    }
+    const boughtSeats = await tripStore.getBoughtSeats(trip.value._id)
+    // Exclude current bill's seats so they can be re-selected
+    const otherBought = boughtSeats.filter(s => !(bill.seats || []).includes(s))
+    editFreeSeats.value = bus.value.seats
+        .map(s => s.number)
+        .filter(s => !otherBought.includes(s) && !bus.value.stuff.includes(s))
+    editingSeats.value = [...(bill.seats || [])]
+    editSeatsDialog.value = true
+}
+
+async function saveEditedSeats() {
+    const res = await tripStore.updateBillSeats(currentBill.value._id, editingSeats.value)
+    if (res?.status === 200) {
+        editSeatsDialog.value = false
+        await updateTripInfo()
+        message.success({ content: 'Места обновлены' })
+    } else {
+        message.error({ content: 'Ошибка при сохранении мест' })
+    }
+}
+
 const clearData = (dateNumber) => {
     let date = new Date(dateNumber).toLocaleDateString("ru-Ru", {
         year: "2-digit",
@@ -361,6 +391,7 @@ onMounted(async () => {
         });
     }
     loading.value = false
+    await updateBus()
 
 });
 
@@ -636,6 +667,7 @@ async function confirmCancelPayment() {
                                         @click="showEditUserCommentDialog(BILL)"></span>
 
                                     <span class="mdi mdi-printer-outline ml-4" style=" cursor: pointer" @click="printContract(BILL)"></span>
+                                    <span v-if="trip.transports?.length" class="mdi mdi-bus-marker ml-4" style="cursor: pointer" @click="showEditSeatsDialog(BILL)"></span>
 
                                 </div>
 
@@ -925,6 +957,37 @@ async function confirmCancelPayment() {
                         <!-- <a-button type="primary" @click="buyTrip(true)"> сейчас </a-button> -->
                         <a-button @click="buyTrip(false)" type="primary"> создать </a-button>
                     </div>
+                </a-col>
+            </a-row>
+        </a-modal>
+
+        <!-- Edit Seats modal -->
+        <a-modal v-model:open="editSeatsDialog" :footer="null" title="Редактировать места в транспорте">
+            <a-row :gutter="[8, 8]" v-if="currentBill">
+                <a-col :span="24">
+                    <div>
+                        <span class="mdi mdi-account-outline"></span>
+                        {{ currentBill.userInfo?.fullname }}
+                    </div>
+                    <div>Количество: {{ currentBill.cart.reduce((a, o) => a + o.count, 0) }} чел.</div>
+                </a-col>
+                <a-col :span="24" class="mb-8">
+                    <div>Выберите места</div>
+                    <div style="font-size:0.8em; opacity: 0.8;">{{ bus?.name }}</div>
+                    <Bus
+                        v-model:selected_seats="editingSeats"
+                        :free_seats="editFreeSeats"
+                        :max_count="currentBill.cart.reduce((a, o) => a + o.count, 0)"
+                        :bus="bus"
+                        style="width: 150px;"
+                    />
+                </a-col>
+                <a-col :span="24">
+                    <div>Выбрано: {{ editingSeats.join(', ') || '—' }}</div>
+                </a-col>
+                <a-col :span="24" class="d-flex justify-center mt-8">
+                    <a-button @click="editSeatsDialog = false">отмена</a-button>
+                    <a-button type="primary" class="lets_go_btn ml-8" @click="saveEditedSeats">сохранить</a-button>
                 </a-col>
             </a-row>
         </a-modal>
