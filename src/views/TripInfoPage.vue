@@ -668,7 +668,8 @@ onMounted(async () => {
                                 @click="buyTripDialog()">
                                 Купить
                             </a-button>
-                            <a-button class="ml-8" @click="transportDialog = !transportDialog" round>
+                            <a-button class="ml-8" @click="transportDialog = !transportDialog"
+                                style="border-radius: 20px;">
                                 {{ transportDialog ? 'Скрыть' : 'Как добраться' }}
                             </a-button>
                         </div>
@@ -701,14 +702,17 @@ onMounted(async () => {
                         </div>
                     </a-col>
                     <a-col :xs="24" v-show="transportDialog">
-                        <div class="mb-16">
-                            <b>Выберите точку старта:</b>
+                        <div class="mb-16" v-if="getStartLocationNames.length > 0">
+                            <b>Выберите до какой точки старта нужно добраться:</b>
                             <div class="d-flex flex-wrap mt-8">
                                 <a-tag v-for="(loc, index) in getStartLocationNames" :key="index" class="location-tag"
                                     @click="setWidgetDestination(loc)">
                                     {{ loc }}
                                 </a-tag>
                             </div>
+                        </div>
+                        <div v-else>
+                            <b>Маршрут до точки</b>
                         </div>
                         <div id="widget-container"></div>
                     </a-col>
