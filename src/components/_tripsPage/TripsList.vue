@@ -3,7 +3,7 @@ import { ref, onMounted } from "vue";
 import { useTrips } from "../../stores/trips";
 
 import TripListCard from "../cards/TripListCard.vue";
-import BackButton from "../BackButton.vue";
+import BackButtonAdaptive from "../BackButtonAdaptive.vue";
 import TripFilter from "../sections/TripFilter.vue";
 import { useRoute, useRouter } from "vue-router";
 
@@ -49,22 +49,20 @@ onMounted(async () => {
 </script>
 <template>
   <div>
-    <BackButton :backRoute="{ path: '/' }" />
     <div class="wrapper" ref="wrapper">
       <a-row type="flex" justify="center">
-        <a-col :xs="22" :lg="16">
-          <h2>Туры
+        <a-col :xs="22" :md="20" :xl="18">
+          <BackButtonAdaptive :backRoute="'/'" />
 
-          </h2>
-
+          <h2 class="title">Туры</h2>
         </a-col>
 
       </a-row>
-      <TripFilter  />
+      <TripFilter />
       <a-row class="d-flex justify-center">
-        <a-col :xs="22" :lg="16">
+        <a-col :xs="22" :md="20" :xl="18">
           <a-row :gutter="[16, 18]" class="d-flex justify-center mt-8 pb-24" v-if="tripStore.trips.length">
-            <a-col :xs="24" :sm="12" :md="8" :lg="6" v-for="trip in tripStore.trips" :key="trip.index">
+            <a-col :xs="24" :sm="12" :md="8" :xl="6" class="d-flex" v-for="trip in tripStore.trips" :key="trip.index">
               <TripListCard :trip="trip" />
             </a-col>
           </a-row>
@@ -85,8 +83,8 @@ onMounted(async () => {
                 <h3 style="text-align: center;">Закажите из каталога туров <br>
                   на удобную вам дату
                 </h3>
-    
-                <a-button type="primary"  @click="
+
+                <a-button type="primary" @click="
                   router.push({ name: 'CatalogPage', query: { search: tripStore.tripFilter.query } })
                   " class="lets_go_btn">В каталог</a-button>
               </div>
@@ -98,6 +96,10 @@ onMounted(async () => {
   </div>
 </template>
 <style lang="scss" scoped>
+.title {
+  font-weight: 900;
+}
+
 .wrapper {
 
   height: 85vh;

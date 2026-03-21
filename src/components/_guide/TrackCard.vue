@@ -43,23 +43,23 @@ const placesNames = computed(() => {
 </script>
 
 <template>
-    <div class="card">
-        <div class="track-preview" :style="previewImage ? { backgroundImage: `url(${previewImage})` } : null">
+    <div class="card" :style="previewImage ? { backgroundImage: `url(${previewImage})` } : null">
+        <!-- <div class="track-preview">
             <div v-if="!previewImage" class="track-icon">
                 <span class="mdi mdi-map-marker-path"></span>
             </div>
-        </div>
+        </div> -->
         <div class="content">
+            <div class="title">{{ track.title }}</div>
+
             <div class="meta">
                 <span class="type">{{ track.type || 'пешком' }}</span>
                 <span v-if="track.length" class="sep">•</span>
                 <span v-if="track.length" class="detail">{{ track.length }} км</span>
                 <span v-if="track.duration" class="sep">•</span>
                 <span v-if="track.duration" class="detail">{{ formatDuration(track.duration) }}</span>
-
             </div>
 
-            <div class="title">{{ track.title }}</div>
             <div v-if="placesNames" class="places">{{ placesNames }}</div>
         </div>
     </div>
@@ -76,21 +76,16 @@ const placesNames = computed(() => {
     background: #fff;
 
     &:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         transform: translateY(-2px);
     }
-}
 
-.track-preview {
-    width: 100%;
     aspect-ratio: 270 / 175;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     background-size: cover;
     background-position: center;
-    border-bottom: 1px solid #e8e8e8;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: end;
+    padding: 0;
+    border-radius: 22px;
 }
 
 .track-icon {
@@ -100,17 +95,21 @@ const placesNames = computed(() => {
 }
 
 .content {
-    padding: 12px 12px 16px 12px;
+    width: 100%;
+    padding: 10px 18px 10px 18px;
+    background: linear-gradient(to bottom, transparent, #484848);
 }
 
 .meta {
     font-size: 10px;
     text-transform: uppercase;
-    color: #666;
     display: flex;
     gap: 6px;
     align-items: center;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
+
+    color: white;
+    font-weight: 500;
 }
 
 .sep {
@@ -118,25 +117,28 @@ const placesNames = computed(() => {
 }
 
 .detail {
-    color: #555;
+    color: white;
 }
 
 .title {
-    font-size: clamp(1rem, 0.55rem + 0.8vw, 1.25rem);
-    font-weight: 600;
-    color: #333;
+    // font-size: clamp(1rem, 0.55rem + 0.8vw, 1.25rem);
+    font-size: clamp(1rem, 0.7017rem + 0.8523vw, 1.375rem);
+    font-weight: 900;
+    color: white;
     margin-bottom: 4px;
+    text-overflow: ellipsis;
 }
 
 .places {
+    font-weight: 500;
+
     font-size: 12px;
-    color: #888;
-    line-height: 1.4;
+    color: white;
+    line-height: 1;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
 }
-
 </style>

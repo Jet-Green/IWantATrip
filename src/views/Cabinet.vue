@@ -51,7 +51,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>
+  <div style="background-color: white !important;">
     <BackButton></BackButton>
 
 
