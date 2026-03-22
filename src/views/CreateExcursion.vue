@@ -63,6 +63,7 @@ let form = reactive(JSON.parse(localStorage.getItem('createExcursionForm')) || {
   deadline: '',
   requirements: '',
   availability: true,
+  organizer: '',
 
 })
 
@@ -552,6 +553,10 @@ onMounted(async () => {
                 <a-radio :value="true">да</a-radio>
                 <a-radio :value="false">нет</a-radio>
               </a-radio-group>
+            </a-col>
+            <a-col :span="24">
+              Организатор
+              <a-input v-model:value="form.organizer" placeholder="ООО Города и веси" />
             </a-col>
             <a-col :span="24" :md="12">
               <Field name="contacts.phone" v-slot="{ value, handleChange }" v-model="form.contacts.phone">

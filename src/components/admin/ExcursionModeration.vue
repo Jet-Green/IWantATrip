@@ -90,6 +90,9 @@ onMounted(async () => {
             <div>
               Место начала: <b> {{ excursion.startPlace }}</b>
             </div>
+            <div v-if="excursion.organizer">
+              Организатор: <b>{{ excursion.organizer }}</b>
+            </div>
             <div>
               Продолжительность: <b>{{ excursion.duration }}</b>
             </div>
