@@ -296,11 +296,26 @@ function setWidgetDestination(location) {
         if (widgetInput) {
             widgetInput.value = location;
             widgetInput.dispatchEvent(new Event('input', { bubbles: true }));
+            widgetInput.dispatchEvent(new Event('change', { bubbles: true }));
         } else {
             setTimeout(setValue, 500);
         }
     };
-    nextTick(() => setValue());
+    setTimeout(setValue, 1000);
+}
+
+function setWidgetFrom(location) {
+    const setValue = () => {
+        const widgetInput = document.querySelector('#widget-container input[name="avia_from"]');
+        if (widgetInput) {
+            widgetInput.value = location;
+            widgetInput.dispatchEvent(new Event('input', { bubbles: true }));
+            widgetInput.dispatchEvent(new Event('change', { bubbles: true }));
+        } else {
+            setTimeout(setValue, 500);
+        }
+    };
+    setTimeout(setValue, 1000);
 }
 
 let getSelectedUsersCount = computed(() => {
@@ -536,6 +551,19 @@ onMounted(async () => {
 мест` });
         }
         selected_seats.value = []
+    })
+
+    watch(transportDialog, (newVal) => {
+        if (newVal) {
+            setTimeout(() => {
+                if (getStartLocationNames.value.length > 0) {
+                    setWidgetDestination(getStartLocationNames.value[0])
+                }
+                if (locationStore.location?.shortName) {
+                    setWidgetFrom(locationStore.location.shortName)
+                }
+            }, 500);
+        }
     })
 });
 </script>
