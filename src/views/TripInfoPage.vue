@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, getCurrentInstance, watch, reactive } from "vue";
+import { ref, computed, onMounted, getCurrentInstance, watch, reactive, nextTick } from "vue";
 import _ from 'lodash'
 import tinkoffPlugin from '../plugins/tinkoff'
 import TinkoffLogo from "../assets/images/tinkofflogo.svg"
@@ -50,6 +50,7 @@ let touristsList = ref([]);
 let activeKey = ref(null)
 let additionalServices = ref([])
 let show = ref(false)
+let transportDialog = ref(false)
 
 
 
@@ -218,7 +219,7 @@ async function refreshDates() {
     let response = await tripStore.getTripById(_id);
     let tripFromDb = response.data;
     additionalServices.value = []
-    for (let service of tripFromDb.additionalServices) {
+    for (let service of tripFromDb?.additionalServices) {
         additionalServices.value.push({ ...service, count: 0 })
     }
 
@@ -282,10 +283,25 @@ let getStartLocationNames = computed(() => {
                 }
             }
         }
-        return results.join(', ')
+        return results
     }
-    else { return "" }
+    else { return [] }
 })
+
+let startLocationsList = computed(() => getStartLocationNames.value.join(', '))
+
+function setWidgetDestination(location) {
+    const setValue = () => {
+        const widgetInput = document.querySelector('#widget-container input[name="avia_to"]');
+        if (widgetInput) {
+            widgetInput.value = location;
+            widgetInput.dispatchEvent(new Event('input', { bubbles: true }));
+        } else {
+            setTimeout(setValue, 500);
+        }
+    };
+    nextTick(() => setValue());
+}
 
 let getSelectedUsersCount = computed(() => {
     let result = 0
@@ -495,7 +511,17 @@ async function updateBus() {
     updateSeats()
 }
 
+
+
 onMounted(async () => {
+    (function () {
+        var script = document.createElement("script");
+        script.id = "widScrParams";
+        script.type = "text/javascript";
+        script.charset = "utf-8";
+        script.src = `https://partner.tutu.ru/js/tutuWidget.js?openNewTab=true&showLogoTab=true&showDataTo=true&tabDef=1&formTabs=[1,2,0]&avia=[,,,,,]&train=[,,,,,]&bus=[,,,,,]&tour=[,,,,,]`;
+        document.head.appendChild(script);
+    })();
 
     await refreshDates();
 
@@ -505,7 +531,9 @@ onMounted(async () => {
         changeTouristsField()
         if (getCurrentCustomerNumber.value > trip.value.maxPeople) {
             message.config({ duration: 3, top: "90vh" });
-            message.success({ content: `Осталось всего ${trip.value.maxPeople - getCustomersCount(selectedDate.value.billsList)} мест` });
+            message.success({
+                content: `Осталось всего ${trip.value.maxPeople - getCustomersCount(selectedDate.value.billsList)}
+мест` });
         }
         selected_seats.value = []
     })
@@ -556,8 +584,8 @@ onMounted(async () => {
 
                         </div>
 
-                        <div v-if="getStartLocationNames != ''">
-                            Старт: <b> {{ getStartLocationNames }}</b>
+                        <div v-if="startLocationsList != ''">
+                            Старт: <b> {{ startLocationsList }}</b>
                         </div>
                         <div v-if="trip.tripRegion != ''">
                             Куда: <b> {{ trip.tripRegion }}</b>
@@ -640,6 +668,10 @@ onMounted(async () => {
                                 @click="buyTripDialog()">
                                 Купить
                             </a-button>
+                            <a-button class="ml-8" @click="transportDialog = !transportDialog"
+                                style="border-radius: 20px;">
+                                {{ transportDialog ? 'Скрыть' : 'Как добраться' }}
+                            </a-button>
                         </div>
 
                         <div>
@@ -668,6 +700,21 @@ onMounted(async () => {
 
 
                         </div>
+                    </a-col>
+                    <a-col :xs="24" v-show="transportDialog">
+                        <div class="mb-16" v-if="getStartLocationNames.length > 0">
+                            <b>Выберите до какой точки старта нужно добраться:</b>
+                            <div class="d-flex flex-wrap mt-8">
+                                <a-tag v-for="(loc, index) in getStartLocationNames" :key="index" class="location-tag"
+                                    @click="setWidgetDestination(loc)">
+                                    {{ loc }}
+                                </a-tag>
+                            </div>
+                        </div>
+                        <div v-else>
+                            <b>Маршрут до точки</b>
+                        </div>
+                        <div id="widget-container"></div>
                     </a-col>
                     <a-col :xs="24">
                         <span v-html="trip.description"></span>
@@ -1009,5 +1056,11 @@ img {
 
 .btn {
     border-radius: 15px;
+}
+
+.location-tag {
+    font-size: 16px;
+    padding: 8px 16px;
+    cursor: pointer;
 }
 </style>

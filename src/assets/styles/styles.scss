@@ -107,6 +107,12 @@ body {
 .flex-wrap {
   flex-wrap: wrap;
 }
+.relative {
+  position: relative;
+}
+.absolute {
+  position: absolute;
+}
 
 // MA
 @for $i from 0 through 10 {
@@ -287,12 +293,81 @@ a {
   height: 22px !important;
 }
 
-
-
-.ant-menu-horizontal .ant-menu-item{
-padding-inline: 12px !important;
+.ant-menu-horizontal .ant-menu-item {
+  padding-inline: 12px !important;
 }
 
-.ant-menu-horizontal .ant-menu-submenu{
+.ant-menu-horizontal .ant-menu-submenu {
   padding-inline: 12px !important;
+}
+
+/* ===== XS (<576px) ===== */
+@media (max-width: 575.98px) {
+  .hide-xs {
+    display: none !important;
+  }
+}
+
+/* ===== SM (≥576px) ===== */
+@media (min-width: 576px) {
+  .hide-sm-up {
+    display: none !important;
+  }
+}
+@media (max-width: 767.98px) and (min-width: 576px) {
+  .hide-sm {
+    display: none !important;
+  }
+}
+
+/* ===== MD (≥768px) ===== */
+@media (min-width: 768px) {
+  .hide-md-up {
+    display: none !important;
+  }
+}
+@media (max-width: 991.98px) and (min-width: 768px) {
+  .hide-md {
+    display: none !important;
+  }
+}
+
+/* ===== LG (≥992px) ===== */
+@media (min-width: 992px) {
+  .hide-lg-up {
+    display: none !important;
+  }
+}
+@media (max-width: 1199.98px) and (min-width: 992px) {
+  .hide-lg {
+    display: none !important;
+  }
+}
+
+/* ===== XL (≥1200px) ===== */
+@media (min-width: 1200px) {
+  .hide-xl-up {
+    display: none !important;
+  }
+}
+@media (max-width: 1599.98px) and (min-width: 1200px) {
+  .hide-xl {
+    display: none !important;
+  }
+}
+
+/* ===== XXL (≥1600px) ===== */
+@media (min-width: 1600px) {
+  .hide-xxl-up {
+    display: none !important;
+  }
+}
+@media (min-width: 1600px) {
+  .hide-xxl {
+    display: none !important;
+  }
+}
+
+.ant-modal-content {
+  border-radius: 18px !important;
 }
