@@ -180,8 +180,11 @@ onMounted(async () => {
           <a-col :xs="24" class="pa-8">
             <h2 class="ma-0">{{ excursion.name }}</h2>
             <div v-if="excursion.excursionType" class="mb-12">
-              {{ excursion.excursionType.type }} | {{ excursion.excursionType.directionType }} | {{
-                excursion.excursionType.directionPlace }}
+              {{ excursion.excursionType.type }} {{
+                excursion.excursionType.directionType ? ' | ' +
+                  excursion.excursionType.directionType : '' }}
+              {{ excursion.excursionType.directionPlace ? ' | ' +
+                excursion.excursionType.directionPlace : '' }}
             </div>
           </a-col>
         </a-row>
@@ -224,7 +227,7 @@ onMounted(async () => {
             </div>
             <div>
               <b>Цены:</b> <br />
-              <div v-if="excursion.prices.length > 0">
+              <div v-if="excursion.prices?.length > 0">
                 <div v-for="(item, index) in excursion.prices" :key="index">
                   {{ item.type }} - <b>{{ item.price }} руб</b>
                 </div>
@@ -247,7 +250,7 @@ onMounted(async () => {
               <span v-if="excursion.availability"> доступно</span>
               <span v-else>не доступно</span>
             </div>
-            <div v-if="excursion.guides.length > 0">
+            <div v-if="excursion.guides && excursion.guides?.length > 0">
               <b>
                 Гиды:
               </b>
@@ -264,17 +267,12 @@ onMounted(async () => {
         </a-row>
 
         <a-row class="additional-info">
-          <a-col :xs="24" class="pa-8">
-        
-
+          <a-col :xs="24">
             <div class="text"> {{ excursion.description }}</div>
 
             <div style="margin-top: 1rem;"><b>Рекомендации</b></div>
             <div class="text"> {{ excursion.requirements }}</div>
           </a-col>
-
-
-
         </a-row>
 
         <a-row style="margin-top: 30px;">
