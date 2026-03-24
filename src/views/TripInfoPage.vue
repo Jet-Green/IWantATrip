@@ -260,6 +260,26 @@ const firstPaymentCost = computed(() => {
     return Math.round(discountedFinalCost.value * firstPaymentPercentage.value);
 })
 
+const baseDiscountPerPerson = computed(() => {
+    if (!trip.value?.loyalty?.enabled || trip.value?.loyalty?.type !== 'discount') return 0
+    const percent = trip.value.loyalty.discount?.baseDiscountPercent || 0
+    if (!firstAvailableCost.value) return 0
+    return Math.round(firstAvailableCost.value.price * percent / 100)
+})
+
+const activeFreeServiceLevel = computed(() => {
+    if (!trip.value?.loyalty?.enabled || trip.value?.loyalty?.type !== 'free_services') return null
+    const levels = trip.value.loyalty.freeServices?.levels || []
+    const currentCount = getCustomersCount(selectedDate.value?.billsList || [])
+    let active = null
+    for (const level of levels) {
+        if (currentCount >= Number(level.peopleCount || 0)) {
+            active = level
+        }
+    }
+    return active
+})
+
 async function refreshDates() {
     let response = await tripStore.getTripById(_id);
     let tripFromDb = response.data;
@@ -717,9 +737,9 @@ onMounted(async () => {
                         </div>
 
                         <div v-if="trip.loyalty?.enabled && trip.loyalty?.type === 'discount'" class="loyalty-discount-card">
-                            <div class="loyalty-discount-card__row">
+                            <div v-if="trip.loyalty.discount?.baseDiscountPercent" class="loyalty-discount-card__row">
                                 <span class="loyalty-discount-card__label">Базовая скидка</span>
-                                <span class="loyalty-discount-card__value">{{ trip.loyalty.discount?.baseDiscountPercent || 0 }}%<span v-if="firstAvailableCost" class="loyalty-discount-card__hint"> ({{ Math.round(firstAvailableCost.price * (trip.loyalty.discount?.baseDiscountPercent || 0) / 100) }}₽)</span></span>
+                                <span class="loyalty-discount-card__value">{{ trip.loyalty.discount.baseDiscountPercent }}%<span v-if="firstAvailableCost" class="loyalty-discount-card__hint"> ({{ Math.round(firstAvailableCost.price * trip.loyalty.discount.baseDiscountPercent / 100) }}₽)</span></span>
                             </div>
                             <div v-if="tripDates.length < 2" class="loyalty-discount-card__row" style="flex-direction: column; align-items: stretch; gap: 4px;">
                                 <span class="loyalty-discount-card__label">Количество человек в туре</span>
@@ -740,7 +760,7 @@ onMounted(async () => {
                                         <span class="loyalty-discount-card__new-price">
                                             {{ Math.max(0, firstAvailableCost.price - (trip.loyalty.discount?.currentDiscountPerPerson || 0)) }} ₽
                                         </span>
-                                        <span class="loyalty-discount-card__old-price">{{ firstAvailableCost.price }} ₽</span>
+                                        <span v-if="firstAvailableCost.price !== Math.max(0, firstAvailableCost.price - (trip.loyalty.discount?.currentDiscountPerPerson || 0))" class="loyalty-discount-card__old-price">{{ firstAvailableCost.price }} ₽</span>
                                     </span>
                                 </div>
                                 <div class="loyalty-discount-card__row" :class="{ 'loyalty-discount-card__row--max': isMaxDiscount }" style="flex: 1; gap: 4px;">
@@ -771,8 +791,16 @@ onMounted(async () => {
                                     :show-info="false"
                                 />
                             </div>
-                            <div v-for="(level, index) in trip.loyalty.freeServices?.levels" :key="index" class="loyalty-discount-card__row">
-                                <span class="loyalty-discount-card__label">При наборе {{ level.peopleCount }} человек, в подарок вы получите услугу <span class="loyalty-discount-card__accent">«{{ level.service }}»</span></span>
+                            <div
+                                v-for="(level, index) in trip.loyalty.freeServices?.levels"
+                                :key="index"
+                                class="loyalty-discount-card__row"
+                                :class="{ 'loyalty-discount-card__row--achieved': getCustomersCount(selectedDate.billsList) >= Number(level.peopleCount || 0) }"
+                            >
+                                <span class="loyalty-discount-card__label">
+                                    {{ getCustomersCount(selectedDate.billsList) >= Number(level.peopleCount || 0) ? 'Вам доступна бесплатная услуга' : `При наборе ${level.peopleCount} человек, в подарок вы получите услугу` }}
+                                    <span class="loyalty-discount-card__accent">«{{ level.service }}»</span>
+                                </span>
                             </div>
                         </div>
 
@@ -898,169 +926,352 @@ onMounted(async () => {
                 </a-row>
             </a-col>
         </a-row>
-        <a-modal v-model:open="buyDialog" :footer="null" @cancel="refreshDates(trip)">
-            <Form @submit="buyTrip" class="mt-16">
-                <a-row :gutter="[4, 8]" class="mb-8" v-for="(tourist, index) in touristsList" :key="index">
-                    <a-col :span="24"> {{ index + 1 }} турист </a-col>
-                    <a-col :span="24" :md="12">
-                        <Field name="fullname">
-                            <a-input v-model:value="touristsList[index].fullname"
-                                placeholder="Иванов Иван Иванович"></a-input>
-                        </Field>
-                    </a-col>
-                    <a-col :span="24" :md="12">
-                        <Field name="phone">
-                            <a-input v-model:value="touristsList[index].phone" placeholder="791275288874" size="medium"
-                                :controls="false" style="width:100%"></a-input>
-                        </Field>
-                    </a-col>
-                </a-row>
-                <a-row :gutter="[4, 8]">
-                    <a-col :span="24" v-if="trip?.locationNames?.length > 1">
-                        <div class="d-flex direction-column">
-                            Место посадки
-                            <a-select placeholder="г.Глазов" v-model:value="selectedStartLocation">
-                                <a-select-option v-for="item in trip.locationNames"
-                                    :value="item.name"></a-select-option>
-                            </a-select>
-                        </div>
-                    </a-col>
-                    <a-col :span="24">
-                        <div>Даты: <b>
-                                {{ clearData(selectedDate.start) + " - " + clearData(selectedDate.end) }}
-                            </b>
-                        </div>
-
-                        <div>
-                            Туристы:
-                            <b :style="isNoPlaces ? 'color: red' : ''">
-                                {{
-                                    getCustomersCount(selectedDate.billsList) +
-                                    selectedDate.selectedCosts.reduce((acc, cost) => {
-                                        return acc + cost.count;
-                                    }, 0) +
-                                    "/" +
-                                    trip.maxPeople
-                                }}
-                                чел.
-                            </b>
-                        </div>
-                    </a-col>
-                    <a-col :span="24">
-                        <div>Цены:</div>
-                        <div v-if="isInWaitingList && trip?.transports?.length" style="color: #ff6600">
-                            Вы в листе ожидания
-                        </div>
-                        <div class="d-flex space-between align-center"
-                            v-for="cost, index of selectedDate.selectedCosts">
-
-                            <div>
-                                {{ cost.costType }}
-                            </div>
-                            <!-- <div v-if="isInWaitingList">
-                                {{ trip.transports[0].price }} руб.
-                            </div>
-                            <div v-else>{{ cost.cost }} руб.</div> -->
-                            <div>{{ cost.cost }} руб.</div>
-
-                            <div class="d-flex direction-column">
-                                <div> <span style="font-size: 8px">кол-во</span>
-                                    <span style="font-size: 8px" v-if="trip.cost[index].limit"> (
-                                        <span v-if="customersByCostType[cost.costType]"> {{
-                                            customersByCostType[cost.costType] }}/</span>
-                                        {{
-                                            trip.cost[index].limit
-                                        }})</span>
-                                </div>
-                                <a-input-number v-model:value="cost.count" :min="0"
-                                    :disabled="trip.cost[index].limit && customersByCostType[cost.costType] >= trip.cost[index].limit"
-                                    :max="trip.cost[index].limit ? trip.cost[index].limit - customersByCostType[cost.costType] : trip.maxPeople - getCustomersCount(selectedDate.billsList)"
-                                    placeholder="чел">
-                                </a-input-number>
-                            </div>
-                        </div>
-                    </a-col>
-                    <a-col v-if="trip.additionalServices?.length > 0" :span="24">
-                        <div>Дополнительные услуги</div>
-                        <a-row v-for="service of additionalServices" :key="service.index" class="d-flex space-between">
-                            <div class="d-flex align-center">
-                                {{ service.name }}
-                            </div>
-                            <div class="d-flex align-center">
-                                {{ service.price }} руб.
-                            </div>
-                            <div class="d-flex direction-column">
-                                <span style="font-size: 8px;">кол-во</span>
-                                <a-input-number v-model:value="service.count" :min="0" :max="getSelectedUsersCount"
-                                    placeholder="чел"></a-input-number>
-                                <!-- <a-checkbox v-model:checked="service.selected" class="ma-8">добавить</a-checkbox> -->
-                            </div>
-                        </a-row>
-                    </a-col>
-                    <a-col :span="24" class="d-flex direction-column align-end">
-                        <div v-if="trip?.loyalty?.enabled && trip?.loyalty?.type === 'discount' && !trip?.loyalty?.discount?.isFixed">
-                            <div>
-                                Полная стоимость: {{ finalCost }} руб.
-                            </div>
-                            <b>Первый платеж ({{ Math.round(firstPaymentPercentage * 100) }}%): {{ firstPaymentCost }} руб.</b>
-                            <div>
-                              Второй платеж будет доступен после фиксации скидки
-                            </div>
-                        </div>
-                        <div v-else-if="loyaltyDiscountTotal > 0" class="d-flex direction-column align-end">
-                            <div style="text-decoration: line-through; opacity: 0.6;">{{ finalCost }} руб.</div>
-                            <div style="color: #f60; font-size: 0.9em;">Скидка: {{ loyaltyDiscountTotal }} руб.</div>
-                            <b>Итого: {{ discountedFinalCost }} руб.</b>
-                        </div>
-                        <b v-else>Итого: {{ finalCost }} руб.</b>
-                    </a-col>
-
-                    <div v-if="!trip?.canSellPartnerTour && trip.partner">
-                        <h4 class="warning">Наличие мест требует уточнения!</h4>
+        <a-modal
+            v-model:open="buyDialog"
+            :footer="null"
+            @cancel="refreshDates(trip)"
+            :width="trip?.loyalty?.enabled ? 1093 : undefined"
+            :wrapClassName="trip?.loyalty?.enabled ? 'loyalty-modal-wrap' : ''"
+        >
+            <Form @submit="buyTrip" :class="trip?.loyalty?.enabled ? 'lm-form' : 'mt-16'">
+                <!-- ========== LOYALTY ENABLED: new layout ========== -->
+                <template v-if="trip?.loyalty?.enabled">
+                    <div class="lm-header">
+                        Даты: <b class="lm-header__dates">{{ clearData(selectedDate.start) }} - {{ clearData(selectedDate.end) }}</b>
                     </div>
 
+                    <div class="lm-body">
+                        <!-- Left column: prices -->
+                        <div class="lm-col-left">
+                            <div class="lm-price-title">
+                              Наличие мест требует уточнения!
+                            </div>
 
-                    <!-- <a-col :span="24">
-                        <WaitingList v-if="people_amount > 0 || show_old_bus" v-model:selected="selected_bus"
-                            v-model:waiting="waiting_bus" @isUserWaiting="detectIsWaiting"
-                            :selected_seats="selected_seats" :show_old_bus="trip.transports?.length && show_old_bus"
-                            :tripsCount="getCurrentCustomerNumber" :transport="trip.transports ?? []" choise />
-                    </a-col> -->
+                            <div class="lm-price-list">
+                                <div v-for="(cost, index) of selectedDate.selectedCosts" :key="index" class="lm-price-row">
+                                    <div class="lm-price-row__info">
+                                        <div class="lm-price-row__type">{{ cost.costType }}</div>
+                                    </div>
+                                    <div class="lm-counter">
+                                        <button type="button" class="lm-counter__btn"
+                                            :disabled="cost.count <= 0"
+                                            @click="cost.count = Math.max(0, cost.count - 1)">
+                                            <span class="mdi mdi-minus"></span>
+                                        </button>
+                                        <input type="number" class="lm-counter__value"
+                                            :value="cost.count"
+                                            @input="cost.count = Math.max(0, Math.min(Number($event.target.value) || 0, trip.cost[index].limit ? trip.cost[index].limit - (customersByCostType[cost.costType] || 0) : trip.maxPeople - getCustomersCount(selectedDate.billsList)))"
+                                        />
+                                        <button type="button" class="lm-counter__btn"
+                                            :disabled="(trip.cost[index].limit && customersByCostType[cost.costType] >= trip.cost[index].limit) || cost.count >= (trip.cost[index].limit ? trip.cost[index].limit - (customersByCostType[cost.costType] || 0) : trip.maxPeople - getCustomersCount(selectedDate.billsList))"
+                                            @click="cost.count = Math.min(cost.count + 1, trip.cost[index].limit ? trip.cost[index].limit - (customersByCostType[cost.costType] || 0) : trip.maxPeople - getCustomersCount(selectedDate.billsList))">
+                                            <span class="mdi mdi-plus"></span>
+                                        </button>
+                                    </div>
+                                    <div class="lm-price-row__amount">{{ cost.cost }}₽</div>
+                                </div>
+                            </div>
 
-                    <a-col v-if="bus && people_amount > 0" :span="24" class="mb-8">
+                            <template v-if="trip.additionalServices?.length > 0">
+                                <div class="lm-section-label">Дополнительные услуги</div>
+                                <div class="lm-price-list">
+                                    <div v-for="service of additionalServices" :key="service.index" class="lm-price-row">
+                                        <div class="lm-price-row__info">
+                                            <div class="lm-price-row__type">{{ service.name }}</div>
+                                        </div>
+                                        <div class="lm-counter">
+                                            <button type="button" class="lm-counter__btn"
+                                                :disabled="service.count <= 0"
+                                                @click="service.count = Math.max(0, service.count - 1)">
+                                                <span class="mdi mdi-minus"></span>
+                                            </button>
+                                            <input type="number" class="lm-counter__value"
+                                                :value="service.count"
+                                                @input="service.count = Math.max(0, Math.min(Number($event.target.value) || 0, getSelectedUsersCount))"
+                                            />
+                                            <button type="button" class="lm-counter__btn"
+                                                :disabled="service.count >= getSelectedUsersCount"
+                                                @click="service.count = Math.min(service.count + 1, getSelectedUsersCount)">
+                                                <span class="mdi mdi-plus"></span>
+                                            </button>
+                                        </div>
+                                        <div class="lm-price-row__amount">{{ service.price }}₽</div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+
+                        <!-- Right column: tourists -->
+                        <div class="lm-col-right">
+                            <div class="lm-tourists-title">Туристы</div>
+                            <div class="lm-tourists-scroll">
+                                <div v-for="(tourist, index) in touristsList" :key="index" class="lm-tourist">
+                                    <div class="lm-tourist__number">{{ index + 1 }} турист</div>
+                                    <div class="lm-tourist__fields">
+                                        <a-input v-model:value="touristsList[index].fullname" placeholder="Иванов Иван Иванович" />
+                                        <a-input v-model:value="touristsList[index].phone" placeholder="79999999999" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location selector -->
+                    <div v-if="trip?.locationNames?.length > 1" class="lm-location">
+                        <span>Место посадки</span>
+                        <a-select placeholder="г.Глазов" v-model:value="selectedStartLocation" style="width: 100%;">
+                            <a-select-option v-for="item in trip.locationNames" :value="item.name"></a-select-option>
+                        </a-select>
+                    </div>
+
+                    <!-- Loyalty: discount type -->
+                    <div v-if="trip?.loyalty?.type === 'discount'" class="modal-loyalty">
+                        <div class="d-flex" style="gap: 10px; flex-wrap: wrap;">
+                            <div class="modal-loyalty__card" style="flex: 1; min-width: 140px;">
+                                <span class="modal-loyalty__label">Базовая скидка</span>
+                                <span class="modal-loyalty__value">{{ trip.loyalty.discount?.baseDiscountPercent }}%
+                                    <span class="modal-loyalty__hint">({{ baseDiscountPerPerson }}₽)</span>
+                                </span>
+                            </div>
+                            <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 8px; padding: 10px 16px 0 16px; background: rgba(255, 255, 255, 0.5); border-radius: 20px;">
+                                <div class="d-flex space-between align-center">
+                                    <span class="modal-loyalty__label">Доп. скидка</span>
+                                    <span v-if="isMaxDiscount" class="modal-loyalty__max-label">Вам доступна максимальная скидка</span>
+                                </div>
+                                <div class="d-flex" style="align-items: stretch; margin-inline: -16px">
+                                    <div class="modal-loyalty__card" style="flex: 1; flex-direction: column; align-items: stretch; gap: 4px; border-radius: 20px 0 0 20px;">
+                                        <span class="modal-loyalty__label">Количество человек в туре</span>
+                                        <div class="modal-loyalty__progress-wrap">
+                                            <span class="modal-loyalty__progress-text">{{ getCustomersCount(selectedDate.billsList) }} / {{ trip.maxPeople }}</span>
+                                            <a-progress
+                                                :percent="(getCustomersCount(selectedDate.billsList) / trip.maxPeople) * 100"
+                                                :show-info="false"
+                                                :strokeWidth="16"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="modal-loyalty__discount-badge" :class="{ 'modal-loyalty__discount-badge--max': isMaxDiscount }">
+                                        <span class="modal-loyalty__discount-label">Скидка</span>
+                                        <div>
+                                            <span class="modal-loyalty__discount-current">{{ trip.loyalty.discount?.currentDiscountPerPerson || 0 }}₽</span>
+                                            <span class="modal-loyalty__discount-divider"> / {{ trip.loyalty.discount?.maxDiscountPerPerson || 0 }}₽</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loyalty: free_services type -->
+                    <div v-if="trip?.loyalty?.type === 'free_services'" class="modal-loyalty modal-loyalty--free">
+                        <span class="modal-loyalty__section-title">Подарок</span>
+                        <div class="modal-loyalty__card" style="flex-direction: column; align-items: stretch; gap: 4px;">
+                            <span class="modal-loyalty__label">Количество человек в туре</span>
+                            <div class="modal-loyalty__progress-wrap">
+                                <span class="modal-loyalty__progress-text">{{ getCustomersCount(selectedDate.billsList) }} / {{ trip.maxPeople }}</span>
+                                <a-progress
+                                    :percent="(getCustomersCount(selectedDate.billsList) / trip.maxPeople) * 100"
+                                    :show-info="false"
+                                    :strokeWidth="16"
+                                />
+                            </div>
+                        </div>
+                        <div v-if="activeFreeServiceLevel" class="modal-loyalty__free-badge">
+                            Вам доступна бесплатная услуга «{{ activeFreeServiceLevel.service }}»
+                        </div>
+                        <div v-for="(level, index) in trip.loyalty.freeServices?.levels" :key="index">
+                            <div
+                                v-if="getCustomersCount(selectedDate.billsList) < Number(level.peopleCount || 0)"
+                                class="modal-loyalty__free-pending"
+                            >
+                                При наборе {{ level.peopleCount }} человек, в подарок вы получите услугу <span>«{{ level.service }}»</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total cost -->
+                    <div class="modal-loyalty__total">
+                        <div>
+                            <div class="modal-loyalty__total-title">Итоговая цена</div>
+                            <div v-if="trip?.loyalty?.type === 'discount' && !trip?.loyalty?.discount?.isFixed" class="modal-loyalty__total-desc">
+                                Оплата производится в 2 этапа, оплатите часть общей суммы сейчас, оставшуюся часть будет доступна после фиксации скидки, оставшаяся сумма будет пересчитана с учетом скидки
+                            </div>
+                            <div v-else-if="loyaltyDiscountTotal > 0" class="modal-loyalty__total-desc">
+                                Цена пересчитана с учетом скидки
+                            </div>
+                        </div>
+                        <div class="modal-loyalty__total-price">
+                            <span v-if="loyaltyDiscountTotal > 0" class="modal-loyalty__total-final">{{ discountedFinalCost }}₽</span>
+                            <span v-else-if="!trip?.loyalty?.discount?.isFixed && trip?.loyalty?.type === 'discount'" class="modal-loyalty__total-final">{{ firstPaymentCost }}₽</span>
+                            <span v-else class="modal-loyalty__total-final">{{ finalCost }}₽</span>
+                            <span v-if="loyaltyDiscountTotal > 0" class="modal-loyalty__total-old">{{ finalCost }}₽</span>
+                        </div>
+                    </div>
+
+                    <!-- Bus seats -->
+                    <div v-if="bus && people_amount > 0" class="lm-bus">
                         <div>Выберите места</div>
                         <div style="font-size:0.8em; opacity: 0.8;">{{ bus.name }}</div>
                         <Bus @select="updateSeats" v-model:selected_seats="selected_seats" :free_seats="free_seats"
                             :max_count="people_amount" :bus="bus" style="width: 150px;" />
-                    </a-col>
+                    </div>
 
-                    <a-col :span="24">
-                        <div class="d-flex space-around">
-                            <a-button html-type="submit" class="btn" @click="buyNow = false" :disabled="isNoPlaces">
-                                Заказать
-                            </a-button>
-                            <div class="buy-btn" v-if="!trip.partner || trip?.canSellPartnerTour">
+                    <!-- Buttons -->
+                    <div class="lm-actions">
+                        <a-button html-type="submit" class="lm-actions__order" @click="buyNow = false" :disabled="isNoPlaces">
+                            Заказать
+                        </a-button>
+                        <a-button v-if="!trip.partner || trip?.canSellPartnerTour"
+                            html-type="submit" :disabled="isNoPlaces" @click="buyNow = true"
+                            type="primary" class="lm-actions__pay">
+                            Оплатить {{ firstPaymentCost > 0 && firstPaymentPercentage < 1 ? firstPaymentCost + '₽' : '' }}
+                        </a-button>
+                    </div>
+                    <div class="lm-legal">
+                        Выполняя покупки на платформе "Города и веси", вы соглашаетесь с
+                        <b><router-link to="/documents" style="color:#ff6600">офертой</router-link></b>
+                        и <b><router-link to="/documents" style="color:#ff6600">обработкой персональных данных по правилам платформы</router-link></b>
+                    </div>
+                </template>
+
+                <!-- ========== LOYALTY DISABLED: old layout ========== -->
+                <template v-else>
+                    <a-row :gutter="[4, 8]" class="mb-8" v-for="(tourist, index) in touristsList" :key="index">
+                        <a-col :span="24"> {{ index + 1 }} турист </a-col>
+                        <a-col :span="24" :md="12">
+                            <Field name="fullname">
+                                <a-input v-model:value="touristsList[index].fullname"
+                                    placeholder="Иванов Иван Иванович"></a-input>
+                            </Field>
+                        </a-col>
+                        <a-col :span="24" :md="12">
+                            <Field name="phone">
+                                <a-input v-model:value="touristsList[index].phone" placeholder="791275288874" size="medium"
+                                    :controls="false" style="width:100%"></a-input>
+                            </Field>
+                        </a-col>
+                    </a-row>
+                    <a-row :gutter="[4, 8]">
+                        <a-col :span="24" v-if="trip?.locationNames?.length > 1">
+                            <div class="d-flex direction-column">
+                                Место посадки
+                                <a-select placeholder="г.Глазов" v-model:value="selectedStartLocation">
+                                    <a-select-option v-for="item in trip.locationNames"
+                                        :value="item.name"></a-select-option>
+                                </a-select>
+                            </div>
+                        </a-col>
+                        <a-col :span="24">
+                            <div>Даты: <b>
+                                    {{ clearData(selectedDate.start) + " - " + clearData(selectedDate.end) }}
+                                </b>
+                            </div>
+
+                            <div>
+                                Туристы:
+                                <b :style="isNoPlaces ? 'color: red' : ''">
+                                    {{
+                                        getCustomersCount(selectedDate.billsList) +
+                                        selectedDate.selectedCosts.reduce((acc, cost) => {
+                                            return acc + cost.count;
+                                        }, 0) +
+                                        "/" +
+                                        trip.maxPeople
+                                    }}
+                                    чел.
+                                </b>
+                            </div>
+                        </a-col>
+                        <a-col :span="24">
+                            <div>Цены:</div>
+                            <div v-if="isInWaitingList && trip?.transports?.length" style="color: #ff6600">
+                                Вы в листе ожидания
+                            </div>
+                            <div class="d-flex space-between align-center"
+                                v-for="cost, index of selectedDate.selectedCosts">
+
                                 <div>
-                                    <a-button html-type="submit" :disabled="isNoPlaces" @click="buyNow = true"
-                                        type="primary" class="lets_go_btn">
-                                        оплатить
-                                    </a-button>
+                                    {{ cost.costType }}
                                 </div>
-                                <div class="d-flex justify-center">
-                                    <img :src="TinkoffLogo" class="tinkoff-logo">
+                                <div>{{ cost.cost }} руб.</div>
+
+                                <div class="d-flex direction-column">
+                                    <div> <span style="font-size: 8px">кол-во</span>
+                                        <span style="font-size: 8px" v-if="trip.cost[index].limit"> (
+                                            <span v-if="customersByCostType[cost.costType]"> {{
+                                                customersByCostType[cost.costType] }}/</span>
+                                            {{
+                                                trip.cost[index].limit
+                                            }})</span>
+                                    </div>
+                                    <a-input-number v-model:value="cost.count" :min="0"
+                                        :disabled="trip.cost[index].limit && customersByCostType[cost.costType] >= trip.cost[index].limit"
+                                        :max="trip.cost[index].limit ? trip.cost[index].limit - customersByCostType[cost.costType] : trip.maxPeople - getCustomersCount(selectedDate.billsList)"
+                                        placeholder="чел">
+                                    </a-input-number>
                                 </div>
                             </div>
+                        </a-col>
+                        <a-col v-if="trip.additionalServices?.length > 0" :span="24">
+                            <div>Дополнительные услуги</div>
+                            <a-row v-for="service of additionalServices" :key="service.index" class="d-flex space-between">
+                                <div class="d-flex align-center">
+                                    {{ service.name }}
+                                </div>
+                                <div class="d-flex align-center">
+                                    {{ service.price }} руб.
+                                </div>
+                                <div class="d-flex direction-column">
+                                    <span style="font-size: 8px;">кол-во</span>
+                                    <a-input-number v-model:value="service.count" :min="0" :max="getSelectedUsersCount"
+                                        placeholder="чел"></a-input-number>
+                                </div>
+                            </a-row>
+                        </a-col>
+
+                        <a-col :span="24" class="d-flex direction-column align-end">
+                            <b>Итого: {{ finalCost }} руб.</b>
+                        </a-col>
+
+                        <div v-if="!trip?.canSellPartnerTour && trip.partner">
+                            <h4 class="warning">Наличие мест требует уточнения!</h4>
                         </div>
-                        <div style="font-size:0.8em; padding-top:10px">
-                            Выполняя покупки на платформе "Города и веси", вы соглашаетесь с
-                            <b><router-link to="/documents" style="color:#ff6600">офертой</router-link></b>
-                            и <b>
-                                <router-link to="/documents" style="color:#ff6600"> обработкой персональных
-                                    данных по правилам платформы</router-link>
-                            </b>
-                        </div>
-                    </a-col>
-                </a-row>
+
+                        <a-col v-if="bus && people_amount > 0" :span="24" class="mb-8">
+                            <div>Выберите места</div>
+                            <div style="font-size:0.8em; opacity: 0.8;">{{ bus.name }}</div>
+                            <Bus @select="updateSeats" v-model:selected_seats="selected_seats" :free_seats="free_seats"
+                                :max_count="people_amount" :bus="bus" style="width: 150px;" />
+                        </a-col>
+
+                        <a-col :span="24">
+                            <div class="d-flex space-around">
+                                <a-button html-type="submit" class="btn" @click="buyNow = false" :disabled="isNoPlaces">
+                                    Заказать
+                                </a-button>
+                                <div class="buy-btn" v-if="!trip.partner || trip?.canSellPartnerTour">
+                                    <div>
+                                        <a-button html-type="submit" :disabled="isNoPlaces" @click="buyNow = true"
+                                            type="primary" class="lets_go_btn">
+                                            оплатить
+                                        </a-button>
+                                    </div>
+                                    <div class="d-flex justify-center">
+                                        <img :src="TinkoffLogo" class="tinkoff-logo">
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="font-size:0.8em; padding-top:10px">
+                                Выполняя покупки на платформе "Города и веси", вы соглашаетесь с
+                                <b><router-link to="/documents" style="color:#ff6600">офертой</router-link></b>
+                                и <b>
+                                    <router-link to="/documents" style="color:#ff6600"> обработкой персональных
+                                        данных по правилам платформы</router-link>
+                                </b>
+                            </div>
+                        </a-col>
+                    </a-row>
+                </template>
             </Form>
         </a-modal>
 
@@ -1186,7 +1397,7 @@ img {
   &__label {
     font-weight: 500;
     font-size: 12px;
-    line-height: 100%;
+    line-height: 120%;
     color: #434343;
   }
 
@@ -1270,6 +1481,15 @@ img {
     background: #f60;
   }
 
+  &__row--achieved {
+    background: #f60;
+
+    .loyalty-discount-card__label,
+    .loyalty-discount-card__accent {
+      color: #fff;
+    }
+  }
+
   &__subtitle--max {
     color: #fff;
     opacity: 1;
@@ -1278,6 +1498,548 @@ img {
   &__accent {
     color: #f60;
     font-weight: 600;
+  }
+}
+
+// ====== Loyalty modal new layout ======
+.lm-form {
+  padding: 0;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.lm-header {
+  font-weight: 500;
+  font-size: 24px;
+  color: #8c8c8c;
+  margin-bottom: 20px;
+
+  &__dates {
+    font-weight: 600;
+    color: #f60;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
+}
+
+.lm-body {
+  display: flex;
+  gap: 10px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.lm-col-left, .lm-col-right {
+  border-radius: 20px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.5);
+  flex: 1;
+  min-width: 0;
+}
+
+.lm-section-label {
+  font-weight: 500;
+  font-size: 13px;
+  color: #434343;
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+
+.lm-price-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lm-price-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 16px;
+  padding: 12px 16px;
+  background: #fff;
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__type {
+    font-weight: 500;
+    font-size: 16px;
+    color: #8c8c8c;
+  }
+
+  &__limit {
+    font-size: 10px;
+    color: #999;
+  }
+
+  &__amount {
+    font-weight: 600;
+    font-size: 20px;
+    color: #f60;
+    white-space: nowrap;
+    min-width: 70px;
+    text-align: right;
+  }
+}
+
+.lm-counter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  border-radius: 43px;
+  padding: 6px;
+  height: 36px;
+  background: #f3f3f3;
+
+  &__btn {
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #f60;
+    color: #fff;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: opacity 0.2s, background 0.2s;
+    padding: 0;
+    line-height: 1;
+
+    &:hover:not(:disabled) {
+      background: #f60;
+      color: #fff;
+    }
+
+    &:disabled {
+      border-color: #d9d9d9;
+      color: #d9d9d9;
+      cursor: not-allowed;
+    }
+  }
+
+  &__value {
+    font-weight: 600;
+    font-size: 16px;
+    color: #434343;
+    width: 32px;
+    text-align: center;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 0;
+    -moz-appearance: textfield;
+    appearance: textfield;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+}
+
+.lm-price-title, .lm-tourists-title {
+  font-weight: 400;
+  font-size: 16px;
+  text-align: center;
+  color: #434343;
+  margin-bottom: 10px;
+}
+
+.lm-tourists-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 318px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.lm-tourist {
+  border-radius: 16px;
+  padding: 10px 14px;
+  background: #fff;
+
+  &__number {
+    font-weight: 500;
+    font-size: 16px;
+    color: #8c8c8c;
+    margin-bottom: 4px;
+  }
+
+  &__fields {
+    display: flex;
+    gap: 4px;
+
+    @media (max-width: 480px) {
+      flex-direction: column;
+    }
+
+    :deep(.ant-input) {
+      border-radius: 51px;
+      padding: 8px;
+      width: 224px;
+      height: 33px;
+      background: #f6f6f6;
+      border: none;
+
+      @media (max-width: 768px) {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.lm-location {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.lm-bus {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.lm-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 40px;
+
+  &__order {
+    border: 2px solid #f60 !important;
+    border-radius: 39px !important;
+    padding: 10px 20px !important;
+    min-width: 224px !important;
+    height: 44px !important;
+    font-weight: 600 !important;
+    font-size: 20px!important;
+    color: #f60 !important;
+    line-height: 1 !important;
+    text-transform: capitalize !important;
+    background: transparent !important;
+  }
+
+  &__pay {
+    border: 2px solid #f60 !important;
+    border-radius: 39px !important;
+    padding: 10px 20px !important;
+    min-width: 224px !important;
+    height: 44px !important;
+    font-weight: 600 !important;
+    font-size: 20px!important;
+    color: #fff !important;
+    line-height: 1 !important;
+    text-transform: capitalize !important;
+    background: #f60 !important;
+  }
+}
+
+.lm-legal {
+  font-weight: 400;
+  font-size: 12px;
+  text-align: center;
+  color: #434343;
+  margin-top: 20px;
+}
+
+.modal-loyalty {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+
+  &--free {
+    border-radius: 20px;
+    padding: 10px 0 0;
+    width: 100%;
+    max-width: 1053px;
+    min-height: 123px;
+    background: rgba(255, 255, 255, 0.5);
+
+    @media (max-width: 768px) {
+      border-radius: 14px;
+      padding: 8px 0 0;
+    }
+  }
+
+  :deep(.ant-progress) {
+    margin: 0;
+
+    .ant-progress-outer {
+      border-radius: 8px !important;
+      padding: 0 !important;
+      max-width: 310px;
+      height: 20px !important;
+      background: #efefef !important;
+      display: flex;
+
+      @media (max-width: 768px) {
+        max-width: 100%;
+      }
+    }
+
+    .ant-progress-inner {
+      border-radius: 6px !important;
+      height: 100% !important;
+      background: transparent !important;
+    }
+
+    .ant-progress-bg {
+      border-radius: 6px !important;
+      height: 100% !important;
+    }
+  }
+
+  &__section-title {
+    font-weight: 500;
+    font-size: 16px;
+    text-align: left;
+    color: #8c8c8c;
+    padding-left: 10px;
+  }
+
+  &__card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 20px;
+    padding: 16px;
+    background: #fff;
+    flex: 1;
+  }
+
+  &__label {
+    font-weight: 500;
+    font-size: 16px;
+    color: #8c8c8c;
+  }
+
+  &__value {
+    font-weight: 600;
+    font-size: 16px;
+    color: #f60;
+    white-space: nowrap;
+  }
+
+  &__hint {
+    font-weight: 400;
+    color: #363636;
+  }
+
+  &__max-label {
+    font-weight: 500;
+    font-size: 11px;
+    color: #f60;
+  }
+
+  &__progress-wrap {
+    position: relative;
+    width: 100%;
+  }
+
+  &__progress-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    z-index: 1;
+    border-radius: 6px;
+    padding: 0 8px;
+    min-width: 46px;
+    height: 16px;
+    background: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+    font-size: 10px;
+    line-height: 1;
+    text-align: center;
+    color: #3d3d3d;
+    white-space: nowrap;
+  }
+
+  &__discount-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    border-radius: 0 20px 20px 0;
+    padding: 10px 16px;
+    background: #f60;
+    color: #fff;
+    min-width: 100px;
+
+    &--max {
+      background: #f60;
+    }
+  }
+
+  &__discount-label {
+    font-weight: 500;
+    font-size: 16px;
+    color: #fff;
+  }
+
+  &__discount-current {
+    font-weight: 600;
+    font-size: 24px;
+    color: #fff;
+  }
+
+  &__discount-divider {
+    font-weight: 400;
+    font-size: 24px;
+    color: #fff;
+    opacity: 0.6;
+  }
+
+  &__free-badge {
+    border-radius: 12px;
+    padding: 14px 16px;
+    background: #f60;
+    color: #fff;
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  &__free-pending {
+    border-radius: 12px;
+    padding: 10px 12px;
+    background: #ffffff;
+    margin-top: 4px;
+    font-weight: 500;
+    font-size: 16px;
+    color: #8c8c8c;
+
+    span {
+      color: #f60;
+    }
+  }
+
+  &__total {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-radius: 20px;
+    padding: 16px;
+    background: #fff;
+    margin-top: 10px;
+    gap: 16px;
+  }
+
+  &__total-title {
+    font-weight: 600;
+    font-size: 20px;
+    color: #f60;
+  }
+
+  &__total-desc {
+    font-weight: 500;
+    font-size: 16px;
+    color: #8c8c8c;
+    max-width: 800px;
+  }
+
+  &__total-price {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    white-space: nowrap;
+  }
+
+  &__total-final {
+    font-weight: 600;
+    font-size: 24px;
+    color: #f60;
+  }
+
+  &__total-old {
+    font-weight: 400;
+    font-size: 16px;
+    text-decoration: line-through;
+    color: #b4b4b4;
+  }
+}
+</style>
+
+<!-- Global styles for loyalty modal wrapper (ant-design modal renders outside scoped component) -->
+<style lang="scss">
+.loyalty-modal-wrap {
+  .ant-modal {
+    max-width: 1093px;
+    width: 95% !important;
+
+    @media (max-width: 768px) {
+      width: 100% !important;
+      max-width: 100%;
+      margin: 0;
+      top: 0;
+      padding: 0;
+    }
+  }
+
+  .ant-modal-content {
+    border-radius: 40px;
+    padding: 20px;
+    box-shadow: 0 6px 17px 0 rgba(0, 0, 0, 0.16);
+    background: #f3f3f3;
+
+    @media (max-width: 768px) {
+      border-radius: 20px;
+      padding: 14px;
+    }
+
+    @media (max-width: 480px) {
+      border-radius: 12px;
+      padding: 10px;
+    }
+  }
+
+  .ant-modal-body {
+    padding: 0;
+  }
+
+  .ant-modal-close {
+    top: 20px;
+    right: 20px;
+    border-radius: 12px;
+    padding: 4px;
+    width: 32px;
+    height: 32px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #f60;
+
+    span {
+      display: flex;
+      color: #f60;
+    }
+
+    .ant-modal-close-x {
+      color: #f60;
+    }
+
+    @media (max-width: 768px) {
+      top: 14px;
+      right: 14px;
+    }
   }
 }
 </style>
