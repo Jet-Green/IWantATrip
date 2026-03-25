@@ -50,8 +50,8 @@ onMounted(() => {
     <!-- <Explanation />
     <ButtonsRow />
     <FindTrip />
-    <CityGuide id="guide"/>
-     -->
+    -->
+    <CityGuide id="guide" />
     <Footer />
   </div>
 </template>

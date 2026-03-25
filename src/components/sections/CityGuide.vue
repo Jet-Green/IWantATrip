@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { useLocations } from '../../stores/locations'
 
 const locationStore = useLocations()
@@ -11,13 +11,13 @@ let cards = ref([
     isShow: true,
 
   },
-    {
-    title: "Маршруты",
-    icon: "mdi-routes",
-    route: "/tracks-list",
-    isShow: true,
+  // {
+  //   title: "Маршруты",
+  //   icon: "mdi-routes",
+  //   route: "/tracks-list",
+  //   isShow: true,
 
-  },
+  // },
   {
     title: "Экскурсии",
     icon: "mdi-crowd",
@@ -25,7 +25,7 @@ let cards = ref([
     isShow: true,
 
   },
-   {
+  {
     title: "Гиды",
     icon: "mdi-account-tie-voice-outline",
     route: "/guides",
@@ -62,7 +62,7 @@ let cards = ref([
   //   isShow: true,
 
   // },
- 
+
   // {
   //   title: "Аренда",
   //   icon: "mdi-tent",
@@ -87,28 +87,20 @@ let cards = ref([
 </script>
 
 <template>
-  <a-row class="pa-16 justify-center guide">
-    <a-col :xs="24" :md="20" :xl="16">
-      <h2 style="text-align: center; margin-bottom: 0">В городе</h2>
-      <h3 class="d-flex justify-center align-center">
+  <a-row class="guide justify-center">
+    <a-col :xs="22" :md="20" :xl="16">
+      <h2 class="text-center">В городе</h2>
+      <h3 class="city-name text-center">
         {{ locationStore.location?.shortName || 'Выберите город' }}
       </h3>
 
-      <a-row :gutter="[8, 8]" class="justify-center">
-        <!-- <h3 class="in-work">
-          В разработке</h3> -->
+      <a-row :gutter="[12, 12]" class="justify-center">
         <a-col v-for="(card, index) in cards" :key="index" :xs="12" :md="8">
-          <div class="d-flex" v-if="!card.isShow">
-          </div>
-          <router-link :to="card.isShow ? card.route : ''">
-            <a-card hoverable class="guide-card" :class="{ opacity: !card.isShow }">
-              <div>
-                <span class="mdi" :class="card.icon"> </span>
-                <span>
-                  {{ card.title }}
-                </span>
-              </div>
-            </a-card>
+          <router-link :to="card.isShow ? card.route : ''" class="guide-card" :class="{ opacity: !card.isShow }">
+            <div class="card-content">
+              <span class="mdi" :class="card.icon"></span>
+              <span class="card-title">{{ card.title }}</span>
+            </div>
           </router-link>
         </a-col>
       </a-row>
@@ -116,56 +108,74 @@ let cards = ref([
   </a-row>
 </template>
 <style lang="scss" scoped>
-.guide-select {
-  font-size: 20px;
-  margin-bottom: 16px;
-
-}
-
-.guide-card {
-  font-size: clamp(1rem, 0.7983rem + 0.4202vw, 1.25rem);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  border-radius: 10px;
-  aspect-ratio: 4/1;
-  position: relative;
-  padding: 8px;
-
-
-
-  .mdi {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    font-size: clamp(1.5rem, 1.1975rem + 0.6303vw, 1.875rem);
-
-  }
-}
-
-.in-work {
-  position: absolute;
-  top: 80%;
-  left: 40%;
-  border: solid 1px #ff6600;
-  padding: 16px;
-  border-radius: 5px;
-  color: #ff6600;
-  transform: rotate(-5deg);
-  z-index: 99;
-  font-size: clamp(1.125rem, 0.6563rem + 1.5vw, 1.5rem);
-
-}
-
-.opacity {
-
-  background: lightgray;
+.text-center {
+  text-align: center;
 }
 
 .guide {
-  position: relative;
-  background: linear-gradient(#34313e, #64bed8);
-  color: white;
+  padding: 40px 0;
+}
+
+h2 {
+  font-size: clamp(1rem, -0.1932rem + 3.4091vw, 2.5rem);
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.city-name {
+  font-size: clamp(1.25rem, 0.3864rem + 2.2727vw, 2rem);
+  font-weight: 400;
+  color: #FF6600;
+  margin-bottom: 24px;
+}
+
+.guide-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 16px;
+  padding: 24px 16px;
+  cursor: pointer;
+  transition: all 0.28s ease;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+
+  &:hover {
+    border-color: #FF6600;
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &.opacity {
+    background: #f5f5f5;
+    cursor: default;
+    pointer-events: none;
+  }
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+
+  .mdi {
+    font-size: 2rem;
+    color: #63BED8;
+  }
+
+  .card-title {
+    font-size: clamp(0.875rem, 0.5rem + 0.9375vw, 1rem);
+    font-weight: 600;
+  }
 }
 </style>
