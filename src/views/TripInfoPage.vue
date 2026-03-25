@@ -290,6 +290,14 @@ let getStartLocationNames = computed(() => {
 
 let startLocationsList = computed(() => getStartLocationNames.value.join(', '))
 
+let isCurrentLocationMatchStart = computed(() => {
+    const currentLocation = locationStore.location?.shortName
+    if (!currentLocation || !getStartLocationNames.value.length) return false
+    return getStartLocationNames.value.some(name => 
+        name.toLowerCase() === currentLocation.toLowerCase()
+    )
+})
+
 function setWidgetDestination(location) {
     const setValue = () => {
         const widgetInput = document.querySelector('#widget-container input[name="avia_to"]');
@@ -696,7 +704,7 @@ onMounted(async () => {
                                 @click="buyTripDialog()">
                                 Купить
                             </a-button>
-                            <a-button class="ml-8" @click="transportDialog = !transportDialog"
+                            <a-button v-if="!isCurrentLocationMatchStart" class="ml-8" @click="transportDialog = !transportDialog"
                                 style="border-radius: 20px;">
                                 {{ transportDialog ? 'Скрыть' : 'Как добраться' }}
                             </a-button>
