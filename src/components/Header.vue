@@ -213,12 +213,12 @@ onMounted(() => {
         </div>
         <div @click="toComponentFromMenu('Contacts')" class="route ma-8">контакты</div>
         <div @click="toComponentFromMenu('Documents')" class="route ma-8">документы</div>
-        <div style="text-align: center">
-          <a href="https://vk.com/gorodaivesi_udm" target="_blank"><img class="ma-4" src="../assets/icons/vk.svg"
-              alt="" /></a>
+        <div style="text-align: center; display: flex; flex-direction: row;">
+          <a style="height: 32px; width: 32px;" href="https://vk.com/gorodaivesi_udm" target="_blank"><img class="ma-4"
+              src="../assets/icons/vk.svg" alt="" /></a>
 
-          <a href="https://t.me/gorodaivesi_ru" target="_blank"><img class="ma-4" src="../assets/icons/telegram.svg"
-              alt="" /></a>
+          <a style="height: 32px; width: 32px;" href="https://max.ru/join/BUKtZsgjwb2QbPWPLQl3XrzVveiJHLiApZdq_6M66w8"
+            target="_blank"><img class="ma-4" src="../assets/icons/max.svg" alt="" /></a>
         </div>
         <img src="../assets/images/logo.webp" class="ma-8" style="height: 60px; cursor: pointer" alt=""
           @click="toComponentFromMenu('Landing')" />
