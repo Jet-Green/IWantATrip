@@ -757,8 +757,9 @@ onMounted(async () => {
                     </a-col>
                     <a-col :xs="24">
 
-                        <router-link :to="`/contract?shopcode=${trip.tinkoffContract.ShopCode}`">
-                            Предоставляется компанией
+                        <router-link :to="`/contract?shopcode=${trip.tinkoffContract.ShopCode}`" style="text-decoration:
+                            underline; color: #ff6f60;">
+                            Тур предоставляется компанией
                         </router-link>
                         <span v-html="trip.description"></span>
                     </a-col>
