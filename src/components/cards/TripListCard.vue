@@ -50,6 +50,7 @@ function getDate() {
         <div class="content">
           <div class="title"> {{ trip.name }} </div>
           <div class="date-row">
+            <span v-if="trip?.privetMirPaymentLink" class="mdi mdi-bank card-vtb-icon" title="Оплата с кэшбеком Привет МИР"></span>
             <span class="date-text">{{ getDate() }}</span>
             <span class="trip-type-small">{{ trip.tripType }}</span>
           </div>
@@ -124,6 +125,11 @@ function getDate() {
     font-size: clamp(1rem, 0.6023rem + 1.1364vw, 1.3rem);
     font-weight: 900;
     text-overflow: ellipsis;
+  }
+
+  .card-vtb-icon {
+    font-size: 18px;
+    color: #ff9900;
   }
 }
 </style>

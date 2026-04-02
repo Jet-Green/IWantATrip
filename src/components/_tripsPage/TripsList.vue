@@ -52,7 +52,7 @@ onMounted(async () => {
     <div class="wrapper" ref="wrapper">
       <a-row type="flex" justify="center">
         <a-col :xs="22" :md="20" :xl="18">
-          <BackButtonAdaptive :backRoute="'/'" />
+          <BackButtonAdaptive :backRoute="{ path: '/' }" />
 
           <h2 class="title">Туры</h2>
         </a-col>

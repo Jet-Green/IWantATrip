@@ -293,7 +293,7 @@ let startLocationsList = computed(() => getStartLocationNames.value.join(', '))
 let isCurrentLocationMatchStart = computed(() => {
     const currentLocation = locationStore.location?.shortName
     if (!currentLocation || !getStartLocationNames.value.length) return false
-    return getStartLocationNames.value.some(name => 
+    return getStartLocationNames.value.some(name =>
         name.toLowerCase() === currentLocation.toLowerCase()
     )
 })
@@ -443,6 +443,9 @@ async function buyTrip() {
             }
 
             if (bill.cart.length != 0) {
+                if (trip.value.privetMirPaymentLink) {
+                    window.open(trip.value.privetMirPaymentLink, '_blank');
+                }
                 userStore
                     .buyTrip(selectedDate.value._id, bill)
                     .then(async (response) => {
@@ -704,8 +707,8 @@ onMounted(async () => {
                                 @click="buyTripDialog()">
                                 Купить
                             </a-button>
-                            <a-button v-if="!isCurrentLocationMatchStart" class="ml-8" @click="transportDialog = !transportDialog"
-                                style="border-radius: 20px;">
+                            <a-button v-if="!isCurrentLocationMatchStart" class="ml-8"
+                                @click="transportDialog = !transportDialog" style="border-radius: 20px;">
                                 {{ transportDialog ? 'Скрыть' : 'Как добраться' }}
                             </a-button>
                         </div>
@@ -753,6 +756,10 @@ onMounted(async () => {
                         <div id="widget-container"></div>
                     </a-col>
                     <a-col :xs="24">
+
+                        <router-link :to="`/contract?shopcode=${trip.tinkoffContract.ShopCode}`">
+                            Предоставляется компанией
+                        </router-link>
                         <span v-html="trip.description"></span>
                     </a-col>
                     <a-col :xs="24" v-if="trip.dayByDayDescription.length">
@@ -954,7 +961,6 @@ onMounted(async () => {
                         <h4 class="warning">Наличие мест требует уточнения!</h4>
                     </div>
 
-
                     <!-- <a-col :span="24">
                         <WaitingList v-if="people_amount > 0 || show_old_bus" v-model:selected="selected_bus"
                             v-model:waiting="waiting_bus" @isUserWaiting="detectIsWaiting"
@@ -972,9 +978,16 @@ onMounted(async () => {
                     <a-col :span="24">
                         <div class="d-flex space-around">
                             <a-button html-type="submit" class="btn" @click="buyNow = false" :disabled="isNoPlaces">
-                                Заказать
+                                <span v-if="!trip?.privetMirPaymentLink">
+                                    Заказать
+                                </span>
+                                <span v-else>
+                                    Купить с кэшбеком Привет МИР <span class="mdi mdi-bank card-vtb-icon"
+                                        title="Оплата с кэшбеком Привет МИР"></span>
+                                </span>
                             </a-button>
-                            <div class="buy-btn" v-if="!trip.partner || trip?.canSellPartnerTour">
+                            <div class="buy-btn"
+                                v-if="!trip.privetMirPaymentLink && (!trip.partner || trip?.canSellPartnerTour)">
                                 <div>
                                     <a-button html-type="submit" :disabled="isNoPlaces" @click="buyNow = true"
                                         type="primary" class="lets_go_btn">
@@ -1002,6 +1015,12 @@ onMounted(async () => {
     </div>
 </template>
 <style lang="scss" scoped>
+.card-vtb-icon {
+    // font-size: 18px;
+    color: #ff9900;
+    margin-left: 4px;
+}
+
 .pretty-tag {
     border-radius: 12px;
     font-size: 14px;

@@ -75,6 +75,7 @@ let form = ref({
     rejected: false,
     tripRegion: "",
     places: [],
+    privetMirPaymentLink: "",
 });
 // для a-select с регионами тура
 let tripRegions = computed(() => appStore.appState[0]?.tripRegions.map((name) => { return { value: name } }) ?? [])
@@ -125,7 +126,7 @@ const delPhoto = () => {
 };
 
 function submit() {
-    description.value = description.value.split("<p><br></p>").join("");
+    description.value = description.value?.split("<p><br></p>").join("");
     form.value.description = description.value;
     form.value.isModerated = false
     form.value.rejected = false
@@ -307,6 +308,7 @@ let formSchema = yup.object({
     // returnConditions: yup.string().required("заполните поле"),
     notNecessarily: yup.string(),
     tripRegion: yup.string().required("заполните поле"),
+    privetMirPaymentLink: yup.string().matches(/^https:\/\/.*/, "ссылка должна начинаться с https://"),
 })
 </script>
 <template>
@@ -596,6 +598,18 @@ let formSchema = yup.object({
                                     ['link'], ['clean']
                                 ]
                                     " />
+                        </a-col>
+                        <a-col :span="24">
+                          <Field name="privetMirPaymentLink" v-slot="{ value, handleChange }" v-model="form.privetMirPaymentLink">
+                            Ссылка на оплату с кэшбеком Привет МИР
+                            <a-input placeholder="https://" @update:value="handleChange" :value="value" />
+                          </Field>
+                          <Transition name="fade">
+                            <ErrorMessage name="privetMirPaymentLink" class="error-message" />
+                          </Transition>
+                          <span class="text-caption">
+                            *оставьте поле пустым, если вы не участвуете в этой программе
+                          </span>
                         </a-col>
                         <a-col :span="24" class="d-flex justify-center">
                             <a-button :disabled="!meta.valid" class="lets_go_btn ma-36" type="primary"

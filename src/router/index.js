@@ -360,6 +360,11 @@ const router = createRouter({
           component: () => import('../components/admin/CreateBus.vue'),
         },
         {
+          path: '/contract',
+          name: 'ContractPage',
+          component: () => import('../views/ContractPage.vue')
+        },
+        {
           path: '/trip',
           name: 'TripInfoPage',
           component: () => import('../views/TripInfoPage.vue')
