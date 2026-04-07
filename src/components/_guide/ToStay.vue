@@ -3,7 +3,7 @@ import BackButton from "../BackButton.vue";
 
 import { useRouter } from 'vue-router';
 import { useGuide } from "../../stores/guide";
-import { onMounted,ref } from "vue";
+import { onMounted, ref } from "vue";
 import { getElementAtEvent } from "vue-chartjs";
 
 const router = useRouter()
@@ -15,7 +15,8 @@ let container = ref()
 useGuideStore.fetchElementsByQuery('watch');
 
 onMounted(() => {
-  let url = 'https://cpa.ostrovok.ru/static/widget/scripts/e9061465c5e7db51e59c37ff9304d6ef.js'
+  // let url = 'https://cpa.ostrovok.ru/static/widget/scripts/e9061465c5e7db51e59c37ff9304d6ef.js'
+  const url = 'https://cpa.ostrovok.ru/static/widget/scripts/e340b9fc323b9e6ff12de3503282647d.js';
   let ostrovok = document.createElement('script')
   ostrovok.setAttribute('src', url)
   container = document.getElementById('contain')
@@ -33,7 +34,7 @@ onMounted(() => {
         </h2>
       </a-col>
     </a-row>
-    <a-row class="mt-16" type="flex" justify="center" >
+    <a-row class="mt-16" type="flex" justify="center">
       <a-col :xs="22" :lg="16">
         <div id="contain"></div>
       </a-col>
@@ -45,6 +46,4 @@ body {
   display: flex;
   flex-direction: column;
 }
-
-
 </style>
