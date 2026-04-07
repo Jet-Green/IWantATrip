@@ -2,11 +2,21 @@
 import { RouterLink, useRouter } from 'vue-router';
 
 import BackButton from "../BackButton.vue";
+import { useLocations } from '../../stores/locations';
+
 const backRoute = { name: 'Landing', hash: '#guide' };
 const router = useRouter()
+const locationStore = useLocations()
 
 let toLink = () => {
-  window.open('https://yandex.ru/maps/transport', '_blank')
+  console.log(locationStore.location);
+  if (locationStore.location?._id) {
+    const lat = locationStore.location.coordinates[0]
+    const lon = locationStore.location.coordinates[1]
+    window.open(`https://yandex.ru/maps/transport?ll=${lat}%2C${lon}&z=15`, '_blank')
+  } else {
+    window.open('https://yandex.ru/maps/transport')
+  }
 }
 function routeTo(buttonRoute) {
 
@@ -150,4 +160,3 @@ function routeTo(buttonRoute) {
   text-transform: lowercase;
 }
 </style>
-
