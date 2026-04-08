@@ -410,7 +410,7 @@ let formSchema = yup.object({
   // returnConditions: yup.string().required("заполните поле"),
   notNecessarily: yup.string(),
   tripRegion: yup.string().required("заполните поле"),
-  privetMirPaymentLink: yup.string().matches(/^https:\/\/.*/, "ссылка должна начинаться с https://"),
+  privetMirPaymentLink: yup.string().nullable().test("optional-url", "ссылка должна начинаться с https://", value => !value || /^https:\/\/.*/.test(value)),
   // https://vee-validate.logaretm.com/v4/examples/array-fields/
 });
 onMounted(async () => {
