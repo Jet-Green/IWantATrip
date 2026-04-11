@@ -4,6 +4,11 @@ import { useAuth } from "../stores/auth";
 import { useRouter, useRoute, RouterView } from "vue-router";
 import BackButton from "../components/BackButton.vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import TripService from "../service/TripService";
+import ExcursionService from "../service/ExcursionService";
+import PlaceService from "../service/PlaceService";
+import TrackService from "../service/TrackService";
+import GuideService from "../service/GuideService";
 
 
 const userStore = useAuth();
@@ -23,6 +28,14 @@ let isManager = userStore.user.roles.includes('manager')
 let current = ref([route.path]);
 
 let showBookingNotifications = ref(false)
+
+let moderationCounts = ref({
+  trips: null,
+  excursions: null,
+  places: null,
+  tracks: null,
+  guides: null,
+})
 
 const open = ref(true);
 
@@ -45,8 +58,38 @@ watch(() => route.path, (newRoute) => {
   current.value[0] = newRoute
 })
 
-onMounted(async () => {
+const toArrayLength = (value) => {
+  if (Array.isArray(value)) {
+    return value.length
+  }
 
+  return 0
+}
+
+const fetchModerationCounts = async () => {
+  const results = await Promise.allSettled([
+    TripService.findForModeration(),
+    ExcursionService.getExcursionsOnModeration(),
+    PlaceService.getAll(1, { isModerated: false, isRejected: false }),
+    TrackService.getAll(1, { isModerated: false, isRejected: false }),
+    GuideService.getGuides(1, { search: "", isModerated: false, isRejected: false, isHidden: false }),
+  ])
+
+  const [tripsRes, excursionsRes, placesRes, tracksRes, guidesRes] = results
+
+  moderationCounts.value = {
+    trips: tripsRes.status === "fulfilled" ? toArrayLength(tripsRes.value?.data) : 0,
+    excursions: excursionsRes.status === "fulfilled" ? toArrayLength(excursionsRes.value?.data) : 0,
+    places: placesRes.status === "fulfilled" ? toArrayLength(placesRes.value?.data) : 0,
+    tracks: tracksRes.status === "fulfilled" ? toArrayLength(tracksRes.value?.data?.tracks) : 0,
+    guides: guidesRes.status === "fulfilled" ? toArrayLength(guidesRes.value?.data) : 0,
+  }
+}
+
+onMounted(async () => {
+  if (isAdmin || isManager) {
+    await fetchModerationCounts()
+  }
 })
 </script>
 
@@ -130,13 +173,58 @@ onMounted(async () => {
               <template #title>
                 Модерация
               </template>
-              <a-menu-item key="/cabinet/moderation-trips/not-moderated-trips">Туры</a-menu-item>
+              <a-menu-item key="/cabinet/moderation-trips/not-moderated-trips">
+                <span class="moderation-menu-item">
+                  Туры
+                  <a-badge
+                    v-if="moderationCounts.trips > 0"
+                    class="moderation-count-badge"
+                    :count="moderationCounts.trips"
+                  />
+                </span>
+              </a-menu-item>
               <a-menu-item key="/cabinet/catalog-trips-moderation/on-moderation">Каталог</a-menu-item>
               <a-menu-item key="/cabinet/moderation-companions">Попутчики</a-menu-item>
-              <a-menu-item key="/cabinet/moderation-excursions">Экскурсии</a-menu-item>
-              <a-menu-item key="/cabinet/moderation-places/on-moderation">Места</a-menu-item>
-              <a-menu-item key="/cabinet/moderation-tracks/on-moderation">Маршруты</a-menu-item>
-              <a-menu-item key="/cabinet/moderation-guides/on-moderation">Гиды</a-menu-item>
+              <a-menu-item key="/cabinet/moderation-excursions">
+                <span class="moderation-menu-item">
+                  Экскурсии
+                  <a-badge
+                    v-if="moderationCounts.excursions > 0"
+                    class="moderation-count-badge"
+                    :count="moderationCounts.excursions"
+                  />
+                </span>
+              </a-menu-item>
+              <a-menu-item key="/cabinet/moderation-places/on-moderation">
+                <span class="moderation-menu-item">
+                  Места
+                  <a-badge
+                    v-if="moderationCounts.places > 0"
+                    class="moderation-count-badge"
+                    :count="moderationCounts.places"
+                  />
+                </span>
+              </a-menu-item>
+              <a-menu-item key="/cabinet/moderation-tracks/on-moderation">
+                <span class="moderation-menu-item">
+                  Маршруты
+                  <a-badge
+                    v-if="moderationCounts.tracks > 0"
+                    class="moderation-count-badge"
+                    :count="moderationCounts.tracks"
+                  />
+                </span>
+              </a-menu-item>
+              <a-menu-item key="/cabinet/moderation-guides/on-moderation">
+                <span class="moderation-menu-item">
+                  Гиды
+                  <a-badge
+                    v-if="moderationCounts.guides > 0"
+                    class="moderation-count-badge"
+                    :count="moderationCounts.guides"
+                  />
+                </span>
+              </a-menu-item>
             </a-sub-menu>
             <a-menu-item key="/cabinet/orders">Заказы</a-menu-item>
             <a-menu-item v-if="isAdmin" key="/cabinet/interface">Интерфейс</a-menu-item>
@@ -174,4 +262,24 @@ onMounted(async () => {
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.moderation-menu-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.moderation-count-badge {
+  :deep(.ant-badge-count) {
+    background: #ff4d00;
+    color: #fff !important;
+    min-width: 16px;
+    height: 16px;
+    line-height: 16px;
+    padding: 0 5px;
+    font-size: 10px;
+    font-weight: 700;
+    box-shadow: 0 0 0 1px rgba(255, 77, 0, 0.35);
+  }
+}
+</style>
