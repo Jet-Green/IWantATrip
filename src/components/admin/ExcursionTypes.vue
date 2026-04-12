@@ -103,7 +103,7 @@ onMounted(async () => {
       </a-input>
     </a-col>
     <a-col :span="24" :lg="8">
-      Тип места
+      Направление
       <a-input placeholder="медицина" size="large" v-model:value="directionTypeStr" class="w-100">
       </a-input>
     </a-col>
