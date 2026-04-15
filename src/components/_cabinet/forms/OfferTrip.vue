@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 
 import { useRoute } from 'vue-router'
 import { useRouter } from 'vue-router'

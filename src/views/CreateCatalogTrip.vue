@@ -209,6 +209,7 @@ const delPhoto = () => {
   delPhotoDialog.value = false;
   localStorage.setItem('createTripImages', JSON.stringify(previews.value))
 };
+
 function selectStartLocation(selected) {
   for (let l of possibleLocations.value) {
     // l.value - name

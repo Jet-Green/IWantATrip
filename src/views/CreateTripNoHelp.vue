@@ -257,6 +257,20 @@ const delPhoto = () => {
   delPhotoDialog.value = false;
   localStorage.setItem('createTripImages', JSON.stringify(previews.value))
 };
+
+function persistCreatingTrip() {
+  localStorage.setItem("CreatingTrip", JSON.stringify(form));
+}
+
+function clearProgramDescription() {
+  description.value = "";
+  form.description = "";
+  nextTick(() => {
+    quill.value?.setHTML?.("");
+    persistCreatingTrip();
+  });
+}
+
 function selectStartLocation(selected) {
   for (let l of possibleLocations.value) {
     // l.value - name
@@ -645,7 +659,14 @@ onMounted(async () => {
             </a-col>
 
             <a-col :span="24" style="display: flex; flex-direction: column">
-              Описание программы
+              <div class="d-flex align-center justify-space-between flex-wrap" style="gap: 8px; margin-bottom: 10px;">
+                <span>Описание программы</span>
+                <a-button type="default" size="small" @click="clearProgramDescription"
+                  style="border-radius: 10px; display: inline-flex; align-items: center; gap: 6px">
+                  <span class="mdi mdi-16px mdi-close" aria-hidden="true"></span>
+                  Очистить
+                </a-button>
+              </div>
 
               <QuillEditor class="ql-editor" theme="snow" ref="quill" v-model:content="description" contentType="html"
                 :toolbar="[

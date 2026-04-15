@@ -245,6 +245,14 @@ const clearData = (dataString) => {
     return dataFromString;
 };
 
+function clearProgramDescription() {
+    description.value = "";
+    form.value.description = "";
+    nextTick(() => {
+        quill.value?.setHTML?.("");
+    });
+}
+
 onMounted(() => {
     tripStore.getById(router.currentRoute.value.query._id)
         .then(async (response) => {
@@ -519,7 +527,15 @@ let formSchema = yup.object({
                         </a-col>
 
                         <a-col :span="24" style="display: flex; flex-direction: column">
-                            Описание программы
+                            <div class="d-flex align-center justify-space-between flex-wrap"
+                                style="gap: 8px; margin-bottom: 10px;">
+                                <span>Описание программы</span>
+                                <a-button type="default" size="small" @click="clearProgramDescription"
+                                    style="border-radius: 10px; display: inline-flex; align-items: center; gap: 6px">
+                                    <span class="mdi mdi-16px mdi-close" aria-hidden="true"></span>
+                                    Очистить
+                                </a-button>
+                            </div>
 
                             <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html"
                                 :toolbar="[['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }], [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }], ['link'], ['clean']]" />

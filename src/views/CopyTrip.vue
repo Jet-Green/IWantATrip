@@ -309,6 +309,7 @@ watch(description, (newValue) => {
         q.focus();
     });
 });
+
 watch(start, () => {
     // округлить, чтобы при поиске мы точно попадали
     if (start.value) {
