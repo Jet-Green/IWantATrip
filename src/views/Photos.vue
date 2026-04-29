@@ -1,8 +1,11 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 
 import BackButton from "../components/BackButton.vue";
 import { usePhotos } from "../stores/photos.js";
+
+const router = useRouter()
 
 const photosStore = usePhotos();
 const getLocalImages = ref([])
@@ -68,7 +71,18 @@ onMounted(async () => {
         <BackButton :backRoute="backRoute" />
         <a-row class="d-flex justify-center">
             <a-col :xs="22" :lg="16">
-                <h2 class="photos-page__title">Фотобанк</h2>
+                <div class="photos-page__title-row">
+                    <h2 class="photos-page__title">Фотобанк</h2>
+                    <a-button
+                        type="primary"
+                        shape="round"
+                        class="photos-page__add-btn"
+                        @click="router.push({ name: 'UploadPhotobank' })"
+                    >
+                        <span class="mdi mdi-plus photos-page__add-icon" aria-hidden="true"></span>
+                        Добавить фото
+                    </a-button>
+                </div>
             </a-col>
             <a-col :xs="22" :lg="16">
                 <a-spin :spinning="loading" tip="Загрузка…" size="large" class="photos-page__spin">
@@ -105,8 +119,33 @@ onMounted(async () => {
     min-height: calc(100vh - 80px);
 }
 
-.photos-page__title {
+.photos-page__title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 16px;
     margin-bottom: 16px;
+}
+
+.photos-page__title {
+    margin: 0;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.photos-page__add-btn.ant-btn {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 100px;
+    padding-inline: 18px 22px;
+}
+
+.photos-page__add-icon {
+    font-size: 18px;
+    line-height: 1;
 }
 
 .photos-page__spin {

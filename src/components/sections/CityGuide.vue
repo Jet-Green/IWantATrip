@@ -53,15 +53,14 @@ let cards = ref([
     isShow: true,
 
   },
+  {
+    title: "Фотобанк",
+    icon: "mdi-camera-outline",
+    route: "/photos",
+    isShow: true,
 
+  },
 
-  // {
-  //   title: "Фотобанк",
-  //   icon: "mdi-camera",
-  //   route: "/photos",
-  //   isShow: true,
-
-  // },
 
   // {
   //   title: "Аренда",
