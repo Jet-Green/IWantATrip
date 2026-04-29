@@ -413,7 +413,7 @@ const router = createRouter({
         {
           path: '/photos',
           name: 'Photos',
-          component: () => import('../components/_guide/Photos.vue')
+          component: () => import('../views/Photos.vue')
         },
         {
           path: '/excursions',
@@ -484,6 +484,11 @@ const router = createRouter({
               path: 'me',
               name: "Me",
               component: () => import('../components/_cabinet/AboutClient.vue'),
+            },
+            {
+              path: 'upload-photobank',
+              name: 'UploadPhotobank',
+              component: () => import('../views/UploadPhotobankPhotos.vue'),
             },
             {
               path: 'booking-trips',

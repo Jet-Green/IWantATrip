@@ -6,5 +6,9 @@ export const usePhotos = defineStore('photos', () => {
         return await PhotosService.getPhotos(page)
     }
 
-    return { getPhotos }
+    async function uploadPhotobankPhotos(formData) {
+        return await PhotosService.uploadPhotobankPhotos(formData)
+    }
+
+    return { getPhotos, uploadPhotobankPhotos }
 })

@@ -135,6 +135,17 @@ let setDocLink = (link) => {
                     на сопровождение несовершеннолетнего, не достигшего 14-и летнего возраста
                 </div>
                 <a-divider></a-divider>
+                <div class="d-flex align-center">
+                    <div class="circle"></div>
+                    <div style="font-weight: 700; cursor: pointer;"
+                        @click="setDocLink('/documents/Лицензионное соглашение на публикацию изображений в фотобанке.pdf')">
+                        Лицензионное соглашение на публикацию изображений в фотобанке
+                    </div>
+                </div>
+                <div class="description">
+                    Условия размещения пользовательских изображений в фотобанке платформы «Города и веси»
+                </div>
+                <a-divider></a-divider>
 
 
 

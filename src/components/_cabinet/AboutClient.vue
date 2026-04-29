@@ -57,6 +57,12 @@ const actionCards = [
     route: "/create-track",
     group: "content",
   },
+  {
+    title: "Загрузить фото в фотобанк",
+    description: "Поделитесь фотографиями любимых мест",
+    route: "/cabinet/upload-photobank",
+    group: "content",
+  },
 ];
 
 const actionGroups = [
@@ -100,7 +106,7 @@ onMounted(() => {
           <a-card class="card">
             <h2>
               <a-avatar style="margin-right: 8px; font-size: large; font-weight: bold" size="large">{{ user.fullname[0]
-              }}</a-avatar>
+                }}</a-avatar>
               {{ user.fullname }}
             </h2>
             <p>

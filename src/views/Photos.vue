@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 
-import BackButton from "../BackButton.vue";
-import { usePhotos } from "../../stores/photos.js";
+import BackButton from "../components/BackButton.vue";
+import { usePhotos } from "../stores/photos.js";
 
 const photosStore = usePhotos();
 let getLocalImages = ref([])
@@ -29,7 +29,7 @@ let morePhotos = async () => {
 
 onMounted(async () => {
     let res = await photosStore.getPhotos(page.value)
-    getLocalImages.value = res.data 
+    getLocalImages.value = res.data
 })
 
 </script>
@@ -41,8 +41,8 @@ onMounted(async () => {
                 <h2>Фотобанк</h2>
             </a-col>
             <a-col :xs="22" :lg="16">
-                <masonry-wall class="masonry-wall" :items="getLocalImages" :ssr-columns="1" :column-width="200"
-                    :gap="8">
+                <masonry-wall class="masonry-wall" :items="getLocalImages" :ssr-columns="1" :column-width="400"
+                    :gap="16">
                     <template #default="{ item, index }">
                         <div>
                             <img :preview="{ visible: false }" :src="item" @click="show(index)" loading="lazy" />
