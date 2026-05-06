@@ -14,11 +14,13 @@ import { useRouter } from 'vue-router';
 import { useAppState } from "../../stores/appState";
 import { useAuth } from '../../stores/auth';
 import { usePlaces } from '../../stores/place';
+import { usePhotos } from '../../stores/photos.js';
 import PlaceService from '../../service/PlaceService';
 
 const appStore = useAppState();
 const userStore = useAuth();
 const placeStore = usePlaces();
+const photosStore = usePhotos();
 const router = useRouter();
 const customMapContainer = ref(null)
 let customMap = null
@@ -61,10 +63,154 @@ const targetIndex = ref(null);
 const delPhotoDialog = ref(false);
 // cropper
 let visibleCropperModal = ref(false);
-let previews = ref([]);
-// отправляем на сервер
-let images = []; // type: blob
+/** @type {import('vue').Ref<Array<{ kind: 'file'; preview: string; blob: Blob } | { kind: 'photobank'; preview: string; url: string }>>} */
+const photoEntries = ref([]);
 
+const photobankModalOpen = ref(false);
+const photobankUrls = ref([]);
+const photobankPage = ref(1);
+const photobankHasMore = ref(false);
+const photobankLoading = ref(false);
+const photobankLoadingMore = ref(false);
+const photobankSearchQuery = ref('');
+const photobankSearchActive = ref(false);
+const selectedPhotobankUrls = ref([]);
+
+function parsePhotosPayload(res) {
+  const d = res?.data;
+  if (d && Array.isArray(d.urls) && typeof d.hasMore === 'boolean') {
+    return { urls: d.urls, hasMore: d.hasMore };
+  }
+  if (Array.isArray(d)) {
+    return { urls: d, hasMore: d.length > 0 };
+  }
+  return { urls: [], hasMore: false };
+}
+
+function persistPhotoEntries() {
+  const urls = photoEntries.value.filter((e) => e.kind === 'photobank').map((e) => e.url);
+  localStorage.setItem('createPlacePhotobankUrls', JSON.stringify(urls));
+}
+
+async function loadPhotobankBrowsePage(pageNum) {
+  photobankLoading.value = true;
+  try {
+    const res = await photosStore.getPhotos(pageNum);
+    const { urls, hasMore } = parsePhotosPayload(res);
+    photobankUrls.value = urls;
+    photobankPage.value = pageNum;
+    photobankHasMore.value = hasMore;
+    photobankSearchActive.value = false;
+  } catch {
+    message.error('Не удалось загрузить фотобанк');
+  } finally {
+    photobankLoading.value = false;
+  }
+}
+
+async function loadPhotobankSearchPage(pageNum) {
+  const q = photobankSearchQuery.value.trim();
+  if (!q) {
+    await loadPhotobankBrowsePage(1);
+    return;
+  }
+  photobankLoading.value = true;
+  try {
+    const res = await photosStore.searchPhotos(q, pageNum);
+    const { urls, hasMore } = parsePhotosPayload(res);
+    photobankUrls.value = urls;
+    photobankPage.value = pageNum;
+    photobankHasMore.value = hasMore;
+    photobankSearchActive.value = true;
+  } catch {
+    message.error('Не удалось выполнить поиск');
+  } finally {
+    photobankLoading.value = false;
+  }
+}
+
+function resetPhotobankModalState() {
+  photobankSearchQuery.value = '';
+  photobankSearchActive.value = false;
+  selectedPhotobankUrls.value = [];
+  photobankPage.value = 1;
+  photobankUrls.value = [];
+  photobankHasMore.value = false;
+}
+
+function openPhotobankModal() {
+  photobankModalOpen.value = true;
+}
+
+watch(photobankModalOpen, (open) => {
+  if (open) {
+    resetPhotobankModalState();
+    loadPhotobankBrowsePage(1);
+  }
+});
+
+function runPhotobankSearch() {
+  selectedPhotobankUrls.value = [];
+  if (!photobankSearchQuery.value.trim()) {
+    loadPhotobankBrowsePage(1);
+    return;
+  }
+  loadPhotobankSearchPage(1);
+}
+
+function clearPhotobankSearch() {
+  photobankSearchQuery.value = '';
+  selectedPhotobankUrls.value = [];
+  loadPhotobankBrowsePage(1);
+}
+
+async function loadMorePhotobank() {
+  if (photobankLoadingMore.value || !photobankHasMore.value) return;
+  photobankLoadingMore.value = true;
+  try {
+    const nextPage = photobankPage.value + 1;
+    const res = photobankSearchActive.value
+      ? await photosStore.searchPhotos(photobankSearchQuery.value.trim(), nextPage)
+      : await photosStore.getPhotos(nextPage);
+    const { urls: chunk, hasMore } = parsePhotosPayload(res);
+    if (chunk.length) {
+      photobankUrls.value = [...photobankUrls.value, ...chunk];
+      photobankPage.value = nextPage;
+    }
+    photobankHasMore.value = chunk.length ? hasMore : false;
+  } catch {
+    message.error('Не удалось подгрузить фото');
+  } finally {
+    photobankLoadingMore.value = false;
+  }
+}
+
+function isPhotobankUrlSelected(url) {
+  return selectedPhotobankUrls.value.includes(url);
+}
+
+function togglePhotobankSelect(url) {
+  const i = selectedPhotobankUrls.value.indexOf(url);
+  if (i === -1) {
+    selectedPhotobankUrls.value = [...selectedPhotobankUrls.value, url];
+  } else {
+    selectedPhotobankUrls.value = selectedPhotobankUrls.value.filter((u) => u !== url);
+  }
+}
+
+function addSelectedPhotobankToPlace() {
+  const urls = [...selectedPhotobankUrls.value];
+  if (!urls.length) {
+    message.warning('Выберите хотя бы одно фото');
+    return;
+  }
+  for (const url of urls) {
+    photoEntries.value.push({ kind: 'photobank', url, preview: url });
+  }
+  persistPhotoEntries();
+  photobankModalOpen.value = false;
+  message.success(urls.length === 1 ? 'Фото добавлено' : `Добавлено фото: ${urls.length}`);
+}
 
 const form = reactive({
   name: '',
@@ -217,17 +363,43 @@ const fetchAddressSuggestions = async (query) => {
 }
 
 async function uploadPlaceImages(_id) {
-  let imagesFormData = new FormData();
-  for (let i = 0; i < images.length; i++) {
-    imagesFormData.append(
-      "place-image",
-      new File([images[i]], _id + '_' + Date.now() + "_" + i + ".jpg"),
-      _id + '_' + Date.now() + "_" + i + ".jpg"
-    );
+  const fd = new FormData();
+  let fileIndex = 0;
+  const photobankUrlsToPush = [];
+
+  for (const entry of photoEntries.value) {
+    if (entry.kind === 'file') {
+      const name = `${_id}_${Date.now()}_${fileIndex}.jpg`;
+      fd.append('place-image', new File([entry.blob], name), name);
+      fileIndex++;
+    } else if (entry.kind === 'photobank') {
+      photobankUrlsToPush.push(entry.url);
+    }
   }
-  let res = await PlaceService.uploadPlaceImages(imagesFormData)
-  localStorage.removeItem('createPlaceImages')
-  return res
+
+  let uploadOk = true;
+
+  if (fileIndex > 0) {
+    try {
+      const res = await PlaceService.uploadPlaceImages(fd);
+      uploadOk = res.status == 200;
+    } catch {
+      uploadOk = false;
+    }
+  }
+
+  if (photobankUrlsToPush.length) {
+    try {
+      const res2 = await PlaceService.pushPhotobankImageUrls(_id, photobankUrlsToPush);
+      uploadOk = uploadOk && res2.status == 200;
+    } catch {
+      uploadOk = false;
+    }
+  }
+
+  localStorage.removeItem('createPlaceImages');
+  localStorage.removeItem('createPlacePhotobankUrls');
+  return { status: uploadOk ? 200 : 400 };
 }
 
 async function submit() {
@@ -253,7 +425,7 @@ async function submit() {
       const placeId = response.data._id
       let uploadOk = true
 
-      if (images.length > 0) {
+      if (photoEntries.value.length > 0) {
         try {
           let res = await uploadPlaceImages(placeId)
           uploadOk = res.status == 200
@@ -265,6 +437,7 @@ async function submit() {
 
       localStorage.removeItem('createPlaceForm')
       localStorage.removeItem('createPlaceImages')
+      localStorage.removeItem('createPlacePhotobankUrls')
       createdPlaceName.value = form.name
       message.config({ duration: 2, top: "70vh" })
       message.success("Место создано!")
@@ -282,6 +455,11 @@ async function submit() {
 }
 
 function clearForm() {
+  for (const e of photoEntries.value) {
+    if (e.kind === 'file' && e.preview?.startsWith('blob:')) {
+      URL.revokeObjectURL(e.preview);
+    }
+  }
   Object.assign(form, {
     name: '',
     location: { name: "", shortName: "", type: "Point", coordinates: [] },
@@ -295,10 +473,10 @@ function clearForm() {
     category: '',
     phone: ''
   });
-  images = [];
-  previews.value = [];
+  photoEntries.value = [];
   localStorage.removeItem('createPlaceForm')
   localStorage.removeItem('createPlaceImages')
+  localStorage.removeItem('createPlacePhotobankUrls')
 }
 
 function closeUsePlacePrompt() {
@@ -319,23 +497,39 @@ function continueToCreateTrack() {
 
 
 function addPreview(blob) {
-  // imagesFormData.append("image", blob, `product-${previews.value.length}`);
   visibleCropperModal.value = false;
-  images.push(blob);
-  previews.value.push(URL.createObjectURL(blob));
-  localStorage.setItem('createPlaceImages', JSON.stringify(previews.value))
+  photoEntries.value.push({
+    kind: 'file',
+    blob,
+    preview: URL.createObjectURL(blob),
+  });
+  persistPhotoEntries();
 }
+
+function openDelPhoto(i) {
+  targetIndex.value = i;
+  delPhotoDialog.value = true;
+}
+
 const delPhoto = () => {
-  previews.value.splice(targetIndex.value, 1);
-  images.splice(targetIndex.value, 1);
+  const i = targetIndex.value;
+  if (i === null || i === undefined) return;
+  const entry = photoEntries.value[i];
+  if (entry?.kind === 'file' && entry.preview?.startsWith('blob:')) {
+    URL.revokeObjectURL(entry.preview);
+  }
+  photoEntries.value.splice(i, 1);
   delPhotoDialog.value = false;
-  localStorage.setItem('createPlaceImages', JSON.stringify(previews.value))
+  persistPhotoEntries();
 };
 
 function handleImgError(i) {
-  previews.value.splice(i, 1)
-  images.splice(i, 1)
-  localStorage.setItem('createPlaceImages', JSON.stringify(previews.value))
+  const entry = photoEntries.value[i];
+  if (entry?.kind === 'file' && entry.preview?.startsWith('blob:')) {
+    URL.revokeObjectURL(entry.preview);
+  }
+  photoEntries.value.splice(i, 1);
+  persistPhotoEntries();
 }
 
 
@@ -397,9 +591,24 @@ watch(form, (newForm) => {
   localStorage.setItem('createPlaceForm', JSON.stringify(newForm))
 })
 onMounted(() => {
-  previews.value = []
+  photoEntries.value = [];
   if (localStorage.getItem('createPlaceForm')) {
-    Object.assign(form, JSON.parse(localStorage.getItem('createPlaceForm')))
+    Object.assign(form, JSON.parse(localStorage.getItem('createPlaceForm')));
+  }
+  const rawPb = localStorage.getItem('createPlacePhotobankUrls');
+  if (rawPb) {
+    try {
+      const urls = JSON.parse(rawPb);
+      if (Array.isArray(urls)) {
+        for (const u of urls) {
+          if (typeof u === 'string' && u.trim()) {
+            photoEntries.value.push({ kind: 'photobank', url: u, preview: u });
+          }
+        }
+      }
+    } catch {
+      /* ignore */
+    }
   }
 })
 
@@ -560,14 +769,26 @@ onBeforeUnmount(() => {
             <a-col :xs="24">
               Фотографии
               <div class="d-flex" style="overflow-x: scroll">
-                <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
-                  @click="delPhotoDialog = true;
-                  targetIndex = i;" @error="handleImgError(i)" />
+                <div
+                  v-for="(entry, i) in photoEntries"
+                  :key="`${entry.kind}-${i}-${entry.preview}`"
+                  class="create-place-photo-thumb-wrap ma-4"
+                  @click="openDelPhoto(i)"
+                >
+                  <img :src="entry.preview" alt="" class="create-place-photo-thumb" @error="handleImgError(i)" />
+                  <span v-if="entry.kind === 'photobank'" class="create-place-photo-badge">фотобанк</span>
+                </div>
               </div>
-              <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
-                <span class="mdi mdi-12px mdi-plus"></span>
-                Добавить фото
-              </a-button>
+              <div class="create-place-photos-actions">
+                <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
+                  <span class="mdi mdi-12px mdi-plus"></span>
+                  Добавить фото
+                </a-button>
+                <a-button type="dashed" block class="ma-8" @click="openPhotobankModal">
+                  <span class="mdi mdi-image-multiple-outline mdi-18px" style="margin-right: 6px" aria-hidden="true"></span>
+                  Из фотобанка
+                </a-button>
+              </div>
             </a-col>
             <a-col :span="24" class="d-flex justify-center">
               <a-button class="lets_go_btn ma-36" type="primary" html-type="submit"
@@ -578,6 +799,66 @@ onBeforeUnmount(() => {
         </Form>
         <a-modal v-model:open="visibleCropperModal" :footer="null" :destroyOnClose="true">
           <ImageCropper :aspectRatio="2 / 1" @addImage="addPreview" />
+        </a-modal>
+        <a-modal
+          v-model:open="photobankModalOpen"
+          title="Выберите фото из фотобанка"
+          width="min(920px, 94vw)"
+          :footer="null"
+          :destroyOnClose="true"
+        >
+          <div class="create-place-photobank-toolbar">
+            <a-input-search
+              v-model:value="photobankSearchQuery"
+              placeholder="Поиск по URL, ключу или подписи"
+              allow-clear
+              enter-button="Найти"
+              size="large"
+              @search="runPhotobankSearch"
+            />
+            <a-button v-if="photobankSearchActive || photobankSearchQuery.trim()" type="link" class="create-place-photobank-all" @click="clearPhotobankSearch">
+              Все фото
+            </a-button>
+          </div>
+          <a-spin :spinning="photobankLoading">
+            <div
+              v-if="!photobankLoading && !photobankUrls.length"
+              class="create-place-photobank-empty"
+            >
+              {{ photobankSearchActive ? 'Ничего не найдено' : 'В фотобанке пока нет фотографий' }}
+            </div>
+            <template v-else-if="!photobankLoading && photobankUrls.length">
+              <div class="create-place-photobank-grid">
+                <div
+                  v-for="(url, idx) in photobankUrls"
+                  :key="`${url}-${idx}`"
+                  class="create-place-photobank-cell"
+                  :class="{ 'create-place-photobank-cell--selected': isPhotobankUrlSelected(url) }"
+                  role="button"
+                  tabindex="0"
+                  @click="togglePhotobankSelect(url)"
+                  @keydown.enter.prevent="togglePhotobankSelect(url)"
+                >
+                  <img :src="url" alt="" loading="lazy" />
+                  <span class="create-place-photobank-check mdi mdi-check-bold" aria-hidden="true"></span>
+                </div>
+              </div>
+              <div v-if="photobankHasMore" class="create-place-photobank-more">
+                <a-button shape="round" :loading="photobankLoadingMore" @click="loadMorePhotobank">
+                  ещё
+                </a-button>
+              </div>
+            </template>
+          </a-spin>
+          <div class="create-place-photobank-footer">
+            <span class="create-place-photobank-count">Выбрано: {{ selectedPhotobankUrls.length }}</span>
+            <div class="create-place-photobank-footer-btns">
+              <a-button @click="photobankModalOpen = false">Отмена</a-button>
+              <a-button type="primary" :disabled="!selectedPhotobankUrls.length" @click="addSelectedPhotobankToPlace">
+                Добавить выбранные
+              </a-button>
+            </div>
+          </div>
         </a-modal>
         <a-modal v-model:open="delPhotoDialog" :footer="null">
           <h3>Удалить фото?</h3>
@@ -606,6 +887,153 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+.create-place-photos-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.create-place-photobank-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-bottom: 16px;
+}
+
+.create-place-photobank-toolbar :deep(.ant-input-search) {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.create-place-photobank-all {
+  flex-shrink: 0;
+  padding-inline: 4px;
+}
+
+.create-place-photobank-empty {
+  text-align: center;
+  padding: 40px 16px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.create-place-photobank-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: 10px;
+  max-height: 52vh;
+  overflow-y: auto;
+  padding: 4px 2px 12px;
+}
+
+.create-place-photobank-cell {
+  position: relative;
+  border: 2px solid #e8e8e8;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #fafafa;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.create-place-photobank-cell:hover {
+  border-color: #ff6600;
+}
+
+.create-place-photobank-cell:focus-visible {
+  outline: 2px solid #ff6600;
+  outline-offset: 2px;
+}
+
+.create-place-photobank-cell--selected {
+  border-color: #ff6600;
+  box-shadow: 0 0 0 1px rgba(255, 102, 0, 0.35);
+}
+
+.create-place-photobank-cell img {
+  width: 100%;
+  height: 112px;
+  object-fit: cover;
+  display: block;
+}
+
+.create-place-photobank-check {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: #ccc;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+.create-place-photobank-cell--selected .create-place-photobank-check {
+  background: #ff6600;
+  color: #fff;
+}
+
+.create-place-photobank-more {
+  display: flex;
+  justify-content: center;
+  padding-top: 12px;
+}
+
+.create-place-photobank-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.create-place-photobank-count {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.create-place-photobank-footer-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.create-place-photo-thumb-wrap {
+  position: relative;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.create-place-photo-thumb {
+  max-width: 200px;
+  max-height: 140px;
+  width: auto;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.create-place-photo-badge {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  text-transform: lowercase;
+}
+
 .create-place-hint {
   margin: -6px 0 16px;
   font-size: 14px;

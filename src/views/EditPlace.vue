@@ -12,11 +12,13 @@ import { useAppState } from "../stores/appState"
 import BackButton from "../components/BackButton.vue"
 import { useAuth } from "../stores/auth"
 import { usePlaces } from "../stores/place"
+import { usePhotos } from "../stores/photos.js"
 import PlaceService from "../service/PlaceService"
 
 const appStore = useAppState()
 const userStore = useAuth()
 const placeStore = usePlaces()
+const photosStore = usePhotos()
 const router = useRouter()
 const route = useRoute()
 
@@ -47,8 +49,157 @@ let visibleCropperModal = ref(false)
 let previews = ref([])
 // отправляем на сервер
 let images = [] // type: blob
-// images from server
+// images from server (+ новые URL из фотобанка до сохранения)
 let oldImages = ref([])
+
+const photobankModalOpen = ref(false)
+const photobankUrls = ref([])
+const photobankPage = ref(1)
+const photobankHasMore = ref(false)
+const photobankLoading = ref(false)
+const photobankLoadingMore = ref(false)
+const photobankSearchQuery = ref("")
+const photobankSearchActive = ref(false)
+const selectedPhotobankUrls = ref([])
+
+function parsePhotosPayload(res) {
+  const d = res?.data
+  if (d && Array.isArray(d.urls) && typeof d.hasMore === "boolean") {
+    return { urls: d.urls, hasMore: d.hasMore }
+  }
+  if (Array.isArray(d)) {
+    return { urls: d, hasMore: d.length > 0 }
+  }
+  return { urls: [], hasMore: false }
+}
+
+async function loadPhotobankBrowsePage(pageNum) {
+  photobankLoading.value = true
+  try {
+    const res = await photosStore.getPhotos(pageNum)
+    const { urls, hasMore } = parsePhotosPayload(res)
+    photobankUrls.value = urls
+    photobankPage.value = pageNum
+    photobankHasMore.value = hasMore
+    photobankSearchActive.value = false
+  } catch {
+    message.error("Не удалось загрузить фотобанк")
+  } finally {
+    photobankLoading.value = false
+  }
+}
+
+async function loadPhotobankSearchPage(pageNum) {
+  const q = photobankSearchQuery.value.trim()
+  if (!q) {
+    await loadPhotobankBrowsePage(1)
+    return
+  }
+  photobankLoading.value = true
+  try {
+    const res = await photosStore.searchPhotos(q, pageNum)
+    const { urls, hasMore } = parsePhotosPayload(res)
+    photobankUrls.value = urls
+    photobankPage.value = pageNum
+    photobankHasMore.value = hasMore
+    photobankSearchActive.value = true
+  } catch {
+    message.error("Не удалось выполнить поиск")
+  } finally {
+    photobankLoading.value = false
+  }
+}
+
+function resetPhotobankModalState() {
+  photobankSearchQuery.value = ""
+  photobankSearchActive.value = false
+  selectedPhotobankUrls.value = []
+  photobankPage.value = 1
+  photobankUrls.value = []
+  photobankHasMore.value = false
+}
+
+function openPhotobankModal() {
+  photobankModalOpen.value = true
+}
+
+watch(photobankModalOpen, (open) => {
+  if (open) {
+    resetPhotobankModalState()
+    loadPhotobankBrowsePage(1)
+  }
+})
+
+function runPhotobankSearch() {
+  selectedPhotobankUrls.value = []
+  if (!photobankSearchQuery.value.trim()) {
+    loadPhotobankBrowsePage(1)
+    return
+  }
+  loadPhotobankSearchPage(1)
+}
+
+function clearPhotobankSearch() {
+  photobankSearchQuery.value = ""
+  selectedPhotobankUrls.value = []
+  loadPhotobankBrowsePage(1)
+}
+
+async function loadMorePhotobank() {
+  if (photobankLoadingMore.value || !photobankHasMore.value) return
+  photobankLoadingMore.value = true
+  try {
+    const nextPage = photobankPage.value + 1
+    const res = photobankSearchActive.value
+      ? await photosStore.searchPhotos(photobankSearchQuery.value.trim(), nextPage)
+      : await photosStore.getPhotos(nextPage)
+    const { urls: chunk, hasMore } = parsePhotosPayload(res)
+    if (chunk.length) {
+      photobankUrls.value = [...photobankUrls.value, ...chunk]
+      photobankPage.value = nextPage
+    }
+    photobankHasMore.value = chunk.length ? hasMore : false
+  } catch {
+    message.error("Не удалось подгрузить фото")
+  } finally {
+    photobankLoadingMore.value = false
+  }
+}
+
+function isPhotobankUrlSelected(url) {
+  return selectedPhotobankUrls.value.includes(url)
+}
+
+function togglePhotobankSelect(url) {
+  const i = selectedPhotobankUrls.value.indexOf(url)
+  if (i === -1) {
+    selectedPhotobankUrls.value = [...selectedPhotobankUrls.value, url]
+  } else {
+    selectedPhotobankUrls.value = selectedPhotobankUrls.value.filter((u) => u !== url)
+  }
+}
+
+function addSelectedPhotobankToEdit() {
+  const urls = [...selectedPhotobankUrls.value]
+  if (!urls.length) {
+    message.warning("Выберите хотя бы одно фото")
+    return
+  }
+  let added = 0
+  for (const url of urls) {
+    if (!oldImages.value.includes(url)) {
+      oldImages.value.push(url)
+      added++
+    }
+  }
+  if (!added && urls.length) {
+    message.info("Эти фото уже в списке")
+  } else if (added) {
+    message.success(added === 1 ? "Фото добавлено" : `Добавлено фото: ${added}`)
+  }
+  photobankModalOpen.value = false
+  selectedPhotobankUrls.value = []
+}
 
 // для customLocation, так как нет реактивности в v-model="form.location.coordinates[index]"
 let lon = ref()
@@ -107,9 +258,10 @@ async function submit() {
   // добавить дату и автора
   // create -> upload-images
 
-  if (!isLocationValid) {
+  if (!isLocationValid.value) {
     message.config({ duration: 3, top: "70vh" })
     message.warning("Укажите широту и долготу!")
+    return
   }
 
   let toSend = { ...form }
@@ -130,6 +282,11 @@ async function submit() {
     clearForm()
   }
   function clearForm() {
+    for (const pr of previews.value) {
+      if (typeof pr === "string" && pr.startsWith("blob:")) {
+        URL.revokeObjectURL(pr)
+      }
+    }
     Object.assign(form, {
       name: "",
       location: { name: "", shortName: "", type: "Point", coordinates: [] },
@@ -156,9 +313,17 @@ async function submit() {
   if (response.status == 200) {
     const placeId = route.query._id
 
-    let res = await uploadPlaceImages(placeId)
+    let uploadOk = true
+    if (images.length > 0) {
+      try {
+        const res = await uploadPlaceImages(placeId)
+        uploadOk = res.status == 200
+      } catch {
+        uploadOk = false
+      }
+    }
 
-    if (res.status == 200) {
+    if (uploadOk) {
       message.config({ duration: 1.5, top: "70vh" })
       message.success({
         content: "Успешно!",
@@ -166,6 +331,8 @@ async function submit() {
           close()
         },
       })
+    } else {
+      message.warning("Место сохранено, но новые файлы не загрузились. Попробуйте ещё раз.")
     }
   }
 }
@@ -177,8 +344,15 @@ function addPreview(blob) {
   previews.value.push(URL.createObjectURL(blob))
 }
 const delPhoto = () => {
-  previews.value.splice(targetIndex.value, 1)
-  images.splice(targetIndex.value, 1)
+  const i = targetIndex.value
+  if (i !== null && i !== undefined) {
+    const pr = previews.value[i]
+    if (typeof pr === "string" && pr.startsWith("blob:")) {
+      URL.revokeObjectURL(pr)
+    }
+    previews.value.splice(i, 1)
+    images.splice(i, 1)
+  }
   delPhotoDialog.value = false
 }
 
@@ -188,6 +362,10 @@ const delOldPhoto = () => {
 }
 
 function handleImgError(i) {
+  const pr = previews.value[i]
+  if (typeof pr === "string" && pr.startsWith("blob:")) {
+    URL.revokeObjectURL(pr)
+  }
   previews.value.splice(i, 1)
   images.splice(i, 1)
 }
@@ -467,7 +645,7 @@ onMounted(async () => {
               <div class="d-flex" style="overflow-x: scroll">
                 <img
                   v-for="(image, i) in oldImages"
-                  :key="i"
+                  :key="'old-' + i + '-' + image"
                   :src="image"
                   alt=""
                   class="ma-4"
@@ -477,7 +655,7 @@ onMounted(async () => {
 
                 <img
                   v-for="(pr, i) in previews"
-                  :key="i"
+                  :key="'new-' + i + '-' + pr"
                   :src="pr"
                   alt=""
                   class="ma-4"
@@ -486,10 +664,16 @@ onMounted(async () => {
                   @error="handleImgError(i)"
                 />
               </div>
-              <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
-                <span class="mdi mdi-12px mdi-plus"></span>
-                Добавить фото
-              </a-button>
+              <div class="edit-place-photos-actions">
+                <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
+                  <span class="mdi mdi-12px mdi-plus"></span>
+                  Добавить фото
+                </a-button>
+                <a-button type="dashed" block class="ma-8" @click="openPhotobankModal">
+                  <span class="mdi mdi-image-multiple-outline mdi-18px" style="margin-right: 6px" aria-hidden="true"></span>
+                  Из фотобанка
+                </a-button>
+              </div>
             </a-col>
             <a-col :span="24" class="d-flex justify-center">
               <a-button
@@ -506,6 +690,66 @@ onMounted(async () => {
         </Form>
         <a-modal v-model:open="visibleCropperModal" :footer="null" :destroyOnClose="true">
           <ImageCropper :aspectRatio="2 / 1" @addImage="addPreview" />
+        </a-modal>
+        <a-modal
+          v-model:open="photobankModalOpen"
+          title="Выберите фото из фотобанка"
+          width="min(920px, 94vw)"
+          :footer="null"
+          :destroyOnClose="true"
+        >
+          <div class="edit-place-photobank-toolbar">
+            <a-input-search
+              v-model:value="photobankSearchQuery"
+              placeholder="Поиск по URL, ключу или подписи"
+              allow-clear
+              enter-button="Найти"
+              size="large"
+              @search="runPhotobankSearch"
+            />
+            <a-button v-if="photobankSearchActive || photobankSearchQuery.trim()" type="link" class="edit-place-photobank-all" @click="clearPhotobankSearch">
+              Все фото
+            </a-button>
+          </div>
+          <a-spin :spinning="photobankLoading">
+            <div
+              v-if="!photobankLoading && !photobankUrls.length"
+              class="edit-place-photobank-empty"
+            >
+              {{ photobankSearchActive ? 'Ничего не найдено' : 'В фотобанке пока нет фотографий' }}
+            </div>
+            <template v-else-if="!photobankLoading && photobankUrls.length">
+              <div class="edit-place-photobank-grid">
+                <div
+                  v-for="(url, idx) in photobankUrls"
+                  :key="`${url}-${idx}`"
+                  class="edit-place-photobank-cell"
+                  :class="{ 'edit-place-photobank-cell--selected': isPhotobankUrlSelected(url) }"
+                  role="button"
+                  tabindex="0"
+                  @click="togglePhotobankSelect(url)"
+                  @keydown.enter.prevent="togglePhotobankSelect(url)"
+                >
+                  <img :src="url" alt="" loading="lazy" />
+                  <span class="edit-place-photobank-check mdi mdi-check-bold" aria-hidden="true"></span>
+                </div>
+              </div>
+              <div v-if="photobankHasMore" class="edit-place-photobank-more">
+                <a-button shape="round" :loading="photobankLoadingMore" @click="loadMorePhotobank">
+                  ещё
+                </a-button>
+              </div>
+            </template>
+          </a-spin>
+          <div class="edit-place-photobank-footer">
+            <span class="edit-place-photobank-count">Выбрано: {{ selectedPhotobankUrls.length }}</span>
+            <div class="edit-place-photobank-footer-btns">
+              <a-button @click="photobankModalOpen = false">Отмена</a-button>
+              <a-button type="primary" :disabled="!selectedPhotobankUrls.length" @click="addSelectedPhotobankToEdit">
+                Добавить выбранные
+              </a-button>
+            </div>
+          </div>
         </a-modal>
         <a-modal v-model:open="delPhotoDialog" :footer="null">
           <h3>Удалить фото?</h3>
@@ -524,4 +768,123 @@ onMounted(async () => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.edit-place-photos-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.edit-place-photobank-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-bottom: 16px;
+}
+
+.edit-place-photobank-toolbar :deep(.ant-input-search) {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.edit-place-photobank-all {
+  flex-shrink: 0;
+  padding-inline: 4px;
+}
+
+.edit-place-photobank-empty {
+  text-align: center;
+  padding: 40px 16px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.edit-place-photobank-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: 10px;
+  max-height: 52vh;
+  overflow-y: auto;
+  padding: 4px 2px 12px;
+}
+
+.edit-place-photobank-cell {
+  position: relative;
+  border: 2px solid #e8e8e8;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #fafafa;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.edit-place-photobank-cell:hover {
+  border-color: #ff6600;
+}
+
+.edit-place-photobank-cell:focus-visible {
+  outline: 2px solid #ff6600;
+  outline-offset: 2px;
+}
+
+.edit-place-photobank-cell--selected {
+  border-color: #ff6600;
+  box-shadow: 0 0 0 1px rgba(255, 102, 0, 0.35);
+}
+
+.edit-place-photobank-cell img {
+  width: 100%;
+  height: 112px;
+  object-fit: cover;
+  display: block;
+}
+
+.edit-place-photobank-check {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: #ccc;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+.edit-place-photobank-cell--selected .edit-place-photobank-check {
+  background: #ff6600;
+  color: #fff;
+}
+
+.edit-place-photobank-more {
+  display: flex;
+  justify-content: center;
+  padding-top: 12px;
+}
+
+.edit-place-photobank-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.edit-place-photobank-count {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.edit-place-photobank-footer-btns {
+  display: flex;
+  gap: 8px;
+}
+</style>
