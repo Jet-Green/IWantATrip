@@ -402,9 +402,6 @@ onMounted(() => {
         type="primary"
         class="lets_go_btn"
         @click="book"
-        :disabled="
-          bookingCount + selectedDate.bookingsCount < props.excursion.minPeople
-        "
         >заказать</a-button
       >
     </div>
@@ -430,7 +427,6 @@ onMounted(() => {
       <a-button
         style="border-radius: 15px"
         @click="buy"
-        :disabled="minPeople < props.excursion.minPeople"
         >заказать</a-button
       >
       <div class="buy-btn" v-if="excursion.tinkoffContract.ShopCode">

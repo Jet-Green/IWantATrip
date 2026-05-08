@@ -46,16 +46,29 @@ onMounted(async () => {
 <template>
   <div>
 
-    <div style="display: flex; justify-content:space-between; flex-wrap:wrap" class="pa-8">
-      <div>
+    <div class="pa-8">
+      <div
+        class="ma-8"
+        style="max-width: 680px; color: rgba(0, 0, 0, 0.65); font-size: 15px; line-height: 1.45;"
+      >
+        <ol style="margin: 0; padding-left: 18px;">
+          <li>
+            Экскурсии <b>без дат</b> — их невозможно оплатить, только заказать.
+          </li>
+          <li>
+            Экскурсии <b>с добавленными датами</b> — пользователь сможет оплатить только после набора порогового количества людей.
+            После этого у вас появится кнопка <b>«Выставить счет всем участникам экскурсии»</b>.
+          </li>
+        </ol>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; flex-wrap: wrap; align-items: center;">
         <a-button class="btn_light ma-8" @click="router.push('/create-excursion')">
           создать экскурсию
         </a-button>
+
+        <a-input v-model:value="query" placeholder="поиск" style="width:180px" class="ma-8" />
       </div>
-      <div>
-        <a-input v-model:value="query" placeholder="поиск" style="width:180px" />
-      </div>
-      
     </div>
     <a-row :gutter="[8, 8]">
       <a-col v-for="excursion in filteredExcursion" :span="24" :sm="12" :lg="8">

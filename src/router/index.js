@@ -486,6 +486,11 @@ const router = createRouter({
               component: () => import('../components/_cabinet/AboutClient.vue'),
             },
             {
+              path: 'my-orders',
+              name: "MyOrders",
+              component: () => import('../components/_cabinet/MyOrders.vue'),
+            },
+            {
               path: 'upload-photobank',
               name: 'UploadPhotobank',
               component: () => import('../views/UploadPhotobankPhotos.vue'),

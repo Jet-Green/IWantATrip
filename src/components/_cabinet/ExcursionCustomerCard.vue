@@ -19,11 +19,23 @@ function getBillSum(bill) {
 }
 
 let payedByTinkoff = ref(false)
-if (props.bill.tinkoff) {
-  let res = await tinkoffPlugin.checkPayment(props.bill.tinkoff.paymentId, props.bill.tinkoff.token)
-  if (res.data.Status == "CONFIRMED") {
-    payedByTinkoff.value = true
+let paymentChecked = ref(false)
+let paymentStatus = ref('unpaid') // unpaid | paid
+
+try {
+  if (props.bill.tinkoff?.paymentId && props.bill.tinkoff?.token) {
+    let res = await tinkoffPlugin.checkPayment(props.bill.tinkoff.paymentId, props.bill.tinkoff.token)
+    if (res?.data?.Status === "CONFIRMED") {
+      payedByTinkoff.value = true
+      paymentStatus.value = 'paid'
+    } else {
+      paymentStatus.value = 'unpaid'
+    }
+  } else {
+    paymentStatus.value = 'unpaid'
   }
+} finally {
+  paymentChecked.value = true
 }
 
 async function deleteExcursionBill(_id) {
@@ -37,6 +49,11 @@ async function deleteExcursionBill(_id) {
   <a-card hoverable class="customer-card">
 
     <div>
+      <div class="d-flex justify-end mb-4">
+        <a-tag v-if="!paymentChecked" color="default">проверяем оплату…</a-tag>
+        <a-tag v-else-if="paymentStatus === 'paid'" color="green">Оплачено</a-tag>
+        <a-tag v-else color="volcano">Не оплачено</a-tag>
+      </div>
       <div v-if="bill.userInfo">
         <span class="mdi mdi-account-outline" style=""></span>
         {{ bill?.userInfo.fullname }}

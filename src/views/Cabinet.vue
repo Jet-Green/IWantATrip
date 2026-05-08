@@ -114,6 +114,10 @@ onMounted(async () => {
             <span ref='cab' v-if=!sm>О пользователе</span>
             <span v-else class="mdi mdi-24px mdi-account-outline" style="color: #245159; "></span>
           </a-menu-item>
+          <a-menu-item key="/cabinet/my-orders">
+            <span v-if=!sm>Мои заказы</span>
+            <span v-else class="mdi mdi-24px mdi-receipt-text-outline" style="color: #245159; "></span>
+          </a-menu-item>
           <a-menu-item key="/cabinet/my-companions">
             <span ref='companions' v-if=!sm>Попутчики</span>
             <span v-else class="mdi mdi-24px mdi-human-capacity-decrease" style="color: #245159; "></span>

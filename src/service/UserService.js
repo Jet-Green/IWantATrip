@@ -41,6 +41,9 @@ export default {
     getBoughtTrips(userId) {
         return $api.get(`/auth/get-bought-trips?user_id=${userId}`)
     },
+    getMyBills(page = 1, limit = 12) {
+        return $api.get('/auth/my-bills', { params: { page, limit } })
+    },
     determineWinner() {
         return $api.get('/auth/determine-winner')
     },
