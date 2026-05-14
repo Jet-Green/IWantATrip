@@ -76,15 +76,206 @@ const photobankSearchQuery = ref('');
 const photobankSearchActive = ref(false);
 const selectedPhotobankUrls = ref([]);
 
+const photobankFullscreenOpen = ref(false);
+const photobankFullscreenUrl = ref('');
+/** @type {import('vue').Ref<{ url: string; location: object | null; placeNameText: string; enterpriseName: string; caption: string } | null>} */
+const photobankFullscreenMeta = ref(null);
+const photobankFullscreenWrapRef = ref(null);
+const photobankFsMapContainer = ref(null);
+/** @type {import('vue').Ref<Record<string, { url: string; location: object | null; placeNameText: string; enterpriseName: string; caption: string }>>} */
+const photobankMetaByUrl = ref({});
+let photobankFsMap = null;
+let photobankFsMarker = null;
+
+const photobankFsShowMap = computed(() => {
+  const loc = photobankFullscreenMeta.value?.location;
+  return !!(
+    loc?.coordinates?.length === 2 &&
+    Number.isFinite(Number(loc.coordinates[0])) &&
+    Number.isFinite(Number(loc.coordinates[1]))
+  );
+});
+
+const photobankFsHasDetails = computed(() => {
+  const m = photobankFullscreenMeta.value;
+  if (!m) return false;
+  return !!(
+    m.location?.coordinates?.length === 2 ||
+    m.placeNameText?.trim() ||
+    m.enterpriseName?.trim() ||
+    m.caption?.trim()
+  );
+});
+
+const photobankFsAlreadySelected = computed(
+  () => !!photobankFullscreenUrl.value && selectedPhotobankUrls.value.includes(photobankFullscreenUrl.value)
+);
+
+function destroyPhotobankFsPreviewMap() {
+  if (photobankFsMap) {
+    photobankFsMap.remove();
+    photobankFsMap = null;
+  }
+  photobankFsMarker = null;
+}
+
+function initPhotobankFsPreviewMap() {
+  const el = photobankFsMapContainer.value;
+  const loc = photobankFullscreenMeta.value?.location;
+  if (!el || !loc?.coordinates || loc.coordinates.length < 2 || photobankFsMap) return;
+  const lon = Number(loc.coordinates[0]);
+  const lat = Number(loc.coordinates[1]);
+  if (!Number.isFinite(lon) || !Number.isFinite(lat)) return;
+
+  photobankFsMap = new maplibregl.Map({
+    container: el,
+    style: {
+      version: 8,
+      sources: {
+        osm: {
+          type: 'raster',
+          tiles: [
+            'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            'https://b.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png',
+          ],
+          tileSize: 256,
+          attribution: '© OpenStreetMap contributors',
+        },
+      },
+      layers: [{ id: 'osm', type: 'raster', source: 'osm' }],
+    },
+    center: [lon, lat],
+    zoom: 13,
+  });
+
+  photobankFsMap.on('load', () => {
+    photobankFsMarker = new maplibregl.Marker({ color: '#ff6600' })
+      .setLngLat([lon, lat])
+      .addTo(photobankFsMap);
+    photobankFsMap?.resize();
+    requestAnimationFrame(() => photobankFsMap?.resize());
+    setTimeout(() => photobankFsMap?.resize(), 240);
+  });
+}
+
+function closePhotobankFullscreen() {
+  destroyPhotobankFsPreviewMap();
+  photobankFullscreenOpen.value = false;
+  photobankFullscreenUrl.value = '';
+  photobankFullscreenMeta.value = null;
+}
+
+function openPhotobankFullscreen(url) {
+  destroyPhotobankFsPreviewMap();
+  photobankFullscreenUrl.value = url;
+  photobankFullscreenMeta.value = photobankMetaByUrl.value[url] ?? normalizePhotobankRow({ url });
+  photobankFullscreenOpen.value = true;
+}
+
+function confirmPhotobankFullscreen() {
+  const url = photobankFullscreenUrl.value;
+  if (!url) {
+    closePhotobankFullscreen();
+    return;
+  }
+  if (selectedPhotobankUrls.value.includes(url)) {
+    closePhotobankFullscreen();
+    return;
+  }
+  selectedPhotobankUrls.value = [...selectedPhotobankUrls.value, url];
+  closePhotobankFullscreen();
+}
+
+function removePhotobankFromSelectionAndClose() {
+  const url = photobankFullscreenUrl.value;
+  if (!url) return;
+  selectedPhotobankUrls.value = selectedPhotobankUrls.value.filter((u) => u !== url);
+  closePhotobankFullscreen();
+}
+
+watch(photobankFullscreenOpen, async (open) => {
+  if (!open) {
+    destroyPhotobankFsPreviewMap();
+    return;
+  }
+  await nextTick();
+  await nextTick();
+  await nextTick();
+  const loc = photobankFullscreenMeta.value?.location;
+  if (loc?.coordinates?.length === 2) {
+    initPhotobankFsPreviewMap();
+    if (!photobankFsMap) {
+      await nextTick();
+      initPhotobankFsPreviewMap();
+    }
+    await nextTick();
+    photobankFsMap?.resize();
+    setTimeout(() => photobankFsMap?.resize(), 220);
+  }
+  photobankFullscreenWrapRef.value?.focus();
+});
+
+function normalizePhotobankRow(raw) {
+  if (typeof raw === 'string') {
+    return {
+      url: raw,
+      location: null,
+      placeNameText: '',
+      enterpriseName: '',
+      caption: '',
+    };
+  }
+  const url = raw?.url != null ? String(raw.url) : '';
+  const loc = raw?.location;
+  const hasLoc =
+    loc &&
+    typeof loc === 'object' &&
+    loc.type === 'Point' &&
+    Array.isArray(loc.coordinates) &&
+    loc.coordinates.length === 2;
+  return {
+    url,
+    location: hasLoc
+      ? {
+          name: loc.name != null ? String(loc.name) : '',
+          shortName: loc.shortName != null ? String(loc.shortName) : '',
+          type: 'Point',
+          coordinates: [Number(loc.coordinates[0]), Number(loc.coordinates[1])],
+        }
+      : null,
+    placeNameText: raw?.placeNameText != null ? String(raw.placeNameText).trim() : '',
+    enterpriseName: raw?.enterpriseName != null ? String(raw.enterpriseName).trim() : '',
+    caption: raw?.caption != null ? String(raw.caption).trim() : '',
+  };
+}
+
+function mergePhotobankMetaFromItems(items) {
+  if (!Array.isArray(items) || !items.length) return;
+  const next = { ...photobankMetaByUrl.value };
+  for (const raw of items) {
+    const row = normalizePhotobankRow(raw);
+    if (row.url) next[row.url] = row;
+  }
+  photobankMetaByUrl.value = next;
+}
+
 function parsePhotosPayload(res) {
   const d = res?.data;
   if (d && Array.isArray(d.urls) && typeof d.hasMore === 'boolean') {
-    return { urls: d.urls, hasMore: d.hasMore };
+    const urls = d.urls;
+    let items = Array.isArray(d.items) ? d.items : [];
+    if (!items.length || items.length !== urls.length) {
+      items = urls.map((u) => ({ url: typeof u === 'string' ? u : String(u?.url ?? '') }));
+    }
+    return { urls, items, hasMore: d.hasMore };
   }
   if (Array.isArray(d)) {
-    return { urls: d, hasMore: d.length > 0 };
+    const items = d.map((x) => (typeof x === 'string' ? { url: x } : x));
+    const urls = items.map((x) => (typeof x === 'string' ? x : String(x?.url ?? ''))).filter(Boolean);
+    return { urls, items, hasMore: d.length > 0 };
   }
-  return { urls: [], hasMore: false };
+  return { urls: [], items: [], hasMore: false };
 }
 
 function persistPhotoEntries() {
@@ -96,8 +287,10 @@ async function loadPhotobankBrowsePage(pageNum) {
   photobankLoading.value = true;
   try {
     const res = await photosStore.getPhotos(pageNum);
-    const { urls, hasMore } = parsePhotosPayload(res);
+    const { urls, items, hasMore } = parsePhotosPayload(res);
     photobankUrls.value = urls;
+    photobankMetaByUrl.value = {};
+    mergePhotobankMetaFromItems(items);
     photobankPage.value = pageNum;
     photobankHasMore.value = hasMore;
     photobankSearchActive.value = false;
@@ -117,8 +310,10 @@ async function loadPhotobankSearchPage(pageNum) {
   photobankLoading.value = true;
   try {
     const res = await photosStore.searchPhotos(q, pageNum);
-    const { urls, hasMore } = parsePhotosPayload(res);
+    const { urls, items, hasMore } = parsePhotosPayload(res);
     photobankUrls.value = urls;
+    photobankMetaByUrl.value = {};
+    mergePhotobankMetaFromItems(items);
     photobankPage.value = pageNum;
     photobankHasMore.value = hasMore;
     photobankSearchActive.value = true;
@@ -130,11 +325,13 @@ async function loadPhotobankSearchPage(pageNum) {
 }
 
 function resetPhotobankModalState() {
+  closePhotobankFullscreen();
   photobankSearchQuery.value = '';
   photobankSearchActive.value = false;
   selectedPhotobankUrls.value = [];
   photobankPage.value = 1;
   photobankUrls.value = [];
+  photobankMetaByUrl.value = {};
   photobankHasMore.value = false;
 }
 
@@ -146,10 +343,13 @@ watch(photobankModalOpen, (open) => {
   if (open) {
     resetPhotobankModalState();
     loadPhotobankBrowsePage(1);
+  } else {
+    closePhotobankFullscreen();
   }
 });
 
 function runPhotobankSearch() {
+  closePhotobankFullscreen();
   selectedPhotobankUrls.value = [];
   if (!photobankSearchQuery.value.trim()) {
     loadPhotobankBrowsePage(1);
@@ -159,6 +359,7 @@ function runPhotobankSearch() {
 }
 
 function clearPhotobankSearch() {
+  closePhotobankFullscreen();
   photobankSearchQuery.value = '';
   selectedPhotobankUrls.value = [];
   loadPhotobankBrowsePage(1);
@@ -172,9 +373,10 @@ async function loadMorePhotobank() {
     const res = photobankSearchActive.value
       ? await photosStore.searchPhotos(photobankSearchQuery.value.trim(), nextPage)
       : await photosStore.getPhotos(nextPage);
-    const { urls: chunk, hasMore } = parsePhotosPayload(res);
+    const { urls: chunk, items, hasMore } = parsePhotosPayload(res);
     if (chunk.length) {
       photobankUrls.value = [...photobankUrls.value, ...chunk];
+      mergePhotobankMetaFromItems(items);
       photobankPage.value = nextPage;
     }
     photobankHasMore.value = chunk.length ? hasMore : false;
@@ -187,15 +389,6 @@ async function loadMorePhotobank() {
 
 function isPhotobankUrlSelected(url) {
   return selectedPhotobankUrls.value.includes(url);
-}
-
-function togglePhotobankSelect(url) {
-  const i = selectedPhotobankUrls.value.indexOf(url);
-  if (i === -1) {
-    selectedPhotobankUrls.value = [...selectedPhotobankUrls.value, url];
-  } else {
-    selectedPhotobankUrls.value = selectedPhotobankUrls.value.filter((u) => u !== url);
-  }
 }
 
 function addSelectedPhotobankToPlace() {
@@ -613,6 +806,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  destroyPhotobankFsPreviewMap();
   if (customMap) {
     customMap.remove()
     customMap = null
@@ -803,7 +997,7 @@ onBeforeUnmount(() => {
         <a-modal
           v-model:open="photobankModalOpen"
           title="Выберите фото из фотобанка"
-          width="min(920px, 94vw)"
+          width="min(980px, 96vw)"
           :footer="null"
           :destroyOnClose="true"
         >
@@ -836,8 +1030,8 @@ onBeforeUnmount(() => {
                   :class="{ 'create-place-photobank-cell--selected': isPhotobankUrlSelected(url) }"
                   role="button"
                   tabindex="0"
-                  @click="togglePhotobankSelect(url)"
-                  @keydown.enter.prevent="togglePhotobankSelect(url)"
+                  @click="openPhotobankFullscreen(url)"
+                  @keydown.enter.prevent="openPhotobankFullscreen(url)"
                 >
                   <img :src="url" alt="" loading="lazy" />
                   <span class="create-place-photobank-check mdi mdi-check-bold" aria-hidden="true"></span>
@@ -883,6 +1077,74 @@ onBeforeUnmount(() => {
 
       </a-col>
     </a-row>
+
+    <Teleport to="body">
+      <Transition name="cp-photobank-fs">
+        <div
+          v-if="photobankFullscreenOpen"
+          ref="photobankFullscreenWrapRef"
+          class="create-place-photobank-fs"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Просмотр фото из фотобанка"
+          tabindex="-1"
+          @click.self="closePhotobankFullscreen"
+          @keydown.escape.prevent="closePhotobankFullscreen"
+        >
+          <div class="create-place-photobank-fs__panel" @click.stop>
+            <img class="create-place-photobank-fs__img" :src="photobankFullscreenUrl" alt="" />
+            <div v-if="photobankFsHasDetails && photobankFullscreenMeta" class="create-place-photobank-fs__details">
+              <template v-if="photobankFullscreenMeta.location?.coordinates?.length === 2">
+                <div class="create-place-photobank-fs__detail-line">
+                  {{ photobankFullscreenMeta.location.name?.trim() || 'Точка на карте' }}
+                </div>
+                <div class="create-place-photobank-fs__detail-line create-place-photobank-fs__detail-line--muted">
+                  {{ Number(photobankFullscreenMeta.location.coordinates[0]).toFixed(5) }},
+                  {{ Number(photobankFullscreenMeta.location.coordinates[1]).toFixed(5) }}
+                </div>
+              </template>
+              <div v-if="photobankFullscreenMeta.placeNameText?.trim()" class="create-place-photobank-fs__detail-line">
+                Место (текст): {{ photobankFullscreenMeta.placeNameText.trim() }}
+              </div>
+              <div v-if="photobankFullscreenMeta.enterpriseName?.trim()" class="create-place-photobank-fs__detail-line">
+                Предприятие: {{ photobankFullscreenMeta.enterpriseName.trim() }}
+              </div>
+              <div v-if="photobankFullscreenMeta.caption?.trim()" class="create-place-photobank-fs__detail-line">
+                {{ photobankFullscreenMeta.caption.trim() }}
+              </div>
+            </div>
+            <div
+              v-if="photobankFsShowMap"
+              ref="photobankFsMapContainer"
+              class="create-place-photobank-fs__map"
+              role="presentation"
+            />
+            <p v-if="photobankFsAlreadySelected" class="create-place-photobank-fs__hint">Уже в выбранных</p>
+            <div class="create-place-photobank-fs__actions">
+              <a-button shape="round" size="large" @click="closePhotobankFullscreen">Отмена</a-button>
+              <a-button
+                v-if="photobankFsAlreadySelected"
+                shape="round"
+                size="large"
+                danger
+                @click="removePhotobankFromSelectionAndClose"
+              >
+                Снять выбор
+              </a-button>
+              <a-button
+                v-else
+                type="primary"
+                shape="round"
+                size="large"
+                @click="confirmPhotobankFullscreen"
+              >
+                Выбрать
+              </a-button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -919,8 +1181,8 @@ onBeforeUnmount(() => {
 
 .create-place-photobank-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+  gap: 14px;
   max-height: 52vh;
   overflow-y: auto;
   padding: 4px 2px 12px;
@@ -929,7 +1191,7 @@ onBeforeUnmount(() => {
 .create-place-photobank-cell {
   position: relative;
   border: 2px solid #e8e8e8;
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
   cursor: pointer;
   background: #fafafa;
@@ -952,21 +1214,33 @@ onBeforeUnmount(() => {
 
 .create-place-photobank-cell img {
   width: 100%;
-  height: 112px;
+  height: 168px;
   object-fit: cover;
   display: block;
+  animation: create-place-pb-thumb-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes create-place-pb-thumb-in {
+  from {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .create-place-photobank-check {
   position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 22px;
-  height: 22px;
+  top: 8px;
+  right: 8px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.92);
   color: #ccc;
-  font-size: 14px;
+  font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1004,6 +1278,119 @@ onBeforeUnmount(() => {
 .create-place-photobank-footer-btns {
   display: flex;
   gap: 8px;
+}
+
+.create-place-photobank-fs {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  background: rgba(0, 0, 0, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.create-place-photobank-fs__panel {
+  max-width: min(100vw - 40px, 1200px);
+  width: 100%;
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  padding-bottom: 8px;
+}
+
+.create-place-photobank-fs__img {
+  max-width: 100%;
+  max-height: min(44vh, 440px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  align-self: center;
+}
+
+.create-place-photobank-fs__details {
+  width: 100%;
+  max-width: 640px;
+  align-self: center;
+  text-align: left;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.create-place-photobank-fs__detail-line {
+  font-size: 14px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.94);
+  word-break: break-word;
+}
+
+.create-place-photobank-fs__detail-line + .create-place-photobank-fs__detail-line {
+  margin-top: 6px;
+}
+
+.create-place-photobank-fs__detail-line--muted {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.create-place-photobank-fs__map {
+  width: 100%;
+  max-width: 720px;
+  align-self: center;
+  height: 280px;
+  min-height: 200px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 102, 0, 0.55);
+}
+
+.create-place-photobank-fs__hint {
+  margin: 0;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  align-self: center;
+}
+
+.create-place-photobank-fs__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 16px;
+  align-self: center;
+}
+
+.cp-photobank-fs-enter-active,
+.cp-photobank-fs-leave-active {
+  transition: opacity 0.28s ease;
+}
+
+.cp-photobank-fs-enter-from,
+.cp-photobank-fs-leave-to {
+  opacity: 0;
+}
+
+.cp-photobank-fs-enter-active .create-place-photobank-fs__panel,
+.cp-photobank-fs-leave-active .create-place-photobank-fs__panel {
+  transition:
+    transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.32s ease;
+}
+
+.cp-photobank-fs-enter-from .create-place-photobank-fs__panel,
+.cp-photobank-fs-leave-to .create-place-photobank-fs__panel {
+  opacity: 0;
+  transform: scale(0.9) translateY(20px);
 }
 
 .create-place-photo-thumb-wrap {
