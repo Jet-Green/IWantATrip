@@ -410,8 +410,8 @@ async function submit() {
     const res = await photosStore.uploadPhotobankPhotos(fd);
     if (res.status === 200 || res.status === 201) {
       message.success({
-        content: "Фото загружены в фотобанк",
-        onClose: () => router.push("/photos"),
+        content: "Фото отправлены на модерацию",
+        onClose: () => router.push("/cabinet/my-photobank/on-moderation"),
       });
     }
   } catch (err) {
@@ -437,8 +437,8 @@ onBeforeUnmount(() => {
         <p class="muted">
           Выберите изображения (JPEG, PNG, GIF, WebP). Для каждого нажмите «Указать место»: можно задать адрес,
           либо геоточку на карте, как при создании места, плюс название места или предприятия — всё по желанию.
-          После отправки снимки появятся в разделе
-          <a href="/photos">«Фотобанк»</a>.
+          После отправки снимки уходят на модерацию и появятся в разделе
+          <a href="/photos">«Фотобанк»</a> после одобления администратором.
         </p>
       </a-col>
       <a-col :span="24">

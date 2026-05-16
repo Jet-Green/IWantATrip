@@ -583,8 +583,15 @@ async function uploadPlaceImages(_id) {
 
   if (photobankUrlsToPush.length) {
     try {
-      const res2 = await PlaceService.pushPhotobankImageUrls(_id, photobankUrlsToPush);
-      uploadOk = uploadOk && res2.status == 200;
+      const { data } = await photosStore.filterPublishedUrls(photobankUrlsToPush);
+      const published = Array.isArray(data?.urls) ? data.urls : [];
+      if (published.length !== photobankUrlsToPush.length) {
+        message.warning('Некоторые фото фотобанка ещё не опубликованы и не были добавлены');
+      }
+      if (published.length) {
+        const res2 = await PlaceService.pushPhotobankImageUrls(_id, published);
+        uploadOk = uploadOk && res2.status == 200;
+      }
     } catch {
       uploadOk = false;
     }
@@ -783,7 +790,7 @@ watch(locationType, async (newType) => {
 watch(form, (newForm) => {
   localStorage.setItem('createPlaceForm', JSON.stringify(newForm))
 })
-onMounted(() => {
+onMounted(async () => {
   photoEntries.value = [];
   if (localStorage.getItem('createPlaceForm')) {
     Object.assign(form, JSON.parse(localStorage.getItem('createPlaceForm')));
@@ -793,10 +800,17 @@ onMounted(() => {
     try {
       const urls = JSON.parse(rawPb);
       if (Array.isArray(urls)) {
-        for (const u of urls) {
-          if (typeof u === 'string' && u.trim()) {
+        const draftUrls = urls.filter((u) => typeof u === 'string' && u.trim());
+        if (draftUrls.length) {
+          const { data } = await photosStore.filterPublishedUrls(draftUrls);
+          const published = Array.isArray(data?.urls) ? data.urls : [];
+          if (published.length < draftUrls.length) {
+            message.warning('Из черновика убраны фото, которые ещё не опубликованы в фотобанке');
+          }
+          for (const u of published) {
             photoEntries.value.push({ kind: 'photobank', url: u, preview: u });
           }
+          persistPhotoEntries();
         }
       }
     } catch {

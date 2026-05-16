@@ -491,6 +491,25 @@ const router = createRouter({
               component: () => import('../components/_cabinet/MyOrders.vue'),
             },
             {
+              path: 'my-photobank',
+              name: 'MyPhotobank',
+              component: () => import('../components/_cabinet/MyPhotobank.vue'),
+              children: [
+                {
+                  path: 'on-moderation',
+                  component: () => import('../components/_cabinet/MyPhotobankOnModeration.vue'),
+                },
+                {
+                  path: 'published',
+                  component: () => import('../components/_cabinet/MyPhotobankPublished.vue'),
+                },
+                {
+                  path: 'rejected',
+                  component: () => import('../components/_cabinet/MyPhotobankRejected.vue'),
+                },
+              ],
+            },
+            {
               path: 'upload-photobank',
               name: 'UploadPhotobank',
               component: () => import('../views/UploadPhotobankPhotos.vue'),
@@ -628,6 +647,27 @@ const router = createRouter({
                 {
                   path: 'not-moderated-trips',
                   component: () => import('../components/admin/NotModeratedTrips.vue'),
+                },
+              ]
+            },
+            {
+              path: 'moderation-photos/',
+              name: 'PhotosOnModeration',
+              component: () => import('../components/admin/PhotosOnModeration.vue'),
+              beforeEnter: () => {
+                let userStore = useAuth()
+                if (!userStore.user?.roles.includes('manager')) {
+                  return false
+                }
+              },
+              children: [
+                {
+                  path: 'rejected-photos',
+                  component: () => import('../components/admin/RejectedPhotos.vue'),
+                },
+                {
+                  path: 'not-moderated-photos',
+                  component: () => import('../components/admin/NotModeratedPhotos.vue'),
                 },
               ]
             },
@@ -874,6 +914,19 @@ const router = createRouter({
             let isTinkoffAuth = await tinkoffPlugin.checkAuth()
             if (!isTinkoffAuth) {
               return '/'
+            }
+          }
+        },
+        {
+          path: '/photo-moderation',
+          name: 'PhotoModeration',
+          component: () => import('../components/admin/PhotoModeration.vue'),
+          beforeEnter: async () => {
+            let userStore = useAuth()
+            if (!getCookie('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+            if (!userStore.user?.roles.includes('manager')) {
+              return false
             }
           }
         },

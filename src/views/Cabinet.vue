@@ -9,6 +9,7 @@ import ExcursionService from "../service/ExcursionService";
 import PlaceService from "../service/PlaceService";
 import TrackService from "../service/TrackService";
 import GuideService from "../service/GuideService";
+import PhotosService from "../service/PhotosService";
 
 
 const userStore = useAuth();
@@ -35,6 +36,7 @@ let moderationCounts = ref({
   places: null,
   tracks: null,
   guides: null,
+  photos: null,
 })
 
 const open = ref(true);
@@ -73,9 +75,10 @@ const fetchModerationCounts = async () => {
     PlaceService.getAll(1, { isModerated: false, isRejected: false }),
     TrackService.getAll(1, { isModerated: false, isRejected: false }),
     GuideService.getGuides(1, { search: "", isModerated: false, isRejected: false, isHidden: false }),
+    PhotosService.findPhotosOnModeration(),
   ])
 
-  const [tripsRes, excursionsRes, placesRes, tracksRes, guidesRes] = results
+  const [tripsRes, excursionsRes, placesRes, tracksRes, guidesRes, photosRes] = results
 
   moderationCounts.value = {
     trips: tripsRes.status === "fulfilled" ? toArrayLength(tripsRes.value?.data) : 0,
@@ -83,6 +86,7 @@ const fetchModerationCounts = async () => {
     places: placesRes.status === "fulfilled" ? toArrayLength(placesRes.value?.data) : 0,
     tracks: tracksRes.status === "fulfilled" ? toArrayLength(tracksRes.value?.data?.tracks) : 0,
     guides: guidesRes.status === "fulfilled" ? toArrayLength(guidesRes.value?.data) : 0,
+    photos: photosRes.status === "fulfilled" ? toArrayLength(photosRes.value?.data) : 0,
   }
 }
 
@@ -117,6 +121,10 @@ onMounted(async () => {
           <a-menu-item key="/cabinet/my-orders">
             <span v-if=!sm>Мои заказы</span>
             <span v-else class="mdi mdi-24px mdi-receipt-text-outline" style="color: #245159; "></span>
+          </a-menu-item>
+          <a-menu-item key="/cabinet/my-photobank/on-moderation">
+            <span v-if=!sm>Фотобанк</span>
+            <span v-else class="mdi mdi-24px mdi-image-multiple-outline" style="color: #245159;"></span>
           </a-menu-item>
           <a-menu-item key="/cabinet/my-companions">
             <span ref='companions' v-if=!sm>Попутчики</span>
@@ -226,6 +234,16 @@ onMounted(async () => {
                     v-if="moderationCounts.guides > 0"
                     class="moderation-count-badge"
                     :count="moderationCounts.guides"
+                  />
+                </span>
+              </a-menu-item>
+              <a-menu-item key="/cabinet/moderation-photos/not-moderated-photos">
+                <span class="moderation-menu-item">
+                  Фотобанк
+                  <a-badge
+                    v-if="moderationCounts.photos > 0"
+                    class="moderation-count-badge"
+                    :count="moderationCounts.photos"
                   />
                 </span>
               </a-menu-item>
