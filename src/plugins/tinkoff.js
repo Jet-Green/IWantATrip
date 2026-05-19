@@ -4,6 +4,30 @@ import axios from 'axios'
 const VITE_TINKOFF_TERMINAL_ID = import.meta.env.VITE_TINKOFF_TERMINAL_ID
 const VITE_TINKOFF_TERMINAL_PASS = import.meta.env.VITE_TINKOFF_TERMINAL_PASS
 
+/** Токен Init/др. по правилам Т‑Банка: только скаляры корня + Password, сортировка ключей. */
+function buildAcquiringRequestToken(rootFields, password) {
+    const pairs = []
+    for (const [key, value] of Object.entries(rootFields)) {
+        if (key === 'Token') continue
+        if (value === undefined || value === null) continue
+        if (typeof value === 'object') continue
+        pairs.push([key, String(value)])
+    }
+    pairs.push(['Password', password])
+    pairs.sort((a, b) => a[0].localeCompare(b[0]))
+    const concatenated = pairs.map(([, v]) => v).join('')
+    return sha256(concatenated)
+}
+
+/** URL для NotificationURL: явный env или {VITE_API_URL}/payments/tinkoff-notification */
+function getTinkoffNotificationUrl() {
+    const explicit = import.meta.env.VITE_TINKOFF_NOTIFICATION_URL
+    if (explicit && String(explicit).trim()) return String(explicit).trim()
+    const api = import.meta.env.VITE_API_URL
+    if (api) return `${String(api).replace(/\/$/, '')}/payments/tinkoff-notification`
+    return ''
+}
+
 /**
  * Отменяет платеж полностью или частично
  * @param {string} paymentId - ID платежа в системе Т‑Бизнес
@@ -145,26 +169,23 @@ async function initPayment(orderId, cart, clientEmail, shopInfo, tripName, addit
         )
         totalAmount += service.price * service.count * 100
     }
-    let payload =
-    {
-        "Amount": totalAmount,
-        "Password": VITE_TINKOFF_TERMINAL_PASS,
-        "OrderId": orderId,
-        "TerminalKey": VITE_TINKOFF_TERMINAL_ID
+    const notificationUrl = getTinkoffNotificationUrl()
+    const description = `Покупка "${tripName}"`
+    const rootForToken = {
+        TerminalKey: VITE_TINKOFF_TERMINAL_ID,
+        Amount: totalAmount,
+        OrderId: orderId,
+        Description: description,
     }
+    if (notificationUrl) rootForToken.NotificationURL = notificationUrl
 
-    let stringPayload = ''
-    for (let key of Object.keys(payload)) {
-        stringPayload += payload[key]
-    }
-
-    const Token = sha256(stringPayload)
+    const Token = buildAcquiringRequestToken(rootForToken, VITE_TINKOFF_TERMINAL_PASS)
 
     let config = {
         "TerminalKey": VITE_TINKOFF_TERMINAL_ID,
         "Amount": totalAmount,
         "OrderId": orderId,
-        "Description": `Покупка "${tripName}"`,
+        "Description": description,
         "Token": Token,
         "Receipt": {
             "Email": clientEmail,
@@ -180,6 +201,7 @@ async function initPayment(orderId, cart, clientEmail, shopInfo, tripName, addit
             }
         ]
     }
+    if (notificationUrl) config.NotificationURL = notificationUrl
 
     let res = await axios.post('https://securepay.tinkoff.ru/v2/Init', config)
     return { data: res.data, token: Token, success: res.data.Success }
@@ -219,26 +241,23 @@ async function initExcursionPayment(orderId, cart, clientEmail, shopInfo, excurs
         }
         totalAmount += cartItem.price * 100 * cartItem.count
     }
-    let payload =
-    {
-        "Amount": totalAmount,
-        "Password": VITE_TINKOFF_TERMINAL_PASS,
-        "OrderId": orderId,
-        "TerminalKey": VITE_TINKOFF_TERMINAL_ID
+    const notificationUrl = getTinkoffNotificationUrl()
+    const description = `Покупка "${excursionName}"`
+    const rootForToken = {
+        TerminalKey: VITE_TINKOFF_TERMINAL_ID,
+        Amount: totalAmount,
+        OrderId: orderId,
+        Description: description,
     }
+    if (notificationUrl) rootForToken.NotificationURL = notificationUrl
 
-    let stringPayload = ''
-    for (let key of Object.keys(payload)) {
-        stringPayload += payload[key]
-    }
-
-    const Token = sha256(stringPayload)
+    const Token = buildAcquiringRequestToken(rootForToken, VITE_TINKOFF_TERMINAL_PASS)
 
     let config = {
         "TerminalKey": VITE_TINKOFF_TERMINAL_ID,
         "Amount": totalAmount,
         "OrderId": orderId,
-        "Description": `Покупка "${excursionName}"`,
+        "Description": description,
         "Token": Token,
         "Receipt": {
             "Email": clientEmail,
@@ -254,6 +273,7 @@ async function initExcursionPayment(orderId, cart, clientEmail, shopInfo, excurs
             }
         ]
     }
+    if (notificationUrl) config.NotificationURL = notificationUrl
     let res = await axios.post('https://securepay.tinkoff.ru/v2/Init', config)
     return { data: res.data, token: Token, success: res.data.Success }
 }
@@ -323,5 +343,4 @@ async function checkAuth() {
     }
     return false
 }
-
 export default { initExcursionPayment, initPayment, checkPayment, cancelPayment, sendClosingReceipt, registerShop, updateContract, checkAuth }
