@@ -964,10 +964,6 @@ onMounted(async () => {
                     <a-input-number v-model:value="form.loyalty.discount.fixationDay" style="width: 100%"
                                     placeholder="2" :min="1" :max="daysToTripStart || undefined" :step="1" />
                   </a-col>
-
-                  <a-col :span="24">
-                    <PriceCalc ref="priceCalcRef" :embedded="true" v-model:minProfit="form.loyalty.discount.minProfit" />
-                  </a-col>
                 </template>
 
                 <template v-else>
@@ -998,6 +994,14 @@ onMounted(async () => {
                     </a-button>
                   </a-col>
                 </template>
+
+                <a-col :span="24">
+                  <PriceCalc
+                      ref="priceCalcRef"
+                      :embedded="true"
+                      v-model:minProfit="form.loyalty.discount.minProfit"
+                  />
+                </a-col>
               </a-row>
             </a-col>
 

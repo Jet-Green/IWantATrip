@@ -358,6 +358,7 @@ onMounted(async () => {
                     :percent="(getCustomersCount(BILL) / (BILL.tripId?.maxPeople || 1)) * 100"
                     :show-info="false"
                     :strokeWidth="16"
+                    strokeColor="#ff6600"
                 />
               </div>
             </div>
@@ -385,6 +386,7 @@ onMounted(async () => {
                     :percent="(getCustomersCount(BILL) / (BILL.tripId?.maxPeople || 1)) * 100"
                     :show-info="false"
                     :strokeWidth="16"
+                    strokeColor="#ff6600"
                 />
               </div>
             </div>

@@ -215,6 +215,10 @@ const firstAvailableCost = computed(() => {
     }) || null
 })
 
+const loyaltyCostDisplay = computed(() => {
+    return firstAvailableCost.value || (trip.value?.cost?.length ? trip.value.cost[0] : null)
+})
+
 let getCurrentCustomerNumber = computed(() => {
     return getCustomersCount(selectedDate.value.billsList) +
         selectedDate.value.selectedCosts.reduce((acc, cost) => {
@@ -263,8 +267,8 @@ const firstPaymentCost = computed(() => {
 const baseDiscountPerPerson = computed(() => {
     if (!trip.value?.loyalty?.enabled || trip.value?.loyalty?.type !== 'discount') return 0
     const percent = trip.value.loyalty.discount?.baseDiscountPercent || 0
-    if (!firstAvailableCost.value) return 0
-    return Math.round(firstAvailableCost.value.price * percent / 100)
+    if (!loyaltyCostDisplay.value) return 0
+    return Math.round(loyaltyCostDisplay.value.price * percent / 100)
 })
 
 const activeFreeServiceLevel = computed(() => {
@@ -697,14 +701,18 @@ onMounted(async () => {
                             <div style="font-size: 0.9em;">
                                 <div v-for="(item, index) in trip.cost" :key="index" class="cost">
 
-                                    <div
-                                        v-if="item.limit - (isNaN(customersByCostType[item.first]) ? 0 : customersByCostType[item.first]) !== 0">
+                                    <div v-if="(item.limit ?? trip.maxPeople) - (customersByCostType[item.first] || 0) !== 0">
+
                                         {{ item.first }}: <b>{{ item.price }} руб.</b>
+
                                         <span>
-                                            <span> | мест - {{
-                                                item.limit - (isNaN(customersByCostType[item.first]) ? 0 :
-                                                customersByCostType[item.first])
-                                                }}</span>
+                                            <span>
+                                              | мест -
+                                              {{
+                                                (item.limit ?? trip.maxPeople) -
+                                                (customersByCostType[item.first] || 0)
+                                              }}
+                                            </span>
                                         </span>
                                     </div>
                                 </div>
@@ -739,7 +747,7 @@ onMounted(async () => {
                         <div v-if="trip.loyalty?.enabled && trip.loyalty?.type === 'discount'" class="loyalty-discount-card">
                             <div v-if="trip.loyalty.discount?.baseDiscountPercent" class="loyalty-discount-card__row">
                                 <span class="loyalty-discount-card__label">Базовая скидка</span>
-                                <span class="loyalty-discount-card__value">{{ trip.loyalty.discount.baseDiscountPercent }}%<span v-if="firstAvailableCost" class="loyalty-discount-card__hint"> ({{ Math.round(firstAvailableCost.price * trip.loyalty.discount.baseDiscountPercent / 100) }}₽)</span></span>
+                                <span class="loyalty-discount-card__value">{{ trip.loyalty.discount.baseDiscountPercent }}%<span v-if="loyaltyCostDisplay" class="loyalty-discount-card__hint"> ({{ Math.round(loyaltyCostDisplay.price * trip.loyalty.discount.baseDiscountPercent / 100) }}₽)</span></span>
                             </div>
                             <div v-if="tripDates.length < 2" class="loyalty-discount-card__row" style="flex-direction: column; align-items: stretch; gap: 4px;">
                                 <span class="loyalty-discount-card__label">Количество человек в туре</span>
@@ -750,17 +758,18 @@ onMounted(async () => {
                                 <a-progress
                                     :percent="(getCustomersCount(selectedDate.billsList) / trip.maxPeople) * 100"
                                     :show-info="false"
+                                    strokeColor="#ff6600"
                                 />
                             </div>
 
                             <div class="d-flex" style="gap: 10px;">
-                                <div v-if="firstAvailableCost" class="loyalty-discount-card__row" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+                                <div v-if="loyaltyCostDisplay" class="loyalty-discount-card__row" style="flex-direction: column; align-items: flex-start; gap: 4px;">
                                     <span class="loyalty-discount-card__label">Цена</span>
                                     <span class="loyalty-discount-card__value">
                                         <span class="loyalty-discount-card__new-price">
-                                            {{ Math.max(0, firstAvailableCost.price - (trip.loyalty.discount?.currentDiscountPerPerson || 0)) }} ₽
+                                            {{ Math.max(0, loyaltyCostDisplay.price - (trip.loyalty.discount?.currentDiscountPerPerson || 0)) }} ₽
                                         </span>
-                                        <span v-if="firstAvailableCost.price !== Math.max(0, firstAvailableCost.price - (trip.loyalty.discount?.currentDiscountPerPerson || 0))" class="loyalty-discount-card__old-price">{{ firstAvailableCost.price }} ₽</span>
+                                        <span v-if="loyaltyCostDisplay.price !== Math.max(0, loyaltyCostDisplay.price - (trip.loyalty.discount?.currentDiscountPerPerson || 0))" class="loyalty-discount-card__old-price">{{ loyaltyCostDisplay.price }} ₽</span>
                                     </span>
                                 </div>
                                 <div class="loyalty-discount-card__row" :class="{ 'loyalty-discount-card__row--max': isMaxDiscount }" style="flex: 1; gap: 4px;">
@@ -789,6 +798,7 @@ onMounted(async () => {
                                 <a-progress
                                     :percent="(getCustomersCount(selectedDate.billsList) / trip.maxPeople) * 100"
                                     :show-info="false"
+                                    strokeColor="#ff6600"
                                 />
                             </div>
                             <div
@@ -1027,7 +1037,7 @@ onMounted(async () => {
                     <!-- Loyalty: discount type -->
                     <div v-if="trip?.loyalty?.type === 'discount'" class="modal-loyalty">
                         <div class="d-flex" style="gap: 10px; flex-wrap: wrap;">
-                            <div class="modal-loyalty__card" style="flex: 1; min-width: 140px;">
+                            <div v-if="trip.loyalty.discount?.baseDiscountPercent" class="modal-loyalty__card" style="flex: 1; min-width: 140px;">
                                 <span class="modal-loyalty__label">Базовая скидка</span>
                                 <span class="modal-loyalty__value">{{ trip.loyalty.discount?.baseDiscountPercent }}%
                                     <span class="modal-loyalty__hint">({{ baseDiscountPerPerson }}₽)</span>
@@ -1047,6 +1057,7 @@ onMounted(async () => {
                                                 :percent="(getCustomersCount(selectedDate.billsList) / trip.maxPeople) * 100"
                                                 :show-info="false"
                                                 :strokeWidth="16"
+                                                strokeColor="#ff6600"
                                             />
                                         </div>
                                     </div>
@@ -1073,6 +1084,7 @@ onMounted(async () => {
                                     :percent="(getCustomersCount(selectedDate.billsList) / trip.maxPeople) * 100"
                                     :show-info="false"
                                     :strokeWidth="16"
+                                    strokeColor="#ff6600"
                                 />
                             </div>
                         </div>

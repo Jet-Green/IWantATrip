@@ -14,6 +14,10 @@ const props = defineProps({
     type: [Number, null],
     default: null,
   },
+  initialData: {
+    type: Object,
+    default: null,
+  },
 });
 
 const emit = defineEmits(["update:minProfit"]);
@@ -273,6 +277,8 @@ onMounted(async () => {
     if (readData) {
       Object.assign(form, readData);
     }
+  } else if (props.initialData) {
+    Object.assign(form, props.initialData);
   }
 });
 
