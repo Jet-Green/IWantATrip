@@ -842,56 +842,95 @@ let formSchema = yup.object({
                                             style="width: 100%" placeholder="10" :min="0" :max="100" :step="1" />
                                     </a-col>
 
-                                    <a-col :xs="24" :md="12">
-                                        Порядок оплаты
-                                        <a-select v-model:value="form.loyalty.discount.paymentOrder"
-                                            :options="paymentOrderOptions" style="width: 100%" />
+                                <a-col :xs="24" :md="12">
+                                  Порядок оплаты
+
+                                  <a-select
+                                      v-model:value="form.loyalty.discount.paymentOrder"
+                                      :options="paymentOrderOptions"
+                                      style="width: 100%"
+                                  />
+                                </a-col>
+
+                                <a-col :xs="24" :md="12">
+                                  Крайний день фиксации скидки
+
+                                  <a-input-number
+                                      v-model:value="form.loyalty.discount.fixationDay"
+                                      style="width: 100%"
+                                      placeholder="2"
+                                      :min="1"
+                                      :max="daysToTripStart || undefined"
+                                      :step="1"
+                                  />
+                                </a-col>
+                              </template>
+
+                              <template v-if="form.loyalty.type === LOYALTY_TYPE.FREE_SERVICES">
+                                <a-col :span="24">
+                                  <a-row
+                                      v-for="(item, index) in form.loyalty.freeServices.levels"
+                                      :key="index"
+                                      :gutter="[12, 12]"
+                                      class="mb-16"
+                                      align="middle"
+                                  >
+                                    <a-col :xs="24" :md="10">
+                                      Кол-во человек для активации бесплатной услуги
+
+                                      <a-input-number
+                                          v-model:value="item.peopleCount"
+                                          style="width: 100%"
+                                          :min="1"
+                                          placeholder="12"
+                                      />
                                     </a-col>
 
                                     <a-col :xs="24" :md="12">
-                                        Крайний день фиксации скидки
-                                        <a-input-number v-model:value="form.loyalty.discount.fixationDay"
-                                            style="width: 100%" placeholder="2" :min="1"
-                                            :max="daysToTripStart || undefined" :step="1" />
+                                      Услуга в подарок
+
+                                      <a-input
+                                          v-model:value="item.service"
+                                          style="width: 100%"
+                                          placeholder="Бесплатный завтрак"
+                                      />
                                     </a-col>
 
-                                    <a-col :span="24">
-                                        <PriceCalc ref="priceCalcRef" :embedded="true"
-                                            v-model:minProfit="form.loyalty.discount.minProfit"
-                                            :initialData="form.calculator" />
+                                    <a-col
+                                        :xs="24"
+                                        :md="2"
+                                        class="d-flex justify-center"
+                                        style="padding-top: 24px;"
+                                    >
+                                      <a-button
+                                          @click="removeLoyaltyFreeService(item)"
+                                          shape="circle"
+                                          :disabled="form.loyalty.freeServices.levels.length <= 1"
+                                      >
+                                        <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                                      </a-button>
                                     </a-col>
-                                </template>
+                                  </a-row>
 
-                                <template v-else>
-                                    <a-col :span="24">
-                                        <a-row v-for="(item, index) in form.loyalty.freeServices.levels" :key="index"
-                                            :gutter="[12, 12]" class="mb-16" align="middle">
-                                            <a-col :xs="24" :md="10">
-                                                Кол-во человек для активации бесплатной услуги
-                                                <a-input-number v-model:value="item.peopleCount" style="width: 100%"
-                                                    :min="1" placeholder="12" />
-                                            </a-col>
+                                  <a-button
+                                      type="dashed"
+                                      block
+                                      @click="addLoyaltyFreeService"
+                                      class="mt-8 mb-8"
+                                  >
+                                    Добавить услугу
+                                  </a-button>
+                                </a-col>
+                              </template>
 
-                                            <a-col :xs="24" :md="12">
-                                                Услуга в подарок
-                                                <a-input v-model:value="item.service" style="width: 100%"
-                                                    placeholder="Бесплатный завтрак" />
-                                            </a-col>
-
-                                            <a-col :xs="24" :md="2" class="d-flex justify-center"
-                                                style="padding-top: 24px;">
-                                                <a-button @click="removeLoyaltyFreeService(item)" shape="circle"
-                                                    :disabled="form.loyalty.freeServices.levels.length <= 1">
-                                                    <span class="mdi mdi-minus" style="cursor: pointer"></span>
-                                                </a-button>
-                                            </a-col>
-                                        </a-row>
-
-                                        <a-button type="dashed" block @click="addLoyaltyFreeService" class="mt-8 mb-8">
-                                            Добавить услугу
-                                        </a-button>
-                                    </a-col>
-                                </template>
+                              <a-col :span="24">
+                                <PriceCalc
+                                    ref="priceCalcRef"
+                                    :embedded="true"
+                                    v-model:minProfit="form.loyalty.discount.minProfit"
+                                    :initialData="form.calculator"
+                                />
+                              </a-col>
                             </a-row>
                         </a-col>
 
