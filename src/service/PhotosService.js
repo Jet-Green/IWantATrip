@@ -1,14 +1,36 @@
 import $api from "../plugins/axios"
 
 export default {
-    getPhotos(page) {
-        return $api.get(`/photos/get-photos?page=${page}` )
+    getPhotos(page, geo) {
+        const params = new URLSearchParams({ page: String(page ?? 1) })
+        if (geo?.lon != null && geo?.lat != null) {
+            params.set('lon', String(geo.lon))
+            params.set('lat', String(geo.lat))
+        }
+        if (geo?.location) {
+            params.set('location', String(geo.location))
+        }
+        if (geo?.locationRadius != null && geo?.locationRadius !== '') {
+            params.set('locationRadius', String(geo.locationRadius))
+        }
+        return $api.get(`/photos/get-photos?${params.toString()}`)
     },
 
-    searchPhotos(q, page) {
+    searchPhotos(q, page, geo) {
         const qq = encodeURIComponent(String(q ?? '').trim())
         const p = page ?? 1
-        return $api.get(`/photos/search?q=${qq}&page=${p}`)
+        const params = new URLSearchParams({ q: String(q ?? '').trim(), page: String(p) })
+        if (geo?.lon != null && geo?.lat != null) {
+            params.set('lon', String(geo.lon))
+            params.set('lat', String(geo.lat))
+        }
+        if (geo?.location) {
+            params.set('location', String(geo.location))
+        }
+        if (geo?.locationRadius != null && geo?.locationRadius !== '') {
+            params.set('locationRadius', String(geo.locationRadius))
+        }
+        return $api.get(`/photos/search?${params.toString()}`)
     },
 
     uploadPhotobankPhotos(formData) {

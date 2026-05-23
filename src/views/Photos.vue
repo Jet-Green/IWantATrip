@@ -6,10 +6,39 @@ import "maplibre-gl/dist/maplibre-gl.css";
 
 import BackButton from "../components/BackButton.vue";
 import { usePhotos } from "../stores/photos.js";
+import { useLocations } from "../stores/locations.js";
 
 const router = useRouter();
 
 const photosStore = usePhotos();
+const locationStore = useLocations();
+
+function photosLocationGeo() {
+  let location = locationStore.location;
+  if (!location?.name) {
+    const raw = localStorage.getItem("location");
+    if (raw) {
+      try {
+        location = JSON.parse(raw);
+      } catch {
+        location = null;
+      }
+    }
+  }
+  if (!location?.name || !Array.isArray(location?.coordinates) || location.coordinates.length < 2) {
+    return null;
+  }
+  const storedRadius = localStorage.getItem("LocationRadius");
+  const locationRadius =
+    storedRadius != null && storedRadius !== "" ? Number(storedRadius) : 100;
+  return {
+    lon: location.coordinates[0],
+    lat: location.coordinates[1],
+    location: location.name,
+    locationRadius: Number.isFinite(locationRadius) ? locationRadius : 100,
+  };
+}
+
 /** @type {import('vue').Ref<Array<{ url: string; location: { name: string; shortName: string; type: string; coordinates: number[] } | null; placeNameText: string; enterpriseName: string; caption: string }>>} */
 const photoItems = ref([]);
 const page = ref(1);
@@ -180,7 +209,7 @@ const morePhotos = async () => {
   loadingMore.value = true;
   try {
     page.value++;
-    const res = await photosStore.getPhotos(page.value);
+    const res = await photosStore.getPhotos(page.value, photosLocationGeo());
     const { photos: chunk, hasMore } = parsePhotosPayload(res);
     if (chunk.length) {
       photoItems.value = [...photoItems.value, ...chunk];
@@ -191,10 +220,12 @@ const morePhotos = async () => {
   }
 };
 
-onMounted(async () => {
+async function loadPhotosFirstPage() {
+  page.value = 1;
   loading.value = true;
+  showMoreButton.value = true;
   try {
-    const res = await photosStore.getPhotos(page.value);
+    const res = await photosStore.getPhotos(page.value, photosLocationGeo());
     const { photos, hasMore } = parsePhotosPayload(res);
     photoItems.value = photos;
     showMoreButton.value = hasMore;
@@ -204,6 +235,19 @@ onMounted(async () => {
   } finally {
     loading.value = false;
   }
+}
+
+watch(() => locationStore.location?._id ?? "", () => {
+  loadPhotosFirstPage();
+});
+
+onMounted(async () => {
+  try {
+    await locationStore.refreshLocation();
+  } catch {
+    /* ignore invalid location in localStorage */
+  }
+  await loadPhotosFirstPage();
 });
 
 onBeforeUnmount(() => {
