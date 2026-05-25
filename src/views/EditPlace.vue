@@ -1,10 +1,13 @@
 <script setup>
-import { reactive, ref, watch, onMounted, computed } from "vue"
+import { reactive, ref, watch, onMounted, computed, defineAsyncComponent } from "vue"
 import { Form, Field, ErrorMessage } from "vee-validate"
 import * as yup from "yup"
 import { QuillEditor } from "@vueup/vue-quill"
 import "@vueup/vue-quill/dist/vue-quill.snow.css"
-import ImageCropper from "../components/ImageCropper.vue"
+// import ImageCropper from "../components/ImageCropper.vue"
+const ImageCropper = defineAsyncComponent(() =>
+  import("../components/ImageCropper.vue")
+)
 import { message } from "ant-design-vue"
 
 import { useRouter, useRoute } from "vue-router"
@@ -215,7 +218,7 @@ const form = reactive({
   openingHours: "",
   price: "",
   website: "",
-  phone:"",
+  phone: "",
 
   category: "",
 })
@@ -267,7 +270,7 @@ async function submit() {
   let toSend = { ...form }
   // toSend.author = userStore.user._id
   // toSend.createdDate = Date.now()
-  
+
   // там какая-то проблема с удалением, видимо с ссылкой на переменные что-то было
   // удалялось 2 раза из одного индекса, потому что мы удаляли сначала из oldImages, потом из form.images, 
   // видимо они ссылаются на одну и ту же переменную в памяти
@@ -298,7 +301,7 @@ async function submit() {
       price: "",
       website: "",
       category: "",
-      phone:"",
+      phone: "",
     })
     images = []
     previews.value = []
@@ -356,7 +359,7 @@ const delPhoto = () => {
   delPhotoDialog.value = false
 }
 
-const delOldPhoto = () => {  
+const delOldPhoto = () => {
   oldImages.value.splice(targetIndex.value, 1)
   delOldPhotoDialog.value = false
 }
@@ -439,7 +442,7 @@ onMounted(async () => {
     if (res.status == 200) {
       Object.assign(form, res.data)
       oldImages.value = res.data.images
-      
+
       form.location = res.data.location
       if (res.data.location?.name) {
         locationSearchRequest.value = res.data.location.name
@@ -467,14 +470,8 @@ onMounted(async () => {
             <a-col :span="24">
               <Field name="name" v-slot="{ value, handleChange }" v-model="form.name">
                 Название
-                <a-input
-                  placeholder="Название места"
-                  @update:value="handleChange"
-                  :value="value"
-                  :maxlength="50"
-                  allow-clear
-                  show-count
-                ></a-input>
+                <a-input placeholder="Название места" @update:value="handleChange" :value="value" :maxlength="50"
+                  allow-clear show-count></a-input>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="name" class="error-message" />
@@ -483,14 +480,8 @@ onMounted(async () => {
             <a-col :span="24">
               <Field name="shortDescription" v-slot="{ value, handleChange }" v-model="form.shortDescription">
                 Короткое описание
-                <a-textarea
-                  placeholder="Кратко о месте"
-                  @update:value="handleChange"
-                  :value="value"
-                  :maxlength="200"
-                  allow-clear
-                  show-count
-                ></a-textarea>
+                <a-textarea placeholder="Кратко о месте" @update:value="handleChange" :value="value" :maxlength="200"
+                  allow-clear show-count></a-textarea>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="shortDescription" class="error-message" />
@@ -499,49 +490,30 @@ onMounted(async () => {
 
             <a-col :span="24" style="display: flex; flex-direction: column">
               Подробное описанние
-              <QuillEditor
-                class="ql-editor"
-                theme="snow"
-                ref="quill"
-                v-model:content="form.description"
-                contentType="html"
-                :toolbar="[
+              <QuillEditor class="ql-editor" theme="snow" ref="quill" v-model:content="form.description"
+                contentType="html" :toolbar="[
                   ['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }],
                   [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
                   ['link'],
                   ['clean'],
-                ]"
-              />
+                ]" />
             </a-col>
             <a-col :span="24" style="display: flex; flex-direction: column">
               Советы туристам
-              <QuillEditor
-                class="ql-editor"
-                theme="snow"
-                ref="quill"
-                v-model:content="form.advicesForTourists"
-                contentType="html"
-                :toolbar="[
+              <QuillEditor class="ql-editor" theme="snow" ref="quill" v-model:content="form.advicesForTourists"
+                contentType="html" :toolbar="[
                   ['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }],
                   [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }],
                   ['link'],
                   ['clean'],
-                ]"
-              />
+                ]" />
             </a-col>
 
             <a-col :span="24">
               <Field name="category" v-slot="{ value, handleChange }" v-model="form.category">
                 Категория места
-                <a-select
-                  :value="value"
-                  @update:value="handleChange"
-                  style="width: 100%"
-                  :options="placeCategory"
-                  placeholder="Музей, памятник"
-                  show-search
-                  allowClear
-                >
+                <a-select :value="value" @update:value="handleChange" style="width: 100%" :options="placeCategory"
+                  placeholder="Музей, памятник" show-search allowClear>
                 </a-select>
               </Field>
               <Transition name="fade">
@@ -552,14 +524,8 @@ onMounted(async () => {
             <a-col :span="24" class="mt-4">
               <Field name="openingHours" v-slot="{ value, handleChange }" v-model="form.openingHours">
                 Время работы
-                <a-input
-                  placeholder="расписание, время работы"
-                  @update:value="handleChange"
-                  :value="value"
-                  :maxlength="100"
-                  allow-clear
-                  show-count
-                ></a-input>
+                <a-input placeholder="расписание, время работы" @update:value="handleChange" :value="value"
+                  :maxlength="100" allow-clear show-count></a-input>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="openingHours" class="error-message" />
@@ -569,14 +535,8 @@ onMounted(async () => {
             <a-col :span="24">
               <Field name="price" v-slot="{ value, handleChange }" v-model="form.price">
                 Цена
-                <a-input
-                  placeholder="взрослый - 100 рублей"
-                  @update:value="handleChange"
-                  :value="value"
-                  :maxlength="100"
-                  allow-clear
-                  show-count
-                ></a-input>
+                <a-input placeholder="взрослый - 100 рублей" @update:value="handleChange" :value="value"
+                  :maxlength="100" allow-clear show-count></a-input>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="price" class="error-message" />
@@ -585,8 +545,8 @@ onMounted(async () => {
             <a-col :span="24">
               <Field name="phone" v-slot="{ value, handleChange }" v-model="form.phone">
                 Телефон
-                <a-input placeholder="8919999999" @update:value="handleChange" :value="value"
-                  allow-clear show-count></a-input>
+                <a-input placeholder="8919999999" @update:value="handleChange" :value="value" allow-clear
+                  show-count></a-input>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="phone" class="error-message" />
@@ -595,14 +555,8 @@ onMounted(async () => {
             <a-col :span="24">
               <Field name="website" v-slot="{ value, handleChange }" v-model="form.website">
                 Сайт/соц.сеть
-                <a-input
-                  placeholder="https://example.com"
-                  @update:value="handleChange"
-                  :value="value"
-                  :maxlength="50"
-                  allow-clear
-                  show-count
-                ></a-input>
+                <a-input placeholder="https://example.com" @update:value="handleChange" :value="value" :maxlength="50"
+                  allow-clear show-count></a-input>
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="website" class="error-message" />
@@ -618,14 +572,8 @@ onMounted(async () => {
               </div>
               <div v-if="locationType == 'dadataLocation'">
                 <Field name="location" v-slot="{ value, handleChange }" v-model="locationSearchRequest">
-                  <a-auto-complete
-                    :value="value"
-                    @update:value="handleChange"
-                    style="width: 100%"
-                    :options="possibleLocations"
-                    placeholder="Глазов"
-                    @select="selectStartLocation"
-                  >
+                  <a-auto-complete :value="value" @update:value="handleChange" style="width: 100%"
+                    :options="possibleLocations" placeholder="Глазов" @select="selectStartLocation">
                   </a-auto-complete>
                 </Field>
                 <Transition name="fade">
@@ -643,26 +591,12 @@ onMounted(async () => {
             <a-col :xs="24">
               Фотографии
               <div class="d-flex" style="overflow-x: scroll">
-                <img
-                  v-for="(image, i) in oldImages"
-                  :key="'old-' + i + '-' + image"
-                  :src="image"
-                  alt=""
-                  class="ma-4"
-                  style="max-width: 200px"
-                  @click=";(delOldPhotoDialog = true), (targetIndex = i)"
-                />
+                <img v-for="(image, i) in oldImages" :key="'old-' + i + '-' + image" :src="image" alt="" class="ma-4"
+                  style="max-width: 200px" @click="; (delOldPhotoDialog = true), (targetIndex = i)" />
 
-                <img
-                  v-for="(pr, i) in previews"
-                  :key="'new-' + i + '-' + pr"
-                  :src="pr"
-                  alt=""
-                  class="ma-4"
-                  style="max-width: 200px"
-                  @click=";(delPhotoDialog = true), (targetIndex = i)"
-                  @error="handleImgError(i)"
-                />
+                <img v-for="(pr, i) in previews" :key="'new-' + i + '-' + pr" :src="pr" alt="" class="ma-4"
+                  style="max-width: 200px" @click="; (delPhotoDialog = true), (targetIndex = i)"
+                  @error="handleImgError(i)" />
               </div>
               <div class="edit-place-photos-actions">
                 <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
@@ -670,20 +604,15 @@ onMounted(async () => {
                   Добавить фото
                 </a-button>
                 <a-button type="dashed" block class="ma-8" @click="openPhotobankModal">
-                  <span class="mdi mdi-image-multiple-outline mdi-18px" style="margin-right: 6px" aria-hidden="true"></span>
+                  <span class="mdi mdi-image-multiple-outline mdi-18px" style="margin-right: 6px"
+                    aria-hidden="true"></span>
                   Из фотобанка
                 </a-button>
               </div>
             </a-col>
             <a-col :span="24" class="d-flex justify-center">
-              <a-button
-                class="lets_go_btn ma-36"
-                type="primary"
-                html-type="submit"
-                :disabled="
-                  !meta.valid || form.advicesForTourists.length < 3 || form.description.length < 3 || !isLocationValid
-                "
-                >Отправить
+              <a-button class="lets_go_btn ma-36" type="primary" html-type="submit" :disabled="!meta.valid || form.advicesForTourists.length < 3 || form.description.length < 3 || !isLocationValid
+                ">Отправить
               </a-button>
             </a-col>
           </a-row>
@@ -691,45 +620,25 @@ onMounted(async () => {
         <a-modal v-model:open="visibleCropperModal" :footer="null" :destroyOnClose="true">
           <ImageCropper :aspectRatio="2 / 1" @addImage="addPreview" />
         </a-modal>
-        <a-modal
-          v-model:open="photobankModalOpen"
-          title="Выберите фото из фотобанка"
-          width="min(920px, 94vw)"
-          :footer="null"
-          :destroyOnClose="true"
-        >
+        <a-modal v-model:open="photobankModalOpen" title="Выберите фото из фотобанка" width="min(920px, 94vw)"
+          :footer="null" :destroyOnClose="true">
           <div class="edit-place-photobank-toolbar">
-            <a-input-search
-              v-model:value="photobankSearchQuery"
-              placeholder="Поиск по URL, ключу или подписи"
-              allow-clear
-              enter-button="Найти"
-              size="large"
-              @search="runPhotobankSearch"
-            />
-            <a-button v-if="photobankSearchActive || photobankSearchQuery.trim()" type="link" class="edit-place-photobank-all" @click="clearPhotobankSearch">
+            <a-input-search v-model:value="photobankSearchQuery" placeholder="Поиск по URL, ключу или подписи"
+              allow-clear enter-button="Найти" size="large" @search="runPhotobankSearch" />
+            <a-button v-if="photobankSearchActive || photobankSearchQuery.trim()" type="link"
+              class="edit-place-photobank-all" @click="clearPhotobankSearch">
               Все фото
             </a-button>
           </div>
           <a-spin :spinning="photobankLoading">
-            <div
-              v-if="!photobankLoading && !photobankUrls.length"
-              class="edit-place-photobank-empty"
-            >
+            <div v-if="!photobankLoading && !photobankUrls.length" class="edit-place-photobank-empty">
               {{ photobankSearchActive ? 'Ничего не найдено' : 'В фотобанке пока нет фотографий' }}
             </div>
             <template v-else-if="!photobankLoading && photobankUrls.length">
               <div class="edit-place-photobank-grid">
-                <div
-                  v-for="(url, idx) in photobankUrls"
-                  :key="`${url}-${idx}`"
-                  class="edit-place-photobank-cell"
-                  :class="{ 'edit-place-photobank-cell--selected': isPhotobankUrlSelected(url) }"
-                  role="button"
-                  tabindex="0"
-                  @click="togglePhotobankSelect(url)"
-                  @keydown.enter.prevent="togglePhotobankSelect(url)"
-                >
+                <div v-for="(url, idx) in photobankUrls" :key="`${url}-${idx}`" class="edit-place-photobank-cell"
+                  :class="{ 'edit-place-photobank-cell--selected': isPhotobankUrlSelected(url) }" role="button"
+                  tabindex="0" @click="togglePhotobankSelect(url)" @keydown.enter.prevent="togglePhotobankSelect(url)">
                   <img :src="url" alt="" loading="lazy" />
                   <span class="edit-place-photobank-check mdi mdi-check-bold" aria-hidden="true"></span>
                 </div>

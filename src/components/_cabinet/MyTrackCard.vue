@@ -74,20 +74,20 @@ async function hideTrack(_id) {
     <div class="actions">
       <div>
         <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="trackToDelete(track._id)">
-          <span class="mdi mdi-delete" style="color: #ff6600;"></span>
+          <MdiIcon style="color: #ff6600;" name="delete" />
         </a-popconfirm>
 
         <a-popconfirm title="Скрыть/показать?" ok-text="Да" cancel-text="Нет" @confirm="hideTrack(track._id)">
-          <span v-if="!track.isHidden" class="mdi mdi-eye-outline"></span>
-          <span v-else class="mdi mdi-eye-off-outline"></span>
+          <MdiIcon v-if="!track.isHidden" name="eye-outline" />
+          <MdiIcon v-else name="eye-off-outline" />
         </a-popconfirm>
 
         <a-popconfirm title="Редактировать?" ok-text="Да" cancel-text="Нет"
           @confirm="router.push(`/edit-track?_id=${track._id}`)">
-          <span class="mdi mdi-pen"></span>
+          <MdiIcon name="pen" />
         </a-popconfirm>
 
-        <span class="mdi mdi-information-outline" @click="show=!show"></span>
+        <MdiIcon @click="show=!show" name="information-outline" />
       </div>
       <div :style="{ color }" style="font-size:14px">
         {{ status }}

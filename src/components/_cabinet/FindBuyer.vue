@@ -54,9 +54,9 @@ const clearData = (dataString) => {
                         {{ trip.name }}
                     </div>
                     <div>
-                        <span class="mdi mdi-calendar-arrow-right"></span>
+                        <MdiIcon name="calendar-arrow-right" />
                         {{ `c ${clearData(trip.start)}` }}
-                        <span class="mdi mdi-calendar-arrow-left"></span>
+                        <MdiIcon name="calendar-arrow-left" />
                         {{ `по ${clearData(trip.end)}` }}
                     </div>
                 </a-card>

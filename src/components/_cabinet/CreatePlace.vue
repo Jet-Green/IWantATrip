@@ -650,12 +650,8 @@ onBeforeUnmount(() => {
             <a-col :xs="24">
               Фотографии
               <div class="d-flex" style="overflow-x: scroll">
-                <div
-                  v-for="(entry, i) in photoEntries"
-                  :key="`${entry.kind}-${i}-${entry.preview}`"
-                  class="create-place-photo-thumb-wrap ma-4"
-                  @click="openDelPhoto(i)"
-                >
+                <div v-for="(entry, i) in photoEntries" :key="`${entry.kind}-${i}-${entry.preview}`"
+                  class="create-place-photo-thumb-wrap ma-4" @click="openDelPhoto(i)">
                   <img :src="entry.preview" alt="" class="create-place-photo-thumb" @error="handleImgError(i)" />
                   <span v-if="entry.kind === 'photobank'" class="create-place-photo-badge">фотобанк</span>
                 </div>
@@ -685,13 +681,8 @@ onBeforeUnmount(() => {
             </a-button>
           </div>
         </a-modal>
-        <a-modal
-          v-model:open="usePlaceForTrackPrompt"
-          title="Место создано"
-          :footer="null"
-          class="post-create-place-modal"
-          @cancel="closeUsePlacePrompt"
-        >
+        <a-modal v-model:open="usePlaceForTrackPrompt" title="Место создано" :footer="null"
+          class="post-create-place-modal" @cancel="closeUsePlacePrompt">
           <p>Используем это место для создания маршрута?</p>
           <div class="d-flex justify-end mt-16 post-create-place-modal__actions" style="gap: 8px;">
             <a-button @click="closeUsePlacePrompt">Нет, позже</a-button>

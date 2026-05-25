@@ -150,17 +150,17 @@ onMounted(async () => {
                 </a-button>
               </a-tooltip>
               <div class="row">
-                <span class="mdi mdi-clock-outline mr-4 icon"></span>
+                <MdiIcon name="clock-outline" class="mr-4 icon" />
                 <b>
                   {{ getTime(time) }}
                 </b>
               </div>
               <div class="row">
-                <span class="mdi mdi-account-multiple-outline mr-4 icon"></span>
+                <MdiIcon name="account-multiple-outline" class="mr-4 icon" />
                 <b>{{ getPeopleCount(time.bills) }}</b>&nbsp;чел.
               </div>
               <div class="row">
-                <span class="mdi mdi-cash-multiple mr-4 icon"></span>
+                <MdiIcon name="cash-multiple" class="mr-4 icon" />
                 <b>{{ getBillsSum(time.bills) }}₽</b>
               </div>
               <div class="d-flex justify-center mt-8" v-if="shouldShowInvoiceAllForTime">

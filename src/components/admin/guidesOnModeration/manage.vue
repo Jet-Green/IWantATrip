@@ -76,16 +76,16 @@ onMounted(async () => {
                 <a-divider class="ma-4" style="border-color: #205f79"></a-divider>
                 <div class="actions d-flex justify-center">
                     <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="deleteGuide(g._id)">
-                        <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+                        <MdiIcon style="color: #ff6600; cursor: pointer" name="delete" />
                     </a-popconfirm>
                     <a-popconfirm title="Скрыть/показать?" ok-text="Да" cancel-text="Нет"
                         @confirm="hideGuide(g._id,g.isHidden)">
-                        <span v-if="!g.isHidden" class="mdi mdi-eye-outline"></span>
-                        <span v-else class="mdi mdi-eye-off-outline"></span>
+                        <MdiIcon v-if="!g.isHidden" name="eye-outline" />
+                        <MdiIcon v-else name="eye-off-outline" />
                     </a-popconfirm>
 
-                    <span class="mdi mdi-pencil" @click="router.push(`/edit-guide?_id=${g._id}&is_admin=${true}`)"
-                        style="color: #245159; cursor: pointer"></span>
+                    <MdiIcon @click="router.push(`/edit-guide?_id=${g._id}&is_admin=${true}`)"
+                        style="color: #245159; cursor: pointer" name="pencil" />
                 </div>
             </a-card>
         </a-col>

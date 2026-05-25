@@ -156,13 +156,13 @@ onMounted(async () => {
         >
           <template #dp-input>
             <a-button class="d-flex justify-center align-center text-center ml-8" shape="circle">
-              <span style="font-size: 18px" class="mdi mdi-plus"></span>
+              <MdiIcon style="font-size: 18px" name="plus" />
             </a-button>
           </template>
         </VueDatePicker>
 
         <a-button @click="deleteDate(date._id)" class="d-flex justify-center align-center text-center ml-8" type="primary" shape="circle">
-          <span style="font-size: 18px" class="mdi mdi-delete-outline"></span>
+          <MdiIcon style="font-size: 18px" name="delete-outline" />
         </a-button>
       </a-col>
     </a-col>

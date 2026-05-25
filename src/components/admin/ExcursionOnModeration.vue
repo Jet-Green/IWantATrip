@@ -54,18 +54,18 @@ onMounted(async () => {
                         <div class="actions d-flex justify-center">
                             <a-popconfirm title="Проверить?" ok-text="Да" cancel-text="Нет"
                                 @confirm="look(excursion._id)">
-                                <span class="mdi mdi-check-decagram-outline"></span>
+                                <MdiIcon name="check-decagram-outline" />
 
                             </a-popconfirm>
 
                             <a-popconfirm title="Редактировать?" ok-text="Да" cancel-text="Нет"
                                 @confirm="router.push(`/edit-excursion?_id=${excursion._id}`)">
-                                <span class="mdi mdi-pen"></span>
+                                <MdiIcon name="pen" />
                             </a-popconfirm>
 
                             <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет"
                                 @confirm="deleteExcursion(excursion._id)">
-                                <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+                                <MdiIcon style="color: #ff6600; cursor: pointer" name="delete" />
                             </a-popconfirm>
                         </div>
                     </a-card>

@@ -55,22 +55,22 @@ async function deleteExcursionBill(_id) {
         <a-tag v-else color="volcano">Не оплачено</a-tag>
       </div>
       <div v-if="bill.userInfo">
-        <span class="mdi mdi-account-outline" style=""></span>
+        <MdiIcon style="" name="account-outline" />
         {{ bill?.userInfo.fullname }}
       </div>
       <div v-else>
-        <span class="mdi mdi-account-outline" style=""></span>
+        <MdiIcon style="" name="account-outline" />
         {{ bill?.user.fullinfo.fullname }}
       </div>
    
       <div v-if="bill.userInfo">
-        <span class="mdi mdi-phone-outline mr-4" style=""></span>
+        <MdiIcon style="" name="phone-outline" class="mr-4" />
         <a :href="`tel:${bill.userInfo.phone}`">
           {{ bill?.userInfo.phone }}
         </a>
       </div>
       <div v-else>
-        <span class="mdi mdi-phone-outline mr-4" style=""></span>
+        <MdiIcon style="" name="phone-outline" class="mr-4" />
         <a :href="`tel:${bill.user.fullinfo.phone}`">
           {{ bill.user?.fullinfo.phone }}
         </a>
@@ -83,13 +83,13 @@ async function deleteExcursionBill(_id) {
         Итого: {{ getBillSum(bill) }}₽
       </div>
       <div v-if="payedByTinkoff" class="d-flex justify-end">
-        <img :src="TinkoffLogo" class="tinkoff-logo">
+        <img :src="TinkoffLogo" alt="tinkoff" class="tinkoff-logo">
       </div>
     </div>
     <div class="actions d-flex">
       <a-popconfirm v-if="!payedByTinkoff" title="Удалить?" ok-text="Да" cancel-text="Нет"
         @confirm="deleteExcursionBill(bill._id)">
-        <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+        <MdiIcon style="color: #ff6600; cursor: pointer" name="delete" />
       </a-popconfirm>
     </div>
   </a-card>

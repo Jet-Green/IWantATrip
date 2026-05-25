@@ -180,7 +180,7 @@ const handleImageChange = async (event) => {
       <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"
         @confirm="() => { deletePhotoFromLocation(location._id) }">
         <div>
-          <img style="width: 100%;" :src="location.image" alt="">
+          <img style="width: 100%;" :src="location.image" alt="not found">
 
         </div>
         <div style="font-size: 8px; text-align: center;">{{ location.shortName }}</div>
@@ -199,7 +199,7 @@ const handleImageChange = async (event) => {
         :options="possibleLocations" placeholder="Глазов" @select="selectStartLocation"></a-auto-complete>
     </div>
     <div class="upload-container mt-16">
-      <label for="image_uploads"> <span class="mdi mdi-24px mdi-paperclip" style="cursor: pointer"></span>Выбери
+      <label for="image_uploads"> <MdiIcon style="cursor: pointer" name="paperclip" size="24px" />Выбери
         фотографию
       </label>
       <input type="file" id="image_uploads" name="image_uploads" accept="image/png, image/jpeg, image/jpg"

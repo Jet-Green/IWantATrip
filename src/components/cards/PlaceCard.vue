@@ -66,7 +66,7 @@ function goToTrip(tripId) {
         <div class="info-item" v-if="place?.location?.name">
           <span class="label">Адрес:</span>
           <a :href="`https://yandex.ru/maps/?ll=${place?.location?.coordinates?.[0]}%2C${place?.location?.coordinates?.[1]}&z=16&pt=${place?.location?.coordinates?.[0]},${place?.location?.coordinates?.[1]}}`"
-             target="_blank" class="value link">
+            target="_blank" class="value link">
             {{ place?.location?.name }}
           </a>
         </div>
@@ -89,12 +89,7 @@ function goToTrip(tripId) {
       <div class="trips-section" v-if="place?.trips?.length">
         <h3>Посещается в турах</h3>
         <div class="trips-list">
-          <div 
-            v-for="trip in place.trips" 
-            :key="trip._id" 
-            class="trip-item"
-            @click="goToTrip(trip._id)"
-          >
+          <div v-for="trip in place.trips" :key="trip._id" class="trip-item" @click="goToTrip(trip._id)">
             {{ trip.name }}
           </div>
         </div>
@@ -221,7 +216,8 @@ function goToTrip(tripId) {
   }
 }
 
-.description-full, .advices {
+.description-full,
+.advices {
   margin-top: 20px;
 
   h3 {
