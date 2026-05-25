@@ -95,27 +95,12 @@ let cards = ref([
 
       <a-row :gutter="[12, 12]" class="justify-center">
         <a-col v-for="(card, index) in cards" :key="index" :xs="12" :md="8">
-          <<<<<<< HEAD <router-link :to="card.isShow ? card.route : ''" class="guide-card"
-            :class="{ opacity: !card.isShow }">
+          <router-link :to="card.isShow ? card.route : ''" class="guide-card" :class="{ opacity: !card.isShow }">
             <div class="card-content">
               <span class="mdi" :class="card.icon"></span>
               <span class="card-title">{{ card.title }}</span>
             </div>
-            =======
-            <div class="d-flex" v-if="!card.isShow">
-            </div>
-            <router-link :to="card.isShow ? card.route : ''">
-              <a-card hoverable class="guide-card" :class="{ opacity: !card.isShow }">
-                <div>
-                  <!-- <span class="mdi" :class="card.icon"> </span> -->
-                  <MdiIcon :name="card.icon" size="24px" />
-                  <span>
-                    {{ card.title }}
-                  </span>
-                </div>
-              </a-card>
-              >>>>>>> seoptim
-            </router-link>
+          </router-link>
         </a-col>
       </a-row>
     </a-col>
