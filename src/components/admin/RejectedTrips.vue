@@ -49,12 +49,12 @@ onMounted(async () => {
                 </div>
                 <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
                 <div v-if="trip?.startLocation?.name">
-                    <span class="mdi mdi-compass-outline"></span> {{ trip.startLocation.name }}
+                    <MdiIcon name="compass-outline" /> {{ trip.startLocation.name }}
                 </div>
                 <div>
-                    <span class="mdi mdi-calendar-arrow-right"></span>
+                    <MdiIcon name="calendar-arrow-right" />
                     {{ `c ${clearData(trip.start)}` }}
-                    <span class="mdi mdi-calendar-arrow-left"></span>
+                    <MdiIcon name="calendar-arrow-left" />
                     {{ `по ${clearData(trip.end)}` }}
                 </div>
                 <div class="mt-8">Автор: {{ trip.author.fullinfo.fullname }}</div>
@@ -62,10 +62,10 @@ onMounted(async () => {
                 <div class="actions d-flex justify-center">
                     <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="tripToDelete(trip._id)"
                         v-if="!trip.billsList.length > 0">
-                        <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+                        <MdiIcon style="color: #ff6600; cursor: pointer" name="delete" />
                     </a-popconfirm>
-                    <span class="mdi mdi-check-decagram-outline" @click="router.push(`/trip-moderation?_id=${trip._id}`)"
-                        style="color: #245159; cursor: pointer"></span>
+                    <MdiIcon @click="router.push(`/trip-moderation?_id=${trip._id}`)"
+                        style="color: #245159; cursor: pointer" name="check-decagram-outline" />
                 </div>
             </a-card>
         </a-col>

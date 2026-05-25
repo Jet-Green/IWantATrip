@@ -32,17 +32,16 @@ onMounted(async () => {
                 </div>
                 <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
                 <div v-if="catalog?.startLocation?.name">
-                    <span class="mdi mdi-compass-outline"></span> {{ catalog.startLocation.name }}
+                    <MdiIcon name="compass-outline" /> {{ catalog.startLocation.name }}
                 </div>
                 <div class="mt-8">Автор: {{ catalog.author.fullinfo.fullname }}</div>
                 <div class="actions d-flex justify-center">
                     <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет"
                         @confirm="catalogToDelete(catalog._id)">
-                        <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+                        <MdiIcon style="color: #ff6600; cursor: pointer" name="delete" />
                     </a-popconfirm>
-                    <span class="mdi mdi-check-decagram-outline"
-                        @click="router.push(`/catalog-trip-moderation?_id=${catalog._id}`)"
-                        style="color: #245159; cursor: pointer"></span>
+                    <MdiIcon @click="router.push(`/catalog-trip-moderation?_id=${catalog._id}`)"
+                        style="color: #245159; cursor: pointer" name="check-decagram-outline" />
                 </div>
             </a-card>
         </a-col>

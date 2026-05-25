@@ -6,7 +6,7 @@ const locationStore = useLocations()
 let cards = ref([
   {
     title: "Места",
-    icon: "mdi-map-marker-outline",
+    icon: "map-marker-outline",
     route: { name: 'Places', hash: '#top' },
     isShow: true,
 
@@ -20,35 +20,35 @@ let cards = ref([
   // },
   {
     title: "Экскурсии",
-    icon: "mdi-crowd",
+    icon: "crowd",
     route: "/excursions",
     isShow: true,
 
   },
   {
     title: "Гиды",
-    icon: "mdi-account-tie-voice-outline",
+    icon: "account-tie-voice-outline",
     route: "/guides",
     isShow: true,
 
   },
   {
     title: "Афиши",
-    icon: "mdi-movie-roll",
+    icon: "movie-roll",
     route: "/poster",
     isShow: true,
 
   },
   {
     title: "Транспорт",
-    icon: "mdi mdi-train-car",
+    icon: "train-car",
     route: "/transport",
     isShow: true,
 
   },
   {
     title: "Гостиницы",
-    icon: "mdi-home-city-outline",
+    icon: "home-city-outline",
     route: "/stay",
     isShow: true,
 
@@ -95,12 +95,27 @@ let cards = ref([
 
       <a-row :gutter="[12, 12]" class="justify-center">
         <a-col v-for="(card, index) in cards" :key="index" :xs="12" :md="8">
-          <router-link :to="card.isShow ? card.route : ''" class="guide-card" :class="{ opacity: !card.isShow }">
+          <<<<<<< HEAD <router-link :to="card.isShow ? card.route : ''" class="guide-card"
+            :class="{ opacity: !card.isShow }">
             <div class="card-content">
               <span class="mdi" :class="card.icon"></span>
               <span class="card-title">{{ card.title }}</span>
             </div>
-          </router-link>
+            =======
+            <div class="d-flex" v-if="!card.isShow">
+            </div>
+            <router-link :to="card.isShow ? card.route : ''">
+              <a-card hoverable class="guide-card" :class="{ opacity: !card.isShow }">
+                <div>
+                  <!-- <span class="mdi" :class="card.icon"> </span> -->
+                  <MdiIcon :name="card.icon" size="24px" />
+                  <span>
+                    {{ card.title }}
+                  </span>
+                </div>
+              </a-card>
+              >>>>>>> seoptim
+            </router-link>
         </a-col>
       </a-row>
     </a-col>

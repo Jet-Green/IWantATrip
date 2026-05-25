@@ -134,11 +134,11 @@ const formatter = (value) => (value = findFinalPrice());
               class="ml-16 mr-16" />
 
             <a-button @click="indRemoveCost(item)" shape="circle">
-              <span class="mdi mdi-minus" style="cursor: pointer"></span>
+              <MdiIcon style="cursor: pointer" name="minus" />
             </a-button>
           </div>
           <a-button type="dashed" block @click="indAddCost" class="ma-8">
-            <span class="mdi mdi-12px mdi-plus"></span>
+            <MdiIcon name="plus" size="12px" />
             Добавить цены
           </a-button>
         </a-col>
@@ -154,11 +154,11 @@ const formatter = (value) => (value = findFinalPrice());
               class="ml-16 mr-16" />
 
             <a-button @click="groupRemoveCost(item)" shape="circle">
-              <span class="mdi mdi-minus" style="cursor: pointer"></span>
+              <MdiIcon style="cursor: pointer" name="minus" />
             </a-button>
           </div>
           <a-button type="dashed" block @click="groupAddCost" class="ma-8">
-            <span class="mdi mdi-12px mdi-plus"></span>
+            <MdiIcon name="plus" size="12px" />
             Добавить цены
           </a-button>
         </a-col>
@@ -182,12 +182,12 @@ const formatter = (value) => (value = findFinalPrice());
                 :min="0" @change="transportRange(value)" />
 
               <a-button @click="tRemoveCost(item)" shape="circle">
-                <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                <MdiIcon style="cursor: pointer" name="minus" />
               </a-button>
             </a-col>
           </a-row>
           <a-button type="dashed" block @click="tAddCost" class="ma-8">
-            <span class="mdi mdi-12px mdi-plus"></span>
+            <MdiIcon name="plus" size="12px" />
             Добавить виды транспорта
           </a-button>
           <h1>Итого: {{ findFinalPrice() }}</h1>

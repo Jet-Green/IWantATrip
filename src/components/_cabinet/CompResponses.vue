@@ -48,14 +48,12 @@ onMounted(async () => {
   <a-row :gutter="[8, 8]">
     <a-col :xs="24" :sm="12" :xl="6" v-for="request in chosenCompanion">
       <a-card class="card" hoverable>
-        <span class="mdi mdi-human-cane"></span>{{ ageString(request?.age) }}
+        <MdiIcon name="human-cane" />{{ ageString(request?.age) }}
         <div :class="[request.gender == 'Male' ? 'male' : 'female']">
-          <span :class="request.gender == 'Female'
-              ? 'mdi mdi-gender-female'
-              : request.gender == 'Male'
-                ? 'mdi mdi-gender-male'
-                : 'mdi mdi-human-male-female'
-            "></span>{{
+        <MdiIcon v-if="request.gender==Female" name="gender-female" />
+        <MdiIcon v-if="request.gender==Male" name="gender-female" />
+        <MdiIcon v-else name="human-male-female"  />
+            {{
     request.gender == "Male"
     ? "Мужчина"
     : request.gender == "Female"
@@ -67,7 +65,7 @@ onMounted(async () => {
 
         <div>
           <a :href="getPhoneNumber(request.phone)">
-            <span class="mdi mdi-phone"></span> {{ request.phone }}</a>
+            <MdiIcon name="phone" /> {{ request.phone }}</a>
         </div>
       </a-card>
     </a-col>

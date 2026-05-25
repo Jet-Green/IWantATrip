@@ -50,7 +50,8 @@ function getDate() {
         <div class="content">
           <div class="title"> {{ trip.name }} </div>
           <div class="date-row">
-            <span v-if="trip?.privetMirPaymentLink" class="mdi mdi-bank card-vtb-icon" title="Оплата с кэшбеком Привет МИР"></span>
+            <span v-if="trip?.privetMirPaymentLink" class="mdi mdi-bank card-vtb-icon"
+              title="Оплата с кэшбеком Привет МИР"></span>
             <span class="date-text">{{ getDate() }}</span>
             <span class="trip-type-small">{{ trip.tripType }}</span>
           </div>

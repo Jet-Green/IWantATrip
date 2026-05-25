@@ -127,7 +127,7 @@ onMounted(async () => {
           {{ buttonTitle }}
         </div>
         <a-button type="primary" shape="circle" class="ml-8" v-if="filterString" @click="resetForm">
-          <span class="mdi mdi-close"></span>
+          <MdiIcon name="close" />
         </a-button>
       </div>
     </a-col>

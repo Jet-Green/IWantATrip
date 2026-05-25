@@ -20,7 +20,7 @@ const sm = breakpoints.smaller("md");
         style="font-size: 16px; line-height: 32px; cursor: pointer">
         <a-button shape="circle" type="text">
           <template #icon>
-            <span class="mdi mdi-arrow-left" style="font-size:16px"></span>
+            <MdiIcon name="arrow-left"/>
           </template>
         </a-button>
         <span v-if="!sm">Назад</span>

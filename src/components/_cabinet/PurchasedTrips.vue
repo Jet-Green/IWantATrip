@@ -53,12 +53,12 @@ onMounted(async () => {
               <div style="text-align:center">{{ bill.tripId.name }} </div>
               <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
               <div v-if="bill.tripId?.startLocation?.name">
-                <span class="mdi mdi-compass-outline"></span> {{ bill.tripId.startLocation?.name }}
+                <MdiIcon name="compass-outline" /> {{ bill.tripId.startLocation?.name }}
               </div>
               <div>
-                <span class="mdi mdi-calendar-arrow-right"></span>
+                <MdiIcon name="calendar-arrow-right" />
                 {{ `c ${clearData(bill.tripId.start)}` }}
-                <span class="mdi mdi-calendar-arrow-left"></span>
+                <MdiIcon name="calendar-arrow-left" />
                 {{ `по ${clearData(bill.tripId.end)}` }}
               </div>
               <div v-for="cartItem of bill.tripId.cart">
@@ -75,15 +75,14 @@ onMounted(async () => {
               <a-row class="actions d-flex justify-center">
                 <a-popconfirm title="Отказаться?" ok-text="Да" cancel-text="Нет"
                   @confirm="cancelTrip(bill._id, userStore.user._id)">
-                  <span class="mdi mdi-close-circle-outline" v-if="!bill.payment.amount"></span>
+                  <MdiIcon v-if="!bill.payment.amount" name="close-circle-outline" />
                 </a-popconfirm>
                 <a-col v-if="bill.tripId.isBoughtNow"><span style="color: #BCC662;">
-                    <span class="mdi mdi-check-all"></span>
+                    <MdiIcon name="check-all" />
                     оплачен
                   </span></a-col>
                 <a-popconfirm v-else title="Оплатить?" ok-text="Да" cancel-text="Нет" @confirm="">
-                  <span class="mdi mdi-cart-outline" v-if="tripTotalPrice(bill) > bill.payment.amount">
-                  </span>
+                  <MdiIcon v-if="tripTotalPrice(bill)  name =" cart-outline" />
                 </a-popconfirm>
               </a-row>
             </a-card>

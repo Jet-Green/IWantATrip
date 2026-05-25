@@ -140,7 +140,7 @@ onMounted(async () => {
 <template>
     <a-row v-if="loading">
         <a-col :span="24" class="d-flex justify-center mt-16">
-            <img src="../../assets/images/founddog.webp" alt="" style="height: 150px;">
+            <img src="../../assets/images/founddog.webp" alt="not found" style="height: 150px;">
         </a-col>
     </a-row>
     <a-row v-else :gutter="[8, 8]">
@@ -195,7 +195,7 @@ onMounted(async () => {
                     </div>
                     <div style="display: flex; align-items: start; justify-content: space-between;">
                         <span v-if="billTotal(BILL) == BILL.payment.amount" style="color: #bcc662">
-                            <span class="mdi mdi-check-all" style="font-size: 20px"></span>
+                            <MdiIcon name="check-all" size="20px" />
                             оплачен
                         </span>
                         <span v-if="billTotal(BILL) != BILL.payment.amount && BILL.payment.amount == 0"
@@ -207,19 +207,19 @@ onMounted(async () => {
                                     </a-button>
                                 </div>
                                 <div class="d-flex justify-center">
-                                    <img :src="TinkoffLogo" class="tinkoff-logo">
+                                    <img :src="TinkoffLogo" class="tinkoff-logo" alt="tinkoff">
                                 </div>
                             </div>
                         </span>
 
-                        <span class="mdi mdi-24px mdi-printer-outline" @click="print(BILL)"></span>
+                        <MdiIcon @click="print(BILL)" name="printer-outline" size="24px" />
 
                        
 
 
                         <a-popconfirm v-if="BILL.payment.amount == 0" title="Удалить?" ok-text="Да" cancel-text="Нет"
                             @confirm="cancelTrip(BILL._id, userStore.user._id)">
-                            <span class="mdi mdi-24px mdi-delete" style="color: #ff6600"></span>
+                            <MdiIcon style="color: #ff6600" name="delete" size="24px" />
                         </a-popconfirm>
                     </div>
 
