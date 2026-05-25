@@ -82,7 +82,7 @@ onMounted(async () => {
                     оплачен
                   </span></a-col>
                 <a-popconfirm v-else title="Оплатить?" ok-text="Да" cancel-text="Нет" @confirm="">
-                  <MdiIcon v-if="tripTotalPrice(bill)  name =" cart-outline" />
+                  <MdiIcon v-if="tripTotalPrice(bill), name = 'cart-outline'" />
                 </a-popconfirm>
               </a-row>
             </a-card>
