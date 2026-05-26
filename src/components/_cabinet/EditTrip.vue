@@ -20,16 +20,11 @@ import { usePlaces } from "../../stores/place.js";
 import datePlugin from '../../plugins/dates'
 
 import TripService from "../../service/TripService";
-import YookassaOnboardingDialog from "../YookassaOnboardingDialog.vue";
-import { hasYookassaAccountId, getYookassaAccountId } from "../../utils/yookassa";
 
 const userStore = useAuth()
 const tripStore = useTrips()
 const appStore = useAppState();
 const placesStore = usePlaces();
-
-const yookassaOnboardingOpen = ref(false)
-const pendingPrivetMirBonus = ref(false)
 
 const dateFormatList = ["DD.MM.YYYY", "DD.MM.YY"];
 const monthFormatList = ["MM.YY"];
@@ -81,7 +76,6 @@ let form = ref({
     tripRegion: "",
     places: [],
     privetMirPaymentLink: "",
-    privetMirBonusProgram: false,
 });
 // для a-select с регионами тура
 let tripRegions = computed(() => appStore.appState[0]?.tripRegions.map((name) => { return { value: name } }) ?? [])
@@ -131,33 +125,6 @@ const delPhoto = () => {
     delPhotoDialog.value = false;
 };
 
-function onPrivetMirBonusChange(e) {
-    const checked = e.target.checked
-    if (!checked) {
-        form.value.privetMirBonusProgram = false
-        return
-    }
-    if (!userStore.user?.tinkoffContract?._id) {
-        message.warning('Сначала оформите договор с платформой')
-        form.value.privetMirBonusProgram = false
-        return
-    }
-    if (!hasYookassaAccountId(userStore.user.tinkoffContract)) {
-        pendingPrivetMirBonus.value = true
-        yookassaOnboardingOpen.value = true
-        form.value.privetMirBonusProgram = false
-        return
-    }
-    form.value.privetMirBonusProgram = true
-}
-
-function onYookassaOnboardingSaved() {
-    if (pendingPrivetMirBonus.value) {
-        form.value.privetMirBonusProgram = true
-        pendingPrivetMirBonus.value = false
-    }
-}
-
 function submit() {
     description.value = description.value?.split("<p><br></p>").join("");
     form.value.description = description.value;
@@ -165,13 +132,6 @@ function submit() {
     form.value.rejected = false
     if (form.value.calculator?.length == 0 || !form.value.calculator)
         form.value.calculator = null
-    if (form.value.privetMirBonusProgram) {
-        form.value.privetMirPaymentLink = ''
-        const account_id = getYookassaAccountId(userStore.user?.tinkoffContract)
-        if (account_id && form.value.tinkoffContract) {
-            form.value.tinkoffContract.yookassa = { account_id }
-        }
-    }
     TripService.updateTrip(form.value).then((res) => {
         const _id = res.data._id;
         let imagesFormData = new FormData();
@@ -656,15 +616,16 @@ let formSchema = yup.object({
                                     " />
                         </a-col>
                         <a-col :span="24">
-                          <a-checkbox
-                            :checked="form.privetMirBonusProgram"
-                            @change="onPrivetMirBonusChange"
-                          >
-                            Участвовать в бонусной программе «Привет, мир»
-                          </a-checkbox>
-                          <div class="text-caption" style="margin-top: 8px;">
-                            При включении оплата тура на сайте проходит через ЮKassa (кэшбек программы). Комиссия платформы не удерживается.
-                          </div>
+                          <Field name="privetMirPaymentLink" v-slot="{ value, handleChange }" v-model="form.privetMirPaymentLink">
+                            Ссылка на оплату с кэшбеком Привет МИР
+                            <a-input placeholder="https://" @update:value="handleChange" :value="value" />
+                          </Field>
+                          <Transition name="fade">
+                            <ErrorMessage name="privetMirPaymentLink" class="error-message" />
+                          </Transition>
+                          <span class="text-caption">
+                            *оставьте поле пустым, если вы не участвуете в этой программе
+                          </span>
                         </a-col>
                         <a-col :span="24" class="d-flex justify-center">
                             <a-button :disabled="!meta.valid" class="lets_go_btn ma-36" type="primary"
@@ -683,10 +644,6 @@ let formSchema = yup.object({
                         </a-button>
                     </div>
                 </a-modal>
-                <YookassaOnboardingDialog
-                  v-model:open="yookassaOnboardingOpen"
-                  @saved="onYookassaOnboardingSaved"
-                />
             </a-col>
         </a-row>
     </div>

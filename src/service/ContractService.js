@@ -24,8 +24,5 @@ export default {
     },
     getContractByShopCode(shopCode) {
         return $api.get(`/contract/byShopCode?shopCode=${shopCode}`)
-    },
-    saveYookassa(account_id) {
-        return $api.post('/contract/yookassa', { account_id })
-    },
+    }
 }

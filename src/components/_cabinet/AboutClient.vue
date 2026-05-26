@@ -2,8 +2,6 @@
 import { computed, onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuth } from "../../stores/auth";
-import YookassaOnboardingDialog from "../YookassaOnboardingDialog.vue";
-import { getYookassaAccountId, hasYookassaAccountId } from "../../utils/yookassa";
 
 let router = useRouter();
 const userStore = useAuth();
@@ -14,12 +12,6 @@ let info = reactive({
   phone: "",
 });
 let isChange = ref(false);
-const yookassaOnboardingOpen = ref(false);
-
-const yookassaShopIdLabel = computed(() => {
-  const id = getYookassaAccountId(userStore.user?.tinkoffContract);
-  return id || "не подключён";
-});
 const actionCards = [
   {
     title: "Создать тур",
@@ -169,29 +161,8 @@ onMounted(() => {
               Ставка платформы:
               <b>{{ user.tinkoffContract.bankAccount.tax }} %</b>
             </div>
-            <div class="mt-8">
-              ЮKassa (Привет, мир):
-              <b>{{ yookassaShopIdLabel }}</b>
-            </div>
-            <div class="d-flex justify-center mt-12">
-              <a-button type="primary" @click="yookassaOnboardingOpen = true">
-                {{ hasYookassaAccountId(user.tinkoffContract) ? 'Изменить ShopId ЮKassa' : 'Подключить ЮKassa' }}
-              </a-button>
-            </div>
           </a-card>
         </a-badge-ribbon>
-      </a-col>
-    </a-row>
-
-    <YookassaOnboardingDialog v-model:open="yookassaOnboardingOpen" />
-
-    <a-row v-if="isCreator && !user.tinkoffContract?._id" :gutter="[8, 8]" class="mb-8">
-      <a-col :span="24">
-        <a-alert
-          type="info"
-          show-icon
-          message="Для оплаты туров через ЮKassa и программы «Привет, мир» нужен договор с платформой."
-        />
       </a-col>
     </a-row>
 
