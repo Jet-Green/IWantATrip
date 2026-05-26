@@ -18,6 +18,9 @@ import { usePlaces } from "../stores/place";
 
 import TripService from "../service/TripService";
 import datePlugin from '../plugins/dates'
+import YookassaOnboardingDialog from "../components/YookassaOnboardingDialog.vue";
+import PartnerPaymentAcceptance from "../components/PartnerPaymentAcceptance.vue";
+import { hasYookassaAccountId, getYookassaAccountId } from "../utils/yookassa";
 
 import dayjs from "dayjs";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
@@ -57,6 +60,8 @@ let previews = ref(localStorage.getItem('createTripImages') ? JSON.parse(localSt
 let images = localStorage.getItem('createTripImages') ? JSON.parse(localStorage.getItem('createTripImages')) : []; // type: blob
 //let pdf = [];
 let locationSearchRequest = ref("")
+const yookassaOnboardingOpen = ref(false)
+const pendingPrivetMirBonus = ref(false)
 // необходимо добавить поле количество людей в туре
 let form = reactive({
   name: "",
@@ -80,8 +85,9 @@ let form = reactive({
   bonuses: [],
   returnConditions: "",
   partner: "",
-  canSellPartnerTour: null,
+  canSellPartnerTour: true,
   privetMirPaymentLink: "",
+  privetMirBonusProgram: false,
   includedInPrice: "",
   paidExtra: "",
   travelRequirement: "",
@@ -179,8 +185,9 @@ function submit() {
       // travelRequirement: "",
       isModerated: false,
       partner: "",
-      canSellPartnerTour: null,
+      canSellPartnerTour: true,
       privetMirPaymentLink: "",
+  privetMirBonusProgram: false,
       tripRegion: "",
       places: [],
     });
@@ -227,6 +234,13 @@ function submit() {
     Phones: t.ceo.phone,
     Inn: t.inn
   }
+  if (form.privetMirBonusProgram) {
+    form.privetMirPaymentLink = ''
+    const account_id = getYookassaAccountId(t)
+    if (account_id) {
+      form.tinkoffContract.yookassa = { account_id }
+    }
+  }
 
   TripStore.createTrip(form, userStore.user).then(async (res) => {
     if (res.status == 200) {
@@ -259,6 +273,33 @@ const delPhoto = () => {
   delPhotoDialog.value = false;
   localStorage.setItem('createTripImages', JSON.stringify(previews.value))
 };
+
+function onPrivetMirBonusChange(e) {
+  const checked = e.target.checked
+  if (!checked) {
+    form.privetMirBonusProgram = false
+    return
+  }
+  if (!userStore.user?.tinkoffContract?._id) {
+    message.warning('Сначала оформите договор с платформой')
+    form.privetMirBonusProgram = false
+    return
+  }
+  if (!hasYookassaAccountId(userStore.user.tinkoffContract)) {
+    pendingPrivetMirBonus.value = true
+    yookassaOnboardingOpen.value = true
+    form.privetMirBonusProgram = false
+    return
+  }
+  form.privetMirBonusProgram = true
+}
+
+function onYookassaOnboardingSaved() {
+  if (pendingPrivetMirBonus.value) {
+    form.privetMirBonusProgram = true
+    pendingPrivetMirBonus.value = false
+  }
+}
 
 function persistCreatingTrip() {
   localStorage.setItem("CreatingTrip", JSON.stringify(form));
@@ -762,28 +803,20 @@ onMounted(async () => {
                 </a-textarea>
               </Field>
             </a-col>
+            <a-col v-if="form.partner?.length" :span="24">
+              <PartnerPaymentAcceptance v-model:canSellPartnerTour="form.canSellPartnerTour" />
+            </a-col>
             <a-col :span="24">
-              <Field name="privetMirPaymentLink" v-slot="{ value, handleChange }" v-model="form.privetMirPaymentLink">
-                Ссылка на оплату с кэшбеком Привет МИР
-                <a-input placeholder="https://" @update:value="handleChange" :value="value" />
-              </Field>
-              <Transition name="fade">
-                <ErrorMessage name="privetMirPaymentLink" class="error-message" />
-              </Transition>
-              <span class="text-caption">
-                *оставьте поле пустым, если вы не участвуете в этой программе
-              </span>
-            </a-col>
-            <a-col :span="24" :md="12" v-if="form.partner.length">
-              Принимать оплату в приложении?
-              <div class="d-flex align-center justify-center" style="height:100%">
-                <a-checkbox v-model:checked="form.canSellPartnerTour">{{ form.canSellPartnerTour ? "ДА" : "НЕТ"
-                }}</a-checkbox>
+              <a-checkbox
+                :checked="form.privetMirBonusProgram"
+                @change="onPrivetMirBonusChange"
+              >
+                Участвовать в бонусной программе «Привет, мир»
+              </a-checkbox>
+              <div class="text-caption" style="margin-top: 8px;">
+                При включении оплата тура на сайте проходит через ЮKassa (кэшбек программы). Комиссия платформы не удерживается.
               </div>
-
             </a-col>
-
-
             <a-col :span="24" class="d-flex justify-center ">
               <a-button class="lets_go_btn ma-36" type="primary" html-type="submit">Отправить
               </a-button>
@@ -800,6 +833,10 @@ onMounted(async () => {
             </a-button>
           </div>
         </a-modal>
+        <YookassaOnboardingDialog
+          v-model:open="yookassaOnboardingOpen"
+          @saved="onYookassaOnboardingSaved"
+        />
       </a-col>
     </a-row>
   </div>

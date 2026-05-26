@@ -7,6 +7,7 @@ import { useAuth } from '../../stores/auth';
 import { useBus } from '../../stores/bus'
 import { useAppState } from '../../stores/appState';
 import Bus from '../../components/Bus.vue'
+import PartnerPaymentAcceptance from '../PartnerPaymentAcceptance.vue'
 import TaskStatusButton from '../_cabinet/crm/TaskStatusButton.vue';
 import { useTasks } from "../../stores/tasks"
 
@@ -30,7 +31,7 @@ let userStore = useAuth()
 const taskStore = useTasks()
 let appStateStore = useAppState()
 let partner = ref(trip.value.partner ?? "")
-let canSellPartnerTour = ref(boolean)
+let canSellPartnerTour = ref(trip.value.canSellPartnerTour !== false)
 let dates = ref([{ start: null, end: null }])
 
 const userTripCalc = ref([{ _id: '', name: 'пустой калькулятор' }, ...userStore.user?.tripCalc])
@@ -204,7 +205,7 @@ async function submit() {
     }
 }
 async function addPartner() {
-    tripStore.updatePartner(partner.value, trip.value._id, canSellPartnerTour.value,)
+    tripStore.updatePartner(partner.value, trip.value._id, canSellPartnerTour.value)
         .then(() => { addPartnerDialog.value = false; emit('updateTrip') })
         .catch(error => console.log(error))
 }
@@ -378,8 +379,8 @@ watch(dates, () => {
 
 
 onMounted(async () => {
+    canSellPartnerTour.value = trip.value.canSellPartnerTour !== false
 
-    canSellPartnerTour.value = trip.value.canSellPartnerTour ?? false
     checked.value = trip.value.isCatalog
     if (!appStateStore.appState[0]?.transport) {
         await appStateStore.refreshState()
@@ -520,15 +521,9 @@ onMounted(async () => {
             <a-col :span="24">
                 Название
                 <a-input placeholder="ООО Ласточка" v-model:value="partner"></a-input>
-
             </a-col>
-            <a-col :span="24">
-                Принимать оплату в приложении?
-                <div class="d-flex align-center justify-center" style="height:100%">
-                    <a-checkbox v-model:checked="canSellPartnerTour">{{ canSellPartnerTour ? "ДА" : "НЕТ"
-                        }}</a-checkbox>
-                </div>
-
+            <a-col :span="24" class="mt-12">
+                <PartnerPaymentAcceptance v-model:canSellPartnerTour="canSellPartnerTour" />
             </a-col>
         </a-modal>
         <a-modal v-model:open="addLocationDialog" title="Изменить локации" okText="Отправить" cancelText="Отмена"

@@ -182,7 +182,8 @@ function getImg(index) {
             <div v-html="trip.returnConditions"></div>
           </a-col>
           <a-col :xs="24" v-if="trip.partner" class="mb-16">
-            <b>Это тур партнера:</b> {{ trip.partner }}, {{ trip.canSellPartnerTour ? "с возможностью продажи" : "без возможности продажи" }} на платформе
+            <b>Это тур партнера:</b> {{ trip.partner }},
+            {{ trip.canSellPartnerTour === false ? 'оплата в приложении не принимается' : 'оплата в приложении принимается' }}
           </a-col>
         </a-row>
       </a-col>

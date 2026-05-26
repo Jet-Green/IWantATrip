@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, getCurrentInstance, watch, reactive, nextTick } from "vue";
 import _ from 'lodash'
 import tinkoffPlugin from '../plugins/tinkoff'
+import YookassaService from '../service/YookassaService'
 import TinkoffLogo from "../assets/images/tinkofflogo.svg"
 import PlaceCard from "../components/cards/PlaceCard.vue";
 
@@ -419,7 +420,9 @@ async function buyTrip() {
             let tinkoffUrl = ''
             let addServices = bill.additionalServices?.length ? bill.additionalServices : []
 
-            if (buyNow.value) {
+            const privetMirYookassa = !!trip.value.privetMirBonusProgram
+
+            if (buyNow.value && !privetMirYookassa) {
                 const orderId = Date.now().toString()
                 let { data, token, success } = await tinkoffPlugin.initPayment(orderId, bill.cart, userStore.user.email, trip.value.tinkoffContract, trip.value.name, addServices)
                 if (!success) {
@@ -443,7 +446,7 @@ async function buyTrip() {
             }
 
             if (bill.cart.length != 0) {
-                if (trip.value.privetMirPaymentLink) {
+                if (trip.value.privetMirPaymentLink && !privetMirYookassa) {
                     window.open(trip.value.privetMirPaymentLink, '_blank');
                 }
                 userStore
@@ -454,6 +457,27 @@ async function buyTrip() {
                             message.success({ content: "Тур заказан!" });
                             await refreshDates();
                             buyDialog.value = false;
+
+                            if (privetMirYookassa) {
+                                const data = response.data
+                                const billId = data.billId ?? data.user?.boughtTrips?.[data.user.boughtTrips.length - 1]
+                                const returnUrl = `${window.location.origin}/trip-info?_id=${trip.value._id}`
+                                try {
+                                    const payRes = await YookassaService.createTripPayment({
+                                        billId,
+                                        tripId: selectedDate.value._id,
+                                        returnUrl,
+                                    })
+                                    const url = payRes.data?.confirmationUrl
+                                    if (url) {
+                                        router.push({ name: 'TinkoffPayment', query: { url } })
+                                    } else {
+                                        message.error({ content: 'Не удалось получить ссылку на оплату' })
+                                    }
+                                } catch (err) {
+                                    message.error({ content: err.response?.data?.message || 'Ошибка оплаты через ЮKassa' })
+                                }
+                            }
                         }
                     })
                     .catch((err) => {
@@ -958,7 +982,7 @@ onMounted(async () => {
                         <b>Итого: {{ finalCost }} руб.</b>
                     </a-col>
 
-                    <div v-if="!trip?.canSellPartnerTour && trip.partner">
+                    <div v-if="trip.partner && trip.canSellPartnerTour === false">
                         <h4 class="warning">Наличие мест требует уточнения!</h4>
                     </div>
 
@@ -979,7 +1003,7 @@ onMounted(async () => {
                     <a-col :span="24">
                         <div class="d-flex space-around">
                             <a-button html-type="submit" class="btn" @click="buyNow = false" :disabled="isNoPlaces">
-                                <span v-if="!trip?.privetMirPaymentLink">
+                                <span v-if="!trip?.privetMirPaymentLink && !trip?.privetMirBonusProgram">
                                     Заказать
                                 </span>
                                 <span v-else>
@@ -988,7 +1012,7 @@ onMounted(async () => {
                                 </span>
                             </a-button>
                             <div class="buy-btn"
-                                v-if="!trip.privetMirPaymentLink && (!trip.partner || trip?.canSellPartnerTour)">
+                                v-if="!trip.privetMirPaymentLink && !trip.privetMirBonusProgram && (!trip.partner || trip.canSellPartnerTour !== false)">
                                 <div>
                                     <a-button html-type="submit" :disabled="isNoPlaces" @click="buyNow = true"
                                         type="primary" class="lets_go_btn">
