@@ -6,7 +6,7 @@ const locationStore = useLocations()
 let cards = ref([
   {
     title: "Места",
-    icon: "map-marker-outline",
+    icon: "mdi-map-marker-outline",
     route: { name: 'Places', hash: '#top' },
     isShow: true,
 
@@ -20,35 +20,35 @@ let cards = ref([
   // },
   {
     title: "Экскурсии",
-    icon: "crowd",
+    icon: "mdi-crowd",
     route: "/excursions",
     isShow: true,
 
   },
   {
     title: "Гиды",
-    icon: "account-tie-voice-outline",
+    icon: "mdi-account-tie-voice-outline",
     route: "/guides",
     isShow: true,
 
   },
   {
     title: "Афиши",
-    icon: "movie-roll",
+    icon: "mdi-movie-roll",
     route: "/poster",
     isShow: true,
 
   },
   {
     title: "Транспорт",
-    icon: "train-car",
+    icon: "mdi-train-car",
     route: "/transport",
     isShow: true,
 
   },
   {
     title: "Гостиницы",
-    icon: "home-city-outline",
+    icon: "mdi-home-city-outline",
     route: "/stay",
     isShow: true,
 
