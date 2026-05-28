@@ -25,9 +25,9 @@ const router = createRouter({
       component: () => import('../layouts/Blank.vue'),
       children: [
         {
-          path: '/tinkoff-payment',
-          name: 'TinkoffPayment',
-          component: () => import('../views/TinkoffPayment.vue')
+          path: '/payment-frame',
+          name: 'PaymentFrame',
+          component: () => import('../views/PaymentFrame.vue')
         },
         {
           path: '/documents',

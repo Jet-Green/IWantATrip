@@ -140,7 +140,7 @@ async function buyWithTinkoff() {
       return;
     }
     if (tinkoffUrl) {
-      router.push({ name: "TinkoffPayment", query: { url: tinkoffUrl } });
+      router.push({ name: "PaymentFrame", query: { url: tinkoffUrl } });
     }
     // create bill with tinkoff and update time's billsList
 

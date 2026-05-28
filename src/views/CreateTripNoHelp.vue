@@ -81,7 +81,7 @@ let form = reactive({
   returnConditions: "",
   partner: "",
   canSellPartnerTour: null,
-  privetMirPaymentLink: "",
+  privetMirYookassaEnabled: false,
   includedInPrice: "",
   paidExtra: "",
   travelRequirement: "",
@@ -180,7 +180,6 @@ function submit() {
       isModerated: false,
       partner: "",
       canSellPartnerTour: null,
-      privetMirPaymentLink: "",
       tripRegion: "",
       places: [],
     });
@@ -426,7 +425,6 @@ let formSchema = yup.object({
   // returnConditions: yup.string().required("заполните поле"),
   notNecessarily: yup.string(),
   tripRegion: yup.string().required("заполните поле"),
-  privetMirPaymentLink: yup.string().nullable().test("optional-url", "ссылка должна начинаться с https://", value => !value || /^https:\/\/.*/.test(value)),
   // https://vee-validate.logaretm.com/v4/examples/array-fields/
 });
 onMounted(async () => {
@@ -762,17 +760,13 @@ onMounted(async () => {
                 </a-textarea>
               </Field>
             </a-col>
-            <a-col :span="24">
-              <Field name="privetMirPaymentLink" v-slot="{ value, handleChange }" v-model="form.privetMirPaymentLink">
-                Ссылка на оплату с кэшбеком Привет МИР
-                <a-input placeholder="https://" @update:value="handleChange" :value="value" />
-              </Field>
-              <Transition name="fade">
-                <ErrorMessage name="privetMirPaymentLink" class="error-message" />
-              </Transition>
-              <span class="text-caption">
-                *оставьте поле пустым, если вы не участвуете в этой программе
-              </span>
+            <a-col :span="24" v-if="userStore.user?.tinkoffContract?.inn === '1837013663'">
+              <a-checkbox v-model:checked="form.privetMirYookassaEnabled">
+                Оплата через ЮKassa
+              </a-checkbox>
+              <div class="text-caption" style="margin-top: 4px;">
+                Включить приём онлайн-оплаты на сайте через ЮKassa для этого тура
+              </div>
             </a-col>
             <a-col :span="24" :md="12" v-if="form.partner.length">
               Принимать оплату в приложении?

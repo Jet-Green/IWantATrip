@@ -75,7 +75,7 @@ let form = ref({
     rejected: false,
     tripRegion: "",
     places: [],
-    privetMirPaymentLink: "",
+    privetMirYookassaEnabled: false,
 });
 // для a-select с регионами тура
 let tripRegions = computed(() => appStore.appState[0]?.tripRegions.map((name) => { return { value: name } }) ?? [])
@@ -316,7 +316,6 @@ let formSchema = yup.object({
     // returnConditions: yup.string().required("заполните поле"),
     notNecessarily: yup.string(),
     tripRegion: yup.string().required("заполните поле"),
-    privetMirPaymentLink: yup.string().nullable().test("optional-url", "ссылка должна начинаться с https://", value => !value || /^https:\/\/.*/.test(value)),
 })
 </script>
 <template>
@@ -615,17 +614,13 @@ let formSchema = yup.object({
                                 ]
                                     " />
                         </a-col>
-                        <a-col :span="24">
-                          <Field name="privetMirPaymentLink" v-slot="{ value, handleChange }" v-model="form.privetMirPaymentLink">
-                            Ссылка на оплату с кэшбеком Привет МИР
-                            <a-input placeholder="https://" @update:value="handleChange" :value="value" />
-                          </Field>
-                          <Transition name="fade">
-                            <ErrorMessage name="privetMirPaymentLink" class="error-message" />
-                          </Transition>
-                          <span class="text-caption">
-                            *оставьте поле пустым, если вы не участвуете в этой программе
-                          </span>
+                        <a-col :span="24" v-if="userStore.user?.tinkoffContract?.inn === '1837013663'">
+                          <a-checkbox v-model:checked="form.privetMirYookassaEnabled">
+                            Оплата через ЮKassa
+                          </a-checkbox>
+                          <div class="text-caption" style="margin-top: 4px;">
+                            Включить приём онлайн-оплаты на сайте через ЮKassa для этого тура
+                          </div>
                         </a-col>
                         <a-col :span="24" class="d-flex justify-center">
                             <a-button :disabled="!meta.valid" class="lets_go_btn ma-36" type="primary"
