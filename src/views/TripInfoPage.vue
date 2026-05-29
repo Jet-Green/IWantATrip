@@ -467,7 +467,8 @@ async function buyTrip() {
                                     })
                                     const url = payRes.data?.confirmationUrl
                                     if (url) {
-                                        router.push({ name: 'PaymentFrame', query: { url } })
+                                        window.open(url, "_blank")
+                                        // router.push({ name: 'PaymentFrame', query: { url } })
                                     } else {
                                         message.error({ content: 'Не удалось получить ссылку на оплату' })
                                     }
@@ -615,7 +616,7 @@ onMounted(async () => {
                         <a-carousel arrows dots-class="slick-dots slick-thumb">
                             <template #customPaging="props">
                                 <a>
-                                    <img :src="getImg(props.i)" alt="not found"/>
+                                    <img :src="getImg(props.i)" alt="not found" />
                                 </a>
                             </template>
                             <div v-for="(item, i) in trip.images" :key="i">
@@ -636,11 +637,11 @@ onMounted(async () => {
                     <a-col :xs="24" :md="12" class="pa-8">
 
                         <div style="float: right;">
-                            <MdiIcon style="opacity: 0.7; cursor: pointer;"
-                                @click="print()" name="printer" size="24px" class="ma-8 " />
+                            <MdiIcon style="opacity: 0.7; cursor: pointer;" @click="print()" name="printer" size="24px"
+                                class="ma-8 " />
 
-                            <MdiIcon style="opacity: 0.7;"
-                                @click="startShare()" name="share-variant-outline" size="24px" class="ma-8" />
+                            <MdiIcon style="opacity: 0.7;" @click="startShare()" name="share-variant-outline"
+                                size="24px" class="ma-8" />
 
                         </div>
 
@@ -1003,9 +1004,8 @@ onMounted(async () => {
                                 v-if="!trip.privetMirYookassaEnabled">
                                 Заказать
                             </a-button>
-                            <a-button html-type="submit" class="lets_go_btn" type="primary"
-                                :disabled="isNoPlaces" @click="buyNow = true"
-                                v-if="trip.privetMirYookassaEnabled">
+                            <a-button html-type="submit" class="lets_go_btn" type="primary" :disabled="isNoPlaces"
+                                @click="buyNow = true" v-if="trip.privetMirYookassaEnabled">
                                 Оплатить онлайн
                             </a-button>
                             <div class="buy-btn"
