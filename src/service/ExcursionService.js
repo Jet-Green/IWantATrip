@@ -24,6 +24,15 @@ export default {
     getExcursionBillsById(_id) {
         return $api.get(`/excursion/with-bills?_id=${_id}`)
     },
+    issueInvoices(timeId) {
+        return $api.post('/excursion/issue-invoices', { timeId })
+    },
+    getMyBills(page = 1, limit = 12) {
+        return $api.get('/excursion/my-bills', { params: { page, limit } })
+    },
+    getMyBillById(_id) {
+        return $api.get('/excursion/my-bill', { params: { _id } })
+    },
     deleteExcursionBill(_id) {
         return $api.get(`/excursion/delete-bill?_id=${_id}`)
     },

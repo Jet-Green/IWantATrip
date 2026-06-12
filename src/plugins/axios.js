@@ -23,15 +23,15 @@ $api.interceptors.response.use(function (response) {
     // console.log(response);
     return response;
 }, function (error) {
-    // Любые коды состояния, выходящие за пределы диапазона 2xx, вызывают срабатывание этой функции
-    // Здесь можете сделать что-то с ошибкой ответа
-    // ошибка с кодом 400 используется для других функций
-    if (error.response.status >= 400) {
-        message.config({ duration: 3, top: '90vh' })
-        message.error({ content: error.response?.data?.message })
-        // console.log("ERROR: ", error);
+  const status = error?.response?.status;
+  if (status != null && status >= 400) {
+    message.config({ duration: 3, top: '90vh' });
+    const msg = error.response?.data?.message;
+    if (msg) {
+      message.error({ content: msg });
     }
-    return error
+  }
+  return Promise.reject(error);
 });
 
 export default $api;

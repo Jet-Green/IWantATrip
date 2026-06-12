@@ -72,7 +72,7 @@ async function submit() {
 <template>
   <a-modal v-model:open="dialog" @cancel="emit('close')">
     <template #title>
-      <span class="mdi mdi-plus"></span>
+      <MdiIcon name="plus" />
       Добавить оплату
     </template>
     {{ payAmount }} - {{ totalPaymentAmount }} осталось {{payAmount - totalPaymentAmount   }} руб

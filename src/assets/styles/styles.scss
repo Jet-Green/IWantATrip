@@ -1,8 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+// @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap");
+// @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
 body {
-  font-family: "Montserrat", sans-serif;
   background: white;
   line-height: 1.5714285714285714;
 
@@ -40,6 +39,10 @@ body {
       transform: scale(1.05);
     }
   }
+  // ant-design-vue can override border-radius on .ant-btn
+  .ant-btn.lets_go_btn {
+    border-radius: 15px !important;
+  }
 
   .btn_light {
     border-width: 2px;
@@ -50,6 +53,9 @@ body {
     &:hover {
       transform: scale(1.05);
     }
+  }
+  .ant-btn.btn_light {
+    border-radius: 15px !important;
   }
 
   .error-message {
@@ -106,6 +112,12 @@ body {
 
 .flex-wrap {
   flex-wrap: wrap;
+}
+.relative {
+  position: relative;
+}
+.absolute {
+  position: absolute;
 }
 
 // MA
@@ -287,12 +299,81 @@ a {
   height: 22px !important;
 }
 
-
-
-.ant-menu-horizontal .ant-menu-item{
-padding-inline: 12px !important;
+.ant-menu-horizontal .ant-menu-item {
+  padding-inline: 12px !important;
 }
 
-.ant-menu-horizontal .ant-menu-submenu{
+.ant-menu-horizontal .ant-menu-submenu {
   padding-inline: 12px !important;
+}
+
+/* ===== XS (<576px) ===== */
+@media (max-width: 575.98px) {
+  .hide-xs {
+    display: none !important;
+  }
+}
+
+/* ===== SM (≥576px) ===== */
+@media (min-width: 576px) {
+  .hide-sm-up {
+    display: none !important;
+  }
+}
+@media (max-width: 767.98px) and (min-width: 576px) {
+  .hide-sm {
+    display: none !important;
+  }
+}
+
+/* ===== MD (≥768px) ===== */
+@media (min-width: 768px) {
+  .hide-md-up {
+    display: none !important;
+  }
+}
+@media (max-width: 991.98px) and (min-width: 768px) {
+  .hide-md {
+    display: none !important;
+  }
+}
+
+/* ===== LG (≥992px) ===== */
+@media (min-width: 992px) {
+  .hide-lg-up {
+    display: none !important;
+  }
+}
+@media (max-width: 1199.98px) and (min-width: 992px) {
+  .hide-lg {
+    display: none !important;
+  }
+}
+
+/* ===== XL (≥1200px) ===== */
+@media (min-width: 1200px) {
+  .hide-xl-up {
+    display: none !important;
+  }
+}
+@media (max-width: 1599.98px) and (min-width: 1200px) {
+  .hide-xl {
+    display: none !important;
+  }
+}
+
+/* ===== XXL (≥1600px) ===== */
+@media (min-width: 1600px) {
+  .hide-xxl-up {
+    display: none !important;
+  }
+}
+@media (min-width: 1600px) {
+  .hide-xxl {
+    display: none !important;
+  }
+}
+
+.ant-modal-content {
+  border-radius: 18px !important;
 }

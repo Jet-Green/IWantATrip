@@ -253,7 +253,7 @@ onUnmounted(() => {
 
       <a-col :span="24">
         <h3>Учредители <a-button @click="addFounders" shape="circle">
-            <span class="mdi mdi-plus" style="cursor: pointer"></span>
+            <MdiIcon style="cursor: pointer" name="plus" />
           </a-button></h3>
 
         <a-row v-for="(item, index) in contractForm.founders.individuals" :key="index" align="middle"
@@ -277,7 +277,7 @@ onUnmounted(() => {
           <a-col :span="2" class="justify-center">
             <a-row justify="center">
               <a-button @click="removeFounders(item)" shape="circle">
-                <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                <MdiIcon style="cursor: pointer" name="minus" />
               </a-button>
             </a-row>
           </a-col>

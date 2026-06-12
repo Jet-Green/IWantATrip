@@ -11,48 +11,77 @@ const router = useRouter()
 </script>
 <template>
     <div class="guide-card">
-        <a-row class="text">
+        <div class="guide-content">
+            <div class="avatar-container">
+                <img :src="guide?.image" class="avatar" alt="Guide Image" />
+            </div>
 
-            <a-col :xs="24">
-                <div
-                    style=" font-size: clamp(1.125rem, 0.925rem + 0.8vw, 1.375rem); font-weight: 700; text-align: center;">
-                    {{
-                        `${guide?.name} ${guide?.surname}` }}</div>
-            </a-col>
-            <a-col :xs="24" style="text-align: center; margin-bottom: 10px;">
+            <div class="name">
+                {{ `${guide?.name} ${guide?.surname}` }}
+            </div>
+
+            <div class="offer" v-if="guide?.offer">
                 {{ guide?.offer }}
-            </a-col>
-            <a-col :xs="24" :md="8"> <img :src="guide?.image" class="pa-8" alt="Guide Image"
-                    style="width: 90%; text-align: center;" />
-            </a-col>
-            <a-col :xs="24" :md="16" class="d-flex align-center">
-                <div style="width: 100%;">
-                    <div> Локация: <b> {{ guide?.location?.name }}</b></div>
+            </div>
 
-                    <div v-if="guide?.phone"> Телефон: <b><a :href="`tel:${guide.phone}`">{{ guide.phone }}</a></b>
-                    </div>
-                    <div v-if="guide?.socialMedia"> Соц. сеть: <b> {{ guide?.socialMedia }}</b></div>
-                    <div v-if="guide?.email"> Почта: <b>{{ guide?.email }}</b></div>
-                    <div v-if="guide?.type"> Статус: <b>{{ guide?.type }}</b></div>
-                    <div class="d-flex justify-center">
-                        <a-button class=" ma-36" @click="router.push(`/guide?_id=${guide._id}`)"
-                            v-if="withButton">Подробнее</a-button>
-                    </div>
-                </div>
-
-            </a-col>
-
-
-        </a-row>
-
-
-
-
-
-
-
+            <a-button class="more-btn" @click="router.push(`/guide?_id=${guide._id}`)"
+                v-if="withButton">Подробнее</a-button>
+        </div>
     </div>
-
-
 </template>
-<style scoped></style>
+<style scoped>
+.guide-card {
+    border-radius: 16px;
+    padding: 20px;
+    background: white;
+    height: 100%;
+}
+
+.guide-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+    justify-content: space-between;
+}
+
+.avatar-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.name {
+    font-size: clamp(1.125rem, 0.925rem + 0.8vw, 1.375rem);
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.offer {
+    margin-bottom: 16px;
+    color: #666;
+}
+
+.more-btn {
+    background-color: #FF6600;
+    border-color: #FF6600;
+    color: white;
+    border-radius: 20px;
+    padding: 4px 24px;
+}
+
+.more-btn:hover {
+    background-color: #e65c00;
+    border-color: #e65c00;
+    color: white;
+}
+</style>

@@ -19,11 +19,23 @@ function getBillSum(bill) {
 }
 
 let payedByTinkoff = ref(false)
-if (props.bill.tinkoff) {
-  let res = await tinkoffPlugin.checkPayment(props.bill.tinkoff.paymentId, props.bill.tinkoff.token)
-  if (res.data.Status == "CONFIRMED") {
-    payedByTinkoff.value = true
+let paymentChecked = ref(false)
+let paymentStatus = ref('unpaid') // unpaid | paid
+
+try {
+  if (props.bill.tinkoff?.paymentId && props.bill.tinkoff?.token) {
+    let res = await tinkoffPlugin.checkPayment(props.bill.tinkoff.paymentId, props.bill.tinkoff.token)
+    if (res?.data?.Status === "CONFIRMED") {
+      payedByTinkoff.value = true
+      paymentStatus.value = 'paid'
+    } else {
+      paymentStatus.value = 'unpaid'
+    }
+  } else {
+    paymentStatus.value = 'unpaid'
   }
+} finally {
+  paymentChecked.value = true
 }
 
 async function deleteExcursionBill(_id) {
@@ -37,23 +49,28 @@ async function deleteExcursionBill(_id) {
   <a-card hoverable class="customer-card">
 
     <div>
+      <div class="d-flex justify-end mb-4">
+        <a-tag v-if="!paymentChecked" color="default">проверяем оплату…</a-tag>
+        <a-tag v-else-if="paymentStatus === 'paid'" color="green">Оплачено</a-tag>
+        <a-tag v-else color="volcano">Не оплачено</a-tag>
+      </div>
       <div v-if="bill.userInfo">
-        <span class="mdi mdi-account-outline" style=""></span>
+        <MdiIcon style="" name="account-outline" />
         {{ bill?.userInfo.fullname }}
       </div>
       <div v-else>
-        <span class="mdi mdi-account-outline" style=""></span>
+        <MdiIcon style="" name="account-outline" />
         {{ bill?.user.fullinfo.fullname }}
       </div>
    
       <div v-if="bill.userInfo">
-        <span class="mdi mdi-phone-outline mr-4" style=""></span>
+        <MdiIcon style="" name="phone-outline" class="mr-4" />
         <a :href="`tel:${bill.userInfo.phone}`">
           {{ bill?.userInfo.phone }}
         </a>
       </div>
       <div v-else>
-        <span class="mdi mdi-phone-outline mr-4" style=""></span>
+        <MdiIcon style="" name="phone-outline" class="mr-4" />
         <a :href="`tel:${bill.user.fullinfo.phone}`">
           {{ bill.user?.fullinfo.phone }}
         </a>
@@ -66,13 +83,13 @@ async function deleteExcursionBill(_id) {
         Итого: {{ getBillSum(bill) }}₽
       </div>
       <div v-if="payedByTinkoff" class="d-flex justify-end">
-        <img :src="TinkoffLogo" class="tinkoff-logo">
+        <img :src="TinkoffLogo" alt="tinkoff" class="tinkoff-logo">
       </div>
     </div>
     <div class="actions d-flex">
       <a-popconfirm v-if="!payedByTinkoff" title="Удалить?" ok-text="Да" cancel-text="Нет"
         @confirm="deleteExcursionBill(bill._id)">
-        <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+        <MdiIcon style="color: #ff6600; cursor: pointer" name="delete" />
       </a-popconfirm>
     </div>
   </a-card>

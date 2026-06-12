@@ -44,24 +44,20 @@ onMounted(async () => {
         </div>
         <a-divider class="ma-4" style="border-color: #205f79"></a-divider>
         <div v-if="track.length" style="font-size: 12px;">
-          <span class="mdi mdi-ruler"></span>
+          <MdiIcon name="ruler" />
           {{ track.length }} км
         </div>
 
         <div class="actions d-flex justify-center">
           <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="deleteTrack(track._id)">
-            <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+            <MdiIcon style="color: #ff6600; cursor: pointer" name="delete" />
           </a-popconfirm>
-          <span
-            class="mdi mdi-check-decagram-outline"
-            @click="router.push(`/moderate-track?_id=${track._id}`)"
+          <MdiIcon @click="router.push(`/moderate-track?_id=${track._id}`)"
             style="color: #245159; cursor: pointer"
-          ></span>
-          <span
-            class="mdi mdi-pencil"
-            @click="router.push(`/edit-track?_id=${track._id}&is_admin=${true}`)"
+           name="check-decagram-outline" />
+          <MdiIcon @click="router.push(`/edit-track?_id=${track._id}&is_admin=${true}`)"
             style="color: #245159; cursor: pointer"
-          ></span>
+           name="pencil" />
         </div>
       </a-card>
     </a-col>

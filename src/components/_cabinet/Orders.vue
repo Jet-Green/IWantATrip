@@ -72,17 +72,17 @@ onMounted(async () => {
                         <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет"
                             @confirm="deleteOrder(booking._id)">
 
-                            <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+                            <MdiIcon style="color: #ff6600; cursor: pointer" name="delete" />
                         </a-popconfirm>
                         <a-popconfirm title="Обновить комментарий?" ok-text="Да" cancel-text="Нет"
                             @confirm="editComment(booking)">
 
-                            <span class="mdi mdi-reload" style=" cursor: pointer"></span>
+                            <MdiIcon style=" cursor: pointer" name="reload" />
                         </a-popconfirm>
                         <a-popconfirm title="Изменить статус?" ok-text="Да" cancel-text="Нет"
                             @confirm="changeStatus(booking._id)">
-                            <span v-if="status == 'closed'" class="mdi mdi-arrow-left" style="cursor: pointer"></span>
-                            <span v-else class="mdi mdi-arrow-right" style="cursor: pointer"></span>
+                            <MdiIcon v-if="status == 'closed'" style="cursor: pointer" name="arrow-left" />
+                            <MdiIcon v-else style="cursor: pointer" name="arrow-right" />
                         </a-popconfirm>
 
                     </div>

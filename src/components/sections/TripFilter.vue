@@ -196,7 +196,7 @@ function resetForm() {
 
 watch(locationRadius, (newRadius) => {
 
-    localStorage.setItem("LocationRadius", newRadius)
+  localStorage.setItem("LocationRadius", newRadius)
 
 })
 
@@ -257,12 +257,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- <span class="ml-16 mdi mdi-24px mdi-filter-outline" :class="{ active_filter: visible, filter: !visible }"
-    @click="visible = !visible">
-  </span> -->
+  <!-- <MdiIcon :class="{ active_filter: visible, filter: !visible }"
+    @click="visible = !visible" name="filter-outline" size="24px" class="ml-16" /> -->
 
   <a-row type="flex" justify="center" class="section_bg">
-    <a-col :xs="22" :lg="16">
+    <a-col :xs="22" :md="20" :xl="18">
       <a-row class="d-flex justify-center">
         <a-col :xs="24" :lg="12" :md="16" class="pa-16">
           <div style="background: #239fca; padding: 10px; border-radius: 12px; display: flex; align-items: center">
@@ -273,7 +272,7 @@ onMounted(() => {
             <!-- Если будет что-то в фильтре показывать  -->
             <a-button type="primary" shape="circle" class="ml-8" @click="resetForm"
               v-if="tripRegion || Number(locationRadius) || type.length > 0 || time?.length > 0">
-              <span class="mdi mdi-close"></span>
+              <MdiIcon name="close" />
             </a-button>
           </div>
         </a-col>
@@ -284,15 +283,15 @@ onMounted(() => {
         <a-row :gutter="[16, 16]">
           <a-col :span="24">
             <!-- <div class="subtitle">Куда</div> -->
-            <a-input v-model:value="tripRegion" placeholder="Название, направление? " name="search" style="width: 100%" allowClear
-              autocomplete="off" autofocus size="large" />
+            <a-input v-model:value="tripRegion" placeholder="Название, направление? " name="search" style="width: 100%"
+              allowClear autocomplete="off" autofocus size="large" />
           </a-col>
 
           <!-- если есть локация, то можно показывать радиус -->
           <a-col :span="24" class="subtitle">Откуда: место начала</a-col>
           <a-col :span="24" v-if="locationStore.location?._id">
             <div class="start-location-container" @click="selectLocationDialog = !selectLocationDialog">
-              <span class="mdi mdi-map-marker-radius-outline"></span>
+              <MdiIcon name="map-marker-radius-outline" />
               {{ locationStore.location.shortName }}
             </div>
             <div>
@@ -305,7 +304,7 @@ onMounted(() => {
           <a-col v-else :span="24">
             <div class="no-location" @click="selectLocationDialog = !selectLocationDialog">
               <span class="mdi mdi-map-marker-outline"></span>
-              <span> Ваш город </span>    
+              <span> Ваш город </span>
             </div>
             <div> начало из любого города </div>
           </a-col>
@@ -338,13 +337,13 @@ onMounted(() => {
           <a-col :span="24" v-if="suggestedRegions.length > 0">
             <div class="subtitle">Направления</div>
             <div class="suggestions-container">
-              <div  v-for="region of suggestedRegions">
+              <div v-for="region of suggestedRegions">
                 <div class="region-container" @click="selectRegion(region)">
                   <div>
                     {{ region }}
                   </div>
                   <div>
-                    <span class="mdi mdi-check"></span>
+                    <MdiIcon name="check" />
                   </div>
                 </div>
               </div>
@@ -355,10 +354,10 @@ onMounted(() => {
             <div class="subtitle">Туры</div>
             <div v-if="foundTrips.length" v-for="fTrip of foundTrips" class="mb-8">
               <span class="trip-name" @click="router.push(`/trip?_id=${fTrip._id}`)">
-               - {{ fTrip.name }}
+                - {{ fTrip.name }}
               </span>
             </div>
-            <div  v-else>Ничего не нашлось</div>
+            <div v-else>Ничего не нашлось</div>
           </a-col>
         </a-row>
 

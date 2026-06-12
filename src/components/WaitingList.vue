@@ -91,14 +91,14 @@ watch(tripsCount, () => {
 
 
                     <div class="transport" v-if="show_old_bus">
-                        <img src="../assets/images/back.png" style="height: 100%" alt="">
+                        <img src="../assets/images/back.png" style="height: 100%" alt="not found">
 
                         <div v-for="seat, i in selectTransport.selected?.capacity" class="passenger-seat"
                             :class="[seat == tripsCount ? 'current-passenger' : '']">
 
 
                         </div>
-                        <img src="../assets/images/front.png" style="height: 100%" alt="">
+                        <img src="../assets/images/front.png" style="height: 100%" alt="not found">
                     </div>
                 </a-popover>
             </a-col>
@@ -124,13 +124,13 @@ watch(tripsCount, () => {
                     </template>
                     <div class="transport" v-if="show_old_bus">
                      
-                        <img src="../assets/images/back.png" style="height: 100%" alt="">
+                        <img src="../assets/images/back.png" style="height: 100%" alt="not found">
 
                         <div v-for="seat, i in selectTransport.wait?.capacity"
                             :class="[seat <= selectTransport.wait.waiting ? 'waiting-passenger' : 'passenger-seat', seat < selectTransport.wait.start ? 'hide' : '', seat == tripsCount ? 'current-passenger' : '']">
                         </div>
 
-                        <img src="../assets/images/front.png" style="height: 100%" alt="">
+                        <img src="../assets/images/front.png" style="height: 100%" alt="not found">
 
                     </div>
 

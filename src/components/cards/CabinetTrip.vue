@@ -399,24 +399,23 @@ onMounted(async () => {
             <div class="d-flex">
                 <div style="width:100%;text-align:center;">{{ trip.name }}</div>
 
-                <span class="mdi mdi-calculator"
-                    style="cursor: pointer; margin-right: 8px; font-size: 20px; color: #245159;"
-                    @click="calculatorDialog = !calculatorDialog"></span>
+                <MdiIcon style="cursor: pointer; margin-right: 8px; font-size: 20px; color: #245159;"
+                    @click="calculatorDialog = !calculatorDialog" name="calculator" />
                 <a-popconfirm title="В каталог?" ok-text="Да" cancel-text="Нет" @confirm="moveToCatalog(trip._id)">
-                    <span class="mdi mdi-send" style="cursor: pointer; font-size: 20px; color: #245159;"></span>
+                    <MdiIcon style="cursor: pointer; font-size: 20px; color: #245159;" name="send" />
                 </a-popconfirm>
             </div>
             <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
             <div v-if="trip.partner">
-                <span class="mdi mdi-human-handsup"> </span>{{ trip.partner }}
+                <MdiIcon name="human-handsup" />{{ trip.partner }}
             </div>
             <div v-if="trip?.startLocation?.name">
-                <span class="mdi mdi-compass-outline"> </span>{{ trip.startLocation.name }}
+                <MdiIcon name="compass-outline" />{{ trip.startLocation.name }}
             </div>
             <div>
-                <span class="mdi mdi-calendar-arrow-right"></span>
+                <MdiIcon name="calendar-arrow-right" />
                 {{ `c ${clearData(trip.start)}` }}
-                <span class="mdi mdi-calendar-arrow-left"></span>
+                <MdiIcon name="calendar-arrow-left" />
                 {{ `по ${clearData(trip.end)}` }}
             </div>
         
@@ -424,41 +423,37 @@ onMounted(async () => {
             <div class="actions d-flex justify-center">
                 <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет" @confirm="tripToDelete(trip._id)"
                     v-if="(!trip.billsList?.length > 0) && actions.includes('delete')">
-                    <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+                    <MdiIcon style="color: #ff6600; cursor: pointer" name="delete" />
                 </a-popconfirm>
                 <a-popconfirm v-if="actions.includes('edit') && !trip.parent" title="Вы уверены?" ok-text="Да"
                     cancel-text="Нет" @confirm="editTrip(trip._id)">
-                    <span class="mdi mdi-pencil" style="cursor: pointer"></span>
+                    <MdiIcon style="cursor: pointer" name="pencil" />
                 </a-popconfirm>
                 <a-popconfirm v-if="actions.includes('hide') && !trip.parent" title="Вы уверены?" ok-text="Да"
                     cancel-text="Нет" @confirm="hideTrip(trip._id)">
-                    <span v-if="!trip.isHidden" class="mdi mdi-eye-outline" style="cursor: pointer"></span>
-                    <span v-else class="mdi mdi-eye-off-outline" style="cursor: pointer"></span>
+                    <MdiIcon v-if="!trip.isHidden" style="cursor: pointer" name="eye-outline" />
+                    <MdiIcon v-else style="cursor: pointer" name="eye-off-outline" />
                 </a-popconfirm>
-                <span v-if="!trip.parent && actions.includes('addDate')" class="mdi mdi-plus-circle-outline"
-                    style="cursor: pointer" @click="addDateDialog = true"></span>
+                <MdiIcon v-if="!trip.parent && actions.includes('addDate')"
+                    style="cursor: pointer" @click="addDateDialog = true" name="plus-circle-outline" />
                 <!-- <a-popconfirm v-if="actions.includes('copy') && !trip.parent" title="Вы уверены?" ok-text="Да"
                     cancel-text="Нет" @confirm="copyTrip(trip._id)">
-                    <span class="mdi mdi-content-copy" style="cursor: pointer"></span>
+                    <MdiIcon style="cursor: pointer" name="content-copy" />
                 </a-popconfirm> -->
-                <span class="mdi mdi-information-outline"
-                    @click="router.push({ path: '/cabinet/customers-trip', query: { _id: trip._id } })"
-                    v-if="actions.includes('info')"></span>
+                <MdiIcon @click="router.push({ path: '/cabinet/customers-trip', query: { _id: trip._id } })"
+                    v-if="actions.includes('info')" name="information-outline" />
 
-                <span v-if="!trip.parent" class="mdi mdi-human-handsup" @click="addPartnerDialog = true">
-                </span>
-                <span v-if="!trip.parent && actions.includes('transports')" class="mdi mdi-car-estate"
-                    @click="updateTransportDialog = true">
-                </span>
-                <span class="mdi mdi-map-marker-plus-outline" style="cursor: pointer"
-                    v-if="actions.includes('addLocation') && !trip.parent" @click="addLocationDialog = true"></span>
-                <span class="mdi mdi-email-outline"
-                    v-if="trip.moderationMessage && actions.includes('msg') && !trip.parent"
-                    @click="showMessage = !showMessage"></span>
-                <span v-if="actions.includes('editComment') && !trip.parent" class="mdi mdi-comment-edit-outline"
-                    @click="editCommentDialog = !editCommentDialog; userComment = trip.userComment"></span>
-                <span v-if="actions.includes('addAdditionalService') && !trip.parent" class="mdi mdi-cash-plus"
-                    @click="addAdditionalServiceDialog = !addAdditionalServiceDialog;"></span>
+                <MdiIcon v-if="!trip.parent" @click="addPartnerDialog = true" name="human-handsup" />
+                <MdiIcon v-if="!trip.parent && actions.includes('transports')"
+                    @click="updateTransportDialog = true" name="car-estate" />
+                <MdiIcon style="cursor: pointer"
+                    v-if="actions.includes('addLocation') && !trip.parent" @click="addLocationDialog = true" name="map-marker-plus-outline" />
+                <MdiIcon v-if="trip.moderationMessage && actions.includes('msg') && !trip.parent"
+                    @click="showMessage = !showMessage" name="email-outline" />
+                <MdiIcon v-if="actions.includes('editComment') && !trip.parent"
+                    @click="editCommentDialog = !editCommentDialog; userComment = trip.userComment" name="comment-edit-outline" />
+                <MdiIcon v-if="actions.includes('addAdditionalService') && !trip.parent"
+                    @click="addAdditionalServiceDialog = !addAdditionalServiceDialog;" name="cash-plus" />
             </div>
             <div v-if="showMessage">
                 Замечания: {{ trip.moderationMessage }}
@@ -617,8 +612,7 @@ onMounted(async () => {
                     {{ service.price }}₽
                     <a-popconfirm title="Вы уверены?" ok-text="Да" cancel-text="Нет"
                         @confirm="deleteAdditionalService(service._id)">
-                        <span class="mdi mdi-delete"
-                            style="cursor: pointer; color: #ff6600; font-size: 20px; margin: 4px;"></span>
+                        <MdiIcon style="cursor: pointer; color: #ff6600; font-size: 20px; margin: 4px;" name="delete" />
                     </a-popconfirm>
                 </a-col>
             </a-row>

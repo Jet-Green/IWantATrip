@@ -46,7 +46,7 @@ let query = {
   $or: [
     {
       "tripInfo.end": {
-        $gte: Date.now() ,
+        $gte: Date.now(),
       }
     },
     {
@@ -54,7 +54,7 @@ let query = {
         { trip: null },
         {
           deadLine: {
-            $gte: Date.now()  - 14 * 24 * 60 * 60 * 1000, // minus 14 days 
+            $gte: Date.now() - 14 * 24 * 60 * 60 * 1000, // minus 14 days 
           }
         }
       ]
@@ -98,7 +98,7 @@ async function getTasksAmount() {
               { trip: null },
               {
                 deadLine: {
-                  $gte: Date.now()  - 14 * 24 * 60 * 60 * 1000, // minus 14 days 
+                  $gte: Date.now() - 14 * 24 * 60 * 60 * 1000, // minus 14 days 
                 }
               }
             ]
@@ -242,15 +242,15 @@ onMounted(async () => {
         </a-radio-group>
       </div>
       <div>
-        <span @click="isCalendarVisible = !isCalendarVisible" class="mdi mdi-calendar-range-outline"
-          style="font-size: 24px; margin-right: 8px; cursor: pointer"></span>
+        <MdiIcon @click="isCalendarVisible = !isCalendarVisible"
+          style="font-size: 24px; margin-right: 8px; cursor: pointer" name="calendar-range-outline" />
         <a-input v-model:value="search" placeholder="поиск" style="width: 180px" allow-clear />
       </div>
     </div>
     <h3>
       {{ prettyDate ? `Задачи на ${prettyDate}` : "Задачи" }}
-      <sup v-if="activeDate" @click="delDateSelect()" class="mdi mdi-close"
-        style="font-size: 16px; color: #fc4f06; cursor: pointer"></sup>
+      <MdiIcon name="close" size="24px" v-if="activeDate" @click="delDateSelect()"
+        style="font-size: 16px; color: #fc4f06; cursor: pointer" />
     </h3>
     <a-config-provider :locale="locale">
       <a-calendar :value="selectedDate" @select="onDateSelect" v-if="isCalendarVisible">
@@ -267,7 +267,7 @@ onMounted(async () => {
       <a-col v-for="(task) in tasks" :span="24" :key="task._id">
         <TaskCard @refreshTasks="refreshTasks()" :task="task"> </TaskCard>
       </a-col>
-      <a-col :span="24" class="justify-center d-flex" @click="moreTasks()" >
+      <a-col :span="24" class="justify-center d-flex" @click="moreTasks()">
         <a-button>Ещё</a-button></a-col>
     </a-row>
   </div>

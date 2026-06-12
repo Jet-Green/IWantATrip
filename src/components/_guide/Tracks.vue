@@ -1,5 +1,5 @@
 <script setup>
-import BackButton from "../BackButton.vue";
+import BackButtonAdaptive from "../BackButtonAdaptive.vue";
 import TrackCard from "./TrackCard.vue";
 import { onMounted, ref } from "vue"
 
@@ -68,9 +68,9 @@ const moreTracks = async () => {
     isHidden: false,
     conditions: conditions()
   };
-  
+
   let res = await trackStore.getAll(page, filter);
-  
+
   if (res.length == tracksLength) {
     showMoreButton.value = false;
   }
@@ -82,7 +82,7 @@ onMounted(async () => {
     trackStore.filter.search = route.query.search;
   }
   await loadTracks();
-  
+
   if (trackStore.tracks.length < 20) {
     showMoreButton.value = false;
   }
@@ -97,16 +97,17 @@ onMounted(async () => {
 </script>
 <template>
   <div>
-    <BackButton :backRoute="backRoute" />
     <a-row type="flex" justify="center">
-      <a-col :xs="22" :lg="16">
-        <h2>Маршруты</h2>
+      <a-col :xs="22" :md="20" :xl="18">
+        <BackButtonAdaptive :backRoute="backRoute" />
+
+        <h2 class="title">Маршруты</h2>
         <TrackFilter @refreshTracks="loadTracks" />
-        
+
         <a-spin v-if="isLoading" size="large" style="display: flex; justify-content: center; margin: 40px 0;" />
 
         <a-row v-else :gutter="[12, 16]">
-          <a-col :span="24" :sm="12" :md="8" v-for="track of trackStore.tracks" :key="track._id">
+          <a-col :span="24" :sm="12" :lg="8" :xl="6" v-for="track of trackStore.tracks" :key="track._id">
             <TrackCard :track="track" @click="router.push(`/track?_id=${track._id}`)" :id="track._id" />
           </a-col>
         </a-row>
@@ -126,5 +127,7 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-
+.title {
+  font-weight: 900;
+}
 </style>

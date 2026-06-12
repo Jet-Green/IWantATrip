@@ -25,8 +25,8 @@ onMounted(async () => {
       <div class="scroll">
         <div v-for="(companion, i) in companionStore.companions" :key="i" style="margin: 15px 25px 15px 25px">
           <div class="d-flex direction-column align-center">
-            <span v-if="companion.gender == 'Мужчина'" class="mdi mdi-24px mdi-face-man-outline men"></span>
-            <span v-if="companion.gender == 'Женщина'" class="mdi mdi-24px mdi-face-woman-outline woman"></span>
+            <MdiIcon v-if="companion.gender == 'Мужчина'" name="face-man-outline" size="24px" class="men" />
+            <MdiIcon v-if="companion.gender == 'Женщина'" name="face-woman-outline" size="24px" class="woman" />
             <span class="ma-0" style="font-size: 16px; line-height: 15px">{{
               companion.name
             }}</span>

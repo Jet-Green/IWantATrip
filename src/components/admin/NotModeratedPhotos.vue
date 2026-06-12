@@ -1,0 +1,105 @@
+<script setup>
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import { usePhotos } from "../../stores/photos";
+
+const photosStore = usePhotos();
+const router = useRouter();
+const photosOnMod = ref([]);
+
+function photoLabel(photo) {
+  return (
+    photo.placeNameText?.trim() ||
+    photo.enterpriseName?.trim() ||
+    photo.location?.name?.trim() ||
+    photo.location?.shortName?.trim() ||
+    "Фото без подписи"
+  );
+}
+
+function authorName(photo) {
+  return photo.author?.fullinfo?.fullname || "—";
+}
+
+async function photoToDelete(_id) {
+  await photosStore.deletePhoto(_id);
+  await refreshPhotosOnModeration();
+}
+
+async function refreshPhotosOnModeration() {
+  const { data } = await photosStore.findPhotosOnModeration();
+  photosOnMod.value = data;
+}
+
+onMounted(async () => {
+  await refreshPhotosOnModeration();
+});
+</script>
+
+<template>
+  <a-row :gutter="[8, 8]" class="mt-8">
+    <a-col
+      v-if="photosOnMod.length > 0"
+      v-for="(photo, index) of photosOnMod"
+      :key="photo._id || index"
+      :lg="8"
+      :sm="12"
+      :xs="24"
+    >
+      <a-card class="card" hoverable>
+        <img :src="photo.url" alt="" class="photo-thumb" />
+        <div style="text-align: center" class="mt-8">
+          {{ photoLabel(photo) }}
+        </div>
+        <a-divider class="ma-4" style="border-color: #205f79" />
+        <div v-if="photo.enterpriseName?.trim()">
+          Предприятие: {{ photo.enterpriseName }}
+        </div>
+        <div v-if="photo.placeNameText?.trim()">
+          Место: {{ photo.placeNameText }}
+        </div>
+        <div v-if="photo.location?.name">
+          <span class="mdi mdi-map-marker-outline"></span>
+          {{ photo.location.name }}
+        </div>
+        <div class="mt-8">Автор: {{ authorName(photo) }}</div>
+
+        <div class="actions d-flex justify-center">
+          <a-popconfirm
+            title="Вы уверены?"
+            ok-text="Да"
+            cancel-text="Нет"
+            @confirm="photoToDelete(photo._id)"
+          >
+            <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+          </a-popconfirm>
+          <span
+            class="mdi mdi-check-decagram-outline"
+            style="color: #245159; cursor: pointer"
+            @click="router.push(`/photo-moderation?_id=${photo._id}`)"
+          ></span>
+        </div>
+      </a-card>
+    </a-col>
+    <a-col v-else :span="24"> Нет фото на модерации </a-col>
+  </a-row>
+</template>
+
+<style scoped lang="scss">
+.photo-thumb {
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.actions {
+  font-size: 20px;
+  position: relative;
+
+  * {
+    margin: 4px;
+    cursor: pointer;
+  }
+}
+</style>

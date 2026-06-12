@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useTrips } from "../stores/trips";
 import CatalogListCard from "../components/cards/CatalogListCard.vue";
-import BackButton from "../components/BackButton.vue";
+import BackButtonAdaptive from "../components/BackButtonAdaptive.vue";
 import CatalogFilter from "../components/sections/CatalogFilter.vue";
 import { useRoute } from "vue-router";
 
@@ -45,33 +45,33 @@ onMounted(async () => {
 </script>
 <template>
     <div>
-        <BackButton />
         <div class="wrapper" ref="wrapper">
             <a-row type="flex" justify="center">
-                <a-col :xs="22" :lg="16">
-                    <h2>Каталог туров</h2>
+                <a-col :xs="22" :md="20" :xl="18">
+                    <BackButtonAdaptive />
+                    <h2 class="title">Каталог туров</h2>
                     <p><i>можно организовать в удобные даты</i> </p>
                 </a-col>
             </a-row>
             <CatalogFilter :search="route.query.search" />
             <a-row class="d-flex justify-center">
-                <a-col :xs="22" :lg="16">
+                <a-col :xs="22" :md="20" :xl="18">
                     <a-row :gutter="[16, 18]" class="d-flex justify-center mt-8 pb-24"
                         v-if="tripStore.catalog.length > 0">
-                        <a-col :xs="24" :sm="12" :md="8" :lg="6" v-for="trip in tripStore.catalog" :key="trip.index">
+                        <a-col :xs="24" :sm="12" :md="8" :xl="6" v-for="trip in tripStore.catalog" :key="trip.index">
                             <CatalogListCard :trip="trip" />
                         </a-col>
                     </a-row>
                     <a-row v-else-if="isRefreshing">
                         <a-col :span="24" class="d-flex justify-center">
-                            <img src="../assets/images/founddog.webp" alt="" style="height: 150px;">
+                            <img src="../assets/images/founddog.webp" alt="not found" style="height: 150px;">
                         </a-col>
                     </a-row>
                     <a-row v-else>
                         <a-col :span="24" class="d-flex justify-center">
                             <div style="display: flex; flex-direction: column;">
                                 <div class="d-flex justify-center">
-                                    <img src="../assets/images/notfound.jpg" alt="" style="height: 150px;">
+                                    <img src="../assets/images/notfound.jpg" alt="not found" style="height: 150px;">
                                 </div>
                                 <h3>я ничего не нашёл</h3>
                             </div>
@@ -91,5 +91,9 @@ onMounted(async () => {
     &::-webkit-scrollbar {
         display: none;
     }
+}
+
+.title {
+    font-weight: 900;
 }
 </style>

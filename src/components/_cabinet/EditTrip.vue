@@ -226,6 +226,7 @@ let form = ref({
     partner: "",
     canSellPartnerTour: null,
     loyalty: getDefaultLoyalty(),
+    privetMirYookassaEnabled: false,
 });
 // для a-select с регионами тура
 let tripRegions = computed(() => appStore.appState[0]?.tripRegions.map((name) => { return { value: name } }) ?? [])
@@ -302,7 +303,7 @@ const delPhoto = () => {
 };
 
 function submit() {
-    description.value = description.value.split("<p><br></p>").join("");
+    description.value = description.value?.split("<p><br></p>").join("");
     form.value.description = description.value;
     form.value.isModerated = false
     form.value.rejected = false
@@ -443,6 +444,14 @@ const clearData = (dataString) => {
     return dataFromString;
 };
 
+function clearProgramDescription() {
+    description.value = "";
+    form.value.description = "";
+    nextTick(() => {
+        quill.value?.setHTML?.("");
+    });
+}
+
 onMounted(() => {
     tripStore.getById(router.currentRoute.value.query._id)
         .then(async (response) => {
@@ -543,12 +552,12 @@ let formSchema = yup.object({
                         <a-col :xs="24">
                             Фотографии
                             <div class="d-flex" style="overflow-x: scroll">
-                                <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="" class="ma-4"
+                                <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="not found" class="ma-4"
                                     style="max-width: 200px; min-width: 50px; background:#ccc" @click="delPhotoDialog = true;
                                     targetIndex = i;" />
                             </div>
                             <a-button type="dashed" block @click=" visibleCropperModal = true" class="ma-8">
-                                <span class="mdi mdi-12px mdi-plus"></span>
+                                <MdiIcon name="plus" size="12px" />
                                 Добавить фото
                             </a-button>
                         </a-col>
@@ -608,13 +617,13 @@ let formSchema = yup.object({
                                     type="number" :min="0" />
 
                                 <a-button @click=" removeCost(item)" shape="circle">
-                                    <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                                    <MdiIcon style="cursor: pointer" name="minus" />
                                 </a-button>
                             </div>
                             <div class="text-caption">*Оставьте третью колонку 'максимум' пустой, если нет
                                 ограничения</div>
                             <a-button type="dashed" block @click="addCost" class="ma-8">
-                                <span class="mdi mdi-12px mdi-plus"></span>
+                                <MdiIcon name="plus" size="12px" />
                                 Добавить цены
                             </a-button>
                         </a-col>
@@ -629,12 +638,12 @@ let formSchema = yup.object({
                                     class="ml-16 mr-16" />
 
                                 <a-button @click=" removeBonuses(item)" shape="circle">
-                                    <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                                    <MdiIcon style="cursor: pointer" name="minus" />
                                 </a-button>
                             </div>
 
                             <a-button type="dashed" block @click="addBonuses" class="ma-8">
-                                <span class="mdi mdi-12px mdi-plus"></span>
+                                <MdiIcon name="plus" size="12px" />
                                 Добавить бонусы и скидки
                             </a-button>
                         </a-col>
@@ -730,7 +739,15 @@ let formSchema = yup.object({
                         </a-col>
 
                         <a-col :span="24" style="display: flex; flex-direction: column">
-                            Описание программы
+                            <div class="d-flex align-center justify-space-between flex-wrap"
+                                style="gap: 8px; margin-bottom: 10px;">
+                                <span>Описание программы</span>
+                                <a-button type="default" size="small" @click="clearProgramDescription"
+                                    style="border-radius: 10px; display: inline-flex; align-items: center; gap: 6px">
+                                    <span class="mdi mdi-16px mdi-close" aria-hidden="true"></span>
+                                    Очистить
+                                </a-button>
+                            </div>
 
                             <QuillEditor theme="snow" ref="quill" v-model:content="description" contentType="html"
                                 :toolbar="[['bold', 'italic', 'underline', { color: ['#000000', '#ff6600', '#3daff5'] }], [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }], ['link'], ['clean']]" />
@@ -742,7 +759,7 @@ let formSchema = yup.object({
 
                                 <div><b>День {{ datePlugin.excursions.getNumeralDay(index) }}</b> <a-button
                                         @click="removeDay(index)" shape="circle">
-                                        <span class="mdi mdi-minus"></span>
+                                        <MdiIcon name="minus" />
                                     </a-button></div>
                                 <QuillEditor class="ql-editor" theme="snow"
                                     v-model:content="form.dayByDayDescription[index]" contentType="html" :toolbar="[
@@ -758,7 +775,7 @@ let formSchema = yup.object({
 
                             </a-col>
                             <a-button type="dashed" block @click="addDay" class="ma-8">
-                                <span class="mdi mdi-12px mdi-plus"></span>
+                                <MdiIcon name="plus" size="12px" />
                                 добавить день
                             </a-button>
                         </a-col>
@@ -934,6 +951,14 @@ let formSchema = yup.object({
                             </a-row>
                         </a-col>
 
+                        <a-col :span="24" v-if="userStore.user?.tinkoffContract?.inn === '1837013663'">
+                          <a-checkbox v-model:checked="form.privetMirYookassaEnabled">
+                            Оплата через ЮKassa
+                          </a-checkbox>
+                          <div class="text-caption" style="margin-top: 4px;">
+                            Включить приём онлайн-оплаты на сайте через ЮKassa для этого тура
+                          </div>
+                        </a-col>
                         <a-col :span="24" class="d-flex justify-center">
                             <a-button :disabled="!meta.valid" class="lets_go_btn ma-36" type="primary"
                                 html-type="submit">Отправить

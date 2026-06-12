@@ -140,7 +140,7 @@ async function buyWithTinkoff() {
       return;
     }
     if (tinkoffUrl) {
-      router.push({ name: "TinkoffPayment", query: { url: tinkoffUrl } });
+      router.push({ name: "PaymentFrame", query: { url: tinkoffUrl } });
     }
     // create bill with tinkoff and update time's billsList
 
@@ -402,9 +402,6 @@ onMounted(() => {
         type="primary"
         class="lets_go_btn"
         @click="book"
-        :disabled="
-          bookingCount + selectedDate.bookingsCount < props.excursion.minPeople
-        "
         >заказать</a-button
       >
     </div>
@@ -430,7 +427,6 @@ onMounted(() => {
       <a-button
         style="border-radius: 15px"
         @click="buy"
-        :disabled="minPeople < props.excursion.minPeople"
         >заказать</a-button
       >
       <div class="buy-btn" v-if="excursion.tinkoffContract.ShopCode">
@@ -445,7 +441,7 @@ onMounted(() => {
           </a-button>
         </div>
         <div class="d-flex justify-center">
-          <img :src="TinkoffLogo" class="tinkoff-logo" />
+          <img :src="TinkoffLogo" class="tinkoff-logo" alt="tinkoff"/>
         </div>
       </div>
     </div>

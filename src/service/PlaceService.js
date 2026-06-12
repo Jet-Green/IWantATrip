@@ -11,6 +11,9 @@ export default {
     // console.log(images)
     return $api.post('/places/upload-images', images)
   },
+  pushPhotobankImageUrls(placeId, urls) {
+    return $api.post('/places/push-photobank-urls', { placeId, urls })
+  },
   getAll(page, query) {
     return $api.post('/places/get-all', { page, query })
   },

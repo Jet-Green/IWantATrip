@@ -25,9 +25,9 @@ const router = createRouter({
       component: () => import('../layouts/Blank.vue'),
       children: [
         {
-          path: '/tinkoff-payment',
-          name: 'TinkoffPayment',
-          component: () => import('../views/TinkoffPayment.vue')
+          path: '/payment-frame',
+          name: 'PaymentFrame',
+          component: () => import('../views/PaymentFrame.vue')
         },
         {
           path: '/documents',
@@ -360,6 +360,11 @@ const router = createRouter({
           component: () => import('../components/admin/CreateBus.vue'),
         },
         {
+          path: '/contract',
+          name: 'ContractPage',
+          component: () => import('../views/ContractPage.vue')
+        },
+        {
           path: '/trip',
           name: 'TripInfoPage',
           component: () => import('../views/TripInfoPage.vue')
@@ -408,7 +413,7 @@ const router = createRouter({
         {
           path: '/photos',
           name: 'Photos',
-          component: () => import('../components/_guide/Photos.vue')
+          component: () => import('../views/Photos.vue')
         },
         {
           path: '/excursions',
@@ -479,6 +484,35 @@ const router = createRouter({
               path: 'me',
               name: "Me",
               component: () => import('../components/_cabinet/AboutClient.vue'),
+            },
+            {
+              path: 'my-orders',
+              name: "MyOrders",
+              component: () => import('../components/_cabinet/MyOrders.vue'),
+            },
+            {
+              path: 'my-photobank',
+              name: 'MyPhotobank',
+              component: () => import('../components/_cabinet/MyPhotobank.vue'),
+              children: [
+                {
+                  path: 'on-moderation',
+                  component: () => import('../components/_cabinet/MyPhotobankOnModeration.vue'),
+                },
+                {
+                  path: 'published',
+                  component: () => import('../components/_cabinet/MyPhotobankPublished.vue'),
+                },
+                {
+                  path: 'rejected',
+                  component: () => import('../components/_cabinet/MyPhotobankRejected.vue'),
+                },
+              ],
+            },
+            {
+              path: 'upload-photobank',
+              name: 'UploadPhotobank',
+              component: () => import('../views/UploadPhotobankPhotos.vue'),
             },
             {
               path: 'booking-trips',
@@ -613,6 +647,27 @@ const router = createRouter({
                 {
                   path: 'not-moderated-trips',
                   component: () => import('../components/admin/NotModeratedTrips.vue'),
+                },
+              ]
+            },
+            {
+              path: 'moderation-photos/',
+              name: 'PhotosOnModeration',
+              component: () => import('../components/admin/PhotosOnModeration.vue'),
+              beforeEnter: () => {
+                let userStore = useAuth()
+                if (!userStore.user?.roles.includes('manager')) {
+                  return false
+                }
+              },
+              children: [
+                {
+                  path: 'rejected-photos',
+                  component: () => import('../components/admin/RejectedPhotos.vue'),
+                },
+                {
+                  path: 'not-moderated-photos',
+                  component: () => import('../components/admin/NotModeratedPhotos.vue'),
                 },
               ]
             },
@@ -859,6 +914,19 @@ const router = createRouter({
             let isTinkoffAuth = await tinkoffPlugin.checkAuth()
             if (!isTinkoffAuth) {
               return '/'
+            }
+          }
+        },
+        {
+          path: '/photo-moderation',
+          name: 'PhotoModeration',
+          component: () => import('../components/admin/PhotoModeration.vue'),
+          beforeEnter: async () => {
+            let userStore = useAuth()
+            if (!getCookie('token') || !userStore.isAuth)
+              await userStore.checkAuth()
+            if (!userStore.user?.roles.includes('manager')) {
+              return false
             }
           }
         },

@@ -18,11 +18,11 @@ let totalAmount = BILL.cart.reduce((accumulator, object) => {
 <template>
     <a-card hoverable class="pa-8" style="width: 100%;">
         <div>
-            <span class="mdi mdi-account-outline" style=""></span>
+            <MdiIcon style="" name="account-outline" />
             {{ customer.fullname }}
         </div>
         <div>
-            <span class="mdi mdi-phone-outline" style=""></span>
+            <MdiIcon style="" name="phone-outline" />
             <a :href='getPhoneNumber(customer.phone)'> {{ customer.phone
             }}</a>
 
@@ -41,11 +41,12 @@ let totalAmount = BILL.cart.reduce((accumulator, object) => {
         <div class="d-flex justify-end">
             <b>
                 <span v-if="totalAmount == BILL.payment.amount" style="color: #BCC662">
-                    <span class="mdi mdi-check-all" style="font-size: 20px;"></span>
+                    <MdiIcon name="check-all" size="20px" />
+                    
                     оплачен
                 </span>
                 <span v-else style="display: flex; align-items: center;">
-                    <span class="mdi mdi-close" style="font-size: 20px;"></span>
+                    <MdiIcon name="close" size="20px" />
                     не оплачен
                 </span>
             </b>

@@ -1,7 +1,7 @@
 <script setup>
-import {computed } from "vue";
+import { computed } from "vue";
 import { useLocations } from "../../stores/locations";
-import BackButton from "../BackButton.vue";
+import BackButtonAdaptive from "../BackButtonAdaptive.vue";
 
 const backRoute = { name: 'Landing', hash: '#guide' };
 
@@ -12,18 +12,16 @@ const src = computed(() => {
 });
 </script>
 <template>
-  <div>
-    <BackButton :backRoute="backRoute" />
-    <a-row class="d-flex justify-center">
-      <a-col :xs="22" :lg="16">
-        <h2>
-          Афиши
-        </h2>
+  <div style="height: 70dvh;">
+    <a-row type="flex" justify="center">
+      <a-col :xs="22" :md="20" :xl="18">
+        <BackButtonAdaptive :backRoute="backRoute" />
+        <h2 class="title">Афиши</h2>
       </a-col>
     </a-row>
-    <a-row class="d-flex justify-center">
-      <a-col :xs="22" :lg="16">
-        <iframe title="Афиши" style="width: 100%; height:90dvh; border: none" :src='src' id="iframe">
+    <a-row type="flex" justify="center" style="height: 100%;">
+      <a-col :xs="22" :md="20" :xl="18">
+        <iframe title="Афиши" style="width: 100%; height: 100%; border: none" :src='src' id="iframe">
 
         </iframe>
       </a-col>
@@ -33,13 +31,16 @@ const src = computed(() => {
   </div>
 </template>
 <style scoped>
+.title {
+  font-weight: 900;
+}
+
 #iframe {
-  -ms-overflow-style: none; 
-  scrollbar-width: none;   
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 #iframe::-webkit-scrollbar {
-  display: none; 
+  display: none;
 }
-
 </style>

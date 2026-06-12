@@ -113,7 +113,7 @@ onMounted(() => {
               @click="selectLocationDialog = !selectLocationDialog"
               style="cursor: pointer; font-weight: bold"
             >
-              <span class="mdi mdi-map-marker-outline"></span>
+              <MdiIcon name="map-marker-outline" />
               <span>
                 {{ locationSearchRequest ? locationSearchRequest : "Ваш город" }}
               </span>
@@ -144,28 +144,24 @@ onMounted(() => {
             </div> -->
 
             <div class="ma-4">
-              <a href="https://vk.com/gorodaivesi_udm" target="_blank"><img src="../assets/icons/vk.svg" alt="" /></a>
+              <a href="https://vk.com/gorodaivesi_udm" target="_blank"><img src="../assets/icons/vk.svg" alt="not found" /></a>
             </div>
             <div class="ma-4">
               <a href="https://t.me/gorodaivesi_ru" target="_blank"
-                ><img src="../assets/icons/telegram.svg" alt=""
+                ><img src="../assets/icons/telegram.svg" alt="not found"
               /></a>
             </div>
 
-            <!-- <span ref='auth' v-if="userStore.isAuth" class="mdi mdi-24px mdi-home" @click="toComponentFromMenu('Me')"
-              style="cursor: pointer" cancelText="отмена">
-            </span>
+            <!-- <MdiIcon ref='auth' v-if="userStore.isAuth" @click="toComponentFromMenu('Me')"
+              style="cursor: pointer" cancelText="отмена" name="home" size="24px" />
 
-            <span ref='auth' v-if="!userStore.isAuth" class="mdi mdi-24px mdi-login"
-              @click="toComponentFromMenu('RegForm')" style="cursor: pointer">
-            </span> -->
+            <MdiIcon ref='auth' v-if="!userStore.isAuth"
+              @click="toComponentFromMenu('RegForm')" style="cursor: pointer" name="login" size="24px" /> -->
           </a-col>
           <a-col>
-            <span
-              class="mdi mdi-24px mdi-menu"
-              style="color: #245159; cursor: pointer"
+            <MdiIcon style="color: #245159; cursor: pointer"
               @click="visibleDrawer = !visibleDrawer"
-            ></span>
+             name="menu" size="24px" />
           </a-col>
         </a-row>
       </a-col>
@@ -179,33 +175,25 @@ onMounted(() => {
       :width="drawerWidth"
     >
       <div style="text-align: right">
-        <span
-          class="mdi mdi-24px mdi-close"
-          style="color: #245159; cursor: pointer"
+        <MdiIcon style="color: #245159; cursor: pointer"
           @click="visibleDrawer = !visibleDrawer"
-        ></span>
+         name="close" size="24px" />
       </div>
       <div class="right-drawer">
         <div @click="toComponentFromMenu('Me')" class="route ma-8" style="text-align: center; font-weight: bold">
           <div>
-            <span
-              ref="auth"
+            <MdiIcon ref="auth"
               v-if="userStore.isAuth"
-              class="mdi mdi-24px mdi-home"
               @click="toComponentFromMenu('Me')"
               style="cursor: pointer"
               cancelText="отмена"
-            >
-            </span>
+             name="home" size="24px" />
 
-            <span
-              ref="auth"
+            <MdiIcon ref="auth"
               v-if="!userStore.isAuth"
-              class="mdi mdi-24px mdi-login"
               @click="toComponentFromMenu('RegForm')"
               style="cursor: pointer"
-            >
-            </span>
+             name="login" size="24px" />
           </div>
           <div class="mr-4">кабинет</div>
         </div>

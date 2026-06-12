@@ -1,7 +1,8 @@
 <script setup>
-import { ref, computed, onMounted, getCurrentInstance, watch, reactive } from "vue";
+import { ref, computed, onMounted, getCurrentInstance, watch, reactive, nextTick } from "vue";
 import _ from 'lodash'
 import tinkoffPlugin from '../plugins/tinkoff'
+import YookassaService from '../service/YookassaService'
 import TinkoffLogo from "../assets/images/tinkofflogo.svg"
 import PlaceCard from "../components/cards/PlaceCard.vue";
 
@@ -50,6 +51,7 @@ let touristsList = ref([]);
 let activeKey = ref(null)
 let additionalServices = ref([])
 let show = ref(false)
+let transportDialog = ref(false)
 
 
 
@@ -288,7 +290,7 @@ async function refreshDates() {
     let response = await tripStore.getTripById(_id);
     let tripFromDb = response.data;
     additionalServices.value = []
-    for (let service of tripFromDb.additionalServices) {
+    for (let service of tripFromDb?.additionalServices) {
         additionalServices.value.push({ ...service, count: 0 })
     }
 
@@ -352,10 +354,48 @@ let getStartLocationNames = computed(() => {
                 }
             }
         }
-        return results.join(', ')
+        return results
     }
-    else { return "" }
+    else { return [] }
 })
+
+let startLocationsList = computed(() => getStartLocationNames.value.join(', '))
+
+let isCurrentLocationMatchStart = computed(() => {
+    const currentLocation = locationStore.location?.shortName
+    if (!currentLocation || !getStartLocationNames.value.length) return false
+    return getStartLocationNames.value.some(name =>
+        name.toLowerCase() === currentLocation.toLowerCase()
+    )
+})
+
+function setWidgetDestination(location) {
+    const setValue = () => {
+        const widgetInput = document.querySelector('#widget-container input[name="avia_to"]');
+        if (widgetInput) {
+            widgetInput.value = location;
+            widgetInput.dispatchEvent(new Event('input', { bubbles: true }));
+            widgetInput.dispatchEvent(new Event('change', { bubbles: true }));
+        } else {
+            setTimeout(setValue, 500);
+        }
+    };
+    setTimeout(setValue, 1000);
+}
+
+function setWidgetFrom(location) {
+    const setValue = () => {
+        const widgetInput = document.querySelector('#widget-container input[name="avia_from"]');
+        if (widgetInput) {
+            widgetInput.value = location;
+            widgetInput.dispatchEvent(new Event('input', { bubbles: true }));
+            widgetInput.dispatchEvent(new Event('change', { bubbles: true }));
+        } else {
+            setTimeout(setValue, 500);
+        }
+    };
+    setTimeout(setValue, 1000);
+}
 
 let getSelectedUsersCount = computed(() => {
     let result = 0
@@ -450,7 +490,9 @@ async function buyTrip() {
             let tinkoffUrl = ''
             let addServices = bill.additionalServices?.length ? bill.additionalServices : []
 
-            if (buyNow.value) {
+            const useYookassa = !!trip.value.privetMirYookassaEnabled
+
+            if (buyNow.value && !useYookassa) {
                 const orderId = Date.now().toString()
 
                 let paymentCart = bill.cart;
@@ -506,6 +548,28 @@ async function buyTrip() {
                             message.success({ content: "Тур заказан!" });
                             await refreshDates();
                             buyDialog.value = false;
+
+                            if (useYookassa) {
+                                try {
+                                    const billId = response.data?.billId
+                                        ?? response.data?.user?.boughtTrips?.[response.data?.user?.boughtTrips?.length - 1]
+                                    const returnUrl = `${window.location.origin}/trip-info?_id=${trip.value._id}`
+                                    const payRes = await YookassaService.createTripPayment({
+                                        billId,
+                                        tripId: selectedDate.value._id,
+                                        returnUrl,
+                                    })
+                                    const url = payRes.data?.confirmationUrl
+                                    if (url) {
+                                        window.open(url, "_blank")
+                                        // router.push({ name: 'PaymentFrame', query: { url } })
+                                    } else {
+                                        message.error({ content: 'Не удалось получить ссылку на оплату' })
+                                    }
+                                } catch (err) {
+                                    message.error({ content: err.response?.data?.message || 'Ошибка оплаты через ЮKassa' })
+                                }
+                            }
                         }
                     })
                     .catch((err) => {
@@ -513,7 +577,7 @@ async function buyTrip() {
                     });
             }
             if (tinkoffUrl) {
-                router.push({ name: 'TinkoffPayment', query: { url: tinkoffUrl } })
+                router.push({ name: 'PaymentFrame', query: { url: tinkoffUrl } })
                 // window.open(tinkoffUrl, '_blank');
             }
         } else {
@@ -589,7 +653,17 @@ async function updateBus() {
     updateSeats()
 }
 
+
+
 onMounted(async () => {
+    (function () {
+        var script = document.createElement("script");
+        script.id = "widScrParams";
+        script.type = "text/javascript";
+        script.charset = "utf-8";
+        script.src = `https://partner.tutu.ru/js/tutuWidget.js?openNewTab=true&showLogoTab=true&showDataTo=true&tabDef=1&formTabs=[1,2,0]&avia=[,,,,,]&train=[,,,,,]&bus=[,,,,,]&tour=[,,,,,]`;
+        document.head.appendChild(script);
+    })();
 
     await refreshDates();
 
@@ -599,9 +673,24 @@ onMounted(async () => {
         changeTouristsField()
         if (getCurrentCustomerNumber.value > trip.value.maxPeople) {
             message.config({ duration: 3, top: "90vh" });
-            message.success({ content: `Осталось всего ${trip.value.maxPeople - getCustomersCount(selectedDate.value.billsList)} мест` });
+            message.success({
+                content: `Осталось всего ${trip.value.maxPeople - getCustomersCount(selectedDate.value.billsList)}
+мест` });
         }
         selected_seats.value = []
+    })
+
+    watch(transportDialog, (newVal) => {
+        if (newVal) {
+            setTimeout(() => {
+                if (getStartLocationNames.value.length > 0) {
+                    setWidgetDestination(getStartLocationNames.value[0])
+                }
+                if (locationStore.location?.shortName) {
+                    setWidgetFrom(locationStore.location.shortName)
+                }
+            }, 500);
+        }
     })
 });
 </script>
@@ -621,20 +710,20 @@ onMounted(async () => {
                         <a-carousel arrows dots-class="slick-dots slick-thumb">
                             <template #customPaging="props">
                                 <a>
-                                    <img :src="getImg(props.i)" />
+                                    <img :src="getImg(props.i)" alt="not found" />
                                 </a>
                             </template>
                             <div v-for="(item, i) in trip.images" :key="i">
-                                <img :src="item" alt="" srcset="" />
+                                <img :src="item" alt="not found" srcset="" />
                             </div>
                             <template #prevArrow>
                                 <div class="custom-slick-arrow" style="left: 10px; z-index: 1">
-                                    <span class="mdi mdi-48px mdi-chevron-left"></span>
+                                    <MdiIcon name="chevron-left" size="48px" />
                                 </div>
                             </template>
                             <template #nextArrow>
                                 <div class="custom-slick-arrow" style="right: 10px">
-                                    <span class="mdi mdi-48px mdi-chevron-right"></span>
+                                    <MdiIcon name="chevron-right" size="48px" />
                                 </div>
                             </template>
                         </a-carousel>
@@ -642,16 +731,16 @@ onMounted(async () => {
                     <a-col :xs="24" :md="12" class="pa-8">
 
                         <div style="float: right;">
-                            <span style="opacity: 0.7; cursor: pointer;" class="mdi mdi-24px mdi-printer ma-8 "
-                                @click="print()"></span>
+                            <MdiIcon style="opacity: 0.7; cursor: pointer;" @click="print()" name="printer" size="24px"
+                                class="ma-8 " />
 
-                            <span style="opacity: 0.7;" class="mdi mdi-24px mdi-share-variant-outline ma-8"
-                                @click="startShare()"></span>
+                            <MdiIcon style="opacity: 0.7;" @click="startShare()" name="share-variant-outline"
+                                size="24px" class="ma-8" />
 
                         </div>
 
-                        <div v-if="getStartLocationNames != ''">
-                            Старт: <b> {{ getStartLocationNames }}</b>
+                        <div v-if="startLocationsList != ''">
+                            Старт: <b> {{ startLocationsList }}</b>
                         </div>
                         <div v-if="trip.tripRegion != ''">
                             Куда: <b> {{ trip.tripRegion }}</b>
@@ -696,8 +785,8 @@ onMounted(async () => {
                             </div>
                         </div>
 
-                        <div class="d-flex">
-                            Цена:&nbsp
+                        <div>
+                            <div>Цена:&nbsp</div>
                             <div style="font-size: 0.9em;">
                                 <div v-for="(item, index) in trip.cost" :key="index" class="cost">
 
@@ -741,6 +830,10 @@ onMounted(async () => {
                             <a-button type="primary" class="lets_go_btn" style="display: flex; justify-content: center"
                                 @click="buyTripDialog()">
                                 Купить
+                            </a-button>
+                            <a-button v-if="!isCurrentLocationMatchStart" class="ml-8"
+                                @click="transportDialog = !transportDialog" style="border-radius: 20px;">
+                                {{ transportDialog ? 'Скрыть' : 'Как добраться' }}
                             </a-button>
                         </div>
 
@@ -841,7 +934,27 @@ onMounted(async () => {
 
                         </div>
                     </a-col>
+                    <a-col :xs="24" v-show="transportDialog">
+                        <div class="mb-16" v-if="getStartLocationNames.length > 0">
+                            <b>Выберите до какой точки старта нужно добраться:</b>
+                            <div class="d-flex flex-wrap mt-8">
+                                <a-tag v-for="(loc, index) in getStartLocationNames" :key="index" class="location-tag"
+                                    @click="setWidgetDestination(loc)">
+                                    {{ loc }}
+                                </a-tag>
+                            </div>
+                        </div>
+                        <div v-else>
+                            <b>Маршрут до точки</b>
+                        </div>
+                        <div id="widget-container"></div>
+                    </a-col>
                     <a-col :xs="24">
+
+                        <router-link :to="`/contract?shopcode=${trip.tinkoffContract.ShopCode}`" style="text-decoration:
+                            underline; color: #ff6f60;">
+                            Тур предоставляется компанией
+                        </router-link>
                         <span v-html="trip.description"></span>
                     </a-col>
                     <a-col :xs="24" v-if="trip.dayByDayDescription.length">
@@ -1258,10 +1371,16 @@ onMounted(async () => {
 
                         <a-col :span="24">
                             <div class="d-flex space-around">
-                                <a-button html-type="submit" class="btn" @click="buyNow = false" :disabled="isNoPlaces">
+                                <a-button html-type="submit" class="btn" @click="buyNow = false" :disabled="isNoPlaces"
+                                    v-if="!trip.privetMirYookassaEnabled">
                                     Заказать
                                 </a-button>
-                                <div class="buy-btn" v-if="!trip.partner || trip?.canSellPartnerTour">
+                                <a-button html-type="submit" class="lets_go_btn" type="primary" :disabled="isNoPlaces"
+                                    @click="buyNow = true" v-if="trip.privetMirYookassaEnabled">
+                                    Оплатить онлайн
+                                </a-button>
+                                <div class="buy-btn"
+                                    v-if="!trip.privetMirYookassaEnabled && (!trip.partner || trip?.canSellPartnerTour)">
                                     <div>
                                         <a-button html-type="submit" :disabled="isNoPlaces" @click="buyNow = true"
                                             type="primary" class="lets_go_btn">
@@ -1269,7 +1388,7 @@ onMounted(async () => {
                                         </a-button>
                                     </div>
                                     <div class="d-flex justify-center">
-                                        <img :src="TinkoffLogo" class="tinkoff-logo">
+                                        <img :src="TinkoffLogo" alt="tinkoff" class="tinkoff-logo">
                                     </div>
                                 </div>
                             </div>
@@ -1290,6 +1409,12 @@ onMounted(async () => {
     </div>
 </template>
 <style lang="scss" scoped>
+.card-vtb-icon {
+    // font-size: 18px;
+    color: #ff9900;
+    margin-left: 4px;
+}
+
 .pretty-tag {
     border-radius: 12px;
     font-size: 14px;
@@ -1732,22 +1857,22 @@ img {
   margin-top: 40px;
 
   &__order {
-    border: 2px solid #f60 !important;
-    border-radius: 39px !important;
+    border: 1px solid #d9d9d9 !important;
+    border-radius: 15px !important;
     padding: 10px 20px !important;
     min-width: 224px !important;
     height: 44px !important;
     font-weight: 600 !important;
     font-size: 20px!important;
-    color: #f60 !important;
+    color: #434343 !important;
     line-height: 1 !important;
     text-transform: capitalize !important;
-    background: transparent !important;
+    background: #fff !important;
   }
 
   &__pay {
     border: 2px solid #f60 !important;
-    border-radius: 39px !important;
+    border-radius: 15px !important;
     padding: 10px 20px !important;
     min-width: 224px !important;
     height: 44px !important;
@@ -2053,5 +2178,11 @@ img {
       right: 14px;
     }
   }
+}
+
+.location-tag {
+    font-size: 16px;
+    padding: 8px 16px;
+    cursor: pointer;
 }
 </style>

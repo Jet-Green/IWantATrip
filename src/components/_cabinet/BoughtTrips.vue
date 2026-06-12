@@ -327,7 +327,7 @@ onMounted(async () => {
 <template>
   <a-row v-if="loading">
     <a-col :span="24" class="d-flex justify-center mt-16">
-      <img src="../../assets/images/founddog.webp" alt="" style="height: 150px;">
+      <img src="../../assets/images/founddog.webp" alt="not found" style="height: 150px;">
     </a-col>
   </a-row>
   <div v-else class="bt-grid">

@@ -1,8 +1,10 @@
 <script setup>
 import BackButton from "../components/BackButton.vue";
-import ImageCropper from "../components/ImageCropper.vue";
-
-import { ref, onMounted, computed, reactive ,watch } from "vue";
+// import ImageCropper from "../components/ImageCropper.vue";
+const ImageCropper = defineAsyncComponent(() =>
+  import("../components/ImageCropper.vue")
+)
+import { ref, onMounted, computed, reactive ,watch,defineAsyncComponent } from "vue";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import { message } from 'ant-design-vue';
@@ -63,6 +65,7 @@ let form = reactive(JSON.parse(localStorage.getItem('createExcursionForm')) || {
   deadline: '',
   requirements: '',
   availability: true,
+  organizer: '',
 
 })
 
@@ -362,12 +365,12 @@ onMounted(async () => {
             <a-col :xs="24">
               Фотографии
               <div class="d-flex" style="overflow-x: scroll">
-                <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="" class="ma-4" style="max-width: 200px;"
+                <img v-for="(pr, i) in previews" :key="i" :src="pr" alt="not found" class="ma-4" style="max-width: 200px;"
                   @click="delPhotoDialog = true;
                   targetIndex = i;"  />
               </div>
               <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
-                <span class="mdi mdi-12px mdi-plus"></span>
+                <MdiIcon name="plus" size="12px" />
                 Добавить фото
               </a-button>
             </a-col>
@@ -398,12 +401,12 @@ onMounted(async () => {
                   :step="1" class="ml-16 mr-16" />
 
                 <a-button @click="removeCost(item)" shape="circle">
-                  <span class="mdi mdi-minus" style="cursor: pointer"></span>
+                  <MdiIcon style="cursor: pointer" name="minus" />
                 </a-button>
               </div>
 
               <a-button type="dashed" block @click="addCost" class="ma-8">
-                <span class="mdi mdi-12px mdi-plus"></span>
+                <MdiIcon name="plus" size="12px" />
                 Добавить цены
               </a-button>
             </a-col>
@@ -529,6 +532,10 @@ onMounted(async () => {
                 <a-radio :value="true">да</a-radio>
                 <a-radio :value="false">нет</a-radio>
               </a-radio-group>
+            </a-col>
+            <a-col :span="24">
+              Организатор
+              <a-input v-model:value="form.organizer" placeholder="ООО Города и веси" />
             </a-col>
             <a-col :span="24" :md="12">
               <Field name="contacts.phone" v-slot="{ value, handleChange }" v-model="form.contacts.phone">

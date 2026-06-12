@@ -18,21 +18,21 @@ async function deleteExcursionBooking(_id) {
 <template>
   <a-card hoverable class="customer-card">
     <div v-if="booking.user">
-      <span class="mdi mdi-account-outline" style=""></span>
+      <MdiIcon style="" name="account-outline" />
       {{ booking.user.fullinfo.fullname }}
     </div>
     <div v-else-if="booking.userInfo?.fullname">
-      <span class="mdi mdi-account-outline" style=""></span>
+      <MdiIcon style="" name="account-outline" />
       {{ booking.userInfo.fullname }}
     </div>
     <div v-if="booking.user">
-      <span class="mdi mdi-phone-outline mr-4" style=""></span>
+      <MdiIcon style="" name="phone-outline" class="mr-4" />
       <a :href="`tel:${booking.user.fullinfo.phone}`">
         {{ booking.user.fullinfo.phone }}
       </a>
     </div>
     <div v-else-if="booking.userInfo?.fullname">
-      <span class="mdi mdi-phone-outline mr-4" style=""></span>
+      <MdiIcon style="" name="phone-outline" class="mr-4" />
       <a :href="`tel:${booking.userInfo.phone}`">
         {{ booking.userInfo.phone }}
       </a>
@@ -42,7 +42,7 @@ async function deleteExcursionBooking(_id) {
     </div>
     <div class="actions d-flex">
       <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="deleteExcursionBooking(booking._id)">
-        <span class="mdi mdi-delete" style="color: #ff6600; cursor: pointer"></span>
+        <MdiIcon style="color: #ff6600; cursor: pointer" name="delete" />
       </a-popconfirm>
 
     </div>

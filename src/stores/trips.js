@@ -366,6 +366,13 @@ export const useTrips = defineStore('trips', {
                 console.log(error);
             }
         },
+        async updateBillSeats(billId, seats) {
+            try {
+                return await TripService.updateBillSeats(billId, seats)
+            } catch (error) {
+                console.log(error);
+            }
+        },
         async getCatalogTripById(catalogTripId) {
             try {
                 return await TripService.getCatalogTripById(catalogTripId)

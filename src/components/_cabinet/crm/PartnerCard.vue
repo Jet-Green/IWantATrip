@@ -47,7 +47,7 @@ async function hidePlace(_id) {
     <div class="actions">
       <div>
         <a-popconfirm title="Удалить?" ok-text="Да" cancel-text="Нет" @confirm="partnerToDelete(partner._id)">
-          <span class="mdi mdi-delete" style="color: #ff6600"></span>
+          <MdiIcon style="color: #ff6600" name="delete" />
         </a-popconfirm>
 
         <a-popconfirm
@@ -56,7 +56,7 @@ async function hidePlace(_id) {
           cancel-text="Нет"
           @confirm="router.push(`/create-partner?_id=${partner._id}`)"
         >
-          <span class="mdi mdi-pen"></span>
+          <MdiIcon name="pen" />
         </a-popconfirm>
       </div>
     </div>
