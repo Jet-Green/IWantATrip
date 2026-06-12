@@ -30,7 +30,8 @@ const router = useRouter();
 
 const route = useRoute();
 
-const _id = route.query._id;
+let _id = route.query._id;
+const slug = route.params.slug;
 const isHistory = route.query.history;
 const tripStore = useTrips();
 const userStore = useAuth();
@@ -115,7 +116,7 @@ async function changeTouristsField() {
 }
 
 
-let backRoute = { name: 'TripsPage', hash: `#${_id}` };
+let backRoute = computed(() => ({ name: 'TripsPage', hash: `#${trip.value?.slug || trip.value?._id || _id || ''}` }));
 
 
 const creatorsType = computed(() => {
@@ -217,8 +218,19 @@ let getCurrentCustomerNumber = computed(() => {
 })
 
 async function refreshDates() {
-    let response = await tripStore.getTripById(_id);
-    let tripFromDb = response.data;
+    let response = slug
+        ? await tripStore.getTripBySlug(slug)
+        : await tripStore.getTripById(_id);
+    let tripFromDb = response?.data;
+    if (!tripFromDb) {
+        router.replace('/trips');
+        return;
+    }
+    _id = tripFromDb._id;
+    // старая ссылка /trip?_id=... — выпрямляем на красивый /trip/:slug
+    if (!slug && tripFromDb.slug && route.params.slug !== tripFromDb.slug) {
+        router.replace({ path: `/trip/${tripFromDb.slug}`, query: isHistory ? { history: 'true' } : {} });
+    }
     additionalServices.value = []
     for (let service of tripFromDb?.additionalServices) {
         additionalServices.value.push({ ...service, count: 0 })
@@ -337,6 +349,12 @@ let getSelectedUsersCount = computed(() => {
     return result
 })
 
+const canonicalUrl = computed(() =>
+    trip.value?.slug
+        ? `${API_URL}/trip/${trip.value.slug}`
+        : `${API_URL}/trip?_id=${trip.value?._id}`
+);
+
 useHead(computed(() => ({
     title: trip.value?.name,
     meta: [
@@ -359,10 +377,10 @@ useHead(computed(() => ({
 
         {
             name: "og:url",
-            content: `${API_URL}/trip?_id=${trip.value?._id}`,
+            content: canonicalUrl.value,
         },
     ],
-    link: [{ rel: "canonical", href: `${API_URL}/trip?_id=${trip.value?._id}` }],
+    link: [{ rel: "canonical", href: canonicalUrl.value }],
 })));
 
 

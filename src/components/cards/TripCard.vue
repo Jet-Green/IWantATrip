@@ -9,7 +9,7 @@ let props = defineProps({
 
 let router = useRouter();
 function goToTripPage() {
-  router.push(`/trip?_id=${props.trip._id}`)
+  router.push(props.trip.slug ? `/trip/${props.trip.slug}` : `/trip?_id=${props.trip._id}`)
 }
 const clearData = (dateNumber) => {
   dateNumber = dateNumber - props.trip.timezoneOffset
