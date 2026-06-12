@@ -820,23 +820,6 @@ onMounted(async () => {
 
                         </div>
 
-                        <div class="d-flex justify-center ma-8" v-if="trip.maxPeople -
-                            getCustomersCount(selectedDate.billsList) -
-                            selectedDate.selectedCosts.reduce((acc, cost) => {
-                                return acc + cost.count;
-                            }, 0) >
-                            0
-                        ">
-                            <a-button type="primary" class="lets_go_btn" style="display: flex; justify-content: center"
-                                @click="buyTripDialog()">
-                                Купить
-                            </a-button>
-                            <a-button v-if="!isCurrentLocationMatchStart" class="ml-8"
-                                @click="transportDialog = !transportDialog" style="border-radius: 20px;">
-                                {{ transportDialog ? 'Скрыть' : 'Как добраться' }}
-                            </a-button>
-                        </div>
-
                         <div v-if="trip.loyalty?.enabled && trip.loyalty?.type === 'discount'" class="loyalty-discount-card">
                             <div v-if="trip.loyalty.discount?.baseDiscountPercent" class="loyalty-discount-card__row">
                                 <span class="loyalty-discount-card__label">Базовая скидка</span>
@@ -905,6 +888,23 @@ onMounted(async () => {
                                     <span class="loyalty-discount-card__accent">«{{ level.service }}»</span>
                                 </span>
                             </div>
+                        </div>
+
+                        <div class="d-flex justify-start mt-8 mb-8" v-if="trip.maxPeople -
+                            getCustomersCount(selectedDate.billsList) -
+                            selectedDate.selectedCosts.reduce((acc, cost) => {
+                                return acc + cost.count;
+                            }, 0) >
+                            0
+                        ">
+                            <a-button type="primary" class="lets_go_btn" style="display: flex; justify-content: center"
+                                @click="buyTripDialog()">
+                                Купить
+                            </a-button>
+                            <a-button v-if="!isCurrentLocationMatchStart" class="ml-8"
+                                @click="transportDialog = !transportDialog" style="border-radius: 20px;">
+                                {{ transportDialog ? 'Скрыть' : 'Как добраться' }}
+                            </a-button>
                         </div>
 
                         <div>
@@ -1512,10 +1512,10 @@ img {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  border-radius: 24px;
-  padding: 10px;
+  border-radius: 20px;
+  padding: 0;
   margin: 12px 0;
-  background: #e6e6e6;
+  background: transparent;
   max-width: 420px;
 
   :deep(.ant-progress) {
@@ -1526,8 +1526,8 @@ img {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-radius: 14px;
-    padding: 10px;
+    border-radius: 16px;
+    padding: 12px 16px;
     background: #fff;
   }
 
@@ -1736,12 +1736,12 @@ img {
   background: #f3f3f3;
 
   &__btn {
-    border: none;
+    border: 1px solid #e0e0e0;
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background: #f60;
-    color: #fff;
+    background: #fff;
+    color: #595959;
     font-size: 20px;
     display: flex;
     align-items: center;
@@ -1752,12 +1752,12 @@ img {
     line-height: 1;
 
     &:hover:not(:disabled) {
-      background: #f60;
-      color: #fff;
+      background: #f6f6f6;
+      color: #595959;
     }
 
     &:disabled {
-      border-color: #d9d9d9;
+      border-color: #ededed;
       color: #d9d9d9;
       cursor: not-allowed;
     }
@@ -2016,39 +2016,44 @@ img {
     justify-content: center;
     border-radius: 0 20px 20px 0;
     padding: 10px 16px;
-    background: #f60;
-    color: #fff;
+    background: #fff;
+    color: #f60;
     min-width: 100px;
 
     &--max {
       background: #f60;
+
+      .modal-loyalty__discount-label,
+      .modal-loyalty__discount-current { color: #fff; }
+
+      .modal-loyalty__discount-divider { color: #fff; opacity: 0.6; }
     }
   }
 
   &__discount-label {
     font-weight: 500;
     font-size: 16px;
-    color: #fff;
+    color: #8c8c8c;
   }
 
   &__discount-current {
     font-weight: 600;
     font-size: 24px;
-    color: #fff;
+    color: #f60;
   }
 
   &__discount-divider {
     font-weight: 400;
     font-size: 24px;
-    color: #fff;
+    color: #8c8c8c;
     opacity: 0.6;
   }
 
   &__free-badge {
     border-radius: 12px;
     padding: 14px 16px;
-    background: #f60;
-    color: #fff;
+    background: rgba(255, 102, 0, 0.1);
+    color: #f60;
     font-weight: 500;
     font-size: 14px;
   }
@@ -2153,24 +2158,22 @@ img {
   .ant-modal-close {
     top: 20px;
     right: 20px;
-    border-radius: 12px;
-    padding: 4px;
     width: 32px;
     height: 32px;
-    background: #fff;
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
 
-    color: #f60;
+    color: #8c8c8c;
 
     span {
       display: flex;
-      color: #f60;
+      color: #8c8c8c;
     }
 
     .ant-modal-close-x {
-      color: #f60;
+      color: #8c8c8c;
     }
 
     @media (max-width: 768px) {
