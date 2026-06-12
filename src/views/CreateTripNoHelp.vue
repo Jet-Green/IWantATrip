@@ -1065,7 +1065,7 @@ onMounted(async () => {
             </a-col>
 
             <a-col :span="24" class="d-flex justify-center ">
-              <a-button class="lets_go_btn mt-36 mb-36" type="primary" html-type="submit">
+              <a-button class="lets_go_btn ma-36" type="primary" html-type="submit">
                 Отправить
               </a-button>
             </a-col>
@@ -1089,39 +1089,5 @@ onMounted(async () => {
 .ql-editor {
   max-height: 500px;
   overflow-y: auto;
-}
-
-:deep(.ant-input),
-:deep(.ant-input-number),
-:deep(.ant-input-number-input),
-:deep(.ant-select-selector),
-:deep(.ant-picker),
-:deep(.ant-input-affix-wrapper) {
-  border-radius: 51px !important;
-}
-
-:deep(.ql-toolbar) {
-  border-radius: 20px 20px 0 0 !important;
-}
-:deep(.ql-container) {
-  border-radius: 0 0 20px 20px !important;
-}
-
-:deep(.ant-btn-dashed) {
-  border-color: #ff6600;
-  border-style: solid;
-  border-width: 2px;
-  color: #ff6600;
-  border-radius: 51px;
-  font-weight: 600;
-}
-
-.lets_go_btn {
-  width: 100%;
-  border-radius: 51px;
-}
-
-.text-caption {
-  color: #A7A7A7;
 }
 </style>
