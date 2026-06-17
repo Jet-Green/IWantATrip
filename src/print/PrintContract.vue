@@ -65,8 +65,8 @@ onUnmounted(() => {
                         <li>Название тура: <b>{{ BILL?.tripId.name }}</b></li>
                         <li>Дата тура: c <b>{{ clearData(BILL?.tripId.start) }}</b> по <b>{{ clearData(BILL?.tripId.end)
                                 }}</b> </li>
-                        <li>Программа тура: <a :href="`${API_URL}/trip?_id=${BILL.tripId._id}`"><b>{{
-                            `${API_URL}/trip?_id=${BILL?.tripId._id}`}}</b></a> </li>
+                        <li>Программа тура: <a :href="BILL.tripId.slug ? `${API_URL}/trip/${BILL.tripId.slug}` : `${API_URL}/trip?_id=${BILL.tripId._id}`"><b>{{
+                            BILL?.tripId.slug ? `${API_URL}/trip/${BILL.tripId.slug}` : `${API_URL}/trip?_id=${BILL?.tripId._id}`}}</b></a> </li>
                         <li>В стоимость включено: <b>{{ BILL.tripId.includedInPrice }}</b></li>
                           <li>Условия возврата: <b v-html="BILL.tripId.returnConditions"></b></li>
                         <li>Туристы по данному заказу: <b>{{ (BILL?.touristsList.map((list) => list.fullname).join())

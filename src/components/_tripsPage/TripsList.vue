@@ -63,7 +63,7 @@ onMounted(async () => {
         <a-col :xs="22" :md="20" :xl="18">
           <a-row :gutter="[16, 18]" class="d-flex justify-center mt-8 pb-24" v-if="tripStore.trips.length">
             <a-col :xs="24" :sm="12" :md="8" :xl="6" class="d-flex" v-for="trip in tripStore.trips" :key="trip.index">
-              <TripListCard :trip="trip" />
+              <TripListCard :trip="trip" :id="trip.slug || trip._id" />
             </a-col>
           </a-row>
           <a-row v-if="isRefreshing">

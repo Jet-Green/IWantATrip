@@ -370,6 +370,11 @@ const router = createRouter({
           component: () => import('../views/TripInfoPage.vue')
         },
         {
+          path: '/trip/:slug',
+          name: 'TripInfoBySlug',
+          component: () => import('../views/TripInfoPage.vue')
+        },
+        {
           path: '/catalog-trip',
           name: 'CatalogInfoPage',
           component: () => import('../views/CatalogInfoPage.vue')

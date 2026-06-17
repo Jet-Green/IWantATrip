@@ -108,6 +108,9 @@ export default {
     getTripById(_id) {
         return $api.get(`/trips/get-trip-by-id?_id=${_id}`)
     },
+    getTripBySlug(slug) {
+        return $api.get(`/trips/get-by-slug?slug=${encodeURIComponent(slug)}`)
+    },
     getFullCatalogById(_id) {
         return $api.get(`/catalog/get-full-catalog?_id=${_id}`)
     },

@@ -353,7 +353,7 @@ onMounted(() => {
           <a-col :span="24" class="trips-container">
             <div class="subtitle">Туры</div>
             <div v-if="foundTrips.length" v-for="fTrip of foundTrips" class="mb-8">
-              <span class="trip-name" @click="router.push(`/trip?_id=${fTrip._id}`)">
+              <span class="trip-name" @click="router.push(fTrip.slug ? `/trip/${fTrip.slug}` : `/trip?_id=${fTrip._id}`)">
                 - {{ fTrip.name }}
               </span>
             </div>

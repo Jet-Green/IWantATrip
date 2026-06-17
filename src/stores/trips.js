@@ -214,6 +214,13 @@ export const useTrips = defineStore('trips', {
                 console.log(error);
             }
         },
+        async getTripBySlug(slug) {
+            try {
+                return await TripService.getTripBySlug(slug)
+            } catch (error) {
+                console.log(error);
+            }
+        },
 
         async getFullCatalogById(_id) {
             try {

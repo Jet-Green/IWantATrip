@@ -129,7 +129,7 @@ async function hideTrip(_id) {
     TripService.hideTrip(_id, trip.value.isHidden);
 }
 function goToTripPage(_id) {
-    router.push(`/trip?_id=${_id}`);
+    router.push(trip.value?.slug ? `/trip/${trip.value.slug}` : `/trip?_id=${_id}`);
 }
 async function tripToDelete(_id) {
     let response = await tripStore.deleteById(_id);
