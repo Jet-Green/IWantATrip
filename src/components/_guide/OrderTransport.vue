@@ -2,28 +2,12 @@
 import { onMounted } from "vue";
 import BackButton from "../BackButton.vue";
 
-import { useAppState } from '../../stores/appState';
-
-let appStateStore = useAppState()
-
-
-let mountWidget = () => {
-    let recaptchaScript = document.createElement('script')
-    recaptchaScript.setAttribute('src', 'https://gettransfer.com/transfers/widget.js?widget_id=232')
-    document.head.appendChild(recaptchaScript)
-    appStateStore.widgetIsMount = false
-}
-
 onMounted(() => {
-    if (appStateStore.widgetIsMount) {
-        mountWidget()
-    } else {
-            document.getElementById("gettransfer_widget").appendChild(gtIframe),
-            window.addEventListener ? window.addEventListener("message", frameListener) : window.attachEvent("onmessage", frameListener);
-    }
+    let resizeScript = document.createElement('script')
+    resizeScript.setAttribute('type', 'text/javascript')
+    resizeScript.setAttribute('src', 'https://iway.ru/js/plugins/iframe.resize.js')
+    document.head.appendChild(resizeScript)
 })
-
-
 </script>
 <template>
     <div>
@@ -35,9 +19,11 @@ onMounted(() => {
                 </h2>
             </a-col>
         </a-row>
-        <div id="gettransfer_widget" class="mt-16">
-
+        <div class="mt-16">
+            <iframe width="100%" height="900" id="iway-frame" name="iway-frame"
+                src="https://iway.ru/steporder/framens?userID=170838&lang=ru&currency=RUB&pos=iframe"
+                onload="if (typeof FrameResize != 'undefined') FrameResize.registerFrame(this)"
+                frameborder="0"></iframe>
         </div>
-
     </div>
 </template>
