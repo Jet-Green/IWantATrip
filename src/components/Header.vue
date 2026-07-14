@@ -179,10 +179,17 @@ onMounted(() => {
           </div>
           <div class="mr-4">кабинет</div>
         </div>
+        <div style="text-align: center; display: flex; flex-direction: row; margin: 10px 0;">
+          <a style="height: 40px; width: 40px;" href="https://vk.com/gorodaivesi_udm" target="_blank"><img class="ma-4"
+              src="../assets/icons/vk.svg" alt="" style="height: 32px; width: 32px;" /></a>
+
+          <a style="height: 40px; width: 40px;" href="https://max.ru/join/BUKtZsgjwb2QbPWPLQl3XrzVveiJHLiApZdq_6M66w8"
+            target="_blank"><img class="ma-4" src="../assets/icons/max.svg" style="height: 32px; width: 32px;"
+              alt="" /></a>
+        </div>
         <div style="width: 50%">
           <a-divider class="ma-0"></a-divider>
         </div>
-
         <div @click="toComponentFromMenu('Landing')" class="route ma-8">главная</div>
         <div @click="toComponentFromMenu('TripsPage')" class="route ma-8">найти тур</div>
         <div @click="toComponentFromMenu('CreateTripWithHelp')" class="route ma-8">заказать тур</div>
@@ -214,13 +221,7 @@ onMounted(() => {
         </div>
         <div @click="toComponentFromMenu('Contacts')" class="route ma-8">контакты</div>
         <div @click="toComponentFromMenu('Documents')" class="route ma-8">документы</div>
-        <div style="text-align: center; display: flex; flex-direction: row;">
-          <a style="height: 32px; width: 32px;" href="https://vk.com/gorodaivesi_udm" target="_blank"><img class="ma-4"
-              src="../assets/icons/vk.svg" alt="" /></a>
 
-          <a style="height: 32px; width: 32px;" href="https://max.ru/join/BUKtZsgjwb2QbPWPLQl3XrzVveiJHLiApZdq_6M66w8"
-            target="_blank"><img class="ma-4" src="../assets/icons/max.svg" alt="" /></a>
-        </div>
         <img src="../assets/images/logo.webp" class="ma-8" style="height: 60px; cursor: pointer" alt=""
           @click="toComponentFromMenu('Landing')" />
       </div>
