@@ -171,4 +171,18 @@ export default {
     deleteAdditionalService(tripId, serviceId) {
         return $api.post('/trips/delete-additional-service', { tripId, serviceId })
     },
+    pushTripPhotobankImageUrls(tripId, urls) {
+        return $api.post('/trips/push-photobank-urls', { tripId, urls })
+    },
+    pushCatalogTripPhotobankImageUrls(catalogTripId, urls) {
+        return $api.post('/catalog/push-photobank-urls', { catalogTripId, urls })
+    },
+    // Отметить фото из фотобанка как использованные (usageCount++), когда в тур
+    // добавляется обрезанная копия фото (сам URL в images не попадает).
+    markTripPhotobankUsed(tripId, urls) {
+        return $api.post('/trips/mark-photobank-used', { tripId, urls })
+    },
+    markCatalogTripPhotobankUsed(catalogTripId, urls) {
+        return $api.post('/catalog/mark-photobank-used', { catalogTripId, urls })
+    },
 }

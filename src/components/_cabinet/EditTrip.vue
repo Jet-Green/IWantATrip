@@ -1,6 +1,7 @@
 <script setup>
 import BackButton from "../BackButton.vue";
 import ImageCropper from "../ImageCropper.vue";
+import AddPhotoFromPhotobank from "../photobank/AddPhotoFromPhotobank.vue";
 import PriceCalc from '../_calculator/PriceCalc.vue'
 
 import dayjs from 'dayjs'
@@ -17,6 +18,7 @@ import { useAuth } from '../../stores/auth'
 import { useTrips } from "../../stores/trips.js";
 import { useAppState } from "../../stores/appState";
 import { usePlaces } from "../../stores/place.js";
+import { usePhotos } from "../../stores/photos.js";
 import datePlugin from '../../plugins/dates'
 
 import TripService from "../../service/TripService";
@@ -25,6 +27,7 @@ const userStore = useAuth()
 const tripStore = useTrips()
 const appStore = useAppState();
 const placesStore = usePlaces();
+const photosStore = usePhotos();
 
 const LOYALTY_TYPE = {
   DISCOUNT: 'discount',
@@ -197,6 +200,52 @@ let visibleCropperModal = ref(false);
 let previews = ref([]);
 // отправляем на сервер
 let images = []; // type: blob
+// Оригинальные URL фото из фотобанка, чьи обрезанные копии добавлены в тур
+// (нужно, чтобы отметить их как использованные в БД — usageCount++)
+const usedPhotobankUrls = ref([]);
+// очередь URL из фотобанка, ожидающих обрезки в кроппере
+const photobankCropQueue = ref([]);
+// src для кроппера: если задан — режем фото из фотобанка, иначе обычная загрузка файла
+const cropperSrc = ref('');
+
+/** Открывает тот же кроппер для каждого выбранного из фотобанка фото по очереди. */
+function addPhotobankUrls(urls) {
+    const fresh = (urls || []).filter((u) => typeof u === 'string' && u.trim());
+    if (!fresh.length) return;
+    photobankCropQueue.value.push(...fresh);
+    if (!cropperSrc.value) startNextPhotobankCrop();
+}
+
+function startNextPhotobankCrop() {
+    if (!photobankCropQueue.value.length) {
+        cropperSrc.value = '';
+        visibleCropperModal.value = false;
+        return;
+    }
+    cropperSrc.value = photobankCropQueue.value[0];
+    visibleCropperModal.value = true;
+}
+
+/** Пользователь закрыл кроппер, не обрезав — сбрасываем очередь фотобанка. */
+function cancelCropper() {
+    photobankCropQueue.value = [];
+    cropperSrc.value = '';
+    visibleCropperModal.value = false;
+}
+
+/** Отмечает использованные фото фотобанка в БД после сохранения тура. */
+async function markUsedPhotobankUrls(_id) {
+    if (!usedPhotobankUrls.value.length) return;
+    try {
+        const { data } = await photosStore.filterPublishedUrls(usedPhotobankUrls.value);
+        const published = Array.isArray(data?.urls) ? data.urls : [];
+        if (published.length) {
+            await TripService.markTripPhotobankUsed(_id, published);
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 // необходимо добавить поле количество людей в туре
 let form = ref({
@@ -331,7 +380,7 @@ function submit() {
         }
     }
 
-    TripService.updateTrip(form.value).then((res) => {
+    TripService.updateTrip(form.value).then(async (res) => {
         const _id = res.data._id;
         let imagesFormData = new FormData();
 
@@ -343,22 +392,28 @@ function submit() {
             router.push('/cabinet/me')
         }
         if (images.length) {
-            TripService.uploadTripImages(imagesFormData).then((res) => {
-                message.config({ duration: 3, top: '90vh' })
-                message.success({ content: 'Тур обновлён!', onClose: close })
-            })
-        } else {
-            message.config({ duration: 3, top: '90vh' })
-            message.success({ content: 'Тур обновлён!', onClose: close })
+            await TripService.uploadTripImages(imagesFormData)
         }
+        // отмечаем использованные оригиналы фотобанка (обрезанные копии уже ушли как новые файлы)
+        await markUsedPhotobankUrls(_id)
+        message.config({ duration: 3, top: '90vh' })
+        message.success({ content: 'Тур обновлён!', onClose: close })
     })
 }
 
 function addPreview(blob) {
-    // imagesFormData.append("image", blob, `product-${previews.value.length}`);
-    visibleCropperModal.value = false;
     images.push(blob);
     previews.value.push(URL.createObjectURL(blob));
+    if (cropperSrc.value) {
+        // это была обрезка фото из фотобанка — запоминаем оригинал и переходим к следующему
+        if (!usedPhotobankUrls.value.includes(cropperSrc.value)) {
+            usedPhotobankUrls.value.push(cropperSrc.value);
+        }
+        photobankCropQueue.value.shift();
+        startNextPhotobankCrop();
+    } else {
+        visibleCropperModal.value = false;
+    }
 }
 
 function selectStartLocation(selected) {
@@ -560,6 +615,7 @@ let formSchema = yup.object({
                                 <MdiIcon name="plus" size="12px" />
                                 Добавить фото
                             </a-button>
+                            <AddPhotoFromPhotobank @add="addPhotobankUrls" />
                         </a-col>
 
                         <a-col :span="12">
@@ -966,8 +1022,8 @@ let formSchema = yup.object({
                         </a-col>
                     </a-row>
                 </Form>
-                <a-modal v-model:open="visibleCropperModal" :footer="null">
-                    <ImageCropper @addImage="addPreview" />
+                <a-modal v-model:open="visibleCropperModal" :footer="null" @cancel="cancelCropper">
+                    <ImageCropper :src="cropperSrc" @addImage="addPreview" />
                 </a-modal>
                 <a-modal v-model:open="delPhotoDialog" :footer="null">
                     <h3>Удалить фото?</h3>
@@ -980,3 +1036,50 @@ let formSchema = yup.object({
         </a-row>
     </div>
 </template>
+
+<style scoped>
+.et-photobank-thumb-wrap {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.et-photobank-thumb {
+    max-width: 200px;
+    min-width: 50px;
+    display: block;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.et-photobank-badge {
+    position: absolute;
+    bottom: 6px;
+    left: 6px;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    text-transform: lowercase;
+}
+
+.et-photobank-remove {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    line-height: 22px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.et-photobank-remove:hover {
+    background: rgba(0, 0, 0, 0.75);
+}
+</style>

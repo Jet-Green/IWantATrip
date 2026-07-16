@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import "cropperjs/dist/cropper.css";
 import Cropper from "cropperjs";
 
@@ -12,7 +12,32 @@ let cropper;
 const emit = defineEmits(["addImage"]);
 const props = defineProps({
     aspectRatio: Number,
+    // Необязательный URL изображения (например, фото из фотобанка).
+    // Если задан — кроппер грузит его напрямую, минуя выбор файла.
+    src: String,
 })
+
+function destroyCropper() {
+    if (cropper) {
+        try { cropper.destroy() } catch (err) { /* ignore */ }
+        cropper = null;
+    }
+}
+
+function initCropper() {
+    if (!previewImage.value) return;
+    destroyCropper();
+    cropper = new Cropper(previewImage.value, {
+        aspectRatio: props.aspectRatio ?? 270 / 175,
+        maxContainerWidth: 300,
+        maxContainerHeight: 300,
+        minContainerWidth: 300,
+        minContainerHeight: 300,
+        guides: true,
+        center: true,
+        checkCrossOrigin: true,
+    });
+}
 
 function loadImage() {
     loadedImages.value = imageInput.value.files;
@@ -40,12 +65,8 @@ async function crop() {
             })
             .toBlob((blob) => {
                 emit("addImage", blob);
-                try {
-                    cropper.destroy()
-                    loadedImages.value = [];
-                } catch (err) {
-                    console.log(err);
-                }
+                destroyCropper();
+                loadedImages.value = [];
             }, 'image/jpeg',
                 // quality is
                 // 0.9,
@@ -53,44 +74,46 @@ async function crop() {
     }
 }
 watch(preview, () => {
-    cropper = new Cropper(previewImage.value, {
-        aspectRatio: props.aspectRatio ?? 270 / 175,
-        maxContainerWidth: 300,
-        maxContainerHeight: 300,
-        minContainerWidth: 300,
-        minContainerHeight: 300,
-        // minCanvasWidth: 500,
-        // maxCanvasWidth: 500,
-        // minCanvasHeight: 500,
-        // maxCanvasHeight: 500,
-        guides: true,
-        center: true,
-        // crop(event) {
-        //     // croppedImage = event.target.currentSrc;
-        //     console.log(event);
-        // }
-        // ready: function () {
-        //     console.log('ready');
-        //     cropperReady.value = true;
-        // },
-    });
+    initCropper();
 });
+
+// Режим URL: подгружаем удалённое изображение (фотобанк) в тот же кроппер.
+// Требует включённого CORS на бакете, чтобы холст не был "tainted" при экспорте.
+watch(
+    () => props.src,
+    async (url) => {
+        if (!url) {
+            destroyCropper();
+            return;
+        }
+        await nextTick();
+        const img = previewImage.value;
+        if (!img) return;
+        destroyCropper();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => initCropper();
+        img.src = url;
+        // если картинка уже в кеше и onload не сработает — инициализируем сразу
+        if (img.complete && img.naturalWidth) initCropper();
+    },
+    { immediate: true }
+);
 </script>
 <template>
     <h3 class="mb-2 text-center">Обработка фотографии</h3>
     <div class="pa-4">
         <input type="file" accept="image/*" ref="imageInput" id="upload" @change="loadImage" style="display: none">
 
-        <div class="d-flex justify-center" v-if="loadedImages.length">
+        <div class="d-flex justify-center" v-if="loadedImages.length || src">
             <a-button @click="crop" class="ma-4"> Обрезать </a-button>
         </div>
 
         <a-row>
             <a-col :span="24" class="pa-0">
-                <img v-if="loadedImages.length" ref="previewImage" style="width: 50vw; height: 50vh" alt="not found"/>
+                <img v-if="loadedImages.length || src" ref="previewImage" style="width: 50vw; height: 50vh" alt="not found"/>
                 <div style="width: 50vw"></div>
                 <label for="upload">
-                    <div v-if="!loadedImages.length" class="d-flex justify-center align-center flex-column"
+                    <div v-if="!loadedImages.length && !src" class="d-flex justify-center align-center flex-column"
                         style="height: 50vh; cursor: pointer">
                         <MdiIcon name="camera" size="24px" />
                         <span> выбери фото</span>

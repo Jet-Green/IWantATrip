@@ -15,7 +15,9 @@ import { useRoute } from "vue-router";
 import { useAuth } from "../stores/auth";
 import { useTrips } from "../stores/trips";
 import { useAppState } from "../stores/appState";
+import { usePhotos } from "../stores/photos";
 import TripService from "../service/TripService";
+import AddPhotoFromPhotobank from "../components/photobank/AddPhotoFromPhotobank.vue";
 
 import dayjs from "dayjs";
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
@@ -27,6 +29,7 @@ dayjs.locale('ru');
 const tripStore = useTrips();
 const userStore = useAuth();
 const appStore = useAppState();
+const photosStore = usePhotos();
 
 const dateFormatList = ["DD.MM.YY", "DD.MM.YY"];
 const monthFormatList = ["MM.YY"];
@@ -53,6 +56,52 @@ let visibleCropperModal = ref(false);
 let previews = ref([]);
 // отправляем на сервер
 let images = []; // type: blob
+// Оригинальные URL фото из фотобанка, чьи обрезанные копии добавлены в тур
+// (нужно, чтобы отметить их как использованные в БД — usageCount++)
+const usedPhotobankUrls = ref([]);
+// очередь URL из фотобанка, ожидающих обрезки в кроппере
+const photobankCropQueue = ref([]);
+// src для кроппера: если задан — режем фото из фотобанка, иначе обычная загрузка файла
+const cropperSrc = ref('');
+
+/** Открывает тот же кроппер для каждого выбранного из фотобанка фото по очереди. */
+function addPhotobankUrls(urls) {
+    const fresh = (urls || []).filter((u) => typeof u === 'string' && u.trim());
+    if (!fresh.length) return;
+    photobankCropQueue.value.push(...fresh);
+    if (!cropperSrc.value) startNextPhotobankCrop();
+}
+
+function startNextPhotobankCrop() {
+    if (!photobankCropQueue.value.length) {
+        cropperSrc.value = '';
+        visibleCropperModal.value = false;
+        return;
+    }
+    cropperSrc.value = photobankCropQueue.value[0];
+    visibleCropperModal.value = true;
+}
+
+/** Пользователь закрыл кроппер, не обрезав — сбрасываем очередь фотобанка. */
+function cancelCropper() {
+    photobankCropQueue.value = [];
+    cropperSrc.value = '';
+    visibleCropperModal.value = false;
+}
+
+/** Отмечает использованные фото фотобанка в БД после создания тура. */
+async function markUsedPhotobankUrls(_id) {
+    if (!usedPhotobankUrls.value.length) return;
+    try {
+        const { data } = await photosStore.filterPublishedUrls(usedPhotobankUrls.value);
+        const published = Array.isArray(data?.urls) ? data.urls : [];
+        if (published.length) {
+            await TripService.markTripPhotobankUsed(_id, published);
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
 //let pdf = [];
 let locationSearchRequest = ref("")
 // необходимо добавить поле количество людей в туре
@@ -158,6 +207,9 @@ function submit() {
         images = [];
         // pdf = [];
         previews.value = [];
+        usedPhotobankUrls.value = [];
+        photobankCropQueue.value = [];
+        cropperSrc.value = '';
         quill.value.setHTML("");
     }
     function uploadTripImages(_id) {
@@ -213,6 +265,7 @@ function submit() {
         if (res.status == 200) {
             const _id = res.data._id;
             await uploadTripImages(_id)
+            await markUsedPhotobankUrls(_id)
             await updateUser(_id)
 
             message.config({ duration: 1.5, top: "70vh" });
@@ -227,9 +280,18 @@ function submit() {
 }
 function addPreview(blob) {
     // imagesFormData.append("image", blob, `product-${previews.value.length}`);
-    visibleCropperModal.value = false;
     images.push(blob);
     previews.value.push(URL.createObjectURL(blob));
+    if (cropperSrc.value) {
+        // это была обрезка фото из фотобанка — запоминаем оригинал и переходим к следующему
+        if (!usedPhotobankUrls.value.includes(cropperSrc.value)) {
+            usedPhotobankUrls.value.push(cropperSrc.value);
+        }
+        photobankCropQueue.value.shift();
+        startNextPhotobankCrop();
+    } else {
+        visibleCropperModal.value = false;
+    }
 }
 function updateUserInfo(info) {
     fullUserInfo = info;
@@ -443,10 +505,13 @@ let formSchema = yup.object({
                                     style="max-width: 200px" @click="delPhotoDialog = true;
             targetIndex = i;" />
                             </div>
-                            <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
-                                <MdiIcon name="plus" size="12px" />
-                                Добавить фото
-                            </a-button>
+                            <div class="copy-trip-photos-actions">
+                                <a-button type="dashed" block @click="visibleCropperModal = true" class="ma-8">
+                                    <MdiIcon name="plus" size="12px" />
+                                    Добавить фото
+                                </a-button>
+                                <AddPhotoFromPhotobank @add="addPhotobankUrls" />
+                            </div>
                         </a-col>
 
                         <a-col :span="12">
@@ -666,8 +731,8 @@ let formSchema = yup.object({
                         </a-col>
                     </a-row>
                 </Form>
-                <a-modal v-model:open="visibleCropperModal" :footer="null">
-                    <ImageCropper @addImage="addPreview" />
+                <a-modal v-model:open="visibleCropperModal" :footer="null" @cancel="cancelCropper">
+                    <ImageCropper :src="cropperSrc" @addImage="addPreview" />
                 </a-modal>
                 <a-modal v-model:open="delPhotoDialog" :footer="null">
                     <h3>Удалить фото?</h3>
@@ -680,3 +745,36 @@ let formSchema = yup.object({
         </a-row>
     </div>
 </template>
+
+<style scoped>
+.copy-trip-photos-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.copy-trip-photo-thumb-wrap {
+    position: relative;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.copy-trip-photo-thumb {
+    max-width: 200px;
+    display: block;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.copy-trip-photo-badge {
+    position: absolute;
+    bottom: 6px;
+    left: 6px;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    text-transform: lowercase;
+}
+</style>

@@ -1,6 +1,7 @@
 <script setup>
 import BackButton from "../components/BackButton.vue";
 import PriceCalc from '../components/_calculator/PriceCalc.vue'
+import AddPhotoFromPhotobank from "../components/photobank/AddPhotoFromPhotobank.vue";
 // import ImageCropper from "../components/ImageCropper.vue";
 const ImageCropper = defineAsyncComponent(() =>
   import("../components/ImageCropper.vue")
@@ -16,6 +17,7 @@ import { useTrips } from "../stores/trips";
 import { useAuth } from "../stores/auth";
 import { useAppState } from "../stores/appState";
 import { usePlaces } from "../stores/place";
+import { usePhotos } from "../stores/photos";
 
 import TripService from "../service/TripService";
 import datePlugin from '../plugins/dates'
@@ -32,6 +34,7 @@ const TripStore = useTrips();
 const userStore = useAuth();
 const appStore = useAppState();
 const placesStore = usePlaces();
+const photosStore = usePhotos();
 
 let places = ref([])
 
@@ -105,6 +108,52 @@ let visibleCropperModal = ref(false);
 let previews = ref(localStorage.getItem('createTripImages') ? JSON.parse(localStorage.getItem('createTripImages')) : []);
 // отправляем на сервер
 let images = localStorage.getItem('createTripImages') ? JSON.parse(localStorage.getItem('createTripImages')) : []; // type: blob
+// Оригинальные URL фото из фотобанка, чьи обрезанные копии добавлены в тур
+// (нужно, чтобы отметить их как использованные в БД — usageCount++)
+const usedPhotobankUrls = ref([]);
+// очередь URL из фотобанка, ожидающих обрезки в кроппере
+const photobankCropQueue = ref([]);
+// src для кроппера: если задан — режем фото из фотобанка, иначе обычная загрузка файла
+const cropperSrc = ref('');
+
+/** Открывает тот же кроппер для каждого выбранного из фотобанка фото по очереди. */
+function addPhotobankUrls(urls) {
+  const fresh = (urls || []).filter((u) => typeof u === 'string' && u.trim());
+  if (!fresh.length) return;
+  photobankCropQueue.value.push(...fresh);
+  if (!cropperSrc.value) startNextPhotobankCrop();
+}
+
+function startNextPhotobankCrop() {
+  if (!photobankCropQueue.value.length) {
+    cropperSrc.value = '';
+    visibleCropperModal.value = false;
+    return;
+  }
+  cropperSrc.value = photobankCropQueue.value[0];
+  visibleCropperModal.value = true;
+}
+
+/** Пользователь закрыл кроппер, не обрезав — сбрасываем очередь фотобанка. */
+function cancelCropper() {
+  photobankCropQueue.value = [];
+  cropperSrc.value = '';
+  visibleCropperModal.value = false;
+}
+
+/** Отмечает использованные фото фотобанка в БД после создания тура. */
+async function markUsedPhotobankUrls(_id) {
+  if (!usedPhotobankUrls.value.length) return;
+  try {
+    const { data } = await photosStore.filterPublishedUrls(usedPhotobankUrls.value);
+    const published = Array.isArray(data?.urls) ? data.urls : [];
+    if (published.length) {
+      await TripService.markTripPhotobankUsed(_id, published);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
 //let pdf = [];
 let locationSearchRequest = ref("")
 // необходимо добавить поле количество людей в туре
@@ -364,6 +413,9 @@ function submit() {
     images = [];
     // pdf = [];
     previews.value = [];
+    usedPhotobankUrls.value = [];
+    photobankCropQueue.value = [];
+    cropperSrc.value = '';
     quill.value.setHTML("");
   }
   function uploadTripImages(_id) {
@@ -431,6 +483,7 @@ function submit() {
     if (res.status == 200) {
       const _id = res.data._id;
       await uploadTripImages(_id)
+      await markUsedPhotobankUrls(_id)
       await updateUser(_id)
 
 
@@ -445,17 +498,25 @@ function submit() {
 
 }
 function addPreview(blob) {
-  // imagesFormData.append("image", blob, `product-${previews.value.length}`);
-  visibleCropperModal.value = false;
   images.push(blob);
   previews.value.push(URL.createObjectURL(blob));
   localStorage.setItem('createTripImages', JSON.stringify(previews.value))
+  if (cropperSrc.value) {
+    // это была обрезка фото из фотобанка — запоминаем оригинал и переходим к следующему
+    if (!usedPhotobankUrls.value.includes(cropperSrc.value)) {
+      usedPhotobankUrls.value.push(cropperSrc.value);
+    }
+    photobankCropQueue.value.shift();
+    startNextPhotobankCrop();
+  } else {
+    visibleCropperModal.value = false;
+  }
 }
 const delPhoto = () => {
   previews.value.splice(targetIndex.value, 1);
   images.splice(targetIndex.value, 1);
-  delPhotoDialog.value = false;
   localStorage.setItem('createTripImages', JSON.stringify(previews.value))
+  delPhotoDialog.value = false;
 };
 
 function persistCreatingTrip() {
@@ -640,7 +701,6 @@ onMounted(async () => {
       locationSearchRequest.value = f.startLocation.name
     }
   }
-
 });
 </script>
 <template>
@@ -668,10 +728,13 @@ onMounted(async () => {
                   @click="delPhotoDialog = true;
                   targetIndex = i;" @error="handleImgError(i)" />
               </div>
-              <a-button type="dashed" block @click="visibleCropperModal = true" class="mb-8 mt-8">
-                <MdiIcon name="plus" size="12px" />
-                Добавить фото
-              </a-button>
+              <div class="create-trip-photos-actions">
+                <a-button type="dashed" block @click="visibleCropperModal = true" class="mb-8 mt-8">
+                  <MdiIcon name="plus" size="12px" />
+                  Добавить фото
+                </a-button>
+                <AddPhotoFromPhotobank @add="addPhotobankUrls" />
+              </div>
             </a-col>
 
             <a-col :span="12">
@@ -1071,8 +1134,8 @@ onMounted(async () => {
             </a-col>
           </a-row>
         </Form>
-        <a-modal v-model:open="visibleCropperModal" :footer="null" :destroyOnClose="true">
-          <ImageCropper @addImage="addPreview" />
+        <a-modal v-model:open="visibleCropperModal" :footer="null" :destroyOnClose="true" @cancel="cancelCropper">
+          <ImageCropper :src="cropperSrc" @addImage="addPreview" />
         </a-modal>
         <a-modal v-model:open="delPhotoDialog" :footer="null">
           <h3>Удалить фото?</h3>
@@ -1089,5 +1152,36 @@ onMounted(async () => {
 .ql-editor {
   max-height: 500px;
   overflow-y: auto;
+}
+
+.create-trip-photos-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.create-trip-photo-thumb-wrap {
+  position: relative;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.create-trip-photo-thumb {
+  max-width: 200px;
+  display: block;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.create-trip-photo-badge {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  text-transform: lowercase;
 }
 </style>
