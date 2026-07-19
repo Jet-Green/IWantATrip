@@ -12,7 +12,7 @@ const src = computed(() => {
 });
 </script>
 <template>
-  <div style="height: 70dvh;">
+  <div style="height: 80dvh;">
     <a-row type="flex" justify="center">
       <a-col :xs="22" :md="20" :xl="18">
         <BackButtonAdaptive :backRoute="backRoute" />

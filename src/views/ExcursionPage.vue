@@ -42,6 +42,7 @@ let fullinfo = reactive({
 let link = computed(() => {
   return API_URL + route.fullPath
 })
+
 const options = ref({
   url: link.value,
   title: excursion.value.name,

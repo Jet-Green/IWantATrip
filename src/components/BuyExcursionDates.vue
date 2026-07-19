@@ -66,7 +66,7 @@ function getBookingCount(timeId) {
 
 async function buyExcursion(time, bookingsCount) {
   if (!userSrore.isAuth) {
-    router.push('/auth')
+    router.push({ path: '/auth', query: { redirect: router.currentRoute.value.fullPath } })
   } else {
     emit('buy-excursion', { time, bookingsCount })
   }

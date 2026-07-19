@@ -1,6 +1,8 @@
 <script setup>
 import { computed } from 'vue'
 import _ from "lodash"
+import datePlugin from "../../plugins/dates"
+
 const props = defineProps({
   excursion: Object
 })
@@ -16,12 +18,34 @@ let getPrice = computed(() => {
   }
 
 
-}) 
+})
+
+function isDatePast(dateObj) {
+  const now = new Date()
+  const d = new Date(dateObj.year, dateObj.month, dateObj.day)
+  return d < new Date(now.getFullYear(), now.getMonth(), now.getDate())
+}
+
+const briefDates = computed(() => {
+  if (!excursion.dates?.length) return []
+  return excursion.dates
+    .filter(d => !isDatePast(d.date))
+    .map(d => {
+      const pretty = datePlugin.excursions.getPrettyDate(d.date)
+      return `${pretty.day} ${pretty.month}`
+    })
+})
 </script>
 <template>
   <div class="excursion-card" :style="{ 'background-image': 'url(' + excursion.images[0] + ')' }">
     <div class="content">
       <div class="title"> {{ excursion.name }} </div>
+
+      <div v-if="briefDates.length" class="dates">
+        <span v-for="(d, i) in briefDates" :key="i">
+          {{ d }}<span v-if="i < briefDates.length - 1">, </span>
+        </span>
+      </div>
 
       <div class="information">
         <span class="about-excursion">
@@ -90,5 +114,21 @@ let getPrice = computed(() => {
   font-weight: 600;
   font-size: clamp(1.25rem, 0.9517rem + 0.8523vw, 1.625rem); // 20 -> 26
   line-height: 1.1;
+}
+
+.dates {
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  width: 100%;
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 </style>
