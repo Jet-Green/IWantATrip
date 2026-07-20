@@ -40,6 +40,16 @@ const router = createRouter({
           component: () => import('../views/Document.vue')
         },
         {
+          path: '/privacy-policy',
+          name: 'PrivacyPolicy',
+          component: () => import('../views/PrivacyPolicy.vue')
+        },
+        {
+          path: '/personal-data-rules',
+          name: 'PersonalDataRules',
+          component: () => import('../views/PersonalDataRules.vue')
+        },
+        {
           path: '/print-contract',
           name: 'PrintContract',
           component: () => import('../print/PrintContract.vue')
@@ -1100,12 +1110,5 @@ router.beforeEach(async (to, from, next) => {
 
   next()
 })
-
-// // яндекс аналитика
-// router.afterEach((to, from) => {
-//   if (typeof ym !== 'undefined') {
-//     ym(98607105, 'hit', to.fullPath);
-//   }
-// });
 
 export default router

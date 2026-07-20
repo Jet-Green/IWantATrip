@@ -1,32 +1,24 @@
 <script setup>
 import { onBeforeMount, ref } from 'vue'
 
-
 import { useLocations } from './stores/locations'
 import { useAuth } from './stores/auth'
 import { useAppState } from './stores/appState'
-
 
 const userStore = useAuth()
 const appStateStore = useAppState()
 const locationStore = useLocations()
 const isInitialized = ref(false)
 
-
 onBeforeMount(async () => {
   await appStateStore.refreshState()
-  // Всегда проверяем auth - восстанавливаем access token из refresh token в cookies
   await userStore.checkAuth()
-  // вся логика локации тут
   await locationStore.fetchLocations()
   if (localStorage.getItem('location')) {
     locationStore.location = JSON.parse(localStorage.getItem('location'))
   }
   isInitialized.value = true
 })
-
-
-
 </script>
 <template>
   <a-config-provider :theme="{
@@ -42,11 +34,9 @@ onBeforeMount(async () => {
       lineHeight: 1.5714285714285714,
     },
   }">
-  
-          <router-view v-if="isInitialized" v-slot="{ Component }">        
-              <component :is="Component" />
-          </router-view>
- 
+    <router-view v-if="isInitialized" v-slot="{ Component }">
+      <component :is="Component" />
+    </router-view>
   </a-config-provider>
 </template>
 <style></style>
