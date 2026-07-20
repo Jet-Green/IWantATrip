@@ -19,7 +19,8 @@ let formState = reactive({
   fullname: "",
   email: "",
   password: "",
-  userLocation: null
+  userLocation: null,
+  consent: false
 });
 async function sendRegInfo() {
   let response = await user.registration({
@@ -110,7 +111,8 @@ const formSchema = yup.object({
   email: yup.string("неверный формат").required("заполните поле").email('неверный формат'),
   password: yup.string("неверный формат").required("заполните поле").min(6, 'минимум 6 символов'),
   fullname: yup.string("неверный формат").required("заполните поле"),
-  startLocation: yup.string("неверный формат").required("заполните поле")
+  startLocation: yup.string("неверный формат").required("заполните поле"),
+  consent: yup.boolean().oneOf([true], "необходимо дать согласие")
 });
 
 </script>
@@ -158,6 +160,20 @@ const formSchema = yup.object({
               </Field>
               <Transition name="fade">
                 <ErrorMessage name="startLocation" class="error-message" />
+              </Transition>
+
+              <Field name="consent" type="checkbox" :value="true" v-slot="{ handleChange, checked }" v-model="formState.consent">
+                <a-checkbox :checked="checked" @change="handleChange" class="mt-16">
+                  <span style="font-size: 13px; line-height: 1.4;">
+                    Я даю согласие на обработку моих персональных данных в соответствии с
+                    <router-link to="/personal-data-rules" style="color:#ff6600">порядку обработки и защиты персональных данных</router-link>
+                    и ознакомлен(а) с
+                    <router-link to="/privacy-policy" style="color:#ff6600">политикой обработки персональных данных</router-link>
+                  </span>
+                </a-checkbox>
+              </Field>
+              <Transition name="fade">
+                <ErrorMessage name="consent" class="error-message" />
               </Transition>
 
               <div class="d-flex justify-center">

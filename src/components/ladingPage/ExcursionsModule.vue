@@ -1,13 +1,32 @@
 <script setup>
 import ExcursionFilter from '../sections/ExcursionFilter.vue';
 import ExcursionCard from '../_guide/ExcursionCard.vue';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useExcursion } from '../../stores/excursion';
 
 import { useRouter } from 'vue-router';
 
 const router = useRouter()
 const excursionStore = useExcursion()
+
+function isDatePast(dateObj) {
+  const now = new Date()
+  const d = new Date(dateObj.year, dateObj.month, dateObj.day)
+  return d < new Date(now.getFullYear(), now.getMonth(), now.getDate())
+}
+
+const sortedExcursions = computed(() => {
+  const list = [...excursionStore.excursions]
+  return list.sort((a, b) => {
+    const aFutureDates = (a.dates || []).filter(d => !isDatePast(d.date))
+    const bFutureDates = (b.dates || []).filter(d => !isDatePast(d.date))
+    const aHasDates = aFutureDates.length > 0
+    const bHasDates = bFutureDates.length > 0
+    if (aHasDates && !bHasDates) return -1
+    if (!aHasDates && bHasDates) return 1
+    return 0
+  })
+})
 
 const scrollContainer = ref(null)
 
@@ -33,15 +52,15 @@ function scrollRight() {
   <div class="container">
     <div class="module-card">
       <div class="cols-22">
-        <h3 v-if="excursionStore.excursions.length > 0">Экскурсии</h3>
+        <h3 v-if="sortedExcursions.length > 0">Экскурсии</h3>
         <h3 v-else>Экскурсии не найдены...</h3>
         <!-- это костыль) чтобы экскурсии загрузились в стор и локация тоже учлась -->
         <div v-show="false">
           <ExcursionFilter />
         </div>
-        <div v-if="excursionStore.excursions.length > 0">
+        <div v-if="sortedExcursions.length > 0">
           <div class="scroll-container" :gutter="[16, 16]" ref="scrollContainer">
-            <div class="scroll-container-col" v-for="ex of excursionStore.excursions" :key="ex._id">
+            <div class="scroll-container-col" v-for="ex of sortedExcursions" :key="ex._id">
               <ExcursionCard :excursion="ex" @click="router.push(`/excursion?_id=${ex._id}`)" :id="ex._id" />
             </div>
           </div>
@@ -50,7 +69,7 @@ function scrollRight() {
         <div class="actions">
           <button class="see-all-btn unselectable" @click="router.push('/excursions')">Смотреть все</button>
 
-          <div class="slider-btns-container" v-if="excursionStore.excursions.length > 0">
+          <div class="slider-btns-container" v-if="sortedExcursions.length > 0">
             <button class="slider-btn" @click="scrollLeft">
               <span class="mdi mdi-chevron-left"></span>
             </button>

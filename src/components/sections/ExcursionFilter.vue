@@ -10,7 +10,14 @@ const appStateStore = useAppState()
 
 import dayjs from "dayjs";
 import objectSupport from "dayjs/plugin/objectSupport";
+import localeData from "dayjs/plugin/localeData";
+import updateLocale from "dayjs/plugin/updateLocale";
+import ruRU from "ant-design-vue/es/locale/ru_RU";
+import ExcursionService from "../../service/ExcursionService.js";
+
 dayjs.extend(objectSupport);
+dayjs.extend(localeData);
+dayjs.extend(updateLocale);
 
 import "dayjs/locale/ru";
 
@@ -39,6 +46,66 @@ let filter = reactive({
 })
 
 let isFilterShow = ref(false);
+
+let isCalendarVisible = ref(false);
+let selectedDate = ref(undefined);
+let activeDate = ref(null);
+let excursionDatesForCalendar = ref([]);
+
+const locale = ruRU;
+
+function openCalendar() {
+  isCalendarVisible.value = true;
+  loadCalendarDates();
+}
+
+async function loadCalendarDates() {
+  let locationId = locationsStore.location._id ? locationsStore.location._id : '';
+  try {
+    let response = await ExcursionService.getAll(locationId, 1, {});
+    let dates = [];
+    response.data.forEach(excursion => {
+      excursion.dates?.forEach(dateObj => {
+        if (dateObj.date) {
+          dates.push(dateObj.date);
+        }
+      });
+    });
+    let uniqueMap = new Map();
+    dates.forEach(d => {
+      let key = `${d.year}-${d.month}-${d.day}`;
+      if (!uniqueMap.has(key)) {
+        uniqueMap.set(key, d);
+      }
+    });
+    excursionDatesForCalendar.value = [...uniqueMap.values()];
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+function getExcursionsForDate(currentDate) {
+  let c = dayjs(currentDate);
+  return excursionDatesForCalendar.value.filter(d => {
+    return d.year === c.year() && d.month === c.month() && d.day === c.date();
+  });
+}
+
+function onCalendarDateSelect(date) {
+  let clickedDate = dayjs(date).startOf("day");
+  if (activeDate.value && activeDate.value.isSame(clickedDate)) {
+    activeDate.value = null;
+    filter.start = '';
+    filter.end = '';
+  } else {
+    activeDate.value = clickedDate;
+    filter.withTimes = 'с датами';
+    filter.start = clickedDate.startOf("day").toDate();
+    filter.end = clickedDate.endOf("day").toDate();
+  }
+  find();
+  isCalendarVisible.value = false;
+}
 
 let excursionType = reactive({
   type: '',
@@ -225,7 +292,9 @@ onMounted(async () => {
         <div color="#239FCA" @click="showFilter" class="filter-button" type="button">
           {{ buttonTitle }}
         </div>
-        <a-button type="primary" shape="circle" class="ml-8" v-if="filterString" @click="resetForm">
+        <MdiIcon @click="openCalendar"
+          style="font-size: 24px; margin-left: 8px; cursor: pointer; color: white" name="calendar-range-outline" />
+        <a-button type="primary" shape="circle" class="ml-8 d-flex justify-center align-center"  v-if="filterString" @click="resetForm">
           <MdiIcon name="close" />
         </a-button>
       </div>
@@ -339,6 +408,19 @@ onMounted(async () => {
       <a-button key="back" style="border-radius: 18px" @click="resetForm(), hideFilter()">Очистить</a-button>
     </template>
   </a-modal>
+  <a-modal v-model:open="isCalendarVisible" title="Выберите дату" :zIndex=900 :footer="null">
+    <a-config-provider :locale="locale">
+      <a-calendar :value="selectedDate" @select="onCalendarDateSelect">
+        <template #dateCellRender="{ current }">
+          <div class="date-cell">
+            <span v-if="getExcursionsForDate(current).length > 0">
+              {{ getExcursionsForDate(current).length }}
+            </span>
+          </div>
+        </template>
+      </a-calendar>
+    </a-config-provider>
+  </a-modal>
 </template>
 
 <style lang="scss" scoped>
@@ -366,5 +448,11 @@ onMounted(async () => {
   padding: 8px;
   cursor: pointer;
   color: rgba(0, 0, 0, 0.7);
+}
+
+.date-cell {
+  text-align: center;
+  color: #fc4f06;
+  font-weight: bold;
 }
 </style>

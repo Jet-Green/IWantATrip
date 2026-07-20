@@ -31,8 +31,8 @@ let setDocLink = (link) => {
                 <div class="d-flex align-center">
                     <div class="circle"></div>
                     <div style="font-weight: 700; cursor: pointer;"
-                        @click="setDocLink('/documents/Правила обработки перональных данных.pdf')">
-                        Правила обработки персональных данных
+                        @click="router.push('/personal-data-rules')">
+                        Порядок обработки и защиты персональных данных
                     </div>
                 </div>
                 <div class="description">
@@ -43,8 +43,8 @@ let setDocLink = (link) => {
                     <div class="circle"></div>
                     
                     <div style="font-weight: 700; cursor: pointer;"
-                        @click="setDocLink('/documents/Политика конфиденциальности.pdf')">
-                        Политика конфиденциальности
+                        @click="router.push('/privacy-policy')">
+                        Политика обработки персональных данных
                     </div>
                 </div>
                 <div class="description">

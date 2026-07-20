@@ -16,6 +16,25 @@ const _id = route.query._id;
 let backRoute = { name: 'Guides', hash: `#${_id}` };
 let excursions = ref([])
 
+function isDatePast(dateObj) {
+  const now = new Date()
+  const d = new Date(dateObj.year, dateObj.month, dateObj.day)
+  return d < new Date(now.getFullYear(), now.getMonth(), now.getDate())
+}
+
+const sortedExcursions = computed(() => {
+  const list = [...excursions.value]
+  return list.sort((a, b) => {
+    const aFutureDates = (a.dates || []).filter(d => !isDatePast(d.date))
+    const bFutureDates = (b.dates || []).filter(d => !isDatePast(d.date))
+    const aHasDates = aFutureDates.length > 0
+    const bHasDates = bFutureDates.length > 0
+    if (aHasDates && !bHasDates) return -1
+    if (!aHasDates && bHasDates) return 1
+    return 0
+  })
+})
+
 useHead(computed(() => ({
   title: guide.value?.name,
   meta: [
@@ -101,7 +120,7 @@ onMounted(async () => {
         <div v-if="excursions.length > 0">
           <h3>Экскурсии</h3>
           <a-row :gutter="[12, 16]">
-            <a-col :span="24" :sm="12" :md="8" v-for="excursion in excursions" :key="excursion._id">
+            <a-col :span="24" :sm="12" :md="8" v-for="excursion in sortedExcursions" :key="excursion._id">
               <ExcursionCard :excursion="excursion" @click="router.push(`/excursion?_id=${excursion._id}`)"
                 :id="excursion._id" />
             </a-col>

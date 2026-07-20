@@ -2,7 +2,7 @@
 import { reactive } from "vue"
 import { useAuth } from "../stores/auth";
 import { useLocations } from "../stores/locations"
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import BackButton from "../components/BackButton.vue";
 import { message } from "ant-design-vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
@@ -11,6 +11,7 @@ import * as yup from 'yup';
 
 const user = useAuth();
 const router = useRouter();
+const route = useRoute();
 let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
 
@@ -22,15 +23,9 @@ let formState = reactive({
 async function logIn() {
   let result = await user.login(formState.email, formState.password);
   if (result.success) {
-    // update location from user loc
-    // useLocations().setLocation()
     message.config({ duration: 0.5, top: "70vh" });
-    message.success({
-      content: "Успешно!",
-      onClose: () => {
-        router.push("/");
-      },
-    });
+    message.success("Успешно!");
+    router.push(route.query.redirect || "/");
   }
 }
 
