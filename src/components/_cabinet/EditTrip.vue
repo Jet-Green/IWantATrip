@@ -563,13 +563,21 @@ watch(description, (newValue) => {
 });
 
 watch(start, () => {
-    if (start.value)
+    if (start.value) {
         form.value.start = Number(Date.parse(start.value.$d.toString()));
-
+        if (form.value.end && form.value.end < form.value.start) {
+            end.value = dayjs(form.value.start)
+        }
+    }
 });
 watch(end, () => {
-    if (end.value)
+    if (end.value) {
         form.value.end = Number(Date.parse(end.value.$d.toString()));
+        if (form.value.start && form.value.end < form.value.start) {
+            message.warning('Дата окончания не может быть раньше даты начала')
+            end.value = dayjs(form.value.start)
+        }
+    }
 });
 let formSchema = yup.object({
     name: yup.string().required("заполните поле"),

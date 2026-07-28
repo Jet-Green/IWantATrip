@@ -641,6 +641,8 @@ watch(start, () => {
 
     if (!end.value) {
       end.value = start.value
+    } else if (form.end && form.start > form.end) {
+      end.value = dayjs(form.start)
     }
     duration.value = ((form.end - form.start) / 86400000).toFixed(0)
   }

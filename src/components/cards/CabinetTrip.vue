@@ -12,6 +12,7 @@ import { useTasks } from "../../stores/tasks"
 
 import dayjs from 'dayjs'
 
+import { message } from 'ant-design-vue';
 import locale from "ant-design-vue/es/date-picker/locale/ru_RU";
 import { boolean } from 'yup';
 const dateFormatList = ["DD.MM.YY", "DD.MM.YY"];
@@ -190,6 +191,10 @@ async function submit() {
         }
 
         if (toPush.start && toPush.end) {
+            if (toPush.end < toPush.start) {
+                message.error('Дата окончания не может быть раньше даты начала')
+                return
+            }
             datesToSend.push(toPush)
         }
     }
@@ -368,7 +373,7 @@ watch(dates, () => {
         let date = dates.value[i]
         if (date.start && !date.end) {
             let s = new Date(dayjs(date.start).$d)
-            s.setDate(s.getDate() + tripDuration.value - 1)
+            s.setDate(s.getDate() + Math.max(tripDuration.value, 1) - 1)
 
             date.end = dayjs(s)
         }

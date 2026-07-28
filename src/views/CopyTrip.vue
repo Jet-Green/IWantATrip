@@ -386,6 +386,8 @@ watch(start, () => {
         form.start = Number(Date.parse(startDate.toString()));
         if (!end.value) {
             end.value = start.value
+        } else if (form.end && form.start > form.end) {
+            end.value = dayjs(form.start)
         }
     }
 });
@@ -399,6 +401,9 @@ watch(end, () => {
         endDate.setMilliseconds(999)
 
         form.end = Date.parse(endDate);
+        if (form.start && form.start > form.end) {
+            end.value = dayjs(form.start)
+        }
     }
 });
 const clearData = (dataString) => {
