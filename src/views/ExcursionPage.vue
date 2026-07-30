@@ -89,7 +89,18 @@ async function startShare() {
   })
 }
 
+// вошёл через VK и не указал почту — покупка недоступна, ведём в кабинет
+function checkRealEmail() {
+  if (userStore.needRealEmail()) {
+    message.warning("Укажите вашу почту в личном кабинете — на неё приходят билеты и уведомления о заказах");
+    router.push("/cabinet/me");
+    return false;
+  }
+  return true;
+}
+
 function openBuyDialog(timeInfo) {
+  if (!checkRealEmail()) return
 
   if (selectedDate.value._id) return
   for (let date of excursion.value.dates) {
@@ -286,7 +297,7 @@ onMounted(async () => {
               <div class="d-flex justify-center ma-8">
 
                 <a-button v-if="userStore.isAuth" type="primary" class="lets_go_btn"
-                  @click="open = !open">Заказать</a-button>
+                  @click="checkRealEmail() && (open = !open)">Заказать</a-button>
                 <RouterLink to="/auth">
                   <a-button type="primary" class="lets_go_btn" to="/auth" v-if="!userStore.isAuth"> вход/регистрация для
                     заказа </a-button>

@@ -94,6 +94,7 @@ const formSchema = yup.object({
   background-color: #0077ff;
   border-color: #0077ff;
   color: #fff;
+  border-radius: 24px;
 }
 
 .vk-login-btn:hover {

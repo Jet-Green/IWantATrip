@@ -166,6 +166,11 @@ function getImg(index) {
 
 let buyTripDialog = () => {
 
+    if (userStore.needRealEmail()) {
+        message.warning("Укажите вашу почту в личном кабинете — на неё приходят билеты и уведомления о заказах");
+        router.push("/cabinet/me");
+        return;
+    }
     if (userStore.user.email) {
         if (!selectedDate.value.selected) {
             tripDates.value[0].selected = true;
