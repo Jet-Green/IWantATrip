@@ -130,6 +130,37 @@ export const useAuth = defineStore('auth', {
                 }
             }
         },
+        async loginVk(payload) {
+            try {
+                const response = await UserService.loginVk(payload);
+                localStorage.setItem('token', response.data.accessToken);
+
+                this.isAuth = true;
+                this.user = response.data.user
+                return { success: true };
+            } catch (err) {
+                return {
+                    success: false,
+                    message: err.response?.data?.message
+                }
+            }
+        },
+        // true, если пользователь вошёл через VK и ещё не указал настоящую почту
+        needRealEmail() {
+            return !!this.user?.email?.endsWith('@id.vk.com')
+        },
+        async setEmail(email) {
+            try {
+                const response = await UserService.setEmail(email);
+                this.user = response.data
+                return { success: true };
+            } catch (err) {
+                return {
+                    success: false,
+                    message: err.response?.data?.message
+                }
+            }
+        },
         async checkAuth() {
             try {
                 if (this.isRefreshing) return

@@ -19,6 +19,12 @@ export default {
     async login(email, password) {
         return $api.post('/auth/login', { email, password })
     },
+    async loginVk(payload) {
+        return $api.post('/auth/vk', payload)
+    },
+    async setEmail(email) {
+        return $api.post('/auth/set-email', { email })
+    },
     async logout() {
         return $api.post('/auth/logout')
     },

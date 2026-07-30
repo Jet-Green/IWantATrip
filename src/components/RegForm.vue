@@ -11,7 +11,12 @@ import * as yup from 'yup';
 
 import { message } from "ant-design-vue";
 import axios from "axios";
+import { redirectToVkAuth } from "../service/vkAuth";
 const user = useAuth();
+
+function regVk() {
+  redirectToVkAuth("/");
+}
 const router = useRouter();
 let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
@@ -180,6 +185,11 @@ const formSchema = yup.object({
                 <a-button class="ma-16 lets_go_btn" type="primary" html-type="submit">Отправить</a-button>
               </div>
             </Form>
+            <div class="d-flex justify-center">
+              <a-button class="mb-16 vk-login-btn" size="large" @click="regVk">
+                Продолжить с VK ID
+              </a-button>
+            </div>
           </a-col>
 
           <a-col :span="24" class="d-flex justify-center">
@@ -193,3 +203,17 @@ const formSchema = yup.object({
     </a-row>
   </div>
 </template>
+
+<style scoped>
+.vk-login-btn {
+  background-color: #0077ff;
+  border-color: #0077ff;
+  color: #fff;
+}
+
+.vk-login-btn:hover {
+  background-color: #0066db;
+  border-color: #0066db;
+  color: #fff;
+}
+</style>

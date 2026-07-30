@@ -995,6 +995,11 @@ const router = createRouter({
           component: () => import('../components/AuthForm.vue')
         },
         {
+          path: '/auth/vk-callback',
+          name: 'VkCallback',
+          component: () => import('../components/VkCallback.vue')
+        },
+        {
           path: '/forgot-password',
           name: 'ForgotPassword',
           component: () => import('../components/ForgotPassword.vue')

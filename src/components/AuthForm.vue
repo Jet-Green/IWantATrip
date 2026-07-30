@@ -8,6 +8,7 @@ import { message } from "ant-design-vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
+import { redirectToVkAuth } from "../service/vkAuth";
 
 const user = useAuth();
 const router = useRouter();
@@ -27,6 +28,10 @@ async function logIn() {
     message.success("Успешно!");
     router.push(route.query.redirect || "/");
   }
+}
+
+function logInVk() {
+  redirectToVkAuth(route.query.redirect || "/");
 }
 
 const formSchema = yup.object({
@@ -67,6 +72,11 @@ const formSchema = yup.object({
                   html-type="submit">Войти</a-button>
               </div>
             </Form>
+            <div class="d-flex justify-center">
+              <a-button class="mb-16 vk-login-btn" size="large" @click="logInVk">
+                Войти через VK ID
+              </a-button>
+            </div>
           </a-col>
           <a-col :span="24" class="d-flex justify-center">
             <router-link to="/reg">регистрация</router-link>
@@ -79,3 +89,16 @@ const formSchema = yup.object({
     </a-row>
   </div>
 </template>
+<style scoped>
+.vk-login-btn {
+  background-color: #0077ff;
+  border-color: #0077ff;
+  color: #fff;
+}
+
+.vk-login-btn:hover {
+  background-color: #0066db;
+  border-color: #0066db;
+  color: #fff;
+}
+</style>

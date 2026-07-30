@@ -2,6 +2,7 @@
 import { ref, watch, onMounted } from "vue";
 import { useAuth } from "../stores/auth";
 import { useRouter, useRoute, RouterView } from "vue-router";
+import { message } from "ant-design-vue";
 import BackButton from "../components/BackButton.vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import TripService from "../service/TripService";
@@ -52,6 +53,26 @@ const logOut = () => {
   userStore.logout();
   router.push("/");
 };
+
+// Пользователь вошёл через VK без почты — просим указать настоящую:
+// на неё приходят билеты и уведомления о покупках
+const emailModalOpen = ref(userStore.needRealEmail());
+const newEmail = ref("");
+const emailSaving = ref(false);
+
+async function saveRealEmail() {
+  if (!/^\S+@\S+\.\S+$/.test(newEmail.value.trim())) {
+    message.error("Введите корректную почту");
+    return;
+  }
+  emailSaving.value = true;
+  const result = await userStore.setEmail(newEmail.value.trim());
+  emailSaving.value = false;
+  if (result.success) {
+    message.success("Почта сохранена!");
+    emailModalOpen.value = false;
+  }
+}
 watch(current, (newRout) => {
 
   router.push(newRout[0])
@@ -100,6 +121,18 @@ onMounted(async () => {
 <template>
   <div style="background-color: white !important;">
     <BackButton></BackButton>
+
+    <a-modal v-model:open="emailModalOpen" title="Укажите вашу почту" :closable="true" :maskClosable="false">
+      <p>
+        Вы вошли через VK ID, и у нас нет вашей почты. На неё приходят билеты,
+        чеки и уведомления о покупках — пожалуйста, укажите её.
+      </p>
+      <a-input v-model:value="newEmail" placeholder="email@email.com" size="large" type="email"
+        @pressEnter="saveRealEmail" />
+      <template #footer>
+        <a-button type="primary" :loading="emailSaving" @click="saveRealEmail">Сохранить</a-button>
+      </template>
+    </a-modal>
 
 
     <a-row type="flex" justify="center">
