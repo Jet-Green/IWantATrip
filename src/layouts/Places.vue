@@ -42,7 +42,8 @@ useHead({
 </script>
 <template>
 
-  <a-layout>
+  <!-- min-height + фон на самом layout: иначе при коротком контенте снизу светит белый .ant-layout -->
+  <a-layout style="min-height: 100vh; background-color: #FFFEF4;">
     <Header></Header>
     <!-- в документации с margin'ом, чтобы предотвратить перекрывание контента хедром -->
     <a-layout-content style="background-color: #FFFEF4; padding-top: 80px; padding-bottom: 80px;">
