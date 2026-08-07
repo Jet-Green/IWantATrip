@@ -3,6 +3,7 @@ import { ref, onMounted, reactive } from 'vue'
 import { useGuide } from '../../stores/guide';
 import { useRouter } from "vue-router";
 import { message } from 'ant-design-vue';
+import { locationName } from '../../service/locationService.js';
 import ImageCropper from '../../components/ImageCropper.vue'; // Import the cropper
 
 let guideStore = useGuide()
@@ -136,7 +137,7 @@ onMounted(async () => {
                 <div class="mt-8 card-content">
                     <!-- <p><b>О себе:</b> {{ g.description }}</p> -->
                     <div class="text-truncate"> {{ g.offer }}</div>
-                    <p v-if="g.location"><b>Локации:</b> {{ g.location }}</p>
+                    <p v-if="locationName(g.location)"><b>Локации:</b> {{ locationName(g.location) }}</p>
                     <!-- <p v-if="g.phone"><b>Тел:</b> {{ g.phone }}</p>
                     <p v-if="g.email"><b>Email:</b> {{ g.email }}</p>
                     <p v-if="g.socialMedia"><b>Соц.сеть:</b> <a :href="g.socialMedia" target="_blank" rel="noopener noreferrer">ссылка</a></p> -->

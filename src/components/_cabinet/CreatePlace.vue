@@ -1,6 +1,7 @@
 <script setup>
 import { reactive, ref, watch, onMounted, onBeforeUnmount, computed, nextTick } from 'vue';
 import { Form, Field, ErrorMessage } from "vee-validate";
+import { suggestAddress } from "../../service/dadataService.js";
 import * as yup from "yup";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
@@ -186,27 +187,7 @@ const initCustomMap = () => {
 }
 
 const fetchAddressSuggestions = async (query) => {
-  const url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
-
-  const options = {
-    method: "POST",
-    mode: "cors",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-      "Authorization": "Token " + import.meta.env.VITE_DADATA_TOKEN
-    },
-    body: JSON.stringify({
-      query,
-      count: 5,
-      "from_bound": { "value": "city" },
-      "to_bound": { "value": "house" }
-    })
-  }
-
-  const res = await fetch(url, options)
-  const data = JSON.parse(await res.text())
-  const suggestions = data?.suggestions ?? []
+  const suggestions = await suggestAddress(query, { toBound: "house" })
   return suggestions
     .filter((s) => s?.data?.geo_lon && s?.data?.geo_lat)
     .map((s) => {

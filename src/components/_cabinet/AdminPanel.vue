@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useTrips } from '../../stores/trips'
+import { locationShortName } from '../../service/locationService.js'
 
 const tripStore = useTrips()
 
@@ -46,7 +47,7 @@ const clearData = (dataString) => {
           </div>
           <a-divider class="ma-4" style="border-color: #205F79"></a-divider>
           <div>
-            <MdiIcon name="compass-outline" />{{ trip.location }}
+            <MdiIcon name="compass-outline" />{{ locationShortName(trip.locationNames) }}
           </div>
           <div>
             <MdiIcon name="calendar-arrow-right" />

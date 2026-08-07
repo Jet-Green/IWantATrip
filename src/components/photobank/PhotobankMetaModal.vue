@@ -1,5 +1,6 @@
 <script setup>
 import { ref, reactive, watch, computed, nextTick, onBeforeUnmount } from "vue";
+import { suggestAddress } from "../../service/dadataService.js";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
@@ -35,24 +36,8 @@ let metaMap = null;
 let metaMapMarker = null;
 
 const fetchAddressSuggestions = async (query) => {
-  const url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
-  const res = await fetch(url, {
-    method: "POST",
-    mode: "cors",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: "Token " + import.meta.env.VITE_DADATA_TOKEN,
-    },
-    body: JSON.stringify({
-      query,
-      count: 5,
-      from_bound: { value: "city" },
-      to_bound: { value: "house" },
-    }),
-  });
-  const data = JSON.parse(await res.text());
-  return (data?.suggestions ?? [])
+  const suggestions = await suggestAddress(query, { toBound: "house" });
+  return suggestions
     .filter((s) => s?.data?.geo_lon && s?.data?.geo_lat)
     .map((s) => {
       let shortName = s.value;

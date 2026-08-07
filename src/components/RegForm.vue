@@ -1,4 +1,5 @@
 <script setup>
+import { suggestAddress } from '../service/dadataService.js';
 import { reactive, watch, ref } from "vue";
 import { useAuth } from "../stores/auth";
 import { useLocations } from "../stores/locations"
@@ -59,27 +60,8 @@ function selectStartLocation(selected) {
 }
 watch(locationSearchRequest, async (newValue, oldValue) => {
   if (newValue.trim().length > 2 && newValue.length > oldValue.length) {
-    var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
-
-    var options = {
-      method: "POST",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": "Token " + import.meta.env.VITE_DADATA_TOKEN
-      },
-      body: JSON.stringify({
-        query: newValue,
-        count: 5,
-        "from_bound": { "value": "city" },
-        "to_bound": { "value": "settlement" }
-      })
-    }
-
-    let res = await fetch(url, options)
     try {
-      let suggestions = JSON.parse(await res.text()).suggestions
+      let suggestions = await suggestAddress(newValue, { toBound: "settlement" })
       possibleLocations.value = []
       for (let s of suggestions) {
         let location = {

@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { usePhotos } from "../stores/photos.js";
+import { suggestAddress } from "../service/dadataService.js";
 import { useAppState } from "../stores/appState";
 import { message } from "ant-design-vue";
 
@@ -61,27 +62,7 @@ function openFilePicker() {
 }
 
 const fetchAddressSuggestions = async (query) => {
-  const url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
-
-  const options = {
-    method: "POST",
-    mode: "cors",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: "Token " + import.meta.env.VITE_DADATA_TOKEN,
-    },
-    body: JSON.stringify({
-      query,
-      count: 5,
-      from_bound: { value: "city" },
-      to_bound: { value: "house" },
-    }),
-  };
-
-  const res = await fetch(url, options);
-  const data = JSON.parse(await res.text());
-  const suggestions = data?.suggestions ?? [];
+  const suggestions = await suggestAddress(query, { toBound: "house" });
   return suggestions
     .filter((s) => s?.data?.geo_lon && s?.data?.geo_lat)
     .map((s) => {

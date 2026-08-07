@@ -2,6 +2,7 @@
 import BackButton from "../BackButton.vue";
 import { ref, onMounted } from "vue";
 import { useGuide } from "../../stores/guide";
+import { locationName } from "../../service/locationService.js";
 import { useRoute } from "vue-router";
 import { useRouter } from "vue-router";
 
@@ -72,7 +73,7 @@ onMounted(async () => {
             <div><b>Описание:</b> {{ guide.description }}</div>
 
             <div v-if="guide.type"><b>Статус:</b> {{ guide.type }}</div>
-            <div v-if="guide.location"><b>Локации:</b> {{ guide.location.name }}</div>
+            <div v-if="locationName(guide.location)"><b>Локации:</b> {{ locationName(guide.location) }}</div>
             <div v-if="guide.phone"><b>Тел:</b> {{ guide.phone }}</div>
             <div v-if="guide.email"><b>Email:</b> {{ guide.email }}</div>
             <div v-if="guide.socialMedia"><b>Соц.сеть:</b> <a :href="guide.socialMedia" target="_blank"

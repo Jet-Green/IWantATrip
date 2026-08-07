@@ -2,6 +2,7 @@
 import { onMounted, ref,reactive } from "vue"
 import { useGuide } from "../../../stores/guide"
 import { useRouter } from "vue-router"
+import { locationName } from "../../../service/locationService.js"
 
 const guideStore = useGuide()
 let router = useRouter()
@@ -80,7 +81,7 @@ onMounted(async () => {
                 <div class="mt-8 card-content">
                     <!-- <p><b>О себе:</b> {{ guide.description }}</p> -->
                     <div class="text-truncate"> {{ guide.offer }}</div>
-                    <p v-if="guide.location"><b>Локации:</b> {{ guide.location }}</p>
+                    <p v-if="locationName(guide.location)"><b>Локации:</b> {{ locationName(guide.location) }}</p>
                     <!-- <p v-if="guide.phone"><b>Тел:</b> {{ guide.phone }}</p>
                     <p v-if="guide.email"><b>Email:</b> {{ guide.email }}</p>
                     <p v-if="guide.socialMedia"><b>Соц.сеть:</b> <a :href="guide.socialMedia" target="_blank" rel="noopener noreferrer">ссылка</a></p> -->
