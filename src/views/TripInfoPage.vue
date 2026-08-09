@@ -18,6 +18,7 @@ import * as yup from "yup";
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import Bus from "../components/Bus.vue";
 import { useBus } from "../stores/bus";
+import { formatTripDate } from "../service/tripDateService.js";
 import { useShare } from '@vueuse/core'
 const API_URL = import.meta.env.VITE_API_URL
 import { useHead } from "@unhead/vue";
@@ -146,17 +147,7 @@ let finalCost = computed(() => {
 });
 
 const clearData = (dateNumber) => {
-    dateNumber = dateNumber - trip.value?.timezoneOffset
-    const date = new Date(dateNumber);
-    if (!isNaN(date.getTime())) {
-        return date.toLocaleDateString("ru-RU", {
-            year: "2-digit",
-            month: "2-digit",
-            day: "2-digit",
-            timeZone: 'UTC' // Используем UTC для гарантии, что время будет в формате UTC
-        });
-    }
-    return '';
+    return formatTripDate(dateNumber, trip.value?.timezoneOffset)
 };
 
 function getImg(index) {

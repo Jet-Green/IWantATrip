@@ -1,5 +1,6 @@
 <script setup>
 import { useRouter } from "vue-router";
+import { formatTripPeriod } from "../../service/tripDateService.js";
 
 let props = defineProps({
   trip: Object,
@@ -10,37 +11,8 @@ let router = useRouter();
 function goToTripPage() {
   router.push(props.trip.slug ? `/trip/${props.trip.slug}` : `/trip?_id=${props.trip._id}`);
 }
-const clearData = (dateNumber) => {
-  dateNumber = dateNumber - props.trip.timezoneOffset
-  const date = new Date(dateNumber);
-  if (!isNaN(date.getTime())) {
-    return date.toLocaleDateString("ru-RU", {
-      year: "2-digit",
-      month: "2-digit",
-      day: "2-digit",
-      timeZone: 'UTC'
-    });
-  }
-  return '';
-}
 function getDate() {
-  let start = clearData(props.trip.start)
-  let end = clearData(props.trip.end)
-
-  if (props.trip.start < Date.now()) {
-    for (let child of props.trip.children) {
-      if (child.start >= Date.now()) {
-        start = clearData(child.start)
-        end = clearData(child.end)
-      }
-    }
-  }
-
-  if (start == end)
-    return start
-  else {
-    return 'с ' + start + ' по ' + end
-  }
+  return formatTripPeriod(props.trip)
 }
 </script>
 <template>

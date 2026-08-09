@@ -1,5 +1,6 @@
 <script setup>
 import { suggestAddress } from '../../service/dadataService.js';
+import { formatTripDate } from '../../service/tripDateService.js';
 import { ref, computed, watch, toRefs, onMounted } from 'vue';
 import { useRouter } from "vue-router";
 import TripService from "../../service/TripService";
@@ -105,19 +106,8 @@ let tasks = ref([])
 
 
 const clearData = (dataString) => {
-    let timezoneOffset = trip.value?.timezoneOffset ? trip.value?.timezoneOffset : trip.value?.parent.timezoneOffset
-    dataString = dataString - timezoneOffset
-    const date = new Date(dataString);
-    if (!isNaN(date.getTime())) {
-        return date.toLocaleDateString("ru-RU", {
-            year: "2-digit",
-            month: "2-digit",
-            day: "2-digit",
-            timeZone: 'UTC' // Используем UTC для гарантии, что время будет в формате UTC
-        });
-    }
-
-    return '';
+    let timezoneOffset = trip.value?.timezoneOffset ?? trip.value?.parent?.timezoneOffset
+    return formatTripDate(dataString, timezoneOffset)
 }
 function editTrip(_id) {
     router.push(`/edit-trip?_id=${_id}`);

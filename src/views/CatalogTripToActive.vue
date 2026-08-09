@@ -38,12 +38,8 @@ const formRef = ref(null);
 const description = ref(null);
 const start = ref();
 const end = ref();
-const period = ref(null);
 const delPhotoDialog = ref(false);
 const targetIndex = ref(null);
-const baseTimeStart = dayjs(1679492631000);
-const baseTimeEnd = dayjs(1679492631000);
-const baseTimePeriod = dayjs(1679492631000);
 const router = useRouter();
 const route = useRoute();
 
@@ -61,6 +57,7 @@ let form = reactive({
     name: "",
     start: null,
     end: null,
+    timezoneOffset: null,
     maxPeople: null,
     duration: "",
     images: [],
@@ -271,14 +268,15 @@ watch(start, () => {
     // округлить, чтобы при поиске мы точно попадали
     if (start.value) {
         let startDate = new Date(start.value.$d);
-        startDate.setHours(0)
-        startDate.setMinutes(0)
-        startDate.setSeconds(0)
-        startDate.setMilliseconds(0)
+        // сдвиг пояса автора — без него карточки не могут показать дату тура
+        form.timezoneOffset = startDate.getTimezoneOffset() * 60 * 1000
+        startDate.setHours(0, 0, 0, 0);
 
-        form.start = Number(Date.parse(startDate.toString()));
+        form.start = startDate.getTime();
         if (!end.value) {
             end.value = start.value
+        } else if (form.end && form.start > form.end) {
+            end.value = dayjs(form.start)
         }
     }
 });
@@ -286,39 +284,21 @@ watch(end, () => {
     // округлить, чтобы при поиске мы точно попадали
     if (end.value) {
         let endDate = new Date(end.value.$d);
-        endDate.setHours(23)
-        endDate.setMinutes(59)
-        endDate.setSeconds(59)
-        endDate.setMilliseconds(999)
+        endDate.setHours(23, 59, 59, 999);
 
-        form.end = Date.parse(endDate);
+        form.end = endDate.getTime();
+        if (form.start > form.end) {
+            end.value = dayjs(form.start)
+        }
     }
 });
-const clearData = (dataString) => {
-    let date
-    if (dataString.length == 13) {
-        const dataFromString = new Date(Number(dataString));
-        date = dataFromString
-
-    } else {
-        date = new Date(dataString)
-    };
-    return date.toLocaleDateString("ru-Ru", {
-        year: "2-digit",
-        month: "2-digit",
-        day: "2-digit",
-    })
-}
 onMounted(async () => {
     if (route.query._id) {
         let response = await tripStore.getCatalogTripById(route.query._id)
         let d = response.data;
         delete d.__v;
         form.name = d.name;
-        start.value = baseTimeStart;
-        end.value = baseTimeEnd;
-        period.value = baseTimePeriod;
-        period.value.$d = clearData(Date.parse(d.period));
+        // даты в каталожном туре не хранятся — их выбирает пользователь
         form.duration = d.duration;
         form.tripType = d.tripType;
         form.distance = d.distance;
@@ -327,7 +307,7 @@ onMounted(async () => {
         form.tripRoute = d.tripRoute;
         form.offer = d.offer;
         form.author = d.author;
-        if(form?.startLocation?.name){
+        if (d?.startLocation?.name) {
             form.startLocation = d.startLocation;
             form.includedLocations = d.includedLocations
             form.locationNames = d.locationNames

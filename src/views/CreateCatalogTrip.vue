@@ -32,7 +32,22 @@ const userStore = useAuth();
 const appStore = useAppState();
 const photosStore = usePhotos();
 
-let formFromLocalStorage = JSON.parse(localStorage.getItem("CreatingTrip"));
+// Ключи свои, а не общие с обычным туром: иначе черновики двух разных форм
+// перезаписывают друг друга
+const DRAFT_KEY = "CreatingCatalogTrip";
+const DRAFT_IMAGES_KEY = "createCatalogTripImages";
+
+/** Черновик из localStorage; битый (или чужого формата) молча выбрасываем. */
+function readDraft(key) {
+  try {
+    return JSON.parse(localStorage.getItem(key));
+  } catch (error) {
+    localStorage.removeItem(key);
+    return null;
+  }
+}
+
+let formFromLocalStorage = readDraft(DRAFT_KEY);
 
 const dateFormatList = ["DD.MM.YY", "DD.MM.YY"];
 const ruLocale = locale;
@@ -50,9 +65,9 @@ var author = ref()
 let possibleLocations = ref([])
 // cropper
 let visibleCropperModal = ref(false);
-let previews = ref(localStorage.getItem('createTripImages') ? JSON.parse(localStorage.getItem('createTripImages')) : []);
+let previews = ref(readDraft(DRAFT_IMAGES_KEY) ?? []);
 // отправляем на сервер
-let images = localStorage.getItem('createTripImages') ? JSON.parse(localStorage.getItem('createTripImages')) : []; // type: blob
+let images = readDraft(DRAFT_IMAGES_KEY) ?? []; // type: blob
 //let pdf = [];
 // Оригинальные URL фото из фотобанка, чьи обрезанные копии добавлены в тур
 // (нужно, чтобы отметить их как использованные в БД — usageCount++)
@@ -207,7 +222,7 @@ function submit() {
     }
     TripService.uploadCatalogTripImages(imagesFormData).then(() => {
       console.log('фотографии загружены')
-      localStorage.removeItem('createTripImages')
+      localStorage.removeItem(DRAFT_IMAGES_KEY)
     })
 
   }
@@ -242,7 +257,7 @@ function submit() {
       await markUsedPhotobankUrls(_id)
       await updateUser(_id)
 
-      localStorage.setItem('CreatingTrip', {})
+      localStorage.removeItem(DRAFT_KEY)
       message.config({ duration: 1.5, top: "70vh" });
       message.success({
         content: "Тур создан!", onClose: () => {
@@ -256,7 +271,7 @@ function submit() {
 function addPreview(blob) {
   images.push(blob);
   previews.value.push(URL.createObjectURL(blob));
-  localStorage.setItem('createTripImages', JSON.stringify(previews.value))
+  localStorage.setItem(DRAFT_IMAGES_KEY, JSON.stringify(previews.value))
   if (cropperSrc.value) {
     // это была обрезка фото из фотобанка — запоминаем оригинал и переходим к следующему
     if (!usedPhotobankUrls.value.includes(cropperSrc.value)) {
@@ -272,7 +287,7 @@ const delPhoto = () => {
   previews.value.splice(targetIndex.value, 1);
   images.splice(targetIndex.value, 1);
   delPhotoDialog.value = false;
-  localStorage.setItem('createTripImages', JSON.stringify(previews.value))
+  localStorage.setItem(DRAFT_IMAGES_KEY, JSON.stringify(previews.value))
 };
 
 function selectStartLocation(selected) {
@@ -349,7 +364,7 @@ watch(start, () => {
   }
 });
 watch(form, () => {
-  localStorage.setItem('CreatingTrip', JSON.stringify(form))
+  localStorage.setItem(DRAFT_KEY, JSON.stringify(form))
 })
 watch(end, () => {
   // округлить, чтобы при поиске мы точно попадали
@@ -368,8 +383,9 @@ watch(end, () => {
   duration.value = ((form.end - form.start) / 86400000).toFixed(0)
 });
 onMounted(async () => {
-  if (localStorage.getItem('CreatingTrip')) {
-    let f = JSON.parse(localStorage.getItem('CreatingTrip'))
+  const draft = readDraft(DRAFT_KEY)
+  if (draft) {
+    let f = draft
     quill.value.setHTML(f.description);
     Object.assign(form, f)
     if (f.startLocation) {
@@ -380,7 +396,7 @@ onMounted(async () => {
 function handleImgError(i) {
   previews.value.splice(i, 1)
   images.splice(i, 1)
-  localStorage.setItem('createTripImages', JSON.stringify(previews.value))
+  localStorage.setItem(DRAFT_IMAGES_KEY, JSON.stringify(previews.value))
 }
 
 let formSchema = yup.object({
