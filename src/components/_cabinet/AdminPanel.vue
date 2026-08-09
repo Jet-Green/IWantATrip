@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useTrips } from '../../stores/trips'
-import { locationShortName } from '../../service/locationService.js'
+import { locationShortName } from '../../service/LocationService.js'
 
 const tripStore = useTrips()
 

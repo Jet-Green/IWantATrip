@@ -2,7 +2,7 @@
 import { onMounted, ref,reactive } from "vue"
 import { useGuide } from "../../../stores/guide"
 import { useRouter } from "vue-router"
-import { locationName } from "../../../service/locationService.js"
+import { locationName } from "../../../service/LocationService.js"
 
 const guideStore = useGuide()
 let router = useRouter()

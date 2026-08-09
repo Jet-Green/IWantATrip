@@ -2,7 +2,7 @@
 import BackButton from "../BackButton.vue";
 import { ref, onMounted } from "vue";
 import { useGuide } from "../../stores/guide";
-import { locationName } from "../../service/locationService.js";
+import { locationName } from "../../service/LocationService.js";
 import { useRoute } from "vue-router";
 import { useRouter } from "vue-router";
 

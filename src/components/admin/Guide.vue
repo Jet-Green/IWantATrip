@@ -3,7 +3,7 @@ import { ref, onMounted, reactive } from 'vue'
 import { useGuide } from '../../stores/guide';
 import { useRouter } from "vue-router";
 import { message } from 'ant-design-vue';
-import { locationName } from '../../service/locationService.js';
+import { locationName } from '../../service/LocationService.js';
 import ImageCropper from '../../components/ImageCropper.vue'; // Import the cropper
 
 let guideStore = useGuide()
