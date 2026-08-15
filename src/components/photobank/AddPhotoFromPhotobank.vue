@@ -15,7 +15,17 @@ defineProps({
 const photosStore = usePhotos();
 const locationStore = useLocations();
 
-const locationSearchRequest = ref('Ваш город');
+// Выбираем город по _id, а не по shortName: shortName у городов повторяется
+// (несколько записей «Глазов», «Пермь»), а кое-где его вообще нет
+const ALL_CITIES = '';
+const selectedLocationId = ref(ALL_CITIES);
+
+/** Поиск в списке — по названию города, а не по _id, который лежит в value. */
+function filterLocationOption(input, option) {
+  return String(option?.label ?? '')
+    .toLowerCase()
+    .includes(String(input ?? '').toLowerCase());
+}
 
 const storedRadiusInit = localStorage.getItem('LocationRadius');
 const locationRadius = ref(
@@ -253,7 +263,8 @@ const locationFilterActive = computed(() => !!locationStore.location?._id);
 const emptyListHint = computed(() => {
   if (photobankSearchActive.value) return 'Ничего не найдено';
   if (locationFilterActive.value) {
-    return `Нет опубликованных фото в радиусе ${locationRadius.value} км от «${locationStore.location.shortName}»`;
+    const city = locationStore.location.shortName || locationStore.location.name;
+    return `Нет опубликованных фото в радиусе ${locationRadius.value} км от «${city}»`;
   }
   return 'В фотобанке пока нет фотографий';
 });
@@ -270,19 +281,15 @@ function reloadPhotobankList() {
 
 function syncLocationSelectFromStore() {
   const loc = locationStore.location;
-  if (loc?._id && loc?.shortName) {
-    locationSearchRequest.value = loc.shortName;
-    return;
-  }
-  locationSearchRequest.value = 'Ваш город';
+  selectedLocationId.value = loc?._id ? String(loc._id) : ALL_CITIES;
 }
 
 async function onPhotobankLocationChange(value) {
   suppressLocationReload = true;
-  if (value === 'Ваш город') {
+  if (!value) {
     await locationStore.resetLocation();
   } else {
-    const loc = locationStore.locations.find((l) => l.shortName === value);
+    const loc = locationStore.locations.find((l) => String(l._id) === String(value));
     if (loc) {
       await locationStore.setLocation(loc);
     }
@@ -463,18 +470,20 @@ onBeforeUnmount(() => {
       <div class="add-photo-from-photobank__location">
         <div class="add-photo-from-photobank__location-title">Место съёмки</div>
         <a-select
-          v-model:value="locationSearchRequest"
+          v-model:value="selectedLocationId"
           class="add-photo-from-photobank__location-select"
           show-search
           placeholder="Выберите город"
+          :filter-option="filterLocationOption"
           :loading="!locationStore.locations?.length"
           @change="onPhotobankLocationChange"
         >
-          <a-select-option value="Ваш город">Ваш город — все фото</a-select-option>
+          <a-select-option :value="ALL_CITIES" label="Ваш город — все фото">Ваш город — все фото</a-select-option>
           <a-select-option
             v-for="(location, index) in locationStore.locations"
             :key="location._id ?? index"
-            :value="location.shortName"
+            :value="String(location._id ?? index)"
+            :label="location.name"
           >
             {{ location.name }}
           </a-select-option>
