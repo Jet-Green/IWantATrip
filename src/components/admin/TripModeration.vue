@@ -1,6 +1,6 @@
 <script setup>
 import BackButton from "../BackButton.vue";
-import { ref, onMounted } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { useTrips } from "../../stores/trips";
 import { useRoute } from "vue-router";
 import { useRouter } from "vue-router";
@@ -14,6 +14,7 @@ let moderationMessage = ref("");
 let router = useRouter();
 let activeKey = ref(null)
 import datePlugin from '../../plugins/dates'
+import { formatTripDate } from '../../service/tripDateService'
 async function moderateTrip(_id) {
   if (!isModerated.value) {
     isLoading.value = true;
@@ -49,22 +50,36 @@ onMounted(async () => {
 });
 
 // service methods
-const clearData = (dataString) => {
-  let date;
-  if (dataString.length == 13) {
-    const dataFromString = new Date(Number(dataString));
-    date = dataFromString;
-  } else {
-    date = new Date(dataString);
-  }
-  return date.toLocaleDateString("ru-Ru", {
-    year: "2-digit",
-    month: "2-digit",
-    day: "2-digit",
-  });
-};
+// Даты тура печатаем так же, как на публичной странице: со сдвигом часового
+// пояса автора, иначе у модератора из другого пояса дата уезжает на день.
+const tripPeriod = computed(() => {
+  const start = formatTripDate(trip.value.start, trip.value.timezoneOffset);
+  const end = formatTripDate(trip.value.end, trip.value.timezoneOffset);
+  if (!start && !end) return "";
+  if (!end || start === end) return start;
+  return `с ${start} по ${end}`;
+});
+
+// дополнительные выезды того же тура
+const otherDates = computed(() => {
+  return (trip.value.children ?? [])
+    .map((child) => {
+      const offset = child?.timezoneOffset ?? trip.value.timezoneOffset;
+      const start = formatTripDate(child?.start, offset);
+      const end = formatTripDate(child?.end, offset);
+      if (!start && !end) return "";
+      if (!end || start === end) return start;
+      return `с ${start} по ${end}`;
+    })
+    .filter(Boolean);
+});
+
 function getImg(index) {
   return trip.value.images[index];
+}
+
+function goToPlacePage(_id) {
+  router.push(`/place?_id=${_id}`);
 }
 
 </script>
@@ -113,26 +128,55 @@ function getImg(index) {
             <div v-if="trip.startLocation?.name">
               Старт: <b>{{ trip.startLocation.name }}</b>
             </div>
-            <div v-if="trip.tripRegion != ''">
+            <div v-if="trip.tripRegion">
               Куда: <b> {{ trip.tripRegion }}</b>
             </div>
 
             <div>
+              Даты тура: <b>{{ tripPeriod || "не указаны" }}</b>
+            </div>
+            <div v-if="otherDates.length" class="d-flex">
+              Другие выезды:&nbsp
+              <div>
+                <div v-for="(date, index) in otherDates" :key="index">
+                  <b>{{ date }}</b>
+                </div>
+              </div>
+            </div>
+            <div>
               Продолжительность: <b>{{ trip.duration }}</b>
+            </div>
+            <div v-if="trip.maxPeople">
+              Макс. число людей: <b>{{ trip.maxPeople }}</b>
+            </div>
+            <div v-if="trip.tripType">
+              Тип тура: <b>{{ trip.tripType }}</b>
+            </div>
+            <div v-if="trip.fromAge">
+              Мин. возраст: <b>{{ trip.fromAge }}</b>
             </div>
             <div>
               Ключевые точки: <b>{{ trip.tripRoute }}</b>
             </div>
-            <div>
-              Ближайший выезд: <b>{{ clearData(trip.start) }}</b>
+            <div v-if="trip.distance">
+              Расстояние: <b>{{ trip.distance }}</b>
             </div>
             <div>
               Цена:
               <div v-for="(item, index) in trip.cost" :key="index" class="cost">
                 {{ item.first }} : <b>{{ item.price }} руб.</b>
+                <span v-if="item.limit"> (мест: {{ item.limit }})</span>
               </div>
             </div>
-            <div v-if="trip.bonuses.length" class="d-flex">
+            <div v-if="trip.additionalServices?.length" class="d-flex">
+              Доп. услуги:&nbsp
+              <div>
+                <div v-for="(item, index) in trip.additionalServices" :key="index">
+                  {{ item.name }}: <b>{{ item.price }} руб.</b>
+                </div>
+              </div>
+            </div>
+            <div v-if="trip.bonuses?.length" class="d-flex">
               Бонусы:&nbsp
               <div>
                 <div v-for="(item, index) in trip.bonuses" :key="index">
@@ -155,7 +199,7 @@ function getImg(index) {
           <a-col :xs="24">
             <span v-html="trip.description"></span>
           </a-col>
-          <a-col :xs="24" v-if="trip.dayByDayDescription.length">
+          <a-col :xs="24" v-if="trip.dayByDayDescription?.length">
             <b>Программа по дням:</b>
             <a-collapse v-model:activeKey="activeKey">
               <a-collapse-panel v-for="day, index in trip.dayByDayDescription" :key="index" key="1"
@@ -183,6 +227,38 @@ function getImg(index) {
           </a-col>
           <a-col :xs="24" v-if="trip.partner" class="mb-16">
             <b>Это тур партнера:</b> {{ trip.partner }}, {{ trip.canSellPartnerTour ? "с возможностью продажи" : "без возможности продажи" }} на платформе
+          </a-col>
+          <a-col :xs="24" v-if="trip.loyalty?.enabled" class="mb-16">
+            <b>Модуль лояльности:</b>
+            {{ trip.loyalty.type === "discount" ? "денежная скидка" : "бесплатные услуги" }}
+            <template v-if="trip.loyalty.type === 'discount'">
+              <div v-if="trip.loyalty.discount?.baseDiscountPercent">
+                Постоянная скидка-кэшбек: <b>{{ trip.loyalty.discount.baseDiscountPercent }}%</b>
+              </div>
+              <div v-if="trip.loyalty.discount?.paymentOrder">
+                Порядок оплаты: <b>{{ trip.loyalty.discount.paymentOrder }}</b>
+              </div>
+              <div v-if="trip.loyalty.discount?.fixationDay">
+                Крайний день фиксации скидки: <b>{{ trip.loyalty.discount.fixationDay }}</b>
+              </div>
+              <div v-if="trip.loyalty.discount?.maxDiscountPerPerson">
+                Максимальная скидка на человека: <b>{{ trip.loyalty.discount.maxDiscountPerPerson }} руб.</b>
+              </div>
+            </template>
+            <div v-else>
+              <div v-for="(level, index) in trip.loyalty.freeServices?.levels" :key="index">
+                от <b>{{ level.peopleCount }}</b> чел. — <b>{{ level.service }}</b>
+              </div>
+            </div>
+          </a-col>
+          <a-col :xs="24" v-if="trip.privetMirYookassaEnabled" class="mb-16">
+            <b>Оплата через ЮKassa:</b> включена
+          </a-col>
+          <a-col :xs="24" v-if="trip.isHidden" class="mb-16">
+            <b>Тур скрыт автором</b>
+          </a-col>
+          <a-col :xs="24" v-if="trip.userComment" class="mb-16">
+            <b>Комментарий автора:</b> {{ trip.userComment }}
           </a-col>
         </a-row>
       </a-col>

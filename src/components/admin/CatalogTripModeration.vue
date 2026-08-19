@@ -104,6 +104,15 @@ function getImg(index) {
             <div>
               Ключевые точки: <b>{{ catalogTrip.tripRoute }}</b>
             </div>
+            <div v-if="catalogTrip.tripType">
+              Тип тура: <b>{{ catalogTrip.tripType }}</b>
+            </div>
+            <div v-if="catalogTrip.fromAge">
+              Мин. возраст: <b>{{ catalogTrip.fromAge }}</b>
+            </div>
+            <div v-if="catalogTrip.isHidden">
+              <b>Тур скрыт автором</b>
+            </div>
           </a-col>
 
           <a-col :xs="24">
