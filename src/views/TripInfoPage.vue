@@ -807,16 +807,6 @@ onMounted(async () => {
                                     <div v-if="(item.limit ?? trip.maxPeople) - (customersByCostType[item.first] || 0) !== 0">
 
                                         {{ item.first }}: <b>{{ item.price }} руб.</b>
-
-                                        <span>
-                                            <span>
-                                              | мест -
-                                              {{
-                                                (item.limit ?? trip.maxPeople) -
-                                                (customersByCostType[item.first] || 0)
-                                              }}
-                                            </span>
-                                        </span>
                                     </div>
                                 </div>
 
