@@ -65,9 +65,15 @@ var author = ref()
 let possibleLocations = ref([])
 // cropper
 let visibleCropperModal = ref(false);
-let previews = ref(readDraft(DRAFT_IMAGES_KEY) ?? []);
+// Черновик фотографий не восстанавливаем и восстановить не можем: в
+// localStorage лежат лишь blob-ссылки на превью, а они умирают вместе с
+// перезагрузкой страницы. Раньше их читали в `images` как файлы — и в
+// облако вместо снимка улетал текст ссылки, тур оставался без фотографий.
+// Поэтому при заходе черновик картинок сбрасываем: фото добавляются заново.
+localStorage.removeItem(DRAFT_IMAGES_KEY);
+let previews = ref([]);
 // отправляем на сервер
-let images = readDraft(DRAFT_IMAGES_KEY) ?? []; // type: blob
+let images = []; // type: blob
 //let pdf = [];
 // Оригинальные URL фото из фотобанка, чьи обрезанные копии добавлены в тур
 // (нужно, чтобы отметить их как использованные в БД — usageCount++)

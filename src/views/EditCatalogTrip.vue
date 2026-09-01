@@ -88,8 +88,16 @@ function clearForm() {
   images = []
 }
 function uploadTripImages(_id) {
+  // Считаем по `images` — там лежат реально выбранные файлы.
+  // Раньше длину брали из `form.value.images`, куда при открытии тура
+  // попадают ссылки уже загруженных фото из базы. Если их было больше,
+  // чем заново выбранных файлов, на месте недостающих уходил пустой
+  // File — и фотографии тура затирались.
+  if (!images.length) return;
+
   let imagesFormData = new FormData();
-  for (let i = 0; i < form.value.images.length; i++) {
+  for (let i = 0; i < images.length; i++) {
+    if (!(images[i] instanceof Blob)) continue;
     imagesFormData.append(
       "trip-image",
       new File([images[i]], _id + "_" + i + ".jpg"),
