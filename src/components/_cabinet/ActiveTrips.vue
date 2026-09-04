@@ -14,12 +14,21 @@ let query = ref('')
 let page = 1
 let userId = userStore.user._id
 let showMoreButton = ref(true)
-async function deleteTrip() {
+// Перечитываем список с самого начала.
+// Сбросить page обязательно: сервер, отсеяв туры по поиску, листает страницы
+// вперёд и возвращает номер, на котором остановился. Если его не сбросить,
+// повторный запрос уходит за уже пройденную страницу и список оказывается
+// пустым — тур «пропадал» сразу после добавления точки подсадки.
+async function reloadTrips() {
+    allTrips.value = []
+    page = 1
     await getAllTrips()
 }
+async function deleteTrip() {
+    await reloadTrips()
+}
 async function updateTrip() {
-    allTrips.value = []
-    await getAllTrips()
+    await reloadTrips()
 }
 
 async function getAllTrips() {

@@ -35,7 +35,13 @@ async function getAllTrips() {
     loading.value = false
 }
 
+// Перечитываем список с начала: сбросить page обязательно — сервер,
+// отсеяв туры по поиску, листает страницы вперёд и возвращает номер,
+// на котором остановился. Без сброса повторный запрос уходит за уже
+// пройденную страницу и список оказывается пустым.
 async function deleteTrip() {
+    allTrips.value = []
+    page = 1
     await getAllTrips()
 }
 async function getNextTrips() {
