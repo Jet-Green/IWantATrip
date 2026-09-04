@@ -255,10 +255,26 @@ async function showEditSeatsDialog(bill) {
     const boughtSeats = await tripStore.getBoughtSeats(trip.value._id)
     // Exclude current bill's seats so they can be re-selected
     const otherBought = boughtSeats.filter(s => !(bill.seats || []).includes(s))
-    editFreeSeats.value = bus.value.seats
-        .map(s => s.number)
+    const busNumbers = bus.value.seats.map(s => s.number)
+    editFreeSeats.value = busNumbers
         .filter(s => !otherBought.includes(s) && !bus.value.stuff.includes(s))
-    editingSeats.value = [...(bill.seats || [])]
+
+    // В автобусе показываем только те места, которые в нём есть.
+    // При замене автобуса номера в заказе остаются от прежней схемы, а
+    // нумерация у автобусов разная («3D» у Ютонга против «3» у Спринтера).
+    // Такое место не рисуется на схеме — снять его кликом нельзя, но квоту
+    // max_count оно занимает, и выбрать новое тоже нельзя. Рассадка вставала
+    // намертво. Поэтому чужие номера отбрасываем, а менеджеру говорим,
+    // сколько человек осталось пересадить.
+    editingSeats.value = (bill.seats || []).filter(s => busNumbers.includes(s))
+    const lostSeats = (bill.seats || []).filter(s => !busNumbers.includes(s))
+    if (lostSeats.length) {
+        message.warning({
+            content: `В автобусе «${bus.value.name}» нет мест ${lostSeats.join(', ')} — выберите новые`,
+            duration: 6,
+        })
+    }
+
     editSeatsDialog.value = true
 }
 
@@ -332,17 +348,58 @@ async function updateSeats() {
     selected_seats.value = selected_seats.value.filter(seat => free_seats.value.includes(seat))
 }
 
-async function updateBus() {
-    let transports = trip.value.transports.filter(bus => bus.capacity >= getCurrentCustomerNumber.value)
-    transports = _.sortBy(transports, [o => o.capacity])
-    let transport = transports[0]
+// Автобус, выбранный менеджером вручную. Пока не выбран — подставляем сами.
+let manualBusId = ref(null)
+// Все автобусы тура со схемой — для переключателя.
+let busOptions = computed(() =>
+    (trip.value?.transports || [])
+        .filter(t => t?.transportType?.bus_id)
+        .map(t => ({ bus_id: t.transportType.bus_id, capacity: t.capacity }))
+)
 
-    let bus_id = transport?.transportType.bus_id
+async function updateBus() {
+    // Ручной выбор главнее автоподбора: при замене автобуса менеджеру нужно
+    // попасть именно в новый, а автоподбор всегда тянет самый маленький,
+    // в который влезает текущая группа, и до второго автобуса не добраться.
+    let bus_id = manualBusId.value
+        && busOptions.value.some(o => o.bus_id === manualBusId.value)
+        ? manualBusId.value
+        : null
+
+    if (!bus_id) {
+        let transports = trip.value.transports.filter(bus => bus.capacity >= getCurrentCustomerNumber.value)
+        transports = _.sortBy(transports, [o => o.capacity])
+        bus_id = transports[0]?.transportType.bus_id
+    }
+
     if (!bus_id) return show_old_bus.value = true
     show_old_bus.value = false
 
     bus.value = await useBus().getById(bus_id)
     updateSeats()
+}
+
+// Названия автобусов для переключателя — грузим по одному разу.
+let busNames = ref({})
+async function loadBusNames() {
+    for (let option of busOptions.value) {
+        if (busNames.value[option.bus_id]) continue
+        let loaded = await useBus().getById(option.bus_id)
+        if (loaded?.name) busNames.value[option.bus_id] = loaded.name
+    }
+}
+function busLabel(option) {
+    return `${busNames.value[option.bus_id] || 'автобус'} · ${option.capacity} мест`
+}
+
+// Переключение автобуса из диалога рассадки: перечитываем схему и
+// заново считаем, какие места в нём свободны для текущего заказа.
+async function chooseBus(bus_id) {
+    manualBusId.value = bus_id
+    await updateBus()
+    if (editSeatsDialog.value && currentBill.value) {
+        await showEditSeatsDialog(currentBill.value)
+    }
 }
 
 const getSellerContract = async (shopCode) => {
@@ -392,6 +449,7 @@ onMounted(async () => {
     }
     loading.value = false
     await updateBus()
+    await loadBusNames()
 
 });
 
@@ -980,7 +1038,15 @@ async function confirmCancelPayment() {
                 </a-col>
                 <a-col :span="24" class="mb-8">
                     <div>Выберите места</div>
-                    <div style="font-size:0.8em; opacity: 0.8;">{{ bus?.name }}</div>
+                    <!-- Переключатель нужен при замене автобуса: без него виден
+                         только тот, что подобрался автоматически по вместимости. -->
+                    <a-radio-group v-if="busOptions.length > 1" :value="bus?._id" size="small" class="mb-2"
+                        @change="e => chooseBus(e.target.value)">
+                        <a-radio-button v-for="option in busOptions" :key="option.bus_id" :value="option.bus_id">
+                            {{ busLabel(option) }}
+                        </a-radio-button>
+                    </a-radio-group>
+                    <div v-else style="font-size:0.8em; opacity: 0.8;">{{ bus?.name }}</div>
                     <Bus v-model:selected_seats="editingSeats" :free_seats="editFreeSeats"
                         :max_count="currentBill.cart.reduce((a, o) => a + o.count, 0)" :bus="bus"
                         style="width: 150px;" />
