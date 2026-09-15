@@ -73,6 +73,10 @@ export const useContract = defineStore('contract', {
         async getContractByShopCode(shopCode) {
             let res = await ContractService.getContractByShopCode(shopCode)
             return res.data
+        },
+        async getPublicContractByShopCode(shopCode) {
+            let res = await ContractService.getPublicContractByShopCode(shopCode)
+            return res.data
         }
     }
 })

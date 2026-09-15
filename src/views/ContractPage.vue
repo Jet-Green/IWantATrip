@@ -12,7 +12,10 @@ let currentContract = ref(null)
 const partnerShopCode = computed(() => route.query.shopcode);
 
 onMounted(async () => {
-  let data = await contractStore.getContractByShopCode(partnerShopCode.value)
+  // Страницу открывают и гости по ссылке со страницы тура, поэтому берём
+  // только открытые сведения о продавце: полная запись требует входа
+  // и содержит личные данные руководителя и учредителей.
+  let data = await contractStore.getPublicContractByShopCode(partnerShopCode.value)
   if (data) {
     currentContract.value = data
   }
@@ -36,7 +39,7 @@ onMounted(async () => {
             <a-descriptions-item label="КПП">{{ currentContract.kpp }}</a-descriptions-item>
             <a-descriptions-item label="ОГРН">{{ currentContract.ogrn }}</a-descriptions-item>
             <a-descriptions-item label="ОКВЭД">{{ currentContract.okved }}</a-descriptions-item>
-            <a-descriptions-item label="Email">{{ currentContract.email }}</a-descriptions-item>
+            <a-descriptions-item v-if="currentContract.email" label="Email">{{ currentContract.email }}</a-descriptions-item>
             <a-descriptions-item label="Сайт">
               <a :href="currentContract.siteUrl" target="_blank">{{ currentContract.siteUrl }}</a>
             </a-descriptions-item>

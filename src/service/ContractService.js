@@ -24,5 +24,9 @@ export default {
     },
     getContractByShopCode(shopCode) {
         return $api.get(`/contract/byShopCode?shopCode=${shopCode}`)
+    },
+    /** Открытые сведения о продавце — работает и без входа в аккаунт */
+    getPublicContractByShopCode(shopCode) {
+        return $api.get(`/contract/public-by-shop-code?shopCode=${shopCode}`)
     }
 }
