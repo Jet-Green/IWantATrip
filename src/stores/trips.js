@@ -236,6 +236,14 @@ export const useTrips = defineStore('trips', {
                 console.log(error);
             }
         },
+        /**
+         * Решение по акции «оплата по СБП».
+         * Ошибку намеренно пробрасываем: модератор должен увидеть отказ,
+         * а не молча остаться с прежним состоянием экрана.
+         */
+        async decideTripPromo(tripId, approved, comment) {
+            return await TripService.decideTripPromo(tripId, approved, comment)
+        },
         async setPayment(bill) {
             try {
                 return await TripService.setPayment(bill)

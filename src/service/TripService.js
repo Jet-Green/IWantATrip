@@ -96,6 +96,10 @@ export default {
     sendModerationMessage(trip_id, msg) {
         return $api.post(`/admin/send-moderation-message?tripId=${trip_id}`, { msg })
     },
+    /** Решение модератора по акции «оплата по СБП» */
+    decideTripPromo(tripId, approved, comment) {
+        return $api.post('/admin/trip-promo-decision', { tripId, approved, comment })
+    },
     sendCatalogModerationMessage(trip_id, msg) {
         return $api.post(`/admin/send-catalog-moderation-message?tripId=${trip_id}`, { msg })
     },

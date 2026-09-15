@@ -276,7 +276,10 @@ let form = ref({
     partner: "",
     canSellPartnerTour: null,
     loyalty: getDefaultLoyalty(),
+    // Автор меняет только запрос; enabled и decision приходят с сервера — для показа статуса
+    privetMirYookassaRequested: false,
     privetMirYookassaEnabled: false,
+    privetMirYookassaDecision: null,
 });
 // для a-select с регионами тура
 let tripRegions = computed(() => appStore.appState[0]?.tripRegions.map((name) => { return { value: name } }) ?? [])
@@ -998,11 +1001,26 @@ let formSchema = yup.object({
                         </a-col>
 
                         <a-col :span="24" v-if="userStore.user?.tinkoffContract?.inn === '1837013663'">
-                          <a-checkbox v-model:checked="form.privetMirYookassaEnabled">
-                            Оплата через ЮKassa
+                          <a-checkbox v-model:checked="form.privetMirYookassaRequested">
+                            Запросить оплату по СБП (акция)
                           </a-checkbox>
                           <div class="text-caption" style="margin-top: 4px;">
-                            Включить приём онлайн-оплаты на сайте через ЮKassa для этого тура
+                            <span v-if="form.privetMirYookassaEnabled" style="color: #389e0d;">
+                              Акция одобрена — на странице тура доступна оплата по СБП.
+                            </span>
+                            <span v-else-if="form.privetMirYookassaDecision?.decidedAt" style="color: #cf1322;">
+                              Отказано.
+                              <template v-if="form.privetMirYookassaDecision?.comment">
+                                Причина: {{ form.privetMirYookassaDecision.comment }}
+                              </template>
+                            </span>
+                            <span v-else-if="form.privetMirYookassaRequested">
+                              Заявка отправлена, ждёт решения модератора.
+                            </span>
+                            <span v-else>
+                              Заявка уйдёт модератору. После одобрения на странице тура появится
+                              оплата по СБП — покупатель платит через приложение банка.
+                            </span>
                           </div>
                         </a-col>
                         <a-col :span="24" class="d-flex justify-center">

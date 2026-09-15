@@ -181,7 +181,8 @@ let form = reactive({
   returnConditions: "",
   partner: "",
   canSellPartnerTour: null,
-  privetMirYookassaEnabled: false,
+  // Автор только просит акцию; решение приходит с сервера и здесь не редактируется
+  privetMirYookassaRequested: false,
   includedInPrice: "",
   paidExtra: "",
   travelRequirement: "",
@@ -1009,11 +1010,12 @@ onMounted(async () => {
               </Field>
             </a-col>
             <a-col :span="24" v-if="userStore.user?.tinkoffContract?.inn === '1837013663'">
-              <a-checkbox v-model:checked="form.privetMirYookassaEnabled">
-                Оплата через ЮKassa
+              <a-checkbox v-model:checked="form.privetMirYookassaRequested">
+                Запросить оплату по СБП (акция)
               </a-checkbox>
               <div class="text-caption" style="margin-top: 4px;">
-                Включить приём онлайн-оплаты на сайте через ЮKassa для этого тура
+                Заявка уйдёт модератору. После одобрения на странице тура появится оплата
+                по СБП — покупатель платит через приложение банка.
               </div>
             </a-col>
             <a-col :span="24" :md="12" v-if="form.partner.length">

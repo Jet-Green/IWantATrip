@@ -1,6 +1,7 @@
 <script setup>
 import BackButton from "../BackButton.vue";
 import { computed, ref, onMounted } from "vue";
+import { message } from "ant-design-vue";
 import { useTrips } from "../../stores/trips";
 import { useRoute } from "vue-router";
 import { useRouter } from "vue-router";
@@ -39,6 +40,33 @@ async function sendModerationMessage() {
   );
   if (res.status == 200) {
     router.push("/cabinet/moderation-trips/not-moderated-trips");
+  }
+}
+
+// Решение по акции «оплата по СБП» — отдельно от публикации тура:
+// тур можно опубликовать без акции и наоборот.
+const promoComment = ref("");
+const promoLoading = ref(false);
+
+async function decidePromo(approved) {
+  promoLoading.value = true;
+  try {
+    const { data } = await tripStore.decideTripPromo(
+      trip.value._id,
+      approved,
+      promoComment.value
+    );
+    trip.value.privetMirYookassaEnabled = data.privetMirYookassaEnabled;
+    trip.value.privetMirYookassaDecision = data.privetMirYookassaDecision;
+    message.success({
+      content: approved ? "Акция разрешена" : "В акции отказано",
+    });
+  } catch (error) {
+    message.error({
+      content: error?.response?.data?.message || "Не удалось сохранить решение",
+    });
+  } finally {
+    promoLoading.value = false;
   }
 }
 
@@ -251,8 +279,41 @@ function goToPlacePage(_id) {
               </div>
             </div>
           </a-col>
-          <a-col :xs="24" v-if="trip.privetMirYookassaEnabled" class="mb-16">
-            <b>Оплата через ЮKassa:</b> включена
+          <a-col :xs="24" v-if="trip.privetMirYookassaRequested || trip.privetMirYookassaEnabled" class="mb-16">
+            <b>Акция «оплата по СБП»</b>
+
+            <div style="margin-top: 4px;">
+              <span v-if="trip.privetMirYookassaEnabled" style="color: #389e0d;">
+                разрешена
+              </span>
+              <span v-else-if="trip.privetMirYookassaDecision?.decidedAt" style="color: #cf1322;">
+                отказано<template v-if="trip.privetMirYookassaDecision?.comment">
+                  — {{ trip.privetMirYookassaDecision.comment }}</template>
+              </span>
+              <span v-else>запрошена автором, решения ещё нет</span>
+            </div>
+
+            <a-textarea
+              v-model:value="promoComment"
+              placeholder="Комментарий автору (нужен при отказе)"
+              :rows="2"
+              style="margin-top: 8px; max-width: 520px;"
+            />
+
+            <div style="margin-top: 8px;">
+              <a-button
+                :loading="promoLoading"
+                :disabled="trip.privetMirYookassaEnabled"
+                type="primary"
+                @click="decidePromo(true)"
+              >Разрешить акцию</a-button>
+
+              <a-button
+                :loading="promoLoading"
+                style="margin-left: 8px;"
+                @click="decidePromo(false)"
+              >Отказать</a-button>
+            </div>
           </a-col>
           <a-col :xs="24" v-if="trip.isHidden" class="mb-16">
             <b>Тур скрыт автором</b>
