@@ -1,5 +1,5 @@
 <script setup>
-import tinkoffPlugin from '../../plugins/tinkoff';
+import PaymentService from '../../service/PaymentService';
 import {message} from "ant-design-vue";
 import {getCurrentInstance, onMounted, ref} from 'vue';
 import {useTrips} from '../../stores/trips'
@@ -24,6 +24,8 @@ let bought = ref([])
 let loading = ref(false)
 // диалоговое окно
 let buyDialog = ref(false)
+// идёт создание платежа — блокируем кнопку, чтобы не нажали дважды
+let payLoading = ref(false)
 // оплатить -> выводится инфа по этому чеку
 let currentBill = ref({})
 
@@ -129,10 +131,16 @@ async function updateBought() {
   let result = []
   let data = await tripStore.getBoughtTrips()
   for (let bill of data) {
-    if (bill.tinkoff) {
-      let res = await tinkoffPlugin.checkPayment(bill.tinkoff.paymentId, bill.tinkoff.token)
-      if (res.data.Status == "CONFIRMED") {
-        bill.payment.amount = (bill.payment.amount || 0) + Number(res.data.Amount / 100)
+    // Статус платежа спрашивает сервер: банк доступен только ему.
+    // Он же запишет оплату в счёт, если уведомление от банка не дошло.
+    if (bill.tinkoff?.paymentId) {
+      try {
+        let { data: state } = await PaymentService.getState(bill._id)
+        if (state.paid) {
+          bill.payment.amount = state.amountRub
+        }
+      } catch (e) {
+        console.log('не удалось проверить платёж:', e)
       }
     }
     result.push(bill)
@@ -155,77 +163,30 @@ async function buyTrip(cardId) {
     }
   }
 
-  buyDialog.value = true
-  const orderId = Date.now().toString()
-
-  // Проверяем предыдущий tinkoff-платёж и сохраняем его сумму, чтобы не потерять при перезаписи
-  let confirmedPreviousAmount = 0
-  if (currentBill.value.tinkoff?.paymentId) {
-    try {
-      let prevRes = await tinkoffPlugin.checkPayment(currentBill.value.tinkoff.paymentId, currentBill.value.tinkoff.token)
-      if (prevRes.data.Status === "CONFIRMED") {
-        confirmedPreviousAmount = Number(prevRes.data.Amount / 100)
-      }
-    } catch (e) {
-      console.log('Ошибка проверки предыдущего платежа:', e)
+  // Сумму к оплате (в том числе остаток при двухэтапной оплате со скидкой),
+  // состав чека и ссылку на оплату готовит сервер — в браузере их подменить нельзя.
+  payLoading.value = true
+  try {
+    let {data} = await PaymentService.createTripPayment(currentBill.value._id)
+    if (!data?.paymentUrl) {
+      message.config({duration: 4, top: "90vh"});
+      message.error({content: "Банк не вернул ссылку на оплату, попробуйте ещё раз"});
+      return
     }
+    currentBill.value.tinkoff = {
+      orderId: data.orderId,
+      paymentId: data.paymentId,
+      amount: data.amountRub * 100,
+    }
+    // Переходим на страницу оплаты в этой же вкладке: всплывающее окно
+    // браузер блокирует, потому что открывается уже после запроса к серверу.
+    router.push({name: 'PaymentFrame', query: {url: data.paymentUrl}})
+  } catch (err) {
+    message.config({duration: 5, top: "90vh"});
+    message.error({content: err.response?.data?.message || "Не удалось создать платёж"});
+  } finally {
+    payLoading.value = false
   }
-
-  // Создаем корзину для оплаты с учетом программы лояльности
-  let paymentCart = currentBill.value.cart;
-  let additionalServices = currentBill.value.additionalServices?.length ? currentBill.value.additionalServices : [];
-
-  const isLoyaltyDiscount = isTwoStagePayment(currentBill.value);
-
-  if (isLoyaltyDiscount) {
-    const totalAmount = billTotal(currentBill.value);
-    const remainingPayment = getRemainingPayment(currentBill.value);
-
-    // Рассчитываем пропорцию для уменьшения цен
-    const paymentPercentage = remainingPayment / totalAmount;
-
-    // Создаем копию корзины с пропорционально уменьшенными ценами
-    paymentCart = currentBill.value.cart.map(item => ({
-      ...item,
-      cost: Math.round(item.cost * paymentPercentage * 100) / 100
-    }));
-
-    // Также уменьшаем цены дополнительных услуг
-    additionalServices = additionalServices.map(service => ({
-      ...service,
-      price: Math.round(service.price * paymentPercentage * 100) / 100
-    }));
-  }
-
-  let {data, token, success} =
-      await tinkoffPlugin.initPayment(orderId, paymentCart, userStore.user.email, currentBill.value.tripId.tinkoffContract, currentBill.value.tripId.name, additionalServices)
-  if (!success) {
-    message.config({duration: 3, top: "90vh"});
-    message.error({content: "Ошибка при оплате"});
-    return
-  }
-  currentBill.value.tinkoff =
-      {
-        orderId: data.OrderId,
-        amount: data.Amount,
-        token,
-        paymentId: data.PaymentId
-      }
-
-  window.open(data.PaymentURL, '_blank')
-
-  userStore
-      .payTinkoffBill(currentBill.value, currentBill.value.tinkoff, currentBill.value.tripId.name, currentBill.value.tripId.author.email, confirmedPreviousAmount)
-      .then(async (response) => {
-        if (response.status == 200) {
-          message.config({duration: 3, top: "90vh"});
-          message.success({content: "Тур заказан!"});
-        }
-        buyDialog.value = false;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
 }
 
 const print = async (BILL) => {
@@ -476,7 +437,8 @@ onMounted(async () => {
                     Оплатить
                   </a-button>
                 </a-tooltip>
-                <a-button v-else @click="buyTrip(BILL._id)" type="primary" class="bt-card__pay-btn">
+                <a-button v-else @click="buyTrip(BILL._id)" type="primary" class="bt-card__pay-btn"
+                          :loading="payLoading">
                   Оплатить
                 </a-button>
               </template>

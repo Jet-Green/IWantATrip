@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useExcursion } from '../../stores/excursion';
-import tinkoffPlugin from '../../plugins/tinkoff'
+import PaymentService from '../../service/PaymentService'
 import TinkoffLogo from "../../assets/images/tinkofflogo.svg"
 
 const excursionStore = useExcursion()
@@ -23,9 +23,10 @@ let paymentChecked = ref(false)
 let paymentStatus = ref('unpaid') // unpaid | paid
 
 try {
-  if (props.bill.tinkoff?.paymentId && props.bill.tinkoff?.token) {
-    let res = await tinkoffPlugin.checkPayment(props.bill.tinkoff.paymentId, props.bill.tinkoff.token)
-    if (res?.data?.Status === "CONFIRMED") {
+  if (props.bill.tinkoff?.paymentId) {
+    // Статус платежа спрашиваем через сервер: банк доступен только ему.
+    let { data: state } = await PaymentService.getState(props.bill._id, 'excursion')
+    if (state.paid) {
       payedByTinkoff.value = true
       paymentStatus.value = 'paid'
     } else {

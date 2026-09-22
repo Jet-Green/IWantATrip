@@ -4,7 +4,7 @@ import { useAuth } from "../../stores/auth";
 import UserService from "../../service/UserService";
 import ExcursionService from "../../service/ExcursionService";
 import { useRoute, useRouter } from "vue-router";
-import tinkoffPlugin from "../../plugins/tinkoff";
+import PaymentService from "../../service/PaymentService";
 import { message } from "ant-design-vue";
 
 const pageSize = 9;
@@ -102,28 +102,21 @@ async function payExcursionBill() {
     message.error({ content: "У экскурсии не настроен договор для оплаты." });
     return;
   }
-  const orderId = `exbill_${payBill.value._id}_${Date.now()}`;
-  const { data, token, success } = await tinkoffPlugin.initExcursionPayment(
-    orderId,
-    payBill.value.cart || [],
-    userStore.user.email,
-    payBill.value.excursion.tinkoffContract,
-    payBill.value.excursion.name
-  );
-  if (!success) {
-    message.config({ duration: 3, top: "90vh" });
-    message.error({ content: "Ошибка при инициализации оплаты" });
-    return;
-  }
-  const tinkoff = {
-    orderId: data.OrderId,
-    amount: data.Amount,
-    token,
-    paymentId: data.PaymentId,
-  };
-  await ExcursionService.updateBill({ billId: payBill.value._id, tinkoff });
-  if (data?.PaymentURL) {
-    window.open(data.PaymentURL, "_blank");
+  // Платёж создаёт сервер: сумму и чек он считает по самому счёту,
+  // и только у него есть доступ к банку.
+  try {
+    const { data } = await PaymentService.createExcursionPayment(payBill.value._id);
+    if (data?.paymentUrl) {
+      router.push({ name: "PaymentFrame", query: { url: data.paymentUrl } });
+    } else {
+      message.config({ duration: 3, top: "90vh" });
+      message.error({ content: "Банк не вернул ссылку на оплату" });
+    }
+  } catch (err) {
+    message.config({ duration: 5, top: "90vh" });
+    message.error({
+      content: err.response?.data?.message || "Не удалось создать платёж",
+    });
   }
 }
 

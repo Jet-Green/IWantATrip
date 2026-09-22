@@ -114,11 +114,6 @@ const router = createRouter({
           component: () => import('../views/EditExcursion.vue')
         },
         {
-          path: '/payment',
-          name: 'Payment',
-          component: () => import('../views/Payment.vue')
-        },
-        {
           path: '/',
           name: 'Landing',
           component: () => import('../views/Landing.vue'),

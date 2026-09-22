@@ -6,7 +6,7 @@ import { useExcursion } from "../stores/excursion";
 import { useAuth } from "../stores/auth";
 import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
-import tinkoffPlugin from "../plugins/tinkoff";
+import PaymentService from "../service/PaymentService";
 
 import TinkoffLogo from "../assets/images/tinkofflogo.svg";
 
@@ -118,44 +118,30 @@ async function buyWithTinkoff() {
       cart: toSend,
       tinkoff: {},
     };
-    // init payment and get data for tinkoff field of bill
-    const orderId = "ex" + Date.now().toString();
-    let { data, token, success } = await tinkoffPlugin.initExcursionPayment(
-      orderId,
-      toSend,
-      userStore.user.email,
-      props.excursion.tinkoffContract,
-      props.excursion.name
-    );
-    let tinkoffUrl = data.PaymentURL;
-    bill.tinkoff = {
-      orderId: data.OrderId,
-      amount: data.Amount,
-      token,
-      paymentId: data.PaymentId,
-    };
-    if (!success) {
-      message.config({ duration: 3, top: "70vh" });
-      message.error({ content: "Ошибка при оплате" });
-      return;
-    }
-    if (tinkoffUrl) {
-      router.push({ name: "PaymentFrame", query: { url: tinkoffUrl } });
-    }
-    // create bill with tinkoff and update time's billsList
-
+    // Сначала записываем счёт, потом создаём по нему платёж: сумму и чек
+    // считает сервер, он же единственный, кто может обратиться в банк.
     let res = await excursionStore.buyWithTinkoff(bill);
-    if (res.status == 200) {
-      message.config({ duration: 3, top: "70vh" });
-      message.success({
-        content: "Экскурсия куплена",
-        onClose: () => {
-          open.value = false;
-          emit("close");
-        },
+    if (res.status != 200) return;
+
+    message.config({ duration: 3, top: "70vh" });
+    message.success({ content: "Экскурсия забронирована" });
+
+    try {
+      let { data } = await PaymentService.createExcursionPayment(res.data._id);
+      if (data?.paymentUrl) {
+        router.push({ name: "PaymentFrame", query: { url: data.paymentUrl } });
+      } else {
+        message.error({ content: "Банк не вернул ссылку на оплату" });
+      }
+    } catch (err) {
+      message.config({ duration: 5, top: "70vh" });
+      message.error({
+        content: err.response?.data?.message || "Не удалось создать платёж",
       });
-      return;
     }
+    open.value = false;
+    emit("close");
+    return;
   }
 }
 

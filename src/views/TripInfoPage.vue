@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, getCurrentInstance, watch, reactive, nextTick } from "vue";
 import _ from 'lodash'
-import tinkoffPlugin from '../plugins/tinkoff'
+import PaymentService from '../service/PaymentService'
 import YookassaService from '../service/YookassaService'
 import TinkoffLogo from "../assets/images/tinkofflogo.svg"
 import PlaceCard from "../components/cards/PlaceCard.vue";
@@ -501,51 +501,11 @@ async function buyTrip() {
             }
             selected_seats.value = []
             updateSeats()
-            let tinkoffUrl = ''
-            let addServices = bill.additionalServices?.length ? bill.additionalServices : []
-
             const useYookassa = !!trip.value.privetMirYookassaEnabled
-
-            if (buyNow.value && !useYookassa) {
-                const orderId = Date.now().toString()
-
-                let paymentCart = bill.cart;
-
-                const isLoyaltyDiscount = trip.value?.loyalty?.enabled && trip.value?.loyalty?.type === 'discount';
-
-                if (isLoyaltyDiscount && loyaltyDiscountTotal.value > 0 && finalCost.value > 0) {
-                    // Скидка зафиксирована — один платёж со скидкой
-                    const ratio = discountedFinalCost.value / finalCost.value;
-                    paymentCart = bill.cart.map(item => ({
-                        ...item,
-                        cost: Math.round(item.cost * ratio * 100) / 100
-                    }));
-                    addServices = addServices.map(service => ({
-                        ...service,
-                        price: Math.round(service.price * ratio * 100) / 100
-                    }));
-                } else if (isLoyaltyDiscount && firstPaymentPercentage.value < 1) {
-                    // Скидка не зафиксирована — первый платёж (часть суммы)
-                    paymentCart = bill.cart.map(item => ({
-                        ...item,
-                        cost: Math.round(item.cost * firstPaymentPercentage.value * 100) / 100
-                    }));
-                }
-
-                let { data, token, success } = await tinkoffPlugin.initPayment(orderId, paymentCart, userStore.user.email, trip.value.tinkoffContract, trip.value.name, addServices)
-                if (!success) {
-                    message.config({ duration: 3, top: "90vh" });
-                    message.error({ content: "Ошибка при оплате" });
-                    return
-                }
-                bill.tinkoff = {
-                    orderId: data.OrderId,
-                    amount: data.Amount,
-                    token,
-                    paymentId: data.PaymentId
-                }
-                tinkoffUrl = data.PaymentURL
-            }
+            // Платёж создаётся после того, как счёт записан: сервер считает сумму
+            // и состав чека по самому счёту. Раньше это делал браузер до брони,
+            // обращаясь в банк напрямую.
+            const payWithTinkoff = buyNow.value && !useYookassa
 
             for (let i = 0; i < bill.cart.length; i++) {
                 if (bill.cart[i].count == 0) {
@@ -563,10 +523,11 @@ async function buyTrip() {
                             await refreshDates();
                             buyDialog.value = false;
 
+                            const billId = response.data?.billId
+                                ?? response.data?.user?.boughtTrips?.[response.data?.user?.boughtTrips?.length - 1]
+
                             if (useYookassa) {
                                 try {
-                                    const billId = response.data?.billId
-                                        ?? response.data?.user?.boughtTrips?.[response.data?.user?.boughtTrips?.length - 1]
                                     const returnUrl = `${window.location.origin}/trip-info?_id=${trip.value._id}`
                                     const payRes = await YookassaService.createTripPayment({
                                         billId,
@@ -583,16 +544,25 @@ async function buyTrip() {
                                 } catch (err) {
                                     message.error({ content: err.response?.data?.message || 'Ошибка оплаты через ЮKassa' })
                                 }
+                            } else if (payWithTinkoff) {
+                                try {
+                                    const payRes = await PaymentService.createTripPayment(billId)
+                                    const url = payRes.data?.paymentUrl
+                                    if (url) {
+                                        router.push({ name: 'PaymentFrame', query: { url } })
+                                    } else {
+                                        message.error({ content: 'Банк не вернул ссылку на оплату' })
+                                    }
+                                } catch (err) {
+                                    message.config({ duration: 5, top: "90vh" });
+                                    message.error({ content: err.response?.data?.message || 'Не удалось создать платёж' })
+                                }
                             }
                         }
                     })
                     .catch((err) => {
                         console.log(err);
                     });
-            }
-            if (tinkoffUrl) {
-                router.push({ name: 'PaymentFrame', query: { url: tinkoffUrl } })
-                // window.open(tinkoffUrl, '_blank');
             }
         } else {
             message.config({ duration: 3, top: "90vh" });

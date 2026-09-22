@@ -3,7 +3,7 @@ import { ref, onMounted, computed, getCurrentInstance, watch } from "vue";
 
 import TinkoffLogo from '../../assets/images/tinkofflogo.svg'
 
-import tinkoffPlugin from '../../plugins/tinkoff'
+import PaymentService from '../../service/PaymentService'
 
 import { useRoute } from "vue-router";
 import { useRouter } from "vue-router";
@@ -312,12 +312,16 @@ async function updateTripInfo() {
     }
 
     for (let b of data.billsList) {
-        if (b.tinkoff) {
+        if (b.tinkoff?.paymentId) {
             b.purchasedByTinkoff = true
-            let res = await tinkoffPlugin.checkPayment(b.tinkoff.paymentId, b.tinkoff.token)
-            if (res.data.Status == "CONFIRMED") {
-                b.payment.amount = Number(res.data.Amount / 100)
-                b.purchasedByTinkoff = true
+            // Статус платежа спрашиваем через сервер: банк доступен только ему.
+            try {
+                let { data: state } = await PaymentService.getState(b._id)
+                if (state.paid) {
+                    b.payment.amount = state.amountRub
+                }
+            } catch (e) {
+                console.log('не удалось проверить платёж:', e)
             }
         }
     }
@@ -510,7 +514,7 @@ async function confirmCancelPayment() {
         let res
         if (refundMode.value === 'full') {
             // Полный возврат
-            res = await tinkoffPlugin.cancelPayment(currentBill.value.tinkoff.paymentId)
+            res = await PaymentService.cancel(currentBill.value._id)
         } else {
             // Частичный возврат: строим Receipt.Items и сумму в копейках
             const items = []
@@ -586,25 +590,22 @@ async function confirmCancelPayment() {
                 message.error({ content: 'Выберите позиции для частичного возврата' })
                 return
             }
-            res = await tinkoffPlugin.cancelPayment(
-                currentBill.value.tinkoff.paymentId,
-                amountKopecks,
-                { Items: items, Taxation: 'usn_income', FfdVersion: '1.05' },
-                trip.value.tinkoffContract
-            )
+            res = await PaymentService.cancel(currentBill.value._id, {
+                amountRub: amountKopecks / 100,
+                receipt: { Items: items, Taxation: 'usn_income', FfdVersion: '1.05' },
+            })
         }
 
-        if (res?.status === 200 && res.data?.Success) {
+        if (res?.status === 200) {
             message.success({ content: 'Возврат выполнен' })
             refundDialog.value = false
             await updateTripInfo()
         } else {
-            const errText = res?.data?.Message || 'Ошибка выполнения возврата'
-            message.error({ content: errText })
+            message.error({ content: 'Ошибка выполнения возврата' })
         }
     } catch (e) {
         console.error(e)
-        message.error({ content: 'Не удалось выполнить возврат' })
+        message.error({ content: e.response?.data?.message || 'Не удалось выполнить возврат' })
     }
 }
 </script>
