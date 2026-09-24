@@ -17,6 +17,7 @@
     "@yeger/vue-masonry-wall": "^5.0.12",
     "ant-design-vue": "^4.2.6",
     "axios": "^0.27.2",
+    "canvas-confetti": "^1.9.4",
     "compression": "^1.8.1",
     "cropperjs": "^1.5.12",
     "dayjs": "^1.11.6",
