@@ -300,6 +300,22 @@ a {
   overflow-y: auto;
 }
 
+// В формах редактор подключён как <QuillEditor class="ql-editor">, и этот класс
+// попадает на внешний контейнер. Из-за overflow контейнер обрезал всё, что
+// выходит за его границы, — в том числе окошко ввода ссылки: оно пряталось
+// под панель инструментов. Прокрутку оставляем только внутреннему полю текста.
+.ql-container.ql-editor {
+  overflow: visible !important;
+  max-height: none !important;
+}
+.ql-container.ql-editor > .ql-editor {
+  max-height: 400px;
+  overflow-y: auto;
+}
+.ql-snow .ql-tooltip {
+  z-index: 20;
+}
+
 .ant-picker-calendar-date-content {
   height: 22px !important;
 }
