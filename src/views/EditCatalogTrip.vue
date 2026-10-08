@@ -118,7 +118,8 @@ async function submit() {
   if (submitCount.value > 1) {
     return
   }
-  form.value.isModerated = false
+  // Правка не сбрасывает одобрение модератора: флаги модерации меняет только
+  // модератор, сервер их от клиента больше не принимает.
   if (!clearingImg) {
     uploadTripImages(form.value._id)
     delete form.value.images
