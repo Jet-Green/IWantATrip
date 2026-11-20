@@ -134,6 +134,9 @@ const router = createRouter({
           name: 'EditTrack',
           component: () => import('../views/EditTrack.vue'),
         },
+        { path: '/rental', name: 'RentalCatalog', component: () => import('../views/RentalCatalog.vue') },
+        { path: '/rental/auth', name: 'RentalAuth', component: () => import('../views/RentalAuth.vue') },
+        { path: '/rental/:id', name: 'RentalListing', component: () => import('../views/RentalListing.vue') },
         {
           path: '/trips',
           name: 'TripsPage',

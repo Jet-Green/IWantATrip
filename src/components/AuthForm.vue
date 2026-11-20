@@ -1,5 +1,5 @@
 <script setup>
-import { reactive } from "vue"
+import { reactive, computed } from "vue"
 import { useAuth } from "../stores/auth";
 import { useLocations } from "../stores/locations"
 import { useRouter, useRoute } from "vue-router";
@@ -8,11 +8,13 @@ import { message } from "ant-design-vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
+import { safeAuthRedirect } from "../service/authRedirect";
 import { redirectToVkAuth } from "../service/vkAuth";
 
 const user = useAuth();
 const router = useRouter();
 const route = useRoute();
+const redirect = computed(() => safeAuthRedirect(route.query.redirect));
 let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
 
@@ -26,12 +28,12 @@ async function logIn() {
   if (result.success) {
     message.config({ duration: 0.5, top: "70vh" });
     message.success("Успешно!");
-    router.push(route.query.redirect || "/");
+    router.push(redirect.value);
   }
 }
 
 function logInVk() {
-  redirectToVkAuth(route.query.redirect || "/");
+  redirectToVkAuth(redirect.value);
 }
 
 const formSchema = yup.object({
@@ -79,7 +81,7 @@ const formSchema = yup.object({
             </div>
           </a-col>
           <a-col :span="24" class="d-flex justify-center">
-            <router-link to="/reg">регистрация</router-link>
+            <router-link :to="{ path: '/reg', query: redirect !== '/' ? { redirect } : {} }">регистрация</router-link>
           </a-col>
           <a-col :span="24" class="d-flex justify-center">
             <router-link to="/forgot-password">забыли пароль?</router-link>
