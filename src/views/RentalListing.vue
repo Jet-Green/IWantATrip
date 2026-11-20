@@ -1,11 +1,14 @@
 <script setup>
 import { ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useAuth } from '../stores/auth'
 import RentalService, { rentalPrice, pickupLabel } from '../service/RentalService'
 import '../assets/rental.scss'
+const auth = useAuth()
 const route = useRoute(), listing = ref(null), loading = ref(false), error = ref('')
 const bookingUrl = computed(() => {
   const params = new URLSearchParams({ listingId: listing.value?.id || '' })
+  if (auth.isAuth) params.set('continue', 'gorodaivesi')
   for (const key of ['dateFrom', 'dateTo', 'unitsNeeded']) if (typeof route.query[key] === 'string' && route.query[key]) params.set(key, route.query[key])
   return `https://rent.gorodaivesi.ru/auth/gorodaivesi?${params}`
 })
