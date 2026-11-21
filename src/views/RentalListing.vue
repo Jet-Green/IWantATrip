@@ -3,7 +3,8 @@ import { ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuth } from '../stores/auth'
 import RentalService, { rentalPrice, pickupLabel } from '../service/RentalService'
-import '../assets/rental.scss'
+import BackButton from '../components/BackButton.vue'
+const imageFailed = ref(false)
 const auth = useAuth()
 const route = useRoute(), listing = ref(null), loading = ref(false), error = ref('')
 const bookingUrl = computed(() => {
@@ -14,7 +15,7 @@ const bookingUrl = computed(() => {
 })
 let requestId = 0
 async function load() {
-  const current = ++requestId; loading.value = true; error.value = ''; listing.value = null
+  const current = ++requestId; loading.value = true; error.value = ''; listing.value = null; imageFailed.value = false
   try { const { data } = await RentalService.listing(route.params.id); if (current === requestId) listing.value = data.listing }
   catch (err) { if (current === requestId) error.value = err.response?.status === 404 ? 'Объект больше не доступен для аренды.' : 'Не удалось загрузить объект. Попробуйте ещё раз.' }
   finally { if (current === requestId) loading.value = false }
@@ -22,22 +23,103 @@ async function load() {
 watch(() => route.params.id, load, { immediate: true })
 </script>
 <template>
-  <div class="rental-page" :aria-busy="loading">
-    <router-link class="rental-back" :to="{ name: 'RentalCatalog', query: route.query }">← К объектам аренды</router-link>
-    <p v-if="loading" role="status" class="rental-state">Загружаем объект…</p>
-    <div v-else-if="error" role="alert" class="rental-state"><h1>{{ error }}</h1><button class="rental-button" @click="load">Повторить</button></div>
-    <template v-else-if="listing">
-      <h1>{{ listing.title }}</h1>
-      <div class="rental-detail">
-        <div><img v-if="listing.photo" class="rental-detail__image" :src="listing.photo" :alt="listing.title" @error="event => event.target.hidden = true"><p class="rental-description">{{ listing.description }}</p></div>
-        <aside class="rental-booking" aria-label="Условия аренды">
-          <strong class="rental-booking__price">{{ rentalPrice(listing.pricePerDay) }} / сутки</strong>
-          <p>Минимальный срок: {{ listing.minRentalDays }} сут.</p><p>Количество: {{ listing.availableUnits }} шт.</p>
-          <div v-for="method in listing.pickupMethods" :key="method"><strong>{{ pickupLabel(method) }}</strong><p>{{ method === 'self_pickup' ? listing.pickupAddress : listing.deliveryZone }}</p></div>
-          <a class="rental-button" :href="bookingUrl">Забронировать</a>
-          <p>Продолжите на площадке аренды: проверьте даты и количество, затем оформите бронь.</p>
-        </aside>
-      </div>
-    </template>
+  <div class="rental-listing" :aria-busy="loading">
+    <BackButton :backRoute="{ name: 'RentalCatalog', query: route.query }" />
+    <a-row justify="center">
+      <a-col :xs="22" :xl="16">
+        <div v-if="loading" class="rental-listing__state" role="status">
+          <a-spin size="large" />
+          <p>Загружаем объект…</p>
+        </div>
+        <div v-else-if="error || !listing" class="rental-listing__state" role="alert">
+          <h1 class="rental-listing__title">{{ error || 'Объект не найден.' }}</h1>
+          <a-button type="primary" class="lets_go_btn" @click="load">Повторить</a-button>
+        </div>
+        <template v-else>
+          <h1 class="rental-listing__title">{{ listing.title }}</h1>
+          <a-row :gutter="[12, 24]" class="text">
+            <a-col :xs="24" :md="12">
+              <img v-if="listing.photo && !imageFailed" class="rental-listing__image" :src="listing.photo" :alt="listing.title" @error="imageFailed = true">
+              <div v-else class="rental-listing__no-photo">
+                <MdiIcon name="image-outline" size="40px" aria-hidden="true" />
+                <span>Фото пока нет</span>
+              </div>
+            </a-col>
+            <a-col :xs="24" :md="12">
+              <aside class="rental-listing__booking" aria-label="Условия аренды">
+                <p class="rental-listing__price"><b>{{ rentalPrice(listing.pricePerDay) }}</b><span> / сутки</span></p>
+                <dl class="rental-listing__terms">
+                  <div><dt>Минимальный срок:</dt><dd>{{ listing.minRentalDays }} сут.</dd></div>
+                  <div><dt>Количество:</dt><dd>{{ listing.availableUnits }} шт.</dd></div>
+                </dl>
+                <div v-for="method in listing.pickupMethods" :key="method" class="rental-listing__pickup">
+                  <b>{{ pickupLabel(method) }}</b>
+                  <p v-if="method === 'self_pickup' ? listing.pickupAddress : listing.deliveryZone">{{ method === 'self_pickup' ? listing.pickupAddress : listing.deliveryZone }}</p>
+                </div>
+                <div class="rental-listing__action">
+                  <a-button type="primary" class="lets_go_btn" :href="bookingUrl">Забронировать</a-button>
+                </div>
+                <p class="rental-listing__note">Продолжите на площадке аренды: проверьте даты и количество, затем оформите бронь.</p>
+              </aside>
+            </a-col>
+            <a-col v-if="listing.description" :span="24">
+              <p class="rental-listing__description">{{ listing.description }}</p>
+            </a-col>
+          </a-row>
+        </template>
+      </a-col>
+    </a-row>
   </div>
 </template>
+<style scoped lang="scss">
+.rental-listing {
+  padding-bottom: 64px;
+  overflow-wrap: anywhere;
+
+  &__title {
+    margin: 0 0 20px;
+    font-size: clamp(1.5rem, 1.1975rem + 0.6303vw, 1.875rem);
+    line-height: 1.3;
+  }
+
+  &__image,
+  &__no-photo {
+    display: block;
+    width: 100%;
+    aspect-ratio: 270 / 175;
+    object-fit: cover;
+  }
+
+  &__no-photo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    background: #f1efe4;
+    color: #6b665b;
+    font-size: 14px;
+  }
+
+  &__booking { padding: 8px; }
+  &__price { margin: 0 0 16px; }
+  &__price b { font-size: 1.4em; }
+  &__price span { white-space: nowrap; }
+  &__terms { margin: 0 0 16px; }
+  &__terms > div { display: flex; flex-wrap: wrap; gap: 0 6px; }
+  &__terms dt { font-weight: normal; }
+  &__terms dd { margin: 0; font-weight: bold; }
+  &__pickup { margin-bottom: 12px; }
+  &__pickup p { margin: 0; }
+  &__action { display: flex; justify-content: center; margin: 20px 0 12px; }
+  &__action .ant-btn { height: auto; min-height: 40px; padding: 7px 20px; max-width: 100%; white-space: normal; }
+  &__note { margin: 0; font-size: 14px; }
+  &__description { margin: 0; white-space: pre-wrap; }
+  &__state { padding: 40px 0; text-align: center; }
+  &__state p { margin: 16px 0; }
+
+  @media (max-width: 767px) {
+    &__booking { padding: 0; }
+  }
+}
+</style>
