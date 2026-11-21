@@ -1,0 +1,11 @@
+// Match the compact filter entry and Ant controls used by TripFilter/ExcursionFilter.
+.rental-filter-bar { background: #239fca; padding: 10px; border-radius: 12px; display: flex; align-items: center; }
+.rental-filter-trigger { background: white; border: 1px solid #239fca; border-radius: 8px; width: 100%; min-width: 0; padding: 8px; cursor: pointer; color: rgba(0, 0, 0, .7); font: inherit; text-align: left; text-transform: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rental-catalog-form .ant-form-item { margin-bottom: 8px; }
+.rental-catalog-form .ant-form-item-label { padding-bottom: 4px; }
+.rental-catalog-form .ant-form-item-label > label { font-size: 13px; }
+.rental-catalog-form .ant-input-number, .rental-catalog-form .ant-picker { width: 100%; }
+.rental-filter-modal .ant-modal-footer { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
+.rental-filter-modal .ant-modal-footer > .ant-btn + .ant-btn { margin-inline-start: 0; }
+
+.rental-error { margin: 0; color: #a62525; }

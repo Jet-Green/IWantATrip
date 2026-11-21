@@ -205,6 +205,7 @@ onMounted(() => {
             {{ locationSearchRequest ? locationSearchRequest : "Ваш город" }}
           </span></h4> -->
 
+          <router-link :to="{ name: 'RentalCatalog' }" class="route guide-link ma-8" @click="visibleDrawer = false">Аренда инвентаря</router-link>
           <div @click="toComponentFromMenu('ExcursionsPage')" class="route ma-8">экскурсии</div>
           <div @click="toComponentFromMenu('CreateExcursion')" class="route ma-8">создать экскурсию</div>
           <div @click="toComponentFromMenu('Photos')" class="route ma-8">фотобанк</div>
@@ -256,6 +257,11 @@ onMounted(() => {
   @media (min-width: 800px) {
     font-size: 16px;
   }
+}
+
+.guide-link {
+  display: block;
+  color: inherit;
 }
 
 .route {

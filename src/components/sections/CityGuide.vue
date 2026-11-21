@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue";
+import rentalMark from "../../assets/images/rental-mark.svg";
 import { useLocations } from '../../stores/locations'
 
 const locationStore = useLocations()
@@ -62,13 +63,12 @@ let cards = ref([
   },
 
 
-  // {
-  //   title: "Аренда",
-  //   icon: "mdi-tent",
-  //   route: "/enter",
-  //   isShow: false,
-
-  // },
+  {
+    title: "Аренда инвентаря",
+    image: rentalMark,
+    route: { name: "RentalCatalog" },
+    isShow: true,
+  },
   // {
   //   title: "Сувениры",
   //   icon: "mdi-gift-outline",
@@ -97,7 +97,8 @@ let cards = ref([
         <a-col v-for="(card, index) in cards" :key="index" :xs="12" :md="8">
           <router-link :to="card.isShow ? card.route : ''" class="guide-card" :class="{ opacity: !card.isShow }">
             <div class="card-content">
-              <span class="mdi" :class="card.icon"></span>
+              <img v-if="card.image" :src="card.image" alt="" width="32" height="32" />
+              <span v-else class="mdi" :class="card.icon"></span>
               <span class="card-title">{{ card.title }}</span>
             </div>
           </router-link>

@@ -1,5 +1,5 @@
 <script setup>
-import { reactive } from "vue"
+import { reactive, computed, ref } from "vue"
 import { useAuth } from "../stores/auth";
 import { useLocations } from "../stores/locations"
 import { useRouter, useRoute } from "vue-router";
@@ -7,12 +7,15 @@ import BackButton from "../components/BackButton.vue";
 import { message } from "ant-design-vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { Form, Field, ErrorMessage } from 'vee-validate';
+import $api from "../plugins/axios";
 import * as yup from 'yup';
+import { safeAuthRedirect } from "../service/authRedirect";
 import { redirectToVkAuth } from "../service/vkAuth";
 
 const user = useAuth();
 const router = useRouter();
 const route = useRoute();
+const redirect = computed(() => safeAuthRedirect(route.query.redirect));
 let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
 
@@ -26,12 +29,25 @@ async function logIn() {
   if (result.success) {
     message.config({ duration: 0.5, top: "70vh" });
     message.success("Успешно!");
-    router.push(route.query.redirect || "/");
+    router.push(redirect.value);
   }
 }
 
+const federationLoading = ref(false);
+const federationError = ref('');
+async function logInRental() {
+  if (federationLoading.value) return;
+  federationLoading.value = true; federationError.value = '';
+  try {
+    const { data } = await $api.post('/auth/federation/start', { returnPath: redirect.value });
+    const target = new URL(data.url);
+    if (target.origin !== 'https://rent.gorodaivesi.ru' || target.pathname !== '/federation/authorize') throw new Error('Invalid destination');
+    window.location.assign(target.href);
+  } catch { federationError.value = 'Не удалось начать вход. Попробуйте ещё раз.'; federationLoading.value = false; }
+}
+
 function logInVk() {
-  redirectToVkAuth(route.query.redirect || "/");
+  redirectToVkAuth(redirect.value);
 }
 
 const formSchema = yup.object({
@@ -77,9 +93,16 @@ const formSchema = yup.object({
                 Войти через VK ID
               </a-button>
             </div>
+            <div v-if="!redirect.startsWith('/federation/authorize')" class="federation-entry">
+              <a-button class="federation-login-btn" size="large" :loading="federationLoading" :disabled="federationLoading" @click="logInRental">
+                <img src="../assets/images/rental-mark.svg" alt="" width="30" height="30" />
+                <span>Войти через Аренду инвентаря</span>
+              </a-button>
+              <p v-if="federationError" role="alert">{{ federationError }}</p>
+            </div>
           </a-col>
           <a-col :span="24" class="d-flex justify-center">
-            <router-link to="/reg">регистрация</router-link>
+            <router-link :to="{ path: '/reg', query: redirect !== '/' ? { redirect } : {} }">регистрация</router-link>
           </a-col>
           <a-col :span="24" class="d-flex justify-center">
             <router-link to="/forgot-password">забыли пароль?</router-link>
@@ -102,4 +125,11 @@ const formSchema = yup.object({
   border-color: #0066db;
   color: #fff;
 }
+</style>
+
+<style scoped>
+.federation-entry { margin: 0 auto 16px; max-width: 100%; text-align: center; }
+.federation-login-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: auto; min-height: 48px; padding: 8px 12px; border-radius: 24px; white-space: normal; line-height: 1.35; }
+.federation-login-btn img { flex-shrink: 0; }
+.federation-entry p { margin-top: 8px; }
 </style>
