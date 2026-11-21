@@ -1,5 +1,4 @@
 <script setup>
-import RentalIcon from '../rental/RentalIcon.vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter()
@@ -25,7 +24,9 @@ const router = useRouter()
             <img src="../../assets/images/double-tree.svg" alt="" class="double-tree-icon absolute">
             <div class="quick-actions-container">
               <button type="button" class="quick-action-card quick-action-card--stacked" @click="router.push('/rental')">
-                <div class="quick-action-card__visual"><RentalIcon style="width: 100%; max-width: 112px;" /></div>
+                <div class="quick-action-card__visual">
+                  <img src="../../assets/images/inventory-rental-logo.png" alt="Аренда инвентаря" class="quick-action-card__logo" width="774" height="240" />
+                </div>
                 <span class="quick-action-card__caption">Аренда</span>
               </button>
               <button

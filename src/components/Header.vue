@@ -214,6 +214,7 @@ onMounted(() => {
           <div @click="toComponentFromMenu('Places')" class="route ma-8">места</div>
           <div @click="toComponentFromMenu('Transport')" class="route ma-8">транспорт</div>
           <div @click="toComponentFromMenu('ToStay')" class="route ma-8">гостиницы</div>
+          <router-link :to="{ name: 'RentalCatalog' }" class="route guide-link ma-8" @click="visibleDrawer = false">Аренда инвентаря</router-link>
         </div>
 
         <div style="width: 50%">
@@ -256,6 +257,11 @@ onMounted(() => {
   @media (min-width: 800px) {
     font-size: 16px;
   }
+}
+
+.guide-link {
+  display: block;
+  color: inherit;
 }
 
 .route {
