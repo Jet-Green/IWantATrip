@@ -70,12 +70,16 @@ onBeforeUnmount(() => { requestId++; controller?.abort() })
         <h1 class="rental-catalog-title">Аренда инвентаря</h1>
       </a-col>
     </a-row>
-    <a-row class="d-flex justify-center rental-filter-row">
-      <a-col :xs="24" :md="16" :lg="12" class="pa-16">
-        <div class="rental-filter-bar">
-          <button type="button" class="rental-filter-trigger" :title="filterSummary" aria-haspopup="dialog" :aria-expanded="filterOpen" @click="openFilters">{{ filterSummary }}</button>
-          <a-button v-if="hasFilters" type="primary" shape="circle" class="ml-8" aria-label="Очистить фильтры" @click="reset"><MdiIcon name="close" /></a-button>
-        </div>
+    <a-row justify="center">
+      <a-col :xs="22" :md="20" :xl="18">
+        <a-row justify="center">
+          <a-col :xs="24" :md="16" :lg="12" class="pa-16">
+            <div class="rental-filter-bar">
+              <button type="button" class="rental-filter-trigger" :title="filterSummary" aria-haspopup="dialog" :aria-expanded="filterOpen" @click="openFilters">{{ filterSummary }}</button>
+              <a-button v-if="hasFilters" type="primary" shape="circle" class="ml-8" aria-label="Очистить фильтры" @click="reset"><MdiIcon name="close" /></a-button>
+            </div>
+          </a-col>
+        </a-row>
       </a-col>
     </a-row>
     <a-modal v-model:open="filterOpen" title="Поиск инвентаря" class="rental-filter-modal">
