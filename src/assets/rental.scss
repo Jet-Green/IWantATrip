@@ -1,7 +1,6 @@
 .rental-page { width: 90%; max-width: 1200px; margin: 0 auto; padding: 12px 0 64px; color: #242424; }
 .rental-page h1 { font-size: clamp(26px, 4vw, 40px); font-weight: 900; margin: 20px 0; }
 .rental-back { display: inline-block; color: #245159; padding: 8px 0; }
-.rental-filters { background: #fff; border-radius: 16px; padding: 20px; display: grid; gap: 16px; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 28px; }
 .rental-field { display: flex; flex-direction: column; gap: 6px; font-weight: 600; min-width: 0; }
 .rental-field input, .rental-field select { width: 100%; min-width: 0; height: 42px; padding: 8px 10px; border: 1px solid #949494; border-radius: 8px; background: white; color: #242424; box-sizing: border-box; font: inherit; font-weight: 400; }
 .rental-field input:focus-visible, .rental-field select:focus-visible, .rental-card:focus-visible, .rental-page button:focus-visible, .rental-page a:focus-visible { outline: 3px solid #245159; outline-offset: 3px; }
@@ -27,9 +26,18 @@
 .rental-booking { background: white; border-radius: 16px; padding: 24px; display: grid; gap: 16px; }
 .rental-booking__price { font-size: 24px; }
 .rental-booking p { margin: 0; }
-@media(max-width: 1000px) { .rental-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } .rental-filters { grid-template-columns: repeat(3,minmax(0,1fr)); } }
-@media(max-width: 760px) { .rental-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } .rental-filters { grid-template-columns: repeat(2,minmax(0,1fr)); } .rental-detail { grid-template-columns: 1fr; gap: 20px; } }
-@media(max-width: 460px) { .rental-grid, .rental-filters { grid-template-columns: 1fr; } .rental-filters, .rental-booking { padding: 16px; } .rental-actions .rental-button { flex: 1; } }
+@media(max-width: 1000px) { .rental-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+@media(max-width: 760px) { .rental-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } .rental-detail { grid-template-columns: 1fr; gap: 20px; } }
+@media(max-width: 460px) { .rental-grid { grid-template-columns: 1fr; } .rental-booking { padding: 16px; } .rental-actions .rental-button { flex: 1; } }
 
-.rental-field select[multiple] { height: 100px; }
 .rental-field small { font-size: 12px; font-weight: 400; }
+
+// Match the compact filter entry and Ant controls used by TripFilter/ExcursionFilter.
+.rental-filter-bar { background: #239fca; padding: 10px; border-radius: 12px; display: flex; align-items: center; }
+.rental-filter-trigger { background: white; border: 1px solid #239fca; border-radius: 8px; width: 100%; min-width: 0; display: flex; align-items: center; padding: 8px; cursor: pointer; color: rgba(0, 0, 0, .7); font: inherit; text-align: left; overflow-wrap: anywhere; }
+.rental-catalog-form .ant-form-item { margin-bottom: 8px; }
+.rental-catalog-form .ant-form-item-label { padding-bottom: 4px; }
+.rental-catalog-form .ant-form-item-label > label { font-size: 13px; }
+.rental-catalog-form .ant-input-number, .rental-catalog-form .ant-picker { width: 100%; }
+.rental-filter-modal .ant-modal-footer { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
+.rental-filter-modal .ant-modal-footer > .ant-btn + .ant-btn { margin-inline-start: 0; }
