@@ -24,7 +24,7 @@ const filterSummary = computed(() => {
   if (query.pickupMethod) parts.push(query.pickupMethod === 'delivery' ? 'Доставка' : 'Самовывоз')
   if (query.unitsNeeded) parts.push(`${query.unitsNeeded} шт.`)
   if (query.sortBy) parts.push(query.sortBy === 'priceAsc' ? 'Сначала дешевле' : 'Сначала дороже')
-  return parts.filter(Boolean).join(', ') || 'Что, когда взять в аренду?'
+  return parts.filter(Boolean).join(', ') || 'Что хотите взять в аренду?'
 })
 function openFilters() { sync(); validation.value = ''; filterOpen.value = true }
 function disabledDate(date) { return date && date.startOf('day').isBefore(dayjs().startOf('day')) }
@@ -63,18 +63,22 @@ onMounted(async () => { try { const { data } = await RentalService.categories();
 onBeforeUnmount(() => { requestId++; controller?.abort() })
 </script>
 <template>
-  <div class="rental-page">
-    <router-link class="rental-back" to="/">← На главную</router-link>
-    <h1>Аренда инвентаря</h1>
+  <div class="rental-catalog">
+    <a-row justify="center">
+      <a-col :xs="22" :md="20" :xl="18">
+        <router-link class="rental-catalog-back mb-8" to="/" aria-label="Назад на главную"><MdiIcon name="arrow-left" /><span>Назад</span></router-link>
+        <h1 class="rental-catalog-title">Аренда инвентаря</h1>
+      </a-col>
+    </a-row>
     <a-row class="d-flex justify-center rental-filter-row">
       <a-col :xs="24" :md="16" :lg="12" class="pa-16">
         <div class="rental-filter-bar">
-          <button type="button" class="rental-filter-trigger" aria-haspopup="dialog" :aria-expanded="filterOpen" @click="openFilters">{{ filterSummary }}</button>
+          <button type="button" class="rental-filter-trigger" :title="filterSummary" aria-haspopup="dialog" :aria-expanded="filterOpen" @click="openFilters">{{ filterSummary }}</button>
           <a-button v-if="hasFilters" type="primary" shape="circle" class="ml-8" aria-label="Очистить фильтры" @click="reset"><MdiIcon name="close" /></a-button>
         </div>
       </a-col>
     </a-row>
-    <a-modal v-model:open="filterOpen" title="Поиск инвентаря" :z-index="900" class="rental-filter-modal">
+    <a-modal v-model:open="filterOpen" title="Поиск инвентаря" class="rental-filter-modal">
       <a-form id="rental-filter-form" :model="filters" layout="vertical" class="rental-catalog-form" @finish="apply">
         <a-row :gutter="[8, 8]">
           <a-col :span="24">
@@ -130,15 +134,47 @@ onBeforeUnmount(() => { requestId++; controller?.abort() })
         <a-button shape="round" @click="reset">Очистить</a-button>
       </template>
     </a-modal>
-    <div :aria-busy="loading" aria-live="polite">
-      <p v-if="loading" class="rental-state" role="status">Загружаем объекты…</p>
-      <div v-else-if="error" class="rental-state" role="alert"><p>{{ error }}</p><button class="rental-button" @click="load">Повторить</button></div>
-      <template v-else>
-        <p>Найдено объектов: {{ total }}</p>
-        <div v-if="listings.length" class="rental-grid"><RentalCard v-for="listing in listings" :key="listing.id" :listing="listing" :query="route.query" /></div>
-        <div v-else class="rental-state"><h2>По вашему запросу ничего не найдено</h2><p>Измените условия или сбросьте фильтры.</p><button class="rental-button secondary" @click="reset">Сбросить фильтры</button></div>
-        <nav v-if="totalPages > 1" class="rental-pagination" aria-label="Страницы каталога"><button class="rental-button secondary" :disabled="page <= 1" @click="goPage(page - 1)">Назад</button><span>{{ page }} из {{ totalPages }}</span><button class="rental-button secondary" :disabled="page >= totalPages" @click="goPage(page + 1)">Далее</button></nav>
-      </template>
-    </div>
+    <a-row justify="center" :aria-busy="loading" aria-live="polite">
+      <a-col :xs="22" :md="20" :xl="18">
+        <div v-if="loading" class="rental-catalog-state" role="status">
+          <img src="../assets/images/founddog.webp" alt="" />
+          <p>Загружаем объекты…</p>
+        </div>
+        <div v-else-if="error" class="rental-catalog-state" role="alert">
+          <p>{{ error }}</p>
+          <a-button type="primary" shape="round" @click="load">Повторить</a-button>
+        </div>
+        <template v-else>
+          <p class="rental-catalog-count">Найдено объектов: {{ total }}</p>
+          <a-row v-if="listings.length" :gutter="[16, 18]" class="d-flex justify-center mt-8 pb-24">
+            <a-col v-for="listing in listings" :key="listing.id" :xs="24" :sm="12" :md="8" :xl="6" class="d-flex">
+              <RentalCard :listing="listing" :query="route.query" />
+            </a-col>
+          </a-row>
+          <div v-else class="rental-catalog-state">
+            <img src="../assets/images/notfound.jpg" alt="" />
+            <h2>Я ничего не нашёл</h2>
+            <p>Измените условия или сбросьте фильтры.</p>
+            <a-button shape="round" @click="reset">Сбросить фильтры</a-button>
+          </div>
+          <nav v-if="totalPages > 1" class="rental-catalog-pagination" aria-label="Страницы каталога">
+            <a-pagination :current="page" :total="total" :page-size="12" :show-size-changer="false" simple @change="goPage" />
+          </nav>
+        </template>
+      </a-col>
+    </a-row>
   </div>
 </template>
+<style lang="scss" scoped>
+.rental-catalog { padding-bottom: 24px; }
+.rental-catalog-title { font-size: clamp(1.5rem, 1.1975rem + .6303vw, 1.875rem); font-weight: 900; margin: 0 0 4px; }
+.rental-catalog-back { display: flex; align-items: center; width: fit-content; min-height: 32px; gap: 8px; color: rgba(0, 0, 0, .88); font-size: 16px; }
+.rental-catalog-back :deep(svg) { width: 16px; height: 16px; margin: 0 8px; }
+.rental-catalog-back:focus-visible { outline: 2px solid #ff6600; outline-offset: 3px; border-radius: 4px; }
+.rental-catalog-count { margin: 8px 0; font-size: 14px; }
+.rental-catalog-state { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 8px 0 24px; }
+.rental-catalog-state img { height: 150px; max-width: 100%; object-fit: contain; }
+.rental-catalog-state h2 { font-size: 1.17em; font-weight: 700; }
+.rental-catalog-pagination { display: flex; justify-content: center; margin: 8px 0 24px; }
+@media (max-width: 767px) { .rental-catalog-back span { display: none; } }
+</style>
