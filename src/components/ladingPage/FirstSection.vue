@@ -122,6 +122,7 @@ const router = useRouter()
 
 .quick-actions-container {
   display: flex;
+  padding: 12px;
   gap: clamp(14px, 4vw, 30px);
   overflow-x: auto;
   overflow-y: visible !important;
