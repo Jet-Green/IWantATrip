@@ -47,7 +47,10 @@ watch(() => route.params.id, load, { immediate: true })
             </a-col>
             <a-col :xs="24" :md="12">
               <aside class="rental-listing__booking" aria-label="Условия аренды">
-                <p class="rental-listing__price"><b>{{ rentalPrice(listing.pricePerDay) }}</b><span> / сутки</span></p>
+                <div class="rental-listing__action">
+                  <p class="rental-listing__price"><b>{{ rentalPrice(listing.pricePerDay) }}</b><span> / сутки</span></p>
+                  <a-button type="primary" class="lets_go_btn" :href="bookingUrl">Забронировать</a-button>
+                </div>
                 <dl class="rental-listing__terms">
                   <div><dt>Минимальный срок:</dt><dd>{{ listing.minRentalDays }} сут.</dd></div>
                   <div><dt>Количество:</dt><dd>{{ listing.availableUnits }} шт.</dd></div>
@@ -56,10 +59,7 @@ watch(() => route.params.id, load, { immediate: true })
                   <b>{{ pickupLabel(method) }}</b>
                   <p v-if="method === 'self_pickup' ? listing.pickupAddress : listing.deliveryZone">{{ method === 'self_pickup' ? listing.pickupAddress : listing.deliveryZone }}</p>
                 </div>
-                <div class="rental-listing__action">
-                  <a-button type="primary" class="lets_go_btn" :href="bookingUrl">Забронировать</a-button>
-                </div>
-                <p class="rental-listing__note">Продолжите на площадке аренды: проверьте даты и количество, затем оформите бронь.</p>
+                <p class="rental-listing__note">Оформление брони — на площадке аренды.</p>
               </aside>
             </a-col>
             <a-col v-if="listing.description" :span="24">
@@ -101,9 +101,14 @@ watch(() => route.params.id, load, { immediate: true })
     font-size: 14px;
   }
 
-  &__booking { padding: 8px; }
-  &__price { margin: 0 0 16px; }
-  &__price b { font-size: 1.4em; }
+  &__booking {
+    padding: 24px;
+    border: 1px solid #e5e0cb;
+    border-radius: 15px;
+    background: #fff;
+  }
+  &__price { margin: 0 0 12px; line-height: 1.3; }
+  &__price b { font-size: 1.6em; }
   &__price span { white-space: nowrap; }
   &__terms { margin: 0 0 16px; }
   &__terms > div { display: flex; flex-wrap: wrap; gap: 0 6px; }
@@ -111,15 +116,45 @@ watch(() => route.params.id, load, { immediate: true })
   &__terms dd { margin: 0; font-weight: bold; }
   &__pickup { margin-bottom: 12px; }
   &__pickup p { margin: 0; }
-  &__action { display: flex; justify-content: center; margin: 20px 0 12px; }
-  &__action .ant-btn { height: auto; min-height: 40px; padding: 7px 20px; max-width: 100%; white-space: normal; }
-  &__note { margin: 0; font-size: 14px; }
+  &__action { margin-bottom: 24px; }
+  &__action .ant-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: auto;
+    min-height: 48px;
+    padding: 10px 16px;
+    border-color: #ff6600;
+    font-size: 16px;
+    font-weight: 600;
+    white-space: normal;
+  }
+  &__action .ant-btn:hover { background: #e65c00; border-color: #e65c00; transform: none; }
+  &__action .ant-btn:focus-visible { outline: 3px solid #239fca; outline-offset: 3px; }
+  &__note { margin: 16px 0 0; padding-top: 16px; border-top: 1px solid #e5e0cb; font-size: 14px; }
   &__description { margin: 0; white-space: pre-wrap; }
   &__state { padding: 40px 0; text-align: center; }
   &__state p { margin: 16px 0; }
 
   @media (max-width: 767px) {
-    &__booking { padding: 0; }
+    padding-bottom: calc(148px + env(safe-area-inset-bottom, 0px));
+
+    &__booking { padding: 16px; }
+    &__action {
+      position: fixed;
+      z-index: 20;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      margin: 0;
+      padding: 12px max(16px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+      border-top: 1px solid #e5e0cb;
+      background: #fffef4;
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, .06);
+    }
+    &__price { margin-bottom: 8px; font-size: 16px; }
+    &__price b { font-size: 24px; }
   }
 }
 </style>
