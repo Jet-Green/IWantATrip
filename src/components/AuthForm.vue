@@ -1,5 +1,5 @@
 <script setup>
-import { reactive } from "vue"
+import { reactive, computed, ref } from "vue"
 import { useAuth } from "../stores/auth";
 import { useLocations } from "../stores/locations"
 import { useRouter, useRoute } from "vue-router";
@@ -7,12 +7,15 @@ import BackButton from "../components/BackButton.vue";
 import { message } from "ant-design-vue";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { Form, Field, ErrorMessage } from 'vee-validate';
+import $api from "../plugins/axios";
 import * as yup from 'yup';
+import { safeAuthRedirect } from "../service/authRedirect";
 import { redirectToVkAuth } from "../service/vkAuth";
 
 const user = useAuth();
 const router = useRouter();
 const route = useRoute();
+const redirect = computed(() => safeAuthRedirect(route.query.redirect));
 let breakpoints = useBreakpoints(breakpointsTailwind);
 let sm = breakpoints.smaller("md");
 
@@ -26,12 +29,25 @@ async function logIn() {
   if (result.success) {
     message.config({ duration: 0.5, top: "70vh" });
     message.success("Успешно!");
-    router.push(route.query.redirect || "/");
+    router.push(redirect.value);
   }
 }
 
+const federationLoading = ref(false);
+const federationError = ref('');
+async function logInRental() {
+  if (federationLoading.value) return;
+  federationLoading.value = true; federationError.value = '';
+  try {
+    const { data } = await $api.post('/auth/federation/start', { returnPath: redirect.value });
+    const target = new URL(data.url);
+    if (target.origin !== 'https://rent.gorodaivesi.ru' || target.pathname !== '/federation/authorize') throw new Error('Invalid destination');
+    window.location.assign(target.href);
+  } catch { federationError.value = 'Не удалось начать вход. Попробуйте ещё раз.'; federationLoading.value = false; }
+}
+
 function logInVk() {
-  redirectToVkAuth(route.query.redirect || "/");
+  redirectToVkAuth(redirect.value);
 }
 
 const formSchema = yup.object({
@@ -72,14 +88,22 @@ const formSchema = yup.object({
                   html-type="submit">Войти</a-button>
               </div>
             </Form>
-            <div class="d-flex justify-center">
+            <div class="provider-entry">
               <a-button class="mb-16 vk-login-btn" size="large" @click="logInVk">
-                Войти через VK ID
+                <img src="../assets/icons/vk.svg" alt="" width="24" height="24" />
+                <span>Войти через VK ID</span>
               </a-button>
+            </div>
+            <div v-if="!redirect.startsWith('/federation/authorize')" class="federation-entry">
+              <a-button class="federation-login-btn" size="large" :loading="federationLoading" :disabled="federationLoading" @click="logInRental">
+                <img src="../assets/images/rental-mark.svg" alt="" width="30" height="30" />
+                <span>Войти через Аренду инвентаря</span>
+              </a-button>
+              <p v-if="federationError" role="alert">{{ federationError }}</p>
             </div>
           </a-col>
           <a-col :span="24" class="d-flex justify-center">
-            <router-link to="/reg">регистрация</router-link>
+            <router-link :to="{ path: '/reg', query: redirect !== '/' ? { redirect } : {} }">регистрация</router-link>
           </a-col>
           <a-col :span="24" class="d-flex justify-center">
             <router-link to="/forgot-password">забыли пароль?</router-link>
@@ -102,4 +126,16 @@ const formSchema = yup.object({
   border-color: #0066db;
   color: #fff;
 }
+</style>
+
+<style scoped>
+.provider-entry, .federation-entry { width: 100%; max-width: 360px; margin: 0 auto 16px; text-align: center; }
+.provider-entry .vk-login-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 48px; height: auto; margin-bottom: 0; padding: 8px 12px; white-space: normal; line-height: 1.35; }
+.provider-entry img { flex-shrink: 0; }
+.federation-login-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: auto; min-height: 48px; padding: 8px 12px; border-radius: 24px; white-space: normal; line-height: 1.35; }
+.federation-login-btn { border-color: #63bed8; color: #245159; background: #f4fbfd; }
+.federation-login-btn:hover { border-color: #ff6600; color: #ff6600; }
+.federation-login-btn:focus-visible { outline: 2px solid #ff6600; outline-offset: 3px; }
+.federation-login-btn img { flex-shrink: 0; }
+.federation-entry p { margin: 8px 0 0; color: #b42318; font-size: 14px; line-height: 1.5; }
 </style>

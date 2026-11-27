@@ -205,6 +205,7 @@ onMounted(() => {
             {{ locationSearchRequest ? locationSearchRequest : "Ваш город" }}
           </span></h4> -->
 
+          <router-link :to="{ name: 'RentalCatalog' }" class="route guide-link guide-link--rental ma-8" @click="visibleDrawer = false"><img src="../assets/images/rental-mark.svg" alt="" width="26" height="26" />Аренда инвентаря</router-link>
           <div @click="toComponentFromMenu('ExcursionsPage')" class="route ma-8">экскурсии</div>
           <div @click="toComponentFromMenu('CreateExcursion')" class="route ma-8">создать экскурсию</div>
           <div @click="toComponentFromMenu('Photos')" class="route ma-8">фотобанк</div>
@@ -256,6 +257,23 @@ onMounted(() => {
   @media (min-width: 800px) {
     font-size: 16px;
   }
+}
+
+.guide-link {
+  display: block;
+  color: inherit;
+}
+
+.guide-link--rental {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  line-height: 1.4;
+
+  img { flex-shrink: 0; }
+  &:focus-visible { outline: 2px solid #ff6600; outline-offset: 4px; }
 }
 
 .route {

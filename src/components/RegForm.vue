@@ -1,9 +1,9 @@
 <script setup>
 import { suggestAddress } from '../service/dadataService.js';
-import { reactive, watch, ref } from "vue";
+import { reactive, watch, ref, computed } from "vue";
 import { useAuth } from "../stores/auth";
 import { useLocations } from "../stores/locations"
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import BackButton from "./BackButton.vue";
 
@@ -12,11 +12,14 @@ import * as yup from 'yup';
 
 import { message } from "ant-design-vue";
 import axios from "axios";
+import { safeAuthRedirect } from "../service/authRedirect";
 import { redirectToVkAuth } from "../service/vkAuth";
 const user = useAuth();
+const route = useRoute();
+const redirect = computed(() => safeAuthRedirect(route.query.redirect));
 
 function regVk() {
-  redirectToVkAuth("/");
+  redirectToVkAuth(redirect.value);
 }
 const router = useRouter();
 let breakpoints = useBreakpoints(breakpointsTailwind);
@@ -43,7 +46,7 @@ async function sendRegInfo() {
     message.success({
       content: "Успешно!",
       onClose: () => {
-        router.push("/");
+        router.push(redirect.value);
       },
     });
   }
@@ -175,7 +178,7 @@ const formSchema = yup.object({
           </a-col>
 
           <a-col :span="24" class="d-flex justify-center">
-            <router-link to="/auth">войти</router-link>
+            <router-link :to="{ path: '/auth', query: redirect !== '/' ? { redirect } : {} }">войти</router-link>
           </a-col>
           <a-col :span="24" class="d-flex justify-center">
             <router-link to="/forgot-password">забыли пароль?</router-link>
