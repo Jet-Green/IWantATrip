@@ -1,11 +1,47 @@
-// Match the compact filter entry and Ant controls used by TripFilter/ExcursionFilter.
-.rental-filter-bar { background: #239fca; padding: 10px; border-radius: 12px; display: flex; align-items: center; }
-.rental-filter-trigger { background: white; border: 1px solid #239fca; border-radius: 8px; width: 100%; min-width: 0; padding: 8px; cursor: pointer; color: rgba(0, 0, 0, .7); font: inherit; text-align: left; text-transform: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.rental-catalog-form .ant-form-item { margin-bottom: 8px; }
-.rental-catalog-form .ant-form-item-label { padding-bottom: 4px; }
-.rental-catalog-form .ant-form-item-label > label { font-size: 13px; }
+.rental-filter-bar { padding: 8px; background: #239fca; border-radius: 18px; }
+.rental-filter-trigger { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) auto; width: 100%; min-width: 0; padding: 0; border: 0; border-radius: 12px; background: #fff; color: #252522; cursor: pointer; font: inherit; text-align: left; text-transform: none; }
+.rental-filter-trigger:focus-visible { outline: 3px solid #ff6600; outline-offset: 4px; }
+.rental-filter-segment { display: flex; align-items: center; gap: 12px; min-width: 0; margin: 12px 0; padding: 0 20px; }
+.rental-filter-segment + .rental-filter-segment { border-left: 1px solid #e5e3dd; }
+.rental-filter-segment > svg { flex-shrink: 0; width: 22px; height: 22px; }
+.rental-filter-segment > span { display: block; min-width: 0; }
+.rental-filter-label { display: block; margin-bottom: 4px; color: #6b6862; font-size: 11px; line-height: 1.4; }
+.rental-filter-segment strong { display: block; overflow: hidden; font-size: 14px; font-weight: 700; line-height: 1.5; text-overflow: ellipsis; white-space: nowrap; }
+.rental-filter-segment--settings { gap: 8px; }
+.rental-filter-segment--settings strong span { white-space: nowrap; }
+.rental-active-conditions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; }
+.rental-condition { max-width: 100%; padding: 6px 12px; border: 1px solid #e1ded5; border-radius: 20px; color: #514f49; font-size: 12px; overflow-wrap: anywhere; }
+.rental-filter-reset { min-height: 32px; padding: 4px 8px; border: 0; background: transparent; color: #655f55; cursor: pointer; font: inherit; font-size: 12px; text-decoration: underline; text-underline-offset: 3px; }
+.rental-filter-reset:focus-visible { outline: 2px solid #ff6600; border-radius: 4px; }
+.rental-filter-modal .ant-modal-content { padding: 26px; border-radius: 20px; }
+.rental-filter-modal .ant-modal-title { padding-right: 20px; font-size: 22px; font-weight: 800; }
+.rental-filter-modal .ant-modal-header { margin-bottom: 24px; }
+.rental-filter-group { min-width: 0; margin: 0 0 20px; padding: 0 0 8px; border: 0; border-bottom: 1px solid #eceae4; }
+.rental-filter-group legend { float: none; width: auto; margin: 0 0 14px; padding: 0; border: 0; font-size: 15px; font-weight: 700; color: #252522; }
+.rental-catalog-form .ant-form-item { margin-bottom: 14px; }
+.rental-catalog-form .ant-form-item-label { padding-bottom: 6px; }
+.rental-catalog-form .ant-form-item-label > label { height: auto; color: #66635d; font-size: 12px; }
 .rental-catalog-form .ant-input-number, .rental-catalog-form .ant-picker { width: 100%; }
-.rental-filter-modal .ant-modal-footer { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
+.rental-catalog-form .ant-input, .rental-catalog-form .ant-input-affix-wrapper, .rental-catalog-form .ant-picker, .rental-catalog-form .ant-input-number, .rental-catalog-form .ant-select-selector { border-radius: 8px; }
+.rental-catalog-form .ant-input-number-input { height: 38px; }
+.rental-catalog-form .ant-picker { min-height: 40px; }
+.rental-catalog-form .ant-select-single { height: 40px; }
+.rental-catalog-form .ant-select-multiple .ant-select-selector { min-height: 40px; }
+.rental-filter-modal .ant-modal-footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+.rental-filter-modal .ant-modal-footer > .ant-btn { height: 42px; padding-inline: 24px; font-weight: 700; }
 .rental-filter-modal .ant-modal-footer > .ant-btn + .ant-btn { margin-inline-start: 0; }
-
 .rental-error { margin: 0; color: #a62525; }
+@media (max-width: 767px) {
+  .rental-filter-trigger { grid-template-columns: minmax(0, 1fr) auto; }
+  .rental-filter-segment { margin: 10px 0; padding: 0 12px; gap: 8px; }
+  .rental-filter-segment--search { grid-column: 1 / -1; margin: 0; padding: 12px; border-bottom: 1px solid #e5e3dd; }
+  .rental-filter-segment--dates { border-left: 0 !important; }
+  .rental-filter-segment--dates .rental-filter-label { display: none; }
+  .rental-filter-segment strong { font-size: 12px; }
+  .rental-filter-segment--search strong { font-size: 14px; }
+  .rental-filter-segment > svg { width: 19px; height: 19px; }
+  .rental-filter-modal { top: 16px; padding-bottom: 16px; }
+  .rental-filter-modal .ant-modal-content { padding: 20px 16px; }
+  .rental-filter-modal .ant-modal-title { font-size: 20px; }
+  .rental-filter-modal .ant-modal-footer > .ant-btn { padding-inline: 18px; }
+}

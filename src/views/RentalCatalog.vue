@@ -26,6 +26,20 @@ const filterSummary = computed(() => {
   if (query.sortBy) parts.push(query.sortBy === 'priceAsc' ? 'Сначала дешевле' : 'Сначала дороже')
   return parts.filter(Boolean).join(', ') || 'Что хотите взять в аренду?'
 })
+const searchLabel = computed(() => route.query.search || 'Любой инвентарь')
+const dateLabel = computed(() => route.query.dateFrom && route.query.dateTo
+  ? `${dayjs(route.query.dateFrom).format('DD.MM')} — ${dayjs(route.query.dateTo).format('DD.MM')}`
+  : 'Выбрать даты')
+const activeConditions = computed(() => {
+  const query = route.query, conditions = []
+  const selected = String(query.categorySlugs || '').split(',').filter(Boolean)
+  selected.forEach(slug => conditions.push(categories.value.find(category => category.slug === slug)?.name || categories.value.find(category => category.slug === slug)?.title || slug))
+  if (hasValue(query.priceFrom) || hasValue(query.priceTo)) conditions.push([hasValue(query.priceFrom) ? `от ${query.priceFrom}` : '', hasValue(query.priceTo) ? `до ${query.priceTo}` : ''].filter(Boolean).join(' ') + ' ₽ / сутки')
+  if (query.pickupMethod) conditions.push(query.pickupMethod === 'delivery' ? 'Доставка' : 'Самовывоз')
+  if (query.unitsNeeded) conditions.push(`${query.unitsNeeded} шт.`)
+  if (query.sortBy) conditions.push(query.sortBy === 'priceAsc' ? 'Сначала дешевле' : 'Сначала дороже')
+  return conditions
+})
 function openFilters() { sync(); validation.value = ''; filterOpen.value = true }
 function disabledDate(date) { return date && date.startOf('day').isBefore(dayjs().startOf('day')) }
 const selectedCategories = ref([])
@@ -72,19 +86,24 @@ onBeforeUnmount(() => { requestId++; controller?.abort() })
     </a-row>
     <a-row justify="center">
       <a-col :xs="22" :md="20" :xl="18">
-        <a-row justify="center">
-          <a-col :xs="24" :md="16" :lg="12" class="pa-16">
-            <div class="rental-filter-bar">
-              <button type="button" class="rental-filter-trigger" :title="filterSummary" aria-haspopup="dialog" :aria-expanded="filterOpen" @click="openFilters">{{ filterSummary }}</button>
-              <a-button v-if="hasFilters" type="primary" shape="circle" class="ml-8" aria-label="Очистить фильтры" @click="reset"><MdiIcon name="close" /></a-button>
-            </div>
-          </a-col>
-        </a-row>
+        <div class="rental-filter-bar">
+          <button type="button" class="rental-filter-trigger" :title="filterSummary" :aria-label="`Поиск и фильтры: ${filterSummary}`" aria-haspopup="dialog" :aria-expanded="filterOpen" @click="openFilters">
+            <span class="rental-filter-segment rental-filter-segment--search"><MdiIcon name="magnify" /><span><span class="rental-filter-label">Что ищем</span><strong>{{ searchLabel }}</strong></span></span>
+            <span class="rental-filter-segment rental-filter-segment--dates"><MdiIcon name="calendar-blank-outline" /><span><span class="rental-filter-label">Когда</span><strong>{{ dateLabel }}</strong></span></span>
+            <span class="rental-filter-segment rental-filter-segment--settings"><MdiIcon name="tune-variant" /><strong>Фильтры<span v-if="activeConditions.length"> · {{ activeConditions.length }}</span></strong></span>
+          </button>
+        </div>
+        <div v-if="hasFilters" class="rental-active-conditions" aria-label="Выбранные условия">
+          <span v-for="(condition, index) in activeConditions" :key="index" class="rental-condition">{{ condition }}</span>
+          <button type="button" class="rental-filter-reset" @click="reset">Сбросить всё</button>
+        </div>
       </a-col>
     </a-row>
-    <a-modal v-model:open="filterOpen" title="Поиск инвентаря" class="rental-filter-modal">
+    <a-modal v-model:open="filterOpen" title="Поиск инвентаря" class="rental-filter-modal" :width="620">
       <a-form id="rental-filter-form" :model="filters" layout="vertical" class="rental-catalog-form" @finish="apply">
-        <a-row :gutter="[8, 8]">
+        <fieldset class="rental-filter-group">
+          <legend>Инвентарь</legend>
+          <a-row :gutter="[16, 0]">
           <a-col :span="24">
             <a-form-item label="Название или описание" name="search" html-for="rental-search">
               <a-input id="rental-search" v-model:value="filters.search" placeholder="Что хотите взять в аренду?" :maxlength="200" allow-clear />
@@ -95,36 +114,49 @@ onBeforeUnmount(() => { requestId++; controller?.abort() })
               <a-select id="rental-categories" v-model:value="selectedCategories" mode="multiple" placeholder="Все категории" :max-tag-count="2" option-filter-prop="label" allow-clear :options="categories.map(category => ({ value: category.slug, label: category.name || category.title }))" />
             </a-form-item>
           </a-col>
-          <a-col :xs="24" :sm="12">
+          </a-row>
+        </fieldset>
+        <fieldset class="rental-filter-group">
+          <legend>Условия аренды</legend>
+          <a-row :gutter="[16, 0]">
+          <a-col :xs="12" :sm="12">
             <a-form-item label="Получение" name="pickupMethod" html-for="rental-pickup">
               <a-select id="rental-pickup" v-model:value="filters.pickupMethod" :options="[{ value: '', label: 'Любой способ' }, { value: 'self_pickup', label: 'Самовывоз' }, { value: 'delivery', label: 'Доставка' }]" />
             </a-form-item>
           </a-col>
-          <a-col :xs="24" :sm="12">
+          <a-col :xs="12" :sm="12">
             <a-form-item label="Количество" name="unitsNeeded" html-for="rental-units">
               <a-input-number id="rental-units" v-model:value="filters.unitsNeeded" :min="1" :max="1000" :step="1" placeholder="1" />
             </a-form-item>
           </a-col>
-          <a-col :xs="24" :sm="12">
+          <a-col :xs="12" :sm="12">
             <a-form-item label="Цена за сутки от, ₽" name="priceFrom" html-for="rental-price-from">
               <a-input-number id="rental-price-from" v-model:value="filters.priceFrom" :min="0" :step="1" placeholder="0" />
             </a-form-item>
           </a-col>
-          <a-col :xs="24" :sm="12">
+          <a-col :xs="12" :sm="12">
             <a-form-item label="Цена за сутки до, ₽" name="priceTo" html-for="rental-price-to">
               <a-input-number id="rental-price-to" v-model:value="filters.priceTo" :min="0" :step="1" placeholder="Любая" />
             </a-form-item>
           </a-col>
-          <a-col :xs="24" :sm="12">
+          </a-row>
+        </fieldset>
+        <fieldset class="rental-filter-group">
+          <legend>Даты</legend>
+          <a-row :gutter="[16, 0]">
+          <a-col :xs="12" :sm="12">
             <a-form-item label="Дата получения" name="dateFrom" html-for="rental-date-from">
               <a-date-picker id="rental-date-from" v-model:value="filters.dateFrom" :locale="dateLocale" value-format="YYYY-MM-DD" format="DD.MM.YYYY" placeholder="Дата" :disabled-date="disabledDate" />
             </a-form-item>
           </a-col>
-          <a-col :xs="24" :sm="12">
+          <a-col :xs="12" :sm="12">
             <a-form-item label="Дата возврата" name="dateTo" html-for="rental-date-to">
               <a-date-picker id="rental-date-to" v-model:value="filters.dateTo" :locale="dateLocale" value-format="YYYY-MM-DD" format="DD.MM.YYYY" placeholder="Дата" :disabled-date="date => disabledDate(date) || (filters.dateFrom && date.format('YYYY-MM-DD') <= filters.dateFrom)" />
             </a-form-item>
           </a-col>
+          </a-row>
+        </fieldset>
+        <a-row :gutter="[16, 0]">
           <a-col :span="24">
             <a-form-item label="Сортировка" name="sortBy" html-for="rental-sort">
               <a-select id="rental-sort" v-model:value="filters.sortBy" :options="[{ value: '', label: 'По умолчанию' }, { value: 'priceAsc', label: 'Сначала дешевле' }, { value: 'priceDesc', label: 'Сначала дороже' }]" />
@@ -134,8 +166,8 @@ onBeforeUnmount(() => { requestId++; controller?.abort() })
         </a-row>
       </a-form>
       <template #footer>
+        <a-button class="rental-filter-clear" shape="round" @click="reset">Очистить</a-button>
         <a-button type="primary" shape="round" html-type="submit" form="rental-filter-form" :loading="loading">Показать</a-button>
-        <a-button shape="round" @click="reset">Очистить</a-button>
       </template>
     </a-modal>
     <a-row justify="center" :aria-busy="loading" aria-live="polite">
@@ -149,9 +181,9 @@ onBeforeUnmount(() => { requestId++; controller?.abort() })
           <a-button type="primary" shape="round" @click="load">Повторить</a-button>
         </div>
         <template v-else>
-          <p class="rental-catalog-count">Найдено объектов: {{ total }}</p>
-          <a-row v-if="listings.length" :gutter="[16, 18]" class="d-flex justify-center mt-8 pb-24">
-            <a-col v-for="listing in listings" :key="listing.id" :xs="24" :sm="12" :md="8" :xl="6" class="d-flex">
+          <div class="rental-catalog-results-heading"><h2>Инвентарь в аренду</h2><p class="rental-catalog-count">Найдено объектов: {{ total }}</p></div>
+          <a-row v-if="listings.length" :gutter="[20, 28]" class="rental-catalog-grid pb-24">
+            <a-col v-for="listing in listings" :key="listing.id" :xs="24" :sm="12" :md="8" :xl="8" class="d-flex">
               <RentalCard :listing="listing" :query="route.query" />
             </a-col>
           </a-row>
@@ -170,12 +202,14 @@ onBeforeUnmount(() => { requestId++; controller?.abort() })
   </div>
 </template>
 <style lang="scss" scoped>
-.rental-catalog { padding-bottom: 24px; }
-.rental-catalog-title { font-size: clamp(1.5rem, 1.1975rem + .6303vw, 1.875rem); font-weight: 900; margin: 0 0 4px; }
+.rental-catalog { padding: 12px 0 40px; background: #faf9f6; }
+.rental-catalog-title { font-size: clamp(1.5rem, 1.1975rem + .6303vw, 1.875rem); font-weight: 900; margin: 0 0 24px; }
 .rental-catalog-back { display: flex; align-items: center; width: fit-content; min-height: 32px; gap: 8px; color: rgba(0, 0, 0, .88); font-size: 16px; }
 .rental-catalog-back :deep(svg) { width: 16px; height: 16px; margin: 0 8px; }
 .rental-catalog-back:focus-visible { outline: 2px solid #ff6600; outline-offset: 3px; border-radius: 4px; }
-.rental-catalog-count { margin: 8px 0; font-size: 14px; }
+.rental-catalog-results-heading { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px 16px; margin: 30px 0 18px; }
+.rental-catalog-results-heading h2 { margin: 0; font-size: 20px; font-weight: 800; }
+.rental-catalog-count { margin: 0; color: #68645f; font-size: 13px; }
 .rental-catalog-state { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 8px 0 24px; }
 .rental-catalog-state img { height: 150px; max-width: 100%; object-fit: contain; }
 .rental-catalog-state h2 { font-size: 1.17em; font-weight: 700; }
