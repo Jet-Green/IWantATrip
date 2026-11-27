@@ -16,6 +16,7 @@
 .rental-filter-modal .ant-modal-content { padding: 26px; border-radius: 20px; }
 .rental-filter-modal .ant-modal-title { padding-right: 20px; font-size: 22px; font-weight: 800; }
 .rental-filter-modal .ant-modal-header { margin-bottom: 24px; }
+.rental-filter-modal .ant-modal-body { max-height: 65vh; max-height: calc(100dvh - 210px); overflow-y: auto; scrollbar-gutter: stable; }
 .rental-filter-group { min-width: 0; margin: 0 0 20px; padding: 0 0 8px; border: 0; border-bottom: 1px solid #eceae4; }
 .rental-filter-group legend { float: none; width: auto; margin: 0 0 14px; padding: 0; border: 0; font-size: 15px; font-weight: 700; color: #252522; }
 .rental-catalog-form .ant-form-item { margin-bottom: 14px; }
@@ -43,5 +44,7 @@
   .rental-filter-modal { top: 16px; padding-bottom: 16px; }
   .rental-filter-modal .ant-modal-content { padding: 20px 16px; }
   .rental-filter-modal .ant-modal-title { font-size: 20px; }
+  .rental-filter-modal .ant-modal-body { max-height: calc(100dvh - 190px); }
+  .rental-catalog-form .ant-picker input { font-size: 12px; }
   .rental-filter-modal .ant-modal-footer > .ant-btn { padding-inline: 18px; }
 }
