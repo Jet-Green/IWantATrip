@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive, ref, watch, onMounted, onBeforeUnmount } from 'vue'
+import { computed, reactive, ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import RentalService from '../service/RentalService'
 import dayjs from 'dayjs'
@@ -40,7 +40,20 @@ const activeConditions = computed(() => {
   if (query.sortBy) conditions.push(query.sortBy === 'priceAsc' ? 'Сначала дешевле' : 'Сначала дороже')
   return conditions
 })
-function openFilters() { sync(); validation.value = ''; filterOpen.value = true }
+const filterForm = ref(null)
+let filterTrigger
+async function openFilters(target, event) {
+  filterTrigger = event?.currentTarget
+  sync(); validation.value = ''; filterOpen.value = true
+  await nextTick()
+  if (!filterOpen.value) return
+  const form = filterForm.value?.$el
+  const field = form?.querySelector(target === 'dates' ? '#rental-date-from' : '#rental-search')
+  const group = target === 'dates' ? form?.querySelector('[data-filter-group="dates"]') : field
+  field?.focus({ preventScroll: true })
+  group?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+}
+function restoreFilterFocus() { filterTrigger?.focus({ preventScroll: true }) }
 function disabledDate(date) { return date && date.startOf('day').isBefore(dayjs().startOf('day')) }
 const selectedCategories = ref([])
 const filters = reactive(Object.fromEntries(keys.map(key => [key, ''])))
@@ -87,11 +100,11 @@ onBeforeUnmount(() => { requestId++; controller?.abort() })
     <a-row justify="center">
       <a-col :xs="22" :md="20" :xl="18">
         <div class="rental-filter-bar">
-          <button type="button" class="rental-filter-trigger" :title="filterSummary" :aria-label="`Поиск и фильтры: ${filterSummary}`" aria-haspopup="dialog" :aria-expanded="filterOpen" @click="openFilters">
-            <span class="rental-filter-segment rental-filter-segment--search"><MdiIcon name="magnify" /><span><span class="rental-filter-label">Что ищем</span><strong>{{ searchLabel }}</strong></span></span>
-            <span class="rental-filter-segment rental-filter-segment--dates"><MdiIcon name="calendar-blank-outline" /><span><span class="rental-filter-label">Когда</span><strong>{{ dateLabel }}</strong></span></span>
-            <span class="rental-filter-segment rental-filter-segment--settings"><MdiIcon name="tune-variant" /><strong>Фильтры<span v-if="activeConditions.length"> · {{ activeConditions.length }}</span></strong></span>
-          </button>
+          <div class="rental-filter-trigger" role="group" aria-label="Поиск и фильтры">
+            <button type="button" class="rental-filter-segment rental-filter-segment--search" :aria-label="`Что ищем: ${searchLabel}`" aria-haspopup="dialog" aria-controls="rental-filter-form" :aria-expanded="filterOpen" @click="openFilters('search', $event)"><MdiIcon name="list-status" aria-hidden="true" /><span><span class="rental-filter-label">Что ищем</span><strong>{{ searchLabel }}</strong></span></button>
+            <button type="button" class="rental-filter-segment rental-filter-segment--dates" :aria-label="`Когда: ${dateLabel}`" aria-haspopup="dialog" aria-controls="rental-filter-form" :aria-expanded="filterOpen" @click="openFilters('dates', $event)"><MdiIcon name="calendar-outline" aria-hidden="true" /><span><span class="rental-filter-label">Когда</span><strong>{{ dateLabel }}</strong></span></button>
+            <button type="button" class="rental-filter-segment rental-filter-segment--settings" :title="filterSummary" :aria-label="`Фильтры: ${filterSummary}`" aria-haspopup="dialog" aria-controls="rental-filter-form" :aria-expanded="filterOpen" @click="openFilters('all', $event)"><MdiIcon name="filter-outline" aria-hidden="true" /><strong>Фильтры<span v-if="activeConditions.length"> · {{ activeConditions.length }}</span></strong></button>
+          </div>
         </div>
         <div v-if="hasFilters" class="rental-active-conditions" aria-label="Выбранные условия">
           <span v-for="(condition, index) in activeConditions" :key="index" class="rental-condition">{{ condition }}</span>
@@ -99,8 +112,8 @@ onBeforeUnmount(() => { requestId++; controller?.abort() })
         </div>
       </a-col>
     </a-row>
-    <a-modal v-model:open="filterOpen" title="Поиск инвентаря" class="rental-filter-modal" :width="620">
-      <a-form id="rental-filter-form" :model="filters" layout="vertical" class="rental-catalog-form" @finish="apply">
+    <a-modal v-model:open="filterOpen" title="Поиск инвентаря" class="rental-filter-modal" :width="620" force-render @after-close="restoreFilterFocus">
+      <a-form ref="filterForm" id="rental-filter-form" :model="filters" layout="vertical" class="rental-catalog-form" @finish="apply">
         <fieldset class="rental-filter-group">
           <legend>Инвентарь</legend>
           <a-row :gutter="[16, 0]">
@@ -141,7 +154,7 @@ onBeforeUnmount(() => { requestId++; controller?.abort() })
           </a-col>
           </a-row>
         </fieldset>
-        <fieldset class="rental-filter-group">
+        <fieldset class="rental-filter-group" data-filter-group="dates">
           <legend>Даты</legend>
           <a-row :gutter="[16, 0]">
           <a-col :xs="12" :sm="12">
@@ -181,7 +194,7 @@ onBeforeUnmount(() => { requestId++; controller?.abort() })
           <a-button type="primary" shape="round" @click="load">Повторить</a-button>
         </div>
         <template v-else>
-          <div class="rental-catalog-results-heading"><h2>Инвентарь в аренду</h2><p class="rental-catalog-count">Найдено объектов: {{ total }}</p></div>
+          <div class="rental-catalog-results-heading"><p class="rental-catalog-count">Найдено объектов: {{ total }}</p></div>
           <a-row v-if="listings.length" :gutter="[20, 28]" class="rental-catalog-grid pb-24">
             <a-col v-for="listing in listings" :key="listing.id" :xs="24" :sm="12" :md="8" :xl="8" class="d-flex">
               <RentalCard :listing="listing" :query="route.query" />
@@ -202,13 +215,12 @@ onBeforeUnmount(() => { requestId++; controller?.abort() })
   </div>
 </template>
 <style lang="scss" scoped>
-.rental-catalog { padding: 12px 0 40px; background: #faf9f6; }
+.rental-catalog { padding: 12px 0 40px; background: #fffef4; }
 .rental-catalog-title { font-size: clamp(1.5rem, 1.1975rem + .6303vw, 1.875rem); font-weight: 900; margin: 0 0 24px; }
 .rental-catalog-back { display: flex; align-items: center; width: fit-content; min-height: 32px; gap: 8px; color: rgba(0, 0, 0, .88); font-size: 16px; }
 .rental-catalog-back :deep(svg) { width: 16px; height: 16px; margin: 0 8px; }
 .rental-catalog-back:focus-visible { outline: 2px solid #ff6600; outline-offset: 3px; border-radius: 4px; }
 .rental-catalog-results-heading { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px 16px; margin: 30px 0 18px; }
-.rental-catalog-results-heading h2 { margin: 0; font-size: 20px; font-weight: 800; }
 .rental-catalog-count { margin: 0; color: #68645f; font-size: 13px; }
 .rental-catalog-state { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 8px 0 24px; }
 .rental-catalog-state img { height: 150px; max-width: 100%; object-fit: contain; }
