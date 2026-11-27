@@ -88,9 +88,10 @@ const formSchema = yup.object({
                   html-type="submit">Войти</a-button>
               </div>
             </Form>
-            <div class="d-flex justify-center">
+            <div class="provider-entry">
               <a-button class="mb-16 vk-login-btn" size="large" @click="logInVk">
-                Войти через VK ID
+                <img src="../assets/icons/vk.svg" alt="" width="24" height="24" />
+                <span>Войти через VK ID</span>
               </a-button>
             </div>
             <div v-if="!redirect.startsWith('/federation/authorize')" class="federation-entry">
@@ -128,8 +129,13 @@ const formSchema = yup.object({
 </style>
 
 <style scoped>
-.federation-entry { margin: 0 auto 16px; max-width: 100%; text-align: center; }
+.provider-entry, .federation-entry { width: 100%; max-width: 360px; margin: 0 auto 16px; text-align: center; }
+.provider-entry .vk-login-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 48px; height: auto; margin-bottom: 0; padding: 8px 12px; white-space: normal; line-height: 1.35; }
+.provider-entry img { flex-shrink: 0; }
 .federation-login-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: auto; min-height: 48px; padding: 8px 12px; border-radius: 24px; white-space: normal; line-height: 1.35; }
+.federation-login-btn { border-color: #63bed8; color: #245159; background: #f4fbfd; }
+.federation-login-btn:hover { border-color: #ff6600; color: #ff6600; }
+.federation-login-btn:focus-visible { outline: 2px solid #ff6600; outline-offset: 3px; }
 .federation-login-btn img { flex-shrink: 0; }
-.federation-entry p { margin-top: 8px; }
+.federation-entry p { margin: 8px 0 0; color: #b42318; font-size: 14px; line-height: 1.5; }
 </style>

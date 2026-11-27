@@ -23,7 +23,7 @@ const router = useRouter()
             <img src="../../assets/images/ship.svg" alt="" class="ship-icon absolute">
             <img src="../../assets/images/double-tree.svg" alt="" class="double-tree-icon absolute">
             <div class="quick-actions-container">
-              <button type="button" class="quick-action-card quick-action-card--stacked" @click="router.push('/rental')">
+              <button type="button" class="quick-action-card quick-action-card--stacked quick-action-card--rental" @click="router.push('/rental')">
                 <div class="quick-action-card__visual">
                   <img src="../../assets/images/inventory-rental-logo.png" alt="Аренда инвентаря" class="quick-action-card__logo" width="774" height="240" />
                 </div>
@@ -240,6 +240,20 @@ const router = useRouter()
   font-weight: 900;
   letter-spacing: 0.04em;
   color: #152028;
+}
+
+.quick-action-card--rental {
+  width: clamp(100px, 37vw, 220px);
+  min-width: 0;
+
+  .quick-action-card__visual { padding: 0; }
+  .quick-action-card__logo { width: 100%; max-width: 100%; max-height: 100%; }
+
+  &:focus-visible { outline: 3px solid #ff6600; outline-offset: 3px; }
+}
+
+@supports (width: 1cqi) {
+  .quick-action-card--rental { width: clamp(96px, calc((100cqi - 40px) / 2.5), 220px); }
 }
 
 .ship-icon {

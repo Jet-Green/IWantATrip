@@ -26,9 +26,10 @@ onMounted(proceed)
     <a-row justify="center">
       <a-col :xs="22" :xl="16">
         <div class="rental-auth__state">
+          <img class="rental-auth__brand" src="../assets/images/inventory-rental-logo.png" alt="Аренда инвентаря" width="774" height="240" />
           <template v-if="loading">
             <a-spin size="large" />
-            <p role="status">Переходим к бронированию…</p>
+            <p role="status" aria-live="polite">Переходим к бронированию…</p>
           </template>
           <div v-else role="alert">
             <h1>Не удалось перейти к бронированию</h1>
@@ -46,7 +47,10 @@ onMounted(proceed)
   padding-bottom: 64px;
   overflow-wrap: anywhere;
 
-  &__state { padding: 40px 0; text-align: center; }
+  &__state { max-width: 520px; box-sizing: border-box; padding: clamp(24px, 5vw, 40px); margin: 24px auto 0; border: 1px solid #e0e0e0; border-radius: 24px; background: #fff; text-align: center; }
+  &__brand { display: block; width: min(100%, 232px); height: auto; margin: 0 auto 28px; }
+  &__state :deep(.ant-spin) { display: block; }
+  &__state :deep(button) { min-height: 44px; height: auto; white-space: normal; }
   &__state h1 { font-size: clamp(1.5rem, 1.1975rem + 0.6303vw, 1.875rem); line-height: 1.3; }
   &__state p { margin: 16px 0 20px; }
   &__back { display: block; width: fit-content; margin: 24px auto 0; color: #ff6600; text-decoration: underline; }

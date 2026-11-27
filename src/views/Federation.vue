@@ -62,24 +62,43 @@ onMounted(async () => {
 })
 </script>
 <template>
-  <section class="federation-page pa-16">
-    <h1>{{ linking ? 'Подтвердите аккаунт «Города и Веси»' : 'Вход в «Города и Веси»' }}</h1>
-    <p v-if="loading" role="status" aria-live="polite">Продолжаем вход…</p>
-    <p v-if="error" role="alert">{{ error }}</p>
+  <section class="federation-page" :aria-busy="loading">
+    <div class="federation-brand" aria-hidden="true">
+      <img src="../assets/images/logo.webp" alt="" width="128" height="60" />
+      <span class="federation-brand__separator"></span>
+      <img src="../assets/images/rental-mark.svg" alt="" width="40" height="40" />
+    </div>
+    <h1>{{ linking ? 'Подтвердите аккаунт' : 'Вход в «Города и Веси»' }}</h1>
+    <p v-if="linking" class="federation-description">Аккаунт с таким email уже существует. Введите его пароль, чтобы связать аккаунты.</p>
+    <div v-if="loading" class="federation-loading" role="status" aria-live="polite">
+      <a-spin />
+      <p>{{ linking ? 'Подтверждаем аккаунт…' : 'Продолжаем вход…' }}</p>
+    </div>
+    <p v-if="error" class="federation-error" role="alert">{{ error }}</p>
     <form v-if="linking" class="federation-form" @submit.prevent="linkAccount">
-      <p>Аккаунт с таким email уже существует. Введите его пароль, чтобы связать аккаунты.</p>
       <label for="federation-email">Email</label>
-      <a-input id="federation-email" v-model:value="email" type="email" autocomplete="username" required size="large" />
+      <a-input id="federation-email" v-model:value="email" type="email" autocomplete="username" required size="large" :disabled="loading" />
       <label for="federation-password">Пароль аккаунта «Города и Веси»</label>
-      <a-input-password id="federation-password" v-model:value="password" autocomplete="current-password" required size="large" />
-      <a-button type="primary" html-type="submit" :loading="loading" :disabled="loading">Подтвердить и войти</a-button>
+      <a-input-password id="federation-password" v-model:value="password" autocomplete="current-password" required size="large" :disabled="loading" />
+      <a-button class="lets_go_btn" type="primary" html-type="submit" size="large" :loading="loading" :disabled="loading">Подтвердить и войти</a-button>
     </form>
-    <a-button v-if="error && action === 'authorize'" @click="proceed" :disabled="loading">Повторить</a-button>
-    <router-link v-if="!loading" :to="nativeLogin">Вернуться ко входу</router-link>
+    <a-button v-if="error && action === 'authorize'" class="lets_go_btn" type="primary" size="large" @click="proceed" :disabled="loading">Повторить</a-button>
+    <router-link v-if="!loading" class="federation-back" :to="nativeLogin">Вернуться ко входу</router-link>
   </section>
 </template>
 <style scoped>
-.federation-page { max-width: 520px; margin: 32px auto; overflow-wrap: anywhere; }
-.federation-form { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
-.federation-page > a { display: block; margin-top: 20px; }
+.federation-page { width: calc(100% - 32px); max-width: 520px; box-sizing: border-box; margin: 40px auto 64px; padding: clamp(20px, 5vw, 32px); border: 1px solid #e0e0e0; border-radius: 24px; background: #fff; overflow-wrap: anywhere; text-align: center; }
+.federation-brand { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 24px; }
+.federation-brand img { object-fit: contain; }
+.federation-brand__separator { width: 1px; height: 32px; background: #e0e0e0; }
+.federation-page h1 { font-size: clamp(1.5rem, 1.1975rem + 0.6303vw, 1.875rem); line-height: 1.3; margin-bottom: 16px; }
+.federation-description { margin-bottom: 24px; }
+.federation-loading { padding: 16px 0; }
+.federation-loading p { margin: 12px 0 0; }
+.federation-error { padding: 12px 16px; margin-bottom: 20px; border-radius: 12px; background: #fff4ec; color: #933a00; text-align: left; }
+.federation-form { display: flex; flex-direction: column; gap: 8px; text-align: left; }
+.federation-form label:not(:first-child) { margin-top: 8px; }
+.federation-form button { height: auto; min-height: 44px; margin-top: 16px; white-space: normal; }
+.federation-back { display: block; width: fit-content; margin: 24px auto 0; color: #ff6600; text-decoration: underline; }
+.federation-back:focus-visible { outline: 2px solid #ff6600; outline-offset: 4px; }
 </style>

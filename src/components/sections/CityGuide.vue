@@ -95,7 +95,7 @@ let cards = ref([
 
       <a-row :gutter="[12, 12]" class="justify-center">
         <a-col v-for="(card, index) in cards" :key="index" :xs="12" :md="8">
-          <router-link :to="card.isShow ? card.route : ''" class="guide-card" :class="{ opacity: !card.isShow }">
+          <router-link :to="card.isShow ? card.route : ''" class="guide-card" :class="{ opacity: !card.isShow, 'guide-card--rental': card.image }">
             <div class="card-content">
               <img v-if="card.image" :src="card.image" alt="" width="32" height="32" />
               <span v-else class="mdi" :class="card.icon"></span>
@@ -159,6 +159,11 @@ h2 {
     cursor: default;
     pointer-events: none;
   }
+}
+
+.guide-card--rental {
+  img { display: block; flex-shrink: 0; width: 36px; height: 36px; object-fit: contain; }
+  &:focus-visible { outline: 2px solid #ff6600; outline-offset: 3px; }
 }
 
 .card-content {
