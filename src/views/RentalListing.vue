@@ -15,7 +15,7 @@ function validDate(value) {
 }
 const selectedPeriod = computed(() => {
   const { dateFrom, dateTo } = route.query
-  if (!validDate(dateFrom) || !validDate(dateTo) || dateFrom > dateTo) return null
+  if (!validDate(dateFrom) || !validDate(dateTo) || dateFrom >= dateTo) return null
   const format = value => value.split('-').reverse().join('.')
   return { from: format(dateFrom), to: format(dateTo) }
 })
