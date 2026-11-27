@@ -112,7 +112,7 @@ onBeforeUnmount(() => { requestId++; controller?.abort() })
         </div>
       </a-col>
     </a-row>
-    <a-modal v-model:open="filterOpen" title="Поиск инвентаря" class="rental-filter-modal" :width="620" force-render @after-close="restoreFilterFocus">
+    <a-modal v-model:open="filterOpen" title="Поиск инвентаря" class="rental-filter-modal" :width="620" force-render :focus-trigger-after-close="false" :after-close="restoreFilterFocus">
       <a-form ref="filterForm" id="rental-filter-form" :model="filters" layout="vertical" class="rental-catalog-form" @finish="apply">
         <fieldset class="rental-filter-group">
           <legend>Инвентарь</legend>
